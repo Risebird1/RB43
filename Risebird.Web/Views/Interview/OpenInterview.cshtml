@@ -141,7 +141,10 @@
                                                     @foreach (var item in Model)
                                                     {
                                                         <tr id=@item.id>
-                                                            <td> @item.interviewDate </td>
+                                                            
+                                                            <td> @item.interviewDate
+                                                                
+                                                            </td>
                                                             <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
                                                           @*  @if (item.IsNewSkillChannel)
                                                             {
@@ -166,8 +169,24 @@
                                                                 <td>₹ 0 </td>
                                                             }*@
                                                             <td> @item.interviewDuration Min.</td>
-                                                            <td>
-                                                                <span> @item.candidateName</span>
+                                                            <td style="padding-left:20px;">
+                                                                
+                                                                    @if (item.IsVideoRequired == true)
+                                                                    {<div style="position:relative;z-index:10;">
+                                                                        <div class="absCenter">
+                                                                            <button class="infoButton" style="top: 13px;left:-122px;">
+                                                                                <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;">Mandate : <b style="color:red">Video On</b></div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                        </div>
+                                                                    }
+                                                                
+                                                                <span style="padding-left:5px;"> @item.candidateName</span>
                                                             <span>
                                                                     @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                     {

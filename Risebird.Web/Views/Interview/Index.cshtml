@@ -802,13 +802,41 @@
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
 
-                                                        <td>
+                                                        <td style="padding-left:20px;">
                                                             @if (item.IsOnline == 1)
                                                             {
+                                                                @if (item.IsVideoRequired == true) {
+                                                                       <div style="position:relative;z-index:10;">
+                                                                        <div class="absCenter">
+                                                                            <button class="infoButton" style="top:8px;left:-145px;">
+                                                                                <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px 0px 7px;width:auto;">Mandate : <b style="color:red">Video On</b></div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                        </div>
+                                                                    }
                                                                 <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
                                                             }
                                                             else
-                                                            {
+                                                            {   
+                                                                @if (item.IsVideoRequired == true) {
+                                                                       <div style="position:relative;z-index:10;">
+                                                                        <div class="absCenter">
+                                                                            <button class="infoButton" style="top:8px;left:-145px;">
+                                                                                <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px 0px 7px;width:auto;">Mandate : <b style="color:red">Video On</b></div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                        </div>
+                                                                    }
                                                                 <span class="name-field">  @item.candidateName</span>
                                                             }
 
