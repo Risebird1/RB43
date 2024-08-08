@@ -60,17 +60,17 @@
                 </div>
                 <div class="pull-right">
                     <div>
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
 
                         @if (ViewBag.Actiontype == 0)
                         {
                             @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" ||
-                            ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" 
-                            || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount" 
-                            || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
+                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport"
+                           || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount"
+                           || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
                            || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "DeletedZoomMeetings"
                            || ViewBag.actionstatus == "InterviewerChurn" || ViewBag.actionstatus == "VideoLink"))
                             {
@@ -265,7 +265,7 @@
                                                         <th>IRF ID</th>
 
                                                     }
-                                                    @if(ViewBag.actionstatus == "InterviewCount")
+                                                    @if (ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Assessment Group</th>
                                                     }
@@ -300,10 +300,10 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                     @if (ViewBag.actionstatus == "QCPendingReport")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport")
                                                     {
-                                                     <th>Interviewer Joinedon</th>
-                                                    
+                                                        <th>Interviewer Joinedon</th>
+
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
@@ -338,7 +338,7 @@
                                                         }
                                                     }
 
-                                                    
+
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Client Name</th>
@@ -434,8 +434,10 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
-                                                    {<th>Channel Owner</th>}
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    {
+                                                        <th>Channel Owner</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Action</th>
@@ -443,7 +445,7 @@
 
                                                     @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport"))
                                                     {
-                                                        
+
                                                         <th>
                                                             Action
                                                         </th>
@@ -503,7 +505,7 @@
                                                         <th>IRF ID</th>
 
                                                     }
-                                                    @if(ViewBag.actionstatus == "InterviewCount")
+                                                    @if (ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Assessment Group</th>
                                                     }
@@ -535,10 +537,10 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                     @if (ViewBag.actionstatus == "QCPendingReport")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport")
                                                     {
-                                                      <th>Interviewer Joinedon</th>
-                                                   
+                                                        <th>Interviewer Joinedon</th>
+
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
@@ -573,7 +575,7 @@
                                                         }
                                                     }
 
-                                                   
+
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Client Name</th>
@@ -587,7 +589,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity" )
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -623,7 +625,7 @@
                                                         <th>Suspicious AddedOn</th>
                                                         <th>Mobile</th>
                                                         <th>Active</th>
-                                                         <th>Red Marker</th>
+                                                        <th>Red Marker</th>
                                                     }
 
                                                     @if (ViewBag.actionstatus == "CancelledInterviewCount")
@@ -670,8 +672,10 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if( ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
-                                                    {<th>Channel Owner</th>}
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    {
+                                                        <th>Channel Owner</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
@@ -803,7 +807,7 @@
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
                                                         }
-                                                        @if(ViewBag.actionstatus == "InterviewCount")
+                                                        @if (ViewBag.actionstatus == "InterviewCount")
                                                         {
                                                             <td>@item.AssessmentGroup</td>
                                                         }
@@ -869,12 +873,12 @@
                                                         {
                                                             <td>@item.Joinedon</td>
                                                         }
-                                                         @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport")
                                                         {
-                                                           <td class="intime-on">
-                                                            <div style="float:left">@item.Joinedon </div>
-                                                           
-                                                        </td>
+                                                            <td class="intime-on">
+                                                                <div style="float:left">@item.Joinedon </div>
+
+                                                            </td>
 
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
@@ -902,6 +906,10 @@
                                                                         <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
                                                                     </span>@item.MobileNumber
                                                                 </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
                                                             }
                                                         }
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
@@ -1091,15 +1099,15 @@
                                                             <td>@item.SuspiciousAddedBy</td>
                                                             <td>@item.SuspiciousAddOn</td>
                                                             <td>@item.SuspiciousMobileNumber</td>
-                                                             @if (item.IsActive)
+                                                            @if (item.IsActive)
                                                             {
-                                                            <td>Active</td>
-                                                             }
+                                                                <td>Active</td>
+                                                            }
                                                             else
                                                             {
-                                                            <td>Inactive</td>
+                                                                <td>Inactive</td>
                                                             }
-                                                               @if (item.interviewer != null || item.interviewer != "")
+                                                            @if (item.interviewer != null || item.interviewer != "")
                                                             {
                                                                 <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.SuspiciousEmail')" style="cursor:pointer">@item.RedMarker</d></td>
                                                             }
@@ -1151,7 +1159,7 @@
                                                             {
                                                                 @if (item.CompanyName.Length > 30)
                                                                 {
-                                                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
                                                                 }
                                                                 else
                                                                 {
@@ -1414,7 +1422,7 @@
 
 
                                                         }
-                                                        @if( ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <td>@item.ChannelOwner</td>
                                                         }
@@ -1437,8 +1445,8 @@
 
                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','@item.scheduleUniqueid')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:4px;width:25px!important;height:25px!important" title="Cancel Interview and Schedule Interview"><span class="fal fa-times" style="font-size:18px;line-height:28px;"></span></span></span>
                                                                     @* <div class="mdc-fab app-fab--absolute" style="position:relative;">
-                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
-                                                                    </div> *@
+                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                        </div> *@
                                                                     @*<button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
                                                         <span onclick="javascript:CheckIntervieweravailbility('@item.irfIntId', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
@@ -1473,10 +1481,10 @@
                                                             <td>
 
                                                                 @* <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
-                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
-                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                    </button>
-                                                                </a> *@
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
+                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                        </button>
+                                                        </a> *@
 
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
@@ -1509,19 +1517,19 @@
                                                                 </span>
 
 
-                                                               @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
 
-                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
-                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
+                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
 
-                                                                    </button>
-                                                                </a> *@
+                                                        </button>
+                                                        </a> *@
 
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
                                                                         <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                     </button>
-                                                                </a> 
+                                                                </a>
                                                                 <span class="interview_9">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                         <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
@@ -1532,7 +1540,7 @@
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
                                                                         <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
                                                                     </button>
-                                                                </a> 
+                                                                </a>
 
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
                                                                     <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
@@ -1742,7 +1750,8 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td style="color:red;text-align:center">item.RedMarker
+                                                                    <td style="color:red;text-align:center">
+                                                                        item.RedMarker
                                                                     </td>
                                                                 }
                                                             }
@@ -2064,7 +2073,7 @@
 
     function ResetFilter() {
         var value = $("#hidactionstatus").val();
-        var returnBack='@ViewBag.ReturnBack';
+        var returnBack = '@ViewBag.ReturnBack';
         window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter?actionstatus=" + value + "&returnBack=" + returnBack;
 
     }
@@ -2241,7 +2250,7 @@
         var modal = document.getElementById("ZoomMeetingHistory");
         modal.style.display = "none";
     }
-    function Changeurldetails(type,returnBack) {
+    function Changeurldetails(type, returnBack) {
         var actiontype = $("#hidactiontype").val();
         window.location.href = "/DashBoard/UnassignedInterviews?actionstatus=" + type + "&actiontype=" + actiontype + "&returnBack=" + returnBack;
     }
@@ -2350,7 +2359,7 @@
                             'schedulertype': 2
                         },
                         success: function (result) {
-                          window.open(result, '_blank');
+                            window.open(result, '_blank');
                             resolve(result)
                         },
                         error: function () {
@@ -2453,7 +2462,7 @@
                         data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': emailid, 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
                         success: function (data) {
                             if (data != null && data.toLowerCase().includes('success')) {
-                                resolve(data);                             
+                                resolve(data);
                             }
                             else {
                                 swal.fire("Error cancelling!", "Please try again", "error");
@@ -2467,33 +2476,33 @@
             },
             allowOutsideClick: false
         })
-      .then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Cancelled!',
-                    type: 'success',
-                    html: '<p>Meeting cancelled.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-        
-                    @*  window.open(window.location.href = "/InterviewScheduler/ScheduleEvent?id=" + $('#scheduleUniqueid').val() + "&interviewid=" + $('#imid').val(), '_blank') *@
-                        @*  window.open("/InterviewScheduler/ScheduleEvent?id=" + scheduleUniqueid + "&interviewid=" + id, '_blank') *@
-                        @*   window.open('ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid)', '_blank') *@
-                            ReschuduleMeeting(id, scheduleUniqueid, IRFid, CandidateEmail);
-                })
+            .then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Cancelled!',
+                        type: 'success',
+                        html: '<p>Meeting cancelled.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
 
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Aborted!',
-                    'Meeting remains confirmed! :)',
-                    'error'
-                )
-            }
-        }) 
+    @*  window.open(window.location.href = "/InterviewScheduler/ScheduleEvent?id=" + $('#scheduleUniqueid').val() + "&interviewid=" + $('#imid').val(), '_blank') *@
+    @*  window.open("/InterviewScheduler/ScheduleEvent?id=" + scheduleUniqueid + "&interviewid=" + id, '_blank') *@
+    @*   window.open('ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid)', '_blank') *@
+                            ReschuduleMeeting(id, scheduleUniqueid, IRFid, CandidateEmail);
+                    })
+
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Aborted!',
+                        'Meeting remains confirmed! :)',
+                        'error'
+                    )
+                }
+            })
 
 
     }
