@@ -4809,6 +4809,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = emailid;
                 ViewBag.IsClientLogin = isClientLogin;
                 model = await _meetingService.FetchSchedulingLinks(emailid);
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 if (model != null)
                 {
                     if (TempData["SuccessErrorMessageMarketPlace1"] != null)
