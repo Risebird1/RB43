@@ -40,6 +40,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
             skills = new List<SkillDetails>();
         }
         public string skillChannelId { get; set; }
+        public string jobId { get; set; }
         public string candidateEmailId { get; set; }
         public string interviewDate { get; set; }
         public string interviewer { get; set; }
@@ -111,5 +112,6 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public List<QuestionDetailsSet> questions { get; set; }
         public DateTime? createdOn { get; set; }
         public DateTime? currentStatusUpdatedAt { get; set; }
+        public string jobId { get; set; }
     }
 }
