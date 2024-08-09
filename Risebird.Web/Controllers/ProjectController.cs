@@ -69,13 +69,13 @@ namespace Risebird.Web.Controllers
                         filter.Location = filter.Location == null ? filter.Location = model.ProjectList.Select(x => x.Location).ToArray() : filter.Location = filter.Location;
                         filter.ProjectID = filter.ProjectID == null ? filter.ProjectID = model.ProjectList.Select(x => x.Name).ToArray() : filter.ProjectID = filter.ProjectID;
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.ProjectList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.ProjectList.Select(x => x.EndClient).ToArray() : filter.ClientName = filter.ClientName;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.ProjectList.Select(x => x.Client).ToArray() : filter.ClientName = filter.ClientName;
 
                         //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
                         model.ProjectList = model.ProjectList.Where(c => filter.Location.Contains(c.Location)
                         && filter.ProjectID.Contains(c.Name)
                         && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
-                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.EndClient) : c.EndClient == null)).ToList();
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.Client) : c.Client == null)).ToList();
 
                         if (model.ProjectList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                         {
@@ -152,24 +152,24 @@ namespace Risebird.Web.Controllers
             {
 
                 var projectModel = new Project();
-                var irfList = _projectService.GetAllIRF();
-                var objList = new List<ProjectIRFMapping>();
-                foreach (var item in irfList)
-                {
+                //var irfList = _projectService.GetAllIRF();
+                //var objList = new List<ProjectIRFMapping>();
+                //foreach (var item in irfList)
+                //{
 
-                    var obj = new ProjectIRFMapping();
-                    obj.IRFId = item.id;
-                    obj.IRFName = item.IRFId;
-                    obj.IsAdded = false;
-                    //obj.id = 0;
-                    obj.PrimarySkills = item.JDTiltle.Split("|")[0];
-                    //obj.ProjectId = 0;
-                    obj.Client = item.ClientCompName;
-                    objList.Add(obj);
-                }
-                projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
+                //    var obj = new ProjectIRFMapping();
+                //    obj.IRFId = item.id;
+                //    obj.IRFName = item.IRFId;
+                //    obj.IsAdded = false;
+                //    //obj.id = 0;
+                //    obj.PrimarySkills = item.JDTiltle.Split("|")[0];
+                //    //obj.ProjectId = 0;
+                //    obj.Client = item.ClientCompName;
+                //    objList.Add(obj);
+                //}
+                //projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
 
-                projectModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
+                projectModel.ClientList = new SelectList(_projectService.GetClientsList(), "id", "Name");
                 return View(projectModel);
             }
             else
@@ -221,7 +221,7 @@ namespace Risebird.Web.Controllers
             {
 
                 var projectModel = _projectService.GetProjectEdit(id);
-                projectModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
+                projectModel.ClientList = new SelectList(_projectService.GetClientsList(), "id", "Name");
                 return View(projectModel);
             }
             else
@@ -348,7 +348,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFilteredIRF(string clientId)
+        public async Task<IActionResult> GetFilteredIRF(string clientId, int SkillSetsevaluate)
         {
             try
             {
@@ -368,7 +368,14 @@ namespace Risebird.Web.Controllers
                         //{
                         //    return new EmptyResult();
                         //}
-
+                        if (SkillSetsevaluate == 2)
+                        {
+                            irfList = irfList.Where(x => x.SkillSetsevaluate == 2).ToList();
+                        }
+                        else
+                        {
+                            irfList = irfList.Where(x => x.SkillSetsevaluate != 2).ToList();
+                        }
                         var objList = new List<ProjectIRFMapping>();
                         foreach (var item in irfList)
                         {
@@ -388,7 +395,6 @@ namespace Risebird.Web.Controllers
                         {
                             return new EmptyResult();
                         }
-
                         return PartialView("GetFilteredIRF", projectModel);
                     }
                     else
@@ -410,7 +416,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEditFilteredIRF(string clientId, string projectId)
+        public async Task<IActionResult> GetEditFilteredIRF(string clientId, string projectId, int SkillSetsevaluate)
         {
             try
             {
@@ -423,7 +429,6 @@ namespace Risebird.Web.Controllers
                         var projectModel = new Project();
                         var projectCluster = _projectService.GetProjectCluster(Convert.ToInt32(projectId));
                         var allIRFs = _projectService.GetAllIRF();
-
                         if (projectCluster != null && projectCluster.Count() > 0)
                         {
                             if (Convert.ToInt32(clientId) != 0)
@@ -446,6 +451,14 @@ namespace Risebird.Web.Controllers
                         {
                             allIRFs = allIRFs.Where(x => x.ClientId == Convert.ToInt32(clientId)).ToList();
 
+                        }
+                        if (SkillSetsevaluate == 2)
+                        {
+                            allIRFs = allIRFs.Where(x => x.SkillSetsevaluate == 2).ToList();
+                        }
+                        else
+                        {
+                            allIRFs = allIRFs.Where(x => x.SkillSetsevaluate != 2).ToList();
                         }
                         var objList = new List<ProjectIRFMapping>();
 

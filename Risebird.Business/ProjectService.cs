@@ -358,6 +358,18 @@ namespace Risebird.Business
             }
 
         }
+        public IEnumerable<Client> GetClientsList()
+        {
+            try
+            {
+                return _projectRepository.GetClients()?.OrderBy(x => x.Name);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }
