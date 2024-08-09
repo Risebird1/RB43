@@ -39,7 +39,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId          
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,        
+  im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,IRF.IsVideoRequired,         
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
 ,iman.interviewDate RescheduleDate,ti.PerSuccessRate 
@@ -86,7 +86,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId          
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,        
+  im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,IRF.IsVideoRequired,         
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
   ,iman.interviewDate RescheduleDate,ti.PerSuccessRate 
@@ -133,7 +133,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId          
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,        
+  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,IRF.IsVideoRequired,         
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker               
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
   ,iman.interviewDate RescheduleDate,ti.PerSuccessRate   
@@ -180,7 +180,7 @@ else
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId           
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,        
+  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner, IRF.IsVideoRequired,        
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
  --,si.Uniqueid as SchedulerUniqueid    
  ,iman.interviewDate RescheduleDate ,ti.PerSuccessRate   

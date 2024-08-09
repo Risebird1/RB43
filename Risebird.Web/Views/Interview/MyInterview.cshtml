@@ -392,6 +392,7 @@
                                         <div class="clearfix"></div>
                                         <div class="col-sm-12 nopad">
                                             <div id="id_interviewListData" style="overflow-x:auto;overflow-y:hidden">
+                                                <div class="scrollbar int-table" id="style-2" style="margin-bottom:20px;">
                                                 <table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
@@ -461,12 +462,27 @@
                                                         @foreach (var item in Model)
                                                         {
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-
+                                                            
                                                             <tr id=@item.id>
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
 
-                                                                <td>
+                                                                <td style="padding-left:30px;width: 300px;">
+                                                                     @if (item.IsVideoRequired == true) {
+                                                                       <div style="position:relative;z-index:10;">
+                                                                        <div class="absCenter">
+                                                                            <button class="infoButton" style="top:8px;left:-145px;">
+                                                                                <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px 0px 7px;width:auto;">Mandate : <b style="color:red">Video On</b></div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                        </div>
+                                                                    }
+                                                                  
                                                                     <div class="myInterview">
                                                                         @if (item.candidateName != null && item.candidateName != "")
                                                                         {
@@ -474,16 +490,15 @@
                                                                             {
                                                                                 <div style="width:100%;float:left">
                                                                                     <span class="cadName pull-left">
-                                                                                        <a data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName.Substring(0, 18)...</span> </a>
+                                                                                        <a data-tooltip="@item.candidateName"><span class="name-field" style="font-size:14px;line-height:29px;font-weight:400"> @item.candidateName.Substring(0, 18)...</span> </a>
                                                                                     </span>
                                                                                     <span class="pull-left">
 
-
                                                                                         @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                         {
-                                                                                            @if (@item.JDTiltle.Length > 20)
+                                                                                            @if (@item.JDTiltle.Length > 40)
                                                                                             {
-                                                                                                <a class="pull-left pskill" href="#" data-tooltip="@item.JDTiltle"> <span class="pull-left">@item.JDTiltle.Substring(0, 20)...</span></a>
+                                                                                                <a class="pull-left pskill" href="#" data-tooltip="@item.JDTiltle"> <span class="pull-left">@item.JDTiltle.Substring(0, 40)...</span></a>
                                                                                             }
                                                                                             else
                                                                                             {
@@ -494,13 +509,13 @@
                                                                                         {
 
                                                                                         }
-
+                                                                                        <span class="pskill">@item.JDTiltle</span>
 
                                                                                     </span>
                                                                                 </div>
                                                                            @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                                 {
-                                                                                    <div class="call-sec" style="width:100%;float:left;margin:10px 0px;">
+                                                                                    <div class="call-sec" style="width:100%;float:left;margin:10px 0px 0px 0px;">
                                                                                         <span class="call-area">
                                                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                             {
@@ -516,14 +531,14 @@
                                                                             {
                                                                                 <div style="width:100%;float:left">
                                                                                     <span class="cadName pull-left">
-                                                                                        <a data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName</span> </a>
+                                                                                        <a data-tooltip="@item.candidateName"><span class="name-field" style="font-size:14px;line-height:29px;font-weight:400"> @item.candidateName</span> </a>
                                                                                     </span>
                                                                                     <span class="pull-left">
                                                                                         @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                         {
-                                                                                            @if (@item.JDTiltle.Length > 20)
+                                                                                            @if (@item.JDTiltle.Length > 40)
                                                                                             {
-                                                                                                <a class="pull-left pskill" href="#" data-tooltip="@item.JDTiltle"> <span class="pull-left">@item.JDTiltle.Substring(0, 20)...</span></a>
+                                                                                                <a class="pull-left pskill" href="#" data-tooltip="@item.JDTiltle"> <span class="pull-left">@item.JDTiltle.Substring(0, 40)...</span></a>
                                                                                             }
                                                                                             else
                                                                                             {
@@ -561,7 +576,7 @@
                                                                     </div>
                                                                     @* <div style="padding:10px 0px;color:#078706;font-weight:bold;width:100%;float:left"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>*@
                                                                     <div class="myInterview">
-                                                                        <button type="button" class="clickhere_btn pull-left" style="margin:10px 0px 0px 5px;padding: 5px 8px;">
+                                                                        <button type="button" class="clickhere_btn pull-left" style="margin:0px 0px 0px 5px;padding: 5px 8px;">
                                                                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
                                                                         </button>
                                                                         <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
@@ -865,6 +880,7 @@
                                                         }
                                                     </tbody>
                                                 </table>
+                                          </div>
                                             </div>
                                         </div>
 
