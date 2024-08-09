@@ -12,6 +12,8 @@ CREATE TABLE [dbo].[Project](
 	[EndClient] [varchar](100) NULL,
 	[ProjectOwnerId] [varchar](100) NULL,
 	[CreatedOn] [date] NULL,
+    [ProjectUniqueid][varchar](20),
+    [SkillSetsevaluate][int],
  CONSTRAINT [PK_Project] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -35,10 +37,28 @@ IF NOT EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'ClientId')
-      AND Object_ID = Object_ID(N'ClientId'))
+      AND Object_ID = Object_ID(N'Project'))
 BEGIN
     ALTER TABLE Project
     Add ClientId INT NOT NULL DEFAULT 0
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillSetsevaluate')
+      AND Object_ID = Object_ID(N'Project'))
+BEGIN
+    ALTER TABLE Project
+    Add SkillSetsevaluate int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ProjectUniqueid')
+      AND Object_ID = Object_ID(N'Project'))
+BEGIN
+    ALTER TABLE Project
+    Add ProjectUniqueid varchar(20)
 END
 
 END
