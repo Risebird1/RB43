@@ -10,7 +10,7 @@
 
 
 <div class="main-panel" id="main-panel">
- 
+
     <div class="mt50">
     </div>
     <div class="content client">
@@ -43,109 +43,74 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 px-1">
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.ProjectOwnerId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                        </div>
+                                @* <div class="col-md-4 col-sm-4 px-1">
+                            <div class="form-group">
+                            <div class="mandate">
+                            @Html.LabelFor(model => model.ProjectOwnerId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
 
-                                        @Html.EditorFor(model => model.ProjectOwnerId, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.ProjectOwnerId, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.ProjectOwnerId, new { htmlAttributes = new { @class = "form-control text-box single-line"} })
+                            @Html.ValidationMessageFor(model => model.ProjectOwnerId, "", new { @class = "text-danger" })
 
-                                    </div>
-                                </div>
+                            </div>
+                            </div> *@
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
 
-                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control select-css", @onchange = "ClientChanged(this.value)" })
+                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control select-css", @onchange = "ClientChanged()" })
                                         @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
 
                                     </div>
                                 </div>
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.SkillSetsevaluate, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                        </div>
+                                        @{
+                                            var skillsetsevaluated = new List<SelectListItem>();
+                                            skillsetsevaluated.Add(new SelectListItem() { Value = "1", Text = "1" });
+                                            skillsetsevaluated.Add(new SelectListItem() { Value = "2", Text = "2" });
+                                        }
+                                        @Html.DropDownListFor(model => model.SkillSetsevaluate, skillsetsevaluated, new { @class = "form-control select-css", @onchange = "ClientChanged()" })
+                                        @Html.ValidationMessageFor(model => model.SkillSetsevaluate, "", new { @class = "text-danger" })
 
+                                    </div>
+                                </div>
 
                             </div>
                             <div class="row mt-15">
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                        </div>
+                                @*  <div class="col-md-4 col-sm-4 pr-1">
+                            <div class="form-group">
+                            <div class="mandate">
+                            @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
 
-                                        @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                            @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
 
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 px-1">
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                        </div>
+                            </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 px-1">
+                            <div class="form-group">
+                            <div class="mandate">
+                            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
 
-                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
 
-                                    </div>
-                                </div>
+                            </div>
+                            </div> *@
                             </div>
 
 
                             <div style="width:100%">&nbsp;</div>
                             <div id="tableID">
-                                <div class="table-responsive-sm">
-                                    <table cellpadding="0" cellspacing="0" class="table table-bordered mbn" id="IRFList">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center" style="font-size:15px!important;">IRF ID</th>
-                                                <th class="text-center" style="font-size:15px!important;">Primary Skills</th>
-                                                <th class="text-center" style="font-size:15px!important;">Client</th>
-                                                <th class="text-center" style="font-size:15px!important;">Add</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
-                                            {
-                                                <tr>
-
-                                                    <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
-                                                    <td class="text-center" width="30%">@Model.ProjectIRFMappings[i].PrimarySkills</td>
-                                                    <td class="text-center" width="20%">@Model.ProjectIRFMappings[i].Client</td>
-                                                    <td class="text-center" width="20%">
-                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                            <div class="mdc-checkbox">
-                                                                @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
-
-
-                                                                <div class="mdc-checkbox__background">
-                                                                    <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
-                                                                        <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                    </svg>
-                                                                    <div class="mdc-checkbox__mixedmark"></div>
-                                                                </div>
-                                                                <div class="mdc-checkbox__ripple"></div>
-
-
-                                                            </div>
-                                                        </div>
-
-
-
-                                                    </td>
-                                                    @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
-
-                                                </tr>
-                                            }
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                                
                             </div>
 
 
@@ -220,8 +185,7 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
+                    function () {
                         window.location.href = '/Project/Index';
                     }
                 )
@@ -235,13 +199,16 @@
 }
 
 <script>
-
-    function ClientChanged(clientId) {
-
+    $(document).ready(function () {
+        ClientChanged();
+    });
+    function ClientChanged() {
+        var clientId = $("#ClientId").val();
+        var SkillSetsevaluate = $("#SkillSetsevaluate").val();
         $.ajax({
             type: "GET",
             url: "/Project/GetFilteredIRF",
-            data: { 'clientId': clientId },
+            data: { 'clientId': clientId, 'SkillSetsevaluate': SkillSetsevaluate },
             success: function (data) {
                 if (data == null || data == '') {
                     $('#tableID').html('');
