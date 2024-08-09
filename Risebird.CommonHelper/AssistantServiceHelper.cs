@@ -33,6 +33,7 @@ namespace Risebird.CommonHelper
         private readonly string interviewerResumesVectorStoreId;
         private readonly string reportQCAssistantId;
         private readonly string reportQCVectorStoreId;
+        private readonly string resumeParserAssistantId;
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -47,6 +48,8 @@ namespace Risebird.CommonHelper
             interviewerResumesVectorStoreId = _configuration["OpenAI:InterviewerResumesVectorStoreId"];
             reportQCAssistantId = _configuration["OpenAI:InterviewerReportQCAssistantId"];
             reportQCVectorStoreId = _configuration["OpenAI:ReportQCVectorStoreId"];
+            resumeParserAssistantId = _configuration["OpenAI:ResumeParserAssistantId"];
+
         }
 
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
@@ -58,6 +61,10 @@ namespace Risebird.CommonHelper
                 {
                     fileId = await UploadFileAsync(requestModel.ReportUrl);
 
+                }
+                else if (requestModel.Type == ProfileNames.ResumeParserAIAssistant)
+                {
+                    fileId = await UploadFileAsync(requestModel.ResumeLink);
                 }
                 else
                 {
@@ -132,6 +139,10 @@ namespace Risebird.CommonHelper
                 else if(profileType == ProfileNames.Interviewer)
                 {
                     assistantId = interviewerScreenerAssistantId;
+                }
+                else if (profileType == ProfileNames.ResumeParserAIAssistant)
+                {
+                    assistantId = resumeParserAssistantId;
                 }
                 else
                 {
@@ -280,53 +291,53 @@ namespace Risebird.CommonHelper
             
         }
 
-        private async Task<bool> AddFileToVectorStoreAsync(string fileId, string profileType)
-        {
-            try
-            {
-                HttpClient client = new HttpClient();
-                var requestBody = new
-                {
-                    file_id = fileId
-                };
-                string vectorStoreId;
-                if(profileType == ProfileNames.Candidate)
-                {
-                    vectorStoreId = candidateResumesVectorStoreId;
-                }
-                else if(profileType == ProfileNames.Interviewer)
-                {
-                    vectorStoreId = interviewerResumesVectorStoreId;
-                }
-                else
-                {
-                    vectorStoreId = reportQCVectorStoreId;
-                }
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{vectorStoreId}/files");
+        //private async Task<bool> AddFileToVectorStoreAsync(string fileId, string profileType)
+        //{
+        //    try
+        //    {
+        //        HttpClient client = new HttpClient();
+        //        var requestBody = new
+        //        {
+        //            file_id = fileId
+        //        };
+        //        string vectorStoreId;
+        //        if(profileType == ProfileNames.Candidate)
+        //        {
+        //            vectorStoreId = candidateResumesVectorStoreId;
+        //        }
+        //        else if(profileType == ProfileNames.Interviewer)
+        //        {
+        //            vectorStoreId = interviewerResumesVectorStoreId;
+        //        }
+        //        else
+        //        {
+        //            vectorStoreId = reportQCVectorStoreId;
+        //        }
+        //        var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{vectorStoreId}/files");
 
-                // Add headers to the request
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-                request.Headers.Add("OpenAI-Beta", "assistants=v2");
+        //        // Add headers to the request
+        //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        //        request.Headers.Add("OpenAI-Beta", "assistants=v2");
 
-                var jsonContent = JsonConvert.SerializeObject(requestBody);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                //content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                request.Content = content;
+        //        var jsonContent = JsonConvert.SerializeObject(requestBody);
+        //        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //        //content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        //        request.Content = content;
 
-                var response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
+        //        var response = await client.SendAsync(request);
+        //        response.EnsureSuccessStatusCode();
 
-                var responseContent = await response.Content.ReadAsStringAsync();
-                return true;
+        //        var responseContent = await response.Content.ReadAsStringAsync();
+        //        return true;
 
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return false;
+        //    }
             
-        }
+        //}
         private async Task<string> CreateThreadAsync(ScreeningRequest requestModel, string fileId)
         {
             try
@@ -351,45 +362,62 @@ namespace Risebird.CommonHelper
                     queryContent = $"Generate an output as per the instructions fed to the assistant.";
 
                 }
+                else if (requestModel.Type == ProfileNames.ResumeParserAIAssistant)
+                {
+                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
+
+                }
                 var threadRequest = new Thread();
-                if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
+                //if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
+                //{
+                //    threadRequest = new Thread
+                //    {
+                //        messages = new List<Message>
+                //        {
+                //            new Message { role = "assistant", content = queryContent}
+                //        },
+                //        tool_resources = new ToolResources()
+                //        {
+                //            file_search = new FileSearch
+                //            {
+                //                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
+
+                //            }
+                //        }
+                //    };
+                //}
+                //else if(requestModel.Type == ProfileNames.QualityController)
+                //{
+                //    threadRequest = new Thread
+                //    {
+                //        messages = new List<Message>
+                //        {
+                //            new Message { role = "assistant", content = queryContent}
+                //        },
+                //        tool_resources = new ToolResources()
+                //        {
+                //            file_search = new FileSearch
+                //            {
+                //                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId} } }
+                //            }
+                //        }
+                //    };
+                //}
+                threadRequest = new Thread
                 {
-                    threadRequest = new Thread
-                    {
-                        messages = new List<Message>
+                    messages = new List<Message>
                         {
                             new Message { role = "assistant", content = queryContent}
                         },
-                        tool_resources = new ToolResources()
-                        {
-                            file_search = new FileSearch
-                            {
-                                //vector_store_ids = new List<string>() { (requestModel.Type == ProfileNames.Candidate ? candidateResumesVectorStoreId : interviewerResumesVectorStoreId) }
-                                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
-
-                            }
-                        }
-                    };
-                }
-                else if(requestModel.Type == ProfileNames.QualityController)
-                {
-                    threadRequest = new Thread
+                    tool_resources = new ToolResources()
                     {
-                        messages = new List<Message>
+                        file_search = new FileSearch
                         {
-                            new Message { role = "assistant", content = queryContent}
-                        },
-                        tool_resources = new ToolResources()
-                        {
-                            file_search = new FileSearch
-                            {
-                                //vector_store_ids = new List<string>() { (reportQCVectorStoreId) },
-                                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId} } }
-                            }
-                        }
-                    };
-                }
+                            vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
 
+                        }
+                    }
+                };
                 string jsonContent = JsonConvert.SerializeObject(threadRequest);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
