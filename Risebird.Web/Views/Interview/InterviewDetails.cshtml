@@ -23,6 +23,10 @@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="heading-txt">
             Review the below client instructions to get the meeting link<br />
+                @if (Model.IsVideoRequired == true)
+            {
+                <div class="video-onmsg"><svg class="blink" style="color: #e12f2f;width: 28px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-5 0h-2v-2h2v2zm0-4h-2V8h2v4zm-1 10c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2z" fill="#e12f2f"></path></svg> Important Notice: Interview requires mandatory Video On of the interivewer</div>
+            }
 
             <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Always Use Virtual Background while keeping your Video On</span>
         </div>
@@ -687,10 +691,17 @@
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" style="padding:20px;">
+                    <div class="col-md-12 pull-left text-center">
+                        <h2 class="interviewerAlert" style="margin:0px;padding:3px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
+                    </div>
+                
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
                 </div>
+
+
+
             </div>
         </div>
     </div>

@@ -169,17 +169,18 @@
                                                                 <td>₹ 0 </td>
                                                             }*@
                                                             <td> @item.interviewDuration Min.</td>
-                                                            <td style="padding-left:20px;">
+                                                            <td style="padding-left:25px;">
                                                                 
                                                                     @if (item.IsVideoRequired == true)
-                                                                    {<div style="position:relative;z-index:10;">
+                                                                {
+                                                                    <div style="position:relative;z-index:10;width:fit-content">
                                                                         <div class="absCenter">
-                                                                            <button class="infoButton" style="top: 13px;left:-122px;">
+                                                                            <button class="infoButton" style="top: 13px;left:-8px;">
                                                                                 <div class="infoButton-btn" style="width:15px;height:15px;">
                                                                                     <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
                                                                                 </div>
                                                                                 <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
-                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;">Mandate : <b style="color:red">Video On</b></div>
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
                                                                                 </div>
                                                                             </button>
                                                                         </div>
@@ -414,6 +415,7 @@
 
     });
 </script>
+
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();

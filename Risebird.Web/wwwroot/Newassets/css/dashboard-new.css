@@ -8987,10 +8987,19 @@ option {
 .interviewerAlert {
     padding: 10px;
     text-align: center;
-    font-size: 20px;
-    line-height: 32px;
+    font-size: 17px;
+    line-height: 26px;
     color: #847878;
     font-weight: 500;
+}
+.video-onmsg {
+    color: #e42c2c;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 15px;
+    position: relative;
+    top:12px;
+    margin-top:7px;
 }
 #InterviewerAlert .filavatar .fa {
     font-size: 17px;
@@ -9659,7 +9668,8 @@ option {
     bottom: calc(-100% + 60px);
     left: 0;
     margin-right: 0px;
-    transform: scale(0);
+    /*transform: scale(0);*/
+    opacity:0;
     transition: transform 0ms linear 200ms;
     background: #fff;
 }
@@ -9681,7 +9691,7 @@ option {
     font-weight: 600;
 }
 
-.infoButton:focus .infoButton-btn,
+.infoButton:hover .infoButton-btn,
 .infoButton_isActive .infoButton-btn {
     border-top-right-radius: 0;
     transition: border-radius 200ms ease-in-out;
@@ -9689,13 +9699,14 @@ option {
     color: white;
 }
 
-.infoButton:focus .infoButton-container,
+.infoButton:hover .infoButton-container,
 .infoButton_isActive .infoButton-container {
-    transform: scale(1);
+    /*transform: scale(1);*/
+    opacity:1;
     transition: transform 0ms linear;
 }
 
-.infoButton:focus
+.infoButton:hover
 .infoButton-container-message,
 .infoButton_isActive
 .infoButton-container-message, {
@@ -9731,17 +9742,20 @@ option {
     transition: opacity 0.3s;
 }
 
-    .report-tooltiptext::after {
-        content: "";
-        position: absolute;
-        top: 58%;
-        left: -1%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #f5e8e8c2 transparent transparent transparent;
-        rotate: 88deg;
-    }
+.infoButton-btn:hover .infoButton-container {
+    transform: scale(1) !important;
+}
+.report-tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 58%;
+    left: -1%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #f5e8e8c2 transparent transparent transparent;
+    rotate: 88deg;
+}
 
 .report-tooltip:hover .report-tooltiptext {
     display: block;
