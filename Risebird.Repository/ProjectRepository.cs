@@ -175,9 +175,12 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
-
-                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
+                    var query = "select top (1)id from Project order by id desc";
+                    var results = con.Query<int>(query, null);
+                    Random rnd = new Random();
+                    int nums = rnd.Next(10, 99);
+                    projectDetails.ProjectUniqueid = "RB" + projectDetails.ClientId.ToString() + (results.FirstOrDefault() + 1).ToString("D5") + nums.ToString();
+                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn,ProjectUniqueid,SkillSetsevaluate ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn,@ProjectUniqueid,@SkillSetsevaluate);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         projectDetails.Name,
@@ -186,7 +189,9 @@ namespace Risebird.Repository
                         projectDetails.Location,
                         projectDetails.ProjectOwnerId,
                         projectDetails.CreatedOn,
-                        IsDeleted = false
+                        IsDeleted = false,
+                        projectDetails.ProjectUniqueid,
+                        projectDetails.SkillSetsevaluate
 
                     });
                     var projectList = SqlMapper.QueryAsync<Project>(

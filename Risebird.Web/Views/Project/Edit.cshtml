@@ -10,7 +10,7 @@
 
 
 <div class="main-panel" id="main-panel">
-  
+
     <div class="mt50">
     </div>
     <div class="content client">
@@ -35,59 +35,84 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-
-                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
+                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
+
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
                                     </div>
-                                <div class="col-md-4 col-sm-4 px-1">
+                                </div>
+                                @*  <div class="col-md-4 col-sm-4 px-1">
+                            <div class="form-group">
+                            <div class="mandate">
+                            @Html.LabelFor(model => model.ProjectOwnerId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.EditorFor(model => model.ProjectOwnerId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                            @Html.ValidationMessageFor(model => model.ProjectOwnerId, "", new { @class = "text-danger" })
+
+                            </div>
+                            </div> *@
+                                <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.ProjectOwnerId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
 
-                                        @Html.EditorFor(model => model.ProjectOwnerId, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.ProjectOwnerId, "", new { @class = "text-danger" })
+                                        @Html.DropDownListFor(model => model.ClientId, Model.ClientList, new { @class = "form-control select-css", @onchange = "ClientChanged()" })
+                                        @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
 
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-
-                                            @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control select-css", @onchange = "ClientChanged(this.value)" })
-                                            @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
-
+                                            @Html.LabelFor(model => model.SkillSetsevaluate, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-                                </div>
+                                        @{
+                                            var skillsetsevaluated = new List<SelectListItem>();
+                                            skillsetsevaluated.Add(new SelectListItem() { Value = "1", Text = "1" });
+                                            skillsetsevaluated.Add(new SelectListItem() { Value = "2", Text = "2" });
+                                        }
+                                        @Html.DropDownListFor(model => model.SkillSetsevaluate, skillsetsevaluated, new { @class = "form-control select-css", @onchange = "ClientChanged()" })
+                                        @Html.ValidationMessageFor(model => model.SkillSetsevaluate, "", new { @class = "text-danger" })
 
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            @Html.LabelFor(model => model.ProjectUniqueid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-
-
-                                        @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
-
+                                        @Html.EditorFor(model => model.ProjectUniqueid, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                @* <div class="col-md-4 col-sm-4 pr-1">
+                            <div class="form-group">
+                            <div class="mandate">
+                            @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
 
-                                            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
 
-                                        </div>
-                                </div>
+                            @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                            @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
+
+                            </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 pr-1">
+                            <div class="form-group">
+                            <div class="mandate">
+                            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+                            </div>
+                            </div> *@
                             </div>
 
 
@@ -236,10 +261,12 @@
     });
     function ClientChanged(clientId) {
         var projectId = '@Model.id';
+        var clientId = $("#ClientId").val();
+        var SkillSetsevaluate = $("#SkillSetsevaluate").val();
         $.ajax({
             type: "GET",
             url: "/Project/GetEditFilteredIRF",
-            data: { 'clientId': clientId, 'projectId': projectId },
+            data: { 'clientId': clientId, 'projectId': projectId ,'SkillSetsevaluate':SkillSetsevaluate},
             success: function (data) {
                 if (data == null || data == '') {
                     $('#tableID').html('');
