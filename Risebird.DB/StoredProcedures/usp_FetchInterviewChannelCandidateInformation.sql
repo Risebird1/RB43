@@ -121,16 +121,16 @@ if(@Roleid=1)
 begin          
 Insert into @TemporaryCandidateTableFinal          
 Select td.* from @TemporaryCandidateTableVariable td join Candidate ca on ca.CandidateMasterId=td.CandidateMasterId and ca.IRFId=td.IRFId          
-join TransClientUser tc on tc.IRFId=ca.IRFId and tc.ClientUserId=td.UserId          
-join UserList ul on ul.id=td.UserId          
+join TransClientUser tc on tc.IRFId=ca.IRFId 
+join UserList ul on ul.id=tc.ClientUserId          
 where ca.ClientHRAttemptContact=@ClientUser and ul.EmailId=@ClientUser          
 end          
 else if(@Roleid=4)          
 begin          
 Insert into @TemporaryCandidateTableFinal          
 Select td.* from @TemporaryCandidateTableVariable td join Candidate ca on ca.CandidateMasterId=td.CandidateMasterId and ca.IRFId=td.IRFId          
-join TransClientUser tc on tc.IRFId=ca.IRFId and tc.ClientUserId=td.UserId          
-join UserList ul on ul.id=td.UserId          
+join TransClientUser tc on tc.IRFId=ca.IRFId 
+join UserList ul on ul.id=tc.ClientUserId          
 left join InterviewMeetings im on im.id=td.InterviewId          
 where (ca.ProfileSource=@ClientUser or im.staffingAgency=@ClientUser) and ul.EmailId=@ClientUser          
 end          
@@ -138,8 +138,8 @@ else if(@Roleid=2 or @Roleid=6)
 begin           
 Insert into @TemporaryCandidateTableFinal          
 Select td.* from @TemporaryCandidateTableVariable td           
-join TransClientUser tc on tc.IRFId=td.IRFId and tc.ClientUserId=td.UserId          
-join UserList ul on ul.id=td.UserId          
+join TransClientUser tc on tc.IRFId=td.IRFId 
+join UserList ul on ul.id=tc.ClientUserId           
 where ul.EmailId=@ClientUser          
 end          
 else          
