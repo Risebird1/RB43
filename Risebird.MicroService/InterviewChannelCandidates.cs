@@ -86,9 +86,9 @@ namespace Risebird.MicroService
                                 {
                                     if (reqData.type.ToLower() == "alldata")
                                     {
-                                        if (string.IsNullOrEmpty(reqData.skillChannelId))
+                                        if (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId))
                                         {
-                                            details.Add("skillChannelId", "This field is required.");
+                                            details.Add("skillChannelId or jobId", "This field is required.");
                                         }
                                     }
                                     else if (reqData.type.ToLower() == "daterange")
@@ -115,9 +115,9 @@ namespace Risebird.MicroService
                             {
                                 if (reqData.type.ToLower() == "alldata")
                                 {
-                                    if (string.IsNullOrEmpty(reqData.skillChannelId))
+                                    if (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId))
                                     {
-                                        details.Add("skillChannelId", "This field is required.");
+                                        details.Add("skillChannelId or jobId", "This field is required.");
                                     }
                                 }
                                 else if (reqData.type.ToLower() == "daterange")
@@ -159,7 +159,7 @@ namespace Risebird.MicroService
                                 }
                             }
                             //Update according to client user role based
-                            var result = await _candidateService.FetchInterviewChannelCandidateInformation(irfid, clientDetails.id, reqData.requestedBy, reqData.startDate, reqData.endDate);
+                            var result = await _candidateService.FetchInterviewChannelCandidateInformation(irfid, clientDetails.id, reqData.requestedBy, reqData.startDate, reqData.endDate, reqData.jobId);
                             if (result == null)
                             {
                                 result = new List<InterviewChannelDetails>();

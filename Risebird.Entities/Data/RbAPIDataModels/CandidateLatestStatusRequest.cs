@@ -15,5 +15,6 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string status { get; set; }
         public DateTime? startDate { get; set; }
         public DateTime? endDate { get; set; }
+        public string jobId { get; set; }
     }
 }
