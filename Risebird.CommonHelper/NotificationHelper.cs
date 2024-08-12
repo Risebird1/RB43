@@ -3283,6 +3283,30 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public async Task<string> SendCheckIntervieweravailbilitywithVideo(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill, int? irfId = null, string companyTypeDesc = null, string countryTypeDesc = null, string planTypeDesc = null, int? selectedDuration = null, int? rejectedDuration = null)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
+                }
+                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, Skillslist, PerSuccessRate, basicSkill, dropMyProfileButton, companyTypeDesc, countryTypeDesc, planTypeDesc, selectedDuration, rejectedDuration };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbilitywithVideoV2.html");
+
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg, irfId);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }

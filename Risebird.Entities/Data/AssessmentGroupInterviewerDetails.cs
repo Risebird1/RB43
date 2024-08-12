@@ -24,7 +24,7 @@
         public int RejectedDurationMin { get; set; }
         public string AGName { get; set; }
         public int AGAvailabilityCommunicationTimeElapsed { get; set; }
-
+        public bool IsVideoRequired { get; set; }
 
     }
 }

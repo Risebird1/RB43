@@ -1502,7 +1502,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate, string jobId)
         {
             try
             {
@@ -1520,6 +1520,12 @@ namespace Risebird.Repository
                     adapter.SelectCommand.Parameters.AddWithValue("@clientid", id);
                     adapter.SelectCommand.Parameters.AddWithValue("@ClientUser", requestedBy);
                     adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
+                    if (string.IsNullOrWhiteSpace(jobId))
+                    {
+                        jobId = "";
+                    }
+                    adapter.SelectCommand.Parameters.AddWithValue("@jobId", jobId);
+
                     if (startDate != null && endDate != null)
                     {
                         adapter.SelectCommand.Parameters.AddWithValue("@startdate", startDate);
