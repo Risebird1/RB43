@@ -85,15 +85,24 @@ namespace Risebird.MicroService
                             string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
                             string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
                             string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=4&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
-                            Mail _mail = new Mail
+                            if (interviewer.IsVideoRequired)
                             {
-                                TO = interviewer.EmailId,
-                                Subject = "Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
-
-                            };
-
-                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id, interviewer.CompanyTypeDesc, interviewer.CountryTypeDesc, interviewer.PlanTypeDesc, interviewer.SelectedDurationMin, interviewer.RejectedDurationMin);//item.PerSuccessRate
-
+                                Mail _mail = new Mail
+                                {
+                                    TO = interviewer.EmailId,
+                                    Subject = "Mandatory Interviewer Video On : Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
+                                };
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbilitywithVideo(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id, interviewer.CompanyTypeDesc, interviewer.CountryTypeDesc, interviewer.PlanTypeDesc, interviewer.SelectedDurationMin, interviewer.RejectedDurationMin);
+                            }
+                            else
+                            {
+                                Mail _mail = new Mail
+                                {
+                                    TO = interviewer.EmailId,
+                                    Subject = "Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
+                                };
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id, interviewer.CompanyTypeDesc, interviewer.CountryTypeDesc, interviewer.PlanTypeDesc, interviewer.SelectedDurationMin, interviewer.RejectedDurationMin);//item.PerSuccessRate
+                            }
                             source = "wp";
 
                             yesbutton = yesbutton + "&rsc=" + source;

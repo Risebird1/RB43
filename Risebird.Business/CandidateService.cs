@@ -581,11 +581,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate, string jobId)
         {
             try
             {
-                return await _candidateRepository.FetchInterviewChannelCandidateInformation(irfid, id, requestedBy, startDate, endDate);
+                return await _candidateRepository.FetchInterviewChannelCandidateInformation(irfid, id, requestedBy, startDate, endDate, jobId);
             }
             catch (Exception ex)
             {
