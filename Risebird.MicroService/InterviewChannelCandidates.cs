@@ -233,6 +233,7 @@ namespace Risebird.MicroService
                                 }
                                 model.result.Add(new CandidateStatusResponse()
                                 {
+                                    jobId = item.jobId,
                                     skillChannelId = item.IRFId,
                                     interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     candidateEmailId = item.candidateEmail,
