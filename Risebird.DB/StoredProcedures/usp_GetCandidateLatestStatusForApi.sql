@@ -17,7 +17,8 @@ Create PROCEDURE [dbo].[usp_GetCandidateLatestStatusForApi]
 AS    
 Begin  
 Declare @RoleId int = (select RoleId From ClientUser cu join UserList ul on cu.UserId=ul.id where ul.EmailId=@requestedByClientUser)  
- 
+Declare @ClientUserId int = (select id From  UserList where EmailId=@requestedByClientUser) 
+
 declare @IRFId int  = (select id from IRF where IRFId = @skillChannelName)
 declare @candidateMasterId int  = (select id from CandidatesMaster where userId = (select id from UserList where EmailId = @candidateEmailId))
 
@@ -57,26 +58,26 @@ if(@Roleid=1)
 begin  
 Insert into @TemporaryCandidateTableFinal  
 Select td.* from @TemporaryCandidateTableVariable td join Candidate ca on ca.CandidateMasterId=td.CandidateMasterId and ca.IRFId=td.IRFId  
-join TransClientUser tc on tc.IRFId=ca.IRFId and tc.ClientUserId=td.UserId  
-join UserList ul on ul.id=td.UserId  
-where ca.ClientHRAttemptContact=@requestedByClientUser and ul.EmailId=@requestedByClientUser  
+join TransClientUser tc on tc.IRFId=ca.IRFId --and tc.ClientUserId=td.UserId  
+--join UserList ul on ul.id=td.UserId  
+where ca.ClientHRAttemptContact=@requestedByClientUser and tc.ClientUserId= @ClientUserId --ul.EmailId=@requestedByClientUser  
 end  
 else if(@Roleid=4)  
 begin  
 Insert into @TemporaryCandidateTableFinal  
 Select td.* from @TemporaryCandidateTableVariable td join Candidate ca on ca.CandidateMasterId=td.CandidateMasterId and ca.IRFId=td.IRFId  
-join TransClientUser tc on tc.IRFId=ca.IRFId and tc.ClientUserId=td.UserId  
-join UserList ul on ul.id=td.UserId  
+join TransClientUser tc on tc.IRFId=ca.IRFId --and tc.ClientUserId=td.UserId  
+--join UserList ul on ul.id=td.UserId  
 left join InterviewMeetings im on im.id=td.InterviewId  
-where (ca.ProfileSource=@requestedByClientUser or im.staffingAgency=@requestedByClientUser) and ul.EmailId=@requestedByClientUser  
+where (ca.ProfileSource=@requestedByClientUser or im.staffingAgency=@requestedByClientUser) and tc.ClientUserId= @ClientUserId--ul.EmailId=@requestedByClientUser  
 end  
 else if(@Roleid=2 or @Roleid=6)  
 begin   
 Insert into @TemporaryCandidateTableFinal  
 Select td.* from @TemporaryCandidateTableVariable td   
-join TransClientUser tc on tc.IRFId=td.IRFId and tc.ClientUserId=td.UserId  
-join UserList ul on ul.id=td.UserId  
-where ul.EmailId = @requestedByClientUser  
+join TransClientUser tc on tc.IRFId=td.IRFId --and tc.ClientUserId=td.UserId  
+--join UserList ul on ul.id=td.UserId  
+where tc.ClientUserId= @ClientUserId--ul.EmailId = @requestedByClientUser  
 end  
 else  
 begin  

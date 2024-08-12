@@ -1616,7 +1616,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
-                    var result = await SqlMapper.QueryAsync<CandidateStatusWebHookData>(con, "usp_GetCandidateStatusForWebHook", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<CandidateStatusWebHookData>(con, "usp_GetCandidateStatusWebHookData", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
