@@ -8158,8 +8158,8 @@ namespace Risebird.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {
-                        actionstatus = "";                       
-                        }
+                        actionstatus = "";
+                    }
                     ViewBag.actionstatus = actionstatus;
                     var model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
                     if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
@@ -8169,11 +8169,7 @@ namespace Risebird.Web.Controllers
                         {
                             filter.EndDate = filter.EndDate?.AddDays(1);
                             model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
-
-
                         }
-
-                        
                     }
                     else
                     {
@@ -8181,7 +8177,6 @@ namespace Risebird.Web.Controllers
                         DateTime EndDate = DateTime.Now.AddDays(1);
                         model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
                     }
-                    
                     return View(model);
                 }
             }
@@ -8189,7 +8184,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PaymentSlaDetails(SkillChannelDetailsFilter filter,string actionstatus, int returnBack)
+        public async Task<IActionResult> PaymentSlaDetails(SkillChannelDetailsFilter filter, string actionstatus, int returnBack)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -8924,7 +8919,7 @@ namespace Risebird.Web.Controllers
                 {
                     //write code to return QC results
                     var qcResult = await PerformQualityCheck(model, regenerateAIQC);
-                    if(isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
+                    if (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
                     {
                         return new OkResult();
                     }
@@ -8953,7 +8948,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(regenerateAIQC == null || (regenerateAIQC.HasValue && regenerateAIQC.Value == false))
+                if (regenerateAIQC == null || (regenerateAIQC.HasValue && regenerateAIQC.Value == false))
                 {
                     var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
 
@@ -8966,7 +8961,7 @@ namespace Risebird.Web.Controllers
                         return JsonConvert.DeserializeObject<RunResult>(qcResult);
                     }
                 }
-                
+
 
 
                 // Render the partial view to a string
