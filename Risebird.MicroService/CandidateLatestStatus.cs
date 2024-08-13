@@ -107,56 +107,38 @@ namespace Risebird.MicroService
                             return new BadRequestObjectResult(errorResponse);
                         }
 
-                        var result = await _candidateRepository.GetCandidateLatestStatusForApi(reqData.skillChannelId, reqData.candidateEmailId, reqData.requestedBy);
-                        
-                        
-                        if(result != null)
+                        var results = await _candidateRepository.GetCandidateLatestStatusForApi(reqData.skillChannelId, reqData.candidateEmailId, reqData.requestedBy, reqData.jobId);
+
+                        var model = new CandidateInfoResponse();
+                        model.requestedBy = reqData.requestedBy;
+                        model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                        if (results != null)
                         {
-                            if (result.InterviewStatusTwo != null && result.InterviewStatusTwo > 0)
+                            foreach (var result in results)
                             {
-                                result.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(result.InterviewStatusTwo)).GetDescription();
-                            }
-                            if (result.MeetingStatusTwo > 0)
-                            {
-                                result.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(result.MeetingStatusTwo)).GetDescription();
-                                if (string.IsNullOrEmpty(result.InterviewStatusTwoDesc))
+                                if (result.InterviewStatusTwo != null && result.InterviewStatusTwo > 0)
                                 {
-                                    result.InterviewStatusTwoDesc = result.MeetingStatusTwoDesc;
+                                    result.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(result.InterviewStatusTwo)).GetDescription();
                                 }
-                            }
-                            //Check for meeting status complete
-                            var executiveurl = string.Empty;
-                            var meetingstatus = !string.IsNullOrWhiteSpace(result.MeetingStatus.ToString()) ? Convert.ToInt32(result.MeetingStatus) : 0;
-                            if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
-                            {
-                                executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={result.id}&irfId={result.irfintid}&isClient=true";
-                            }
-                            //Create JD Based Info
-                            List<SkillDetails> _skills = new List<SkillDetails>();
-                            var _questions = new List<QuestionCommentsDetails>();
-                            foreach (var _question in result.questions.Where(x => x.skillSet == 1).ToList())
-                            {
-                                _questions.Add(new QuestionCommentsDetails
+                                if (result.MeetingStatusTwo > 0)
                                 {
-                                    question = _question.question,
-                                    skillName = _question.skillName,
-                                    rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
-                                });
-                            }
-                            _skills.Add(new SkillDetails
-                            {
-                                isPrimary = true,
-                                skillName = result.JDTiltle,
-                                status = result.CandidateLatestStatus,
-                                techscore = result.TechScoreone,
-                                interviewerComment = result.InterviewerComment,
-                                questions = _questions
-                            });
-                            //In case of multiStack
-                            if (result.numberOfTechStacks == 2)
-                            {
-                                _questions = new List<QuestionCommentsDetails>();
-                                foreach (var _question in result.questions.Where(x => x.skillSet == 2).ToList())
+                                    result.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(result.MeetingStatusTwo)).GetDescription();
+                                    if (string.IsNullOrEmpty(result.InterviewStatusTwoDesc))
+                                    {
+                                        result.InterviewStatusTwoDesc = result.MeetingStatusTwoDesc;
+                                    }
+                                }
+                                //Check for meeting status complete
+                                var executiveurl = string.Empty;
+                                var meetingstatus = !string.IsNullOrWhiteSpace(result.MeetingStatus.ToString()) ? Convert.ToInt32(result.MeetingStatus) : 0;
+                                if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
+                                {
+                                    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={result.id}&irfId={result.irfintid}&isClient=true";
+                                }
+                                //Create JD Based Info
+                                List<SkillDetails> _skills = new List<SkillDetails>();
+                                var _questions = new List<QuestionCommentsDetails>();
+                                foreach (var _question in result.questions.Where(x => x.skillSet == 1).ToList())
                                 {
                                     _questions.Add(new QuestionCommentsDetails
                                     {
@@ -167,29 +149,129 @@ namespace Risebird.MicroService
                                 }
                                 _skills.Add(new SkillDetails
                                 {
-                                    isPrimary = false,
-                                    skillName = result.JDTitleTwo,
-                                    status = result.InterviewStatusTwoDesc,
-                                    techscore = result.TechScoretwo,
-                                    interviewerComment = result.InterviewerCommentTwo,
+                                    isPrimary = true,
+                                    skillName = result.JDTiltle,
+                                    status = result.CandidateLatestStatus,
+                                    techscore = result.TechScoreone,
+                                    interviewerComment = result.InterviewerComment,
                                     questions = _questions
                                 });
+                                //In case of multiStack
+                                if (result.numberOfTechStacks == 2)
+                                {
+                                    _questions = new List<QuestionCommentsDetails>();
+                                    foreach (var _question in result.questions.Where(x => x.skillSet == 2).ToList())
+                                    {
+                                        _questions.Add(new QuestionCommentsDetails
+                                        {
+                                            question = _question.question,
+                                            skillName = _question.skillName,
+                                            rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
+                                        });
+                                    }
+                                    _skills.Add(new SkillDetails
+                                    {
+                                        isPrimary = false,
+                                        skillName = result.JDTitleTwo,
+                                        status = result.InterviewStatusTwoDesc,
+                                        techscore = result.TechScoretwo,
+                                        interviewerComment = result.InterviewerCommentTwo,
+                                        questions = _questions
+                                    });
+                                }
+                                model.result.Add(new CandidateStatusResponse
+                                {
+                                    jobId = result.jobId,
+                                    skillChannelId = result.IRFId,
+                                    interviewDate = result.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    candidateEmailId = result.candidateEmail,
+                                    interviewer = result.InterviewerCodedName,
+                                    reportUrl = executiveurl,
+                                    communicationScore = result.CommunicationalProficiency,
+                                    videoUrl = result.VideoLink,
+                                    skills = _skills,
+                                    createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                                });
                             }
-                            var model = new CandidateLatestStatusResponse
-                            {
-                                skillChannelId = result.IRFId,
-                                interviewDate = result.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                candidateEmailId = result.candidateEmail,
-                                interviewer = result.InterviewerCodedName,
-                                reportUrl = executiveurl,
-                                communicationScore = result.CommunicationalProficiency,
-                                videoUrl = result.VideoLink,
-                                requestedBy = reqData.requestedBy,
-                                retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                skills = _skills,
-                                createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
-                            };
+                            //if (result.InterviewStatusTwo != null && result.InterviewStatusTwo > 0)
+                            //{
+                            //    result.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(result.InterviewStatusTwo)).GetDescription();
+                            //}
+                            //if (result.MeetingStatusTwo > 0)
+                            //{
+                            //    result.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(result.MeetingStatusTwo)).GetDescription();
+                            //    if (string.IsNullOrEmpty(result.InterviewStatusTwoDesc))
+                            //    {
+                            //        result.InterviewStatusTwoDesc = result.MeetingStatusTwoDesc;
+                            //    }
+                            //}
+                            ////Check for meeting status complete
+                            //var executiveurl = string.Empty;
+                            //var meetingstatus = !string.IsNullOrWhiteSpace(result.MeetingStatus.ToString()) ? Convert.ToInt32(result.MeetingStatus) : 0;
+                            //if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
+                            //{
+                            //    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={result.id}&irfId={result.irfintid}&isClient=true";
+                            //}
+                            ////Create JD Based Info
+                            //List<SkillDetails> _skills = new List<SkillDetails>();
+                            //var _questions = new List<QuestionCommentsDetails>();
+                            //foreach (var _question in result.questions.Where(x => x.skillSet == 1).ToList())
+                            //{
+                            //    _questions.Add(new QuestionCommentsDetails
+                            //    {
+                            //        question = _question.question,
+                            //        skillName = _question.skillName,
+                            //        rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
+                            //    });
+                            //}
+                            //_skills.Add(new SkillDetails
+                            //{
+                            //    isPrimary = true,
+                            //    skillName = result.JDTiltle,
+                            //    status = result.CandidateLatestStatus,
+                            //    techscore = result.TechScoreone,
+                            //    interviewerComment = result.InterviewerComment,
+                            //    questions = _questions
+                            //});
+                            ////In case of multiStack
+                            //if (result.numberOfTechStacks == 2)
+                            //{
+                            //    _questions = new List<QuestionCommentsDetails>();
+                            //    foreach (var _question in result.questions.Where(x => x.skillSet == 2).ToList())
+                            //    {
+                            //        _questions.Add(new QuestionCommentsDetails
+                            //        {
+                            //            question = _question.question,
+                            //            skillName = _question.skillName,
+                            //            rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
+                            //        });
+                            //    }
+                            //    _skills.Add(new SkillDetails
+                            //    {
+                            //        isPrimary = false,
+                            //        skillName = result.JDTitleTwo,
+                            //        status = result.InterviewStatusTwoDesc,
+                            //        techscore = result.TechScoretwo,
+                            //        interviewerComment = result.InterviewerCommentTwo,
+                            //        questions = _questions
+                            //    });
+                            //}
+                            //var model = new CandidateInfoResponse
+                            //{
+                            //    skillChannelId = result.IRFId,
+                            //    interviewDate = result.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            //    candidateEmailId = result.candidateEmail,
+                            //    interviewer = result.InterviewerCodedName,
+                            //    reportUrl = executiveurl,
+                            //    communicationScore = result.CommunicationalProficiency,
+                            //    videoUrl = result.VideoLink,
+                            //    requestedBy = reqData.requestedBy,
+                            //    retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            //    skills = _skills,
+                            //    createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            //    currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                            //};
                             //if (result.CandidateLatestStatus == "FUTURESCHEDULE")
                             //{
                             //    //Schdeuled
