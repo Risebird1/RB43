@@ -99,7 +99,7 @@ end
 select im.id, im.IRFId,IRF.id as irfintid,im.interviewDate, im.candidateEmail,IRF.JDTiltle,IRF.JDTitleTwo,ic.MeetingStatus,      
 ic.InterviewStatus, ic.InterviewerComment, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency, 
 ice.MeetingStatus as MeetingStatusTwo,ice.InterviewStatus as InterviewStatusTwo,
-ice.InterviewerComment as InterviewerCommentTwo,
+ice.InterviewerComment as InterviewerCommentTwo, Project.ProjectUniqueid as jobId, 
 CASE
     WHEN CandidateLatestStatus like '%FUTURESCHEDULE%' THEN 'SCHEDULED'
     ELSE CandidateLatestStatus
@@ -116,7 +116,8 @@ join UserList ul on ul.EmailId = im.candidateEmail
 left join UserList uli on uli.EmailId = im.interviewer      
 left join InterviewerProfile ipr on ipr.UserId = uli.id      
 outer apply(select Sum(WeightageActual) as TechScore From TechSkillReport ts where ts.InterviewId=im.id and (ts.SkillSet = 1 or ts.SkillSet is null)) PrimarySkill  
-outer apply(select Sum(WeightageActual) as TechScoreTwo From TechSkillReport ts where ts.InterviewId=im.id and ts.SkillSet = 2) SecondarySkill  
+outer apply(select Sum(WeightageActual) as TechScoreTwo From TechSkillReport ts where ts.InterviewId=im.id and ts.SkillSet = 2) SecondarySkill 
+outer apply (Select top 1 ProjectUniqueid From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where pim.IRFId=IRF.id) Project 
 where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%' 
 or CandidateLatestStatus like '%PENDING%' or CandidateLatestStatus like '%FUTURESCHEDULE%'         
 or CandidateLatestStatus like '%NOTSCHEDULED%' or CandidateLatestStatus like '%COLDCANDIDATE%'

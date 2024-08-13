@@ -1465,6 +1465,7 @@ namespace Risebird.Repository
                                     InterviewerCommentTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerCommentTwo"].ToString()) ? dt.Rows[i]["InterviewerCommentTwo"].ToString() : null,
                                     createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : new DateTime(),
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : new DateTime(),
+                                    jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
 
                                 });
                             }
