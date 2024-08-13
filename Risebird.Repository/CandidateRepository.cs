@@ -1405,7 +1405,7 @@ namespace Risebird.Repository
         //        return null;
         //    }
         //}
-        public async Task<InterviewChannelDetails> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser)
+        public async Task<IEnumerable<InterviewChannelDetails>> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser, string jobId)
         {
             try
             {
@@ -1422,6 +1422,7 @@ namespace Risebird.Repository
                     adapter.SelectCommand.Parameters.AddWithValue("@skillChannelName", skillChannelName);
                     adapter.SelectCommand.Parameters.AddWithValue("@candidateEmailId", candidateEmailId);
                     adapter.SelectCommand.Parameters.AddWithValue("@requestedByClientUser", requestedByClientUser);
+                    adapter.SelectCommand.Parameters.AddWithValue("@jobId", jobId);
                     adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
 
                     adapter.Fill(dataset);
@@ -1464,6 +1465,7 @@ namespace Risebird.Repository
                                     InterviewerCommentTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerCommentTwo"].ToString()) ? dt.Rows[i]["InterviewerCommentTwo"].ToString() : null,
                                     createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : new DateTime(),
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : new DateTime(),
+                                    jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
 
                                 });
                             }
@@ -1492,7 +1494,7 @@ namespace Risebird.Repository
                             }
                         }
                     }
-                    return _resultVM?.FirstOrDefault();
+                    return _resultVM;//?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -1622,7 +1624,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
-                    var result = await SqlMapper.QueryAsync<CandidateStatusWebHookData>(con, "usp_GetCandidateStatusForWebHook", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<CandidateStatusWebHookData>(con, "usp_GetCandidateStatusWebHookData", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

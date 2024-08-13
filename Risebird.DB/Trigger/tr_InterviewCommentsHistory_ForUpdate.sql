@@ -45,7 +45,7 @@ BEGIN
 
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
-	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, null 
+	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'completed' 
  End
  
 

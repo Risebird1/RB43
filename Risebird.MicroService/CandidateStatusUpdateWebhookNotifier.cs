@@ -64,7 +64,7 @@ namespace Risebird.MicroService
 
                                 var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-scheduled")
                                 {
-                                    Headers = { { "Content-Type", "application/json" }, { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
+                                    Headers = { { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
                                 };
 
                                 var jsonContent = JsonConvert.SerializeObject(requestBody);
@@ -77,6 +77,7 @@ namespace Risebird.MicroService
                                 response.EnsureSuccessStatusCode();
                                 successfullyDeliveredCandidates.Add(data.id);
                                 var responseContent = await response.Content.ReadAsStringAsync();
+                                log.LogInformation($"Response recieved : {responseContent}");
 
                             }
                         }
@@ -104,7 +105,7 @@ namespace Risebird.MicroService
 
                                 var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-result")
                                 {
-                                    Headers = { { "Content-Type", "application/json" }, { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
+                                    Headers = {  { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }//{ "Content-Type", "application/json" },
                                 };
 
                                 var jsonContent = JsonConvert.SerializeObject(requestBody);
@@ -117,6 +118,8 @@ namespace Risebird.MicroService
                                 response.EnsureSuccessStatusCode();
                                 successfullyDeliveredCandidates.Add(data.id);
                                 var responseContent = await response.Content.ReadAsStringAsync();
+
+                                log.LogInformation($"Response recieved : {responseContent}");
 
                             }
                         }

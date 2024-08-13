@@ -21,11 +21,19 @@ BEGIN
   
  begin try  
   begin tran  
-
-  if not exists (select top 1* from CandidateStatusWebHookData where IRFId = @IRFName and CandidateEmailId = @candidateEmailId)
+  declare @clientId int = (select ClientId from IRF where irfid = @IRFName)
+  if(@clientId = 177)
   Begin
-	insert into CandidateStatusWebHookData values (@IRFName, @candidateEmailId, @status, getdate())
+	  if not exists (select top 1* from CandidateStatusWebHookData where IRFId = @IRFName and CandidateEmailId = @candidateEmailId)
+	  Begin
+		insert into CandidateStatusWebHookData values (@IRFName, @candidateEmailId, @status, getdate())
+	  End
+	  Else
+	  Begin
+		update CandidateStatusWebHookData set Status = @status where IRFId = @IRFName and CandidateEmailId = @candidateEmailId
+	  End
   End
+  
 
     
   commit tran  

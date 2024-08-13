@@ -38,6 +38,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedOn { get; set; }
         public string InterviewerProfileAddedBy { get; set; }
         public string SkillChannelAssessmentGroup { get; set; }
+        public string JDLink { get; set; }
 
     }
 }
