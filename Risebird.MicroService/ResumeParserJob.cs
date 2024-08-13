@@ -12,6 +12,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -28,6 +29,7 @@ namespace Risebird.MicroService
         private readonly IIRFService _irfService;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IValidationHelper _validationHelper;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
 
         //private readonly string ContainerName;
         //private readonly string SASConnectionString;
@@ -35,7 +37,8 @@ namespace Risebird.MicroService
         public ResumeParserJob(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
             ISASUrlHelper sasUrlHelper, IIRFService irfService,
-            IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper)
+            IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
+            IAssistantServiceHelper assistantServiceHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -47,6 +50,7 @@ namespace Risebird.MicroService
             _irfService = irfService;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _validationHelper = validationHelper;
+            _assistantServiceHelper = assistantServiceHelper;
             //ContainerName = _configuration["SASURLSettings:ContainerName"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
 
@@ -67,8 +71,21 @@ namespace Risebird.MicroService
 
                 foreach (var resume in resumeList)
                 {
+                    //string resumeLinkToParse = string.Empty;
+                    //if(!resume.ResumeLink.Contains(".pdf"))
+                    //{
+                    //    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
+                    //}
+                    //else
+                    //{
+                    //    resumeLinkToParse = resume.ResumeLink;
+                    //}
+                    //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { ResumeLink = resumeLinkToParse, Type = ProfileNames.ResumeParserAIAssistant });
+
                     // call the api for each of those resumes, return a candidate
                     var candidateData = await _affIndaResumeParserHelper.UploadAndParseResume(resume.ResumeLink, resume.SkillChannelName, resume.IsAffindaIndexCreated);
+
+
 
                     try
                     {
