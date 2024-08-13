@@ -58,8 +58,8 @@ namespace Risebird.MicroService
                                 {
                                     skillChannelId = data.IRFId,
                                     candidateEmailId = data.CandidateEmailId,
-                                    currentStatus = data.Status
-
+                                    currentStatus = data.Status,
+                                    jobId = data.jobId
                                 };
 
                                 var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-scheduled")
@@ -99,7 +99,8 @@ namespace Risebird.MicroService
                                 {
                                     skillChannelId = data.IRFId,
                                     candidateEmailId = data.CandidateEmailId,
-                                    currentStatus = data.Status
+                                    currentStatus = data.Status,
+                                    jobId = data.jobId
 
                                 };
 

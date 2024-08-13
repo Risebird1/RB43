@@ -10,10 +10,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].[usp_GetCandidateLatestStatusForApi]    
-@skillChannelName varchar(25),     
+@skillChannelName varchar(25) = null,     
 @candidateEmailId varchar(150) ,
 @requestedByClientUser varchar(200),
-@jobId varchar(20),
+@jobId varchar(20) = null,
 @timeNow datetime
 AS    
 Begin  
