@@ -1405,7 +1405,7 @@ namespace Risebird.Repository
         //        return null;
         //    }
         //}
-        public async Task<InterviewChannelDetails> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser)
+        public async Task<IEnumerable<InterviewChannelDetails>> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser, string jobId)
         {
             try
             {
@@ -1422,6 +1422,7 @@ namespace Risebird.Repository
                     adapter.SelectCommand.Parameters.AddWithValue("@skillChannelName", skillChannelName);
                     adapter.SelectCommand.Parameters.AddWithValue("@candidateEmailId", candidateEmailId);
                     adapter.SelectCommand.Parameters.AddWithValue("@requestedByClientUser", requestedByClientUser);
+                    adapter.SelectCommand.Parameters.AddWithValue("@jobId", jobId);
                     adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
 
                     adapter.Fill(dataset);
@@ -1492,7 +1493,7 @@ namespace Risebird.Repository
                             }
                         }
                     }
-                    return _resultVM?.FirstOrDefault();
+                    return _resultVM;//?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)

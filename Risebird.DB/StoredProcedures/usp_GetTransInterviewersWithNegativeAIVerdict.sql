@@ -24,7 +24,7 @@ Begin
  join Client cl on cl.id = irf.ClientId
  join UserList ulc on ulc.id = irf.BillingOwner
  join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
- where AIVerdict in ('No')-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
+ where AIVerdict in ('No') and ti.IsActive = 1-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
  order by irf.CreatedOn desc
 
 End
