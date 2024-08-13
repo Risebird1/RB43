@@ -16,9 +16,10 @@ CREATE PROCEDURE [dbo].[usp_GetCandidateStatusWebHookData]
 AS  
 Begin  
 
-select * from CandidateStatusWebHookData
+select cswh.*, Project.ProjectUniqueid as jobId from CandidateStatusWebHookData cswh
+join IRF on irf.IRFId = cswh.IRFId
+outer apply (Select top 1 ProjectUniqueid From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where pim.IRFId=IRF.id) Project 
   
-
 End  
   
   
