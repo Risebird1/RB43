@@ -26,6 +26,7 @@ CREATE TABLE [dbo].[PaymentSLADetails](
 	[VideoEnable] [bit] NULL,
 	[isQcDone] [bit] NULL,
 	[Recommendation] [varchar](15) NULL,
+	[IsTechQCDone] [bit] NULL,
  CONSTRAINT [PK_PaymentSLADetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -69,6 +70,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentSLADetails
     Add Recommendation varchar(15)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsTechQCDone')
+      AND Object_ID = Object_ID(N'PaymentSLADetails'))
+BEGIN
+    ALTER TABLE PaymentSLADetails
+    Add IsTechQCDone bit
 END
 END
 GO
