@@ -7,81 +7,82 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>*@
 <style>
     .popup {
-    margin: 0 auto;
-    position: relative;
-    text-align: center;
-    z-index: 999;
-    width: calc(100% - 35px);
-}
+        margin: 0 auto;
+        position: relative;
+        text-align: center;
+        z-index: 999;
+        width: calc(100% - 35px);
+    }
 
-    .popup:after {
-        content: "";
-        height: 100%;
+        .popup:after {
+            content: "";
+            height: 100%;
+            width: 100%;
+            border-radius: 4px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-shadow: 0 1px 14px rgba(0,0,0,.2);
+        }
+
+        .popup:before {
+            content: "";
+            width: 20px;
+            height: 20px;
+            transform: rotate(45deg);
+            box-shadow: 0 1px 14px rgba(0,0,0,.2);
+            background: #fff;
+            position: absolute;
+            z-index: 998;
+        }
+        /*
+        Different arrow positioning
+        */
+        .popup.arrow-top:before {
+            left: calc(10% - 10px);
+            top: -4px;
+        }
+
+    }
+
+    .popup.arrow-right:before {
+        top: calc(50% - 10px);
+        right: -8px;
+    }
+
+    .popup.arrow-bottom:before {
+        left: calc(50% - 10px);
+        bottom: -8px;
+    }
+
+    .popup.arrow-left:before {
+        top: calc(50% - 10px);
+        left: -8px;
+    }
+
+
+    .popup-wrapper {
         width: 100%;
+        padding: 2px;
         border-radius: 4px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        box-shadow: 0 1px 14px rgba(0,0,0,.2);
-    }
-
-    .popup:before {
-        content: "";
-        width: 20px;
-        height: 20px;
-        transform: rotate(45deg);
-        box-shadow: 0 1px 14px rgba(0,0,0,.2);
         background: #fff;
-        position: absolute;
+        position: relative;
         z-index: 998;
-    }
-    /*
-Different arrow positioning
-*/
-    .popup.arrow-top:before {
-        left: calc(10% - 10px);
-        top: -4px;
+        margin-bottom: 20px;
+        height: 70px;
     }
 
-}
+        .popup-wrapper textarea {
+            border: 0px;
+            height: 95%;
+            width: 100%;
+        }
 
-.popup.arrow-right:before {
-    top: calc(50% - 10px);
-    right: -8px;
-}
-
-.popup.arrow-bottom:before {
-    left: calc(50% - 10px);
-    bottom: -8px;
-}
-
-.popup.arrow-left:before {
-    top: calc(50% - 10px);
-    left: -8px;
-}
-
-
-.popup-wrapper {
-    width: 100%;
-    padding: 2px;
-    border-radius: 4px;
-    background: #fff;
-    position: relative;
-    z-index: 998;
-    margin-bottom: 20px;
-    height: 70px;
-}
-
-    .popup-wrapper textarea {
-        border: 0px;
-        height: 95%;
-        width: 100%;
-    }
-  .popup-wrapper textarea::placeholder {
-  font-weight: normal;
-  opacity: 0.5;
-  color: #ccc;
-}
+            .popup-wrapper textarea::placeholder {
+                font-weight: normal;
+                opacity: 0.5;
+                color: #ccc;
+            }
 
 </style>
 <form action="/Interview/GetPaymentSlaDetails" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
@@ -102,37 +103,33 @@ Different arrow positioning
                 <div class="accordion" id="accordion2">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
-                             @if (Model.techqc)
+                            @if (Model.techqc)
                             {
-                            <div class="form-group">
-                                <div class="accordion-group">
-                                    <div class="accordion-heading">
-                                        <a class="accordion-toggle">
-                                            @Html.LabelFor(model => model.Recommendation, htmlAttributes: new { @class = "label-name" })
-                                        </a>
-                                    </div>
-                                    <div class="accordion-body" style="margin-bottom:15px;">
-                                        <div class="accordion-inner">
-                                            <div class="custom-select">
-                                                @Html.RadioButtonFor(model => model.Recommendation, "Shortlist") Shortlist interviewer
-                                                @Html.RadioButtonFor(model => model.Recommendation, "Remove") Remove interviewer
-                                                @* <input type="radio" name="Recommendation" value="Shortlist" checked="checked" />Shortlist
+                                <div class="form-group">
+                                    <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle">
+                                                @Html.LabelFor(model => model.Recommendation, htmlAttributes: new { @class = "label-name" })
+                                            </a>
+                                        </div>
+                                        <div class="accordion-body" style="margin-bottom:15px;">
+                                            <div class="accordion-inner">
+                                                <div class="custom-select">
+                                                    @Html.RadioButtonFor(model => model.Recommendation, "Shortlist") Shortlist interviewer
+                                                    @Html.RadioButtonFor(model => model.Recommendation, "Remove") Remove interviewer
+                                                    @* <input type="radio" name="Recommendation" value="Shortlist" checked="checked" />Shortlist
                                                 <input type="radio" name="Recommendation" value="Remove" />Remove *@
+                                                </div>
                                             </div>
-                                         
-  
-
-
-
+                                        </div>
+                                        <div class="popup arrow-top">
+                                            <div class="popup-wrapper">
+                                                @Html.TextAreaFor(m => m.RecommendationComments, new { htmlAttributes = new { @class = "scrollbar" }, @style = "width:100%", @placeholder = "Enter your comments here..." ,@Maxlength="250"})
+                                            </div>
                                         </div>
                                     </div>
-                                       <div class="popup arrow-top">
-  <div class="popup-wrapper">
-    <textarea placeholder="Enter your comments here..." class="scrollbar" style="width:100%;"></textarea>
-   </div>
-</div>
-  </div></div>
-                               
+                                </div>
+
                             }
                             <div class="form-group">
                                 <div class="accordion-group">
@@ -869,7 +866,7 @@ Different arrow positioning
                             {
                                 @Html.HiddenFor(model => model.VideoReward)
                             }
-                         
+
                         </div>
 
 

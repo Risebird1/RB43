@@ -6880,6 +6880,7 @@ namespace Risebird.Repository
                     parameters.Add("@isQcDone", model.isQcDone);
                     parameters.Add("@techqc", model.techqc);
                     parameters.Add("@Recommendation", model.Recommendation);
+                    parameters.Add("@RecommendationComments", model.RecommendationComments);
 
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);

@@ -6661,7 +6661,7 @@ namespace Risebird.Web.Controllers
                                     Mail _mail = new Mail
                                     {
                                         TO = item.EmailId,
-                                        Subject = "Mandatory Interviewer Video On : Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
+                                        Subject = "Mandatory Interviewer Video On : Current Availability (2 days) check for  " + item.JDTitle + " Risebird Interviews"
                                     };
                                     var emailresult = await _notificationHelper.SendCheckIntervieweravailbilitywithVideo(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId, item.CompanyTypeDesc, item.CountryTypeDesc, item.PlanTypeDesc, item.SelectedDurationMin, item.RejectedDurationMin);
                                 }
@@ -6670,7 +6670,7 @@ namespace Risebird.Web.Controllers
                                     Mail _mail = new Mail
                                     {
                                         TO = item.EmailId,
-                                        Subject = "Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
+                                        Subject = "Current Availability (2 days) check for  " + item.JDTitle + " Risebird Interviews"
                                     };
                                     var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId, item.CompanyTypeDesc, item.CountryTypeDesc, item.PlanTypeDesc, item.SelectedDurationMin, item.RejectedDurationMin);
                                 }

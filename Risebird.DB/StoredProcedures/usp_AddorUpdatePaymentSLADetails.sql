@@ -8,6 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 Create Procedure usp_AddorUpdatePaymentSLADetails  
 @Interviewid int,  
 @Emailid varchar(150),  
@@ -31,7 +32,8 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @VideoEnable bit,
 @isQcDone bit,
 @techqc bit,
-@Recommendation varchar(15)
+@Recommendation varchar(15),
+@RecommendationComments varchar(250)
 AS  
 BEGIN  
 Declare @Userid int       
@@ -60,15 +62,15 @@ Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,  
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,  
 UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved,  
-PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation,IsTechQCDone= @techqc 
+PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation,IsTechQCDone= @techqc,RecommendationComments=@RecommendationComments 
 where Interviewid=@Interviewid  
 end  
 else  
 begin  
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,  
-LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone)   
+LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone,RecommendationComments)   
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,  
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc)   
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc,@RecommendationComments)   
 end  
 end
 If(@isapproved=1)  
