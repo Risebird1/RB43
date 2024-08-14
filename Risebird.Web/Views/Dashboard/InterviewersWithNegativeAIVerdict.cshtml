@@ -102,25 +102,25 @@
                                                     foreach (var item in Model)
                                                     {
 
-                                                                       <tr id=@item.id data-changes="1">
-                                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                     <tr id=@item.id data-changes="1">
+                                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
                                                                     <td class="text-center">
                                                                         <div>
                                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName})">
-                                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#a3abcdd1;border-color:#a3abcdd1;width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
-                                                                                    <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
+                                                                                 <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#a3abcdd1;border-color:#a3abcdd1;width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                                   <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
                                                                                 </span>
                                                                             </a>
 
                                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName, isRedo = true})">
                                                                                 <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
-                                                                                    <span title="Screen Resume(Regenerate)" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px"/></span>
+                                                                                 <span title="Screen Resume(Regenerate)" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px"/></span>
                                                                                 </span>
                                                                             </a>
 
                                                                             <button class="btn shadow btn-xs sharp me-1 trash-btn" aria-label="Delete" style="width:23px!important;height:23px!important;background: #ee6f6f !important;position:relative;left:-6px;border-color:#ee6f6f!important">
                                                                                 <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.EmailId', '@item.IRFId');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;left:-1px;top:-2px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" style="position:relative;left:-2px;top:-2px;" /></svg>
+                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;left:-1px;top:-2px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" style="position:relative;left:-2px;top:-2px;" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                     @* <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Stats" style="width: 23px!important;height:23px!important;background:#a3d6ebe3;border:#a3d6ebe3;position:relative;left:-6px;">
@@ -131,18 +131,15 @@
 
                                                                             <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to edit Interviewer Profile" style="width:23px!important;height:23px!important;background:#d18fec94;border:#d18fec94;position:relative;left:-6px;">
                                                                                 <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })" target="_blank">
-                                                                                    <span title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /><a target="_blank" href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"></a></svg></span>
+                                                                                 <span title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /><a target="_blank" href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"></a></svg></span>
                                                                                 </a>
                                                                             </button>
-
                                                                         </div>
-
-                                                                    </td>
-                                                            
+                                                                    </td>                                                            
                                                             <td>@item.IRFName</td>
                                                             <td>
-                                                                <div><span style="color: #42a5f5;font-size: 14px; padding: 0px 4px;font-weight: 500;">JD Title:</span>@item.JDTitle</div>
-                                                                        <div style=" margin-top: 4px;"><span style="color: #42a5f5;font-size: 14px; padding: 0px 4px;font-weight: 500;">Link</span><a style="left: 3px;top: -1px;position: relative;letter-spacing: 0.4px;border-radius: 3px;padding: 2px 7px;font-size: 11px;color: #fff;text-decoration: none;background: #9ebfd9e6;" target="_blank" href="@item.JDLink">Click here</a></div>
+                                                                <div><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">JD Title:</span>@item.JDTitle</div>
+                                                                  <div style=" margin-top: 4px;"><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">Link</span><a style="left: 3px;top: -1px;position: relative;letter-spacing: 0.4px;border-radius: 3px;padding: 2px 7px;font-size: 11px;color: #fff;text-decoration: none;background: #9ebfd9e6;" target="_blank" href="@item.JDLink">Click here</a></div>
                                                                 </td>
                                                             @if(item.IsActive)
                                                             {
@@ -150,30 +147,27 @@
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                             <td></td>
                                                             }
                                                             <td>@item.CreatedOn</td>
                                                             
                                                             @if (!string.IsNullOrEmpty(item.ResumeLink))
                                                             {
-                                                                <td> <a style="padding:0px;" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-4px;" src="/img/resume-icon.png" width="16">Resume</a> </td>
+                                                               <td><a style="padding:0px;" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-4px;" src="/img/resume-icon.png" width="16">Resume</a> </td>
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                               <td></td>
                                                             }
-                                                           
-                                                            <td>@item.CompanyName</td>
-                                                            <td>@item.ChannelOwner</td>
-                                                           
+                                                           <td>@item.CompanyName</td>
+                                                           <td>@item.ChannelOwner</td>
                                                         </tr>
-
-                                                               <tr class="collapse @item.id">
+                                                        <tr class="collapse @item.id">
                                                                                 <td colspan="999" class="child-section">
                                                                                     <table class="table table-striped">
-                                                                                        <tr>
+                                                                                        <tr> 
                                                                                            
-                                                                                              <th>Interviewer</th>
+                                                                                            <th>Interviewer</th>
                                                                                             <th>Assessment Group</th>
                                                                                               <th>Added By</th>
                                                                                               <th>Client HR</th>
@@ -197,7 +191,7 @@
                                                                                     </table>
                                                                                 </td>
                                                                             </tr>
-    
+
                                                     }
                                                 }
 
