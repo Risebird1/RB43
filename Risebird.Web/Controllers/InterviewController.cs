@@ -8300,6 +8300,10 @@ namespace Risebird.Web.Controllers
             {
                 model.PoorCommunicationSkills = string.Empty;
             }
+            if (string.IsNullOrEmpty(model.InterviewerVideo))
+            {
+                model.InterviewerVideo = string.Empty;
+            }
         }
         [HttpPost]
         public async Task<JsonResult> PaymentSlaDetailsNotApproved(int interviewid)
