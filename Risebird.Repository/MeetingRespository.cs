@@ -7458,5 +7458,26 @@ namespace Risebird.Repository
             }
             return 0;
         }
+
+        public async Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    var result = await SqlMapper.QueryAsync(con, "usp_DeleteQuestionsDiscussedFromReport", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
