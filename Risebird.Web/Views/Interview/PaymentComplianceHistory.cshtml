@@ -6,7 +6,7 @@
         <div class="col-md-4">
             <p>@item.CreatedBy</p>
             <p>@item.CreatedOn</p>
-            @if (!string.IsNullOrWhiteSpace(Recommendation))
+            @if (!string.IsNullOrWhiteSpace(item.Recommendation))
             {
                 <p>@item.Recommendation</p>
             }

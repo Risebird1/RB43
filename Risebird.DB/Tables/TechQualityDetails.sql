@@ -8,6 +8,8 @@ CREATE TABLE [dbo].[TechQualityDetails](
 	[CreatedBy] [varchar](150) NULL,
 	[CreatedOn] [datetime] NULL,
 	[IsActive] [bit] NULL,
+    [QcInterviewer] [varchar](100) NULL,	
+	[IsCompleted] [bit] NULL,
 	FOREIGN KEY([Interviewid]) REFERENCES [dbo].[InterviewMeetings] ([id]),
  CONSTRAINT [PK_TechQualityDetails] PRIMARY KEY CLUSTERED 
 (
@@ -20,11 +22,20 @@ BEGIN
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'SharedOn')
+    WHERE Name IN (N'QcInterviewer')
       AND Object_ID = Object_ID(N'TechQualityDetails'))
 BEGIN
     ALTER TABLE TechQualityDetails
     Add [QcInterviewer] [varchar](100) NULL		
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsCompleted')
+      AND Object_ID = Object_ID(N'TechQualityDetails'))
+BEGIN
+    ALTER TABLE TechQualityDetails
+    Add IsCompleted bit
 END
 END
 GO
