@@ -1569,6 +1569,15 @@
                                                                         <span title="Generate QC Report" class="mdc-fab__icon material-icons"><img src="~/img/qc-icon.png" style="width:16px;" /></span>
                                                                     </button>
                                                                 </a>
+                                                                @if(ViewBag.emailid == "tanishka_gupta@risebird.io")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
+                                                                        <span onclick="javascript:DeleteQuestionsDiscussed('@item.imid', '@item.interviewer', '@item.candidateEmail', '@item.interviewDate.ToString()');" title="Delete Questions Discussed" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                                
                                                             </td>
 
                                                         }
@@ -1991,6 +2000,65 @@
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
 <script src="~/js/checkintervieweravailabilitybymail.js"></script>
+
+<script>
+    function DeleteQuestionsDiscussed(interviewId, interviewer, candidateEmaiId, interviewDate = null) {
+        debugger;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The questions added by the interviewer " + interviewer + " for interview dated " + interviewDate + " against candidate " + candidateEmaiId + " will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it/them!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interview/DeleteQuestionsDiscussedFromReport',
+                        method: 'POST',
+                        data: { 'interviewId': interviewId },
+                        success: function (result) {
+                            if (result) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The questions have been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    //location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'The questions have not been deleted.',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
 
 <script>
     function OpenRedoFormModel(interviewid) {

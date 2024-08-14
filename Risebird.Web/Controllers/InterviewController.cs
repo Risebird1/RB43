@@ -9144,5 +9144,39 @@ namespace Risebird.Web.Controllers
             model.TechSkillReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet != 2).ToList();
         }
         #endregion
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteQuestionsDiscussedFromReport(int interviewId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "SupportAdmin" && emailid == "tanishka_gupta@risebird.io")
+                    {
+                        var result = await _meetingService.DeleteQuestionsDiscussedFromReport(interviewId);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
     }
 }
