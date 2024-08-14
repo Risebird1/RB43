@@ -74,6 +74,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interviewer quality check")]
         public string Recommendation { get; set; }
         public string RecommendationComments { get; set; }
+        [Display(Name = "Interviewer Video")]
+        public string InterviewerVideo { get; set; }
     }
     public class PaymentSlabsVM
     {

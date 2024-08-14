@@ -36,8 +36,8 @@
             z-index: 998;
         }
         /*
-        Different arrow positioning
-        */
+                Different arrow positioning
+                */
         .popup.arrow-top:before {
             left: calc(10% - 10px);
             top: -4px;
@@ -124,7 +124,7 @@
                                         </div>
                                         <div class="popup arrow-top">
                                             <div class="popup-wrapper">
-                                                @Html.TextAreaFor(m => m.RecommendationComments, new { htmlAttributes = new { @class = "scrollbar" }, @style = "width:100%", @placeholder = "Enter your comments here..." ,@Maxlength="250"})
+                                                @Html.TextAreaFor(m => m.RecommendationComments, new { htmlAttributes = new { @class = "scrollbar" }, @style = "width:100%", @placeholder = "Enter your comments here...", @Maxlength = "250" })
                                             </div>
                                         </div>
                                     </div>
@@ -1484,7 +1484,54 @@
                                 }
                                 </div>*@
                             </div>
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(model => model.InterviewerVideo, htmlAttributes: new { @class = "label-name" })
 
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            @Html.HiddenFor(m => m.InterviewerVideo)
+                                            <ul class="ks-cboxtags">
+                                                <li>
+                                                    @if (Model.InterviewerVideo.Split(",").Contains("Video Off When Mandatory"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Video Off When Mandatory" /> <label for="checkboxFiftyOne">Video Off When Mandatory</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="InterviewerVideo" onclick="ChangeCheckBox('InterviewerVideo')" value="Video Off When Mandatory" /> <label for="checkboxFiftyOne">Video Off When Mandatory</label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.InterviewerVideo.Split(",").Contains("Stretched Video After Candidate Left"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyTwo" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Stretched Video After Candidate Left" /> <label for="checkboxFiftyTwo">Stretched Video After Candidate Left</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyTwo" name="InterviewerVideo" onclick="ChangeCheckBox('InterviewerVideo')" value="Stretched Video After Candidate Left" /> <label for="checkboxFiftyTwo">Stretched Video After Candidate Left</label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.InterviewerVideo.Split(",").Contains("Left Call Without Notice"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyThree" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Left Call Without Notice" /> <label for="checkboxFiftyThree">Left Call Without Notice</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyThree" name="InterviewerVideo" onclick="ChangeCheckBox('InterviewerVideo')" value="Left Call Without Notice" />  <label for="checkboxFiftyThree">Left Call Without Notice</label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
