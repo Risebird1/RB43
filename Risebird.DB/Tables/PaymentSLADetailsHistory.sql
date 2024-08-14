@@ -22,6 +22,7 @@ CREATE TABLE [dbo].[PaymentSLADetailsHistory](
 	[PaymentComplianceCount] [int] NULL,
 	[Recommendation] [varchar](15) NULL,
 	[IsTechQCDone] [bit] NULL,
+	[InterviewerVideo] [varchar](250) NULL,
  CONSTRAINT [PK_PaymentSLADetailsHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -47,6 +48,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentSLADetailsHistory
     Add IsTechQCDone bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerVideo')
+      AND Object_ID = Object_ID(N'PaymentSLADetailsHistory'))
+BEGIN
+    ALTER TABLE PaymentSLADetailsHistory
+    Add InterviewerVideo varchar(250)
 END
 END
 GO

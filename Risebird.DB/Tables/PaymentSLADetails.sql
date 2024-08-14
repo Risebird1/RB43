@@ -28,6 +28,7 @@ CREATE TABLE [dbo].[PaymentSLADetails](
 	[Recommendation] [varchar](15) NULL,
 	[IsTechQCDone] [bit] NULL,
     [RecommendationComments] [varchar](250) NULL,
+    [InterviewerVideo] [varchar](250) NULL,
  CONSTRAINT [PK_PaymentSLADetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -89,6 +90,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentSLADetails
     Add RecommendationComments varchar(250)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerVideo')
+      AND Object_ID = Object_ID(N'PaymentSLADetails'))
+BEGIN
+    ALTER TABLE PaymentSLADetails
+    Add InterviewerVideo varchar(250)
 END
 END
 GO
