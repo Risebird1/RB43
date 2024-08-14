@@ -24,20 +24,23 @@
                     <div class="mobile-view"> <h4 class="card-title"> Tech QC Details</h4></div>
                 </div>
                 <div class="pull-left">
+                    @if (ViewBag.Type == "Pending")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
+                    }
+                    else if (ViewBag.Type == "Completed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
+                    }
                 </div>
                 <div class="pull-right">
                     <div>
                         <div class="pull-left" style="margin-left:10px">
                             <div class="filtercon">
                                 <div id="myinterview_3">
-                                    @if (ViewBag.ReturnBack == 1)
-                                    {
-                                        <a href='/Dashboard/EmergencyDashboard' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
-                                    }
-                                    else
-                                    {
-                                        <a href='/Dashboard/Dashboard911' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
-                                    }
+                                    <a href='/Dashboard/EmergencyDashboard' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +112,6 @@
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CompanyName</td>
                                                         <td class="text-center">
-                                                           
                                                         </td>
                                                     </tr>
                                                 }
@@ -197,5 +199,8 @@
             $("#meeting").show();
         }, 2000);
     };
+     function Changeurldetails(type) {
+        window.location.href = "/Dashboard/TechQCDetails?type=" + type;
+    }
 </script>
 
