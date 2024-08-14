@@ -71,7 +71,11 @@ namespace Risebird.Entities.ViewModel
         public bool isQcDone { get; set; }
         public bool techqc { get; set; }
         public int TotalPaymentComplianceCount { get; set; }
+        [Display(Name = "Interviewer quality check")]
         public string Recommendation { get; set; }
+        public string RecommendationComments { get; set; }
+        [Display(Name = "Interviewer Video")]
+        public string InterviewerVideo { get; set; }
     }
     public class PaymentSlabsVM
     {

@@ -8,6 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 Create Procedure usp_AddorUpdatePaymentSLADetails  
 @Interviewid int,  
 @Emailid varchar(150),  
@@ -30,15 +31,28 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @Rating int,
 @VideoEnable bit,
 @isQcDone bit,
-@Recommendation varchar(15)
+@techqc bit,
+@Recommendation varchar(15),
+@RecommendationComments varchar(250),
+@InterviewerVideo varchar(250)
 AS  
 BEGIN  
 Declare @Userid int       
-Declare @isQcDonecheck bit       
+Declare @isQcDonecheck bit  
+Declare @isTechQcDonecheck bit  
 Select  @isQcDonecheck=ISNULL(isQcDone,0) from PaymentSLADetails where Interviewid=@Interviewid
+Select  @isTechQcDonecheck=ISNULL(IsTechQCDone,0) from PaymentSLADetails where Interviewid=@Interviewid
+if(@techqc=1)
+begin
+Update TechQualityDetails set IsCompleted=1 where interviewid=@Interviewid
+end
 if(@isQcDonecheck=1)
 begin
 set @isQcDone=1
+end
+if(@isTechQcDonecheck=1)
+begin
+set @techqc=1
 end
 Select @Userid=id From UserList where Emailid=@Emailid    
 if(@Rating<5)
@@ -49,15 +63,15 @@ Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,  
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,  
 UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved,  
-PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation  
+PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation,IsTechQCDone= @techqc,RecommendationComments=@RecommendationComments,InterviewerVideo=@InterviewerVideo 
 where Interviewid=@Interviewid  
 end  
 else  
 begin  
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,  
-LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation)   
+LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone,RecommendationComments,InterviewerVideo)   
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,  
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation)   
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc,@RecommendationComments,@InterviewerVideo)   
 end  
 end
 If(@isapproved=1)  
