@@ -14,7 +14,7 @@ Create PROCEDURE [dbo].[usp_GetCompletedInterviewMeetings]
 AS                 
 Begin  
 select distinct im.id imid,im.IRFId, im.interviewDate,im.candidateEmail,im.ClientHrContact, im.interviewer, ulin.mobilenumber,                 
-im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,ic.VideoLink,ic.InterviewerComment,            
+im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsVideoRequired,ic.VideoLink,ic.InterviewerComment,            
 ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus,ul.EmailId as risebirdHR,    
 im.HRCoordinatorEmailId,cl.[Name] as Client,tqc.id as QCPresent,  
 imjt.Joinedon,im.IsEmergency,im.EIAssigned
