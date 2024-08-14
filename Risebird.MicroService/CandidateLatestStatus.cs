@@ -77,16 +77,16 @@ namespace Risebird.MicroService
                     {
                         CandidateLatestStatusRequest reqData = JsonConvert.DeserializeObject<CandidateLatestStatusRequest>(requestBody);
 
-                        if (reqData == null || string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.candidateEmailId) || string.IsNullOrEmpty(reqData.requestedBy))
+                        if (reqData == null || (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId)) || string.IsNullOrEmpty(reqData.candidateEmailId) || string.IsNullOrEmpty(reqData.requestedBy))
                         {
                             var details = new Dictionary<string, string>();
                             if (reqData == null)
                             {
                                 details.Add("body", "Request Body is null.");
                             }
-                            if (string.IsNullOrEmpty(reqData.skillChannelId))
+                            if (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId))
                             {
-                                details.Add("skillChannelId", "This field is required.");
+                                details.Add("skillChannelId/jobId", "Either of 'skillChannelId' or 'jobId' fields is required.");
                             }
                             if (string.IsNullOrEmpty(reqData.candidateEmailId))
                             {

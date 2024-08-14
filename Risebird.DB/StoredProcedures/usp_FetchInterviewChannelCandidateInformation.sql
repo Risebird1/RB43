@@ -165,7 +165,7 @@ left join UserList uli on uli.EmailId = im.interviewer
 left join InterviewerProfile ipr on ipr.UserId = uli.id              
 outer apply(select Sum(WeightageActual) as TechScore From TechSkillReport ts where ts.InterviewId=im.id and (ts.SkillSet = 1 or ts.SkillSet is null)) PrimarySkill          
 outer apply(select Sum(WeightageActual) as TechScoreTwo From TechSkillReport ts where ts.InterviewId=im.id and ts.SkillSet = 2) SecondarySkill          
-outer apply (Select Max(ProjectUniqueid) as ProjectUniqueid From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where pim.IRFId=IRF.id) Project  
+outer apply (Select top 1 ProjectUniqueid From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where pim.IRFId=IRF.id) Project  
 where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%' or CandidateLatestStatus like '%PENDING%' or CandidateLatestStatus like '%FUTURESCHEDULE%'                 
           
 Select qd.InterviewId,qd.Comment,qd.SkillName,qd.SkillSet,qd.RatingId From QuestionsDiscussed qd join @TemporaryCandidateTableVariable td on qd.InterviewId=td.InterviewId             
