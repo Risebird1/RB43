@@ -4301,6 +4301,18 @@ namespace Risebird.Business
             }
             return 0;
         }
+        public async Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId)
+        {
+            try
+            {
+                return await _meetingRespository.DeleteQuestionsDiscussedFromReport(interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

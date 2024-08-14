@@ -290,5 +290,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetOpenAIReportQC(int interviewId);
         Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson);
         Task<int> checkInterviewEditable(int meetingid);
+        Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
     }
 }
