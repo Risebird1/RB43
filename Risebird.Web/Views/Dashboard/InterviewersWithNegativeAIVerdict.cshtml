@@ -59,7 +59,7 @@
                                         <table id="verdictTable" class="table table-striped table-bordered dataTable dtr-inline" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                     <th style="border-right: 0px !important;"></th>
+                                                   
                                                     <th>Actions</th>
                                                    
                                                     <th>Skill Channel</th>
@@ -78,7 +78,7 @@
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="border-right: 0px !important;"></th>
+                                                    
                                                     <th>Actions</th>
                                                     
                                                     <th>Skill Channel</th>
@@ -102,8 +102,7 @@
                                                     foreach (var item in Model)
                                                     {
 
-                                                     <tr id=@item.id data-changes="1">
-                                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                     <tr id=@item.id>
                                                                     <td class="text-center">
                                                                         <div>
                                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName})">
@@ -134,10 +133,38 @@
                                                                                  <span title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /><a target="_blank" href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"></a></svg></span>
                                                                                 </a>
                                                                             </button>
+
+
+
+                                                                        </div>
+                                                                <a onclick="moreinfo('@item.id')" class="more-info-btn" value="More Info" id="more-info-btn_@item.id" href="#" style="color: #747b74;text-decoration: none;font-size: 12px;  display: block;     padding-right: 3px;   margin-top: 10px;"><i class='fa fa-plus-circle' style="margin-right:3px"></i>Click for More Info</a>
+                                                                
+                                                                <div id="morepopup_@item.id" class="morepopup arrow-bottom">
+                                                                <div class="more-info">
+                                                        <div class="@item.id">
+                                                                            <div> <span ><b style="padding-right:10px;">Interviewer:</b></span><span>@item.EmailId</span></div>
+                                                                        <div>
+                                                                                <span><b style="padding-right:10px;">Assessment Group:</b></span><span>@item.SkillChannelAssessmentGroup</span>
+                                                                        </div>
+                                                                        <div>
+                                                                           
+                                                                                
+                                                                                @if (!string.IsNullOrEmpty(item.InterviewerProfileAddedBy))
+                                                                            {
+                                                                                    <span><b style="padding-right:10px;">Added By:</b></span>
+                                                                                <span>@item.InterviewerProfileAddedBy</span>
+                                                                            }
+                                                                           
+                                                                          
+                                                                        </div>
+                                                                        </div>
+                                                                
+                                                        </div>
+ 
                                                                         </div>
                                                                     </td>                                                            
                                                             <td>@item.IRFName</td>
-                                                            <td>
+                                                            <td style="padding:0px 40px 0px 0px">
                                                                 <div><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">JD Title:</span>@item.JDTitle</div>
                                                                   <div style=" margin-top: 4px;"><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">Link</span><a style="left: 3px;top: -1px;position: relative;letter-spacing: 0.4px;border-radius: 3px;padding: 2px 7px;font-size: 11px;color: #fff;text-decoration: none;background: #9ebfd9e6;" target="_blank" href="@item.JDLink">Click here</a></div>
                                                                 </td>
@@ -162,35 +189,7 @@
                                                            <td>@item.CompanyName</td>
                                                            <td>@item.ChannelOwner</td>
                                                         </tr>
-                                                        <tr class="collapse @item.id">
-                                                                                <td colspan="999" class="child-section">
-                                                                                    <table class="table table-striped">
-                                                                                        <tr> 
-                                                                                           
-                                                                                            <th>Interviewer</th>
-                                                                                            <th>Assessment Group</th>
-                                                                                              <th>Added By</th>
-                                                                                              <th>Client HR</th>
-                                                                                                <th>AI Verdict</th>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                  
-                                                                                    <td>@item.EmailId</td>
-                                                                                 <td>@item.SkillChannelAssessmentGroup</td>
-                                                                        @if (!string.IsNullOrEmpty(item.InterviewerProfileAddedBy))
-                                                                        {
-                                                                                         <td>@item.InterviewerProfileAddedBy</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                                       <td></td>
-                                                                        }
-                                                                                    <td>@item.ClientHr</td>
-                                                                                    <td title="@item.EmailId">@item.AIVerdict</td>
-                                                                                        </tr>
-                                                                                    </table>
-                                                                                </td>
-                                                                            </tr>
+                                                        
 
                                                     }
                                                 }
@@ -243,6 +242,7 @@
 
     $(document).ready(function () {
         applyDataTable();
+      
     });
     function applyDataTable() {
         var table = $('#verdictTable').DataTable({
@@ -288,6 +288,7 @@
         loader.style.left = left + "px";
     };
     ShowProgress();
+   
 
     window.onload = function () {
         setTimeout(function () {
@@ -311,6 +312,39 @@
             $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
+    }
+</script>
+<script>
+    // $('#more-info-btn_' + id').mousehover(function () {
+    //  $('#morepopup_' + id').addClass('show');
+    //})
+
+    //$('#more-info-btn_' + id').mouseleave(function () {
+    //    $('#morepopup_' + id').removeClass('show')
+    //})
+
+
+    //    $(function () {
+    //    $('#more-info-btn_' + id').mouseenter(function () {
+    //            $('#morepopup_' + id').addClass("show");
+    //    }).mouseleave(function () {
+    //        $('#morepopup_' + id').removeClass("show");
+    //    });
+    //});
+    //$(document).ready(function () {
+    //$('.more-info-btn_' + id).hover(function () {
+    //            $('#morepopup_' + id).addClass("show");
+      
+    //});
+    //});
+
+    function moreinfo(id) {
+
+    $('#more-info-btn_' + id).hover(function () {
+        $('#morepopup_' + id).addClass('show');
+    }, function () {
+        $('#morepopup_' + id).removeClass('show');
+    });
     }
 </script>
 
