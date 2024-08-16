@@ -28,6 +28,7 @@ namespace Risebird.Entities.ViewModel
         public string CampaignName { get; set; }
         public string OpenAIScreeningResponse { get; set; }
         public string JDTitle { get; set; }
+        public string JDLink { get; set; }
         public string AIVerdict { get; set; }
         public string ChannelOwner { get; set; }
         public string ClientHr { get; set; }
@@ -38,7 +39,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedOn { get; set; }
         public string InterviewerProfileAddedBy { get; set; }
         public string SkillChannelAssessmentGroup { get; set; }
-        public string JDLink { get; set; }
+       
 
     }
 }
