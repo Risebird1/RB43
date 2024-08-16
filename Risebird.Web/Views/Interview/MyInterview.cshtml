@@ -489,10 +489,10 @@
                                                                             @if (item.candidateName.Length > 18)
                                                                             {
                                                                                 <div style="width:100%;float:left">
-                                                                                    <span class="cadName pull-left">
+                                                                                    <span class="cadName">
                                                                                         <a data-tooltip="@item.candidateName"><span class="name-field" style="font-size:14px;line-height:29px;font-weight:400"> @item.candidateName.Substring(0, 18)...</span> </a>
                                                                                     </span>
-                                                                                    <span class="pull-left">
+                                                                                    <span style="position:relative;top:-5px;">
 
                                                                                         @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                         {
@@ -509,7 +509,7 @@
                                                                                         {
 
                                                                                         }
-                                                                                        <span class="pskill">@item.JDTiltle</span>
+                                                                                      
 
                                                                                     </span>
                                                                                 </div>
@@ -530,10 +530,10 @@
                                                                             else
                                                                             {
                                                                                 <div style="width:100%;float:left">
-                                                                                    <span class="cadName pull-left">
+                                                                                    <span class="cadName">
                                                                                         <a data-tooltip="@item.candidateName"><span class="name-field" style="font-size:14px;line-height:29px;font-weight:400"> @item.candidateName</span> </a>
                                                                                     </span>
-                                                                                    <span class="pull-left">
+                                                                                    <span style="position:relative;top:-5px;">
                                                                                         @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                         {
                                                                                             @if (@item.JDTiltle.Length > 40)
