@@ -64,10 +64,9 @@
                                                    
                                                     <th>Skill Channel</th>
                                                    <th>Job Details</th>
-                                                    <th>Status(Is Active)</th>
                                                     <th>Created On</th>
                                                     
-                                                    <th>Resume</th>
+                                                   <th>Interviewer</th>
                                                    
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
@@ -80,13 +79,12 @@
                                                 <tr>
                                                     
                                                     <th>Actions</th>
-                                                    
                                                     <th>Skill Channel</th>
                                                      <th>Job Details</th>
-                                                    <th>Status(Is Active)</th>
-                                                    <th>Created On</th>
                                                     
-                                                    <th>Resume</th>
+                                                    <th>Created On</th>
+
+                                                    <th>Interviewer</th>
                                                     
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
@@ -142,7 +140,7 @@
                                                                 <div id="morepopup_@item.id" class="morepopup arrow-bottom">
                                                                 <div class="more-info">
                                                         <div class="@item.id">
-                                                                            <div> <span ><b style="padding-right:10px;">Interviewer:</b></span><span>@item.EmailId</span></div>
+                                                                           @* <div> <span ><b style="padding-right:10px;">Interviewer:</b></span><span>@item.EmailId</span></div>*@
                                                                         <div>
                                                                                 <span><b style="padding-right:10px;">Assessment Group:</b></span><span>@item.SkillChannelAssessmentGroup</span>
                                                                         </div>
@@ -168,24 +166,28 @@
                                                                 <div><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">JD Title:</span>@item.JDTitle</div>
                                                                   <div style=" margin-top: 4px;"><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">Link</span><a style="left: 3px;top: -1px;position: relative;letter-spacing: 0.4px;border-radius: 3px;padding: 2px 7px;font-size: 11px;color: #fff;text-decoration: none;background: #9ebfd9e6;" target="_blank" href="@item.JDLink">Click here</a></div>
                                                                 </td>
-                                                            @if(item.IsActive)
-                                                            {
-                                                                <td>Active</td>
-                                                            }
-                                                            else
-                                                            {
-                                                             <td></td>
-                                                            }
-                                                            <td>@item.CreatedOn</td>
                                                             
-                                                            @if (!string.IsNullOrEmpty(item.ResumeLink))
+                                                            <td>@item.CreatedOn</td>
+                                                            <td>
+                                                                <span style="display:block">@item.EmailId</span>
+                                                                @if (item.IsActive)
+                                                                {
+                                                                    <span style="display:block"><b style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">Status: </b> Active</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                <span></span>
+                                                                }
+                                                            
+                                                            </td>
+                                                           @* @if (!string.IsNullOrEmpty(item.ResumeLink))
                                                             {
                                                                <td><a style="padding:0px;" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-4px;" src="/img/resume-icon.png" width="16">Resume</a> </td>
                                                             }
                                                             else
                                                             {
                                                                <td></td>
-                                                            }
+                                                            }*@
                                                            <td>@item.CompanyName</td>
                                                            <td>@item.ChannelOwner</td>
                                                         </tr>
