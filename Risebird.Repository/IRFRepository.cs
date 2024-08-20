@@ -2697,7 +2697,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
+                var query = "Select tts.*, Skill.[Name] as SkillName, IRF.TechRubricType from TransTechSkill tts join Skill on tts.SkillId=Skill.id join IRF on irf.id = tts.IRFId where tts.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
