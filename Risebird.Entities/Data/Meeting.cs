@@ -130,5 +130,6 @@ namespace Risebird.Entities.Data
         public string PreReportUsername { get; set; }
         public string PreReportPassword { get; set; }
         public bool IsVideoRequired { get; set; }
+        public string TechRubricType { get; set; }
     }
 }
