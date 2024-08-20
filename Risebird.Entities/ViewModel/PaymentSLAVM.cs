@@ -70,6 +70,7 @@ namespace Risebird.Entities.ViewModel
         public bool VideoEnable { get; set; }
         public bool isQcDone { get; set; }
         public bool techqc { get; set; }
+        public bool IsVideoRequired { get; set; }
         public int TotalPaymentComplianceCount { get; set; }
         [Display(Name = "Interviewer quality check")]
         public string Recommendation { get; set; }
