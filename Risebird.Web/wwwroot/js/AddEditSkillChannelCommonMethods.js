@@ -299,6 +299,24 @@ function commonUpdateRate(planType = null, countryType = null, companyType = nul
         });
     }
 }
+function RubricTypeChanged(val) {
+    var elements = document.getElementsByClassName('advancedRubricField');
+    if (elements != null) {
+        if (val == 'Advanced') {//TechRubricTypes.Advanced
+
+            // Loop through the elements and hide each one
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = 'block';
+            }
+        }
+        else {
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = 'none';
+            }
+        }
+    }
+    
+}
 
 
 

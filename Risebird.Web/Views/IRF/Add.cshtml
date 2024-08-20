@@ -1,6 +1,6 @@
 ﻿@model Risebird.Entities.ViewModel.IRFVm
 @using Risebird.Entities.Enum;
-
+@using Risebird.Entities.Data;
 @{
     ViewData["Title"] = "Add Skills Channel";
     ViewBag.PageHeader = "Skills Channel / Add Skills Channel";
@@ -516,6 +516,17 @@
                                         <div class="tab-box" id="tab-3">
                                             <div class="tab-main-box">
                                                 <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(model => model.TechRubricType, TechRubricTypes.Basic, new { @onchange = "RubricTypeChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) @TechRubricTypes.Basic<br />
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(model => model.TechRubricType, TechRubricTypes.Advanced, new { @onchange = "RubricTypeChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) @TechRubricTypes.Advanced<br />
+                                                        </label>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
 
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                         <div class="table-responsive-sm">
@@ -524,37 +535,41 @@
                                                                 <thead>
                                                                     <tr>
 
-                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                                        <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Concepts</th>
-                                                                        <th width="30%" class="table_heading">Nature of questions</th>
-                                                                        <th width="10%" class="table_heading">Time limit</th>
-                                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                                        <th width="10%"  class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%"  class="table_heading">Skill Name<span class="red">*</span></th>
+                                                                        <th class="table_heading">Weightage <span class="red">*</span></th>
+                                                                        <th width="35%"  class="table_heading advancedRubricField" style="float:left;margin-right:2px;display:none">Concepts</th>
+                                                                        <th width="25%"  class="table_heading advancedRubricField" style="float:left;margin-right:2px;display:none">Expectations</th>
+                                                                        <th width="14.5%" class="table_heading advancedRubricField" style="float:left;margin-right:2px;display:none">Time limit</th>
+                                                                        <th width="24.3%"  class="table_heading advancedRubricField" style="float:left;display:none">Is Elimination Skill</th>
+                                                                        <th  class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
                                                                     {
                                                                         <tr>
-                                                                            <td>
+                                                                            <td width="10%">
                                                                                 @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
 
                                                                             </td>
-                                                                            <td>
+                                                                             <td width="25%">
                                                                                 @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
                                                                             </td>
                                                                             <td>
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                             </td>
-                                                                            <td>
+                                                                            <td width="35%"  class="advancedRubricField" style="float:left;margin-right:2px;display:none">
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
                                                                             </td>
-                                                                            <td>
+                                                                             <td width="25%" class="advancedRubricField" style="float:left;margin-right:2px;display:none">
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
                                                                             </td>
-                                                                            <td>
+                                                                            <td width="15%" class="advancedRubricField" style="float:left;margin-right:2px;display:none">
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                                            </td>
+                                                                            <td  width="23.6%" class="advancedRubricField" style="text-align:center;float:left;display:none">
+                                                                                @Html.CheckBox("SkillCollection[0].isEliminationskill")  @*, new { @checked = "checked" }*@
                                                                             </td>
                                                                             <td class="action text-center">
 
@@ -572,12 +587,12 @@
                                                                         {
                                                                             <tr>
 
-                                                                                <td>
+                                                                                <td width="10%">
 
                                                                                     @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
 
                                                                                 </td>
-                                                                                <td>
+                                                                                 <td width="25%">
                                                                                     @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                                                 </td>
 
@@ -585,14 +600,17 @@
                                                                                     @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                                 </td>
-                                                                                <td>
+                                                                                <td width="35%"  class="advancedRubricField" style="display:none">
                                                                                     @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                                                                 </td>
-                                                                                <td>
+                                                                                 <td width="25%" class="advancedRubricField" style="display:none">
                                                                                     @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                                                                 </td>
-                                                                                <td>
+                                                                                 <td width="15%" class="advancedRubricField" style="display:none">
                                                                                     @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
+                                                                                </td>
+                                                                                <td width="24.5%" class="advancedRubricField" style="display:none">
+                                                                                    @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
                                                                                 </td>
                                                                                 <td class="action text-center">
                                                                                     <div>
@@ -1458,6 +1476,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
+
 @*<script>
         jQuery(document).ready(function ($) {
 
@@ -3787,24 +3806,32 @@
             }
         }
         if (tab_skill == "SkillCollection" || tab_skill == "SkillTwoCollection") {
-            var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
-            var drpdowns2 = $('[id^=' + tab_skill + '][id$="Concepts"]');
-            var drpdowns3 = $('[id^=' + tab_skill + '][id$="Natureofquestion"]');
-            for (i = 0; i < drpdowns1.length; i++) {
-                var interviewId = $("#" + drpdowns1[i].id).val();
-                if ($("#" + drpdowns2[i].id).val() != '' && $("#" + drpdowns3[i].id).val() != '') {
-                    if (interviewId != '') {
-                        if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
-                            document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
-                            return true;
+            var selectedValue = document.querySelector('input[name="TechRubricType"]:checked').value;
+            if(selectedValue == '@TechRubricTypes.Advanced')
+            {
+                var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
+                var drpdowns2 = $('[id^=' + tab_skill + '][id$="Concepts"]');
+                var drpdowns3 = $('[id^=' + tab_skill + '][id$="Natureofquestion"]');
+                if(drpdowns1 != null)
+                {
+                    for (i = 0; i < drpdowns1.length; i++) {
+                        var interviewId = $("#" + drpdowns1[i].id).val();
+                        if ($("#" + drpdowns2[i].id).val() != '' && $("#" + drpdowns3[i].id).val() != '') {
+                            if (interviewId != '') {
+                                if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
+                                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                                    return true;
+                                }
+                            }
+                            else {
+                                document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                                return true;
+                            }
                         }
-                    }
-                    else {
-                        document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
-                        return true;
                     }
                 }
             }
+           
         }
 
         if (tab_skill == "Joinability") {

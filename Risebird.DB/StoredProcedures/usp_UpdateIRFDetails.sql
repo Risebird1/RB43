@@ -63,6 +63,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 	@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
 	@IsNewSkillChannel bit = null,
+	@TechRubricType varchar(20) = null,
 	@IsVideoRequired bit
 	--@FixedAmount int = null
 	--@idRecommendation int,
@@ -125,6 +126,7 @@ BEGIN
 	,[IsLocked]=@IsLocked
 	,[JDTitleTwo]=@JDTitleTwo
 	,[IsVideoRequired]=@IsVideoRequired
+	,[TechRubricType] =@TechRubricType
 	--,[InterviewDuration]=@InterviewDuration
 	--,[IsFixedInterviewduration]=@IsFixedInterviewduration
 	--,[FixedAmount] = @FixedAmount

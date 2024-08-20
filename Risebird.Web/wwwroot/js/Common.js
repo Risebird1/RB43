@@ -64,3 +64,59 @@ function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
         }
     })
 }
+
+function DeleteQuestionsDiscussed(interviewId, interviewer, candidateEmaiId, interviewDate = null) {
+    swal.fire({
+        title: 'Are you sure?',
+        text: "The questions added by the interviewer " + interviewer + " for interview dated " + interviewDate + " against candidate " + candidateEmaiId + " will be permanently deleted!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it/them!',
+        preConfirm: function () {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: '/Interview/DeleteQuestionsDiscussedFromReport',
+                    method: 'POST',
+                    data: { 'interviewId': interviewId },
+                    success: function (result) {
+                        if (result) {
+                            resolve(result)
+
+                        }
+                        else {
+                            swal.fire("Error deleting!", "Please try again", "error");
+
+                        }
+                    },
+                    error: function () {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
+                })
+            })
+        },
+        allowOutsideClick: false
+    }).then(function (result) {
+        if (result.dismiss !== 'cancel') {
+            swal.fire({
+                title: 'Deleted!',
+                type: 'success',
+                html: '<p>The questions have been deleted.</p>',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Close!',
+                allowOutsideClick: false
+            }).then(function () {
+                //location.reload(true);
+            })
+        }
+        else if (result.dismiss === 'cancel') {
+            swal.fire(
+                'Cancelled',
+                'The questions have not been deleted.',
+                'error'
+            )
+        }
+    })
+}
