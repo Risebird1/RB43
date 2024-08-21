@@ -1027,7 +1027,11 @@ namespace Risebird.Web.Controllers
             if (convertedResponse == null)
             {
                 convertedResponse = new SignzyEmployeeResponse();
-                convertedResponse.message = resultset.message;
+                convertedResponse.message = resultset.error?.message;
+                if (string.IsNullOrWhiteSpace(convertedResponse.message))
+                {
+                    convertedResponse.message = resultset.message;
+                }
             }
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             convertedResponse.MobileNumber = mobiledata.mobileNumber;
