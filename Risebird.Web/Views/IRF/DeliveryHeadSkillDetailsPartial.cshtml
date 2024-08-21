@@ -10,12 +10,12 @@
             <thead>
                 <tr>
                     <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                    <th width="30%" class="table_heading">Skill Name<span class="red">*</span></th>
-                    <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                    <th width="20%" class="table_heading" style="display:@rubricDisplayStatus">Concepts</th>
-                    <th width="30%" class="table_heading" style="display:@rubricDisplayStatus">Expectations</th>
-                    <th width="10%" class="table_heading" style="display:@rubricDisplayStatus">Time limit</th>
-                    <th width="10%" class="table_heading">Is Elimination Skill</th>
+                    <th width="25%" class="table_heading">Skill Name<span class="red">*</span></th>
+                    <th  class="table_heading">Weightage <span class="red">*</span></th>
+                    <th width="35%" class="table_heading" style="float:left;margin-right:2px;display:@rubricDisplayStatus">Concepts</th>
+                    <th width="25%" class="table_heading" style="float:left;margin-right:2px;display:@rubricDisplayStatus">Expectations</th>
+                    <th width="14.5%" class="table_heading" style="float:left;margin-right:2px;display:@rubricDisplayStatus">Time limit</th>
+                    <th width="24.3%" class="table_heading">Is Elimination Skill</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,26 +25,26 @@
                 {
                     <tr>
 
-                        <td>
+                        <td width="10%">
                             @Model.colectionone[i].LevelName;
                         </td>
-                        <td>
+                        <td width="25%">
                             @Model.colectionone[i].SkillName;
                         </td>
 
                         <td>
                             @Model.colectionone[i].Weightage;
                         </td>
-                        <td style="display:@rubricDisplayStatus">
+                        <td width="35%" style="float:left;display:@rubricDisplayStatus">
                             @Model.colectionone[i].Concepts;
                         </td>
-                        <td style="display:@rubricDisplayStatus">
+                        <td width="25%" style="float:left;display:@rubricDisplayStatus">
                             @Model.colectionone[i].Natureofquestion;
                         </td>
-                        <td style="display:@rubricDisplayStatus">
+                        <td width="15%" style="float:left;display:@rubricDisplayStatus">
                             @Model.colectionone[i].Timelimit;
                         </td>
-                        <td>
+                        <td width="24.5%">
                             @(Model.colectionone[i].isEliminationskill ? "Yes" : "No");
                         </td>
 
