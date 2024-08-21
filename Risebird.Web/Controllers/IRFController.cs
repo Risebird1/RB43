@@ -8722,7 +8722,7 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
-        public async Task<JsonResult> DeliveryHeadSkillDetails(int id)
+        public async Task<IActionResult> DeliveryHeadSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
             var level = await _irfRepository.GetLevelTech();
@@ -8740,7 +8740,19 @@ namespace Risebird.Web.Controllers
             }
             var colectionone = transTechSkills.Where(x => x.SkillSet != 2).ToList();
             var colectiontwo = transTechSkills.Where(x => x.SkillSet == 2).ToList(); //Other Skill
-            return Json(new { colectionone = colectionone, colectiontwo = colectiontwo });
+            //return Json(new { colectionone = colectionone, colectiontwo = colectiontwo });
+            var model = new TechSkillsCollectionsWrapper();
+            model.colectionone = colectionone;
+            model.colectiontwo = colectiontwo;
+            if(transTechSkills != null)
+            {
+                ViewBag.TechRubricType = transTechSkills.FirstOrDefault().TechRubricType;
+            }
+            else
+            {
+                ViewBag.TechRubricType = TechRubricTypes.Basic;
+            }
+            return PartialView("DeliveryHeadSkillDetailsPartial", model);
         }
         [HttpPost]
         public async Task<JsonResult> ApproveDM(int id)
