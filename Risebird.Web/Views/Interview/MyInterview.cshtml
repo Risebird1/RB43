@@ -1329,11 +1329,16 @@
             url: "/IRF/DeliveryHeadSkillDetails",
             data: { id: id },
             success: function (data) {
+                debugger;
                 var modal = document.getElementById("IRFSkillModel");
                 var skill_id_pop = $("#skill_id_" + id).val();
                 $("#skill_id_pop").text(skill_id_pop);
                 modal.style.display = "block";
-                bindSkillData(data.colectionone,data.colectiontwo);
+                //bindSkillData(data.colectionone,data.colectiontwo);
+                if(data != null)
+                {
+                    $("#divcandidateskills").empty().html(html);
+                }
             }
         });
     }

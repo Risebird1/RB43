@@ -637,6 +637,7 @@ namespace Risebird.Repository
                             _resultVM.SkillSetsevaluate = !string.IsNullOrEmpty(dt.Rows[0]["SkillSetsevaluate"].ToString()) ? Convert.ToInt32(dt.Rows[0]["SkillSetsevaluate"]) : 1;
                             _resultVM.JDTitleTwo = !string.IsNullOrEmpty(dt.Rows[0]["JDTitleTwo"].ToString()) ? dt.Rows[0]["JDTitleTwo"].ToString() : null;
                             _resultVM.IsVideoRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsVideoRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsVideoRequired"]) : false;
+                            _resultVM.TechRubricType = !string.IsNullOrEmpty(dt.Rows[0]["TechRubricType"].ToString()) ? dt.Rows[0]["TechRubricType"].ToString() : null;
 
                         }
                     }
@@ -1198,13 +1199,18 @@ namespace Risebird.Repository
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
-                            if (string.IsNullOrEmpty(item.Concepts))
+                            if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                             {
                                 item.Concepts = "";
                             }
-                            if (string.IsNullOrEmpty(item.Natureofquestion))
+                            if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                             {
                                 item.Natureofquestion = "";
+                            }
+                            if (irfDetails.TechRubricType == TechRubricTypes.Basic)
+                            {
+                                item.Timelimit = 0;
+                                item.isEliminationskill = false;
                             }
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                         }
@@ -1392,6 +1398,8 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
 
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -2136,13 +2144,18 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if (string.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                         {
                             item.Concepts = "";
                         }
-                        if (string.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                         {
                             item.Natureofquestion = "";
+                        }
+                        if(irfDetails.TechRubricType == TechRubricTypes.Basic)
+                        {
+                            item.Timelimit = 0;
+                            item.isEliminationskill = false;
                         }
                         techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                     }
@@ -2366,6 +2379,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -2682,7 +2697,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
+                var query = "Select tts.*, Skill.[Name] as SkillName, IRF.TechRubricType from TransTechSkill tts join Skill on tts.SkillId=Skill.id join IRF on irf.id = tts.IRFId where tts.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

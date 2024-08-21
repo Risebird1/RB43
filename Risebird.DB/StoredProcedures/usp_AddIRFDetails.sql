@@ -62,6 +62,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsNewSkillChannel bit = null,
 @FlatRate int,
 @IsVideoRequired bit,
+@TechRubricType varchar(20) = null,
 @idIrf int output            
             
 AS            
@@ -108,7 +109,8 @@ Begin
 				   ,[FlatRate]
 				   ,[SkillSetsevaluate]
 				   ,[JDTitleTwo]
-				   ,[IsVideoRequired])
+				   ,[IsVideoRequired]
+				   ,[TechRubricType])
 				   --,[InterviewDuration]
 				   --,[IsFixedInterviewduration]
 				   --,[FixedAmount])            
@@ -149,7 +151,8 @@ Begin
 				   @FlatRate,
 				   @SkillSetsevaluate,
 				   @JDTitleTwo,
-				   @IsVideoRequired)
+				   @IsVideoRequired,
+				   @TechRubricType)
 				   --@InterviewDuration,
 				   --@IsFixedInterviewduration,
 				   --@FixedAmount)      

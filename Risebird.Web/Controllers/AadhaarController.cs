@@ -797,7 +797,7 @@ namespace Risebird.Web.Controllers
                         {
                             var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
                             DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
-                            employementdetails.CandidateEmail = model.CandidateEmail;
+                            employementdetails.CandidateEmail = model.CandidateEmail?.Trim();
                             employementdetails.MobileNumber = model.MobileNumber;
                             employementdetails.isVerified = true;
                             if (model.summary != null)
@@ -1027,7 +1027,11 @@ namespace Risebird.Web.Controllers
             if (convertedResponse == null)
             {
                 convertedResponse = new SignzyEmployeeResponse();
-                convertedResponse.message = resultset.message;
+                convertedResponse.message = resultset.error?.message;
+                if (string.IsNullOrWhiteSpace(convertedResponse.message))
+                {
+                    convertedResponse.message = resultset.message;
+                }
             }
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             convertedResponse.MobileNumber = mobiledata.mobileNumber;

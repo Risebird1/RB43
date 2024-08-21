@@ -263,6 +263,7 @@ namespace Risebird.Entities.ViewModel
         public string JDTitleTwo { get; set; }
         [DisplayName("Interviewer Video Required")]
         public bool IsVideoRequired { get; set; }
+        public string TechRubricType { get; set; }
     }
     public class InterviewerIds
     {

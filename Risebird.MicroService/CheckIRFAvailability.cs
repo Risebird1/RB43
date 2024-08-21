@@ -13,6 +13,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,10 +59,23 @@ namespace Risebird.MicroService
 
                 var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(obj.AssessmentGroupId), obj.id);
                 var skills = await _irfService.GetTechSkillswithWeightage(obj.id);
-
+                string techRubricType = TechRubricTypes.Basic;
+                if( skills != null && skills.Count()>0 )
+                {
+                    techRubricType = skills.FirstOrDefault().TechRubricType;
+                }
                 StringBuilder sb = new StringBuilder();
                 sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
-                sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                if(techRubricType == TechRubricTypes.Advanced)
+                {
+                    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td><td style='border: 1px solid black'>Concepts</td><td style='border: 1px solid black'>Expectations</td><td style='border: 1px solid black'>Time limit</td></tr>");
+
+                }
+                else
+                {
+                    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+
+                }
                 foreach (var item in skills)
                 {
                     sb.Append("<tr><td style='border: 1px solid black'>");
@@ -69,7 +83,20 @@ namespace Risebird.MicroService
                     sb.Append("</td>");
                     sb.Append("<td style='border: 1px solid black'>");
                     sb.Append(item.Weightage);
+                    if (techRubricType == TechRubricTypes.Advanced && (item.SkillSet == 0 || item.SkillSet == 1))
+                    {
+                        sb.Append("<td style='border: 1px solid black'>");
+                        sb.Append(item.Concepts);
+                        sb.Append("</td>");
+                        sb.Append("<td style='border: 1px solid black'>");
+                        sb.Append(item.Natureofquestion);
+                        sb.Append("</td>");
+                        sb.Append("<td style='border: 1px solid black'>");
+                        sb.Append(item.Timelimit);
+                        //sb.Append("</td>");
+                    }
                     sb.Append("</td></tr>");
+
                 }
                 sb.Append("</table>");
 
