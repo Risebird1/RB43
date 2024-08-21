@@ -752,9 +752,11 @@
             data: { id: id },
             success: function (data) {
                 //bindSkillData(data.colectionone, data.colectiontwo);
+                debugger;
+                console.log(data);
                 if(data != null)
                 {
-                    $("#techskills").empty().html(html);
+                    $("#techskills").empty().html(data);
                 }
                 
             }
