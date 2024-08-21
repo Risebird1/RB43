@@ -82,13 +82,13 @@
                                                                     <table class="table table-bordered mbn" id="SkillTable">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th width="15%" class="table_heading">Skill Level<span class="red">*</span></th>
-                                                                                <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                                                                <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                                                <th width="10%" class="table_heading" style="display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
-                                                                                <th width="10%" class="table_heading" style="display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
-                                                                                <th width="10%" class="table_heading" style="display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
-                                                                                <th width="10%" class="table_heading">Is Elimination Skill</th>
+                                                                                <th width="10%" class="table_heading">Skill Level<span class="red">*</span></th>
+                                                                                <th width="25%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                                                                <th  class="table_heading">Weightage <span class="red">*</span></th>
+                                                                                <th width="32%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
+                                                                                <th width="25%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
+                                                                                <th width="15.7%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
+                                                                                <th width="26%" class="table_heading" style="float:left">Is Elimination Skill</th>
                                                                                 <th width="10%" class="table_heading text-center">Action</th>
                                                                             </tr>
                                                                         </thead>
@@ -96,25 +96,25 @@
                                                                             @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
                                                                             {
                                                                                 <tr>
-                                                                                    <td>
+                                                                                    <td width="10%">
                                                                                         @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
                                                                                     </td>
-                                                                                    <td>
+                                                                                    <td  width="25%">
                                                                                         @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
                                                                                     </td>
-                                                                                    <td>
+                                                                                     <td>
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                                     </td>
-                                                                                    <td style="display:@rubricDisplayStatus">
+                                                                                    <td  width="35%" style="float:left;display:@rubricDisplayStatus">
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
                                                                                     </td>
-                                                                                    <td style="display:@rubricDisplayStatus">
+                                                                                    <td width="25%" style="float:left;display:@rubricDisplayStatus">
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
                                                                                     </td>
-                                                                                    <td style="display:@rubricDisplayStatus">
+                                                                                    <td width="15%" style="float:left;display:@rubricDisplayStatus">
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
                                                                                     </td>
-                                                                                    <td class="text-center">
+                                                                                    <td width="25%"  class="text-center" style="float:left;">
                                                                                         @Html.CheckBox("SkillCollection[0].isEliminationskill") @*, new { @checked = "checked" }*@
                                                                                     </td>
                                                                                     <td class="action text-center">
@@ -128,25 +128,25 @@
                                                                                 for (int i = 0; i < Model.SkillCollection.Count(); i++)
                                                                                 {
                                                                                     <tr>
-                                                                                        <td>
+                                                                                         <td width="10%">
                                                                                             @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
                                                                                         </td>
-                                                                                        <td>
+                                                                                        <td width="25%">
                                                                                             @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
                                                                                         </td>
-                                                                                        <td style="display:@rubricDisplayStatus">
+                                                                                         <td width="35%" style="float:left;display:@rubricDisplayStatus">
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                                                                         </td>
-                                                                                        <td style="display:@rubricDisplayStatus">
+                                                                                        <td width="25%" style="float:left;display:@rubricDisplayStatus">
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                                                                         </td>
-                                                                                        <td style="display:@rubricDisplayStatus">
+                                                                                        <td width ="15%" style="float:left;display:@rubricDisplayStatus">
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
                                                                                         </td>
-                                                                                        <td class="text-center">
+                                                                                        <td width="25%" class="text-center" style="float:left;">
                                                                                             @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
                                                                                         </td>
                                                                                         <td class="action text-center">
