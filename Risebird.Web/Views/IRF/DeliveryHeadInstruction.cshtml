@@ -85,10 +85,10 @@
                                                                                 <th width="10%" class="table_heading">Skill Level<span class="red">*</span></th>
                                                                                 <th width="25%" class="table_heading">Skill Name<span class="red">*</span></th>
                                                                                 <th  class="table_heading">Weightage <span class="red">*</span></th>
-                                                                                <th width="35%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
+                                                                                <th width="32%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
                                                                                 <th width="25%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
-                                                                                <th width="14.5%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
-                                                                                <th width="24.3%" class="table_heading" style="float:left">Is Elimination Skill</th>
+                                                                                <th width="15.7%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
+                                                                                <th width="26%" class="table_heading" style="float:left">Is Elimination Skill</th>
                                                                                 <th width="10%" class="table_heading text-center">Action</th>
                                                                             </tr>
                                                                         </thead>
@@ -114,7 +114,7 @@
                                                                                     <td width="15%" style="float:left;display:@rubricDisplayStatus">
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
                                                                                     </td>
-                                                                                    <td width="24.5%"  class="text-center" style="float:left;">
+                                                                                    <td width="25%"  class="text-center" style="float:left;">
                                                                                         @Html.CheckBox("SkillCollection[0].isEliminationskill") @*, new { @checked = "checked" }*@
                                                                                     </td>
                                                                                     <td class="action text-center">
@@ -146,7 +146,7 @@
                                                                                         <td width ="15%" style="float:left;display:@rubricDisplayStatus">
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
                                                                                         </td>
-                                                                                        <td class="text-center" style="float:left;">
+                                                                                        <td width="25%" class="text-center" style="float:left;">
                                                                                             @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
                                                                                         </td>
                                                                                         <td class="action text-center">
