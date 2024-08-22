@@ -388,6 +388,7 @@ namespace Risebird.Entities.ViewModel
         public string CodeSnippetTwo { get; set; }
         [Display(Name = "Candidate Solution File")]
         public IFormFile CandidateFileTwo { get; set; }
+        public string TechRubricType { get; set; }
 
     }
     public class RBInterviewDetails

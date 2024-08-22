@@ -5405,7 +5405,7 @@ td.detail-row {
 tr.shows td.detail-row {
     background: #cccccc47 url(../../Newassets/img/details_close.png) no-repeat right 12px;
 }
-
+input[type="number"],
 input[type="text"],
 input[type="password"],
 textarea,
@@ -5433,7 +5433,10 @@ textarea.form-control {
     -ms-transition: all .3s;
     transition: all .3s;
 }
-
+input[type=number]:focus {
+    outline: none !important;
+    border: 1.5px #ccc solid !important
+}
 .survey .multiselect.dropdown-toggle.btn {
     padding: 11px 8px;
 }

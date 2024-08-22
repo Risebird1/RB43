@@ -21,5 +21,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Time Limit")]
         public int Timelimit { get; set; }
         public int SkillSet { get; set; }
+        public bool isEliminationskill { get; set; }
     }
 }
