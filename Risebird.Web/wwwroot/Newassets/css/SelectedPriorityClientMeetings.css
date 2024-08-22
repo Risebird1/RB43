@@ -218,8 +218,10 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-
-.no-sort::after {
+input[type=number]:focus {
+    outline:none!important;
+}
+    .no-sort::after {
     display: none !important;
 }
 
