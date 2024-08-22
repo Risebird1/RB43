@@ -2,6 +2,7 @@
 @using System.Text.RegularExpressions
 @using Risebird.Entities.Enum
 @using Microsoft.Extensions.Configuration;
+@using Risebird.Entities.Data
 
 @inject IConfiguration configuration
 
@@ -521,6 +522,9 @@
                                                     {
 
                                                         <p>  Note: If the candidate is on the range of values, then take the lower experience category only, for example if the candidate has 3 years of experience, then take 1 - 3 years only.</p>
+                                                    }
+                                                    @{
+                                                        string rubricDisplayStatus =  Model.TechRubricType == TechRubricTypes.Advanced ? "inline-block" : "none";
                                                     }
                                                     <div class="table-responsive-sm">
                                                         <table class="table table-bordered mbn" id="SkillTable" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
