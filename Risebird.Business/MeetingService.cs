@@ -1106,6 +1106,7 @@ namespace Risebird.Business
                             Concepts = item.Concepts,
                             Timelimit = item.Timelimit,
                             Natureofquestion = item.Natureofquestion,
+                            isEliminationskill = item.isEliminationskill,
                             SkillSet = item.SkillSet
                         };
 
@@ -1255,6 +1256,7 @@ namespace Risebird.Business
                 reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
                 reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 reportModel.Heuristicsscore = irfDetails.Heuristicsscore;
+                reportModel.TechRubricType = irfDetails.TechRubricType;
                 return reportModel;
             }
             catch (Exception e)
@@ -1290,6 +1292,7 @@ namespace Risebird.Business
                         Concepts = item.Concepts,
                         Timelimit = item.Timelimit,
                         Natureofquestion = item.Natureofquestion,
+                        isEliminationskill = item.isEliminationskill,
                         SkillSet = item.SkillSet
                     };
 
@@ -1309,6 +1312,7 @@ namespace Risebird.Business
                         item.Concepts = techdetails.Concepts;
                         item.Timelimit = techdetails.Timelimit;
                         item.Natureofquestion = techdetails.Natureofquestion;
+                        item.isEliminationskill = techdetails.isEliminationskill;
                     }
                 }
                 model.TechSkillReportCollection = techReportCollection;

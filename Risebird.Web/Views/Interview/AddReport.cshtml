@@ -2,6 +2,7 @@
 @using System.Text.RegularExpressions
 @using Risebird.Entities.Enum
 @using Microsoft.Extensions.Configuration;
+@using Risebird.Entities.Data
 
 @inject IConfiguration configuration
 
@@ -522,15 +523,23 @@
 
                                                         <p>  Note: If the candidate is on the range of values, then take the lower experience category only, for example if the candidate has 3 years of experience, then take 1 - 3 years only.</p>
                                                     }
-                                                    <div class="table-responsive-sm">
+                                                    @{
+                                                        string rubricDisplayStatus =  Model.TechRubricType == TechRubricTypes.Advanced ? "table-cell" : "none";
+                                                    }
+                                                    <div style="overflow:auto;" id="style-2">
                                                         <table class="table table-bordered mbn" id="SkillTable" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
                                                             <thead>
                                                                 <tr>
-                                                                    <th width="10%">Required Level</th>
-                                                                    <th width="40%">Skill Name</th>
-                                                                    <th width="30%">Actual Level</th>
-                                                                    <th width="5%">Required Weightage</th>
-                                                                    <th width="5%">Actual Weightage</th>
+                                                                    <th>Required Level</th>
+                                                                    <th>Skill  Name</th>
+                                                                    <th>Actual Level</th>
+                                                                    <th>Required Weightage</th>
+                                                                    <th>Actual Weightage</th>
+                                                                     <th class="table_heading" style="display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
+                                                                      <th class="table_heading" style="display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
+                                                                       <th  class="table_heading" style="display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
+                                                                         <th  class="table_heading" style="display:@(rubricDisplayStatus)">Is Elimination Skill</th>
+   
                                                                 </tr>
                                                             </thead>
 
@@ -573,6 +582,18 @@
                                                                             </td>
                                                                             <td>
                                                                                 @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
+                                                                            </td>
+                                                                            <td  style="display:@rubricDisplayStatus">
+                                                                                <input style="width:350px;font-size:13px;font-weight:500;" class=text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50", readonly = "readonly" >
+                                                                            </td>
+                                                                            <td  style="display:@rubricDisplayStatus">
+                                                                                <input style="width:350px;font-size:13px;font-weight:500;border: 1.5px #ccc solid !important;width:" class="text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50" ,readonly = "readonly">
+                                                                            </td>
+                                                                            <td  style="display:@rubricDisplayStatus">
+                                                                                <input style="font-size:13px;font-weight:500;height:42px;width:100px" class="text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                                            </td>
+                                                                            <td style="display:@rubricDisplayStatus" class="text-center">
+                                                                                @Html.CheckBox("SkillCollection[0].isEliminationskill"),@*, new { @checked = "checked" }*@
                                                                             </td>
                                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)

@@ -3,6 +3,7 @@
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
 @using Microsoft.Extensions.Configuration;
+@using Risebird.Entities.Data
 @inject IConfiguration configuration
 @{
     ViewData["Title"] = "Interview Report";
@@ -676,11 +677,14 @@
                                                     </h3>
                                                 </div>
                                                 <div>
+                                                     @{
+                                                        string rubricDisplayStatus =  Model.TechRubricType == TechRubricTypes.Advanced ? "block" : "none";
+                                                    }
                                                     @if (Model.TechSkillReportCollection != null)
                                                     {
                                                         @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                         {
-                                                            <div class="tech-skill-wrapper">
+                                                            <div class="tech-skill-wrapper" style="margin-bottom:20px;clear:both">
                                                                 <div style="font-weight:500;">@Model.TechSkillReportCollection[i].SkillName</div>
                                                                 @{
                                                                     var TechSkill_Score = 0.0;
@@ -708,6 +712,51 @@
                                                                         <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
 
                                                                     }
+
+                                                                    <span class="rqlevel" style="margin:5px 0px 0px 0px;width:100%;float:left">
+
+                                                                         @if (@Model.TechSkillReportCollection[i].Concepts != null && @Model.TechSkillReportCollection[i].Concepts != "")
+                                                                        {
+                                                                            @if (@Model.TechSkillReportCollection[i].Concepts.Length > 30)
+                                                                            {
+                                                                               <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b> <a  href="#" data-tooltip="@Model.TechSkillReportCollection[i].Concepts"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                              <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b>  <span  style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts</span>
+                                                                            }
+
+                                                                        }
+                                                                    </span>
+
+
+
+                                                                    @*    <span class="techinfocontainer pull-left">
+                                                                                    <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                                        <span class="tooltiptext">
+                                                                                            <p style="margin-bottom:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+                                                                                            
+                                                                                        </span>
+                                                                                    </i>
+                                                                                </span>*@
+                                                                        
+@*                                                                        <b>@Model.TechSkillReportCollection[i].Concepts</b></span>
+                                                                               
+*@                                                                    <br/>  <span class="rqlevel" style="margin:5px 0px 0px 0px;width:100%;float:left">
+    @if (@Model.TechSkillReportCollection[i].Natureofquestion != null && @Model.TechSkillReportCollection[i].Natureofquestion != "")
+                                                                        {
+                                                                            @if (@Model.TechSkillReportCollection[i].Natureofquestion.Length > 30)
+                                                                            {
+                                                                              <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <a  href="#" data-tooltip="@Model.TechSkillReportCollection[i].Natureofquestion"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                              <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <span  style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion</span>
+                                                                            }
+
+                                                                        }
+    
+   </span>
                                                                 </div>
                                                             </div>
                                                         }
