@@ -1198,7 +1198,14 @@ namespace Risebird.Business
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                     //var staffingAgency = await _candidateRepository.GetCandidateStaffingAgency(candidate.id);
                     string primarySkill = string.Empty;
-                    primarySkill = irf.JDTiltle.Split("|")[0];
+                    if (irf.SkillSetsevaluate > 1)
+                    {
+                        primarySkill = irf.JDTiltle + " and " + irf.JDTitleTwo;
+                    }
+                    else
+                    {
+                        primarySkill = irf.JDTiltle.Split("|")[0];
+                    }
                     string oneTimeSchedulingLink = string.Empty;
 
                     string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
