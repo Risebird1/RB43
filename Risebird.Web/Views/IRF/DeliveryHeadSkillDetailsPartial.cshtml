@@ -1,20 +1,21 @@
 ﻿@model Risebird.Entities.ViewModel.TechSkillsCollectionsWrapper
 @using Risebird.Entities.Data;
 @{
-   string rubricDisplayStatus =  ViewBag.TechRubricType == TechRubricTypes.Advanced ? "block" : "none";
+   string rubricDisplayStatus =  ViewBag.TechRubricType == TechRubricTypes.Advanced ? "table-cell" : "none";
 }
+
 @if(Model.colectionone !=  null && Model.colectionone.Count() > 0)
 {
-    <div class="table-responsive scrollbar style-2" style="overflow-x:scroll;padding-bottom:0px;">
+    <div class="table-responsive  style-2" style="overflow-x:scroll;overflow-y:hidden;padding-bottom:0px;">
         <table style="background:#fff;" class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">
             <thead>
                 <tr>
                     <th width="15%" class="table_heading">Level<span class="red">*</span></th>
                     <th width="25%" class="table_heading">Skill Name<span class="red">*</span></th>
                     <th  class="table_heading">Weightage <span class="red">*</span></th>
-                    <th width="32%" class="table_heading" style="float:left;margin-right:2px;display:@rubricDisplayStatus">Concepts</th>
-                    <th width="25%" class="table_heading" style="float:left;margin-right:2px;display:@rubricDisplayStatus">Expectations</th>
-                    <th width="15.7%" class="table_heading" style="float:left;margin-right:2px;display:@rubricDisplayStatus">Time limit</th>
+                    <th width="32%" class="table_heading" style="margin-right:2px;display:@rubricDisplayStatus">Concepts</th>
+                    <th width="25%" class="table_heading" style="margin-right:2px;display:@rubricDisplayStatus">Expectations</th>
+                    <th width="15.7%" class="table_heading" style="margin-right:2px;display:@rubricDisplayStatus">Time limit</th>
                     <th width="26%" class="table_heading">Is Elimination Skill</th>
                 </tr>
             </thead>
@@ -35,35 +36,15 @@
                         <td>
                             @Model.colectionone[i].Weightage
                         </td>
-                        <td class="tooltip-skill" width="35%" style="float:left;display:@rubricDisplayStatus">
+                        <td class="tooltip-skill" width="35%" style="display:@rubricDisplayStatus">
                             @Model.colectionone[i].Concepts;
-                            @if (Model.colectionone[i].Concepts != null)
-                            {
-                                <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
-                                    <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
-                                        <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
-                                            <p style="margin-bottom:7px;">Concepts: @Model.colectionone[i].Concepts</p>
-
-                                        </span>
-                                    </i>
-                                </div>
-                            }
+                           
                         </td>
-                        <td class="tooltip-skill" width="25%" style="float:left;display:@rubricDisplayStatus">
+                        <td class="tooltip-skill" width="25%" style="display:@rubricDisplayStatus">
                             @Model.colectionone[i].Natureofquestion;
-                            @if (Model.colectionone[i].Natureofquestion != null)
-                            {
-                                <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
-                                    <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
-                                        <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
-                                            <p style="margin-bottom:7px;">Expectation: @Model.colectionone[i].Natureofquestion</p>
-
-                                        </span>
-                                    </i>
-                                </div>
-                            }
+                            
                         </td>
-                        <td width="15%" style="float:left;display:@rubricDisplayStatus">
+                        <td width="15%" style="display:@rubricDisplayStatus">
                             @Model.colectionone[i].Timelimit
                         </td>
 
@@ -84,7 +65,7 @@
 
 @if(Model.colectiontwo != null && Model.colectiontwo.Count() > 0)
 {
-    <span id="techskills-note-txt"><label style="font-size:12.2px;line-height:14px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">40-45 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">20-25 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>
+    <span id="techskills-note-txt" style="width:100%"><label style="font-size:12.2px;line-height:14px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">40-45 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">20-25 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>
     <h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL(S)</h1>
 
     <div class="table-responsive scrollbar style-2" style="overflow-x:scroll;padding-bottom:0px;">
@@ -128,3 +109,4 @@
 
     </div>
 }
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
