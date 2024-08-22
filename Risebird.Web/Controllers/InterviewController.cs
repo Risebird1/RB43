@@ -3344,6 +3344,10 @@ namespace Risebird.Web.Controllers
                                 //    TO = maillist,
                                 //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 //};
+                                if (model.SkillSetsevaluate > 1)
+                                {
+                                    model.JDTiltle = model.JDTiltle + " and " + model.JDTitleTwo;
+                                }
                                 if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
                                 {
                                     await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);

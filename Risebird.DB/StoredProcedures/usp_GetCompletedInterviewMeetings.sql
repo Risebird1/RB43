@@ -14,7 +14,7 @@ Create PROCEDURE [dbo].[usp_GetCompletedInterviewMeetings]
 AS                 
 Begin  
 select distinct im.id imid,im.IRFId, im.interviewDate,im.candidateEmail,im.ClientHrContact, im.interviewer, ulin.mobilenumber,                 
-im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsVideoRequired,ic.VideoLink,ic.InterviewerComment,            
+im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsVideoRequired,ic.VideoLink,ic.InterviewerComment,            
 ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus,ul.EmailId as risebirdHR,    
 im.HRCoordinatorEmailId,cl.[Name] as Client,tqc.id as QCPresent,  
 imjt.Joinedon,im.IsEmergency,im.EIAssigned
@@ -32,7 +32,5 @@ Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where 
 where IsNull(IsProctor,0)=0 and im.interviewDate >= @startDate AND im.interviewDate < @endDate and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)   
 and ISNULL(im.RedoInterview,0)=0  
 End  
-  
-
 GO
 

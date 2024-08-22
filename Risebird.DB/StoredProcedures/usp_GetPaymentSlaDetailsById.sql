@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE usp_GetPaymentSlaDetailsById  
+Create PROCEDURE usp_GetPaymentSlaDetailsById 
 @Interviewid int ,
 @type varchar(50)
 AS  
@@ -22,11 +22,12 @@ END
 else
 BEGIN
 Select ps.*,IRF.id as IRFId,IRF.IsVideoRequired,im.candidateEmail,im.interviewer,tq.Redflags,Case when tq.id>0 then 1 else 1 end as QCStatus,IsNull(ip.VideoReward,0) as VideoReward   
-From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId   
+From InterviewMeetings im  left join IRF on IRF.IRFId=im.IRFId   
+left join PaymentSLADetails ps on ps.Interviewid=im.id
 left join Trans_QCFormReport tq on tq.interviewid=im.id  
 left join UserList ul on ul.EmailId=im.interviewer
 left join InterviewPoints ip on ip.Interviewid=im.id and ip.Userid=ul.id
-where ps.Interviewid=@Interviewid  
+where im.id=@Interviewid  
 END 
 END
 GO
