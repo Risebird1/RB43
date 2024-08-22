@@ -10,5 +10,6 @@
         public int SkillSetsevaluate { get; set; }
         public string JDTitleTwo { get; set; }
         public int? Heuristicsscore { get; set; }
+        public string TechRubricType { get; set; }
     }
 }

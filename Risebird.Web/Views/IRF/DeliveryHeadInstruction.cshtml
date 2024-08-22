@@ -19,7 +19,7 @@
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
-
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
@@ -88,7 +88,15 @@
                                                                                 <th width="32%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
                                                                                 <th width="25%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
                                                                                 <th width="15.7%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
-                                                                                <th width="26%" class="table_heading" style="float:left">Is Elimination Skill</th>
+                                                                                @if(Model.TechRubricType == TechRubricTypes.Advanced)
+                                                                                {
+                                                                                    <th width="26%" class="table_heading" style="float:left">Is Elimination Skill</th>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                     <th width="100%" class="table_heading" style="float:left">Is Elimination Skill</th>
+                                                                                }
+
                                                                                 <th width="10%" class="table_heading text-center">Action</th>
                                                                             </tr>
                                                                         </thead>
@@ -105,19 +113,41 @@
                                                                                      <td>
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                                     </td>
-                                                                                    <td  width="35%" style="float:left;display:@rubricDisplayStatus">
-                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                                                    <td class="tooltip-skill"  width="35%" style="float:left;display:@rubricDisplayStatus">
+                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50" style="font-weight:600">
+                                                                                    @if (Model.SkillCollection[0].Concepts != null){
+                                                                                            <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
+                                                                                                <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
+                                                                                                    <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
+                                                                                                        <p style="margin-bottom:7px;">Concepts: @Model.SkillCollection[0].Concepts</p>
+
+                                                                                                    </span>
+                                                                                                </i>
+                                                                                            </div>
+                                                                                        } 
                                                                                     </td>
-                                                                                    <td width="25%" style="float:left;display:@rubricDisplayStatus">
-                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
+                                                                                    <td class="tooltip-skill" width="25%" style="float:left;display:@rubricDisplayStatus">
+                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50" style="font-weight:600">
+                                                                                   @if (Model.SkillCollection[0].Natureofquestion != null)
+                                                                                        {
+                                                                                            <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
+                                                                                                <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
+                                                                                                    <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
+                                                                                                        <p style="margin-bottom:7px;">Expectation: @Model.SkillCollection[0].Natureofquestion</p>
+
+                                                                                                    </span>
+                                                                                                </i>
+                                                                                            </div>
+                                                                                        }
                                                                                     </td>
                                                                                     <td width="15%" style="float:left;display:@rubricDisplayStatus">
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
                                                                                     </td>
-                                                                                    <td width="25%"  class="text-center" style="float:left;">
+                                                                                   <td width="25%"  class="text-center" style="float:left;border-right:0px!important">
                                                                                         @Html.CheckBox("SkillCollection[0].isEliminationskill") @*, new { @checked = "checked" }*@
-                                                                                    </td>
-                                                                                    <td class="action text-center">
+                                                                                        </td>
+                                                                                    
+                                                                                    <td class="action text-center"  style="border-left: 1px solid #dee2e65e!important">
                                                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','isEliminationskill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                     </td>
@@ -135,21 +165,42 @@
                                                                                             @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1",@style="font-weight:600" } })
                                                                                         </td>
-                                                                                         <td width="35%" style="float:left;display:@rubricDisplayStatus">
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                                                                         <td class="tooltip-skill" width="35%" style="float:left;display:@rubricDisplayStatus">
+                                                                                           @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50",@style="font-weight:600" } })
+                                                                                        @if (Model.SkillCollection[i].Concepts != null){
+                                                                                                <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
+                                                                                                    <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
+                                                                                                        <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
+                                                                                                            <p style="margin-bottom:7px;">Concepts: @Model.SkillCollection[i].Concepts</p>
+
+                                                                                                        </span>
+                                                                                                    </i>
+                                                                                                </div>
+                                                                                            }
                                                                                         </td>
-                                                                                        <td width="25%" style="float:left;display:@rubricDisplayStatus">
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                                                                        <td class="tooltip-skill" width="25%" style="float:left;display:@rubricDisplayStatus">
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50", @style="font-weight:600" } })
+                                                                                            @if (Model.SkillCollection[i].Natureofquestion != null)
+                                                                                            {
+                                                                                                <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
+                                                                                                    <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
+                                                                                                        <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
+                                                                                                            <p style="margin-bottom:7px;">Expectation: @Model.SkillCollection[i].Natureofquestion</p>
+
+                                                                                                        </span>
+                                                                                                    </i>
+                                                                                                </div>
+                                                                                            }
                                                                                         </td>
                                                                                         <td width ="15%" style="float:left;display:@rubricDisplayStatus">
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1",@style="font-weight:600" } })
                                                                                         </td>
-                                                                                        <td width="25%" class="text-center" style="float:left;">
+                                                                                        <td width="25%" class="text-center" style="float:left;border-right:0px!important">
                                                                                             @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
                                                                                         </td>
-                                                                                        <td class="action text-center">
+                                                                                        <td class="action text-center" style="border-left: 1px solid #dee2e65e!important">
                                                                                             <div>
                                                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'isEliminationskill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -192,10 +243,10 @@
                                                                                             <td>
                                                                                                 <input class="form-control text-box single-line" id="SkillTwoCollection_0__Weightage" name="SkillTwoCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                                             </td>
-                                                                                            <td class="text-center">
+                                                                                            <td class="text-center" style="border-right: 0px!important">
                                                                                                 @Html.CheckBox("SkillTwoCollection[0].isEliminationskill")
                                                                                             </td>
-                                                                                            <td class="action text-center">
+                                                                                            <td class="action text-center" style="border-left: 1px solid #dee2e65e!important">
                                                                                                 <span id="btnPlus" onclick="AddRowSkillTwoCollection()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillTwoCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                             </td>
@@ -218,10 +269,10 @@
                                                                                                     @Html.EditorFor(m => m.SkillTwoCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                                                 </td>
-                                                                                                <td class="text-center">
+                                                                                                <td class="text-center" style="border-right: 0px!important">
                                                                                                     @Html.CheckBoxFor(m => m.SkillTwoCollection[i].isEliminationskill)
                                                                                                 </td>
-                                                                                                <td class="action text-center">
+                                                                                                <td class="action text-center" style="border-left: 1px solid #dee2e65e!important">
                                                                                                     <div>
                                                                                                         <span id="btnPlus" onclick="AddRowSkillTwoCollection()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillTwoCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
