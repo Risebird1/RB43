@@ -52,7 +52,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
-@TechSkillBulkData AS [dbo].[TransTechSkill2_TableType] READONLY,
+@TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV3] READONLY,--TransTechSkill2_TableType
 @InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
