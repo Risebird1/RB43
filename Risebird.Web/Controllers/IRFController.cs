@@ -1032,6 +1032,10 @@ namespace Risebird.Web.Controllers
             var interviewduration = from InterviewDurationEnum s in Enum.GetValues(typeof(InterviewDurationEnum))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
+            if(string.IsNullOrEmpty(model.TechRubricType))
+            {
+                model.TechRubricType = TechRubricTypes.Basic;
+            }
             return;
         }
         //    catch (Exception ex)
@@ -1968,6 +1972,10 @@ namespace Risebird.Web.Controllers
                     ViewBag.clonevalue = clonevalue;
                     model.clonevalue = clonevalue;
                     model.Profile = profileName;
+                    if (string.IsNullOrEmpty(model.TechRubricType))
+                    {
+                        model.TechRubricType = TechRubricTypes.Basic;
+                    }
                     if (profileName == "Client" && templateId != null)
                     {
                         await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailid);
