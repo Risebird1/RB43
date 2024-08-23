@@ -259,7 +259,7 @@ namespace Risebird.Entities.ViewModel
         public string DisCompanyType { get; set; }
         public string DisJobCountry { get; set; }
         public int DisSkillSetsevaluate { get; set; }
-        [DisplayName("Job Title")]
+        [DisplayName("Job Title (Secondary)")]
         public string JDTitleTwo { get; set; }
         [DisplayName("Interviewer Video Required")]
         public bool IsVideoRequired { get; set; }
