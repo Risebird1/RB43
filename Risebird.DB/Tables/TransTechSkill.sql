@@ -1,6 +1,6 @@
 /****** Object:  Table [dbo].[TransTechSkill]    Script Date: 11/15/2021 10:09:49 PM ******/
 IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_NAME = N'TransRecruiter')
+WHERE TABLE_NAME = N'TransTechSkill')
 BEGIN
 
 CREATE TABLE [dbo].[TransTechSkill](
@@ -9,8 +9,8 @@ CREATE TABLE [dbo].[TransTechSkill](
 	[SkillId] [int] NULL,
 	[LevelId] [int] NULL,
 	[Weightage] [int] NULL,
-	[Concepts] [varchar](50) NULL,
-	[Natureofquestion] [varchar](50) NULL,
+	[Concepts] [varchar](200) NULL,
+	[Natureofquestion] [varchar](200) NULL,
 	[Timelimit] [int] NULL,
 	[isEliminationskill] [bit] NULL,
 	[SkillSet] [int] NULL,
@@ -70,4 +70,23 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TransTechSkill
     Add isEliminationskill bit
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Concepts')
+      AND Object_ID = Object_ID(N'TransTechSkill'))
+BEGIN
+    ALTER TABLE TransTechSkill
+    ALTER COLUMN Concepts VARCHAR(200);
+END
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Natureofquestion')
+      AND Object_ID = Object_ID(N'TransTechSkill'))
+BEGIN
+    ALTER TABLE TransTechSkill
+    ALTER COLUMN Natureofquestion VARCHAR(200);
 END
