@@ -884,10 +884,8 @@ namespace Risebird.Web.Controllers
                         irfDetails.EndDate = DateTime.Now.AddMonths(3);
 
                         //Start: Auto Generate Scheduling Link 
-
                         var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
                         irfDetails.CalendlyLink = _schedulinglink;
-
                         //End: Auto Generate Scheduling Link
                         await checkSkillSetandCombine(irfDetails);
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
@@ -1032,7 +1030,7 @@ namespace Risebird.Web.Controllers
             var interviewduration = from InterviewDurationEnum s in Enum.GetValues(typeof(InterviewDurationEnum))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
-            if(string.IsNullOrEmpty(model.TechRubricType))
+            if (string.IsNullOrEmpty(model.TechRubricType))
             {
                 model.TechRubricType = TechRubricTypes.Basic;
             }
@@ -8752,7 +8750,7 @@ namespace Risebird.Web.Controllers
             var model = new TechSkillsCollectionsWrapper();
             model.colectionone = colectionone;
             model.colectiontwo = colectiontwo;
-            if(transTechSkills != null)
+            if (transTechSkills != null)
             {
                 ViewBag.TechRubricType = transTechSkills.FirstOrDefault().TechRubricType;
             }
