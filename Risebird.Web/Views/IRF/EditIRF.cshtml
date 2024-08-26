@@ -538,11 +538,13 @@
                                                         </div>
 
                                                         <div class="form-group mb-0">
-                                                            <div class="mandate">
+                                                           @* <div class="mandate">
                                                                 @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
+                                          
                                                             @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })
+                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })*@
+                                                             @Html.HiddenFor(model => model.PrimarySkillInvite)
 
                                                         </div>
 
