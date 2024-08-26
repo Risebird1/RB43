@@ -691,10 +691,12 @@
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" style="padding:20px;">
+                @if (Model.IsVideoRequired == true)
+                {
                     <div class="col-md-12 pull-left text-center">
                         <h2 class="interviewerAlert" style="margin:0px;padding:3px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
                     </div>
-                
+                }
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
