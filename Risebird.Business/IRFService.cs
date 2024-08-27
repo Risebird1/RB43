@@ -4044,5 +4044,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<ProjectStatsVM>> GetProjectSkillChannelStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetProjectSkillChannelStatsCount(startDate, endDate, profile, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetProjectSkillChannelStatsDetailedView(int projectid, string type, DateTime startDate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetProjectSkillChannelStatsDetailedView(projectid, type, startDate);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
