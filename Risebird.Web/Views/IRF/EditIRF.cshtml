@@ -538,11 +538,13 @@
                                                         </div>
 
                                                         <div class="form-group mb-0">
-                                                            <div class="mandate">
+                                                           @* <div class="mandate">
                                                                 @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
+                                          
                                                             @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })
+                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })*@
+                                                             @Html.HiddenFor(model => model.PrimarySkillInvite)
 
                                                         </div>
 
@@ -727,8 +729,7 @@
                                                                             </td>
                                                                             <td  width="35%" class="tooltip-skill advancedRubricField" style="float:left;display:@rubricDisplayStatus">
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="150" style="font-weight:600">
-                                                                              @* @if (Model.SkillCollection[0].Concepts != null)
-                                                                                {
+                                                                             
                                                                                     <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
                                                                                         <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:13px;color:gray;">
                                                                                             <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
@@ -737,12 +738,11 @@
                                                                                             </span>
                                                                                         </i>
                                                                                     </div>
-                                                                                } *@  
+                                                                                 
                                                                             </td>
                                                                             <td width="25%" class="tooltip-skill advancedRubricField" style="float:left;display:@rubricDisplayStatus">
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="150" style="font-weight:600">
-                                                                              @* @if (Model.SkillCollection[0].Natureofquestion != null)
-                                                                                {
+                                                                              
                                                                                     <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
                                                                                         <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:13px;color:gray;">
                                                                                             <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
@@ -751,7 +751,7 @@
                                                                                             </span>
                                                                                         </i>
                                                                                     </div>
-                                                                                } *@
+                                                                                
                                                                             </td>
                                                                             <td width="15%" class="advancedRubricField" style="float:left;display:@rubricDisplayStatus">
                                                                                 <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1" style="font-weight:600">

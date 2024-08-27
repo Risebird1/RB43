@@ -535,8 +535,8 @@
                                                                     <th>Actual Level</th>
                                                                     <th>Required Weightage</th>
                                                                     <th>Actual Weightage</th>
-                                                                     <th class="table_heading" style="display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
-                                                                      <th class="table_heading" style="display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
+                                                                 @*    <th class="table_heading" style="display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
+                                                                      <th class="table_heading" style="display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>*@
                                                                        <th  class="table_heading" style="display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
                                                                          <th  class="table_heading" style="display:@(rubricDisplayStatus)">Is Elimination Skill</th>
    
@@ -556,18 +556,18 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                <div class="tooltipskill pull-left">
+                                                                                <div class="tooltipskill pull-left" style="width:90%">
                                                                                     <span class="tooltipskilltext">@Model.TechSkillReportCollection[i].SkillName</span>
 
-                                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:270px", @readonly = "readonly" })
+                                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:230px", @readonly = "readonly" })
 
                                                                                 </div>
-                                                                                <div class="techinfocontainer pull-left">
+                                                                                <div class="techinfocontainer pull-left" style="width:10%;    position: relative;top:4px;">
                                                                                     <i class="fa fa-info-circle techinfoicon tooltipquestion">
-                                                                                        <span class="tooltiptext">
-                                                                                            <p style="margin-bottom:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
-                                                                                            <p style="margin-bottom:7px;">Natureofquestion: @Model.TechSkillReportCollection[i].Natureofquestion</p>
-                                                                                            <p style="margin-bottom:7px;">Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
+                                                                                        <span class="tooltiptext" style="top:-57px!important;left:-166px!important;">
+                                                                                            <p style="margin-bottom:5px;margin-top:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+                                                                                            <p style="margin-bottom:5px;">Expectation: @Model.TechSkillReportCollection[i].Natureofquestion</p>
+                                                                                            <p style="margin-bottom:5px;">Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
                                                                                         </span>
                                                                                     </i>
                                                                                 </div>
@@ -583,14 +583,14 @@
                                                                             <td>
                                                                                 @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
                                                                             </td>
-                                                                            <td  style="display:@rubricDisplayStatus">
+                                                                            @*<td  style="display:@rubricDisplayStatus">
                                                                                 <input style="width:350px;font-size:13px;font-weight:500;" class=text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50", readonly = "readonly" >
                                                                             </td>
                                                                             <td  style="display:@rubricDisplayStatus">
-                                                                                <input style="width:350px;font-size:13px;font-weight:500;border: 1.5px #ccc solid !important;width:" class="text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50" ,readonly = "readonly">
-                                                                            </td>
+                                                                                <input style="width:350px;font-size:13px;font-weight:500;border: 1.5px #ccc solid !important;" class="text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50" ,readonly = "readonly">
+                                                                            </td>*@
                                                                             <td  style="display:@rubricDisplayStatus">
-                                                                                <input style="font-size:13px;font-weight:500;height:42px;width:100px" class="text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                                                <input style="font-size:13px;font-weight:500;height:42px;width:100px;border: 1.5px #ccc solid !important;" class="text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
                                                                             </td>
                                                                             <td style="display:@rubricDisplayStatus" class="text-center">
                                                                                 @Html.CheckBox("SkillCollection[0].isEliminationskill"),@*, new { @checked = "checked" }*@
