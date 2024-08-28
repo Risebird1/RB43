@@ -1096,7 +1096,9 @@ namespace Risebird.Repository
                                     MeetingStatusTwo = !string.IsNullOrEmpty(dt.Rows[i]["MeetingStatusTwo"].ToString()) ? Convert.ToInt32(dt.Rows[i]["MeetingStatusTwo"]) : null,
                                     InterviewStatusTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewStatusTwo"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatusTwo"]) : null,
                                     InterviewerCommentTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerCommentTwo"].ToString()) ? dt.Rows[i]["InterviewerCommentTwo"].ToString() : null,
-
+                                    PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
+                                    PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
+                                    PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
                                     CandidateType = CandidateSingleSourceTruthTypes.Completed
                                 });
                             }
@@ -1146,6 +1148,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
                                     interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
@@ -1167,6 +1170,10 @@ namespace Risebird.Repository
                                     VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
                                     CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
+                                    PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
+                                    PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
+
                                     CandidateType = CandidateSingleSourceTruthTypes.Pending
                                 });
                             }
@@ -1186,6 +1193,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
                                     interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
@@ -1208,6 +1216,9 @@ namespace Risebird.Repository
                                     //VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
                                     //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
+                                    PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
+                                    PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
                                     CandidateType = CandidateSingleSourceTruthTypes.FutureScheduled
                                 });
                             }
@@ -1226,6 +1237,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
                                     interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
@@ -1250,6 +1262,9 @@ namespace Risebird.Repository
                                     VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
                                     //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
+                                    PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
+                                    PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
                                     CandidateType = CandidateSingleSourceTruthTypes.Reschedule
                                 });
                             }
@@ -1268,6 +1283,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     //id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
                                     //interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
@@ -1289,6 +1305,9 @@ namespace Risebird.Repository
                                     //VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     //confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
                                     //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
+                                    PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
+                                    PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
                                     CandidateType = (dt.Rows[i]["CandidateLatestStatus"] != null && dt.Rows[i]["CandidateLatestStatus"].ToString() == "NOTSCHEDULED") ? CandidateSingleSourceTruthTypes.NotScheduled : CandidateSingleSourceTruthTypes.Cold
                                 });
                             }

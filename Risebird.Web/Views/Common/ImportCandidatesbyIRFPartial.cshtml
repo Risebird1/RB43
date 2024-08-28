@@ -1,0 +1,149 @@
+﻿
+
+<div id="id_import_myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left" id="id_import_Title"> Import Candidates</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+                </button>
+
+
+                <div class="modal-body">
+                    <div class="form-group text-center">
+                        <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "Candidate")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+
+
+                    </div>
+
+                    @using (Html.BeginForm("ImportQuickCandidates", "Candidate", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="form-group">
+
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;">
+                                <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                    <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile" />
+
+                                </div>
+                            </button>
+
+                        </div>
+                                    
+                        <div class="">
+                            <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import" onclick="ImportQuickCandidates()">
+
+                        </div>
+                        <input type="hidden" id="id_import_IRFId" name="IRFId">
+                        <input type="hidden" id="id_import_IRFName" name="IRFName">
+                        <input type="hidden" id="id_import_IsSendInvite" name="IsSendInvite" value="true">
+
+                    }
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="importResultModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-file-import" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="importResultHeading">Import status</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="importResultPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="importResultTableBody" style=" overflow: auto; height: 300px">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var span = document.getElementById("importPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("id_import_myModal");
+        modal.style.display = "none";
+    }
+    
+    var clientEmailId = '';
+
+    function OpenImportModal(irfId, irfName, emailid) {
+        //document.getElementById("id_import_IsSendInvite").value = value;
+        clientEmailId = emailid;
+        // Get the modal
+        var modal = document.getElementById("id_import_myModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        document.getElementById("id_import_IRFId").value = irfId;
+        document.getElementById("id_import_IRFName").value = irfName;
+        document.getElementById("id_import_Title").innerHTML = '';
+        document.getElementById("id_import_Title").innerHTML = 'Import Candidates for ' + irfName;
+
+    }
+</script>
+<script>
+    var spanImport = document.getElementById("importResultPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanImport.onclick = function () {
+        var modal = document.getElementById("importResultModal");
+        modal.style.display = "none";
+        location.reload();
+    }
+    function ImportQuickCandidates() {
+        document.getElementById("btnImport").disabled = true;
+        var irfExcelId = document.getElementById("id_import_IRFId").value;
+        var irfExcelName = document.getElementById("id_import_IRFName").value;
+        var excel_file = $("#idExcelFile")[0].files[0];
+        var isSendInvite = document.getElementById("id_import_IsSendInvite").value;
+
+
+        var formdata = new FormData();
+        formdata.append('IRFId', irfExcelId);
+        formdata.append('IsSendInvite', isSendInvite);
+        formdata.append('excel_file', excel_file);
+        formdata.append('IRFName', irfExcelName);
+        formdata.append('clientEmailId', clientEmailId);
+
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/ImportQuickCandidatesPublic",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                debugger;
+                document.getElementById('myModal').style.display = "none";
+                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                document.getElementById('importResultModal').style.display = "block";
+                $('#importResultTableBody').html('');
+                $('#importResultTableBody').html(importMsg);
+            }
+        });
+    }
+</script>
