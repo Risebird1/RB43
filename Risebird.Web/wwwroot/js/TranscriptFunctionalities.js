@@ -16,23 +16,32 @@ function GetMeetingAudioText(imid, transcriptUrl = null) {
                 }
                 else {
                     if (data.keywordsFound != null && data.keywordsFound != '') {
-                       
+                       var innerText = '<div class="clearfix"><label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;float:left">Suspicious Keywords Match Found:</label><span id="key" class="matcnum" style="float:left"><h1  style="color:red;display:none;">' + data.keywordsFound + '</h1><div id="keycontainer"></div></span></div><div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+
                     }
-                    var innerText = '<div class="clearfix"><label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;float:left">Suspicious Keywords Match Found:</label><span id="key" class="matcnum" style="float:left"><h1  style="color:red;display:none;">' + data.keywordsFound + '</h1><div id=keycontainer></div></span></div><div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+                    else
+                    {
+                         var innerText = '<div class="clearfix"><label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;float:left">Suspicious Keywords Match Found:</label><span id="key" class="matcnum" style="float:left"><h1  style="display:none;">' + ' None ' + '</h1><div id="keycontainer"></div></span></div><div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+
+                    }
                     totalHighlightedWords = data.total;
                     transcriptElement.innerHTML = innerText;
                     const h1 = document.querySelector('h1');
-                        output = document.getElementById('keycontainer'),
+                    output = document.getElementById('keycontainer');
+                    if(output != null)
+                    {
                         update = function () {
-                            var words = h1.textContent.trim().split(/,\s*/);
-                            while (output.firstChild) output.removeChild(output.firstChild);
+                        var words = h1.textContent.trim().split(/,\s*/);
+                        while (output.firstChild) output.removeChild(output.firstChild);
                             for (var i = 0; i < words.length; i++) {
                                 var div = document.createElement('div');
                                 div.textContent = words[i];
                                 output.appendChild(div);
                             }
                         };
-                    update();
+                        update();
+                    }
+                    
                 }
 
             }

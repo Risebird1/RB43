@@ -2953,6 +2953,144 @@ namespace Risebird.Web.Controllers
             }
             return null;
         }
+        [HttpPost]
+        public string ImportQuickCandidatesPublic(IFormCollection formCollection)
+        {
+            var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
+            var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
+            var IRFName = formCollection["IRFName"].ToString();
+            var emailid = formCollection["clientEmailId"].ToString();
+            try
+            {
+                //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                //profileName = profileName.Replace("\"", "");
+                //var emailid = HttpContext.Session.GetString("email")?.Trim();
+                //emailid = emailid.Replace("\"", "");
+                var linkurl = "https://" + Request.Host.ToString();
+                StringBuilder result = new StringBuilder();
+
+                if (Request != null && formCollection.Files.Count > 0)
+                {
+                    var file = formCollection.Files[0];
+
+                    if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+                    {
+                        FileInfo fi = new FileInfo(file.FileName);
+                        if (fi.Extension == ".xls" || fi.Extension == ".xlsx")
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                            if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                || fileMimeType == "application/vnd.ms-excel")
+                            {
+                                _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                string fileName = file.FileName;
+                                string fileContentType = file.ContentType;
+                                byte[] fileBytes = new byte[file.Length];
+                                var data = file.OpenReadStream();
+                                var candidateList = new List<CandidateQuickAddModel>();
+                                using (var package = new ExcelPackage(file.OpenReadStream()))
+                                {
+                                    var currentSheet = package.Workbook.Worksheets;
+                                    var workSheet = currentSheet.First();
+                                    var noOfCol = workSheet.Dimension.End.Column;
+                                    var noOfRow = workSheet.Dimension.End.Row;
+                                    var ClientEmailid = _candidateService.FetchBillingownerById(IRFId).Result;
+                                    var ClientDomain = string.Empty;
+                                    if (string.IsNullOrWhiteSpace(ClientEmailid))
+                                    {
+                                        ClientDomain = "risebird.io";
+                                    }
+                                    else
+                                    {
+                                        ClientDomain = ClientEmailid.Split("@")[1];
+                                    }
+                                    for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                                    {
+                                        if (workSheet.Cells[rowIterator, 2].Value != null)
+                                        {
+                                            try
+                                            {
+                                                string str = (workSheet.Cells[rowIterator, 4] != null && workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString() : string.Empty;
+                                                int numberOfLetters = !string.IsNullOrEmpty(str) ? str.ToCharArray().Length : 0;
+                                                var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
+                                                var candidate = new CandidateQuickAddModel
+                                                {
+                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
+                                                    ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
+                                          ? workSheet.Cells[rowIterator, 3].Value.ToString()
+                                          : string.Empty,
+                                                    Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
+                                          ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString())
+                                          : string.Empty,
+                                                    //          WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                    //? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                    //: string.Empty,
+                                                    WhatsappNumber = string.Empty,
+                                                    //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                                    //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
+                                                    //    : string.Empty,
+                                                    ClientHREmail = workSheet.Cells[rowIterator, 5].Value.ToString().ToLower(),
+
+                                                    ProfileSource = workSheet.Cells[rowIterator, 6].Value != null ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                                    IRFId = IRFId
+
+                                                };
+                                                if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
+                                                {
+                                                    candidateList.Add(candidate);
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                if (workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null
+                                                    || workSheet.Cells[rowIterator, 5] == null || workSheet.Cells[rowIterator, 5].Value == null)
+                                                {
+                                                    result.Append("Failed! Candidate EmailId and Client HR EmailId are mandatory. Please check for the missing entries.");
+                                                }
+
+                                                result.Append("Failed!");
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                                                return result.ToString();
+                                            }
+                                        }
+                                    }
+                                }
+                                if (candidateList != null && candidateList.Any())
+                                {
+                                    result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, ProfileNames.Client, IRFId, isSendInvite, linkurl).Result;
+                                }
+                                else
+                                {
+                                    result.Append("No candidates to add!");
+                                }
+                                return result.ToString();
+                            }
+                            else
+                            {
+                                return "Please select valid file for import(.xls, .xslx)!";
+                            }
+                        }
+                        else
+                        {
+                            return "Please select valid file for import(.xls, .xslx)!";
+                        }
+                    }
+                    else
+                    {
+                        return "Failed to import candidates!";
+                    }
+                }
+                return "Please select valid file for import!";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to import candidates!"; ;
+            }
+            return null;
+        }
 
         [Authorize]
         [HttpGet]
@@ -5717,6 +5855,7 @@ namespace Risebird.Web.Controllers
 
                 string jdtitleTwo = string.Empty;
                 jdtitleTwo = skillsTwolist.FirstOrDefault();
+                int? clientId = model?.FirstOrDefault()?.ClientId;
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
@@ -5747,6 +5886,13 @@ namespace Risebird.Web.Controllers
 
                 Sheet.Cells[1, 15].Value = "Client Hr";
                 Sheet.Cells[1, 16].Value = "Interviewer(Encoded)";
+                int colNumber = 16;
+                if (clientId.HasValue && clientId.Value == 177)
+                {
+                    Sheet.Cells[1, ++colNumber].Value = $"Pre-Report Url";
+                    Sheet.Cells[1, ++colNumber].Value = $"Pre-Report Username";
+                    Sheet.Cells[1, ++colNumber].Value = $"Pre-Report Password";
+                }
                 //Sheet.Cells[1, 13].Value = "Staffing Agency";
 
                 //Sheet.Cells[1, 14].Value = "Confirmation Status";
@@ -5756,13 +5902,13 @@ namespace Risebird.Web.Controllers
 
                 //Sheet.Cells[1, 17].Value = "Interviewer Comment";
                 //Sheet.Cells[1, 16].Value = "Video Link";
-                Sheet.Cells[1, 17].Value = "Report Link";
+                Sheet.Cells[1, ++colNumber].Value = "Report Link";
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
-                Sheet.Cells[1, 18].Value = "Communication Score";
+                Sheet.Cells[1, ++colNumber].Value = "Communication Score";
 
                 bool? isDrive = model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Completed)?.FirstOrDefault()?.IsDrive;
-                int j = 18;
+                int j = colNumber;
                 if (isDrive.HasValue && isDrive.Value)
                 {
 
@@ -5803,6 +5949,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
 
                 }
+                
 
 
 
@@ -5848,6 +5995,23 @@ namespace Risebird.Web.Controllers
 
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        int colDataNumber = 16;
+                        if (clientId.HasValue && clientId.Value == 177)
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, ++colDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, ++colDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, ++colDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, ++colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, ++colDataNumber].Value = string.Empty;
+                            }
+                            Sheet.Cells[i, ++colDataNumber].Value = item.PreReportUsername;
+                            Sheet.Cells[i, ++colDataNumber].Value = item.PreReportPassword;
+                        }
                         //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
@@ -5877,14 +6041,14 @@ namespace Risebird.Web.Controllers
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 17].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 17].Value = "Executive Report";
-                            Sheet.Cells[i, 17].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, ++colDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, ++colDataNumber].Value = "Executive Report";
+                            Sheet.Cells[i, ++colDataNumber].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, ++colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 17].Value = "No Report";
+                            Sheet.Cells[i, ++colDataNumber].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -5899,10 +6063,10 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 17].Value = "No Report";
                         //}
-                        Sheet.Cells[i, 18].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
+                        Sheet.Cells[i, ++colDataNumber].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
-                        int jV = 18;
+                        int jV = colDataNumber;
                         if (isDrive.HasValue && isDrive.Value)
                         {
 
@@ -6022,7 +6186,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-
+                        
                         i++;
                     }
 
@@ -6048,6 +6212,23 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        int colFutDataNumber = 16;
+                        if (clientId.HasValue && clientId.Value == 177)
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, ++colFutDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, ++colFutDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, ++colFutDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, ++colFutDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, ++colFutDataNumber].Value = string.Empty;
+                            }
+                            Sheet.Cells[i, ++colFutDataNumber].Value = item.PreReportUsername;
+                            Sheet.Cells[i, ++colFutDataNumber].Value = item.PreReportPassword;
+                        }
                         //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
@@ -6084,6 +6265,23 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        int colPendDataNumber = 16;
+                        if (clientId.HasValue && clientId.Value == 177)
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, ++colPendDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, ++colPendDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, ++colPendDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, ++colPendDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, ++colPendDataNumber].Value = string.Empty;
+                            }
+                            Sheet.Cells[i, ++colPendDataNumber].Value = item.PreReportUsername;
+                            Sheet.Cells[i, ++colPendDataNumber].Value = item.PreReportPassword;
+                        }
                         //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
@@ -6096,7 +6294,7 @@ namespace Risebird.Web.Controllers
 
                             var document = new HTMLDocument(interviewerComent, "");
                             var intComment = GetContent(document);
-                            Sheet.Cells[i, 17].Value = intComment;
+                            Sheet.Cells[i, ++colPendDataNumber].Value = intComment;
                         }
 
                         //  Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
@@ -6121,14 +6319,14 @@ namespace Risebird.Web.Controllers
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 18].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 18].Value = "Executive Report";
-                            Sheet.Cells[i, 18].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 18].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, ++colPendDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, ++colPendDataNumber].Value = "Executive Report";
+                            Sheet.Cells[i, ++colPendDataNumber].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, ++colPendDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 18].Value = "No Report";
+                            Sheet.Cells[i, ++colPendDataNumber].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -6171,6 +6369,23 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        int colReschDataNumber = 16;
+                        if (clientId.HasValue && clientId.Value == 177)
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, ++colReschDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, ++colReschDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, ++colReschDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, ++colReschDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, ++colReschDataNumber].Value = string.Empty;
+                            }
+                            Sheet.Cells[i, ++colReschDataNumber].Value = item.PreReportUsername;
+                            Sheet.Cells[i, ++colReschDataNumber].Value = item.PreReportPassword;
+                        }
                         //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
@@ -6183,7 +6398,7 @@ namespace Risebird.Web.Controllers
 
                             var document = new HTMLDocument(interviewerComent, "");
                             var intComment = GetContent(document);
-                            Sheet.Cells[i, 17].Value = intComment;
+                            Sheet.Cells[i, ++colReschDataNumber].Value = intComment;
                         }
 
                         // Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
@@ -6255,6 +6470,27 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
+                        int colNoSchDataNumber = 12;
+                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                        if (clientId.HasValue && clientId.Value == 177)
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, ++colNoSchDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, ++colNoSchDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, ++colNoSchDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, ++colNoSchDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                            }
+                            Sheet.Cells[i, ++colNoSchDataNumber].Value = item.PreReportUsername;
+                            Sheet.Cells[i, ++colNoSchDataNumber].Value = item.PreReportPassword;
+                        }
 
                         i++;
                     }
@@ -6278,7 +6514,27 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
-
+                        int colDataNumberCold = 12;
+                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                        if (clientId.HasValue && clientId.Value == 177)
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, ++colDataNumberCold].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, ++colDataNumberCold].Value = "Pre-Report URL";
+                                Sheet.Cells[i, ++colDataNumberCold].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, ++colDataNumberCold].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                            }
+                            Sheet.Cells[i, ++colDataNumberCold].Value = item.PreReportUsername;
+                            Sheet.Cells[i, ++colDataNumberCold].Value = item.PreReportPassword;
+                        }
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
