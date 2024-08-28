@@ -322,7 +322,6 @@ function calcMonthCalendar() {
 // print each cell its day number and color
 function printMonthCalendarInDOM() {
     const monthArr = calcMonthCalendar();
-
     let currentMonthStarted = false;
     let currentMonthEnd = true;
     for (let i = 0; i < 6; i++) {
@@ -372,12 +371,13 @@ function printMonthCalendarInDOM() {
                 // week.children[j].innerHTML = currentWeek[j].day;
                 week.children[j].id = "current-day";
                 week.children[j].classList.add("currMonth");
+                week.children[j].classList.remove("otherMonth");
                 week.children[j].style.backgroundColor = "#e1e1e1";
                 currentMonthStarted = false;
                 currentMonthEnd = false;
             } else {
                 week.children[j].style.cursor = "";
-                week.children[j].style.backgroundColor = "white"; //.style.backgroundColor = "white";
+                week.children[j].style.backgroundColor = "white"; 
                 week.children[j].style.color = "black";
                 week.children[j].innerHTML = currentWeek[j].day;
                 week.children[j].removeAttribute("id");
@@ -387,11 +387,13 @@ function printMonthCalendarInDOM() {
                     week.children[j].style.color = "rgba(255, 255, 255,0.4)";
                     week.children[j].style.cursor = "default";
                     week.children[j].classList.remove("currMonth");
+                    week.children[j].classList.add("otherMonth");
                     week.children[j].classList.remove("tooltip-container");
                 }
                 if (currentWeek[j].state == "currMonth") {
                     //exp 2019 10 24
                     week.children[j].classList.add("currMonth");
+                    week.children[j].classList.remove("otherMonth");
                     let currentFullDate =
                         currentFullMonth.year +
                         " " +

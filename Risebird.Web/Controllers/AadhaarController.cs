@@ -839,6 +839,7 @@ namespace Risebird.Web.Controllers
             {
                 employementdetails.message = "Fail to verify,please check the details and try again.";
             }
+            employementdetails.CandidateEmail = employementdetails.CandidateEmail?.Trim();
             return Json(employementdetails);
         }
 
