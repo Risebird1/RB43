@@ -10758,6 +10758,9 @@ font-family: 'Font Awesome 5 Free';
         cursor: pointer;
         width: 100%;
     }
+.cadEmail [data-tooltip]:hover:before{
+    left:85px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
