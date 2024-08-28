@@ -492,13 +492,15 @@
                 var comparemonth = monthsStr[new Date().getMonth()];
                 var compareyear = new Date().getFullYear();
                 if (relativemonth == comparemonth && relativeyear == compareyear)
-                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: bold;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
+                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: normal;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
                 //document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
-                if ($('#calender td').attr('style') == 'background-color: rgb(27, 25, 205); opacity: 0.6; color: rgba(255, 255, 255, 0.4); cursor: default;'){
-                   $('#calender td').removeAttr('style')
-                    $('#calender td').addClass('hid-prevmonth');
-                    $('.currMonth').removeClass('hid-prevmonth');
-                }
+                //if ($('#calender td').attr('style') == 'background-color: rgb(27, 25, 205); opacity: 0.6; color: rgba(255, 255, 255, 0.4); cursor: default;'){
+                //   $('#calender td').removeAttr('style')
+                //    $('#calender td').addClass('hid-prevmonth');
+                //    $('.currMonth').removeClass('hid-prevmonth');
+                //}
+                 $('.currMonth').removeClass('hid-prevmonth');
+                $('.otherMonth').addClass('hid-prevmonth');
             }
         }
     }
