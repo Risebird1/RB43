@@ -120,7 +120,7 @@ irfId,LogoLink, candidateUniqueId, JDLink) as (
 Select distinct im.id, t1.Meetingid,im.candidateEmail,im.interviewer,ulr.EmailId as risebirdHR,'' as emergencyinterviewer,                             
 (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END) as isInterviewerWaiting, 'reaminder' as EmailType,im.zoomLink,      
 IRF.CalendlyLink,im.HRCoordinatorEmailId,im.candidateName,im.interviewDate,im.ClientHrContact,            
-Cl.Name as ClientName,IRF.JDTiltle as PrimarySkill,        
+Cl.Name as ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,        
 IRF.id as irfId,cl.LogoLink, ulc.uniqueid, irf.JDLink from          
 (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where                          
 Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1                                    
