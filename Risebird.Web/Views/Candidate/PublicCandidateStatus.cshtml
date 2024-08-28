@@ -694,8 +694,8 @@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
-                                                            @* <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
-                                                        <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>*@
+                                                            @* <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
+                                                        <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
 
                                                         }
 
@@ -959,10 +959,11 @@
 
                                                                                     }
                                                                                     @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
-                                                                                    {
+                                                                                    {  
+                                                                                    // var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus.ToString()) ? Convert.ToInt32(item.MeetingStatus) : 0;    
 
-                                                                                        @if (item.zoomLink != null && item.zoomLink != "")
-                                                                                        {
+                                                                                        @if (item.zoomLink != null && item.zoomLink != "" @*&&  (meetingstatus != 4 || meetingstatus != 6 || meetingstatus != 7 || meetingstatus != 8)*@){
+                       
                                                                                             <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a> </td>
                                                                                         }
                                                                                         else
@@ -2488,6 +2489,21 @@
             url: '/Candidate/ReScheduleMeetingsByClient',
             type: 'GET',
             data: { 'emailid': emailid },
+            success: function (data) {
+                $(".loader").hide();
+                $('#tab6').html('');
+                $('#tab6').html(data);
+            }
+        });
+    }
+
+
+       function RescheduleMeeting(emailid) {
+        $(".loader").show();
+        $.ajax({
+            url: '/Client/ReScheduleMeetings',
+            type: 'GET',
+            data: { 'Emailid': emailid },
             success: function (data) {
                 $(".loader").hide();
                 $('#tab6').html('');
