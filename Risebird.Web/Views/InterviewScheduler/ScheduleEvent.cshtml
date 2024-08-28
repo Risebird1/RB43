@@ -206,7 +206,7 @@
                                     <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#9b9797"><path d="M86,6.88c-43.62608,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49392,79.12 79.12,79.12c43.62608,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49392,-79.12 -79.12,-79.12zM129.8084,43.61576l-34.71304,37.60264c0.7568,1.43448 1.22464,3.04784 1.22464,4.7816c0,2.6144 -1.00448,4.97768 -2.60752,6.79744l12.49408,22.49416c0.92536,1.65808 0.32336,3.75304 -1.33472,4.67496c-0.52976,0.29584 -1.10424,0.43344 -1.6684,0.43344c-1.21088,0 -2.38048,-0.63984 -3.01,-1.7716l-12.49064,-22.4804c-0.55728,0.09288 -1.118,0.172 -1.7028,0.172c-5.70008,0 -10.32,-4.61992 -10.32,-10.32c0,-5.70008 4.61992,-10.32 10.32,-10.32c1.4448,0 2.8208,0.30272 4.06952,0.83936l34.68208,-37.57512c1.29,-1.38976 3.46408,-1.48264 4.86072,-0.19264c1.39664,1.29 1.48264,3.46408 0.19608,4.86416z"></path></g></g>
                                 </svg>
                             </span>
-                                <span class="pull-left time-txt">@Model.Interviewduration &nbsp;Min</span>
+                            <span class="pull-left time-txt">@Model.Interviewduration &nbsp;Min</span>
                         </div>
                     </div>
 
@@ -220,10 +220,10 @@
                                     <th colspan="7" class="border-color" style="background:#fff!important;">
                                         <h4>Select a Date & Time</h4>
                                         <h2 id="cal-month" class="cal-myr pull-left">july</h2>    <h2 id="cal-year" class="cal-myr pull-left">2018</h2>
-                                       <div class="icon-div">
+                                        <div class="icon-div">
                                             <div style="width:25px;height:25px;margin:0px 5px;border-radius: 100%;background: #eee;"><i style="font-size:1.5rem;position:relative;left:4px;top:1px;" class="fas fa-chevron-left icon">&nbsp; </i></div>
 
-                                           <div style="width:25px;height:25px;margin:0px 5px;border-radius: 100%;background: #eee;"><i style="font-size:1.5rem;position:relative;left:4px;top:1px;" class="fas fa-chevron-right icon">&nbsp;</i></div>
+                                            <div style="width:25px;height:25px;margin:0px 5px;border-radius: 100%;background: #eee;"><i style="font-size:1.5rem;position:relative;left:4px;top:1px;" class="fas fa-chevron-right icon">&nbsp;</i></div>
                                         </div>
                                     </th>
                                 </tr>
@@ -557,14 +557,14 @@
                 var comparemonth = monthsStr[new Date().getMonth()];
                 var compareyear = new Date().getFullYear();
                 if (relativemonth == comparemonth && relativeyear == compareyear)
-                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: bold;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
+                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
                 //document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
-                if ($('#calender td').attr('style') == 'background-color: rgb(27, 25, 205); opacity: 0.6; color: rgba(255, 255, 255, 0.4); cursor: default;'){
-                   $('#calender td').removeAttr('style')
-                    $('#calender td').addClass('hid-prevmonth');
-                    $('.currMonth').removeClass('hid-prevmonth');
-                }
-
+                // if ($('#calender td').attr('style') == 'background-color: rgb(27, 25, 205); opacity: 0.6; color: rgba(255, 255, 255, 0.4); cursor: default;'){
+                //    $('#calender td').removeAttr('style');
+                //     $('#calender td').addClass('hid-prevmonth');
+                // }
+                $('.currMonth').removeClass('hid-prevmonth');
+                $('.otherMonth').addClass('hid-prevmonth');
 
             }
         }

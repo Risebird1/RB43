@@ -1,0 +1,595 @@
+﻿@model IEnumerable<Risebird.Entities.Data.CandidateExcelData>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Interview Channel Stats Details";
+    ViewBag.PageHeader = "Interview Channel Stats Details";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+}
+
+<style>
+    .DetailLink td {
+        color: darkblue;
+    }
+
+    .DetailLink:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+<style>
+    .modal-dialog {
+        height: 900px !important;
+    }
+
+    .modal-content {
+        /* 80% of window height */
+        height: 60%;
+    }
+
+</style>
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123941/stacktable.js"></script>
+<script>
+    $('table').stacktable();
+</script>
+<div id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Skill Channel Stats</h4></div>
+                </div>
+                <input type="hidden" value="@ViewBag.Type" id="hidtype" />
+                <div class="pull-left">
+                </div>
+                <div class="pull-right">
+                    <p class="skill-details-header">Project: @ViewBag.projectname <span style="color: darkcyan;">(@ViewBag.type)</span></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div class="scrollbar int-table">
+                                    <div id="tableID" class="second style-2" style="overflow-x:scroll">
+                                        <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
+                                                    {
+                                                        <th>Interview Date</th>
+                                                    }
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Emailid</th>
+                                                    <th>POC</th>
+                                                    @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
+                                                    {
+                                                        <th>Interviewer</th>
+                                                        <th>Report</th>
+                                                        <th>Tech Score(Primary)</th>
+                                                        <th>Interview Status(Primary)</th>
+                                                        <th>Tech Score(Secondary)</th>
+                                                        <th>Interview Status(Secondary)</th>
+                                                        <th>Candidate Solution(Primary)</th>
+                                                        <th>Candidate Solution(Secondary)</th>
+                                                        <th>Combined Status</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Mobile Number</th>
+                                                        <th>Current Status</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
+                                                    {
+                                                        <th>Interview Date</th>
+                                                    }
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Emailid</th>
+                                                    <th>POC</th>
+                                                    @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
+                                                    {
+                                                        <th>Interviewer</th>
+                                                        <th>Report</th>
+                                                        <th>Tech Score(Primary)</th>
+                                                        <th>Interview Status(Primary)</th>
+                                                        <th>Tech Score(Secondary)</th>
+                                                        <th>Interview Status(Secondary)</th>
+                                                        <th>Candidate Solution(Primary)</th>
+                                                        <th>Candidate Solution(Secondary)</th>
+                                                        <th>Combined Status</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Mobile Number</th>
+                                                        <th>Current Status</th>
+                                                    }
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @if (Model != null && Model.Count() > 0)
+                                                {
+                                                    foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.IRFId</td>
+                                                            @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
+                                                            {
+                                                                <td>@item.interviewDate</td>
+                                                            }
+                                                            <td>@item.candidateName</td>
+                                                            <td>@item.candidateEmail</td>
+                                                            <td>@item.ClientHrContact</td>
+                                                            @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
+                                                            {
+                                                                <td>@item.InterviewerCodedName</td>
+                                                                <td><a target="_blank" href="@item.ReportLink">Report</a></td>
+                                                                <td><span class="count">@item.TechScoreone</span></td>
+                                                                <td>
+                                                                    @if (item.InterviewStatus == "Marginally Selected")
+                                                                    {
+                                                                        <span style="color:green"> @item.InterviewStatus</span>
+                                                                    }
+                                                                    else if (item.InterviewStatus == "Strongly Selected")
+                                                                    {
+                                                                        <span style="color:green"> @item.InterviewStatus</span>
+                                                                    }
+                                                                    else if (item.InterviewStatus == "Marginally Rejected")
+                                                                    {
+                                                                        <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                                                    }
+                                                                    else if (item.InterviewStatus == "Proxy")
+                                                                    {
+                                                                        <span style="color:#deb61b"> @item.InterviewStatus</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                                                    }
+
+                                                                </td>
+                                                                <td><span class="count">@item.TechScoretwo</span></td>
+                                                                @if (item.InterviewStatusTwoDesc == "0")
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>
+
+                                                                        @if (item.InterviewStatusTwoDesc == "Marginally Selected")
+                                                                        {
+                                                                            <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                                                        }
+                                                                        else if (item.InterviewStatus == "Strongly Selected")
+                                                                        {
+                                                                            <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                                                        }
+                                                                        else if (item.InterviewStatus == "Marginally Rejected")
+                                                                        {
+                                                                            <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
+                                                                        }
+                                                                        else if (item.InterviewStatus == "Proxy")
+                                                                        {
+                                                                            <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
+                                                                        }
+
+                                                                    </td>
+                                                                }
+                                                                <td>
+                                                                    @if (!string.IsNullOrWhiteSpace(item.CodeSnippet))
+                                                                    {
+                                                                        <a target="_blank" href="@item.CodeSnippet">Solution</a>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @if (!string.IsNullOrWhiteSpace(item.CodeSnippetTwo))
+                                                                    {
+                                                                        <a target="_blank" href="@item.CodeSnippetTwo">Solution</a>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <p>
+                                                                        @item.JDTiltle :
+                                                                        @if (item.InterviewStatus == "Marginally Selected")
+                                                                        {
+                                                                            <span style="color:green"> @item.InterviewStatus</span>
+                                                                        }
+                                                                        else if (item.InterviewStatus == "Strongly Selected")
+                                                                        {
+                                                                            <span style="color:green"> @item.InterviewStatus</span>
+                                                                        }
+                                                                        else if (item.InterviewStatus == "Marginally Rejected")
+                                                                        {
+                                                                            <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                                                        }
+                                                                        else if (item.InterviewStatus == "Proxy")
+                                                                        {
+                                                                            <span style="color:#deb61b"> @item.InterviewStatus</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                                                        }
+                                                                    </p>
+                                                                    <p>
+                                                                        @item.JDTitleTwo:
+                                                                        @if (item.InterviewStatusTwoDesc != "0")
+                                                                        {
+                                                                            @if (item.InterviewStatusTwoDesc == "Marginally Selected")
+                                                                            {
+                                                                                <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                                                            }
+                                                                            else if (item.InterviewStatus == "Strongly Selected")
+                                                                            {
+                                                                                <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                                                            }
+                                                                            else if (item.InterviewStatus == "Marginally Rejected")
+                                                                            {
+                                                                                <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
+                                                                            }
+                                                                            else if (item.InterviewStatus == "Proxy")
+                                                                            {
+                                                                                <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
+                                                                            }
+                                                                        }
+                                                                    </p>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <td>
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span style=" cursor:pointer; " title="Click here to call the candidate."><img src="/img/calling.png" width="17">@item.MobileNumber</span>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td class="text-center">
+                                                                    @if (item.StatusValue == "In Progress")
+                                                                    {
+                                                                        <span class="current progress" style="font-size:12px; height:19px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "New")
+                                                                    {
+                                                                        <span class="current new" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Added")
+                                                                    {
+                                                                        <span class="current added" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+
+                                                                    else if (item.StatusValue == "Waiting For Response")
+                                                                    {
+                                                                        <span class="current waiting" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Scheduled")
+                                                                    {
+                                                                        <span class="current scheduled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Cancelled")
+                                                                    {
+                                                                        <span class="current cancelled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "No Show(Candidate)")
+                                                                    {
+                                                                        <span class="current noshowcandidate" style="font-size:12px;font-weight: 500;">@item.StatusValue</span>
+                                                                    }
+
+                                                                    else if (item.StatusValue == "Irrelevant")
+                                                                    {
+                                                                        <span class="current irrelevant" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Duplicate")
+                                                                    {
+                                                                        <span style=" color: hotpink;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Not Interested")
+                                                                    {
+                                                                        <span style=" color: purple;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Got Another Offer")
+                                                                    {
+                                                                        <span style=" color: darkgreen;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Hold")
+                                                                    {
+                                                                        <span style="color: orangered;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Meeting Status")
+                                                                    {
+                                                                        <span style="color: #c572ac;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Invitation Sent")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Interview Status")
+                                                                    {
+                                                                        <span style="color: #4832d4ab;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Reminder Call")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Called Candidate")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Not Responding")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Not Reachable")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Wrong Number/Out of service")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Will schedule by themselves")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div>@item.StatusValue</div>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                        <!-- end col-md-12 -->
+                    </div>
+                    <!-- end row -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal modal-bg" style="z-index:100">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Call Candidate!</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div>
+                    <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                </div>
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
+<script>
+    function searchResult() {
+        $('#irfTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#irfTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        var table = $('#irfTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+    };
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#irfTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#irfTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#irfTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+    function Startloader() {
+        $(".loader").show();
+        $(".dataloading").hide();
+    }
+    function Stoploader() {
+        $(".loader").hide();
+        $(".dataloading").show();
+    }
+</script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+
+        if (phoneNumber != null && phoneNumber.length >= 9) {
+            Twilio.Device.connect(params);
+        }
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function ModalButtonClick(candidateName, mobileNumber) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+</script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>

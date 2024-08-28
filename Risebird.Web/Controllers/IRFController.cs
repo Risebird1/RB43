@@ -9856,6 +9856,98 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ProjectSkillChannelStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            if (!isClientLogin)
+            {
+                ViewBag.PageStatus = "Public";
+            }
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
+            if (Emailid != emailid)
+            {
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            var irfList = new List<ProjectStatsVM>();
+            if (HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters") == null)
+            {
+                irfList = (await _irfService.GetProjectSkillChannelStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetProjectSkillChannelStatsCount(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetProjectSkillChannelStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                }
+            }
+            return View(irfList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ProjectSkillChannelStats(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("ProjectSkillChannelStatsFilters", JsonConvert.SerializeObject(filter));
+            }
+            return RedirectToAction("ProjectSkillChannelStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetProjectSkillChannelStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            try
+            {
+                HttpContext.Session.Remove("ProjectSkillChannelStatsFilters");
+                return RedirectToAction("ProjectSkillChannelStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ProjectSkillChannelStatsDetailedView(int projectid, string projectname, string type,string uniqueid)
+        {
+            try
+            {
+                DateTime startDate = DateTime.Now.AddDays(-30);
+                if (HttpContext.Session.GetString("ProjectSkillChannelStatsFilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("ProjectSkillChannelStatsFilters"));
+                    startDate = filter.StartDate.Value;
+                }
+                var irfList = (await _irfService.GetProjectSkillChannelStatsDetailedView(projectid, type, startDate))?.ToList();
+                irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                foreach (var item in irfList)
+                {
+                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                }
+                ViewBag.projectname = projectname;
+                ViewBag.type = type;
+                return View(irfList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+        }
         #endregion
     }
 }
