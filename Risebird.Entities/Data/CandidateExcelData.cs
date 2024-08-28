@@ -62,5 +62,8 @@ namespace Risebird.Entities.Data
         public string CodeSnippet { get; set; }
         public string CodeSnippetTwo { get; set; }
         public string StatusValue { get; set; }
+        public string PreReportLink { get; set; }
+        public string PreReportUsername { get; set; }
+        public string PreReportPassword { get; set; }
     }
 }
