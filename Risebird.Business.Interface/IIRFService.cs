@@ -178,5 +178,7 @@ namespace Risebird.Business.Interface
         Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId);
         Task<IEnumerable<IRF>> GetAllIRFMultiStackDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type, DateTime startDate);
+        Task<IEnumerable<ProjectStatsVM>> GetProjectSkillChannelStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
+        Task<IEnumerable<CandidateExcelData>> GetProjectSkillChannelStatsDetailedView(int projectid, string type, DateTime startDate);
     }
 }

@@ -17,4 +17,25 @@ namespace Risebird.Entities.ViewModel
         public int? interviewId { get; set; }
         public bool isTechQC { get; set; }
     }
+    public class ProjectStatsVM
+    {
+        public int id { get; set; }
+        public string ClientName { get; set; }
+        public string ProjectUniqueid { get; set; }
+        public string ProjectName { get; set; }
+        public int ClientId { get; set; }
+        public string ClientCompName { get; set; }
+        public int SelectedMeetings { get; set; }
+        public int CandidateCount { get; set; }
+        public int CompletedInterviews { get; set; }
+        public int RejectedMeetings { get; set; }
+        public int NotScheduledCount { get; set; }
+        public int ReScheduledCount { get; set; }
+        public int FutureScheduledMeetings { get; set; }
+        public int ColdCandidateCount { get; set; }
+        public int SelectedRejectMeetings { get; set; }
+        public int RejectSelectedMeetings { get; set; }
+        public int SkillSetsevaluate { get; set; }
+        public int PendingCount { get; set; }
+    }
 }
