@@ -1336,7 +1336,7 @@
 
 <script src="~/js/transcriptfunctionalities.js?v=2024"></script>
 
-@if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+@if (Model.IsTranscript  && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))//&& ViewBag.profile == "Client"
 {
     <script>
 
