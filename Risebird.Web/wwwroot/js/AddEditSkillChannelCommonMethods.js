@@ -50,7 +50,7 @@ function AddRow() {
 
 }
 
-function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
+function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven,tdEight) {
 
     if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -107,6 +107,11 @@ function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour,
                     var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
                     elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
                     elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+                }
+                if (tdEight != null && tdEight != '') {
+                    var elem8 = document.getElementById(collectionName + "_" + i + "__" + tdEight);
+                    elem8.id = collectionName + "_" + (i - 1) + "__" + tdEight;
+                    elem8.name = collectionName + "[" + (i - 1) + "]." + tdEight;
                 }
 
             }
