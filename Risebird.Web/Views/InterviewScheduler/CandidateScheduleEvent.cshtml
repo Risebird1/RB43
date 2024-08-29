@@ -469,7 +469,7 @@
         </div>
     </div>
 </div>
-<script src="~/js/InterviewCalender.js"></script>
+
 <script>
     var rs = 0;
     $(document).ready(function () {
@@ -477,29 +477,26 @@
     });
     function setvalues() {
         var slotdays = $("#txthiddenSlotdays").val();
+        const now1 = new Date();
+         const todayDay1 = now1.getDate(),
+               todayMonth1 = now1.getMonth(),
+               todayYear1 = now1.getFullYear();
         for (var i = 0; i < parseInt(slotdays); i++) {
-            const now1 = new Date();
-            const todayDay1 = now1.getDate(),
-                todayMonth1 = now1.getMonth(),
-                todayYear1 = now1.getFullYear();
-            const now = new Date().addDays(i);
+            const now = now1.addDays(i);
             const todayDay = now.getDate(),
                 todayMonth = now.getMonth(),
                 todayYear = now.getFullYear();
-            if (todayDay1 <= todayDay) {
                 var relativemonth = $("#cal-month").text();
                 var relativeyear = $("#cal-year").text();
-                var comparemonth = monthsStr[new Date().getMonth()];
-                var compareyear = new Date().getFullYear();
+                var comparemonth = monthsStr[now.getMonth()];
+                var compareyear = now.getFullYear();
                 if (relativemonth == comparemonth && relativeyear == compareyear)
-                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: bold;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
-                //document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
-                if ($('#calender td').attr('style') == 'background-color: rgb(27, 25, 205); opacity: 0.6; color: rgba(255, 255, 255, 0.4); cursor: default;'){
-                   $('#calender td').removeAttr('style')
-                    $('#calender td').addClass('hid-prevmonth');
-                    $('.currMonth').removeClass('hid-prevmonth');
+                {
+                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
                 }
-            }
+                $('.currMonth').removeClass('hid-prevmonth');
+                $('.otherMonth').addClass('hid-prevmonth');
+                $(".otherMonth").removeClass('active-slot');
         }
     }
     var countrydetails;
@@ -524,13 +521,6 @@
             document.getElementById("divcalenderdetails").style.display = "none";
             document.getElementById("divconfirm").style.display = "block";
         }
-        $('.currMonth').click(function () {
-            $(".currMonth").removeClass('active-slot');
-            setvalues();
-            $(this).removeAttr('style', '');
-            $(this).addClass('active-slot');
-        });
-
     });
     Date.prototype.addDays = function (days) {
         var date = new Date(this.valueOf());
@@ -669,3 +659,18 @@
         fileChosen.textContent = this.files[0].name
     })
 </script>
+<script>
+    var myFunction = function() {
+            $(".currMonth").removeClass('active-slot');
+            setvalues();
+            $(this).removeAttr('style', '');
+            $(this).addClass('active-slot');
+    };
+    function resetListener(){
+        var elements = document.getElementsByClassName("currMonth");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].addEventListener('click', myFunction, false);
+        }
+    }
+</script>
+<script src="~/js/InterviewCalender.js?v=2024"></script>

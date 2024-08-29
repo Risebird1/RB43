@@ -30,12 +30,16 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  InvitationSentOnDate datetime null,  
  FirstScheduledOnDate datetime null,  
  FirstScheduledOninterviewDate datetime null,  
- completedDate datetime null  
+ completedDate datetime null,
+ PreReportLink varchar(500) NULL,
+ PreReportUsername varchar(50) NULL,
+ PreReportPassword varchar(50) NULL
 );             
   
 INSERT INTO @TemporaryCandidateTableVariable                
 select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink  
-,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, La.completedDate         
+,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, 
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword         
 from  Candidate ca           
 join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)           
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId    
@@ -43,7 +47,8 @@ outer apply dbo.fn_CandidateLatestStatusForIrfStatsForExcel(cm.UserId, ca.IRFId,
 outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) Journey  
 where cs.[Status] = 12 and  ca.IRFId = @irfId-- cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)          
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink  
-, Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, La.completedDate   
+, Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, 
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword      
   
   
 ----completed  
@@ -53,7 +58,7 @@ ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.
 im.staffingAgency, ice.InterviewStatus as InterviewStatusTwo, ice.MeetingStatus as MeetingStatusTwo,   
 ice.InterviewerComment as InterviewerCommentTwo,  
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,   
-tctv.FirstScheduledOninterviewDate, tctv.completedDate  
+tctv.FirstScheduledOninterviewDate, tctv.completedDate, tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword     
 , 1 as isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing  
 from @TemporaryCandidateTableVariable tctv  
 join InterviewMeetings im on im.id = tctv.InterviewId  
@@ -82,7 +87,8 @@ where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%RE
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,  
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,  
 im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,  
-tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName  
+tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName,
+tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId    
 from @TemporaryCandidateTableVariable tctv  
 join InterviewMeetings im on im.id = tctv.InterviewId  
 join IRF on IRF.IRFId=im.IRFId   
@@ -98,7 +104,7 @@ select distinct im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candida
 , im.ClientHrContact, im.staffingAgency  
 , tctv.ResumeLink, CandidateLatestStatus,  
 tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate  
-, ipr.NickName as InterviewerCodedName  
+, ipr.NickName as InterviewerCodedName, tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId   
 from @TemporaryCandidateTableVariable tctv  
 join InterviewMeetings im on im.id = tctv.InterviewId  
 join IRF on IRF.IRFId=im.IRFId   
@@ -112,7 +118,8 @@ where CandidateLatestStatus in ('FUTURESCHEDULE')
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,  
 ic.InterviewStatus, im.ClientHrContact, ic.VideoLink, im.confirmationStatus--, ic.CommunicationalProficiency, ic.InterviewerComment  
 ,im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,  
-tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName  
+tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName, tctv.PreReportLink, 
+tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId    
 from @TemporaryCandidateTableVariable tctv  
 join InterviewMeetings im on im.id = tctv.InterviewId  
 join IRF on IRF.IRFId=im.IRFId   
@@ -126,7 +133,9 @@ where CandidateLatestStatus in ('RESCHEDULE')
 ----not scheduled  
 select ul.id as UserId, ul.MobileNumber, IRF.JDTiltle, ul.EmailId as candidateEmail, concat(ul.FirstName, ' ', ul.LastName) as candidateName, irf.IRFId  --ic.MeetingStatus,--im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName,   
 --ic.InterviewStatus, ic.InterviewerComment,  ic.VideoLink, ic.CommunicationalProficiency,--im.ClientHrContact, im.confirmationStatus, im.staffingAgency,   
-,tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate  
+,tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, 
+tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate, tctv.PreReportLink, tctv.PreReportUsername, 
+tctv.PreReportPassword, irf.ClientId    
 from @TemporaryCandidateTableVariable tctv  
 join IRF on IRF.id =tctv.IRFId   
 join UserList ul on ul.id = tctv.UserId  
