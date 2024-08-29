@@ -647,11 +647,12 @@
                                                         @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                                                         {
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active">Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
-                                                            @*          <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
-                                                        <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>*@
+                                                            @*          <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
+                                                        
 
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
@@ -660,8 +661,9 @@
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             @*   <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')">Not Scheduled Meetings</li>
-                                                            @* <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>*@
+                                                           
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.NotProcessedResumes.GetDescription())
                                                         {
@@ -669,8 +671,9 @@
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" class="active" rel="tab4">Not Processed Resume</li>
                                                             @*<li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
-                                                            @* <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>*@
+                                                            
                                                         }
                                                         @* else if (ViewBag.CandidateType == CandidateTypeForClient.PotentialColdCandidate.GetDescription())
                                                         {
@@ -691,12 +694,13 @@
                                                         else
                                                         {
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" class="active" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
+
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             @* <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
-                                                        <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
-
+                                                        
                                                         }
 
 
@@ -908,7 +912,7 @@
                                                                                                         <p class="current marginalselected">@item.CurrentStatus</p>
                                                                                                     }
 
-                                                                                                    else if (item.CurrentStatus == "Strongly Rejected")
+                                                                                                    else if (item.CurrentStatus == "Strongly Rejected")
                                                                                                     {
                                                                                                         <p class="current strongrejected">@item.CurrentStatus</p>
                                                                                                     }
@@ -958,18 +962,31 @@
 
 
                                                                                     }
+                                                                                   
                                                                                     @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
-                                                                                    {  
-                                                                                    // var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus.ToString()) ? Convert.ToInt32(item.MeetingStatus) : 0;    
-
-                                                                                        @if (item.zoomLink != null && item.zoomLink != "" @*&&  (meetingstatus != 4 || meetingstatus != 6 || meetingstatus != 7 || meetingstatus != 8)*@){
-                       
-                                                                                            <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a> </td>
-                                                                                        }
-                                                                                        else
+                                                                                    {  <td>
+                                                                                        @if(item.CurrentStatus == "Selected" || item.CurrentStatus == "Rejected" || item.CurrentStatus == "Strongly Selected" || item.CurrentStatus == "Marginally Selected" || item.CurrentStatus == "Strongly Rejected" || item.CurrentStatus == "Marginally Rejected" || item.CurrentStatus == "Proxy" )
                                                                                         {
-                                                                                            <td><span style="color:red">No Meeting Link</span></td>
-                                                                                        }
+                                                                                                <span style="color:red">No Meeting Link</span>
+                                                                                         }
+
+                                                                                        else
+                                                                                            {
+                                                                                                 @if (item.zoomLink != null && item.zoomLink != ""){
+                       
+                                                                                                  <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a>
+                                                                                                   }
+                                                                                                  else
+                                                                                                   {
+                                                                                                    <span style="color:red">No Meeting Link</span>
+
+                                                                                                      }
+                                                                                           
+                                                                                    }
+
+                                                                                       
+
+                                                                                        </td>
                                                                                     }
 
                                                                                     <td>
