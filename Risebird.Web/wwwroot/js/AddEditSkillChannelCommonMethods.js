@@ -50,8 +50,7 @@ function AddRow() {
 
 }
 
-function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven,tdEight) {
-
+function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven, tdEight) {
     if ($(element).parents('tbody').find('tr').length === 1) {
 
         alert('Must have atleast one Row');
