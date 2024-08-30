@@ -180,5 +180,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type, DateTime startDate);
         Task<IEnumerable<ProjectStatsVM>> GetProjectSkillChannelStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<IEnumerable<CandidateExcelData>> GetProjectSkillChannelStatsDetailedView(int projectid, string type, DateTime startDate);
+        Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate);
     }
 }

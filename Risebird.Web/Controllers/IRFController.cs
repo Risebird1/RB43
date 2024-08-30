@@ -9452,15 +9452,15 @@ namespace Risebird.Web.Controllers
             ViewBag.profile = profileName;
             ViewBag.PageStatus = "Public";
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-            var startdate = DateTime.Now.AddDays(-7);
+            var startdate = DateTime.Now;
             var enddate = DateTime.Now.AddDays(1);
             if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
             {
                 var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
-                if (filter.StartDate != null && filter.EndDate != null)
+                if (filter.StartDate != null)
                 {
                     startdate = filter.StartDate.Value;
-                    enddate = filter.EndDate.Value;
+                    enddate = startdate.AddDays(1);
                 }
             }
             var DayinterviewList = (await _irfService.GetDayStatsByClientUser(startdate, enddate, emailid))?.ToList();
@@ -9487,6 +9487,36 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DateChannelStatsDetailedView(int irfintid, string IRFId, string type, string uniqueid, string emailid)
+        {
+            try
+            {
+                DateTime startDate = DateTime.Now;
+                var enddate = DateTime.Now.AddDays(1);
+                if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                    startDate = filter.StartDate.Value;
+                    enddate = startDate.AddDays(1);
+                }
+                var irfList = (await _irfService.GetGetDayStatsByClientUserDetailedView(irfintid, type, startDate, emailid, enddate))?.ToList();
+                irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                foreach (var item in irfList)
+                {
+                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                }
+                ViewBag.projectname = IRFId;
+                ViewBag.type = type;
+                ViewBag.PageType = "DayStats";
+                return View("ProjectSkillChannelStatsDetailedView", irfList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
             }
         }
         #endregion
@@ -9922,7 +9952,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ProjectSkillChannelStatsDetailedView(int projectid, string projectname, string type,string uniqueid)
+        public async Task<IActionResult> ProjectSkillChannelStatsDetailedView(int projectid, string projectname, string type, string uniqueid)
         {
             try
             {
@@ -9940,6 +9970,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.projectname = projectname;
                 ViewBag.type = type;
+                ViewBag.PageType = "ProjectStats";
                 return View(irfList);
             }
             catch (Exception ex)
