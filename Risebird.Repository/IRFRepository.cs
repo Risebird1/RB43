@@ -2144,7 +2144,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if( item.SkillId != 0)
+                        if (item.SkillId != 0)
                         {
                             if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                             {
@@ -2161,7 +2161,7 @@ namespace Risebird.Repository
                             }
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                         }
-                        
+
                     }
 
                     DataTable interviewerDt = new DataTable();
@@ -8872,6 +8872,32 @@ namespace Risebird.Repository
                     parameters.Add("@startdate", startDate);
                     parameters.Add("@timenow", DateTime.Now);
                     return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetProjectSkillChannelStatsDetailedView", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfid", irfid);
+                    parameters.Add("@type", type);
+                    parameters.Add("@startdate", startDate);
+                    parameters.Add("@enddate", enddate);
+                    parameters.Add("@timenow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetDayStatsByClientUserStatsDetailedView", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
             }
