@@ -425,6 +425,7 @@ function printMonthCalendarInDOM() {
             // console.log("xZx: ", currentWeek[j]);
         }
     }
+    resetListener();
 }
 
 function nextMonth() {
@@ -437,6 +438,7 @@ function nextMonth() {
     currentFullMonth = currentFullYear.months[monthsStr[state.todayMonth]];
     showCalenderInfo();
     setvalues();
+    bindslots("");
 }
 
 function prevMonth() {
@@ -449,6 +451,7 @@ function prevMonth() {
     currentFullMonth = currentFullYear.months[monthsStr[state.todayMonth]];
     showCalenderInfo();
     setvalues();
+    bindslots("");
 }
 
 function showCalenderInfo() {

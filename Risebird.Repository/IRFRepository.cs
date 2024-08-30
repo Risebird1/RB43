@@ -2144,20 +2144,24 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
+                        if( item.SkillId != 0)
                         {
-                            item.Concepts = "";
+                            if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
+                            {
+                                item.Concepts = "";
+                            }
+                            if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
+                            {
+                                item.Natureofquestion = "";
+                            }
+                            if (irfDetails.TechRubricType == TechRubricTypes.Basic)
+                            {
+                                item.Timelimit = 0;
+                                item.isEliminationskill = false;
+                            }
+                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                         }
-                        if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
-                        {
-                            item.Natureofquestion = "";
-                        }
-                        if(irfDetails.TechRubricType == TechRubricTypes.Basic)
-                        {
-                            item.Timelimit = 0;
-                            item.isEliminationskill = false;
-                        }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
+                        
                     }
 
                     DataTable interviewerDt = new DataTable();
