@@ -45,7 +45,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     var model = new ProjectViewModel();
                     var projectList = _projectService.GetProjects(emailid, profileName).ToList();
@@ -273,7 +273,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                     {
                         if (_projectService.DeleteProject(Convert.ToInt32(id)).Result)
                         {
@@ -315,7 +315,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                     {
                         if (_projectService.UnArchiveProject(id).Result)
                         {
@@ -356,7 +356,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         var projectModel = new Project();
                         var irfList = _projectService.GetAllIRF();
@@ -424,7 +424,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         var projectModel = new Project();
                         var projectCluster = _projectService.GetProjectCluster(Convert.ToInt32(projectId));
@@ -834,7 +834,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         var irfList = _projectService.GetProjectCluster(Convert.ToInt32(id));
                         var meetings = new List<MeetingVM>();
@@ -925,7 +925,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         //var selectedMeeting = new List<MeetingVM>();
                         var irfList = _projectService.GetProjectCluster(Convert.ToInt32(id));
@@ -1014,7 +1014,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         //var selectedMeeting = new List<MeetingVM>();
                         var irfList = _projectService.GetProjectCluster(Convert.ToInt32(id));
@@ -1113,7 +1113,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         //var selectedMeeting = new List<MeetingVM>();
                         var irfList = _projectService.GetProjectCluster(Convert.ToInt32(id));
@@ -1206,7 +1206,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
 
                         var chartData = _projectService.GetFunnelData(Convert.ToInt32(id));
