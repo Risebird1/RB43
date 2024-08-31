@@ -5998,16 +5998,17 @@ namespace Risebird.Web.Controllers
                         int colDataNumber = 16;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
+                            ++colDataNumber;
                             try
                             {
-                                Sheet.Cells[i, ++colDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
-                                Sheet.Cells[i, ++colDataNumber].Value = "Pre-Report URL";
-                                Sheet.Cells[i, ++colDataNumber].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, ++colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, colDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, colDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, colDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, ++colDataNumber].Value = string.Empty;
+                                Sheet.Cells[i, colDataNumber].Value = string.Empty;
                             }
                             Sheet.Cells[i, ++colDataNumber].Value = item.PreReportUsername;
                             Sheet.Cells[i, ++colDataNumber].Value = item.PreReportPassword;
@@ -6041,14 +6042,15 @@ namespace Risebird.Web.Controllers
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, ++colDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, ++colDataNumber].Value = "Executive Report";
-                            Sheet.Cells[i, ++colDataNumber].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, ++colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            ++colDataNumber;
+                            Sheet.Cells[i, colDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, colDataNumber].Value = "Executive Report";
+                            Sheet.Cells[i, colDataNumber].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, ++colDataNumber].Value = "No Report";
+                            Sheet.Cells[i, colDataNumber].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -6215,16 +6217,17 @@ namespace Risebird.Web.Controllers
                         int colFutDataNumber = 16;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
+                            ++colFutDataNumber;
                             try
                             {
-                                Sheet.Cells[i, ++colFutDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
-                                Sheet.Cells[i, ++colFutDataNumber].Value = "Pre-Report URL";
-                                Sheet.Cells[i, ++colFutDataNumber].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, ++colFutDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, colFutDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, colFutDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, colFutDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colFutDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, ++colFutDataNumber].Value = string.Empty;
+                                Sheet.Cells[i, colFutDataNumber].Value = string.Empty;
                             }
                             Sheet.Cells[i, ++colFutDataNumber].Value = item.PreReportUsername;
                             Sheet.Cells[i, ++colFutDataNumber].Value = item.PreReportPassword;
@@ -6268,16 +6271,17 @@ namespace Risebird.Web.Controllers
                         int colPendDataNumber = 16;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
+                            ++colPendDataNumber;
                             try
                             {
-                                Sheet.Cells[i, ++colPendDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
-                                Sheet.Cells[i, ++colPendDataNumber].Value = "Pre-Report URL";
-                                Sheet.Cells[i, ++colPendDataNumber].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, ++colPendDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, colPendDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, colPendDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, colPendDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colPendDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, ++colPendDataNumber].Value = string.Empty;
+                                Sheet.Cells[i, colPendDataNumber].Value = string.Empty;
                             }
                             Sheet.Cells[i, ++colPendDataNumber].Value = item.PreReportUsername;
                             Sheet.Cells[i, ++colPendDataNumber].Value = item.PreReportPassword;
@@ -6288,14 +6292,14 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
-                        {
-                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+                        //if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        //{
+                        //    var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
 
-                            var document = new HTMLDocument(interviewerComent, "");
-                            var intComment = GetContent(document);
-                            Sheet.Cells[i, ++colPendDataNumber].Value = intComment;
-                        }
+                        //    var document = new HTMLDocument(interviewerComent, "");
+                        //    var intComment = GetContent(document);
+                        //    Sheet.Cells[i, ++colPendDataNumber].Value = intComment;
+                        //}
 
                         //  Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
@@ -6317,16 +6321,18 @@ namespace Risebird.Web.Controllers
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
+                        ++colPendDataNumber;
                         try
                         {
-                            Sheet.Cells[i, ++colPendDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, ++colPendDataNumber].Value = "Executive Report";
-                            Sheet.Cells[i, ++colPendDataNumber].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, ++colPendDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+
+                            Sheet.Cells[i, colPendDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, colPendDataNumber].Value = "Executive Report";
+                            Sheet.Cells[i, colPendDataNumber].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, colPendDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, ++colPendDataNumber].Value = "No Report";
+                            Sheet.Cells[i, colPendDataNumber].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -6372,16 +6378,17 @@ namespace Risebird.Web.Controllers
                         int colReschDataNumber = 16;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
+                            ++colReschDataNumber;
                             try
                             {
-                                Sheet.Cells[i, ++colReschDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
-                                Sheet.Cells[i, ++colReschDataNumber].Value = "Pre-Report URL";
-                                Sheet.Cells[i, ++colReschDataNumber].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, ++colReschDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, colReschDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, colReschDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, colReschDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colReschDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, ++colReschDataNumber].Value = string.Empty;
+                                Sheet.Cells[i, colReschDataNumber].Value = string.Empty;
                             }
                             Sheet.Cells[i, ++colReschDataNumber].Value = item.PreReportUsername;
                             Sheet.Cells[i, ++colReschDataNumber].Value = item.PreReportPassword;
@@ -6392,14 +6399,14 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
-                        {
-                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+                        //if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        //{
+                        //    var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
 
-                            var document = new HTMLDocument(interviewerComent, "");
-                            var intComment = GetContent(document);
-                            Sheet.Cells[i, ++colReschDataNumber].Value = intComment;
-                        }
+                        //    var document = new HTMLDocument(interviewerComent, "");
+                        //    var intComment = GetContent(document);
+                        //    Sheet.Cells[i, ++colReschDataNumber].Value = intComment;
+                        //}
 
                         // Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
 
@@ -6477,16 +6484,17 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
+                            ++colNoSchDataNumber;
                             try
                             {
-                                Sheet.Cells[i, ++colNoSchDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
-                                Sheet.Cells[i, ++colNoSchDataNumber].Value = "Pre-Report URL";
-                                Sheet.Cells[i, ++colNoSchDataNumber].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, ++colNoSchDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, colNoSchDataNumber].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, colNoSchDataNumber].Value = "Pre-Report URL";
+                                Sheet.Cells[i, colNoSchDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colNoSchDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                                Sheet.Cells[i, colNoSchDataNumber].Value = string.Empty;
                             }
                             Sheet.Cells[i, ++colNoSchDataNumber].Value = item.PreReportUsername;
                             Sheet.Cells[i, ++colNoSchDataNumber].Value = item.PreReportPassword;
@@ -6521,16 +6529,17 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
+                            ++colDataNumberCold;
                             try
                             {
-                                Sheet.Cells[i, ++colDataNumberCold].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
-                                Sheet.Cells[i, ++colDataNumberCold].Value = "Pre-Report URL";
-                                Sheet.Cells[i, ++colDataNumberCold].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, ++colDataNumberCold].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, colDataNumberCold].Hyperlink = new Uri(item.PreReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, colDataNumberCold].Value = "Pre-Report URL";
+                                Sheet.Cells[i, colDataNumberCold].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colDataNumberCold].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                                Sheet.Cells[i, colDataNumberCold].Value = string.Empty;
                             }
                             Sheet.Cells[i, ++colDataNumberCold].Value = item.PreReportUsername;
                             Sheet.Cells[i, ++colDataNumberCold].Value = item.PreReportPassword;
