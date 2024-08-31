@@ -6611,7 +6611,7 @@ namespace Risebird.Web.Controllers
                 DateTime StartDate = DateTime.Now.AddMonths(-2);
                 meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
 
-                return View("_ReScheduleMeetingsByClient", meetings);
+                return PartialView("_ReScheduleMeetingsByClient", meetings);
             }
             catch (Exception ex)
             {

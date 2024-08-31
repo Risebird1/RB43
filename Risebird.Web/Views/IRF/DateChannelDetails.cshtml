@@ -136,20 +136,10 @@
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                    Start Date
+                                                                    Date
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                    End Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -180,6 +170,8 @@
                                             <thead>
                                                 <tr>
                                                     <th>Date</th>
+                                                    <th>Skill Channel</th>
+                                                    <th>JD Title</th>
                                                     <th>Scheduled Interviews</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -192,6 +184,8 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Date</th>
+                                                    <th>Skill Channel</th>
+                                                    <th>JD Title</th>
                                                     <th>Scheduled Interviews</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -208,9 +202,11 @@
                                                     {
                                                         <tr>
                                                             <td>@item.interviewDate</td>
+                                                            <td>@item.IRFId</td>
+                                                            <td>@item.JDTiltle</td>
                                                             <td> @item.CandidateCount </td>
                                                             <td>
-                                                                <a href="#">
+                                                                <a target="_blank" href='@Url.Action("DateChannelStatsDetailedView", "IRF", new { irfintid=item.id,IRFId=item.IRFId,type="Completed",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.CompletedInterviews
                                                                     { @if (item.CandidateCount > 0)
                                                                     {
@@ -219,7 +215,7 @@
                                                                 </a>
                                                             </td>
                                                             <td>
-                                                                <a href="#">
+                                                                <a target="_blank" href='@Url.Action("DateChannelStatsDetailedView", "IRF", new { irfintid=item.id,IRFId=item.IRFId,type="Selected",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.SelectedMeetings
                                                                     { @if (item.CompletedInterviews > 0)
                                                                     {
@@ -228,26 +224,32 @@
                                                                 </a>
                                                             </td>
                                                             <td>
-                                                                @item.RejectedMeetings
-                                                                { @if (item.CompletedInterviews > 0)
-                                                                {
-                                                                    @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
-                                                                }% }
+                                                                <a target="_blank" href='@Url.Action("DateChannelStatsDetailedView", "IRF", new { irfintid=item.id,IRFId=item.IRFId,type="Rejected",uniqueid=ViewBag.uniqueid })'>
+                                                                    @item.RejectedMeetings
+                                                                    { @if (item.CompletedInterviews > 0)
+                                                                    {
+                                                                        @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                    }% }
+                                                                </a>
                                                             </td>
                                                             <td> @item.PendingCount </td>
                                                             <td>
-                                                                @item.ReScheduledCount
-                                                                { @if (item.CandidateCount > 0)
-                                                                {
-                                                                    @((item.ReScheduledCount * 100) / @item.CandidateCount)
-                                                                }% }
+                                                                <a target="_blank" href='@Url.Action("DateChannelStatsDetailedView", "IRF", new { irfintid=item.id,IRFId=item.IRFId,type="Reschedule",uniqueid=ViewBag.uniqueid })'>
+                                                                    @item.ReScheduledCount
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.ReScheduledCount * 100) / @item.CandidateCount)
+                                                                    }% }
+                                                                </a>
                                                             </td>
                                                             <td>
-                                                                @item.FutureScheduledMeetings
-                                                                { @if (item.CandidateCount > 0)
-                                                                {
-                                                                    @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
-                                                                }% }
+                                                                <a target="_blank" href='@Url.Action("DateChannelStatsDetailedView", "IRF", new { irfintid=item.id,IRFId=item.IRFId,type="Futureschedule",uniqueid=ViewBag.uniqueid })'>
+                                                                    @item.FutureScheduledMeetings
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
+                                                                    }% }
+                                                                </a>
                                                             </td>
                                                         </tr>
                                                     }

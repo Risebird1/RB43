@@ -54,9 +54,18 @@
                     <div class="mobile-view"> <h4 class="card-title"> Skill Channel Stats</h4></div>
                 </div>
                 <input type="hidden" value="@ViewBag.Type" id="hidtype" />
-                <p class="text-center" style="color: #3396d1;margin-bottom:0px;font-size:19px;font-weight: 600;text-transform:uppercase">
-                    Project: @ViewBag.projectname <span style="color: darkcyan;text-transform:capitalize">(@ViewBag.type)</span></p>
-                
+                @if (ViewBag.PageType == "ProjectStats")
+                {
+                    <p class="text-center" style="color: #3396d1;margin-bottom:0px;font-size:19px;font-weight: 600;text-transform:uppercase">
+                        Project: @ViewBag.projectname <span style="color: darkcyan;text-transform:capitalize">(@ViewBag.type)</span>
+                    </p>
+                }
+                else
+                {
+                    <p class="text-center" style="color: #3396d1;margin-bottom:0px;font-size:19px;font-weight: 600;text-transform:uppercase">
+                        Interview Channel: @ViewBag.projectname <span style="color: darkcyan;text-transform:capitalize">(@ViewBag.type)</span>
+                    </p>
+                }
 
             </div>
         </div>
@@ -76,14 +85,14 @@
                                         <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    
+
                                                     @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                     {
                                                         <th>Interview Date</th>
                                                     }
                                                     <th>Skill Channel</th>
                                                     <th>Candidate Details</th>
-                                                   
+
                                                     <th>POC</th>
                                                     @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                     {
@@ -99,21 +108,20 @@
                                                     }
                                                     else
                                                     {
-                                                       
                                                         <th>Current Status</th>
                                                     }
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                   
+
                                                     @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                     {
                                                         <th>Interview Date</th>
                                                     }
                                                     <th>Skill Channel</th>
                                                     <th>Candidate Details</th>
-                                                    
+
                                                     <th>POC</th>
                                                     @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                     {
@@ -129,7 +137,7 @@
                                                     }
                                                     else
                                                     {
-                                                        
+
                                                         <th>Current Status</th>
                                                     }
                                                 </tr>
@@ -140,25 +148,25 @@
                                                     foreach (var item in Model)
                                                     {
                                                         <tr>
-                                                         
+
                                                             @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                             {
                                                                 <td>@item.interviewDate</td>
                                                             }
                                                             <td> @item.IRFId</td>
                                                             <td class="candidate-details">
-                                                                    @if (item.candidateName != null && item.candidateName != "")
-                                                                    {
+                                                                @if (item.candidateName != null && item.candidateName != "")
+                                                                {
                                                                     <div class="mtop-5 name-field">@item.candidateName</div>
-                                                                    }
+                                                                }
                                                                 <div>
                                                                     <span class="call-area">
-                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                            {
+                                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                        {
                                                                             <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" height="17" /></span>
-                                                                            }
+                                                                        }
                                                                     </span>
-                                                                        @item.MobileNumber
+                                                                    @item.MobileNumber
 
                                                                 </div>
                                                                 <div class="cadEmail">
@@ -166,18 +174,18 @@
                                                                     {
                                                                         @if (item.candidateEmail.Length > 20)
                                                                         {
-                                                                        <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail</span> </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail</span> </a>
                                                                         }
                                                                         else
                                                                         {
-                                                                        <a onclick=""> @item.candidateEmail </a>
+                                                                            <a onclick=""> @item.candidateEmail </a>
                                                                         }
 
                                                                     }
-                                                                    </div>
-                                                               
-                                                               </td>
-                                                           
+                                                                </div>
+
+                                                            </td>
+
                                                             <td>@item.ClientHrContact</td>
                                                             @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                             {
@@ -305,7 +313,7 @@
                                                             }
                                                             else
                                                             {
-                                                               
+
                                                                 <td class="text-center">
                                                                     @if (item.StatusValue == "In Progress")
                                                                     {

@@ -238,18 +238,22 @@
                                                                 </a>
                                                             </td>
                                                             <td style="color:#2680c7">
+                                                                <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Reschedule",uniqueid=ViewBag.uniqueid })'>
                                                                 @item.ReScheduledCount
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
                                                                     @((item.ReScheduledCount * 100) / @item.CandidateCount)
                                                                 }% }
+                                                                </a>
                                                             </td>
                                                             <td style="color:#2680c7">
+                                                                <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Futureschedule",uniqueid=ViewBag.uniqueid })'>
                                                                 @item.FutureScheduledMeetings
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
                                                                     @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
                                                                 }% }
+                                                                </a>
                                                             </td>
                                                         </tr>
                                                     }
