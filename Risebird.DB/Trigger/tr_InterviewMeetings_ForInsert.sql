@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TRIGGER tr_InterviewMeetings_ForInsert
+Create TRIGGER tr_InterviewMeetings_ForInsert
 ON InterviewMeetings
 FOR INSERT
 AS
@@ -26,7 +26,14 @@ BEGIN
  Begin
 	 update InterviewMeetings set candidateEmail  = @candidateEmailId where id = @id
  End
- 
+ Declare @candiateEmailId varchar(200),
+ @irfName varchar(15),
+ @Confirmationstatus int
+
+ Select @candiateEmailId=candidateEmail From InterviewMeetings where id=@id
+ Select @irfName=IRFId From InterviewMeetings where id=@id
+ Select @Confirmationstatus=confirmationStatus From InterviewMeetings where id=@id
+
  insert into InterviewMeetingsHistory 
  (id,	IRFId,	interviewDate,	interviewSlot,	interviewDuration,	candidateEmail,	ClientHrContact, resumeLink,
  confirmationStatus,	zoomLink,	risebirdHR,	interviewer,	IntervIewOnDevice,	PreferredLocation,
@@ -46,6 +53,13 @@ BEGIN
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
  IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, 'Inserted', DATEADD(MINUTE, 330, getdate()), sCreatedBy, TimeZoneoffset, TimeZonesValue,IsDeleted
  from InterviewMeetings where id = @id)
+ 
+ if(@Confirmationstatus=1)
+ begin
+  Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'scheduled' 
+  end
 END
+
+
 
 

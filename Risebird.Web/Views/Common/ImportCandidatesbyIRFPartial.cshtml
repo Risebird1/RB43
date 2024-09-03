@@ -13,7 +13,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
                         </span>
                     </div>
-                    <h5 class="modal-title pull-left" id="id_import_Title"> Import Candidates</h5>
+                    <h5 class="modal-title" id="id_import_Title"> Import Candidates</h5>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
@@ -46,6 +46,7 @@
                         </div>
                         <input type="hidden" id="id_import_IRFId" name="IRFId">
                         <input type="hidden" id="id_import_IRFName" name="IRFName">
+                        <input type="hidden" id="id_import_JDTiltle" name="JDTiltle">
                         <input type="hidden" id="id_import_IsSendInvite" name="IsSendInvite" value="true">
 
                     }
@@ -81,7 +82,12 @@
 
     </div>
 </div>
+<script>
+     $("form").on("change", ".file-upload-field", function () {
+        $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+    });
 
+</script>
 <script>
     var span = document.getElementById("importPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -92,7 +98,7 @@
     
     var clientEmailId = '';
 
-    function OpenImportModal(irfId, irfName, emailid) {
+    function OpenImportModal(irfId, irfName, emailid,JDTiltle) {
         //document.getElementById("id_import_IsSendInvite").value = value;
         clientEmailId = emailid;
         // Get the modal
@@ -102,8 +108,9 @@
         modal.style.display = "block";
         document.getElementById("id_import_IRFId").value = irfId;
         document.getElementById("id_import_IRFName").value = irfName;
+        document.getElementById("id_import_JDTiltle").value = JDTiltle;
         document.getElementById("id_import_Title").innerHTML = '';
-        document.getElementById("id_import_Title").innerHTML = 'Import Candidates for ' + irfName;
+        document.getElementById("id_import_Title").innerHTML = 'Import Candidates for ' + irfName + '<span style="padding:0px 5px;color:green;text-transform: capitalize;display: block;font-size: 18px;"> (' +JDTiltle+ ')</span>';
 
     }
 </script>
@@ -119,31 +126,80 @@
         document.getElementById("btnImport").disabled = true;
         var irfExcelId = document.getElementById("id_import_IRFId").value;
         var irfExcelName = document.getElementById("id_import_IRFName").value;
+        var jdtitleName = document.getElementById("id_import_JDTiltle").value;
         var excel_file = $("#idExcelFile")[0].files[0];
         var isSendInvite = document.getElementById("id_import_IsSendInvite").value;
-
-
         var formdata = new FormData();
         formdata.append('IRFId', irfExcelId);
         formdata.append('IsSendInvite', isSendInvite);
         formdata.append('excel_file', excel_file);
         formdata.append('IRFName', irfExcelName);
         formdata.append('clientEmailId', clientEmailId);
+         swal.fire({
+                title: 'Are you sure?',
+                text: "Candidates("+ jdtitleName  +") "+"for(" + irfExcelName + ") will be imported!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, import it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: "POST",
+                             url: "/Candidate/ImportQuickCandidatesPublic",
+                                 contentType: false,
+                                  processData: false,
+                                   data: formdata,
+                                  success: function (result) {
+                                if (result == true) {
+                                     document.getElementById('myModal').style.display = "none";
+                                   var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                                    document.getElementById('importResultModal').style.display = "block";
+                                   $('#importResultTableBody').html('');
+                                  $('#importResultTableBody').html(importMsg);
+                                    resolve(result)
 
-        $.ajax({
-            type: "POST",
-            url: "/Candidate/ImportQuickCandidatesPublic",
-            contentType: false,
-            processData: false,
-            data: formdata,
-            success: function (data) {
-                debugger;
-                document.getElementById('myModal').style.display = "none";
-                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                document.getElementById('importResultModal').style.display = "block";
-                $('#importResultTableBody').html('');
-                $('#importResultTableBody').html(importMsg);
-            }
-        });
+                                }
+                                else {
+                                    swal.fire("Error in importing!", "Please try again", "error");
+                                    document.getElementById("btnImport").disabled = false;
+
+                                }
+
+                            },
+                            error: function () {
+
+                                swal.fire("Error importing!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Imported!',
+                        type: 'success',
+                        html: '<p>Candidate has been imported.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        //window.location = "/IRF/Index";
+                        location.reload(true);
+
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'Candidate has not been imported! :)',
+                        'error'
+                    );
+                    document.getElementById("btnImport").disabled = false;
+                }
+            })
     }
 </script>

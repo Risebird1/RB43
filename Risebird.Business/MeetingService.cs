@@ -3055,11 +3055,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        public async Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate)
         {
             try
             {
-                var meetings = (await _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid)).ToList();
+                var meetings = (await _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid, startdate, enddate)).ToList();
                 return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)

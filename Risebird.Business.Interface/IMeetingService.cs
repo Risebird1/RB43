@@ -150,7 +150,7 @@ namespace Risebird.Business.Interface
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
-        Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid);
+        Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
         List<string> FetchClientListByIRFID(int IRFID);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
