@@ -61,5 +61,6 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string ZoomMeetingId { get; set; }
         public int CandidateId { get; set; }
+        public int CandidateMasterId { get; set; }
     }
 }
