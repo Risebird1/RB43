@@ -364,6 +364,16 @@
                                                                                     </a>
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
 
+                                                                                    
+                                                                                    @* <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.imid })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                                        <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                                                    </a>
+
+                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.EmailId, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
+                                                                                        <span title="Send Invite Over Whatsapp">
+                                                                                            <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                                        </span>
+                                                                                    </a> *@
                                                                                     @*<button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                         <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                                                     </button>*@
@@ -555,6 +565,15 @@
                                                                                                 </span>
                                                                                             </button>
                                                                                         </span>
+                                                                                    <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.imid })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                                        <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                                                    </a>
+
+                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
+                                                                                        <span title="Send Invite Over Whatsapp">
+                                                                                            <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                                        </span>
+                                                                                    </a>
                                                                                     
                                                                                 </td>
                                                                             </tr>

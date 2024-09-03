@@ -27,11 +27,14 @@ begin
 Declare @Clientid int    
 Select @Clientid=cu.ClientId From UserList ul join ClientUser cu on cu.UserId=ul.id where ul.Emailid=@Emailid    
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,
-imc.PerformedOn,imcf.FirstPerformedOn,im.confirmationStatus,ip.NickName as interviewer    
+imc.PerformedOn,imcf.FirstPerformedOn,im.confirmationStatus,ip.NickName as interviewer, c.id as CandidateId    
 ,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ClientHrContact as ClientHR   
 from InterviewMeetings im            
-join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
+join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId  
+left join UserList ulca on ulca.EmailId=im.candidateEmail              
+left join CandidatesMaster cm on cm.UserId=ulca.id              
+left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id
 Left join InterviewComments ic on ic.InterviewId=im.id          
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid       
 left join UserList ul on ul.EmailId=im.interviewer    
@@ -50,9 +53,12 @@ Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.Firs
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,    
 im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
-,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ZoomMeetingId,im.ClientHrContact as ClientHR
+,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ZoomMeetingId,im.ClientHrContact as ClientHR, c.id as CandidateId
 from InterviewMeetings im     
-join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
+join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId
+left join UserList ulca on ulca.EmailId=im.candidateEmail              
+left join CandidatesMaster cm on cm.UserId=ulca.id              
+left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id
 join SeniorHr sh on sh.Clientid=irf.ClientId    
 left join UserList ulsh on ulsh.id=sh.Userid    
 Left join InterviewComments ic on ic.InterviewId=im.id          
@@ -71,9 +77,12 @@ Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.Firs
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,    
 im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
-,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ZoomMeetingId,im.ClientHrContact as ClientHR
+,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ZoomMeetingId,im.ClientHrContact as ClientHR, c.id as CandidateId
 from InterviewMeetings im     
-join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
+join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId   
+left join UserList ulca on ulca.EmailId=im.candidateEmail              
+left join CandidatesMaster cm on cm.UserId=ulca.id              
+left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id
 join SeniorHr sh on sh.Clientid=irf.ClientId    
 left join UserList ulsh on ulsh.id=sh.Userid    
 Left join InterviewComments ic on ic.InterviewId=im.id          
@@ -92,9 +101,12 @@ Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.Firs
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,    
 im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId    
 ,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
-,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ZoomMeetingId,im.ClientHrContact as ClientHR
+,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus,im.ZoomMeetingId,im.ClientHrContact as ClientHR, c.id as CandidateId
 from InterviewMeetings im            
-join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
+join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId 
+left join UserList ulca on ulca.EmailId=im.candidateEmail              
+left join CandidatesMaster cm on cm.UserId=ulca.id              
+left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id
 Left join InterviewComments ic on ic.InterviewId=im.id          
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid      
 left join UserList ulc on ulc.id=IRF.RisebirdHr    

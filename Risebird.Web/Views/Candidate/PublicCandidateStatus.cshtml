@@ -1261,6 +1261,10 @@
                                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
                                                                                                         <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" /></span>
                                                                                                     </span>
+
+                                                                                                    @* <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("EditViaClientPublicUrl", "Candidate", new { id = item.CandidateMasterId, irfName = item.IRFName, irfId = item.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                                                        <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                                                                    </a> *@
                                                                                                 }
 
                                                                                             }
