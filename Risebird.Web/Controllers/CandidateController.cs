@@ -6008,7 +6008,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
 
                 }
-                
+
 
 
 
@@ -6247,7 +6247,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        
+
                         i++;
                     }
 
@@ -6659,17 +6659,14 @@ namespace Risebird.Web.Controllers
                 var client = await _userRepository.GetClientUserDetails(emailid);
                 ClientId = client.ClientId;
                 ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
-
-                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                DateTime StartDate = DateTime.Now.AddMonths(-2);
+                DateTime EndDate = DateTime.Now;
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid, StartDate, EndDate);
                 meetings = meetings.Select(x =>
                 {
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                     return x;
                 }).ToList();
-
-                DateTime StartDate = DateTime.Now.AddMonths(-2);
-                meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
-
                 return PartialView("_ReScheduleMeetingsByClient", meetings);
             }
             catch (Exception ex)
