@@ -180,7 +180,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForToday(string emailID);
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForTheWeek(string emailID);
         Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
-        Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid);
+        Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate);
         Task<IEnumerable<CallCatalogueVM>> GetCallCatalogueList(string profile, string Emailid);
         Task<IEnumerable<string>> FetchClientListByIRFID(int IRFID);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoInstantMeetings();
