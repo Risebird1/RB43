@@ -1234,6 +1234,11 @@ namespace Risebird.Web.Controllers
                         //                 select new { ID = (int)s, Name = s.GetDescription() };
                         //model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         model.profileName = profileName;
+                        if (TempData["SuccessErrorMessageCandidateEdit"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCandidateEdit"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidateEdit");
+                        }
                         return View(model);
                     }
                     else
@@ -1272,11 +1277,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
-                        //if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
-                        //{
-                        //    model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
-                        //}
-                        //var result = "Risebird.io is not allowed to add as candidate";
+                        
                         var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
                         var ClientDomain = string.Empty;
                         if (string.IsNullOrWhiteSpace(ClientEmailid))
@@ -1292,13 +1293,16 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _irfService.UpdateCandidate(model, emailid))
                             {
-                                TempData["SuccessErrorMessageCandidate"] = "Candidate has been updated Successfully!";
-                                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                                TempData["SuccessErrorMessageCandidateEdit"] = "Candidate has been updated Successfully!";
+                                //return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                                return RedirectToAction("Edit", new { id = model.id, irfName = model.IRFName, irfId = model.IRFId });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageCandidate"] = "Failed to update Candidate!";
-                                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                                TempData["SuccessErrorMessageCandidateEdit"] = "Failed to update Candidate!";
+                                //return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                                return RedirectToAction("Edit", new { id = model.id, irfName = model.IRFName, irfId = model.IRFId });
+
                             }
                         }
                         else
@@ -1543,7 +1547,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SendInvite(int irfId, string IRFName, string emailId, DateTime endDate, int? communicationMedium = null)
+        public async Task<IActionResult> SendInvite(int irfId, string IRFName, string emailId, DateTime endDate, int? communicationMedium = null, string pageUrl = null)
         {
             try
             {
@@ -1559,17 +1563,72 @@ namespace Risebird.Web.Controllers
                         if (endDate < DateTime.Now)
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested Skill Channel positions have been filled.";
-                            return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            if(string.IsNullOrEmpty(pageUrl))
+                            {
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+                            else if(pageUrl.Contains("Not"))
+                            {
+                                return RedirectToAction("NotScheduledMeetings", "Client");
+
+                            }
+                            else if (pageUrl.Contains("Missed"))
+                            {
+                                return RedirectToAction("InterviewManagementDetails", "Dashboard");
+
+                            }
+                            else
+                            {
+                                return RedirectToAction("ReScheduleMeetings", "Client");
+
+                            }
                         }
                         if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail, linkurl, communicationMedium))
                         {
+
                             TempData["SuccessErrorMessageCandidate"] = "Invitation has been sent Successfully!";
-                            return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            if (string.IsNullOrEmpty(pageUrl))
+                            {
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+                            else if (pageUrl.Contains("Not"))
+                            {
+                                return RedirectToAction("NotScheduledMeetings", "Client");
+
+                            }
+                            else if (pageUrl.Contains("Missed"))
+                            {
+                                return RedirectToAction("InterviewManagementDetails", "Dashboard");
+
+                            }
+                            else
+                            {
+                                return RedirectToAction("ReScheduleMeetings", "Client");
+
+                            }
                         }
                         else
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
-                            return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            if (string.IsNullOrEmpty(pageUrl))
+                            {
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+                            else if (pageUrl.Contains("Not"))
+                            {
+                                return RedirectToAction("NotScheduledMeetings", "Client");
+
+                            }
+                            else if (pageUrl.Contains("Missed"))
+                            {
+                                return RedirectToAction("InterviewManagementDetails", "Dashboard");
+
+                            }
+                            else
+                            {
+                                return RedirectToAction("ReScheduleMeetings", "Client");
+
+                            }
                         }
                     }
                     else
