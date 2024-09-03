@@ -238,7 +238,58 @@
 
 </div>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
 
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        //window.location.href = '/IRF/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //location.reload(true);
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function () {
+                        //window.location.href = '/IRF/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //location.reload(true);
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
 @*<script>
     $('form').submit(function () {
         if ($(this).valid()) {
