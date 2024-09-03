@@ -4811,15 +4811,17 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        public async Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid,DateTime startdate,DateTime enddate)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("Clientid", Clientid);
-                    parameters.Add("Emailid", Emailid);
+                    parameters.Add("@Clientid", Clientid);
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@Startdate", startdate);
+                    parameters.Add("@Enddate", enddate);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientReScheduledMeetings", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout: 600);
                 }
