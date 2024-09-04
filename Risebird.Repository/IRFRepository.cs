@@ -1060,6 +1060,28 @@ namespace Risebird.Repository
             }
 
         }
+
+        public IRF GetIRFbyIRFName(string irfName)
+        {
+            try
+            {
+                var query = "select IRF.*, Client.[Name] as ClientCompName, Client.GST as ClientGST, Client.OfficeAddress as ClientAddress from IRF join Client on IRF.ClientId=client.id where IRF.IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfName);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
         public bool UpdateIRFInvites(int id, int totalInvites)
         {
             try
@@ -5129,6 +5151,8 @@ namespace Risebird.Repository
                 parameters.Add("@Status", model.Status);
                 parameters.Add("@PerformedBy", model.PerformedBy);
                 parameters.Add("@InterviewId", model.InterviewId);
+                parameters.Add("@candidateEmailId", model.CandidateEmailId);
+                parameters.Add("@IRFName", model.IRFName);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -8899,6 +8923,33 @@ namespace Risebird.Repository
                     parameters.Add("@timenow", DateTime.Now);
                     return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetDayStatsByClientUserStatsDetailedView", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType=null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@countryType", countryType);
+                    parameters.Add("@jobId", jobId);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@planType", planType);
+                    var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFBasedOnTuringsJobId", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
