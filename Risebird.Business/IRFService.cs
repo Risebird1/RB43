@@ -1796,7 +1796,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null)
+        public async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null, string irfName = null, string candidateEmailId = null)
         {
             try
             {
@@ -1808,6 +1808,8 @@ namespace Risebird.Business
                 model.Status = status;
                 model.PerformedBy = performedBy;
                 model.InterviewId = interviewid;
+                model.IRFName = irfName;
+                model.CandidateEmailId = candidateEmailId;
                 return await _irfRepository.AddCandidateStatus(model);
             }
 
@@ -4077,6 +4079,171 @@ namespace Risebird.Business
                 var irfList = await _irfRepository.GetGetDayStatsByClientUserDetailedView(irfid, type, startDate, emailid, enddate);
                 return irfList;
             }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string irfName = null)
+        {
+            //StringBuilder sb = new StringBuilder();
+
+            try
+            {
+                var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
+                //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
+                var userId = _irfRepository.GetUserId(requestedBy);
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId);
+                //int irfId = _irfRepository.GetIRFIdByIRFName(irfName);
+                var irf = _irfRepository.GetIRFbyIRFName(irfName);
+                //var inviteCount = irf.TotalInvites;
+                var calendlyLink = irf.CalendlyLink;
+                var jdLink = irf.JDLink;
+                var client = await _clientService.GetClient(irf.ClientId);
+                var irfClientUsers = _irfRepository.GetTransClientUser(irf.id).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                string primarySkill = string.Empty;
+                primarySkill = irf.JDTiltle.Split("|")[0];
+
+                AddCandidatesResponse addCandidatesResponseObj = new AddCandidatesResponse();
+
+                if (data != null)
+                {
+                    List<CandidateOnboardingStatus> canReponseList = new List<CandidateOnboardingStatus>();
+                    if (isSendInvite)
+                    {
+
+                        Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
+                        {
+                            var canOnboardingStatus = new CandidateOnboardingStatus();
+                            string value = row.ItemArray[1].ToString();
+                            string candidateEmail = row.ItemArray[0].ToString();
+                            canOnboardingStatus.emailId = candidateEmail;
+
+                            if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
+                            {
+                                 
+                                canOnboardingStatus.onboardingStatus = "successful";
+                                if (candidateEmail != null && calendlyLink != null)
+                                {
+                                    //var candidate = await _irfRepository.GetCandidateByIRF(irfId, candidateEmail);
+                                    string mailResult = string.Empty;
+                                    string oneTimeSchedulingLink = string.Empty;
+                                    string oneTimeSchedulingLink1 = string.Empty;
+
+                                    string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                                    var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
+                                    oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                                    if (string.IsNullOrEmpty(oneTimeSchedulingLink))
+                                    {
+                                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                                    }
+                                    oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + candidateEmail;
+                                    canOnboardingStatus.SchedulingLink = oneTimeSchedulingLink1;
+                                    var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
+                                    if (irf.BussinessType == "B2B")
+                                    {
+                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id).Result;
+                                    }
+                                    else
+                                    {
+                                        mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, requestedBy, irf.id).Result;
+                                    }
+                                    //var index = data.Rows.IndexOf(row);
+                                    if (mailResult.ToLower().Contains("success"))
+                                    {
+                                        canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
+
+                                        //data.Rows[index][1] = row.ItemArray[1].ToString() + "(Invitation sent successfully)";
+
+
+                                        //if (candidate.TotalInvites == 0)
+                                        //{
+                                        //    _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+
+                                        //}
+
+                                        //_irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
+                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName:irfName).Result;
+
+                                    }
+                                    else
+                                    {
+                                        canOnboardingStatus.invitationMailDeliveryStatus = "not delivered";
+
+                                        //data.Rows[index][1] = row.ItemArray[1].ToString() + "(Failed to send invite)";
+
+                                    }
+
+                                    //auto call candidate here
+                                    try
+                                    {
+                                        await _twilioHelper.AutoCallCandidate(candidateDetails.Phone, irf.id, 0, requestedBy);//passing 0 for candidate Id because it is either way not used in the method
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        return;
+                                    }
+
+
+                                }
+                            }
+                            else
+                            {
+                                canOnboardingStatus.onboardingStatus = value;//"failed";
+                                canOnboardingStatus.invitationMailDeliveryStatus = "NA";
+                                canOnboardingStatus.SchedulingLink = "NA";
+
+                            }
+                            canReponseList.Add(canOnboardingStatus);
+                        });
+                        addCandidatesResponseObj.list = canReponseList;
+
+                    }
+                    //Table start.
+                    //sb.Append("<div class='import' style='overflow-y:auto;'><table  style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>"); ;
+
+                    ////Adding HeaderRow.
+                    //sb.Append("<tr>");
+                    //foreach (DataColumn column in data.Columns)
+                    //{
+                    //    sb.Append("<th style='background-color: #B8DBFD;    border-right: 1px #ccc solid;width:200px'>" + column.ColumnName + "</th>");
+                    //}
+                    //sb.Append("</tr>");
+
+
+                    ////Adding DataRow.
+                    //foreach (DataRow row in data.Rows)
+                    //{
+                    //    sb.Append("<tr>");
+                    //    foreach (DataColumn column in data.Columns)
+                    //    {
+                    //        sb.Append("<td style='border-left: 1px #ccc solid;'>" + row[column.ColumnName].ToString() + "</td>");
+                    //    }
+                    //    sb.Append("</tr>");
+                    //}
+
+                    ////Table end.
+                    //sb.Append("</table></div>");
+                }
+
+                //else
+                //{
+                //    sb.Append("Failed to import candidates");
+                //}
+
+
+
+                //StringBuilder sb = new StringBuilder();
+
+                return addCandidatesResponseObj;
+
+
+            }
+
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
