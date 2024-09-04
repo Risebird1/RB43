@@ -4096,7 +4096,7 @@ namespace Risebird.Business
                 var userId = _irfRepository.GetUserId(requestedBy);
                 var irf = _irfRepository.GetIRFbyIRFName(irfName);
 
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, irf.id);
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, irfId: irf.id);
                 //int irfId = _irfRepository.GetIRFIdByIRFName(irfName);
                 //var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
