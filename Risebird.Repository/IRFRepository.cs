@@ -5412,7 +5412,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null)
         {
             DataTable dt = new DataTable();
             if (isResumeParser)
@@ -5451,9 +5451,18 @@ namespace Risebird.Repository
 
                             }
                             parameters.Add("@date", DateTime.Now);
-                            parameters.Add("@ClientHREmail", obj.ClientHREmail);
-                            parameters.Add("@ProfileSource", obj.ProfileSource);
-                            parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                            if(isApi && !string.IsNullOrEmpty(ApiRequestedBy))
+                            {
+                                parameters.Add("@ClientHREmail", ApiRequestedBy);
+                                parameters.Add("@ProfileSource", ApiRequestedBy);
+                                parameters.Add("@WhatsappNumber", obj.Phone);
+                            }
+                            else
+                            {
+                                parameters.Add("@ClientHREmail", obj.ClientHREmail);
+                                parameters.Add("@ProfileSource", obj.ProfileSource);
+                                parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                            }
                             parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
                             parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
