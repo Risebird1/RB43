@@ -3148,7 +3148,6 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to import candidates!"; ;
             }
-            return null;
         }
 
         [Authorize]

@@ -36,6 +36,7 @@ namespace Risebird.Entities.ViewModel
         public bool RedoInterview { get; set; }
         public DateTime? interviewDate { get; set; }
         public string interviewer { get; set; }
+        public string CandidateEmailId { get; set; }
 
     }
 }

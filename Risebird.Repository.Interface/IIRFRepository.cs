@@ -56,6 +56,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteCandidate(int id);
         bool UpdateCandidate(Candidate obj);
         IRF GetIRFbyId(int id);
+        IRF GetIRFbyIRFName(string irfName);
         bool UpdateIRFInvites(int id, int totalInvites);
         bool UpdateCandidateInvites(int id, int totalInvites);
         Task<InterviewPlanner> GetInterviewPlanner(int id);
@@ -256,5 +257,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ProjectStatsVM>> GetProjectSkillChannelStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<IEnumerable<CandidateExcelData>> GetProjectSkillChannelStatsDetailedView(int projectid, string type, DateTime startDate);
         Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, DateTime enddate);
+        //Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate);
+
+        Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType = null);
     }
 }
