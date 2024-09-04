@@ -4094,9 +4094,10 @@ namespace Risebird.Business
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
                 var userId = _irfRepository.GetUserId(requestedBy);
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy);
-                //int irfId = _irfRepository.GetIRFIdByIRFName(irfName);
                 var irf = _irfRepository.GetIRFbyIRFName(irfName);
+
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, irf.id);
+                //int irfId = _irfRepository.GetIRFIdByIRFName(irfName);
                 //var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
                 var jdLink = irf.JDLink;
