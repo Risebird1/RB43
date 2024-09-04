@@ -405,6 +405,26 @@
                                                                     </svg>
                                                                 </span>
                                                             </a>
+
+                                                            <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.irfIntId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                            </a>
+
+                                                            <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.irfIntId, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp, pageUrl = "Missed" })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
+                                                                <span title="Send Invite Over Whatsapp">
+                                                                    <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                </span>
+                                                            </a>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+
+                                                                <div id="getstatus_11" class="btn shadow btn-xs sharp me-1" aria-label="Call Candidate" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#8baabe;color:#fff;">
+                                                                    <span id="getstatus_11" class="call" onclick="AutoCallCandidate('@item.MobileNumber','@item.irfIntId', '@item.CandidateMasterId', '@item.candidateName')" title="Call Candidate">
+                                                                        <span class="fa fa-phone-square" style="font-size:14px!important;position:relative;top:0px;"></span>
+                                                                    </span>
+                                                                </div>
+
+                                                            }
                                                         </td>
                                                     </tr>
                                                 }
@@ -457,7 +477,7 @@
 
 <script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
-
+<script src="~/autocallcandidate.js"></script>
 <script>
     function searchResult() {
         $('#meeting').DataTable();

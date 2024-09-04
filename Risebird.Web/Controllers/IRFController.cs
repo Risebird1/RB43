@@ -9492,7 +9492,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> DateChannelStatsDetailedView(int irfintid, string IRFId, string type, string uniqueid, string emailid)
+        public async Task<IActionResult> DateChannelStatsDetailedView(int irfintid, string IRFId, string type, string uniqueid)
         {
             try
             {
@@ -9504,7 +9504,7 @@ namespace Risebird.Web.Controllers
                     startDate = filter.StartDate.Value;
                     enddate = startDate.AddDays(1);
                 }
-                var irfList = (await _irfService.GetGetDayStatsByClientUserDetailedView(irfintid, type, startDate, emailid, enddate))?.ToList();
+                var irfList = (await _irfService.GetGetDayStatsByClientUserDetailedView(irfintid, type, startDate, enddate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
                 foreach (var item in irfList)
                 {

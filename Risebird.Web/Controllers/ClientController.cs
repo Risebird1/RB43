@@ -3465,7 +3465,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if ( profileName == "SeniorHR" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
+                    if (profileName == "SeniorHR" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -3478,7 +3478,30 @@ namespace Risebird.Web.Controllers
                             ClientId = client.ClientId;
                             ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                         }
-                        var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+
+                        DateTime StartDate = DateTime.Now.AddMonths(-1);
+                        DateTime EndDate = DateTime.Now;
+
+                        if (HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                StartDate = filter.StartDate.Value;
+                                EndDate = filter.EndDate.Value;
+                            }
+                            else if (filter.StartDate != null && filter.EndDate == null)
+                            {
+                                StartDate = filter.StartDate.Value;
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                EndDate = filter.EndDate.Value;
+                            }
+                        }
+                        var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid, StartDate, EndDate);
                         meetings = meetings.Select(x =>
                         {
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
@@ -3487,22 +3510,6 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
-
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                                meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate && t.dtCreatedOn <= filter.EndDate).ToList();
-                            }
-                            else if (filter.StartDate != null && filter.EndDate == null)
-                            {
-                                meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate).ToList();
-                            }
-                            else if (filter.StartDate == null && filter.EndDate != null)
-                            {
-                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                                meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
-                            }
-
                             filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                             filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
                             filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -3512,11 +3519,6 @@ namespace Risebird.Web.Controllers
                                                     && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
                                                     && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)
                                                     && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
-                        }
-                        else
-                        {
-                            DateTime StartDate = DateTime.Now.AddMonths(-1);
-                            meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
                         }
                         return View(meetings);
                     }
@@ -3792,7 +3794,29 @@ namespace Risebird.Web.Controllers
                     ClientId = client.ClientId;
                     ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
-                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                DateTime StartDate = DateTime.Now.AddMonths(-1);
+                DateTime EndDate = DateTime.Now;
+
+                if (HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                        StartDate = filter.StartDate.Value;
+                        EndDate = filter.EndDate.Value;
+                    }
+                    else if (filter.StartDate != null && filter.EndDate == null)
+                    {
+                        StartDate = filter.StartDate.Value;
+                    }
+                    else if (filter.StartDate == null && filter.EndDate != null)
+                    {
+                        filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                        EndDate = filter.EndDate.Value;
+                    }
+                }
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid, StartDate, EndDate);
                 meetings = meetings.Select(x =>
                 {
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
@@ -3801,33 +3825,15 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                        meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate && t.dtCreatedOn <= filter.EndDate).ToList();
-                    }
-                    else if (filter.StartDate != null && filter.EndDate == null)
-                    {
-                        meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate).ToList();
-                    }
-                    else if (filter.StartDate == null && filter.EndDate != null)
-                    {
-                        filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                        meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
-                    }
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
                     filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+
                     meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                        && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                        && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)
-                        && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
-                }
-                else
-                {
-                    DateTime StartDate = DateTime.Now.AddMonths(-1);
-                    meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
+                                            && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+                                            && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)
+                                            && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
                 }
 
                 Sheet.Cells["A1:AI1"].Style.Font.Bold = true;

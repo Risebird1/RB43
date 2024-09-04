@@ -4072,11 +4072,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate)
+        public async Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, DateTime enddate)
         {
             try
             {
-                var irfList = await _irfRepository.GetGetDayStatsByClientUserDetailedView(irfid, type, startDate, emailid, enddate);
+                var irfList = await _irfRepository.GetGetDayStatsByClientUserDetailedView(irfid, type, startDate, enddate);
                 return irfList;
             }
             catch (Exception e)

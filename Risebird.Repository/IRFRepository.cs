@@ -8909,7 +8909,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate)
+        public async Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, DateTime enddate)
         {
             try
             {
