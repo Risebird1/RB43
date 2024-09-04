@@ -103,7 +103,7 @@ namespace Risebird.MicroService
                                 return new BadRequestObjectResult(errorResponse);
                             }
                             //find the name of the skill channel based on the request parameters;
-                            var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("outside")? 2 :1), reqData.jobId, reqData.planType);
+                            var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
                             var result = await _irfService.AddMultipleCandidatesViaApi(reqData.CandidateList, reqData.requestedBy, true, irf.IRFId);
                             if(result != null)
                             {
