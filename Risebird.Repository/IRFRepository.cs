@@ -5412,7 +5412,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, int? irfId = null)
         {
             DataTable dt = new DataTable();
             if (isResumeParser)
@@ -5435,7 +5435,16 @@ namespace Risebird.Repository
                         foreach (var obj in candidateList)
                         {
                             DynamicParameters parameters = new DynamicParameters();
-                            parameters.Add("@IRFId", obj.IRFId);
+                            if(isApi && irfId.HasValue)
+                            {
+                                parameters.Add("@IRFId", irfId.Value);
+
+                            }
+                            else
+                            {
+                                parameters.Add("@IRFId", obj.IRFId);
+
+                            }
                             parameters.Add("@Name", obj.Name);
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
