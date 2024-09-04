@@ -446,6 +446,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsDrive { get; set; }
         public bool DMApproved { get; set; }
         public bool CalibrationMeetingdone { get; set; }
+        public string JobCountry { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {
