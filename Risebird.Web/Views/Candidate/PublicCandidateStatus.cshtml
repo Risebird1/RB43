@@ -1278,6 +1278,7 @@
                                                                                                     </div>
                                                                                                 }
                                                                                             }
+
                                                                                             @if (item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
                                                                                             {
                                                                                                 @if (!item.IsColdCandidate)
@@ -2525,19 +2526,7 @@
     }
 
 
-       function RescheduleMeeting(emailid) {
-        $(".loader").show();
-        $.ajax({
-            url: '/Client/ReScheduleMeetings',
-            type: 'GET',
-            data: { 'Emailid': emailid },
-            success: function (data) {
-                $(".loader").hide();
-                $('#tab6').html('');
-                $('#tab6').html(data);
-            }
-        });
-    }
+       
 
 </script>
 

@@ -127,79 +127,169 @@
         var irfExcelId = document.getElementById("id_import_IRFId").value;
         var irfExcelName = document.getElementById("id_import_IRFName").value;
         var jdtitleName = document.getElementById("id_import_JDTiltle").value;
+
         var excel_file = $("#idExcelFile")[0].files[0];
         var isSendInvite = document.getElementById("id_import_IsSendInvite").value;
+
+
         var formdata = new FormData();
         formdata.append('IRFId', irfExcelId);
         formdata.append('IsSendInvite', isSendInvite);
         formdata.append('excel_file', excel_file);
         formdata.append('IRFName', irfExcelName);
         formdata.append('clientEmailId', clientEmailId);
-         swal.fire({
-                title: 'Are you sure?',
-                text: "Candidates("+ jdtitleName  +") "+"for(" + irfExcelName + ") will be imported!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, import it!',
-                preConfirm: function () {
-                    return new Promise(function (resolve, reject) {
-                        $.ajax({
-                            type: "POST",
-                             url: "/Candidate/ImportQuickCandidatesPublic",
-                                 contentType: false,
-                                  processData: false,
-                                   data: formdata,
-                                  success: function (result) {
-                                if (result == true) {
-                                     document.getElementById('myModal').style.display = "none";
-                                   var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                                    document.getElementById('importResultModal').style.display = "block";
-                                   $('#importResultTableBody').html('');
-                                  $('#importResultTableBody').html(importMsg);
-                                    resolve(result)
 
-                                }
-                                else {
-                                    swal.fire("Error in importing!", "Please try again", "error");
-                                    document.getElementById("btnImport").disabled = false;
-
-                                }
-
-                            },
-                            error: function () {
-
-                                swal.fire("Error importing!", "Please try again", "error");
-                            }
-                        })
-                    })
-                },
-                allowOutsideClick: false
-            }).then(function (result) {
-                if (result.dismiss !== 'cancel') {
-                    swal.fire({
-                        title: 'Imported!',
-                        type: 'success',
-                        html: '<p>Candidate has been imported.</p>',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Close!',
-                        allowOutsideClick: false
-                    }).then(function () {
-                        //window.location = "/IRF/Index";
-                        location.reload(true);
-
-                    })
-                }
-                else if (result.dismiss === 'cancel') {
-                    swal.fire(
-                        'Cancelled',
-                        'Candidate has not been imported! :)',
-                        'error'
-                    );
-                    document.getElementById("btnImport").disabled = false;
-                }
-            })
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/ImportQuickCandidatesPublic",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                debugger;
+                document.getElementById('myModal').style.display = "none";
+                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                document.getElementById('importResultModal').style.display = "block";
+                $('#importResultTableBody').html('');
+                $('#importResultTableBody').html(importMsg);
+            }
+        });
     }
+
+    // function ConfirmImport()
+    // {
+    //     var irfExcelId = document.getElementById("id_import_IRFId").value;
+    //     var irfExcelName = document.getElementById("id_import_IRFName").value;
+    //     var jdtitleName = document.getElementById("id_import_JDTiltle").value;
+    //     swal.fire({
+    //         title:'Are you sure?',
+    //         text: "Candidates(" + jdtitleName + ") " + "for(" + irfExcelName + ") will be imported!",
+    //         type: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, import!',
+    //         preConfirm: function () {
+    //             return new Promise(function (resolve, reject) {
+                    
+    //                 ImportQuickCandidates();
+    //                 $.ajax({
+    //                     url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+    //                     success: function (result) {
+    //                         resolve(result)
+
+    //                     },
+    //                     error: function () {
+
+    //                         swal.fire("Error pausing!", "Please try again", "error");
+    //                     }
+    //                 })
+    //             })
+    //         },
+    //         allowOutsideClick: false
+    //     }).then(function (result) {
+    //         if (result.dismiss !== 'cancel') {
+    //             swal.fire({
+    //                 title: 'Paused!',
+    //                 type: 'success',
+    //                 html: '<p>IRF has been paused.</p>',
+    //                 showCancelButton: false,
+    //                 confirmButtonColor: '#3085d6',
+    //                 confirmButtonText: 'Close!',
+    //                 allowOutsideClick: false
+    //             }).then(function () {
+    //                 //window.location = "/IRF/Index";
+    //             })
+    //         }
+    //         else if (result.dismiss === 'cancel') {
+    //             swal.fire(
+    //                 'Cancelled',
+    //                 'Not Imported!',
+    //                 'error'
+    //             )
+    //         }
+    //     })
+    // }
+
+
+    // function ImportQuickCandidates() {
+    //     document.getElementById("btnImport").disabled = true;
+    //     var irfExcelId = document.getElementById("id_import_IRFId").value;
+    //     var irfExcelName = document.getElementById("id_import_IRFName").value;
+    //     var jdtitleName = document.getElementById("id_import_JDTiltle").value;
+    //     var excel_file = $("#idExcelFile")[0].files[0];
+    //     var isSendInvite = document.getElementById("id_import_IsSendInvite").value;
+    //     var formdata = new FormData();
+    //     formdata.append('IRFId', irfExcelId);
+    //     formdata.append('IsSendInvite', isSendInvite);
+    //     formdata.append('excel_file', excel_file);
+    //     formdata.append('IRFName', irfExcelName);
+    //     formdata.append('clientEmailId', clientEmailId);
+    //      swal.fire({
+    //             title: 'Are you sure?',
+    //             text: "Candidates("+ jdtitleName  +") "+"for(" + irfExcelName + ") will be imported!",
+    //             type: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonColor: '#3085d6',
+    //             cancelButtonColor: '#d33',
+    //             confirmButtonText: 'Yes, import it!',
+    //             preConfirm: function () {
+    //                 return new Promise(function (resolve, reject) {
+    //                     $.ajax({
+    //                         type: "POST",
+    //                          url: "/Candidate/ImportQuickCandidatesPublic",
+    //                              contentType: false,
+    //                               processData: false,
+    //                                data: formdata,
+    //                               success: function (result) {
+    //                             if (result == true) {
+    //                                  document.getElementById('myModal').style.display = "none";
+    //                                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    //                                 document.getElementById('importResultModal').style.display = "block";
+    //                                $('#importResultTableBody').html('');
+    //                               $('#importResultTableBody').html(importMsg);
+    //                                 resolve(result)
+
+    //                             }
+    //                             else {
+    //                                 swal.fire("Error in importing!", "Please try again", "error");
+    //                                 document.getElementById("btnImport").disabled = false;
+
+    //                             }
+
+    //                         },
+    //                         error: function () {
+
+    //                             swal.fire("Error importing!", "Please try again", "error");
+    //                         }
+    //                     })
+    //                 })
+    //             },
+    //             allowOutsideClick: false
+    //         }).then(function (result) {
+    //             if (result.dismiss !== 'cancel') {
+    //                 swal.fire({
+    //                     title: 'Imported!',
+    //                     type: 'success',
+    //                     html: '<p>Candidate has been imported.</p>',
+    //                     showCancelButton: false,
+    //                     confirmButtonColor: '#3085d6',
+    //                     confirmButtonText: 'Close!',
+    //                     allowOutsideClick: false
+    //                 }).then(function () {
+    //                     //window.location = "/IRF/Index";
+    //                     location.reload(true);
+
+    //                 })
+    //             }
+    //             else if (result.dismiss === 'cancel') {
+    //                 swal.fire(
+    //                     'Cancelled',
+    //                     'Candidate has not been imported! :)',
+    //                     'error'
+    //                 );
+    //                 document.getElementById("btnImport").disabled = false;
+    //             }
+    //         })
+    // }
 </script>
