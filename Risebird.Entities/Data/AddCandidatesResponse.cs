@@ -8,6 +8,10 @@ namespace Risebird.Entities.Data
 {
     public class AddCandidatesResponse
     {
+        public AddCandidatesResponse()
+        {
+            list = new List<CandidateOnboardingStatus>();
+        }
         public string performedAt { get; set; }
         public List<CandidateOnboardingStatus> list { get; set; }
     }
