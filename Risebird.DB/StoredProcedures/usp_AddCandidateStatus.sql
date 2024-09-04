@@ -23,7 +23,9 @@ Create PROCEDURE [dbo].[usp_AddCandidateStatus]
 @AudioFileLink nvarchar(max),      
 @Status int,      
 @PerformedBy varchar(100),      
-@InterviewId int      
+@InterviewId int,
+@IRFName varchar(25)=null,
+@candidateEmailId varchar(200) = null
           
 AS      
 BEGIN      
@@ -32,6 +34,23 @@ BEGIN
 	Begin
 		set @timeNow = dateadd(MILLISECOND, -1500, @timeNow)
 	End
+	if(@IRFId = 0 and @IRFName is not null and @IRFName != '')
+	begin
+		set @IRFId = (select id from IRF where IRFId = @IRFName)
+	end
+	if(@CandidateId = 0 and @candidateEmailId is not null and @candidateEmailId != '')
+	begin
+		set @CandidateId = (select id from CandidatesMaster where UserId = (select top 1 id from UserList where EmailId =@candidateEmailId and idProfile =23))
+		
+		if(@Status = 11)
+		begin
+			update IRF set TotalInvites = (TotalInvites +1) where id = @IRFId
+
+			update Candidate set TotalInvites = (TotalInvites +1) where CandidateMasterId = @CandidateId and irfId = @irfId
+		end
+		
+	
+	end
 	 
 	if(@Status=18)
 	Begin
