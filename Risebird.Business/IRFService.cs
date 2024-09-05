@@ -4113,8 +4113,7 @@ namespace Risebird.Business
                     List<CandidateOnboardingStatus> canReponseList = new List<CandidateOnboardingStatus>();
                     if (isSendInvite)
                     {
-
-                        Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
+                        foreach (var row in data.Rows.OfType<System.Data.DataRow>())
                         {
                             int irfId = Convert.ToInt32(row.ItemArray[2].ToString());
                             var irf = _irfRepository.GetIRFbyId(irfId);
@@ -4131,7 +4130,7 @@ namespace Risebird.Business
 
                             if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                             {
-                                 
+
                                 canOnboardingStatus.onboardingStatus = "successful";
                                 if (candidateEmail != null && calendlyLink != null)
                                 {
@@ -4163,7 +4162,7 @@ namespace Risebird.Business
                                     {
                                         canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
 
-                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName:irf.IRFId).Result;
+                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId).Result;
 
                                     }
                                     else
@@ -4181,7 +4180,7 @@ namespace Risebird.Business
                                     catch (Exception ex)
                                     {
                                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                        return;
+                                        //return;
                                     }
 
 
@@ -4195,7 +4194,90 @@ namespace Risebird.Business
 
                             }
                             canReponseList.Add(canOnboardingStatus);
-                        });
+                        }
+
+                        //Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
+                        //{
+                        //    int irfId = Convert.ToInt32(row.ItemArray[2].ToString());
+                        //    var irf = _irfRepository.GetIRFbyId(irfId);
+                        //    var calendlyLink = irf.CalendlyLink;
+                        //    var jdLink = irf.JDLink;
+                        //    var client = await _clientService.GetClient(irf.ClientId);
+                        //    var irfClientUsers = _irfRepository.GetTransClientUser(irf.id).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                        //    string primarySkill = string.Empty;
+                        //    primarySkill = irf.JDTiltle.Split("|")[0];
+                        //    var canOnboardingStatus = new CandidateOnboardingStatus();
+                        //    string value = row.ItemArray[1].ToString();
+                        //    string candidateEmail = row.ItemArray[0].ToString();
+                        //    canOnboardingStatus.emailId = candidateEmail;
+
+                        //    if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
+                        //    {
+                                 
+                        //        canOnboardingStatus.onboardingStatus = "successful";
+                        //        if (candidateEmail != null && calendlyLink != null)
+                        //        {
+                        //            //var candidate = await _irfRepository.GetCandidateByIRF(irfId, candidateEmail);
+                        //            string mailResult = string.Empty;
+                        //            string oneTimeSchedulingLink = string.Empty;
+                        //            string oneTimeSchedulingLink1 = string.Empty;
+
+                        //            string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                        //            var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
+                        //            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                        //            if (string.IsNullOrEmpty(oneTimeSchedulingLink))
+                        //            {
+                        //                oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                        //            }
+                        //            oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + candidateEmail;
+                        //            canOnboardingStatus.SchedulingLink = oneTimeSchedulingLink1;
+                        //            var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
+                        //            if (irf.BussinessType == "B2B")
+                        //            {
+                        //                mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id).Result;
+                        //            }
+                        //            else
+                        //            {
+                        //                mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, requestedBy, irf.id).Result;
+                        //            }
+                        //            //var index = data.Rows.IndexOf(row);
+                        //            if (mailResult.ToLower().Contains("success"))
+                        //            {
+                        //                canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
+
+                        //                var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName:irf.IRFId).Result;
+
+                        //            }
+                        //            else
+                        //            {
+                        //                canOnboardingStatus.invitationMailDeliveryStatus = "not delivered";
+
+                        //            }
+
+                        //            //auto call candidate here
+                        //            try
+                        //            {
+                        //                await _twilioHelper.AutoCallCandidate(candidateDetails.Phone, irf.id, 0, requestedBy);//passing 0 for candidate Id because it is either way not used in the method
+
+                        //            }
+                        //            catch (Exception ex)
+                        //            {
+                        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //                return;
+                        //            }
+
+
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        canOnboardingStatus.onboardingStatus = value;//"failed";
+                        //        canOnboardingStatus.invitationMailDeliveryStatus = "NA";
+                        //        canOnboardingStatus.SchedulingLink = "NA";
+
+                        //    }
+                        //    canReponseList.Add(canOnboardingStatus);
+                        //});
                         addCandidatesResponseObj.list = canReponseList;
 
                     }
