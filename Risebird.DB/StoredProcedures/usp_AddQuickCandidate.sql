@@ -164,7 +164,7 @@ Begin
   
 			IF(@jobId is not null and @countryCode is not null)
 			Begin
-				set @operationStatus = @operationStatus + '|' +@IRFId
+				set @operationStatus = @operationStatus + '|' +  CAST(@IRFId AS VARCHAR(10))--@IRFId
 			End
 		commit tran
 	end try

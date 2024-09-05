@@ -4116,7 +4116,7 @@ namespace Risebird.Business
 
                         Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
                         {
-                            int irfId = Convert.ToInt32(row.ItemArray[1].ToString());
+                            int irfId = Convert.ToInt32(row.ItemArray[2].ToString());
                             var irf = _irfRepository.GetIRFbyId(irfId);
                             var calendlyLink = irf.CalendlyLink;
                             var jdLink = irf.JDLink;
