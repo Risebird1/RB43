@@ -11,7 +11,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].usp_AddQuickCandidate        
-@IRFId int,        
+@IRFId int = null,        
 @Name varchar(200),        
 @EmailId varchar(200),        
 @ResumeLink varchar(500),          
@@ -22,6 +22,8 @@ CREATE PROCEDURE [dbo].usp_AddQuickCandidate
 @ProfileSource varchar(200) = null,     
 @WhatsappNumber varchar(15), 
 @AffindaResumeIdentifier varchar(75) = null,
+@jobId varchar(20) = null,
+@countryCode varchar(10) = null,
 @operationStatus varchar(200) out      
       
         
@@ -32,7 +34,19 @@ Begin
 
 			declare  @ProfileId int, @addedByEmail varchar(100);      
 			set @ProfileId = (select id from [Profile] where [Name]='Candidate')       
-			set @addedByEmail= (select EmailId from UserList where id=@AddedByUserId)      
+			set @addedByEmail= (select EmailId from UserList where id=@AddedByUserId) 
+			if(@IRFId is null and @jobId is not null and @countryCode is not null)
+			Begin
+				declare @locationType varchar(25), @countryType int=1
+				set @locationType = (select [Location] from Country_Classification where Code = @countryCode)
+				if(@locationType = 'Onsite')
+				Begin
+					set @countryType=2
+				End
+
+				set @IRFId = (select top 1.id from IRF where id in (select irfid from ProjectIRFMapping where ProjectId = 
+				(select id from Project where ProjectUniqueid =@jobId) and IsAdded = 1) and JobCountry=@countryType)
+			End
       
 			IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))      
 			Begin      
@@ -148,7 +162,10 @@ Begin
         
 			End        
   
-
+			IF(@jobId is not null and @countryCode is not null)
+			Begin
+				set @operationStatus = @operationStatus + '|' +@IRFId
+			End
 		commit tran
 	end try
 	Begin catch 
