@@ -26,6 +26,8 @@ namespace Risebird.Entities.ViewModel
         public int CandidateResumeId { get; set; }// id from CandidateResume table
         public int AddedByUserEmail { get; set; }
         public string AffindaResumeIdentifier { get; set; }
+        public string countryCode { get; set; }
+
 
 
 

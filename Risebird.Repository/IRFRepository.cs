@@ -5412,13 +5412,18 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, int? irfId = null)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, string jobId = null)
         {
             DataTable dt = new DataTable();
             if (isResumeParser)
             {
                 dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)), new DataColumn("CandidateResumeId", typeof(int)) });
+            }
+            else if (isApi)
+            {
+                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
+                    new DataColumn("Import Status", typeof(string)), new DataColumn("IRFId", typeof(int)) });
             }
             else
             {
@@ -5435,16 +5440,17 @@ namespace Risebird.Repository
                         foreach (var obj in candidateList)
                         {
                             DynamicParameters parameters = new DynamicParameters();
-                            if(isApi && irfId.HasValue)
-                            {
-                                parameters.Add("@IRFId", irfId.Value);
-
-                            }
-                            else
+                            if(!isApi)
                             {
                                 parameters.Add("@IRFId", obj.IRFId);
 
                             }
+                            else
+                            {
+                                parameters.Add("@jobId", jobId);
+                                parameters.Add("@countryCode", obj.countryCode);
+                            }
+                            
                             parameters.Add("@Name", obj.Name);
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
@@ -5482,6 +5488,12 @@ namespace Risebird.Repository
                             if (isResumeParser)
                             {
                                 dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
+
+                            }
+                            else if(isApi)
+                            {
+                                var irfId = Convert.ToInt32(result.Split("|")?.Last());
+                                dt.Rows.Add(obj.EmailId, result, irfId);
 
                             }
                             else
