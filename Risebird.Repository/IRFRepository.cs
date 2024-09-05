@@ -5492,8 +5492,9 @@ namespace Risebird.Repository
                             }
                             else if(isApi)
                             {
-                                var irfId = Convert.ToInt32(result.Split("|")?.Last());
-                                dt.Rows.Add(obj.EmailId, result, irfId);
+                                var resultArr = result.Split("|");
+                                var irfId = Convert.ToInt32(resultArr?.Last());
+                                dt.Rows.Add(obj.EmailId, resultArr[0], irfId);
 
                             }
                             else
