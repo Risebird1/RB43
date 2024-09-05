@@ -147,7 +147,7 @@ namespace Risebird.Repository.Interface
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<Candidate> GetCandidateByIRF(int irfId, string emailId);
         //Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
-        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, int? irfId = null);
+        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, string jobId = null);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
