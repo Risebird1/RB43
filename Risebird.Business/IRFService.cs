@@ -4085,7 +4085,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string irfName = null)
+        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId)
         {
             //StringBuilder sb = new StringBuilder();
 
@@ -4094,17 +4094,17 @@ namespace Risebird.Business
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
                 var userId = _irfRepository.GetUserId(requestedBy);
-                var irf = _irfRepository.GetIRFbyIRFName(irfName);
+                
+                //var irf = _irfRepository.GetIRFbyIRFName(irfName);
 
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, irfId: irf.id);
-                //int irfId = _irfRepository.GetIRFIdByIRFName(irfName);
-                //var inviteCount = irf.TotalInvites;
-                var calendlyLink = irf.CalendlyLink;
-                var jdLink = irf.JDLink;
-                var client = await _clientService.GetClient(irf.ClientId);
-                var irfClientUsers = _irfRepository.GetTransClientUser(irf.id).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                string primarySkill = string.Empty;
-                primarySkill = irf.JDTiltle.Split("|")[0];
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, jobId:jobId);
+                
+                //var calendlyLink = irf.CalendlyLink;
+                //var jdLink = irf.JDLink;
+                //var client = await _clientService.GetClient(irf.ClientId);
+                //var irfClientUsers = _irfRepository.GetTransClientUser(irf.id).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                //string primarySkill = string.Empty;
+                //primarySkill = irf.JDTiltle.Split("|")[0];
 
                 AddCandidatesResponse addCandidatesResponseObj = new AddCandidatesResponse();
 
@@ -4116,6 +4116,14 @@ namespace Risebird.Business
 
                         Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
                         {
+                            int irfId = Convert.ToInt32(row.ItemArray[1].ToString());
+                            var irf = _irfRepository.GetIRFbyId(irfId);
+                            var calendlyLink = irf.CalendlyLink;
+                            var jdLink = irf.JDLink;
+                            var client = await _clientService.GetClient(irf.ClientId);
+                            var irfClientUsers = _irfRepository.GetTransClientUser(irf.id).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                            string primarySkill = string.Empty;
+                            primarySkill = irf.JDTiltle.Split("|")[0];
                             var canOnboardingStatus = new CandidateOnboardingStatus();
                             string value = row.ItemArray[1].ToString();
                             string candidateEmail = row.ItemArray[0].ToString();
@@ -4155,25 +4163,12 @@ namespace Risebird.Business
                                     {
                                         canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
 
-                                        //data.Rows[index][1] = row.ItemArray[1].ToString() + "(Invitation sent successfully)";
-
-
-                                        //if (candidate.TotalInvites == 0)
-                                        //{
-                                        //    _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
-
-                                        //}
-
-                                        //_irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
-
-                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName:irfName).Result;
+                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName:irf.IRFId).Result;
 
                                     }
                                     else
                                     {
                                         canOnboardingStatus.invitationMailDeliveryStatus = "not delivered";
-
-                                        //data.Rows[index][1] = row.ItemArray[1].ToString() + "(Failed to send invite)";
 
                                     }
 
@@ -4204,41 +4199,8 @@ namespace Risebird.Business
                         addCandidatesResponseObj.list = canReponseList;
 
                     }
-                    //Table start.
-                    //sb.Append("<div class='import' style='overflow-y:auto;'><table  style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>"); ;
-
-                    ////Adding HeaderRow.
-                    //sb.Append("<tr>");
-                    //foreach (DataColumn column in data.Columns)
-                    //{
-                    //    sb.Append("<th style='background-color: #B8DBFD;    border-right: 1px #ccc solid;width:200px'>" + column.ColumnName + "</th>");
-                    //}
-                    //sb.Append("</tr>");
-
-
-                    ////Adding DataRow.
-                    //foreach (DataRow row in data.Rows)
-                    //{
-                    //    sb.Append("<tr>");
-                    //    foreach (DataColumn column in data.Columns)
-                    //    {
-                    //        sb.Append("<td style='border-left: 1px #ccc solid;'>" + row[column.ColumnName].ToString() + "</td>");
-                    //    }
-                    //    sb.Append("</tr>");
-                    //}
-
-                    ////Table end.
-                    //sb.Append("</table></div>");
+                    
                 }
-
-                //else
-                //{
-                //    sb.Append("Failed to import candidates");
-                //}
-
-
-
-                //StringBuilder sb = new StringBuilder();
 
                 return addCandidatesResponseObj;
 

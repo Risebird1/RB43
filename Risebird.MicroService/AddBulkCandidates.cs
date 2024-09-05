@@ -76,14 +76,10 @@ namespace Risebird.MicroService
                         var details = new Dictionary<string, string>();
                         if (reqData != null)
                         {
-                            if (string.IsNullOrEmpty(reqData.jobCountry) || string.IsNullOrEmpty(reqData.jobId) || string.IsNullOrEmpty(reqData.requestedBy))
+                            if (string.IsNullOrEmpty(reqData.jobId) || string.IsNullOrEmpty(reqData.requestedBy))
                             {
                                 var detailsError = new Dictionary<string, string>();
                                 
-                                if (string.IsNullOrEmpty(reqData.jobCountry))
-                                {
-                                    detailsError.Add("jobCountry", "This field is required.");
-                                }
                                 if (string.IsNullOrEmpty(reqData.jobId))
                                 {
                                     detailsError.Add("jobId", "This field is required.");
@@ -103,8 +99,8 @@ namespace Risebird.MicroService
                                 return new BadRequestObjectResult(errorResponse);
                             }
                             //find the name of the skill channel based on the request parameters;
-                            var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
-                            var result = await _irfService.AddMultipleCandidatesViaApi(reqData.CandidateList, reqData.requestedBy, true, irf.IRFId);
+                            //var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
+                            var result = await _irfService.AddMultipleCandidatesViaApi(reqData.CandidateList, reqData.requestedBy, true, reqData.jobId);
                             if(result != null)
                             {
                                 result.performedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
