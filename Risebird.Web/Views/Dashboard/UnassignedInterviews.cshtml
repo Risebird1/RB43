@@ -869,28 +869,28 @@
                                                         {
                                                             <td>
                                                                 <span style="display:block;">@item.candidateName</span>
-                                                            
-                                                              @if (ViewBag.actionstatus == "InterviewCount")
-                                                        {
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                               
-                                                                   <button  aria-label="Click here to call the candidate" style="background:none;border:0px;padding:0px;">
-                                                                        <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="18"></span>
-                                                                    </button>
-                                                                    @item.MobileNumber
-                                                               
-                                                            }
+
+                                                                @if (ViewBag.actionstatus == "InterviewCount")
+                                                                {
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+
+                                                                        <button aria-label="Click here to call the candidate" style="background:none;border:0px;padding:0px;">
+                                                                            <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="18"></span>
+                                                                        </button>
+                                                                        @item.MobileNumber
+
+                                                                    }
 
 
-                                                        }
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                        </td>
+                                                                }
+
+
+
+
+
+
+                                                            </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
@@ -899,20 +899,21 @@
                                                         @if (ViewBag.actionstatus == "QCPendingReport")
                                                         {
                                                             <td class="intime-on" style="padding-left:30px;">
-                                                                 @if (item.IsVideoRequired == true) {
-                                                                       <div style="position:relative;z-index:10;width: fit-content">
+                                                                @if (item.IsVideoRequired == true)
+                                                                {
+                                                                    <div style="position:relative;z-index:10;width: fit-content">
                                                                         <div class="absCenter">
                                                                             <button class="infoButton" style="top:12px;left:-16px;">
                                                                                 <div class="infoButton-btn" style="width:15px;height:15px;">
                                                                                     <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
                                                                                 </div>
                                                                                 <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
-                                                                                            <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
-                                                                                        </div>
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
+                                                                                </div>
                                                                             </button>
                                                                         </div>
-                                                                        </div>
-                                                                    }
+                                                                    </div>
+                                                                }
                                                                 <div style="float:left">@item.Joinedon </div>
 
                                                             </td>
@@ -1479,8 +1480,12 @@
                                                                 {
                                                                     <input type="hidden" value="@item.scheduleUniqueid" id="scheduleUniqueid" />
                                                                     <input type="hidden" value="@item.imid" id="imid" />
-
                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','@item.scheduleUniqueid')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:4px;width:25px!important;height:25px!important" title="Cancel Interview and Schedule Interview"><span class="fal fa-times" style="font-size:18px;line-height:28px;"></span></span></span>
+                                                                    <a target="_blank" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.irfIntId })" title="Edit">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                            <span title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
                                                                     @* <div class="mdc-fab app-fab--absolute" style="position:relative;">
                                                         <span onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                         </div> *@
@@ -1614,7 +1619,7 @@
                                                                         <span title="Generate QC Report" class="mdc-fab__icon material-icons"><img src="~/img/qc-icon.png" style="width:16px;" /></span>
                                                                     </button>
                                                                 </a>
-                                                                @if(ViewBag.emailid == "tanishka_gupta@risebird.io")
+                                                                @if (ViewBag.emailid == "tanishka_gupta@risebird.io")
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
                                                                         <span onclick="javascript:DeleteQuestionsDiscussed('@item.imid', '@item.interviewer', '@item.candidateEmail', '@item.interviewDate.ToString()');" title="Delete Questions Discussed" class="mdc-fab__icon material-icons">
@@ -1622,7 +1627,7 @@
                                                                         </span>
                                                                     </button>
                                                                 }
-                                                                
+
                                                             </td>
 
                                                         }
