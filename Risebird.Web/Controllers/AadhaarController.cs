@@ -799,6 +799,7 @@ namespace Risebird.Web.Controllers
                             DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
                             employementdetails.CandidateEmail = model.CandidateEmail?.Trim();
                             employementdetails.MobileNumber = model.MobileNumber;
+                            employementdetails.Name = model.uanDetails1?.FirstOrDefault().name;
                             employementdetails.isVerified = true;
                             if (model.summary != null)
                             {

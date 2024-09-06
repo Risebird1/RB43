@@ -121,7 +121,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.*, Client.[Name] as ClientCompName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
+                //var query = "Select IRF.*, Client.[Name] as ClientCompName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
+                var query = "Select IRF.id,IRF.IRFId,IRF.SkillSetsevaluate,IRF.Clientid, Client.[Name] as ClientCompName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
