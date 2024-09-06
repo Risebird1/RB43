@@ -21,21 +21,21 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 	begin
 		if (@actiontype = 0)
 		begin
-			if (@Profile = 'SeniorHR' or @Profile = 'HR')
-			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name, 
-				IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
-				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup from InterviewMeetings im 
-				join IRF on im.IRFId=irf.IRFId 
-				join Client cl on irf.ClientId=cl.id 
-				join SeniorHr sh on sh.Clientid=irf.ClientId 
-				left join UserList ulsh on ulsh.id=sh.Userid 
-				join UserList ul on ul.id= irf.RisebirdHr
-				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
-				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ul.Emailid= @Emailid
-			end
-			else
-			begin
+			--if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			--begin
+			--	select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name, 
+			--	IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
+			--	LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup from InterviewMeetings im 
+			--	join IRF on im.IRFId=irf.IRFId 
+			--	join Client cl on irf.ClientId=cl.id 
+			--	join SeniorHr sh on sh.Clientid=irf.ClientId 
+			--	left join UserList ulsh on ulsh.id=sh.Userid 
+			--	join UserList ul on ul.id= irf.RisebirdHr
+			--	join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
+			--	where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ul.Emailid= @Emailid
+			--end
+			--else
+			--begin
 				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name,IRF.CalendlyLink,
 				SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup 
@@ -44,7 +44,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				join UserList ul on ul.id=  irf.RisebirdHr
 				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
 				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1
-			end
+			--end
 		end
 		else
 		begin
@@ -72,26 +72,26 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 	begin
 		if (@actiontype = 0)
 		begin
-			if (@Profile = 'SeniorHR' or @Profile = 'HR')
-			begin
-				select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
-				InterviewMeetings im 
-				join IRF on im.IRFId=irf.IRFId 
-				join Client cl on irf.ClientId=cl.id 
-				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
-				left join InterviewComments ic on ic.InterviewId= im.id 
-				left join UserList uli on uli.EmailId=im.interviewer
-				left join UserList ulc on ulc.id=IRF.RisebirdHr
-				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid and interviewdate<@currentdate
-			end
-			else
-			begin
+			--if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			--begin
+			--	select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
+			--	InterviewMeetings im 
+			--	join IRF on im.IRFId=irf.IRFId 
+			--	join Client cl on irf.ClientId=cl.id 
+			--	join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+			--	left join InterviewComments ic on ic.InterviewId= im.id 
+			--	left join UserList uli on uli.EmailId=im.interviewer
+			--	left join UserList ulc on ulc.id=IRF.RisebirdHr
+			--	where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid and interviewdate<@currentdate
+			--end
+			--else
+			--begin
 				select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				left join InterviewComments ic on ic.InterviewId= im.id 
 				left join UserList uli on uli.EmailId=im.interviewer
 				left join UserList ulc on ulc.id=IRF.RisebirdHr
 				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and interviewdate<@currentdate
-			end
+			--end
 		end
 		else
 		begin
