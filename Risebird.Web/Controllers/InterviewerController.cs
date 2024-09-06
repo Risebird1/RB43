@@ -351,6 +351,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         InterviewerProfileVM model = new InterviewerProfileVM();
+                        model.Country = "26";
                         // Get all the select Lists
                         await GetAllSelectList(model);
 
