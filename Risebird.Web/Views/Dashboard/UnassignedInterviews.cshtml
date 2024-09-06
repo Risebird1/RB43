@@ -867,7 +867,30 @@
                                                         }
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
-                                                            <td>@item.candidateName</td>
+                                                            <td>
+                                                                <span style="display:block;">@item.candidateName</span>
+                                                            
+                                                              @if (ViewBag.actionstatus == "InterviewCount")
+                                                        {
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                               
+                                                                   <button  aria-label="Click here to call the candidate" style="background:none;border:0px;padding:0px;">
+                                                                        <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="18"></span>
+                                                                    </button>
+                                                                    @item.MobileNumber
+                                                               
+                                                            }
+
+
+                                                        }
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                        </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
