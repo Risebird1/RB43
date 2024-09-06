@@ -38,11 +38,14 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			--begin
 				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name,IRF.CalendlyLink,
 				SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
-				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup 
+				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup,c.id as CandidateId    
 				from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=  irf.RisebirdHr
 				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
+				left join UserList ulc on ulc.Emailid=im.CandidateEmail
+				left join CandidatesMaster cm on cm.userid=ulc.id
+				left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id
 				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1
 			--end
 		end
