@@ -9619,6 +9619,41 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ProjectMeetingsDetails(string uniqueid, int projectid, string meetingtype, string ProjectUniqueid)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid?.Replace("\"", "");
+                if (string.IsNullOrEmpty(emailid))
+                {
+                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+                }
+                var selectedMeeting = new List<MeetingVM>();
+                var meetings = new List<MeetingVM>();
+                meetings = await _irfService.GetProjectInterviewMeetings(projectid, "Client", emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                ViewBag.IRF = ProjectUniqueid;
+                ViewBag.id = uniqueid;
+                ViewBag.IRFintId = projectid;
+                ViewBag.meetingtype = meetingtype;
+                if (meetingtype == "Select")
+                {
+                    meetings = meetings?.Where(x => (x.InterviewStatus == 2 || x.InterviewStatus == 4) && !x.RedoInterview)?.ToList();
+                }
+                else if (meetingtype == "Reject")
+                {
+                    meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5 && !x.RedoInterview)?.ToList();
+                }
+                return View("SkillChannelMeetingsDetails", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+        }
         #endregion
         #region Multi-Stack
         public ActionResult Task()

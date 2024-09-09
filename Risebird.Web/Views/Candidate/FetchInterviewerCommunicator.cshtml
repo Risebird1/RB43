@@ -35,8 +35,8 @@
     }
 
     /*.mob_h {
-                                               display: none !important
-                                        }*/
+                                                                                                                           display: none !important
+                                                                                                                    }*/
 
     .tox-notifications-container {
         display: none
@@ -56,6 +56,7 @@
                     <div class="pull-left myinterview">
                         <div class="mobile-view"> <h4 class="card-title"> Manage Interviews</h4></div>
                     </div>
+
                 </div>
                 <div class="col-md-4 m-w-40 pull-left mob-ht">
                     <div class="pull-right">
@@ -68,6 +69,21 @@
                         }
                     </div>
                 </div>
+                @if (ViewBag.ClientRole == "Business Owner" || ViewBag.ClientRole == "Client Admin" || ViewBag.ClientRole == "Head HR")
+                {
+                    <div class="pull-left">
+                        @if (ViewBag.Type == "SkillChannel")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Project','@ViewBag.emailid','@ViewBag.id')"><strong>Project Interviews</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Project','@ViewBag.emailid','@ViewBag.id')"><strong>Project Interviews</strong></div>
+                        }
+                    </div>
+                }
                 <div class="pull-right">
                     @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                     {
@@ -125,41 +141,51 @@
                                                 <table id="InterviewerCommunicatorList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th style="border-right: 0px !important;">Skill Channel</th>
-                                                            <th style="border-right: 0px !important;">Job Country</th>
-                                                            <th style="border-left: 0px !important;">Candidate Submission Link</th>
-                                                           @* <th style="text-align:left">Billing Owner</th>*@
-                                                            <th style="text-align:left">JD-Skills</th>
-                                                            <th>JD</th>
-                                                           @* @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                            @if (ViewBag.Type == "SkillChannel")
                                                             {
-                                                                <th class="text-left">Calibration</th>
-                                                                <th class="text-left">Instruction Approval</th>
-                                                            }*@
-                                                            <th class="text-left">Candidate Submission</th>
-                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                <th style="border-right: 0px !important;">Skill Channel</th>
+                                                                <th style="border-right: 0px !important;">Project Id</th>
+                                                                <th style="border-right: 0px !important;">Job Country</th>
+                                                                <th style="border-left: 0px !important;">Candidate Submission Link</th>
+                                                                <th style="text-align:left">JD-Skills</th>
+                                                                <th>JD</th>
+                                                                <th class="text-left">Candidate Submission</th>
+                                                                @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                {
+                                                                    <th class="disabled-sorting text-center">Actions</th>
+                                                                }
+                                                            }
+                                                            else
                                                             {
-                                                                <th class="disabled-sorting text-center">Actions</th>
+                                                                <th>Project</th>
+                                                                <th>Project ID</th>
+                                                                <th>Skill Channels</th>
+                                                                <th>Candidate Submission</th>
                                                             }
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
-                                                            <th style="border-right: 0px !important;">Skill Channel</th>
-                                                            <th style="border-right: 0px !important;">Job Country</th>
-                                                            <th style="border-left: 0px !important;">Candidate Submission Link</th>
-                                                            @*<th style="text-align:left">Billing Owner</th>*@
-                                                            <th style="text-align:left">JD-Skills</th>
-                                                            <th>JD</th>
-                                                           @* @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                            @if (ViewBag.Type == "SkillChannel")
                                                             {
-                                                                <th class="text-left">Calibration</th>
-                                                                <th class="text-left">Instruction Approval</th>
-                                                            }*@
-                                                            <th class="text-left">Candidate Submission</th>
-                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                <th style="border-right: 0px !important;">Skill Channel</th>
+                                                                <th style="border-right: 0px !important;">Project Id</th>
+                                                                <th style="border-right: 0px !important;">Job Country</th>
+                                                                <th style="border-left: 0px !important;">Candidate Submission Link</th>
+                                                                <th style="text-align:left">JD-Skills</th>
+                                                                <th>JD</th>
+                                                                <th class="text-left">Candidate Submission</th>
+                                                                @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                {
+                                                                    <th class="disabled-sorting text-center">Actions</th>
+                                                                }
+                                                            }
+                                                            else
                                                             {
-                                                                <th class="disabled-sorting text-center">Actions</th>
+                                                                <th>Project</th>
+                                                                <th>Project ID</th>
+                                                                <th>Skill Channels</th>
+                                                                <th>Candidate Submission</th>
                                                             }
                                                         </tr>
 
@@ -175,160 +201,139 @@
                                                         @foreach (var item in Model)
                                                         {
                                                             <tr id=@item.id>
-                                                                <td>@item.IRFId</td>
-                                                                <td>@item.JobCountry</td>
-                                                                <td>
-                                                                    <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
-                                                                    @*  <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Scheduling Link" title="Scheduling Link">
-                                                                <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                                </button>*@
-                                                                    <div class="btn btn-copy shadow btn-xs sharp me-1" aria-label="Copy Public URL" style="min-width:23px;min-height:24px;height:24px;width:23px;">
-                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><i class='fa fa-clone' style="font-size:11px;position:relative;left:0px;top:0px;"></i></span>
-                                                                    </div>
-                                                                </td>
-                                                                @*<td> @item.BillingOwner </td>*@
-                                                                <td>
-                                                                    <button type="button" class="clickhere_btn pull-left">
-                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
-                                                                    </button>
-                                                                    <input id="skill_id_@item.id" type="hidden" value="@item.IRFId" />
-                                                                </td>
-                                                                @if (item.JDLink != null && item.JDLink != "")
+                                                                @if (ViewBag.Type == "SkillChannel")
                                                                 {
-                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink.Replace(" ", "%20")>@item.JDTiltle</a></td>
+                                                                    <td>@item.IRFId</td>
+                                                                    <td>@item.ProjectUniqueid</td>
+                                                                    <td>@item.JobCountry</td>
+                                                                    <td>
+                                                                        <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
+                                                                        <div class="btn btn-copy shadow btn-xs sharp me-1" aria-label="Copy Public URL" style="min-width:23px;min-height:24px;height:24px;width:23px;">
+                                                                            <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><i class='fa fa-clone' style="font-size:11px;position:relative;left:0px;top:0px;"></i></span>
+                                                                        </div>
+                                                                    </td>
+                                                                    @*<td> @item.BillingOwner </td>*@
+                                                                    <td>
+                                                                        <button type="button" class="clickhere_btn pull-left">
+                                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
+                                                                        </button>
+                                                                        <input id="skill_id_@item.id" type="hidden" value="@item.IRFId" />
+                                                                    </td>
+                                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                                    {
+                                                                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink.Replace(" ", "%20")>@item.JDTiltle</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No JD</td>
+                                                                    }
+                                                                    <td class="text-center">
+                                                                        <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
+                                                                            <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public');" title="Upload Resumes">
+                                                                                <span class="fas fa-upload"></span>
+                                                                            </span>
+                                                                        </button>
+
+                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
+                                                                            <span onclick="OpenImportModal('@item.id', '@item.IRFId', '@ViewBag.emailid','@item.JDTiltle')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
+                                                                        </button>
+
+                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                        {
+                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Select",irfId=item.id})" title="Selected Meetings">
+                                                                                <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background:#30a73099;">
+                                                                                    <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
+                                                                                </div>
+                                                                            </a>
+                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Reject",irfId=item.id})" title="Rejected Meetings">
+                                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18a1;">
+                                                                                    <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                                </div>
+                                                                            </a>
+                                                                        }
+
+
+                                                                        @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                        {
+                                                                            <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
+                                                                                <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span class="fas fa-file"></span></span>
+                                                                            </button>
+                                                                        }
+
+                                                                        @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                        {
+                                                                            <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
+                                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
+                                                                                    <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                                </div>
+                                                                            </a>
+                                                                        }
+                                                                    </td>
+                                                                    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                    {
+                                                                        <td class="text-center">
+                                                                            <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
+                                                                                <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
+                                                                                    <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
+                                                                                </span>
+                                                                            </button>
+                                                                            <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
+                                                                                <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
+                                                                                    <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                                    <svg fill="#fff" style="position:relative;top:2px;right:10px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+
+                                                                                </span>
+                                                                            </button>
+
+                                                                            @if (item.IsPaused)
+                                                                            {
+                                                                                <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Play">
+                                                                                    <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play"><svg xmlns="http://www.w3.org/2000/svg" fill="#fff" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                                </button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <button id="skill_16" class="btn shadow btn-xs sharp me-1  trash-btn" aria-label="Pause">
+                                                                                    <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" style="position:relative;left:-1px;top:-1px"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                                </button>
+                                                                            }
+                                                                            <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
+                                                                                <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { irfId =item.id, irfName =item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
+                                                                            </button>
+                                                                        </td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>No JD</td>
-                                                                }
-                                                               @* @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                                                {
-                                                                    @if (item.CalibrationMeetingdone)
-                                                                    {
-                                                                        <td style="color: darkgreen;font-weight: 600;text-align:center"><i class="fa fa-check-circle" style=" color: green; font-size: 14px;"></i> Yes</td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td style="color: #cd6b6b;font-weight: 600;text-align:center"><i class="fa fa-ban" style=" color: red; font-size: 14px;"></i> No</td>
-                                                                    }
-                                                                    @if (item.DMApproved)
-                                                                    {
-                                                                        <td style="color: darkgreen;font-weight: 600;text-align:center"><i class="fa fa-check-circle" style=" color: green; font-size: 14px;"></i> Yes</td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td style="color: #cd6b6b;font-weight: 600;text-align:center"><i class="fa fa-ban" style=" color: red; font-size: 14px;"></i> No</td>
-                                                                    }
-                                                                }*@
-                                                                <td class="text-center">
-                                                                     <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
-                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public');" title="Upload Resumes">
-                                                                            <span class="fas fa-upload"></span>
-                                                                        </span>
-                                                                    </button>
-
-                                                                         <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
-                                                                                <span onclick="OpenImportModal('@item.id', '@item.IRFId', '@ViewBag.emailid','@item.JDTiltle')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
-                                                                        </button>
-
-                                                                    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                                                    {
-                                                                        <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Select",irfId=item.id})" title="Selected Meetings">
-                                                                            <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background:#30a73099;">
-                                                                                <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
-                                                                            </div>
-                                                                        </a>
-                                                                        <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Reject",irfId=item.id})" title="Rejected Meetings">
-                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18a1;">
-                                                                                <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
-                                                                            </div>
-                                                                        </a>
-                                                                    }
-                                                                   
-
-                                                                    @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                                                                    {
-                                                                        <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                            <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span class="fas fa-file"></span></span>
-                                                                        </button>
-                                                                    }
-                                                                   
-                                                                    
-                                                                    @* <button id="skill_10" class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidates List">
-                                                                <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List">  <span class="fas fa-list"></span></span>
-                                                                </button> *@
-                                                                    @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                                                                    {
-                                                                        <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
-                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
-                                                                                <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
-                                                                            </div>
-                                                                        </a>
-                                                                    }
-                                                                </td>
-                                                                @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                                                {
+                                                                    <td>@item.ProjectName</td>
+                                                                    <td>@item.ProjectUniqueid</td>
+                                                                    <td>@item.IRFCount</td>
                                                                     <td class="text-center">
-                                                                        @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
-                                                                <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
-                                                                </span>
-                                                                </button>
-                                                                <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Audio Recording">
-                                                                <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                </span>
-                                                                </button>*@
-                                                                        @* <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
-                                                                <span onclick="javascript:openHMInstruction('@item.id', '@item.IRFId');" title="HM Instruction">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                </span>
-                                                                </button> *@
-
-                                                                        @* @if(item.ShowInterviewInstructions)
-                                                                {
-
-                                                                } *@
-                                                                        <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
-                                                                            <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
-                                                                                <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
-                                                                            </span>
-                                                                        </button>
-                                                                        <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
-                                                                            <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
-                                                                                <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
-                                                                                <svg fill="#fff" style="position:relative;top:2px;right:10px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
-
+                                                                        <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
+                                                                            <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.ProjectUniqueid', 'public');" title="Upload Resumes">
+                                                                                <span class="fas fa-upload"></span>
                                                                             </span>
                                                                         </button>
 
-                                                                        @if (item.IsPaused)
-                                                                        {
-                                                                            <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Play">
-                                                                                <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play"><svg xmlns="http://www.w3.org/2000/svg" fill="#fff" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-                                                                            </button>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <button id="skill_16" class="btn shadow btn-xs sharp me-1  trash-btn" aria-label="Pause">
-                                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" style="position:relative;left:-1px;top:-1px"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                                            </button>
-                                                                        }
-                                                                        @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Interviewer Stats">
-                                                                <a href="@Url.Action("InterviewerStatsAndRatingsForClientByIRF", "Interviewer", new {irfId = item.id, irfName = item.IRFId, clientEmailId = ViewBag.emailid,usepl=true})" target="_blank">
-                                                                <span title="Interviewer Stats"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
-                                                                </a>
-                                                                </button>*@
-                                                                        @* @if (item.IsDrive)
-                                                                {
-                                                                <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
-                                                                <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { irfId =item.id, irfName =item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
-                                                                </button>
-                                                                } *@
-                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
-                                                                            <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { irfId =item.id, irfName =item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
+                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
+                                                                            <span onclick="OpenImportModal('@item.id', '@item.ProjectUniqueid', '@ViewBag.emailid','@item.ProjectName')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
                                                                         </button>
+
+                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                        {
+                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("ProjectMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , ProjectUniqueid = item.ProjectUniqueid,meetingtype="Select",projectid=item.id})" title="Selected Meetings">
+                                                                                <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background:#30a73099;">
+                                                                                    <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
+                                                                                </div>
+                                                                            </a>
+                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("ProjectMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , ProjectUniqueid = item.ProjectUniqueid,meetingtype="Reject",projectid=item.id})" title="Rejected Meetings">
+                                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18a1;">
+                                                                                    <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                                </div>
+                                                                            </a>
+                                                                        }
                                                                     </td>
+                                                                    <td></td>
                                                                 }
                                                             </tr>
                                                         }
@@ -955,6 +960,9 @@
     function Candidates(id, IRFid) {
         var url = '/Candidate/GetCandidates?id=' + id + '&irfName=' + IRFid;
         window.location.href = url;
+    }
+    function Changeurldetails(type, emailid, id) {
+        window.location.href = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&type=" + type + "&isClientLogin=true&id=" + id;
     }
 </script>
 

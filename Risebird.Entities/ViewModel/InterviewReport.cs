@@ -447,6 +447,9 @@ namespace Risebird.Entities.ViewModel
         public bool DMApproved { get; set; }
         public bool CalibrationMeetingdone { get; set; }
         public string JobCountry { get; set; }
+        public string ProjectUniqueid { get; set; }
+        public string ProjectName { get; set; }
+        public int IRFCount { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {

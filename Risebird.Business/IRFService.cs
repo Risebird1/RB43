@@ -4094,11 +4094,11 @@ namespace Risebird.Business
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
                 var userId = _irfRepository.GetUserId(requestedBy);
-                
+
                 //var irf = _irfRepository.GetIRFbyIRFName(irfName);
 
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, jobId:jobId);
-                
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi: true, ApiRequestedBy: requestedBy, jobId: jobId);
+
                 //var calendlyLink = irf.CalendlyLink;
                 //var jdLink = irf.JDLink;
                 //var client = await _clientService.GetClient(irf.ClientId);
@@ -4213,7 +4213,7 @@ namespace Risebird.Business
 
                         //    if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                         //    {
-                                 
+
                         //        canOnboardingStatus.onboardingStatus = "successful";
                         //        if (candidateEmail != null && calendlyLink != null)
                         //        {
@@ -4281,12 +4281,26 @@ namespace Risebird.Business
                         addCandidatesResponseObj.list = canReponseList;
 
                     }
-                    
+
                 }
 
                 return addCandidatesResponseObj;
 
 
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> GetProjectInterviewMeetings(int id, string profileName, string email)
+        {
+            try
+            {
+                var result = (await _irfRepository.GetProjectInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
+                return result;
             }
 
             catch (Exception e)
