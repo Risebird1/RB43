@@ -11,7 +11,7 @@ namespace Risebird.Business.Interface
         Task<List<Client>> GetClients(string emailid, string profileName);
         Task<bool> AddClient(Client client);
         Task<bool> UpdateClient(Client client);
-        Task<Client> GetClient(int id);
+        Task<Client> GetClient(int id, bool isStaging = false);
         Task<bool> DeleteClient(int id);
         Task<List<ClientRole>> GetClientRoles();
         Task<string> AddClientJd(ClientJdVM _client);

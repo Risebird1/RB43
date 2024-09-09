@@ -18,7 +18,8 @@ namespace Risebird.Repository
     public class InterviewSchedulerRepository : IInterviewSchedulerRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly string connectionString;
+        private string connectionString;//readonly
+        private readonly string connectionStringForTesting;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public InterviewSchedulerRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
@@ -26,6 +27,8 @@ namespace Risebird.Repository
             _configuration = configuration;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             _applicationErrorLogger = applicationErrorLogger;
+            connectionStringForTesting = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
         }
 
         public async Task<List<daytimes_report>> FetchEventList()
@@ -414,10 +417,14 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail)
+        public async Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail, bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 daytimes_report resultset = new daytimes_report();
                 var query = "Select * from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1";
                 DynamicParameters dp = new DynamicParameters();

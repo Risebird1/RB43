@@ -12,7 +12,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Client>> GetClients(string emailid, string profileName);
         Task<bool> AddClient(Client client);
         Task<bool> UpdateClient(Client entity);
-        Task<Client> GetClient(int id);
+        Task<Client> GetClient(int id, bool isStaging = false);
         Task<bool> DeleteClient(int id);
         Task<IEnumerable<ClientRole>> GetClientRoles();
         Task<string> AddClientJd(ClientJdVM _client);
