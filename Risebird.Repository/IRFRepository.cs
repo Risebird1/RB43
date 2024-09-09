@@ -19,7 +19,8 @@ namespace Risebird.Repository
     public class IRFRepository : IIRFRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly string connectionString;
+        private string connectionString;//readonly
+        private readonly string connectionStringForTesting;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -28,6 +29,7 @@ namespace Risebird.Repository
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            connectionStringForTesting = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             _httpContextAccessor = httpContextAccessor;
 
         }
@@ -1039,10 +1041,14 @@ namespace Risebird.Repository
             }
 
         }
-        public IRF GetIRFbyId(int id)
+        public IRF GetIRFbyId(int id, bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 var query = "select IRF.*, Client.[Name] as ClientCompName, Client.GST as ClientGST, Client.OfficeAddress as ClientAddress from IRF join Client on IRF.ClientId=client.id where IRF.id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
@@ -2891,10 +2897,14 @@ namespace Risebird.Repository
         }
 
 
-        public IEnumerable<TransClientUser> GetTransClientUser(int id)
+        public IEnumerable<TransClientUser> GetTransClientUser(int id, bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 //"select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
                 var query = "select a.*, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId,UserList.uniqueid,IRF.IRFId as IRFName,UserList.FirstName from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id join IRF on IRF.id=TransClientUser.IRFId) as a inner join ClientRole on ClientRole.id =a.ClientRoleId where IRFId =  @IRFId";
                 var dynamicParameters = new DynamicParameters();
@@ -3947,9 +3957,13 @@ namespace Risebird.Repository
             }
         }
 
-        public int GetUserId(string emailId, string profile = null)
+        public int GetUserId(string emailId, string profile = null, bool isStaging = false)
         {
             int result = 0;
+            if(isStaging)
+            {
+                connectionString = connectionStringForTesting;
+            }
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
@@ -5137,10 +5151,14 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<bool> AddCandidateStatus(CandidateStatus model)
+        public async Task<bool> AddCandidateStatus(CandidateStatus model, bool isStaging = false)
         {
             try
             {
+                if(isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", model.IRFId); // Normal parametersmeters           
@@ -5412,8 +5430,12 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, string jobId = null)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, string jobId = null, bool isStaging = false)
         {
+            if(isStaging)
+            {
+                connectionString = connectionStringForTesting;
+            }
             DataTable dt = new DataTable();
             if (isResumeParser)
             {

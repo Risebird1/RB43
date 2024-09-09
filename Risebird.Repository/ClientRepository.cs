@@ -18,7 +18,8 @@ namespace Risebird.Repository
     public class ClientRepository : IClientRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly string connectionString;
+        private string connectionString;//readonly
+        private string connectionStringForTesting;//readonly
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public ClientRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
@@ -26,6 +27,8 @@ namespace Risebird.Repository
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            connectionStringForTesting = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
         }
 
         public async Task<IEnumerable<Client>> GetClients(string emailid, string profileName)
@@ -87,10 +90,14 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<Client> GetClient(int id)
+        public async Task<Client> GetClient(int id, bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);

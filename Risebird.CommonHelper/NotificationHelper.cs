@@ -227,7 +227,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null, int? irfId = null)
+        public async Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null, int? irfId = null, bool isStaging = false)
         {
             try
             {
@@ -258,7 +258,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg, irfId);
+                return await SendMail(msg, irfId, isStaging: isStaging);
             }
             catch (Exception)
             {
@@ -1045,7 +1045,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogoLink = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null)
+        public async Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogoLink = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null, bool isStaging = false)
         {
             try
             {
@@ -1076,7 +1076,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg, irfId);
+                return await SendMail(msg, irfId, isStaging: isStaging);
             }
             catch (Exception ex)
             {
@@ -1257,7 +1257,7 @@ namespace Risebird.CommonHelper
         //    }
         //    return msg;
         //}
-        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null)
+        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null, bool isStaging = false)
         {
             try
             {
@@ -1359,7 +1359,7 @@ namespace Risebird.CommonHelper
                 }
                 obj.AssessmentGroupId = assessmentGroupId;
                 obj.CampaignId = campaignId;
-                _ = await _sendGridRepository.SaveSentMailDetails(obj);
+                _ = await _sendGridRepository.SaveSentMailDetails(obj, isStaging);
                 return result;
             }
             catch (Exception ex)
