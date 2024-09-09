@@ -16,7 +16,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewerMailOnAssinment(string interviwers, string meetingDate);
         //string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer, string Skillchannelid, string Client);
         //string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
-        Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null, int? irfId = null);
+        Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null, int? irfId = null, bool isStaging = false);
         Task<string> CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId, int? irfId = null);
         // Task<string> SendQCInterviewerMail(List<string> interviwers, string meetingDate);
         Task<string> SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null);
@@ -47,7 +47,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         Task<string> SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName, string meetingurl, DateTime interviewdatetime, int offset);
         Task<string> CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
-        Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogoLink = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null);
+        Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogoLink = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null, bool isStaging = false);
         Task<string> RBPayNotification(Mail model, string emailid);
         Task<string> RBFNQueryNotification(Mail model, string query);
         Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
@@ -102,7 +102,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientLogoLink = null);
         Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
-        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null);
+        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null, bool isStaging = false);
         Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo);
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl);

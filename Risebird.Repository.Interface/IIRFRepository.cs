@@ -22,7 +22,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Interviewer> GetInterviewerSkills();
         public Interviewer GetInterviewerSkillsAndResume(int userId);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
-        IEnumerable<TransClientUser> GetTransClientUser(int id);
+        IEnumerable<TransClientUser> GetTransClientUser(int id, bool isStaging = false);
         //IEnumerable<TransInterviewer> GetTransInterviewer(int id);
         Task<IEnumerable<TransInterviewer>> GetTransInterviewer(int id);
         IEnumerable<TransJoinability> GetTransJoinability(int id);
@@ -55,7 +55,7 @@ namespace Risebird.Repository.Interface
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId);
         Task<bool> DeleteCandidate(int id);
         bool UpdateCandidate(Candidate obj);
-        IRF GetIRFbyId(int id);
+        IRF GetIRFbyId(int id, bool isStaging = false);
         IRF GetIRFbyIRFName(string irfName);
         bool UpdateIRFInvites(int id, int totalInvites);
         bool UpdateCandidateInvites(int id, int totalInvites);
@@ -75,7 +75,7 @@ namespace Risebird.Repository.Interface
         int InterviewMeetings(string irfName, string candidateEmail);
         IEnumerable<InterviewComments> GetInterviewComments(string idList);
         IEnumerable<string> GetIRFCandidatesEmail(string irfName);
-        int GetUserId(string emailId, string profile = null);
+        int GetUserId(string emailId, string profile = null, bool isStaging = false);
         IEnumerable<Recruiter> GetRecruiters();
         string GetRecruiterDomain(int userId);
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
@@ -134,7 +134,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
         string AssessmentLike(int id, string emailid);
         Task<IEnumerable<string>> GetPrimarySkillFromIRF();
-        Task<bool> AddCandidateStatus(CandidateStatus model);
+        Task<bool> AddCandidateStatus(CandidateStatus model, bool isStaging = false);
         Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId);
         Task<CandidateStatus> GetCandidateStatusById(int id);
         Task<bool> EditCandidateStatus(CandidateStatus model);
@@ -147,7 +147,7 @@ namespace Risebird.Repository.Interface
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<Candidate> GetCandidateByIRF(int irfId, string emailId);
         //Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
-        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, string jobId = null);
+        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, string jobId = null, bool isStaging = false);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
