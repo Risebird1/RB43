@@ -23,7 +23,7 @@ namespace Risebird.Repository.Interface
         Task<int> AutoCreateEvent(daytimes_report model);
         Task<int> FetchEventidByUniqueid(string _uniqueid);
         Task<bool> UpdateSchedulingLinkDetails(string _uniqueid);
-        Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail);
+        Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail, bool isStaging = false);
         Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
         Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink, string zoommeetingid);

@@ -50,11 +50,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<Client> GetClient(int id)
+        public async Task<Client> GetClient(int id, bool isStaging = false)
         {
             try
             {
-                return await _clientRepository.GetClient(id);
+                return await _clientRepository.GetClient(id, isStaging);
 
             }
             catch (Exception e)

@@ -1796,7 +1796,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null, string irfName = null, string candidateEmailId = null)
+        public async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null, string irfName = null, string candidateEmailId = null, bool isStaging = false)
         {
             try
             {
@@ -1810,7 +1810,7 @@ namespace Risebird.Business
                 model.InterviewId = interviewid;
                 model.IRFName = irfName;
                 model.CandidateEmailId = candidateEmailId;
-                return await _irfRepository.AddCandidateStatus(model);
+                return await _irfRepository.AddCandidateStatus(model, isStaging);
             }
 
             catch (Exception e)
@@ -4085,7 +4085,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId)
+        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId, bool isStaging = false)
         {
             //StringBuilder sb = new StringBuilder();
 
@@ -4093,11 +4093,11 @@ namespace Risebird.Business
             {
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
-                var userId = _irfRepository.GetUserId(requestedBy);
+                var userId = _irfRepository.GetUserId(requestedBy, isStaging: isStaging);
                 
                 //var irf = _irfRepository.GetIRFbyIRFName(irfName);
 
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, jobId:jobId);
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, jobId:jobId, isStaging:isStaging);
                 
                 //var calendlyLink = irf.CalendlyLink;
                 //var jdLink = irf.JDLink;
@@ -4116,11 +4116,11 @@ namespace Risebird.Business
                         foreach (var row in data.Rows.OfType<System.Data.DataRow>())
                         {
                             int irfId = Convert.ToInt32(row.ItemArray[2].ToString());
-                            var irf = _irfRepository.GetIRFbyId(irfId);
+                            var irf = _irfRepository.GetIRFbyId(irfId, isStaging);
                             var calendlyLink = irf.CalendlyLink;
                             var jdLink = irf.JDLink;
-                            var client = await _clientService.GetClient(irf.ClientId);
-                            var irfClientUsers = _irfRepository.GetTransClientUser(irf.id).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                            var client = await _clientService.GetClient(irf.ClientId, isStaging);
+                            var irfClientUsers = _irfRepository.GetTransClientUser(irf.id, isStaging).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                             string primarySkill = string.Empty;
                             primarySkill = irf.JDTiltle.Split("|")[0];
                             var canOnboardingStatus = new CandidateOnboardingStatus();
@@ -4141,28 +4141,28 @@ namespace Risebird.Business
 
                                     string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                                     var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                                    oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                                    oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail, isStaging);
                                     if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                                     {
-                                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail, isStaging);
                                     }
                                     oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + candidateEmail;
                                     canOnboardingStatus.SchedulingLink = oneTimeSchedulingLink1;
                                     var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
                                     if (irf.BussinessType == "B2B")
                                     {
-                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id).Result;
+                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id, isStaging : isStaging).Result;
                                     }
                                     else
                                     {
-                                        mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, requestedBy, irf.id).Result;
+                                        mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, requestedBy, irf.id, isStaging: isStaging).Result;
                                     }
                                     //var index = data.Rows.IndexOf(row);
                                     if (mailResult.ToLower().Contains("success"))
                                     {
                                         canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
 
-                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId).Result;
+                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId, isStaging :isStaging).Result;
 
                                     }
                                     else
