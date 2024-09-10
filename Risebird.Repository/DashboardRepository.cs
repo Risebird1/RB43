@@ -12,7 +12,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 
 namespace Risebird.Repository
@@ -908,7 +907,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchRibbonDetailsValuesbydate", parameters,
-                        commandType: CommandType.StoredProcedure,commandTimeout:600);
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result?.ToList();
                 }
             }
@@ -1345,7 +1344,7 @@ namespace Risebird.Repository
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@CurrentDate", DateTime.Now);
-                dynamicParam.Add("@EmailId",EmailId);
+                dynamicParam.Add("@EmailId", EmailId);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(conChange, "usp_PotentialRiskByCandidate", dynamicParam,
@@ -1532,7 +1531,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@EmailId",EmailId);
+                    parameters.Add("@EmailId", EmailId);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetDmApproveDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
@@ -1571,7 +1570,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type,string uniqueid, string Email)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid, string Email)
         {
             try
             {
@@ -1579,7 +1578,7 @@ namespace Risebird.Repository
                 parameters.Add("@type", type);
                 parameters.Add("@uniqueid", uniqueid);
                 parameters.Add("@timeNow", DateTime.Now);
-                parameters.Add("@Email",Email);
+                parameters.Add("@Email", Email);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1630,7 +1629,7 @@ namespace Risebird.Repository
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@EmailId",EmailId);
+                parameters.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchTechQCDetails", parameters,
@@ -1659,11 +1658,11 @@ namespace Risebird.Repository
                     if (ColdCandidateValue == 0)
                     {
                         var parameters = new DynamicParameters();
-                        
+
                         parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
                         parameters.Add("@endDate", DateTime.Now);
                         parameters.Add("@Emailid", EmailId);
-                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList",parameters ,commandTimeout: 600,
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                         return result.ToList();
                     }
@@ -1671,7 +1670,7 @@ namespace Risebird.Repository
                     {
                         var parameters = new DynamicParameters();
                         parameters.Add("@Emailid", EmailId);
-                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidate",parameters, commandTimeout: 600,
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidate", parameters, commandTimeout: 600,
                                                     commandType: CommandType.StoredProcedure);
                         return result.ToList();
                     }
@@ -1685,7 +1684,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email,int InterviewId,int type)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type)
         {
             try
             {
@@ -1694,13 +1693,13 @@ namespace Risebird.Repository
                 dynamicParam.Add("@ColdMarkedBY", Email);
                 dynamicParam.Add("@ColdMarkedDate", DateTime.Now);
                 dynamicParam.Add("@InterviewId", InterviewId);
-                dynamicParam.Add("@type",type);
-                dynamicParam.Add("@Currentdate",DateTime.Now);
+                dynamicParam.Add("@type", type);
+                dynamicParam.Add("@Currentdate", DateTime.Now);
 
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
-                  var result=  await SqlMapper.QueryAsync<InterviewUsersDetails>(conChange, "Usp_ColdCandidateMarked", dynamicParam,
-                       commandType: CommandType.StoredProcedure);
+                    var result = await SqlMapper.QueryAsync<InterviewUsersDetails>(conChange, "Usp_ColdCandidateMarked", dynamicParam,
+                         commandType: CommandType.StoredProcedure);
                     return result.ToList();
 
                 }
@@ -1711,14 +1710,14 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task <List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail)
+        public async Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId",IRFId);
-                dynamicParameters.Add("@CandidateEmail",CandidateEmail);
-                dynamicParameters.Add("@Currentdate",DateTime.Now);
+                dynamicParameters.Add("@IRFId", IRFId);
+                dynamicParameters.Add("@CandidateEmail", CandidateEmail);
+                dynamicParameters.Add("@Currentdate", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QueryAsync<InterviewUsersDetails>("usp_GetFutureDateInterviewSchedule", dynamicParameters, commandType: CommandType.StoredProcedure);
@@ -1766,14 +1765,14 @@ namespace Risebird.Repository
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
-                { 
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
-                        parameters.Add("@endDate", DateTime.Now);
-                        parameters.Add("@Email", Email);
-                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateListByClient", parameters, commandTimeout: 600,
-                            commandType: CommandType.StoredProcedure);
-                        return result.ToList();                   
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
+                    parameters.Add("@endDate", DateTime.Now);
+                    parameters.Add("@Email", Email);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateListByClient", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
                 }
 
             }
@@ -1812,7 +1811,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@actionType",actionType);
+                    parameters.Add("@actionType", actionType);
                     parameters.Add("@StartDate", StartDate);
                     parameters.Add("@EndDate", EndDate);
                     var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_GetSurchargeRequestDetails", parameters,
@@ -1830,22 +1829,22 @@ namespace Risebird.Repository
         {
             try
             {
-                string RequestType=string.Empty;
-                if (actionType==1)
+                string RequestType = string.Empty;
+                if (actionType == 1)
                 {
                     RequestType = "Approved";
                 }
                 else { RequestType = "UnApproved"; }
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@InterviewId", InterviewId);
-                dynamicParam.Add("@Type",Type );
+                dynamicParam.Add("@Type", Type);
                 dynamicParam.Add("@Surcharge", Surcharge);
                 dynamicParam.Add("@SurchargeComment", SurchargeComment);
                 dynamicParam.Add("@RequestBy", EmailId);
                 dynamicParam.Add("@RequestAt", DateTime.Now);
                 dynamicParam.Add("@RequestType", RequestType);
                 dynamicParam.Add("@actionType", actionType);
-                dynamicParam.Add("@IRFId",IRFId);
+                dynamicParam.Add("@IRFId", IRFId);
                 dynamicParam.Add("@UserId", UserId);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
@@ -1860,7 +1859,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<bool> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment, int Surchargeamt,string EmailId)
+        public async Task<bool> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment, int Surchargeamt, string EmailId)
         {
             try
             {
@@ -1895,9 +1894,9 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@InterviewId", InterviewId);
-                    parameters.Add("@IRFId",IRFId);
-                    parameters.Add("@UserId",UserId);
-                    parameters.Add("@Type",Type);
+                    parameters.Add("@IRFId", IRFId);
+                    parameters.Add("@UserId", UserId);
+                    parameters.Add("@Type", Type);
                     var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_SurchargeActivityTracker", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result;
@@ -1910,7 +1909,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetNotSecheduleSeniorHRList( string Emailid)
+        public async Task<IEnumerable<MeetingVM>> GetNotSecheduleSeniorHRList(string Emailid)
         {
             try
             {

@@ -56,5 +56,5 @@ namespace Risebird.Entities.Data
         public bool IsDeleted { get; set; }
         public bool HasEmailDroppedOrBounced { get; set; }
     }
-    }
+}
 

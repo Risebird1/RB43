@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -8,13 +6,9 @@ using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Policy;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 //using Twilio.Http;
 
@@ -78,7 +72,7 @@ namespace Risebird.CommonHelper
                 //{
                 //    return null;
                 //}
-                string threadId= string.Empty;
+                string threadId = string.Empty;
                 if (!string.IsNullOrEmpty(fileId))
                 {
                     threadId = await CreateThreadAsync(requestModel, fileId);
@@ -116,8 +110,8 @@ namespace Risebird.CommonHelper
                 {
                     return null;
                 }
-                
-                
+
+
             }
             catch (Exception ex)
             {
@@ -132,11 +126,11 @@ namespace Risebird.CommonHelper
             {
                 HttpClient client = new HttpClient();
                 string assistantId = string.Empty;
-                if(profileType == ProfileNames.Candidate)
+                if (profileType == ProfileNames.Candidate)
                 {
                     assistantId = candidateScreenerAssistantId;
                 }
-                else if(profileType == ProfileNames.Interviewer)
+                else if (profileType == ProfileNames.Interviewer)
                 {
                     assistantId = interviewerScreenerAssistantId;
                 }
@@ -221,7 +215,7 @@ namespace Risebird.CommonHelper
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/messages")
                 {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" }}//{ "Content-Type", "application/json" },
+                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
                 };
 
                 var response = await client.SendAsync(request);
@@ -257,7 +251,7 @@ namespace Risebird.CommonHelper
 
                         fcName = url.Split("/").Last();
                     }
-                    if(!string.IsNullOrEmpty(fcName) && fcName.Split(".").Last() != "doc")
+                    if (!string.IsNullOrEmpty(fcName) && fcName.Split(".").Last() != "doc")
                     {
                         var content = new MultipartFormDataContent
                         {
@@ -275,11 +269,11 @@ namespace Risebird.CommonHelper
                         var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
                         return fileResponse["id"].ToString();
                     }
-                    else 
-                    { 
-                        return null; 
+                    else
+                    {
+                        return null;
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -288,7 +282,7 @@ namespace Risebird.CommonHelper
                 return null;
             }
 
-            
+
         }
 
         //private async Task<bool> AddFileToVectorStoreAsync(string fileId, string profileType)
@@ -336,28 +330,28 @@ namespace Risebird.CommonHelper
         //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
         //        return false;
         //    }
-            
+
         //}
         private async Task<string> CreateThreadAsync(ScreeningRequest requestModel, string fileId)
         {
             try
             {
-               
+
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/threads")
                 {
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, 
                 };
 
                 string queryContent = string.Empty;
-                if(requestModel.Type == ProfileNames.Candidate)
+                if (requestModel.Type == ProfileNames.Candidate)
                 {
                     queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}.";
                 }
-                else if(requestModel.Type == ProfileNames.Interviewer)
+                else if (requestModel.Type == ProfileNames.Interviewer)
                 {
                     queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {requestModel.JDTitle}.";
                 }
-                else if(requestModel.Type == ProfileNames.QualityController)
+                else if (requestModel.Type == ProfileNames.QualityController)
                 {
                     queryContent = $"Generate an output as per the instructions fed to the assistant.";
 
@@ -445,7 +439,7 @@ namespace Risebird.CommonHelper
     public class VectorStore
     {
         public List<string> file_ids { get; set; }
-        
+
     }
     public class Message
     {

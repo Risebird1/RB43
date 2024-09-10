@@ -4811,7 +4811,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid,DateTime startdate,DateTime enddate)
+        public async Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate)
         {
             try
             {
@@ -5041,7 +5041,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid,string type)
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid, string type)
         {
             try
             {

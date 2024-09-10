@@ -9,8 +9,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
-using static System.Net.WebRequestMethods;
 
 namespace Risebird.MicroService
 {

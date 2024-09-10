@@ -1,18 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Microsoft.AspNetCore.Mvc;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
 using Risebird.Entities.Data.OpenAIModels;
-using static System.Net.WebRequestMethods;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System.Threading.Tasks;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -33,7 +29,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
         }
 
-        
+
 
         //[HttpPost("screen")]
         public async Task<IActionResult> ScreenCandidate(string jdTitle, string emailId, int irfId, int candidateMasterId, string irfName)//, string skillsstring resumeLink, 
@@ -50,7 +46,7 @@ namespace Risebird.Web.Controllers
                         //check if the candidate's screening is already done and saved in db(as json string)
 
                         var candidate = await _candidateService.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
-                        
+
                         ViewBag.CandidateEmail = emailId;
                         ViewBag.JobTitle = jdTitle;
                         ViewBag.ResumeLink = candidate?.ResumeLink;
@@ -83,11 +79,11 @@ namespace Risebird.Web.Controllers
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
                         bool saveOperationResult = true;
-                        if(!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                         {
                             saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResults(irfId, candidateMasterId, responseInJson);
                         }
-                        
+
                         if (saveOperationResult)
                         {
                             ViewBag.SaveOperationResult = "Evaluation saved successfully.";
@@ -121,7 +117,7 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                
+
             }
             catch (System.Exception ex)
             {
@@ -143,7 +139,7 @@ namespace Risebird.Web.Controllers
                     {
                         var interviewer = new TransInterviewer();
                         //check if the interviewer's screening is already done and saved in db(as json string)
-                        
+
                         interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, userId);
 
 
@@ -163,7 +159,7 @@ namespace Risebird.Web.Controllers
                             //Skills = skills,
                             JDTitle = jdTitle,
                             ResumeLink = interviewer?.ResumeLink ?? resumeLink,
-                            Type =  ProfileNames.Interviewer
+                            Type = ProfileNames.Interviewer
                         };
                         var response = await _assistantServiceHelper.ScreenAsync(request);
 
@@ -185,7 +181,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         return View(response);
-                        
+
                     }
                     else
                     {

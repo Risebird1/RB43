@@ -3960,7 +3960,7 @@ namespace Risebird.Repository
         public int GetUserId(string emailId, string profile = null, bool isStaging = false)
         {
             int result = 0;
-            if(isStaging)
+            if (isStaging)
             {
                 connectionString = connectionStringForTesting;
             }
@@ -5155,7 +5155,7 @@ namespace Risebird.Repository
         {
             try
             {
-                if(isStaging)
+                if (isStaging)
                 {
                     connectionString = connectionStringForTesting;
                 }
@@ -5430,9 +5430,9 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, string jobId = null, bool isStaging = false)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, string jobId = null, bool isStaging = false)
         {
-            if(isStaging)
+            if (isStaging)
             {
                 connectionString = connectionStringForTesting;
             }
@@ -5462,7 +5462,7 @@ namespace Risebird.Repository
                         foreach (var obj in candidateList)
                         {
                             DynamicParameters parameters = new DynamicParameters();
-                            if(!isApi)
+                            if (!isApi)
                             {
                                 parameters.Add("@IRFId", obj.IRFId);
 
@@ -5472,7 +5472,7 @@ namespace Risebird.Repository
                                 parameters.Add("@jobId", jobId);
                                 parameters.Add("@countryCode", obj.countryCode);
                             }
-                            
+
                             parameters.Add("@Name", obj.Name);
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
@@ -5488,7 +5488,7 @@ namespace Risebird.Repository
 
                             }
                             parameters.Add("@date", DateTime.Now);
-                            if(isApi && !string.IsNullOrEmpty(ApiRequestedBy))
+                            if (isApi && !string.IsNullOrEmpty(ApiRequestedBy))
                             {
                                 parameters.Add("@ClientHREmail", ApiRequestedBy);
                                 parameters.Add("@ProfileSource", ApiRequestedBy);
@@ -5512,7 +5512,7 @@ namespace Risebird.Repository
                                 dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
 
                             }
-                            else if(isApi)
+                            else if (isApi)
                             {
                                 var resultArr = result.Split("|");
                                 var irfId = Convert.ToInt32(resultArr?.Last());
@@ -8989,7 +8989,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType=null)
+        public async Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType = null)
         {
             try
             {

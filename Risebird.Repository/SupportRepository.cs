@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -206,7 +205,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters parameters = new DynamicParameters();
                     parameters.Add("@profileName", profileName);
-                    return await SqlMapper.QueryAsync<RaiseBugsVM>(con, "usp_GetRaisedIssues",parameters,
+                    return await SqlMapper.QueryAsync<RaiseBugsVM>(con, "usp_GetRaisedIssues", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }

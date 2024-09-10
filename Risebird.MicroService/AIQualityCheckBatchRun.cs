@@ -1,13 +1,12 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 
 namespace Risebird.MicroService
@@ -16,7 +15,7 @@ namespace Risebird.MicroService
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IDashboarRepository _dashboardRepository;
-        
+
         public AIQualityCheckBatchRun(IApplicationErrorLogger applicationErrorLogger,
             IDashboarRepository dashboardRepository)
         {
@@ -32,7 +31,7 @@ namespace Risebird.MicroService
             try
             {
                 var qcPendingReports = await _dashboardRepository.GetQCPendingReportsForAIQC();
-                if(qcPendingReports != null && qcPendingReports.Count()>0)
+                if (qcPendingReports != null && qcPendingReports.Count() > 0)
                 {
                     foreach (var item in qcPendingReports)
                     {
@@ -59,8 +58,8 @@ namespace Risebird.MicroService
                         }
 
                     }
-                    
-                        
+
+
                 }
             }
             catch (Exception ex)
@@ -72,6 +71,6 @@ namespace Risebird.MicroService
 
         }
 
-        
+
     }
 }
