@@ -4213,7 +4213,7 @@ namespace Risebird.Business
 
                         //    if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                         //    {
-                                 
+
                         //        canOnboardingStatus.onboardingStatus = "successful";
                         //        if (candidateEmail != null && calendlyLink != null)
                         //        {
@@ -4281,7 +4281,7 @@ namespace Risebird.Business
                         addCandidatesResponseObj.list = canReponseList;
 
                     }
-                    
+
                 }
 
                 return addCandidatesResponseObj;
@@ -4289,6 +4289,33 @@ namespace Risebird.Business
 
             }
 
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> GetProjectInterviewMeetings(int id, string profileName, string email)
+        {
+            try
+            {
+                var result = (await _irfRepository.GetProjectInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetPartnerDetailsStatsCount(startDate, endDate, profile, emailid);
+                return irfList;
+            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

@@ -3162,11 +3162,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid)
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid,string type)
         {
             try
             {
-                var result = _meetingRespository.FetchSchedulingLinks(emailid);
+                var result = _meetingRespository.FetchSchedulingLinks(emailid, type);
                 return result.Result;
             }
             catch (Exception e)

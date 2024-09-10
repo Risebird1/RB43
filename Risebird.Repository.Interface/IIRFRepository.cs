@@ -260,5 +260,7 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate);
 
         Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType = null);
+        Task<IEnumerable<MeetingVM>> GetProjectInterviewMeetings(int id, string emailId = null);
+        Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
     }
 }
