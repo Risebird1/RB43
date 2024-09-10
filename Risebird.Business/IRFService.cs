@@ -4309,5 +4309,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetPartnerDetailsStatsCount(startDate, endDate, profile, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
