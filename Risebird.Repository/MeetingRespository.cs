@@ -5041,12 +5041,13 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid)
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid,string type)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
+                dynamicParameters.Add("@@Type", type);
                 //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused, cl.ShowInterviewInstructions,IRF.IsDrive  from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner join Client cl on cl.id = irf.ClientId Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE()) order by CreatedOn desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
