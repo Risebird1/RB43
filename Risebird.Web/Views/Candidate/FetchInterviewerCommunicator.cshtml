@@ -87,10 +87,10 @@
                 <div class="pull-right">
                     @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                     {
-                        <div class="topheader-header left-p">
+                        <div class="topheader-header">
                             <div class="desktop-view">
                                 <div class="topheader-link-wrap calibration-btn">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:20px; left: 20px;position: relative;">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:-20px;right:30px;position: relative;">
                                         <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Calibration Meetings
