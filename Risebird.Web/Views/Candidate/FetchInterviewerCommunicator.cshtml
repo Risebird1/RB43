@@ -315,7 +315,7 @@
                                                                     <td>@item.ProjectUniqueid</td>
                                                                     <td>@item.IRFCount</td>
                                                                     <td class="text-center">
-                                                                        <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
+                                                                        @* <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
                                                                             <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.ProjectUniqueid', 'public');" title="Upload Resumes">
                                                                                 <span class="fas fa-upload"></span>
                                                                             </span>
@@ -323,7 +323,7 @@
 
                                                                         <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
                                                                             <span onclick="OpenImportModal('@item.id', '@item.ProjectUniqueid', '@ViewBag.emailid','@item.ProjectName')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
-                                                                        </button>
+                                                                        </button> *@
 
                                                                         @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                         {
