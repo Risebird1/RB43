@@ -51,7 +51,7 @@
 <div id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad mob-top" style="margin:25px;">
-            <div class="row card-header bg-w clearfix">
+            <div class="row card-header bg-w clearfix" style="height:80px;padding: 8px 0px 20px 0px;">
                 <div class="col-md-8  m-w-60 pull-left">
                     <div class="pull-left myinterview">
                         <div class="mobile-view"> <h4 class="card-title"> Manage Interviews</h4></div>
@@ -63,15 +63,14 @@
                         <input type="hidden" value="@ViewBag.emailid" id="hiddemailid" />
                         <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
                         <input type="hidden" value="@ViewBag.IsClientLogin" id="hiddIsClientLogin" />
-                        @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                        {
-                            @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button", @style="position:relative;top:30px;right:30px;" })
-                        }
-                    </div>
+                       
+                        
+
+                        </div>
                 </div>
                 @if (ViewBag.ClientRole == "Business Owner" || ViewBag.ClientRole == "Client Admin" || ViewBag.ClientRole == "Head HR")
                 {
-                    <div class="pull-left">
+                    <div class="col-md-8  m-w-60 pull-left" style="padding-top:30px;">
                         @if (ViewBag.Type == "SkillChannel")
                         {
                             <div class="feedback-tab-ac" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
@@ -84,13 +83,13 @@
                         }
                     </div>
                 }
-                <div class="pull-right">
+                <div class="col-md-4 m-w-40 pull-left mob-ht">
                     @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                     {
-                        <div class="topheader-header">
+                        <div>
                             <div class="desktop-view">
-                                <div class="topheader-link-wrap calibration-btn">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:-20px;right:30px;position: relative;">
+                                <div class="topheader-link-wrap">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: -95px;">
                                         <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Calibration Meetings
@@ -101,13 +100,20 @@
 
                             <div class="mobile-view">
                                 <div class="topheader-link-wrap calibration-btn">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top: 8px; left: 20px;position: relative;">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;right: -95px; position: relative;">
                                         <span><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
 
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                          
+ @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                        {
+
+                                @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "pull-right mob-ht mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button", @style="position:relative;top:30px;right:30px;" })
+                        }
+                       
+                            </div>
                     }
                 </div>
             </div>
