@@ -50,7 +50,7 @@
 
 <div id="main-panel">
     <div class="pt30">
-        <div class="col-md-12 nopad mob-top" style="margin:0px;">
+        <div class="col-md-12 nopad mob-top" style="margin:25px;">
             <div class="row card-header bg-w clearfix">
                 <div class="col-md-8  m-w-60 pull-left">
                     <div class="pull-left myinterview">
@@ -65,7 +65,7 @@
                         <input type="hidden" value="@ViewBag.IsClientLogin" id="hiddIsClientLogin" />
                         @if (!(bool)(ViewBag.IsClientLogin ?? false))
                         {
-                            @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button" })
+                            @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button", @style="position:relative;top:30px;right:30px;" })
                         }
                     </div>
                 </div>
@@ -90,7 +90,7 @@
                         <div class="topheader-header left-p">
                             <div class="desktop-view">
                                 <div class="topheader-link-wrap calibration-btn">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top: 8px; left: 20px;position: relative;">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:20px; left: 20px;position: relative;">
                                         <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Calibration Meetings
