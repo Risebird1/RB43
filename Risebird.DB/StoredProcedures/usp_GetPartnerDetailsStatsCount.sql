@@ -19,7 +19,7 @@ Declare @Clientid int
 Select @Clientid=cu.ClientId From UserList ul join ClientUser cu on ul.id=cu.UserId where EmailId=@emailid and idProfile=4  
 declare @notinclude varchar(50)
 set @notinclude='@'+SUBSTRING(@emailid,LEN(@emailid)-CHARINDEX('@',REVERSE(@emailid))+ 2, LEN(@emailid))
-  
+
 DECLARE @TemporaryCandidateTableVariable TABLE (                          
  IRFId int,                    
  CandidateMasterId int,                    
@@ -27,17 +27,16 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  CandidateLatestStatus varchar(20),
  ClientHRAttemptContact varchar(200)
 );                       
-                    
-INSERT INTO @TemporaryCandidateTableVariable                          
-select ca.IRFId, ca.CandidateMasterId, cm.UserId,                      
+
+INSERT INTO @TemporaryCandidateTableVariable                        
+select ca.IRFId, ca.CandidateMasterId, cm.UserId,                    
 dbo.fn_CandidateLatestStatusForIrfStats(cm.UserId, ca.IRFId, cast(@startDate as date), @timeNow),ca.ClientHRAttemptContact
-from Interviewmeetings im join IRF on IRF.IRFId=im.IRFId
-join UserList ul on ul.emailid=im.CandidateEmail
-join CandidatesMaster cm on ul.id=cm.Userid
-join Candidate ca on cm.id=ca.CandidateMasterId and ca.IRFId=IRF.id
-where IRF.ClientId=@Clientid and cast(im.Interviewdate as date) <= cast(@endDate as date) and cast(im.Interviewdate as date) >= cast(@startDate as date) 
+from  Candidate ca                   
+join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)                   
+join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
+join IRF on IRF.id=ca.IRFId
+Where IRF.ClientId=@Clientid  and cs.[Status] =12 and cast(cs.[Date] as date) <= cast(@endDate as date) and cast(cs.[Date] as date) >= cast(@startDate as date)
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId,ca.ClientHRAttemptContact
-                    
  
  select distinct cl.[Name] as ClientCompName,cl.id as Clientid,ul.Emailid as ClientHRAttemptContact,    
  (select count(UserId) from @TemporaryCandidateTableVariable where ClientHRAttemptContact = ul.Emailid) as CandidateCount,                      
