@@ -9066,7 +9066,32 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public async Task<IEnumerable<CandidateExcelData>> GetPartnerDetailsStatsDetailedView(int userid, string type, DateTime startDate, DateTime enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userid", userid);
+                    parameters.Add("@type", type);
+                    parameters.Add("@startdate", startDate);
+                    parameters.Add("@endDate", enddate);
+                    parameters.Add("@timenow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetPartnerDetailsStatsDetailedView", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 } 
 

@@ -60,6 +60,12 @@
                         Project: @ViewBag.projectname <span style="color: darkcyan;text-transform:capitalize">(@ViewBag.type)</span>
                     </p>
                 }
+                else if (ViewBag.PageType == "PartnerStats")
+                {
+                    <p class="text-center" style="color: #3396d1;margin-bottom:0px;font-size:19px;font-weight: 600;text-transform:uppercase">
+                        Partner: @ViewBag.projectname <span style="color: darkcyan;text-transform:capitalize">(@ViewBag.type)</span>
+                    </p>
+                }
                 else
                 {
                     <p class="text-center" style="color: #3396d1;margin-bottom:0px;font-size:19px;font-weight: 600;text-transform:uppercase">

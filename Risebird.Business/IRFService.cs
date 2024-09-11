@@ -4322,5 +4322,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<CandidateExcelData>> GetPartnerDetailsStatsDetailedView(int userid, string type, DateTime startDate, DateTime enddate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetPartnerDetailsStatsDetailedView(userid, type, startDate, enddate);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
