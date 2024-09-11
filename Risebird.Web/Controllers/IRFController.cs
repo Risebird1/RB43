@@ -62,12 +62,13 @@ namespace Risebird.Web.Controllers
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
-            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper)
+            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper, ISASUrlHelper sasUrlHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -94,6 +95,7 @@ namespace Risebird.Web.Controllers
             codeapiendpoint = _configuration["CodeApiEndPoint"];
             _httpClient = factory.GetHttpClient();
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
 
 
@@ -7028,6 +7030,44 @@ namespace Risebird.Web.Controllers
             return uploadedfbaudioFileURL;
         }
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadVideoInstructionFile()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
+                string uploadedVideoUrl = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "").Replace("+", "").Replace("_", "");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime")
+                {
+                    await _azureStorageHelper.InsertImageBlob(outputFileName, "videoinstructions", model, fileMimeType);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videoinstructions");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedVideoUrl = blob.Uri.ToString();
+                    var sas = _sasUrlHelper.CreateSasUrl("videoinstructions");
+                    if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                    {
+                        uploadedVideoUrl = uploadedVideoUrl + "?" + sas;
+                    }
+                    var result = _irfService.SaveIRFAudioLink(Convert.ToInt32(irfid), uploadedVideoUrl);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only PDF file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
+        }
+
+        [HttpPost]
         public async Task<JsonResult> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try
@@ -10112,7 +10152,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
             }
-        } 
+        }
         #endregion
 
     }
