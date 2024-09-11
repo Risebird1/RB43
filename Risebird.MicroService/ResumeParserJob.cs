@@ -12,7 +12,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -124,7 +123,7 @@ namespace Risebird.MicroService
                                     candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
                                     //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
                                 }
-                                if(!_validationHelper.ValidateEmailAddress(candidate.EmailId))
+                                if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
                                 {
                                     //mark it as cant be processed in the database
                                     candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });

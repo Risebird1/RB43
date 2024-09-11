@@ -390,8 +390,8 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         string uploadedFileURL = string.Empty;
-
-                        if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                        
+                        if (string.IsNullOrEmpty(interviewerProfile.ResumeLink) && (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null))
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {

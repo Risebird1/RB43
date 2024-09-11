@@ -3162,7 +3162,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid,string type)
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid, string type)
         {
             try
             {

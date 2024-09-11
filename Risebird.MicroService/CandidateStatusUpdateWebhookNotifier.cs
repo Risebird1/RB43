@@ -1,19 +1,16 @@
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using Risebird.Repository.Interface;
 
 namespace Risebird.MicroService
 {
@@ -42,7 +39,7 @@ namespace Risebird.MicroService
             {
                 var webHookData = await _candidateRepository.GetCandidateStatusForWebHook();
 
-                if(webHookData != null && webHookData.Count() > 0)
+                if (webHookData != null && webHookData.Count() > 0)
                 {
                     var successfullyDeliveredCandidates = new List<int>();
 
@@ -149,7 +146,7 @@ namespace Risebird.MicroService
                         await _candidateRepository.DeleteDeliveredCandidateStatusForWebHook(successfullyDeliveredCandidates);
                     }
                 }
-                
+
 
             }
             catch (Exception ex)

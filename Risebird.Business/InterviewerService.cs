@@ -1551,5 +1551,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveInterviewerPreOnboardingVerdict(emailId, PrimarySpecialization, screeningResponseJson, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
