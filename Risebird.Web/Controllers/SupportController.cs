@@ -23,7 +23,7 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly INotificationHelper _notificationHelper;
 
-        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IDashboardService dashboardService, IFileMimeTypeHelper fileMimeTypeHelper, IAzureStorageHelper azureStorageHelper,INotificationHelper notificationHelper)
+        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IDashboardService dashboardService, IFileMimeTypeHelper fileMimeTypeHelper, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper)
         {
             _supportService = supportService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -407,15 +407,16 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                
+
                 var model = new RaiseBugsVM();
                 if (profileName == ProfileNames.Interviewer || profileName == ProfileNames.Client)
                 {
                     model.RequestType = "Operation";
                 }
-                else {
+                else
+                {
                     model.RequestType = "Technical";
-                }  
+                }
                 model.RequestedBy = emailId;
                 model.Requester = profileName;
                 return PartialView(model);
@@ -457,7 +458,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Request is not raised, Please try again.");
         }
-        public async Task<IActionResult> RaisedRequests(string type,int returnBack)
+        public async Task<IActionResult> RaisedRequests(string type, int returnBack)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {

@@ -64,9 +64,9 @@ namespace Risebird.MicroService
                         && !item.TimeZonesValue.Contains("Chennai"))
                     {
                         timeZoneValue = item.TimeZonesValue.Split(")").ElementAtOrDefault(1);
-                       
-                            item.interviewDate = item.interviewDate.AddMinutes(-(330 + item.TimeZoneoffset.Value));
-                        
+
+                        item.interviewDate = item.interviewDate.AddMinutes(-(330 + item.TimeZoneoffset.Value));
+
                     }
 
 

@@ -93,5 +93,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);
         Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
+        Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
     }
 }

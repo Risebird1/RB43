@@ -4094,11 +4094,11 @@ namespace Risebird.Business
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
                 var userId = _irfRepository.GetUserId(requestedBy, isStaging: isStaging);
-                
+
                 //var irf = _irfRepository.GetIRFbyIRFName(irfName);
 
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, jobId:jobId, isStaging:isStaging);
-                
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi: true, ApiRequestedBy: requestedBy, jobId: jobId, isStaging: isStaging);
+
                 //var calendlyLink = irf.CalendlyLink;
                 //var jdLink = irf.JDLink;
                 //var client = await _clientService.GetClient(irf.ClientId);
@@ -4151,7 +4151,7 @@ namespace Risebird.Business
                                     var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
                                     if (irf.BussinessType == "B2B")
                                     {
-                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id, isStaging : isStaging).Result;
+                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id, isStaging: isStaging).Result;
                                     }
                                     else
                                     {
@@ -4162,7 +4162,7 @@ namespace Risebird.Business
                                     {
                                         canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
 
-                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId, isStaging :isStaging).Result;
+                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId, isStaging: isStaging).Result;
 
                                     }
                                     else

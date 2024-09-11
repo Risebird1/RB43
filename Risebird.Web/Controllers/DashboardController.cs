@@ -20,7 +20,6 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
