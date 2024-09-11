@@ -391,49 +391,49 @@ namespace Risebird.Web.Controllers
                     {
                         string uploadedFileURL = string.Empty;
                         
-                        if (string.IsNullOrEmpty(interviewerProfile.ResumeLink) && (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null))
-                        {
-                            if (interviewerProfile.ResumeFile != null)
-                            {
-                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
-                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                                {
-                                    var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
-                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
-                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                                    uploadedFileURL = blob.Uri.ToString();
-                                    interviewerProfile.ResumeLink = uploadedFileURL;
-                                }
+                        //if (string.IsNullOrEmpty(interviewerProfile.ResumeLink) && (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null))
+                        //{
+                        //    if (interviewerProfile.ResumeFile != null)
+                        //    {
+                        //        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                        //        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        //                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        //        {
+                        //            var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                        //            await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
+                        //            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        //            var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                        //            uploadedFileURL = blob.Uri.ToString();
+                        //            interviewerProfile.ResumeLink = uploadedFileURL;
+                        //        }
 
 
-                            }
-                            if (interviewerProfile.CodedResumeFile != null)
-                            {
-                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
-                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                                {
-                                    var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+                        //    }
+                        //    if (interviewerProfile.CodedResumeFile != null)
+                        //    {
+                        //        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
+                        //        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        //                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        //        {
+                        //            var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
-                                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
-                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                                    uploadedFileURL = blob.Uri.ToString();
-                                    interviewerProfile.CodedResumeLink = uploadedFileURL;
-                                }
+                        //            await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
+                        //            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        //            var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                        //            uploadedFileURL = blob.Uri.ToString();
+                        //            interviewerProfile.CodedResumeLink = uploadedFileURL;
+                        //        }
 
-                            }
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Please add a Resume File");
-                            InterviewerProfileVM model = new InterviewerProfileVM();
-                            // Get all the select Lists
-                            await GetAllSelectList(model);
-                            return View("AddInterviewerProfile", model);
-                        }
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    ModelState.AddModelError(string.Empty, "Please add a Resume File");
+                        //    InterviewerProfileVM model = new InterviewerProfileVM();
+                        //    // Get all the select Lists
+                        //    await GetAllSelectList(model);
+                        //    return View("AddInterviewerProfile", model);
+                        //}
 
                         if (!string.IsNullOrEmpty(interviewerProfile.FirstName))
                         {
