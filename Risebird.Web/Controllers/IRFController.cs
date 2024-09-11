@@ -10016,6 +10016,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
             }
         }
+        #endregion
+        #region Partners Stats
         [HttpGet]
         public async Task<IActionResult> PartnerDetailsStats(string emailid, bool isClientLogin = false, string uniqueid = null)
         {
@@ -10110,7 +10112,8 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
             }
-        }
+        } 
         #endregion
+
     }
 }
