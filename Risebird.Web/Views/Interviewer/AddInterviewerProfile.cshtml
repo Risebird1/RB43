@@ -105,7 +105,7 @@
                                     @Html.TextBoxFor(model => model.CodedResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                 </div> *@
                                 <div class="" id="uploadDiv">
-                                    @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+                                    @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf" })
                                 </div>
                             </div>
                             <div class="card-footer ">
@@ -982,6 +982,7 @@
 </script>
 <script>
     function GenerateAIVerdict() {
+        document.getElementById("id_btn_generateAIVerdict").disabled = true;
         var primarySpecialization = $("#PrimarySpecializationForAIVerdict").val().trim();
         var emailId = $("#txt_EmailId").val().trim();
         
@@ -1007,14 +1008,16 @@
                     }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
-                        document.getElementById("id_btn_generateAIVerdict").disabled = true;
+                        //document.getElementById("id_btn_generateAIVerdict").disabled = true;
                     }
                 }
                 else if (data != null && data.errorMessage != '') {
                     swal.fire(data.errorMessage);
+                    document.getElementById("id_btn_generateAIVerdict").disabled = false;
                 }
                 else {
                     swal.fire("Error generating verdict. Please try again.");
+                    document.getElementById("id_btn_generateAIVerdict").disabled = false;
                 }
 
             }
