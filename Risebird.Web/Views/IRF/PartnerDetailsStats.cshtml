@@ -206,7 +206,7 @@
                                                             <td style="color: #23466f;">@item.ClientHRAttemptContact</td>
                                                             <td class="text-center"> <span class="count">@item.CandidateCount</span> </td>
                                                             <td style="color:#2680c7;cursor:pointer">
-                                                                <a>
+                                                                <a target="_blank" href='@Url.Action("PartnerDetailsStatsDetailedView", "IRF", new { userid=item.id,partnername=item.ClientHRAttemptContact,type="Completed",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.CompletedInterviews
                                                                     { @if (item.CandidateCount > 0)
                                                                     {
@@ -217,7 +217,7 @@
                                                             </td>
                                                             <td><span class="count">@item.PendingCount</span> </td>
                                                             <td style="color:#2680c7;cursor:pointer">
-                                                                <a>
+                                                                <a target="_blank" href='@Url.Action("PartnerDetailsStatsDetailedView", "IRF", new { userid=item.id,partnername=item.ClientHRAttemptContact,type="ColdCandidate",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.ColdCandidateCount
                                                                     { @if (item.CandidateCount > 0)
                                                                     {
@@ -226,7 +226,7 @@
                                                                 </a>
                                                             </td>
                                                             <td style="color:#2680c7;cursor:pointer">
-                                                                <a>
+                                                                <a target="_blank" href='@Url.Action("PartnerDetailsStatsDetailedView", "IRF", new { userid=item.id,partnername=item.ClientHRAttemptContact,type="NotScheduled",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.NotScheduledCount
                                                                     { @if (item.CandidateCount > 0)
                                                                     {
@@ -235,7 +235,7 @@
                                                                 </a>
                                                             </td>
                                                             <td style="color:#2680c7">
-                                                                <a>
+                                                                <a target="_blank" href='@Url.Action("PartnerDetailsStatsDetailedView", "IRF", new { userid=item.id,partnername=item.ClientHRAttemptContact,type="Reschedule",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.ReScheduledCount
                                                                     { @if (item.CandidateCount > 0)
                                                                     {
@@ -244,7 +244,7 @@
                                                                 </a>
                                                             </td>
                                                             <td style="color:#2680c7">
-                                                                <a>
+                                                                <a target="_blank" href='@Url.Action("PartnerDetailsStatsDetailedView", "IRF", new { userid=item.id,partnername=item.ClientHRAttemptContact,type="Futureschedule",uniqueid=ViewBag.uniqueid })'>
                                                                     @item.FutureScheduledMeetings
                                                                     { @if (item.CandidateCount > 0)
                                                                     {

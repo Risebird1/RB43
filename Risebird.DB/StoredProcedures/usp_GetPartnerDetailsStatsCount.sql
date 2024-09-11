@@ -38,7 +38,7 @@ join IRF on IRF.id=ca.IRFId
 Where IRF.ClientId=@Clientid  and cs.[Status] =12 and cast(cs.[Date] as date) <= cast(@endDate as date) and cast(cs.[Date] as date) >= cast(@startDate as date)
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId,ca.ClientHRAttemptContact
  
- select distinct cl.[Name] as ClientCompName,cl.id as Clientid,ul.Emailid as ClientHRAttemptContact,    
+ select distinct cl.[Name] as ClientCompName,cl.id as Clientid,ul.Emailid as ClientHRAttemptContact,ul.id,    
  (select count(UserId) from @TemporaryCandidateTableVariable where ClientHRAttemptContact = ul.Emailid) as CandidateCount,                      
  (select count(UserId) from @TemporaryCandidateTableVariable                        
  where ClientHRAttemptContact = ul.Emailid and CandidateLatestStatus = 'FUTURESCHEDULE') as FutureScheduledMeetings,                     
