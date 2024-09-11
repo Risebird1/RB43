@@ -1,30 +1,21 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http;
-using Risebird.CommonHelper;
 //using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace Risebird.MicroService
@@ -327,7 +318,7 @@ namespace Risebird.MicroService
 
                         }
 
-                        
+
 
                         //if (candidateStatus != null)
                         //{

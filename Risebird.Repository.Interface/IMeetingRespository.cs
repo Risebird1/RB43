@@ -191,7 +191,7 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
         Task<Meeting> GetMeetingDetails(int meetingId);
         Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
-        Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid,string type);
+        Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid, string type);
         Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int? irfId = null);
         Task<IEnumerable<string>> GetIRFActiveInterviewers(string irfId);
         Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);

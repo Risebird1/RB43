@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public static class ProfileNames
     {
@@ -18,8 +12,8 @@ namespace Risebird.Entities.Data
         public static readonly string Finance = "Finance";
         public static readonly string InterviewerManagement = "InterviewerManagement";
         public static readonly string SeniorInterviewerManagement = "SeniorInterviewerManagement";
-        public static readonly string Recruiter = "Recruiter";      
-        public static readonly string Candidate = "Candidate";      
+        public static readonly string Recruiter = "Recruiter";
+        public static readonly string Candidate = "Candidate";
         public static readonly string ResumeParserAIAssistant = "ResumeParserAIAssistant";  // this profile is created solely for the purpose of Resume Parsing using OpenAI's assistant and does not map to any Risebird-defined profiles. Added here to avoid duplicacy of creating another enum that lists Profiles.    
     }
 }

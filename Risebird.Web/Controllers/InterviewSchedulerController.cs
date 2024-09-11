@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
@@ -16,7 +15,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using VirusTotalNet.Exceptions;
 
 namespace Risebird.Web.Controllers
 {

@@ -3361,6 +3361,30 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailId);
+                    parameters.Add("@PrimarySpecialization", PrimarySpecialization);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerPreOnboardingVerdict", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 
 }

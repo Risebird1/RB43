@@ -232,5 +232,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AvailabilityResponseDate { get; set; }
         public bool IsResumeRedactAttempted { get; set; }
         public bool IsResumeRedactFailed { get; set; }
+
+        [Display(Name = "Primary Specialization")]
+        public string PrimarySpecializationForAIVerdict { get; set; }
     }
 }

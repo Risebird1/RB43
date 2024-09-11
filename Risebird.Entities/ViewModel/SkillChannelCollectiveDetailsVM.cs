@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -56,7 +51,7 @@ namespace Risebird.Entities.ViewModel
         public string LessSelectCommentStatus { get; set; }
         public string LessRejectCommentStatus { get; set; }
         public string LessQuestionsStatus { get; set; }
-        
+
         public string ReportPendingStatus { get; set; }
         public string RescheduleStatus { get; set; }
         public string QcPendingStatus { get; set; }
