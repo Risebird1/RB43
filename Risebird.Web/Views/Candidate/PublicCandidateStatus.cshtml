@@ -411,6 +411,12 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                 {
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Partner Stats
+                                        </div>
+                                    </button>
                                     <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">

@@ -85,7 +85,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
-        Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null, string irfName = null, string candidateEmailId = null);
+        Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null, string irfName = null, string candidateEmailId = null, bool isStaging = false);
         Task AddCandidateUsingResumeParserJob(List<CandidateQuickAddModel> candidateList, int irfId);
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite, string linkurl);
         Task<IRF> GetIRFForCall(int irfId);
@@ -182,6 +182,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateExcelData>> GetProjectSkillChannelStatsDetailedView(int projectid, string type, DateTime startDate);
         Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, DateTime enddate);
         //Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate);
-        Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId);
+        Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId, bool isStaging = false);
+        Task<List<MeetingVM>> GetProjectInterviewMeetings(int id, string profileName, string email);
+        Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
     }
 }

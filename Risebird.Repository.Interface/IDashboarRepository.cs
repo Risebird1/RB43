@@ -65,11 +65,11 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ProctoringReport>> GeProxyReport();
         Task<ProctoringReport> GetProxyReportCountDetails(int id);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid);
-        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null,string emailid = null);
+        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null, string emailid = null);
         Task<List<MeetingVM>> GetDMApproveDetailsRepository(string EmailId);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId);
-        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid,string Email);
-        Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue,string EmailId);
+        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid, string Email);
+        Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue, string EmailId);
         Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId);
         Task<List<MeetingVM>> FetchTechQCDetails(string EmailId);

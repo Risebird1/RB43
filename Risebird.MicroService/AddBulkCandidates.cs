@@ -1,27 +1,20 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
-using System.Linq;
+using System;
 using System.Collections.Generic;
-using Risebird.CommonHelper;
-using Microsoft.Azure.Documents.SystemFunctions;
-using Risebird.Entities.Data;
-using Risebird.Entities.ViewModel;
-using Microsoft.IdentityModel.Tokens;
-using System.Web.Http;
-using System.Reflection;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -79,7 +72,7 @@ namespace Risebird.MicroService
                             if (string.IsNullOrEmpty(reqData.jobId) || string.IsNullOrEmpty(reqData.requestedBy))
                             {
                                 var detailsError = new Dictionary<string, string>();
-                                
+
                                 if (string.IsNullOrEmpty(reqData.jobId))
                                 {
                                     detailsError.Add("jobId", "This field is required.");
@@ -101,7 +94,7 @@ namespace Risebird.MicroService
                             //find the name of the skill channel based on the request parameters;
                             //var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
                             var result = await _irfService.AddMultipleCandidatesViaApi(reqData.CandidateList, reqData.requestedBy, true, reqData.jobId);
-                            if(result != null)
+                            if (result != null)
                             {
                                 result.performedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
                                 return new OkObjectResult(result);

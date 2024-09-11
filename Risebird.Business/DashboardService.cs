@@ -864,11 +864,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null,string emailid=null)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null, string emailid = null)
         {
             try
             {
-                return await _dashboardRespository.GetEmailRecipientsDetails(recipientType, startDate, endDate,emailid);
+                return await _dashboardRespository.GetEmailRecipientsDetails(recipientType, startDate, endDate, emailid);
             }
             catch (Exception ex)
             {
@@ -906,7 +906,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid,Email);
+                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid, Email);
             }
             catch (Exception ex)
             {
@@ -918,7 +918,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.InterviewerIRFLogisticDetails(type,EmailId);
+                return await _dashboardRespository.InterviewerIRFLogisticDetails(type, EmailId);
             }
             catch (Exception ex)
             {
@@ -939,11 +939,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue,string EmailId)
+        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue, string EmailId)
         {
             try
             {
-                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue,EmailId)).ToList();
+                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue, EmailId)).ToList();
             }
             catch (Exception ex)
             {
@@ -952,12 +952,12 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId,int type)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type)
         {
             try
             {
-               return await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId,type);
-               
+                return await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId, type);
+
             }
             catch (Exception e)
             {
@@ -969,7 +969,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetFutureDateInterviewSchedule(IRFId,CandidateEmail);
+                return await _dashboardRespository.GetFutureDateInterviewSchedule(IRFId, CandidateEmail);
             }
 
             catch (Exception e)
@@ -1018,11 +1018,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType,DateTime? StartDate,DateTime? EndDate)
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType, DateTime? StartDate, DateTime? EndDate)
         {
             try
             {
-                return await _dashboardRespository.GetSurcharesDetails(actionType,StartDate,EndDate);
+                return await _dashboardRespository.GetSurcharesDetails(actionType, StartDate, EndDate);
             }
             catch (Exception ex)
             {
@@ -1030,11 +1030,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId,int IRFId, int actionType, int UserId)
+        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int IRFId, int actionType, int UserId)
         {
             try
             {
-                return await _dashboardRespository.ApproveSurcharge(InterviewId,Surcharge,SurchargeComment,Type,EmailId, IRFId, actionType, UserId);
+                return await _dashboardRespository.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type, EmailId, IRFId, actionType, UserId);
 
             }
             catch (Exception e)
@@ -1048,7 +1048,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.UpdateSurchargeDetails (InterviewId,IRFId,Type,UserId,SurchargeComment,Surchargeamt,EmailId);
+                return await _dashboardRespository.UpdateSurchargeDetails(InterviewId, IRFId, Type, UserId, SurchargeComment, Surchargeamt, EmailId);
 
             }
             catch (Exception e)
@@ -1062,7 +1062,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetSurcharesActivityTracker(InterviewId,IRFId,Type,UserId);
+                return await _dashboardRespository.GetSurcharesActivityTracker(InterviewId, IRFId, Type, UserId);
             }
             catch (Exception ex)
             {

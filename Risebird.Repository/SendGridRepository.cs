@@ -14,7 +14,8 @@ namespace Risebird.Repository
     public class SendGridRepository : ISendGridRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly string connectionString;
+        private string connectionString;//readonly
+        private readonly string connectionStringForTesting;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public SendGridRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
@@ -22,6 +23,8 @@ namespace Risebird.Repository
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            connectionStringForTesting = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
         }
         public async Task<bool> SaveSendGridEventDetails(SendgridEventData model)
         {
@@ -63,10 +66,14 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<bool> SaveSentMailDetails(SentMailDetails model)
+        public async Task<bool> SaveSentMailDetails(SentMailDetails model, bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     if (model.InterviewIdList != null)
@@ -122,7 +129,7 @@ namespace Risebird.Repository
                         parameters.Add("@IRFName", model.IRFName);
                         parameters.Add("@AssessmentGroupId", model.AssessmentGroupId);
                         parameters.Add("@CampaignId", model.CampaignId);
-                        parameters.Add("@IsACS",false);
+                        parameters.Add("@IsACS", false);
 
                         await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
                              commandType: CommandType.StoredProcedure);
