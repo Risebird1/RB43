@@ -9,11 +9,8 @@ using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
-using Risebird.Entities.Data.OpenAIModels;
-using static System.Net.WebRequestMethods;
-using Risebird.Entities.ViewModel;
+using System;
+using System.Net.Http.Headers;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
