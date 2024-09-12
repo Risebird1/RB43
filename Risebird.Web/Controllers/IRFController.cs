@@ -9504,6 +9504,17 @@ namespace Risebird.Web.Controllers
                 }
             }
             var DayinterviewList = (await _irfService.GetDayStatsByClientUser(startdate, enddate, emailid))?.ToList();
+            foreach (var item in DayinterviewList)
+            {
+                if (item.InterviewDuration > 0)
+                {
+                    item.NoOfIntterview = 12 * item.Concurrency * 60 / item.InterviewDuration;
+                }
+                else
+                {
+                    item.NoOfIntterview = 12 * item.Concurrency;
+                }
+            }
             return View(DayinterviewList);
         }
         [HttpPost]
