@@ -1020,7 +1020,7 @@
         openInterviewerAlert()
     })
 </script>
-@if (!string.IsNullOrWhiteSpace(Model.AudioComment))
+@if (!string.IsNullOrWhiteSpace(Model.AudioComment) || !string.IsNullOrWhiteSpace(Model.CompanyDetails))
 {
     <script>
         $(document).ready(function () {
