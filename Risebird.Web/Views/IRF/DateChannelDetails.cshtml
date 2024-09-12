@@ -172,6 +172,8 @@
                                                     <th>Date</th>
                                                     <th>Skill Channel</th>
                                                     <th>JD Title</th>
+                                                    <th>Total Slots</th>
+                                                    <th>Available Slots</th>
                                                     <th>Scheduled Interviews</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -186,6 +188,8 @@
                                                     <th>Date</th>
                                                     <th>Skill Channel</th>
                                                     <th>JD Title</th>
+                                                    <th>Total Slots</th>
+                                                    <th>Available Slots</th>
                                                     <th>Scheduled Interviews</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -204,6 +208,8 @@
                                                             <td>@item.interviewDate</td>
                                                             <td>@item.IRFId</td>
                                                             <td>@item.JDTiltle</td>
+                                                            <td>@item.NoOfIntterview</td>
+                                                            <td>@(item.NoOfIntterview-item.CandidateCount)</td>
                                                             <td> @item.CandidateCount </td>
                                                             <td>
                                                                 <a target="_blank" href='@Url.Action("DateChannelStatsDetailedView", "IRF", new { irfintid=item.id,IRFId=item.IRFId,type="Completed",uniqueid=ViewBag.uniqueid })'>
