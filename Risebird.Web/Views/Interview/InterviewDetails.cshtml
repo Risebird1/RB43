@@ -1020,7 +1020,7 @@
         openInterviewerAlert()
     })
 </script>
-@if (!string.IsNullOrWhiteSpace(Model.AudioComment))
+@if (!string.IsNullOrWhiteSpace(Model.AudioComment) || !string.IsNullOrWhiteSpace(Model.CompanyDetails))
 {
     <script>
         $(document).ready(function () {
@@ -1056,7 +1056,7 @@
 <script>
     $(document).ready(function () {
         GetquestionList();
-        InsightsDetails('@Model.interviewer', '@Model.IRFID');
+        //InsightsDetails('@Model.interviewer', '@Model.IRFID');
         FetchCodesnippet();
     });
     function GetquestionList() {
@@ -1091,7 +1091,7 @@
     }
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
-@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@* @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml") *@
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script>
     function closePopupDetailsModal() {

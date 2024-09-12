@@ -9485,37 +9485,44 @@ namespace Risebird.Web.Controllers
         #region Day Stats
         public async Task<IActionResult> DateChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
         {
-            ViewBag.emailid = emailid;
-            ViewBag.uniqueid = uniqueid;
-            ViewBag.IsClientLogin = isClientLogin;
-            var profileName = "Client";
-            ViewBag.profile = profileName;
-            ViewBag.PageStatus = "Public";
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-            var startdate = DateTime.Now;
-            var enddate = DateTime.Now.AddDays(1);
-            if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
+            try
             {
-                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
-                if (filter.StartDate != null)
+                ViewBag.emailid = emailid;
+                ViewBag.uniqueid = uniqueid;
+                ViewBag.IsClientLogin = isClientLogin;
+                var profileName = "Client";
+                ViewBag.profile = profileName;
+                ViewBag.PageStatus = "Public";
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                var startdate = DateTime.Now;
+                var enddate = DateTime.Now.AddDays(1);
+                if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
                 {
-                    startdate = filter.StartDate.Value;
-                    enddate = startdate.AddDays(1);
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                    if (filter.StartDate != null)
+                    {
+                        startdate = filter.StartDate.Value;
+                        enddate = startdate.AddDays(1);
+                    }
                 }
+                var DayinterviewList = (await _irfService.GetDayStatsByClientUser(startdate, enddate, emailid))?.ToList();
+                foreach (var item in DayinterviewList)
+                {
+                    if (item.InterviewDuration > 0)
+                    {
+                        item.NoOfIntterview = 12 * item.Concurrency * 60 / item.InterviewDuration;
+                    }
+                    else
+                    {
+                        item.NoOfIntterview = 12 * item.Concurrency;
+                    }
+                }
+                return View(DayinterviewList);
             }
-            var DayinterviewList = (await _irfService.GetDayStatsByClientUser(startdate, enddate, emailid))?.ToList();
-            foreach (var item in DayinterviewList)
+            catch (Exception ex)
             {
-                if (item.InterviewDuration > 0)
-                {
-                    item.NoOfIntterview = 12 * item.Concurrency * 60 / item.InterviewDuration;
-                }
-                else
-                {
-                    item.NoOfIntterview = 12 * item.Concurrency;
-                }
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
             }
-            return View(DayinterviewList);
         }
         [HttpPost]
         public async Task<IActionResult> DateChannelDetails(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
