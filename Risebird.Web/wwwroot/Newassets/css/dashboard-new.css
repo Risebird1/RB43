@@ -9009,7 +9009,7 @@ option {
     color: #fff;
     padding: 10px 32px 0px 10px;
 }
-#InterviewerAlert .button-warning {
+#InterviewerAlert .button-warning, .VideoInstAlert .button-warning{
     background: #d43434;
     color: #fff;
     font-size: 14px;

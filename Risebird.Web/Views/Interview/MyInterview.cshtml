@@ -80,29 +80,29 @@
                 <div class="pull-left">
                     @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Pending)
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                       <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                     {
+                       <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
@@ -399,26 +399,33 @@
                                                             <th style="border-right: 0px !important;"></th>
 
                                                             @* <th style="text-align:left">JD-Skills</th>*@
-                                                            <th id="myinterview_4">Candidate Details</th>
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                {
+                                                                    <th class="disabled-sorting text-center">Actions</th>
+                                                                }
+                                                            <th id="myinterview_4">Interview Details</th>
                                                             <th style="border-left: 0px !important;">Interview Date </th>
                                                             @*<th id="myinterview_5">JD Link</th>*@
                                                             @*<th>Instructions</th>*@
-                                                            <th id="myinterview_6">Resume</th>
+                                                           
+                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Cancelled)
+                                                            {
                                                              <th>Client</th>
+                                                            }
+                                                            
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
                                                                  <th>Proxy Voting</th>                                                            
                                                             }
 
-                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
                                                             {
-                                                                <th id="myinterview_7">Meeting Link</th>
-                                                                <th>Interview Price</th>
-                                                                @* <th>Variable Pay</th>*@
-                                                                <th>Minimum Duration</th>
-                                                                <th class="disabled-sorting text-left">Actions</th>
+                                                                    <th class="text-center" id="myinterview_7">Meeting Link</th>
                                                             }
+                                                                <th id="myinterview_6">Resume</th>
+                                                                @* <th>Variable Pay</th>*@
+                                                            
 
                                                         </tr>
 
@@ -426,27 +433,35 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
-                                                            <th>Candidate Details</th>
+                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                {
+                                                                    <th class="disabled-sorting text-center">Actions</th>
+                                                                }
+                                                                <th>Interview Details</th>
                                                             <th style="border-left: 0px !important;width:12%">Interview Date</th>
                                                             @* <th>JD-Skills</th>*@
-                                                            <th>Client</th>
+                                                                @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Cancelled)
+                                                                {
+                                                                    <th>Client</th>
+                                                                }
                                                             @*<th>JD Link</th>*@
                                                             @* <th>Instructions</th>*@
-                                                            <th>Resume</th>
+                                                          
 
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
                                                                 <th>Proxy Voting</th>
                                                             }
-                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
                                                             {
-                                                                <th>Meeting Link</th>
-                                                                <th>Interview Price</th>
-                                                                @* <th>Variable Pay</th>*@
-                                                                <th>Minimum Duration</th>
-                                                                <th class="disabled-sorting text-left">Actions</th>
+                                                                    <th class="text-center">Meeting Link</th>
                                                             }
+
+                                                                <th>Resume</th>
+                                                                @* <th>Variable Pay</th>*@
+
+                                                                
 
                                                         </tr>
 
@@ -466,7 +481,100 @@
                                                             <tr id=@item.id>
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
+                                                                    <td class="text-center">
+                                                                        @{
+                                                                            var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
+                                                                        }
 
+                                                                        @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
+                                                                        {
+
+
+                                                                            <div class="btn btn-unassign shadow btn-xs sharp me-1" style="background:#a1b6d1;border-color:#a1b6d1">
+                                                                                <a target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })">
+                                                                                    <span id="myinterview_10" class="feedbackreportbtn" aria-label="Feedback Report">
+                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                    </span>
+                                                                                </a>
+                                                                            </div>
+
+
+                                                                            @* <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                    <button class="btn btn-newreport shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="margin: 0px 3px;background: #4499b5">
+                                                                    <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                    </button>
+                                                                    </a>*@
+
+
+
+                                                                        }
+                                                                        @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
+                                                                        {
+                                                                            @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                                            {
+                                                                                <div class="btn btn-unassign shadow btn-xs sharp me-1">
+                                                                                    <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="Unassign Yourself" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                                                </div>
+
+
+                                                                            }
+                                                                        }
+                                                                        <div class="btn btn-comment shadow btn-xs sharp me-1">
+                                                                            <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId, irf= item.IRFID })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                                        </div>
+
+
+                                                                        @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
+                                                                    <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg fill=" rgb(255,255,255)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                    </button>*@
+
+
+
+                                                                        @*<div class="btn btn-report shadow btn-xs sharp me-1">
+                                                                    <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:13px;top:1px;position:relative" class="fas fa-poll"></i></span>
+                                                                    </div>
+                                                                    *@
+
+
+
+                                                                        @* <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey" style="position:relative;top:-1px;left:2px;">
+                                                                    <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="far fa-comments"></i></span>
+                                                                    </button>*@
+
+                                                                        @*@if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                                    {
+
+                                                                    <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                                                                    <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.id', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                    </button>
+                                                                    }*@
+                                                                        @if (item.QCPresent > 0)
+                                                                        {
+                                                                            @*  <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
+                                                                    <a style="color:white" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.id })" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                    </a>
+                                                                    </button>*@
+
+
+                                                                            <div class="btn btn-qc shadow btn-xs sharp me-1">
+                                                                                <a style="color:white" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.id })" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                                    <i style="font-size: 14px; position: relative; top: 1px;" class="far fa-comment-dots"></i>
+                                                                                </a>
+                                                                            </div>
+
+
+                                                                        }
+                                                                        @*<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Client Rating and Feedback" style="position:relative;top:-1px;left:2px;" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.id})">
+                                                                    <span title="Client Rating and Feedback" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-star"></i></span>
+                                                                    </button>*@
+                                                                        @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.MeetingPlatform != "Zoom")
+                                                                        {
+                                                                            <button class="btn btn-qc shadow btn-xs sharp me-1" aria-label="Generate a backup Meeting Link" style="position:relative;top:-1px;left:2px;background:#b4c6c7;border-color:#b4c6c7" onclick="GenerateBackupLink(@item.id,'@item.IRFID','@item.ClientName','@item.irfIntId')">
+                                                                                <span title="Generate a backup Meeting Link" class="mdc-fab__icon material-icons"><i style="font-size:16px;position:relative;top:2px;" class="fa fa-external-link"></i></span>
+                                                                            </button>
+                                                                        }
+                                                                    </td>
                                                                 <td style="padding-left:30px;width: 300px;">
                                                                      @if (item.IsVideoRequired == true) {
                                                                        <div style="position:relative;width: fit-content">
@@ -488,7 +596,7 @@
                                                                         {
                                                                             @if (item.candidateName.Length > 18)
                                                                             {
-                                                                                <div style="width:100%;float:left">
+                                                                                    <div style="width:100%;float:left;height: 17px;">
                                                                                     <span class="cadName">
                                                                                         <a data-tooltip="@item.candidateName"><span class="name-field" style="font-size:14px;line-height:29px;font-weight:400"> @item.candidateName.Substring(0, 18)...</span> </a>
                                                                                     </span>
@@ -515,7 +623,7 @@
                                                                                 </div>
                                                                            @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                                 {
-                                                                                    <div class="call-sec" style="width:100%;float:left;margin:10px 0px 0px 0px;">
+                                                                                        <div class="call-sec" style="width:100%;float:left;margin: 4px 0px 10px 0px;">
                                                                                         <span class="call-area">
                                                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                             {
@@ -529,7 +637,7 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div style="width:100%;float:left">
+                                                                                <div style="width:100%;float:left;height:17px;">
                                                                                     <span class="cadName">
                                                                                         <a data-tooltip="@item.candidateName"><span class="name-field" style="font-size:14px;line-height:29px;font-weight:400"> @item.candidateName</span> </a>
                                                                                     </span>
@@ -555,7 +663,7 @@
                                                                                 </div>
                                                                                 @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                                 {
-                                                                                    <div class="call-sec" style="width:100%;float:left;margin:5px 0px;">
+                                                                                    <div class="call-sec" style="width:100%;float:left;margin:5px 0px 10px 0px;">
                                                                                         <span class="call-area">
                                                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                             {
@@ -576,15 +684,23 @@
                                                                     </div>
                                                                     @* <div style="padding:10px 0px;color:#078706;font-weight:bold;width:100%;float:left"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>*@
                                                                     <div class="myInterview">
-                                                                        <button type="button" class="clickhere_btn pull-left" style="margin:0px 0px 0px 5px;padding: 5px 8px;">
+                                                                            <button type="button" class="clickhere_btn pull-left" style="margin: 3px 0px 3px 0px;padding: 5px 8px;">
                                                                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
                                                                         </button>
                                                                         <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
-                                                                    </div>
+                                                                         @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled){
+                                                                            <div style="width:100%;float:left"><span style="font-size: 14px;color: #898282;margin-top: 5px;display: inline-block">Client Name:</span>@item.ClientName</div>
+                                                                         }
+                                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                            {
+                                                                                <div style="font-size:14px;color: chocolate;font-weight: 600;width:100%;float:left;"><div style="float:left;margin-right:10px;"><span style="font-weight: 500;font-size: 14px;color: #918d8d;margin-top:9px;display: inline-block;padding-right:5px;">Interview Price:</span>₹ @(
+                                                                                Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</div><div style="float:left"><span style="font-weight: 500;font-size: 14px;color: #918d8d;margin-top:9px;padding-right:5px;display: inline-block;">Interview Duration:</span><strong>@item.MaxInterviewDuration Min.</strong></div></div>
+                                                                            }
+                                                                        </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="int-datetime"> @item.interviewDate</div>
-                                                                    @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                        @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
                                                                     {
                                                                         @if (item.Timer > 0)
                                                                         {
@@ -623,19 +739,11 @@
                                                             <td>No Instructions</td>
                                                             }
                                                             }*@
-                                                                @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
-                                                                {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.CandidateCodedResumeLink>Resume</a> </td>
-                                                                }
-                                                                else if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
-                                                                {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Resume</td>
-                                                                }
+                                                               
+                                                                 @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Cancelled){
                                                               <td>@item.ClientName</td>
+                                                                 }
+
                                                            @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed){
                                                                 @if (item.ProxyvotingCount>0) { 
                                                         <td class="text-center">
@@ -661,18 +769,21 @@
                                                             </a>
                                                             </td>*@
                                                                 @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
-                                                                {
-                                                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                     {
-                                                                        <td class="cadName" onclick="captureclick('Meeting','Meeting','@item.id')">
-                                                                            <a target="_blank" title="Meeting Link" href="/Interview/InterviewDetails?id=@item.irfIntId&interviewId=@item.id">Meeting Link</a>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>Before 10 min only</td>
-                                                                    }
-                                                                    @*@if (item.zoomLink != null && item.zoomLink != "")
+                                                                        @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
+                                                                        {
+                                                                            @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                            {
+                                                                                <td class="cadName text-center" onclick="captureclick('Meeting','Meeting','@item.id')">
+                                                                                    <a style="border-radius: 5px !important;width: 175px;margin: 0px auto;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" target="_blank" title="Meeting Link" href="/Interview/InterviewDetails?id=@item.irfIntId&interviewId=@item.id">Meeting Link</a>
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td class="text-center" style="color: #42a5f5;font-weight: 600;    font-size: 15px;">Before 10 min only</td>
+                                                                            }
+                                                                        }
+                                                                        @*@if (item.zoomLink != null && item.zoomLink != "")
                                                             {
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
@@ -689,7 +800,6 @@
                                                             {
                                                             <td></td>
                                                             }*@
-                                                                    <td style="font-size:16px;color: chocolate;font-weight: 600">₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
                                                                     @*  @if (item.IsNewSkillChannel)
                                                             {
                                                             <td>
@@ -710,98 +820,21 @@
                                                             <td>₹ 0 </td>
                                                             }*@
                                                                     @*<td><strong>@item.interviewDuration Min.</strong></td>*@
-                                                                    <td><strong>@item.MaxInterviewDuration Min.</strong></td>
-                                                                    <td class="text-left">
-                                                                        @{
-                                                                            var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
-                                                                        }
-                                                                        @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
-                                                                        {
-                                                                            <div class="btn btn-unassign shadow btn-xs sharp me-1" style="background:#a1b6d1;border-color:#a1b6d1">
-                                                                                <a target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })">
-                                                                                    <span id="myinterview_10" class="feedbackreportbtn" aria-label="Feedback Report">
-                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                                    </span>
-                                                                                </a>
-                                                                            </div>
-
-                                                                            
-                                                                            @* <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                                <button class="btn btn-newreport shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="margin: 0px 3px;background: #4499b5">
-                                                                                    <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                                </button>
-                                                                            </a>*@
-
-
-
-                                                                        }
-
-                                                                        @if (item.interviewDate.Date >= DateTime.Now.Date)
-                                                                        {
-                                                                            <div class="btn btn-unassign shadow btn-xs sharp me-1">
-                                                                                <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="Unassign Yourself" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
-                                                                            </div>
-
-
-                                                                        }
-
-                                                                        <div class="btn btn-comment shadow btn-xs sharp me-1">
-                                                                            <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId, irf= item.IRFID })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
-                                                                        </div>
-
-
-                                                                        @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
-                                                                <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg fill=" rgb(255,255,255)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                                </button>*@
-
-
-
-                                                                        @*<div class="btn btn-report shadow btn-xs sharp me-1">
-                                                                <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:13px;top:1px;position:relative" class="fas fa-poll"></i></span>
-                                                                </div>
-                                                                *@
-
-
-
-                                                                        @* <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey" style="position:relative;top:-1px;left:2px;">
-                                                                <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="far fa-comments"></i></span>
-                                                                </button>*@
-
-                                                                        @*@if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
-                                                                {
-
-                                                                <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
-                                                                <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.id', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                </button>
-                                                                }*@
-                                                                        @if (item.QCPresent > 0)
-                                                                        {
-                                                                          @*  <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
-                                                                                <a style="color:white" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.id })" title="QC Form" class="mdc-fab__icon material-icons">
-                                                                                    <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                                </a>
-                                                                            </button>*@
-
-
-                                                                             <div class="btn btn-qc shadow btn-xs sharp me-1">
-                                                                               <a style="color:white" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.id })" title="QC Form" class="mdc-fab__icon material-icons">
-                                                                                    <i style="font-size: 14px; position: relative; top: 1px;" class="far fa-comment-dots"></i>
-                                                                                </a>
-                                                                            </div>
-
-
-                                                                        }
-                                                                        @*<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Client Rating and Feedback" style="position:relative;top:-1px;left:2px;" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.id})">
-                                                                <span title="Client Rating and Feedback" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-star"></i></span>
-                                                                </button>*@
-                                                                        @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.MeetingPlatform != "Zoom")
-                                                                        {
-                                                                            <button class="btn btn-qc shadow btn-xs sharp me-1" aria-label="Generate a backup Meeting Link" style="position:relative;top:-1px;left:2px;background:#b4c6c7;border-color:#b4c6c7" onclick="GenerateBackupLink(@item.id,'@item.IRFID','@item.ClientName','@item.irfIntId')">
-                                                                                <span title="Generate a backup Meeting Link" class="mdc-fab__icon material-icons"><i style="font-size:16px;position:relative;top:2px;" class="fa fa-external-link"></i></span>
-                                                                            </button>
-                                                                        }
-                                                                    </td>
+                                                                   
+                                                             
                                                                 }
+                                                                    @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
+                                                                    {
+                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.CandidateCodedResumeLink>Resume</a> </td>
+                                                                    }
+                                                                    else if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
+                                                                    {
+                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No Resume</td>
+                                                                    }
                                                             </tr>
 
                                                             <tr class="collapse @item.id">
