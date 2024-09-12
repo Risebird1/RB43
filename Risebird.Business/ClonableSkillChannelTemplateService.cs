@@ -297,7 +297,7 @@ namespace Risebird.Business
                 //var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
-                if(model != null && model.IRFRecommendations != null)
+                if (model != null && model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.CategoryList = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                     if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
@@ -306,7 +306,7 @@ namespace Risebird.Business
                         //model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
                     }
                 }
-                
+
 
                 //SetSelectListForMultiSelectRecommendationValues(model.IRFRecommendations);
 
@@ -440,7 +440,7 @@ namespace Risebird.Business
                 model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
 
-                
+
                 var result = await _clonableSkillChannelTemplateRepository.UpdateClonableSkillChannel(model);
                 if (result)
                 {

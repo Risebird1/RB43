@@ -1,15 +1,11 @@
 ﻿using Aspose.Html;
-using ExcelDataReader.Log;
-using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Azure.ApplicationInsights.Query.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -17,25 +13,17 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using Twilio.TwiML.Voice;
-using Twilio.Types;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
 
@@ -1277,7 +1265,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
-                        
+
                         var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
                         var ClientDomain = string.Empty;
                         if (string.IsNullOrWhiteSpace(ClientEmailid))
@@ -1563,11 +1551,11 @@ namespace Risebird.Web.Controllers
                         if (endDate < DateTime.Now)
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested Skill Channel positions have been filled.";
-                            if(string.IsNullOrEmpty(pageUrl))
+                            if (string.IsNullOrEmpty(pageUrl))
                             {
                                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                             }
-                            else if(pageUrl.Contains("Not"))
+                            else if (pageUrl.Contains("Not"))
                             {
                                 return RedirectToAction("NotScheduledMeetings", "Client");
 
@@ -4963,7 +4951,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = await _meetingService.FetchSchedulingLinks(emailid);
+                var model = await _meetingService.FetchSchedulingLinks(emailid, "SkillChannel");
                 if (model != null)
                 {
                     return Json(model);
@@ -4996,7 +4984,7 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> FetchInterviewerCommunicator(string emailid, bool isClientLogin = false, string id = null)
+        public async Task<IActionResult> FetchInterviewerCommunicator(string emailid, string type, bool isClientLogin = false, string id = null)
         {
             var model = new List<SchedulingLinkVM>();
             try
@@ -5004,7 +4992,12 @@ namespace Risebird.Web.Controllers
                 ViewBag.id = id;
                 ViewBag.emailid = emailid;
                 ViewBag.IsClientLogin = isClientLogin;
-                model = await _meetingService.FetchSchedulingLinks(emailid);
+                if (string.IsNullOrWhiteSpace(type))
+                {
+                    type = "SkillChannel";
+                }
+                ViewBag.Type = type;
+                model = await _meetingService.FetchSchedulingLinks(emailid, type);
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 if (model != null)

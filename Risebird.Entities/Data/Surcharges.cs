@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.Data
 {
@@ -13,7 +9,7 @@ namespace Risebird.Entities.Data
         public int IRFId { get; set; }
         public String SurchargeComment { get; set; }
         public String SkillChannel { get; set; }
-        public String interviewer { get; set; }       
+        public String interviewer { get; set; }
         public int Surcharge { get; set; }
         public bool IsSurcharge { get; set; }
         public DateTime? RequestAt { get; set; }

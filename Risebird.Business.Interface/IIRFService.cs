@@ -183,5 +183,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, DateTime enddate);
         //Task<IEnumerable<CandidateExcelData>> GetGetDayStatsByClientUserDetailedView(int irfid, string type, DateTime startDate, string emailid, DateTime enddate);
         Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId, bool isStaging = false);
+        Task<List<MeetingVM>> GetProjectInterviewMeetings(int id, string profileName, string email);
+        Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
+        Task<IEnumerable<CandidateExcelData>> GetPartnerDetailsStatsDetailedView(int userid, string type, DateTime startDate, DateTime enddate);
     }
 }

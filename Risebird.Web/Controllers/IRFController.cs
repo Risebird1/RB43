@@ -62,12 +62,13 @@ namespace Risebird.Web.Controllers
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
-            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper)
+            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper, ISASUrlHelper sasUrlHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -94,6 +95,7 @@ namespace Risebird.Web.Controllers
             codeapiendpoint = _configuration["CodeApiEndPoint"];
             _httpClient = factory.GetHttpClient();
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
 
 
@@ -7028,6 +7030,44 @@ namespace Risebird.Web.Controllers
             return uploadedfbaudioFileURL;
         }
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadVideoInstructionFile()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
+                string uploadedVideoUrl = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "").Replace("+", "").Replace("_", "");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime")
+                {
+                    await _azureStorageHelper.InsertImageBlob(outputFileName, "videoinstructions", model, fileMimeType);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videoinstructions");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedVideoUrl = blob.Uri.ToString();
+                    var sas = _sasUrlHelper.CreateSasUrl("videoinstructions");
+                    if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                    {
+                        uploadedVideoUrl = uploadedVideoUrl + "?" + sas;
+                    }
+                    var result = _irfService.SaveIRFAudioLink(Convert.ToInt32(irfid), uploadedVideoUrl);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only PDF file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
+        }
+
+        [HttpPost]
         public async Task<JsonResult> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try
@@ -9619,6 +9659,41 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ProjectMeetingsDetails(string uniqueid, int projectid, string meetingtype, string ProjectUniqueid)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid?.Replace("\"", "");
+                if (string.IsNullOrEmpty(emailid))
+                {
+                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+                }
+                var selectedMeeting = new List<MeetingVM>();
+                var meetings = new List<MeetingVM>();
+                meetings = await _irfService.GetProjectInterviewMeetings(projectid, "Client", emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                ViewBag.IRF = ProjectUniqueid;
+                ViewBag.id = uniqueid;
+                ViewBag.IRFintId = projectid;
+                ViewBag.meetingtype = meetingtype;
+                if (meetingtype == "Select")
+                {
+                    meetings = meetings?.Where(x => (x.InterviewStatus == 2 || x.InterviewStatus == 4) && !x.RedoInterview)?.ToList();
+                }
+                else if (meetingtype == "Reject")
+                {
+                    meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5 && !x.RedoInterview)?.ToList();
+                }
+                return View("SkillChannelMeetingsDetails", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+        }
         #endregion
         #region Multi-Stack
         public ActionResult Task()
@@ -9982,5 +10057,103 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        #region Partners Stats
+        [HttpGet]
+        public async Task<IActionResult> PartnerDetailsStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            if (!isClientLogin)
+            {
+                ViewBag.PageStatus = "Public";
+            }
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
+            if (Emailid != emailid)
+            {
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            var irfList = new List<ProjectStatsVM>();
+            if (HttpContext.Session.GetString("PartnersStatsFilters") == null)
+            {
+                irfList = (await _irfService.GetPartnerDetailsStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PartnersStatsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetPartnerDetailsStatsCount(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetPartnerDetailsStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                }
+            }
+            return View(irfList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> PartnerDetailsStats(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("PartnersStatsFilters", JsonConvert.SerializeObject(filter));
+            }
+            return RedirectToAction("PartnerDetailsStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPartnerDetailsStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            try
+            {
+                HttpContext.Session.Remove("PartnersStatsFilters");
+                return RedirectToAction("PartnerDetailsStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> PartnerDetailsStatsDetailedView(int userid, string partnername, string type, string uniqueid)
+        {
+            try
+            {
+                DateTime startDate = DateTime.Now.AddDays(-30);
+                var enddate = DateTime.Now.AddDays(7);
+                if (HttpContext.Session.GetString("PartnersStatsFilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PartnersStatsFilters"));
+                    startDate = filter.StartDate.Value;
+                    enddate = filter.EndDate.Value.AddDays(1);
+                }
+                var irfList = (await _irfService.GetPartnerDetailsStatsDetailedView(userid, type, startDate, enddate))?.ToList();
+                irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                foreach (var item in irfList)
+                {
+                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                }
+                ViewBag.projectname = partnername;
+                ViewBag.type = type;
+                ViewBag.PageType = "PartnerStats";
+                return View("ProjectSkillChannelStatsDetailedView", irfList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+        }
+        #endregion
+
     }
 }

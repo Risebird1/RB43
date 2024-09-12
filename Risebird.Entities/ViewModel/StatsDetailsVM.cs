@@ -37,5 +37,6 @@ namespace Risebird.Entities.ViewModel
         public int RejectSelectedMeetings { get; set; }
         public int SkillSetsevaluate { get; set; }
         public int PendingCount { get; set; }
+        public string ClientHRAttemptContact { get; set; }
     }
 }

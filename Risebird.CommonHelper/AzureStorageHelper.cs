@@ -413,7 +413,7 @@ namespace Risebird.CommonHelper
             blob = GetCloudBlockBlobClient(containerName, filename);
             if (blobFile != null)
             {
-                if(isOpenAiQc.HasValue && isOpenAiQc.Value)
+                if (isOpenAiQc.HasValue && isOpenAiQc.Value)
                 {
                     await blob.UploadFromStreamAsync(blobFile);
                 }
@@ -1491,7 +1491,7 @@ namespace Risebird.CommonHelper
             }
             return null;
         }
-        
+
     }
 
 }

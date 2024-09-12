@@ -53,6 +53,70 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div id="divAIVerdict" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.PrimarySpecializationForAIVerdict, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                        </div>
+                                        @Html.EditorFor(model => model.PrimarySpecializationForAIVerdict, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <span class="desp-label control-label">
+                                        Upload Resume
+                                    </span>
+                                    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                        <div class="mdc-radio mdc-radio--touch">
+                                            <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
+                                            <div class="mdc-radio__background">
+                                                <div class="mdc-radio__outer-circle"></div>
+                                                <div class="mdc-radio__inner-circle"></div>
+                                            </div>
+                                            <div class="mdc-radio__ripple"></div>
+                                        </div>
+                                    </div>
+
+                                    <!--- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
+                                    @* | <span class="desp-label control-label">
+                                        Coded Resume
+                                    </span>
+                                    <!--- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
+
+                                    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                        <div class="mdc-radio mdc-radio--touch">
+                                            <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                            <div class="mdc-radio__background">
+                                                <div class="mdc-radio__outer-circle"></div>
+                                                <div class="mdc-radio__inner-circle"></div>
+                                            </div>
+                                            <div class="mdc-radio__ripple"></div>
+                                        </div>
+                                    </div> *@
+                                </div>
+                                @* <div style="display:none" id="linkDiv">
+                                    @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                    @Html.TextBoxFor(model => model.CodedResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                </div> *@
+                                <div class="" id="uploadDiv">
+                                    @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+                                </div>
+                            </div>
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="button" value="generateAIVerdict" id="id_btn_generateAIVerdict" onclick="GenerateAIVerdict()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Generate AI Verdict</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" })
                         <div id="divEVverified" style="display:none">
                             @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
@@ -66,6 +130,7 @@
                                 @Html.HiddenFor(m => m.IsEmployed)
                                 @Html.HiddenFor(m => m.Country)
                                 @Html.HiddenFor(m => m.DOB)
+                                @Html.HiddenFor(m => m.ResumeLink)
 
                                 <!-- Add Interviewer personal Details Start-->
                                 <div class="row">
@@ -141,7 +206,7 @@
                                             </div>
                                             @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text", @readonly = "readonly" } })
                                         </div>
-                                        <div class="form-group" style="margin-top: -10px;">
+                                        @* <div class="form-group" style="margin-top: -10px;">
                                             <span class="desp-label control-label">
                                                 Upload Resume
                                             </span>
@@ -180,7 +245,7 @@
                                         </div>
                                         <div class="" id="uploadDiv">
                                             @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
-                                        </div>
+                                        </div> *@
                                     </div>
                                 </div>
                                 <!-- INterviewer personal Details End-->
@@ -876,7 +941,8 @@
                                     success: function (result) {
                                         if (result.message == null) {
                                             document.getElementById("divEVverification").style.display = "none";
-                                            document.getElementById("divEVverified").style.display = "block";
+                                            document.getElementById("divAIVerdict").style.display = "block";
+                                            @* document.getElementById("divEVverified").style.display = "block"; *@
                                             $("#txt_MobileNumber").val(result.mobileNumber);
                                             $("#txt_EmailId").val(result.candidateEmail);
                                             $("#CompanyName").val(result.companyName);
@@ -900,17 +966,58 @@
                                     }
                                 });
                             } else {
-                                swal.fire("Please enter valid 10 digit Mobile Number.");
+                                swal.fire("Please enter a valid 10 digit Mobile Number.");
                                 clickverification = 0;
                             }
 
                         } else {
-                            swal.fire("Please enter Mobile Number and Email Address.");
+                            swal.fire("Please enter a Mobile Number and Email Address.");
                             clickverification = 0;
                         }
                     }
                 }
             });
         }
+    }
+</script>
+<script>
+    function GenerateAIVerdict() {
+        var primarySpecialization = $("#PrimarySpecializationForAIVerdict").val().trim();
+        var emailId = $("#txt_EmailId").val().trim();
+        
+        var resume_file = $("#ResumeFile")[0].files[0];
+
+        var formdata = new FormData();
+        formdata.append('resume_file', resume_file);
+        formdata.append('primarySpecialization', primarySpecialization);
+        formdata.append('emailId', emailId);
+
+        $.ajax({
+            type: "POST",
+            url: "/AIScreener/ScreenInterviewerBeforeOnboarding",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                if (data != null && data.errorMessage == '') {
+                    if (data.isfavourableVerdict) {
+                        document.getElementById("divAIVerdict").style.display = "none";
+                        document.getElementById("divEVverified").style.display = "block";
+                        $("#ResumeLink").val(data.resumeLink);
+                    }
+                    else {
+                        swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
+                        document.getElementById("id_btn_generateAIVerdict").disabled = true;
+                    }
+                }
+                else if (data != null && data.errorMessage != '') {
+                    swal.fire(data.errorMessage);
+                }
+                else {
+                    swal.fire("Error generating verdict. Please try again.");
+                }
+
+            }
+        });
     }
 </script>

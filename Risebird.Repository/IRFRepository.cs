@@ -3960,7 +3960,7 @@ namespace Risebird.Repository
         public int GetUserId(string emailId, string profile = null, bool isStaging = false)
         {
             int result = 0;
-            if(isStaging)
+            if (isStaging)
             {
                 connectionString = connectionStringForTesting;
             }
@@ -5155,7 +5155,7 @@ namespace Risebird.Repository
         {
             try
             {
-                if(isStaging)
+                if (isStaging)
                 {
                     connectionString = connectionStringForTesting;
                 }
@@ -5430,9 +5430,9 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi=false, string ApiRequestedBy=null, string jobId = null, bool isStaging = false)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, string jobId = null, bool isStaging = false)
         {
-            if(isStaging)
+            if (isStaging)
             {
                 connectionString = connectionStringForTesting;
             }
@@ -5462,7 +5462,7 @@ namespace Risebird.Repository
                         foreach (var obj in candidateList)
                         {
                             DynamicParameters parameters = new DynamicParameters();
-                            if(!isApi)
+                            if (!isApi)
                             {
                                 parameters.Add("@IRFId", obj.IRFId);
 
@@ -5472,7 +5472,7 @@ namespace Risebird.Repository
                                 parameters.Add("@jobId", jobId);
                                 parameters.Add("@countryCode", obj.countryCode);
                             }
-                            
+
                             parameters.Add("@Name", obj.Name);
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
@@ -5488,7 +5488,7 @@ namespace Risebird.Repository
 
                             }
                             parameters.Add("@date", DateTime.Now);
-                            if(isApi && !string.IsNullOrEmpty(ApiRequestedBy))
+                            if (isApi && !string.IsNullOrEmpty(ApiRequestedBy))
                             {
                                 parameters.Add("@ClientHREmail", ApiRequestedBy);
                                 parameters.Add("@ProfileSource", ApiRequestedBy);
@@ -5512,7 +5512,7 @@ namespace Risebird.Repository
                                 dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
 
                             }
-                            else if(isApi)
+                            else if (isApi)
                             {
                                 var resultArr = result.Split("|");
                                 var irfId = Convert.ToInt32(resultArr?.Last());
@@ -8989,7 +8989,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType=null)
+        public async Task<IRF> GetIRFBasedOnTuringsJobId(int countryType, string jobId, string planType = null)
         {
             try
             {
@@ -9003,6 +9003,83 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFBasedOnTuringsJobId", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> GetProjectInterviewMeetings(int id, string emailId = null)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetProjectInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<ProjectStatsVM>(con, "dbo.usp_GetPartnerDetailsStatsCount", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetPartnerDetailsStatsDetailedView(int userid, string type, DateTime startDate, DateTime enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userid", userid);
+                    parameters.Add("@type", type);
+                    parameters.Add("@startdate", startDate);
+                    parameters.Add("@endDate", enddate);
+                    parameters.Add("@timenow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetPartnerDetailsStatsDetailedView", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

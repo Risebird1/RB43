@@ -1,13 +1,13 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 //using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
-using Risebird.Entities.Data;
-using Newtonsoft.Json;
 
 namespace Risebird.MicroService
 {

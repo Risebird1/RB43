@@ -4094,11 +4094,11 @@ namespace Risebird.Business
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
                 var userId = _irfRepository.GetUserId(requestedBy, isStaging: isStaging);
-                
+
                 //var irf = _irfRepository.GetIRFbyIRFName(irfName);
 
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi:true, ApiRequestedBy:requestedBy, jobId:jobId, isStaging:isStaging);
-                
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi: true, ApiRequestedBy: requestedBy, jobId: jobId, isStaging: isStaging);
+
                 //var calendlyLink = irf.CalendlyLink;
                 //var jdLink = irf.JDLink;
                 //var client = await _clientService.GetClient(irf.ClientId);
@@ -4151,7 +4151,7 @@ namespace Risebird.Business
                                     var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
                                     if (irf.BussinessType == "B2B")
                                     {
-                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id, isStaging : isStaging).Result;
+                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id, isStaging: isStaging).Result;
                                     }
                                     else
                                     {
@@ -4162,7 +4162,7 @@ namespace Risebird.Business
                                     {
                                         canOnboardingStatus.invitationMailDeliveryStatus = "delivered";
 
-                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId, isStaging :isStaging).Result;
+                                        var result = AddCandidateStatus(requestedBy, 0, irf.id, "Invitation sent", (int)CandidateStatusOptions.InvitationSent, candidateEmailId: candidateEmail, irfName: irf.IRFId, isStaging: isStaging).Result;
 
                                     }
                                     else
@@ -4213,7 +4213,7 @@ namespace Risebird.Business
 
                         //    if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                         //    {
-                                 
+
                         //        canOnboardingStatus.onboardingStatus = "successful";
                         //        if (candidateEmail != null && calendlyLink != null)
                         //        {
@@ -4281,7 +4281,7 @@ namespace Risebird.Business
                         addCandidatesResponseObj.list = canReponseList;
 
                     }
-                    
+
                 }
 
                 return addCandidatesResponseObj;
@@ -4289,6 +4289,46 @@ namespace Risebird.Business
 
             }
 
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> GetProjectInterviewMeetings(int id, string profileName, string email)
+        {
+            try
+            {
+                var result = (await _irfRepository.GetProjectInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetPartnerDetailsStatsCount(startDate, endDate, profile, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetPartnerDetailsStatsDetailedView(int userid, string type, DateTime startDate, DateTime enddate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetPartnerDetailsStatsDetailedView(userid, type, startDate, enddate);
+                return irfList;
+            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

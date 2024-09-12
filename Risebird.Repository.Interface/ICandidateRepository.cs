@@ -44,7 +44,7 @@ namespace Risebird.Repository.Interface
         Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId);
         Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson);
         Task<IEnumerable<InterviewChannelDetails>> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser, string jobId);
-        Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate,string jobId);
+        Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate, string jobId);
         Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook();
         Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data);
     }

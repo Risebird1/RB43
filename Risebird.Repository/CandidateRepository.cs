@@ -13,9 +13,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Twilio.TwiML.Voice;
 using static Dapper.SqlMapper;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Repository
 {

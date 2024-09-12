@@ -411,6 +411,12 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                 {
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Partner Stats
+                                        </div>
+                                    </button>
                                     <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
@@ -481,8 +487,8 @@
                                 </span>
 
 
-                                <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
-                            </div>
+@*                                 <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+ *@                            </div>
                             <div class="desktop-view pull-left">
                                 <span class="filter">
 
@@ -494,8 +500,8 @@
                                 </span>
 
 
-                                <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
-                            </div>
+@*                                 <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+ *@                            </div>
 
                         </div>
 
