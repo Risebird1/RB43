@@ -131,6 +131,7 @@
                                 @Html.HiddenFor(m => m.Country)
                                 @Html.HiddenFor(m => m.DOB)
                                 @Html.HiddenFor(m => m.ResumeLink)
+                                @Html.HiddenFor(m => m.PrimarySpecializationForAcknowledgement)
 
                                 <!-- Add Interviewer personal Details Start-->
                                 <div class="row">
@@ -250,7 +251,7 @@
                                 </div>
                                 <!-- INterviewer personal Details End-->
                                 <!-- Account Details start-->
-                                <div class="row">
+                                @* <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h2>Account Details</h2>
@@ -288,7 +289,7 @@
                                     </div>
 
                                     <!-- Account Detilas End-->
-                                </div>
+                                </div> *@
                                 <!-- Account Details End-->
 
 
@@ -1005,6 +1006,7 @@
                         document.getElementById("divAIVerdict").style.display = "none";
                         document.getElementById("divEVverified").style.display = "block";
                         $("#ResumeLink").val(data.resumeLink);
+                        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
                     }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");

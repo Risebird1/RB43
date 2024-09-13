@@ -235,5 +235,6 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Primary Specialization")]
         public string PrimarySpecializationForAIVerdict { get; set; }
+        public string PrimarySpecializationForAcknowledgement { get; set; }
     }
 }

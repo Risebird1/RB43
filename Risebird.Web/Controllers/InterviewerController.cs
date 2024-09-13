@@ -52,6 +52,7 @@ namespace Risebird.Web.Controllers
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
         ISkillService skillService, IProfileService profileService,
@@ -59,7 +60,8 @@ namespace Risebird.Web.Controllers
         IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService,
         INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository,
         IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService,
-        IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
+        IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, 
+        IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper)
 
         {
             _interviewerService = interviewerService;
@@ -82,6 +84,7 @@ namespace Risebird.Web.Controllers
             _whatsAppHelper = whatsAppHelper;
             _sasUrlHelper = sasUrlHelper;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _encryptionHelper = encryptionHelper;
         }
 
 
@@ -4096,6 +4099,40 @@ namespace Risebird.Web.Controllers
             {
                 return Json(null);
             }
+        }
+        [HttpGet]
+        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, string user)
+        {
+            //check link expiry befire hitting db
+
+            try
+            {
+                //dec = dec.Replace(" ", "+");
+                var userId = await _encryptionHelper.DecryptData(user);
+                if(!string.IsNullOrEmpty(userId))
+                {
+                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, Convert.ToInt32(userId));
+                    if(result != null)
+                    {
+                        return Json("Status updated successfully.");
+                    }
+                    else
+                    {
+                        return Json("Failed to update status. Please try again.");
+                    }
+                }
+                else
+                {
+                    return Json("Bad Request.");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to update status, Please try again");
+            }
+
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IConfiguration _configuration;
         private readonly string key;
+        private readonly string genericKey;
 
 
         public EncryptionHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
@@ -23,6 +24,7 @@ namespace Risebird.CommonHelper
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             key = _configuration["EncryptionDetails:Key"];
+            genericKey = _configuration["EncryptionDetails:GenericKey"];
 
         }
 
@@ -95,6 +97,87 @@ namespace Risebird.CommonHelper
                             {
                                 string serializedData = srDecrypt.ReadToEnd();
                                 return JsonConvert.DeserializeObject<DateTime>(serializedData);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<string> EncryptData(string data)
+        {
+            try
+            {
+                byte[] encryptedBytes;
+                using (Aes aesAlg = Aes.Create())
+                {
+                    aesAlg.Key = Encoding.UTF8.GetBytes(genericKey);
+                    aesAlg.GenerateIV();
+
+                    ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                    using (MemoryStream msEncrypt = new MemoryStream())
+                    {
+                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                        {
+                            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                            {
+                                // Serialize datetime to JSON and write to the crypto stream
+                                string serializedData = JsonConvert.SerializeObject(data);
+                                swEncrypt.Write(serializedData);
+                            }
+                        }
+
+                        encryptedBytes = aesAlg.IV.Concat(msEncrypt.ToArray()).ToArray();
+
+                    }
+
+                    // Combine IV and encrypted data
+                    //byte[] encryptedBytes = aesAlg.IV.Concat(msEncrypt.ToArray()).ToArray();
+                    if (encryptedBytes != null)
+                    {
+                        return Convert.ToBase64String(encryptedBytes);
+
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+
+        public async Task<string> DecryptData(string encryptedData)
+        {
+            try
+            {
+                byte[] encryptedBytes = Convert.FromBase64String(encryptedData);
+
+                using (Aes aesAlg = Aes.Create())
+                {
+                    aesAlg.Key = Encoding.UTF8.GetBytes(genericKey);
+                    aesAlg.IV = encryptedBytes.Take(16).ToArray(); // IV length is 16 bytes
+
+                    ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                    using (MemoryStream msDecrypt = new MemoryStream(encryptedBytes.Skip(16).ToArray()))
+                    {
+                        using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                        {
+                            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                            {
+                                string serializedData = srDecrypt.ReadToEnd();
+                                return JsonConvert.DeserializeObject<string>(serializedData);
                             }
                         }
                     }
