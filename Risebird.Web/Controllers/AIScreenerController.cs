@@ -224,7 +224,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUser = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUser = loggedInUser.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var file = Request.Form.Files;
                         var nvc = Request.Form;
