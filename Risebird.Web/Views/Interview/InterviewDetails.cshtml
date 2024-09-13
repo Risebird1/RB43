@@ -30,6 +30,21 @@
 
             <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Always Use Virtual Background while keeping your Video On</span>
         </div>
+
+
+        @if (Model.zoomLink != null && Model.zoomLink != "")
+        {
+            @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
+        {*@
+            <div>
+                <a style="float: none;margin: 0px auto 20px auto;width: 245px;" target="_blank" id="join-button" class="join-button" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join Zoom Meeting now</a>
+            </div>
+            @*}*@
+            @*  else
+        {
+        <div>Before 10 min only</div>
+        }  *@
+        }
         <div class="card" style="margin-bottom:10px;">
 
             <label class="question note-card" for="checkbox_two">
@@ -57,16 +72,16 @@
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
                     <label style="visibility:hidden" for="checkbox_two"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" checked />
                     <label for="hidden_fields_two_1"></label>
-                    <span id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
 
                     <span id="hidden_fields_two_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
 
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_two">
+            <fieldset class="answer hidden show-default" id="hidden_fields_two">
                 <div class="answer-label"></div>
                 <div id="techskills"></div>
             </fieldset>
@@ -144,14 +159,14 @@
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
                     <label style="visibility:hidden" for="checkbox_nine"></label>
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_nine_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_nine_1" name="Checkshow" checked />
                     <label for="hidden_fields_nine_1"></label>
-                    <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_nine_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_nine">
+            <fieldset class="answer hidden show-default" id="hidden_fields_nine">
                 <div class="answer-label"></div>
                 <div id="divquestionslist"></div>
             </fieldset>
@@ -626,7 +641,7 @@
 
     </div>
 
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;margin-bottom:90px;">
+    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;margin-bottom:20px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_ten">
                 <label for="checkbox_ten">
@@ -650,30 +665,56 @@
         </div>
     </div>
 
-    <div class="footer-nav">
+   @* <div class="footer-nav">
         <div class="button-wrapper">
             <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
-            @if (Model.zoomLink != null && Model.zoomLink != "")
-            {
-                @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
-            {*@
-                <div>
-                    <a style="position: relative;top:10px;" target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
-                </div>
-                @*}*@
-                @*  else
-            {
-            <div>Before 10 min only</div>
-            }  *@
-            }
+           
         </div>
-    </div>
+    </div>*@
 </div>
 
 
 
 
-
+<div id="VideoInstAlert" class="modal modal-bg" style="z-index:10000">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 600px !important;top:10px;">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar" style="background:#d61818!important;">
+                    <span class="mdc-fab__icon material-icons">
+                        <i class='fa fa-warning' style='color: #FFF;font-size: 22px;'></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">
+                    Instruction Alert  
+                </h5>
+            </div>
+            <div style=" padding: 5px 20px 5px 20px;font-size: 16px;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
+                <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;"></i> Video Instruction:
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
+                <span onclick="closeVideoInstAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding:20px;">
+            @if (!string.IsNullOrEmpty(Model.AudioComment)){
+                <video style="width:100%" controls><source src="@Model.AudioComment"></video>
+               }
+                
+                 @if (!string.IsNullOrEmpty(Model.CompanyDetails))
+                {
+                    <div style=" padding:5px 0px 5px 0px;font-size: 16px;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
+                        <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+                    </div>
+               }
+                <div class="col-md-12 pull-left text-center">
+                    <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
+                    <button style="font-size: 14px;background:#d43434;font-size: 14px;color:#fff" type="button" class="mdc-button" onclick="closeInterviewerAlert()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="InterviewerAlert" class="modal modal-bg">
     <!-- Modal content -->
@@ -960,7 +1001,7 @@
         });
         if($('#PreReportLink').val()==null || $('#PreReportLink').val()=='')
         {
-            if (countcheck == 6) {
+            if (countcheck == 7) {
                 $(".join-button").removeClass('disable-link')
                 //enable meeting link
             }
@@ -979,8 +1020,14 @@
         openInterviewerAlert()
     })
 </script>
-
-
+@if (!string.IsNullOrWhiteSpace(Model.AudioComment) || !string.IsNullOrWhiteSpace(Model.CompanyDetails))
+{
+    <script>
+        $(document).ready(function () {
+        openVideoInstAlert()
+        })
+    </script>
+}
 <script>
     function openInterviewerAlert() {
         var model = document.getElementById("InterviewerAlert");
@@ -992,11 +1039,24 @@
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "none";
     }
+
+
+    function openVideoInstAlert() {
+        var model = document.getElementById("VideoInstAlert");
+        model.style.display = "block";
+    }
+
+
+    function closeVideoInstAlert() {
+        var model = document.getElementById("VideoInstAlert");
+        model.style.display = "none";
+    }
+
 </script>
 <script>
     $(document).ready(function () {
         GetquestionList();
-        InsightsDetails('@Model.interviewer', '@Model.IRFID');
+        //InsightsDetails('@Model.interviewer', '@Model.IRFID');
         FetchCodesnippet();
     });
     function GetquestionList() {
@@ -1031,7 +1091,7 @@
     }
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
-@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@* @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml") *@
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script>
     function closePopupDetailsModal() {
