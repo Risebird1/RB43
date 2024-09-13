@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -22,8 +23,12 @@ namespace Risebird.Business
         private readonly IPasswordHelper _passwordHelper;
         private readonly IIRFRepository _irfRepository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
+        private readonly IEncryptionHelper _encryptionHelper;
 
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper, IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository)
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, 
+            IUserService userService, IMeetingRespository meetingRespository,
+            INotificationHelper notificationHelper, IPasswordHelper passwordHelper,
+            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,6 +38,7 @@ namespace Risebird.Business
             _passwordHelper = passwordHelper;
             _irfRepository = irfRepository;
             _activityTrackerRepository = activityTrackerRepository;
+            _encryptionHelper = encryptionHelper;
         }
 
         #region Interviewer Profile Service Functions
@@ -131,8 +137,8 @@ namespace Risebird.Business
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
+                int userId;
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -142,6 +148,14 @@ namespace Risebird.Business
                     activityTrackerModel.Summary = "Add Interviewer";
                     activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    if(userId>0)
+                    {
+                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" +  _encryptionHelper.EncryptData(userId.ToString()).Result;
+
+                        string dropProfileButton ="";
+                        //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
+                        _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, assessmentGroupList, interviewerProfile.PrimarySpecializationForAcknowledgement);
+                    }
                 }
                 return result;
             }
@@ -211,7 +225,8 @@ namespace Risebird.Business
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
+                int userId;
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -1561,6 +1576,25 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
+        {
+            try
+            {
+                var result =  await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId);
+
+                if (result != null)
+                {
+                    //sendwelcomeEmailtointerviewer
+                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, "");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

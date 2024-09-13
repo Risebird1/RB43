@@ -225,7 +225,7 @@ namespace Risebird.Repository
         //    }
         //}
 
-        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
+        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId)
         {
             assessmentGroupList = string.Empty;
             try
@@ -244,6 +244,7 @@ namespace Risebird.Repository
                     int? profileOut = (int?)parameters.Get<int?>("@InterviewerProfileId");
                     ProfileId = profileOut.HasValue ? profileOut.Value : 0;
                     assessmentGroupList = parameters.Get<string>("@assessmentGroupList");
+                    userId = parameters.Get<int>("@outputUserId");
                     if (!string.IsNullOrEmpty(assessmentGroupList))
                     {
                         return false;
@@ -371,20 +372,24 @@ namespace Risebird.Repository
                 //}
 
                 //add interviewer account details
-                DynamicParameters paramsAccount = new DynamicParameters();
-                paramsAccount.Add("@InterviewerProfileId", ProfileId);
-                paramsAccount.Add("@AccountName", interviewerProfile.InterviewerAccDetails.AccountName);
-                paramsAccount.Add("@AccountNumber", interviewerProfile.InterviewerAccDetails.AccountNumber);
-                paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
-                paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
-                paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
-
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if(!string.IsNullOrEmpty(interviewerProfile.InterviewerAccDetails.AccountName))
                 {
-                    _ = SqlMapper.Query<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
-                    commandType: CommandType.StoredProcedure);
+                    DynamicParameters paramsAccount = new DynamicParameters();
+                    paramsAccount.Add("@InterviewerProfileId", ProfileId);
+                    paramsAccount.Add("@AccountName", interviewerProfile.InterviewerAccDetails.AccountName);
+                    paramsAccount.Add("@AccountNumber", interviewerProfile.InterviewerAccDetails.AccountNumber);
+                    paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
+                    paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
+                    paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
 
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+                        commandType: CommandType.StoredProcedure);
+
+                    }
                 }
+                
 
                 return true;
 
@@ -393,12 +398,14 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                userId = 0;
                 return false;
             }
 
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                userId = 0;
                 return false;
             }
         }
@@ -455,6 +462,7 @@ namespace Risebird.Repository
             parameters.Add("@IsEmployed", entity.IsEmployed);
             //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+            parameters.Add("@outputUserId", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
 
             return parameters;
         }
@@ -3384,6 +3392,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@status", status);
+                dynamicParameters.Add("@userId", userId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UserList>(con, "usp_UpdateInterviewerActiveStatus", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 
