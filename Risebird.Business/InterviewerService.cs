@@ -150,7 +150,7 @@ namespace Risebird.Business
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
                     if(userId>0)
                     {
-                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" +  _encryptionHelper.EncryptData(userId.ToString()).Result;
+                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();//_encryptionHelper.EncryptData(userId.ToString()).Result;
 
                         string dropProfileButton ="";
                         //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
