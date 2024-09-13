@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -3306,6 +3307,52 @@ namespace Risebird.CommonHelper
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public async Task<string> SendAcknowledgementEmailToInterviewer(string interviewerEmailId, string interviewerName, string yesButton, string dropButton, string asessmentGroups, string primarySpecialization)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Risebird Onboarding Acknowledgement";
+                var toMails = interviewerEmailId;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
+                
+                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, asessmentGroups, yesButton};//, dropButton 
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerAcknowledgementTemplateV2.html");
+
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail.";
+            }
+        }
+
+        public async Task<string> SendWelcomeEmailToInterviewer(string interviewerEmailId, string password, string interviewInstructions)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Welcome to Risebird.";
+                var toMails = interviewerEmailId;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
+                string portalWalkthroughUrl = "https://docs.google.com/spreadsheets/d/1kTMfxgfChGXIGR0KoWqN2ln7050iho07AtM5iQPG8Co/edit?gid=0#gid=0";
+                string videoWalkthroughUrl = "https://drive.google.com/file/d/16OmRNx7AdSUBYM1apqW-zwc_DnEj2zWo/view?usp=sharing";
+                object[] parameters = new object[] { interviewerEmailId, password, portalWalkthroughUrl, videoWalkthroughUrl };//, interviewInstructions,  
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "WelcomeTemplateV2.html");
+
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail.";
             }
         }
     }

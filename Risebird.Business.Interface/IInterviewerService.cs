@@ -94,5 +94,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
+        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
     }
 }
