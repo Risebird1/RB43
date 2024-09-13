@@ -7,5 +7,7 @@ namespace Risebird.CommonHelper.Interface
     {
         Task<string> EncryptDateTime(DateTime dateTime);
         Task<DateTime?> DecryptDateTime(string encryptedData);
+        Task<string> EncryptData(string data);
+        Task<string> DecryptData(string encryptedData);
     }
 }
