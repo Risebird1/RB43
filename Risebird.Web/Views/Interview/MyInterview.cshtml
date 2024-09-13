@@ -81,29 +81,29 @@
                     @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Pending)
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                       <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
+                       <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews Report</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews Report</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
                     {
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews Report</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews Report</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                     {
                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews Report</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews Report</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews Report</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews Report</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                 </div>
@@ -364,9 +364,20 @@
     font-weight: 600;">Click on the call button to call the candidate. The button will be enabled only 10 minutes before the scheduled meeting.</span>
                                     </span>
                                 </div>
-                                <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
+                                <div class="note-meeting text-left" style="margin-top:0px;"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b><br/>
+                                @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
+                                {
+                                        <p style="color: green;font-weight: 600;color:green;margin: 5px 0px;line-height: 23px;font-size: 14px;width: 100%;position: absolute;"><span style="float: left;"><img src="/img/note.png" style="width: 23px;position: relative;top: 6px;left:-4px;"></span><span style="float: left;width: 72%;">As your interview time passes the scheduled time, meeting link will not be available, the interview details will starts reflecting on pending interview report section.</span></p>
 
-                                <div id="tableID" class="second">
+                                }
+
+                                @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Pending)
+                                {
+                                        <p style="color: green;font-weight: 600;color:green;margin: 5px 0px;line-height: 23px;font-size: 14px;width: 100%;position: absolute;"><span style="float: left;"><img src="/img/note.png" style="width: 23px;position: relative;top: 6px;left:-4px;"></span><span style="float: left;width: 72%;">As feedback report is filled, the completed interview details will be reflecting on completed interview report section.</span></p>
+
+                                }
+                                </div>
+                                <div id="tableID" class="second" style="margin-top: 20px;">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
                                         <div class="col-sm-12 col-md-6">
@@ -419,7 +430,7 @@
                                                                  <th>Proxy Voting</th>                                                            
                                                             }
 
-                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed &&  ViewBag.MeetingLineUpType != MeetingLineUpType.Pending)
                                                             {
                                                                     <th class="text-center" id="myinterview_7">Meeting Link</th>
                                                             }
@@ -453,7 +464,7 @@
                                                             {
                                                                 <th>Proxy Voting</th>
                                                             }
-                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed && ViewBag.MeetingLineUpType != MeetingLineUpType.Pending)
                                                             {
                                                                     <th class="text-center">Meeting Link</th>
                                                             }
@@ -768,11 +779,9 @@
                                                             Client Instruction(s)
                                                             </a>
                                                             </td>*@
-                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed && ViewBag.MeetingLineUpType != MeetingLineUpType.Pending)
                                                                     {
-                                                                        @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
-                                                                        {
-                                                                            @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                        @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                             {
                                                                                 <td class="cadName text-center" onclick="captureclick('Meeting','Meeting','@item.id')">
                                                                                     <a style="border-radius: 5px !important;width: 175px;margin: 0px auto;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" target="_blank" title="Meeting Link" href="/Interview/InterviewDetails?id=@item.irfIntId&interviewId=@item.id">Meeting Link</a>
@@ -780,9 +789,9 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <td class="text-center" style="color: #42a5f5;font-weight: 600;    font-size: 15px;">Before 10 min only</td>
+                                                                                          <td class="text-center" style="color: #b9c4cd;font-weight: 500;font-size: 14px;line-height: 20px;">No meeting link <br/><span style="color: #42a5f5;font-weight: 600;font-size: 13px;">(Available before 10 min only)</span></td>
                                                                             }
-                                                                        }
+                                                                        
                                                                         @*@if (item.zoomLink != null && item.zoomLink != "")
                                                             {
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
