@@ -676,45 +676,7 @@
 
 
 
-<div id="VideoInstAlert" class="modal modal-bg" style="z-index:10000">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width: 600px !important;top:10px;">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar" style="background:#d61818!important;">
-                    <span class="mdc-fab__icon material-icons">
-                        <i class='fa fa-warning' style='color: #FFF;font-size: 22px;'></i>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">
-                    Instruction Alert  
-                </h5>
-            </div>
-            <div style=" padding: 5px 20px 5px 20px;font-size: 16px;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
-                <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;"></i> Video Instruction:
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
-                <span onclick="closeVideoInstAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body" style="padding:20px;">
-            @if (!string.IsNullOrEmpty(Model.AudioComment)){
-                <video style="width:100%" controls><source src="@Model.AudioComment"></video>
-               }
-                
-                 @if (!string.IsNullOrEmpty(Model.CompanyDetails))
-                {
-                    <div style=" padding:5px 0px 5px 0px;font-size: 16px;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
-                        <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
-                    </div>
-               }
-                <div class="col-md-12 pull-left text-center">
-                    <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
-                    <button style="font-size: 14px;background:#d43434;font-size: 14px;color:#fff" type="button" class="mdc-button" onclick="closeInterviewerAlert()">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <div id="InterviewerAlert" class="modal modal-bg">
     <!-- Modal content -->
@@ -731,13 +693,27 @@
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
-            <div class="modal-body" style="padding:20px;">
+            <div class="modal-body" style="padding:10px 20px;">
                 @if (Model.IsVideoRequired == true)
                 {
                     <div class="col-md-12 pull-left text-center">
-                        <h2 class="interviewerAlert" style="margin:0px;padding:3px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
+                        <h2 class="interviewerAlert" style="margin:0px;padding:0px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
                     </div>
-                }
+               }
+
+              @if (!string.IsNullOrEmpty(Model.AudioComment)){
+              <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
+                <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
+               </div>
+                <video style="width:100%" controls><source src="@Model.AudioComment"></video>
+               }
+                
+                @if (!string.IsNullOrEmpty(Model.CompanyDetails))
+                {
+                    <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
+                     <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+                    </div>
+             }
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
@@ -1020,14 +996,7 @@
         openInterviewerAlert()
     })
 </script>
-@if (!string.IsNullOrWhiteSpace(Model.AudioComment) || !string.IsNullOrWhiteSpace(Model.CompanyDetails))
-{
-    <script>
-        $(document).ready(function () {
-        openVideoInstAlert()
-        })
-    </script>
-}
+
 <script>
     function openInterviewerAlert() {
         var model = document.getElementById("InterviewerAlert");
@@ -1037,18 +1006,6 @@
 
     function closeInterviewerAlert() {
         var model = document.getElementById("InterviewerAlert");
-        model.style.display = "none";
-    }
-
-
-    function openVideoInstAlert() {
-        var model = document.getElementById("VideoInstAlert");
-        model.style.display = "block";
-    }
-
-
-    function closeVideoInstAlert() {
-        var model = document.getElementById("VideoInstAlert");
         model.style.display = "none";
     }
 
