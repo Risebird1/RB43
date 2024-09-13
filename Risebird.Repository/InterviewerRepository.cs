@@ -372,7 +372,7 @@ namespace Risebird.Repository
                 //}
 
                 //add interviewer account details
-                if(!string.IsNullOrEmpty(interviewerProfile.InterviewerAccDetails.AccountName))
+                if((interviewerProfile.InterviewerAccDetails !=null) && (!string.IsNullOrEmpty(interviewerProfile.InterviewerAccDetails.AccountName)))
                 {
                     DynamicParameters paramsAccount = new DynamicParameters();
                     paramsAccount.Add("@InterviewerProfileId", ProfileId);
