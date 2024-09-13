@@ -135,8 +135,8 @@
     }
 
     /*.mob_h {
-                            display: none !important
-                              }*/
+                                display: none !important
+                                  }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -464,14 +464,14 @@
                                     </div>
                                 </button>
 
-                             @*    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                @*    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                 {
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('@ViewBag')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
-                                        <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Live Interview Co-ordination
-                                        </div>
-                                    </button>
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('@ViewBag')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                <div class="d-lg-inline-flex pad3">
+                                Live Interview Co-ordination
+                                </div>
+                                </button>
                                 } *@
 
                             </div>
@@ -510,7 +510,7 @@
                         <div class="note-filter" style="text-align: right;"> Note: To visualize data older and greater than 15 days, please apply filter</div>
                         }*@
                     </div>
-
+                    
                 </div>
             </div>
         </div>
@@ -664,7 +664,7 @@
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             @*          <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
-                                                        
+
 
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
@@ -673,9 +673,9 @@
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             @*   <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
-                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')">Not Scheduled Meetings</li>
-                                                           
+
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.NotProcessedResumes.GetDescription())
                                                         {
@@ -683,9 +683,9 @@
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" class="active" rel="tab4">Not Processed Resume</li>
                                                             @*<li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
-                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
-                                                            
+
                                                         }
                                                         @* else if (ViewBag.CandidateType == CandidateTypeForClient.PotentialColdCandidate.GetDescription())
                                                         {
@@ -712,7 +712,7 @@
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             @* <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>*@
-                                                        
+
                                                         }
 
 
@@ -736,22 +736,19 @@
                                                                                     <th class="text-left">Interview Date</th>
                                                                                     <th>Meeting Link</th>
                                                                                 }
-
                                                                                 @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                 {
-                                                                                    <th>Report</th>
+                                                                                    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                    {
+                                                                                        <th>Report</th>
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <th>Current Status</th>
                                                                                 }
-                                                                                @*<th id="status_4" class="text-left">JD Title</th>*@
-                                                                                @*   <th id="status_8">Current Status</th>*@
-                                                                                @* <th>Client Hr</th>*@
-                                                                                @* <th>Staffing Agency</th>*@
                                                                                 <th>Action</th>
                                                                                 <th title="Communication attempts count">Communications</th>
-                                                                                @*<th>Interviewer</th>*@
 
                                                                             </tr>
                                                                         </thead>
@@ -767,23 +764,20 @@
                                                                                     <th class="text-left">Interview Date</th>
                                                                                     <th>Meeting Link</th>
                                                                                 }
+
                                                                                 @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                 {
-                                                                                    <th>Report</th>
+                                                                                    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                    {
+                                                                                        <th>Report</th>
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <th>Current Status</th>
                                                                                 }
-                                                                                @*<th class="text-left">JD Title</th>*@
-                                                                                @*     <th>Current Status</th>*@
-                                                                                @* <th>Client Hr</th>*@
-                                                                                @* <th>Staffing Agency</th>*@
                                                                                 <th>Action</th>
                                                                                 <th title="Communication attempts count">Communication</th>
-
-
-
                                                                             </tr>
                                                                         </tfoot>
                                                                         <tbody id="tblbodyTimeline">
@@ -974,89 +968,96 @@
 
 
                                                                                     }
-                                                                                   
-                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
-                                                                                    {  <td>
-                                                                                        @if(item.CurrentStatus == "Selected" || item.CurrentStatus == "Rejected" || item.CurrentStatus == "Strongly Selected" || item.CurrentStatus == "Marginally Selected" || item.CurrentStatus == "Strongly Rejected" || item.CurrentStatus == "Marginally Rejected" || item.CurrentStatus == "Proxy" )
-                                                                                        {
-                                                                                                <span style="color:red">No Meeting Link</span>
-                                                                                         }
 
-                                                                                        else
+                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                                                    {
+                                                                                        <td>
+                                                                                            @if (item.CurrentStatus == "Selected" || item.CurrentStatus == "Rejected" || item.CurrentStatus == "Strongly Selected" || item.CurrentStatus == "Marginally Selected" || item.CurrentStatus == "Strongly Rejected" || item.CurrentStatus == "Marginally Rejected" || item.CurrentStatus == "Proxy")
                                                                                             {
-                                                                                                 @if (item.zoomLink != null && item.zoomLink != ""){
-                       
-                                                                                                  <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a>
-                                                                                                   }
-                                                                                                  else
-                                                                                                   {
+                                                                                                <span style="color:red">No Meeting Link</span>
+                                                                                            }
+
+                                                                                            else
+                                                                                            {
+                                                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                                                {
+
+                                                                                                    <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a>
+                                                                                                }
+                                                                                                else
+                                                                                                {
                                                                                                     <span style="color:red">No Meeting Link</span>
 
-                                                                                                      }
-                                                                                           
-                                                                                    }
+                                                                                                }
 
-                                                                                       
+                                                                                            }
+
+
 
                                                                                         </td>
                                                                                     }
 
-                                                                                    <td>
-                                                                                        @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                                                    {
+                                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                                         {
-                                                                                            @if (item.RedoInterview == true)
-                                                                                            {
-                                                                                                <p>No Report</p>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
-                                                                                                {
-                                                                                                    @*Turing*@
-                                                                                                    @if (!item.IsQCDone)
-                                                                                                    {
-                                                                                                        <div style="height:40px;"></div>
-                                                                                                        <div class="report-tooltip" style="border:0px;display:block!important">
-                                                                                                            <span style=" position: relative;left: 0px; top: -5px;">
-
-                                                                                                                <i class="fa fa-clock pull-left blink" style="color: red"></i><span style="padding-left: 24px;position: relative;top: -2px;">QC Pending</span>
-                                                                                                                <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
-                                                                                                                    <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
-                                                                                                                </div>
-                                                                                                            </span>
-                                                                                                        </div>
-                                                                                                    }
-                                                                                                    @*Turing*@
-
-                                                                                                    <div stye="width:100%;float:left">
-
-                                                                                                        @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
-                                                                                                        <a style="text-decoration:none;" target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
-                                                                                                            <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report">
-                                                                                                                <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                                                            </span>
-                                                                                                        </a>
-                                                                                                        <a style="text-decoration:none;" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
-                                                                                                            <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report" style="background:#53a5f5 !important;">
-                                                                                                                <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                                                            </span>
-                                                                                                        </a>
-
-                                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="SendFeedbackReminder(@item.InterviewId, @item.IRFId,'@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
-                                                                                                            <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-2px;left:-2px;max-width:18px; position: relative;" /></span>
-                                                                                                        </span>
-
-
-                                                                                                    </div>
-                                                                                                }
-                                                                                                else
+                                                                                            <td>
+                                                                                                @if (item.RedoInterview == true)
                                                                                                 {
                                                                                                     <p>No Report</p>
                                                                                                 }
-                                                                                            }
+                                                                                                else
+                                                                                                {
+                                                                                                    @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
+                                                                                                    {
+                                                                                                        @*Turing*@
+                                                                                                        @if (!item.IsQCDone)
+                                                                                                        {
+                                                                                                            <div style="height:40px;"></div>
+                                                                                                            <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                                                                <span style=" position: relative;left: 0px; top: -5px;">
+
+                                                                                                                    <i class="fa fa-clock pull-left blink" style="color: red"></i><span style="padding-left: 24px;position: relative;top: -2px;">QC Pending</span>
+                                                                                                                    <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
+                                                                                                                        <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
+                                                                                                                    </div>
+                                                                                                                </span>
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                        @*Turing*@
+
+                                                                                                        <div stye="width:100%;float:left">
+
+                                                                                                            @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
+                                                                                                            <a style="text-decoration:none;" target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
+                                                                                                                <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report">
+                                                                                                                    <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                                                </span>
+                                                                                                            </a>
+                                                                                                            <a style="text-decoration:none;" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
+                                                                                                                <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report" style="background:#53a5f5 !important;">
+                                                                                                                    <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                                                </span>
+                                                                                                            </a>
+
+                                                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="SendFeedbackReminder(@item.InterviewId, @item.IRFId,'@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
+                                                                                                                <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-2px;left:-2px;max-width:18px; position: relative;" /></span>
+                                                                                                            </span>
+
+
+                                                                                                        </div>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <p>No Report</p>
+                                                                                                    }
+                                                                                                }
+                                                                                            </td>
                                                                                         }
-                                                                                        else
-                                                                                        {
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>
                                                                                             @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                             {  @if (item.StatusValue == "In Progress")
                                                                                                 {
@@ -1234,10 +1235,8 @@
                                                                                             {
                                                                                                 <p>No status</p>
                                                                                             }
-
-                                                                                        }
-                                                                                    </td>
-
+                                                                                        </td>
+                                                                                    }
 
 
                                                                                     <td>
@@ -1269,8 +1268,8 @@
                                                                                                     </span>
 
                                                                                                     @* <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("EditViaClientPublicUrl", "Candidate", new { id = item.CandidateMasterId, irfName = item.IRFName, irfId = item.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
-                                                                                                        <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
-                                                                                                    </a> *@
+                                                                                        <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                                                        </a> *@
                                                                                                 }
 
                                                                                             }
@@ -2532,7 +2531,7 @@
     }
 
 
-       
+
 
 </script>
 
