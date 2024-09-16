@@ -2009,7 +2009,9 @@
         });
     }
     function FetchInterviewerCommunicator(emailid) {
-        window.location.href = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
+        //window.location.href = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
+            var url = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
+            window.open(url, '_blank');
     }
     function bindschedulingdata(data) {
         var html = '';
