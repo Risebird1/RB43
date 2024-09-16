@@ -162,11 +162,16 @@ namespace Risebird.Web.Controllers
                     if (profileName != "Admin")
                     {
                         profilesToExclude.Add("SupportAdmin");
+                        profilesToExclude.Add("Admin");
                     }
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
                     if (profileName == "SeniorHR")
                     {
                         profiles = profiles.Where(x => profilesToInclude.Contains(x.Name.ToString())).ToList();
+                    }
+                    if (profileName == "SeniorInterviewerManagement")
+                    {
+                        profiles = profiles.Where(x => x.Name == "InterviewerManagement").ToList();
                     }
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
                     await GetClientsSelectList(model);
