@@ -158,7 +158,7 @@ namespace Risebird.Web.Controllers
                     List<Profile> profiles = await _profileService.GetProfile();
 
                     List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Freemium Client", "MappingAdmin" };
-                    List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
+                    List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller", "InterviewerManagement" };
                     if (profileName != "Admin")
                     {
                         profilesToExclude.Add("SupportAdmin");
@@ -410,7 +410,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var model = new ClientUserVM();
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "dilruba_sultana@risebird.io"))
                     {
                         model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
                         model.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
@@ -442,7 +442,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
 
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "dilruba_sultana@risebird.io"))
                     {
                         if (ModelState.IsValid)
                         {
@@ -548,7 +548,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "dilruba_sultana@risebird.io"))
                     {
                         ClientUserVM clientUserVM = await _userService.GetClientUser(id);
 
@@ -590,7 +590,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "dilruba_sultana@risebird.io"))
                     {
                         if (ModelState.IsValid)
                         {

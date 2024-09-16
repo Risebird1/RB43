@@ -424,7 +424,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null)
+        public async Task<IEnumerable<CandidateTimelineVM>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null)
         {
             try
             {
@@ -435,7 +435,7 @@ namespace Risebird.Repository
                 parameters.Add("@datatype", datatype);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByDateStatus", parameters,
+                    return await SqlMapper.QueryAsync<CandidateTimelineVM>(con, "usp_GetCandidateTimelineByDateStatus", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                 }
             }

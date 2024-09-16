@@ -23,7 +23,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteCandidateResume(int id);
         Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId);
         Task<string> GetCandidateStaffingAgency(int candidateId);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
+        Task<IEnumerable<CandidateTimelineVM>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
         Task<bool> AddEditFitmentReport(FitmentReportModel model);
         Task<Candidate> GetCandidateForFitmentReport(int candidateMasterId, int irfId);
         Task<bool> ProcessCandidateResume(int id);
