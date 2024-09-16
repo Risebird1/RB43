@@ -107,10 +107,8 @@
                                 </div>
                             </div>
 
-                            @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                            { *@
-                                @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "pull-right mob-ht mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button", @style = "position:relative;top:30px;right:30px;" })
-                            @* } *@
+                            
+                               @*  @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "pull-right mob-ht mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button", @style = "position:relative;top:30px;right:30px;" }) *@
 
                         </div>
                     }
@@ -154,7 +152,7 @@
                                                                 <th style="border-left: 0px !important;">Candidate Submission Link</th>
                                                                 <th style="text-align:left">JD-Skills</th>
                                                                 <th>JD</th>
-                                                                <th class="text-left">Candidate Submission</th>
+                                                                <th class="text-center">Candidate Submission</th>
                                                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                 {
                                                                     <th class="disabled-sorting text-center">Actions</th>
@@ -165,7 +163,7 @@
                                                                 <th>Project</th>
                                                                 <th>Project ID</th>
                                                                 <th>Skill Channels</th>
-                                                                <th>Candidate Submission</th>
+                                                                <th class="text-center">Candidate Submission</th>
                                                             }
                                                         </tr>
                                                     </thead>
@@ -179,7 +177,7 @@
                                                                 <th style="border-left: 0px !important;">Candidate Submission Link</th>
                                                                 <th style="text-align:left">JD-Skills</th>
                                                                 <th>JD</th>
-                                                                <th class="text-left">Candidate Submission</th>
+                                                                <th class="text-center">Candidate Submission</th>
                                                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                 {
                                                                     <th class="disabled-sorting text-center">Actions</th>
@@ -190,7 +188,7 @@
                                                                 <th>Project</th>
                                                                 <th>Project ID</th>
                                                                 <th>Skill Channels</th>
-                                                                <th>Candidate Submission</th>
+                                                                    <th class="text-center">Candidate Submission</th>
                                                             }
                                                         </tr>
 
@@ -258,21 +256,21 @@
                                                                         }
 
 
-                                                                        @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                                                                        {
+                                                                       @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                        {*@
                                                                             <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
                                                                                 <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span class="fas fa-file"></span></span>
                                                                             </button>
-                                                                        }
+                                                                      @*  }*@
 
-                                                                        @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                                                                        {
+                                                                       @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                        {*@
                                                                             <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
                                                                                 <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
                                                                                     <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
                                                                                 </div>
                                                                             </a>
-                                                                        }
+                                                                       @* }*@
                                                                     </td>
                                                                     @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                     {
