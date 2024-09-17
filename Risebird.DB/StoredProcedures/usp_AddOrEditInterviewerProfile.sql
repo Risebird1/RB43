@@ -50,14 +50,20 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @isVerified bit,  
 @CompanyName varchar(100),  
 @IsEmployed bit,  
+@TargetIrfId int,
+@PrimarySpecializationForAcknowledgement varchar(250)=null,
 @loggedInUser varchar(50),  
 @AssessmentGroupDifference varchar(100),  
 @assessmentGroupList varchar(max) out,  
 @RemovedAssessmentGroups varchar(max)=null,
 @outputUserId int out
 AS              
-Begin  
-  set @assessmentGroupList = ''  
+Begin
+
+begin try  
+ begin tran 
+
+ set @assessmentGroupList = ''  
   if(@AssessmentGroupDifference is not null and @AssessmentGroupDifference != '')  
   Begin  
     declare @temp table(assessmentGroupId varchar(5), TotalInterviewers int)  
@@ -125,11 +131,19 @@ Begin
     --[IndiaProductRate] = @IndiaProductRate,    
     --[OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,    
     --[OutsideIndiaProductRate] = @OutsideIndiaProductRate    
-  where userId = @UserId;              
+  where userId = @UserId             
         
-     
-    
-   select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;              
+   
+   
+   select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;  
+   if(@TargetIrfId > 0)
+   Begin
+	   if not exists (select 1 from TransInterviewer where IRFId =@TargetIrfId and UserId = @UserId)
+	   Begin
+		   Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable) 
+		   values(@TargetIrfId,@v_ProfileId,@UserId,0,1) 
+	   End
+   End
     select @outputUserId= @UserId     
    --delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId              
               
@@ -223,7 +237,8 @@ Declare @v_User_Id int;
    [CreatedOn],  
    [isVerified],  
    [CompanyName],  
-   [IsEmployed])    
+   [IsEmployed],
+   [PrimarySpecializationForAcknowledgement])    
    --[IsServiceDomain],    
    --[IsProductDomain],    
    --[IndiaServiceRate],    
@@ -257,7 +272,8 @@ Declare @v_User_Id int;
    dateadd(MINUTE, 330, getdate()),  
    @isVerified,  
    @CompanyName,  
-   @IsEmployed)    
+   @IsEmployed,
+   @PrimarySpecializationForAcknowledgement)    
    --@IsServiceDomain,    
    --@IsProductDomain,    
    --@IndiaServiceRate,    
@@ -329,7 +345,22 @@ if(@RemovedAssessmentGroups is not null and @RemovedAssessmentGroups != '')
    update TransInterviewer set IsActive = 0 where id in   
    (select ti.id from @tempRemovedFromAssessmentGroups tra join irf on tra.assessmentGroupId = irf.AssessmentGroupId  
    join TransInterviewer ti on ti.IRFId = irf.id where ti.UserId = @UserId)  
-   End   
+   End
+
+ commit tran  
+end try  
+begin catch  
+ 
+ rollback transaction  
+ 
+ DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),  
+  @Severity int = ERROR_SEVERITY(),  
+  @State smallint = ERROR_STATE()  
+  
+ RAISERROR (@Message, @Severity, @State)  
+  
+end catch 
+     
 End  
 GO
 
