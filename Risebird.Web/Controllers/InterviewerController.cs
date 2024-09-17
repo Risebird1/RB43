@@ -4111,7 +4111,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, int user, int irf)
+        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, int user)//, int irf
         {
             //check link expiry befire hitting db
 
@@ -4121,8 +4121,8 @@ namespace Risebird.Web.Controllers
                 //var userId = await _encryptionHelper.DecryptData(user);
                 if(user>0)//!string.IsNullOrEmpty(userId)
                 {
-                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, user, irf);
-                    if(result != null)
+                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, user);//, irf
+                    if (result != null)
                     {
                         return Json("Status updated successfully.");
                     }

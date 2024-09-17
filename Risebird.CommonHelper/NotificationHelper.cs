@@ -3319,7 +3319,7 @@ namespace Risebird.CommonHelper
                 var toMails = interviewerEmailId;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
                 
-                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, asessmentGroups, yesButton};//, dropButton 
+                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, yesButton};//asessmentGroups, dropButton 
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerAcknowledgementTemplateV2.html");
 
                 string msgBody = string.Format(rawEmail, parameters);
@@ -3342,7 +3342,7 @@ namespace Risebird.CommonHelper
                 var toMails = interviewerEmailId;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
                 string portalWalkthroughUrl = "https://drive.google.com/file/d/16OmRNx7AdSUBYM1apqW-zwc_DnEj2zWo/view?usp=sharing";//this is risebird video url
-                string videoWalkthroughUrl = HMVideoForTargetIRFUrl;//
+                string videoWalkthroughUrl = HMVideoForTargetIRFUrl ?? string.Empty;//
                 object[] parameters = new object[] { interviewerEmailId, password, portalWalkthroughUrl, videoWalkthroughUrl };//, interviewInstructions,  
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "WelcomeTemplateV2.html");
 
