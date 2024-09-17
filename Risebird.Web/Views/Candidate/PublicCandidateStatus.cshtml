@@ -411,30 +411,32 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                 {
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                   <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;"> <button type="button" data-toggle="tooltip" data-placement="top">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Partner Stats
                                         </div>
-                                    </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    </button></a>
+                                   <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;"> <button type="button" data-toggle="tooltip" data-placement="top">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Interview Channel Stats(Project Id)
                                         </div>
                                     </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    </a>
+                                   <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;"> <button type="button" data-toggle="tooltip" data-placement="top">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Interview Channel Stats
                                         </div>
                                     </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    </a>
+                                  <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;"><button type="button" data-toggle="tooltip" data-placement="top">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Interview Channel Stats(Multi-Stack)
                                         </div>
-                                    </button>
+                                    </button></a>
                                 }
                                 @if (ViewBag.ClientRole != "Client Admin")
                                 {
