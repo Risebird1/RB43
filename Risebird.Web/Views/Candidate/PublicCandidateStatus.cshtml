@@ -135,8 +135,8 @@
     }
 
     /*.mob_h {
-                                        display: none !important
-                                          }*/
+                                                display: none !important
+                                                  }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -411,30 +411,38 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                 {
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
-                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Partner Stats
-                                        </div>
-                                    </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
-                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Interview Channel Stats(Project Id)
-                                        </div>
-                                    </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
-                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Interview Channel Stats
-                                        </div>
-                                    </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
-                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Interview Channel Stats(Multi-Stack)
-                                        </div>
-                                    </button>
+                                    <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Partner Stats
+                                            </div>
+                                        </button>
+                                    </a>
+                                    <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Project-Id Stats
+                                            </div>
+                                        </button>
+                                    </a>
+                                    <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Interview Channel Stats
+                                            </div>
+                                        </button>
+                                    </a>
+                                    <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Multi-Stack Stats
+                                            </div>
+                                        </button>
+                                    </a>
                                 }
                                 @if (ViewBag.ClientRole != "Client Admin")
                                 {
@@ -492,10 +500,7 @@
                                         <span class="mdc-button__ripple"></span>
                                     </span>
                                 </span>
-                                @if (ViewBag.ClientRole == "Client Admin")
-                                {
-                                    <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
-                                }
+                                <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
                             </div>
 
                         </div>
@@ -637,50 +642,41 @@
                                                     <ul class="tabs">
                                                         @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                                                         {
-                                                            @* <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" rel="tab1">Future Scheduled</li> *@
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" rel="tab1">Future Scheduled</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.CompletedMeeting.GetDescription()')" rel="tab1">Completed Meeting</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.ReportPending.GetDescription()')" rel="tab1">Report Pending</li>
+                                                            @* <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li> *@
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active">Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
-                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
+                                                            @* <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li> *@
                                                         }
-                                                        @* else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
+                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.ReportPending.GetDescription())
                                                         {
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" class="active" rel="tab1">Future Scheduled</li>
-                                                            <li onclick="ColdCandidateByClient('@ViewBag.emailid')" class="active" rel="tab3">Cold Candidates</li>
-                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
-                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')">Not Scheduled Meetings</li>
-
-                                                        }
-                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.NotProcessedResumes.GetDescription())
-                                                        {
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" class="active" rel="tab1">Future Scheduled</li>
-                                                            <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
-                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" class="active" rel="tab4">Not Processed Resume</li>
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
-                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')">Not Scheduled Meetings</li>
-
-                                                        } *@
-                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
-                                                        {
-                                                            @* <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" class="active" rel="tab1">Future Scheduled</li> *@
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" rel="tab1">Future Scheduled</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.CompletedMeeting.GetDescription()')" rel="tab1">Completed Meeting</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.ReportPending.GetDescription()')" class="active" rel="tab1">Report Pending</li>
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
-                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
+                                                        }
+                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
+                                                        {
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" rel="tab1">Future Scheduled</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.CompletedMeeting.GetDescription()')" class="active" rel="tab1">Completed Meeting</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.ReportPending.GetDescription()')" rel="tab1">Report Pending</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                            <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                         }
                                                         else
                                                         {
-                                                            @* <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" rel="tab1">Future Scheduled</li> *@
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" class="active" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" class="active" rel="tab1">Future Scheduled</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.CompletedMeeting.GetDescription()')" rel="tab1">Completed Meeting</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.ReportPending.GetDescription()')" rel="tab1">Report Pending</li>
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
-                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                         }
 
 
@@ -997,12 +993,6 @@
                                                                                                                     <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                                                                 </span>
                                                                                                             </a>
-
-                                                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="SendFeedbackReminder(@item.InterviewId, @item.IRFId,'@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
-                                                                                                                <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-2px;left:-2px;max-width:18px; position: relative;" /></span>
-                                                                                                            </span>
-
-
                                                                                                         </div>
                                                                                                     }
                                                                                                     else

@@ -813,7 +813,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.message.Contains("Upstream"))
                         {
-                            employementdetails.message = "Fail to verify,please check the details and try again.";
+                            employementdetails.message = "Fail to verify , API didn't work, try after sometime";
                         }
                         else
                         {
