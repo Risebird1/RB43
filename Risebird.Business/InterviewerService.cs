@@ -151,7 +151,7 @@ namespace Risebird.Business
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
                     if(userId>0)
                     {
-                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString() + "&irf=" + interviewerProfile.TargetIrfId.ToString();// _encryptionHelper.EncryptData(userId.ToString()).Result;
+                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();// _encryptionHelper.EncryptData(userId.ToString()).Result;+ "&irf=" + interviewerProfile.TargetIrfId.ToString()
 
                         string dropProfileButton ="";
                         //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
@@ -1579,11 +1579,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, int targetIrf)
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
         {
             try
             {
-                var result =  await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId, targetIrf);
+                var result =  await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId);
 
                 if (result != null)
                 {
