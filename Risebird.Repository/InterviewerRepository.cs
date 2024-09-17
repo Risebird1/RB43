@@ -372,7 +372,7 @@ namespace Risebird.Repository
                 //}
 
                 //add interviewer account details
-                if(!string.IsNullOrEmpty(interviewerProfile.InterviewerAccDetails.AccountName))
+                if(interviewerProfile.InterviewerAccDetails != null && !string.IsNullOrEmpty(interviewerProfile.InterviewerAccDetails.AccountName))
                 {
                     DynamicParameters paramsAccount = new DynamicParameters();
                     paramsAccount.Add("@InterviewerProfileId", ProfileId);
@@ -460,6 +460,8 @@ namespace Risebird.Repository
             parameters.Add("@isVerified", entity.isVerified);
             parameters.Add("@CompanyName", entity.CompanyName);
             parameters.Add("@IsEmployed", entity.IsEmployed);
+            parameters.Add("@TargetIrfId", entity.TargetIrfId);
+            parameters.Add("@PrimarySpecializationForAcknowledgement", entity.PrimarySpecializationForAcknowledgement);
             //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@outputUserId", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
@@ -3400,6 +3402,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@status", status);
                 dynamicParameters.Add("@userId", userId);
+                //dynamicParameters.Add("@targetIrf", targetIrf);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<UserList>(con, "usp_UpdateInterviewerActiveStatus", dynamicParameters,
@@ -3412,6 +3415,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userId", userId);
+                    return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetApplicableSkillChannelsForInterviewerPostAdding", parameters, commandType: CommandType.StoredProcedure, commandTimeout: 300);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 

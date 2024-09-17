@@ -3319,7 +3319,7 @@ namespace Risebird.CommonHelper
                 var toMails = interviewerEmailId;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
                 
-                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, asessmentGroups, yesButton};//, dropButton 
+                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, yesButton};//asessmentGroups, dropButton 
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerAcknowledgementTemplateV2.html");
 
                 string msgBody = string.Format(rawEmail, parameters);
@@ -3332,7 +3332,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendWelcomeEmailToInterviewer(string interviewerEmailId, string password, string interviewInstructions)
+        public async Task<string> SendWelcomeEmailToInterviewer(string interviewerEmailId, string password, string HMVideoForTargetIRFUrl)
         {
             try
             {
@@ -3341,8 +3341,8 @@ namespace Risebird.CommonHelper
                 msg.Subject = "Welcome to Risebird.";
                 var toMails = interviewerEmailId;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
-                string portalWalkthroughUrl = "https://docs.google.com/spreadsheets/d/1kTMfxgfChGXIGR0KoWqN2ln7050iho07AtM5iQPG8Co/edit?gid=0#gid=0";
-                string videoWalkthroughUrl = "https://drive.google.com/file/d/16OmRNx7AdSUBYM1apqW-zwc_DnEj2zWo/view?usp=sharing";
+                string portalWalkthroughUrl = "https://drive.google.com/file/d/16OmRNx7AdSUBYM1apqW-zwc_DnEj2zWo/view?usp=sharing";//this is risebird video url
+                string videoWalkthroughUrl = HMVideoForTargetIRFUrl ?? string.Empty;//
                 object[] parameters = new object[] { interviewerEmailId, password, portalWalkthroughUrl, videoWalkthroughUrl };//, interviewInstructions,  
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "WelcomeTemplateV2.html");
 
