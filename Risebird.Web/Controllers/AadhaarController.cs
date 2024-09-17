@@ -801,6 +801,7 @@ namespace Risebird.Web.Controllers
                             employementdetails.MobileNumber = model.MobileNumber;
                             employementdetails.Name = model.uanDetails1?.FirstOrDefault().name;
                             employementdetails.isVerified = true;
+                            employementdetails.CompanyName = companyname;
                             if (model.summary != null)
                             {
                                 employementdetails.Isemployed = model.summary.isEmployed;
