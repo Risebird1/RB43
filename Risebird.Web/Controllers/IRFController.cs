@@ -886,10 +886,8 @@ namespace Risebird.Web.Controllers
                         irfDetails.EndDate = DateTime.Now.AddMonths(3);
 
                         //Start: Auto Generate Scheduling Link 
-
                         var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
                         irfDetails.CalendlyLink = _schedulinglink;
-
                         //End: Auto Generate Scheduling Link
                         await checkSkillSetandCombine(irfDetails);
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
