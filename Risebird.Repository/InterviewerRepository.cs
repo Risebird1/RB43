@@ -3395,14 +3395,14 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, int targetIrf)
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@status", status);
                 dynamicParameters.Add("@userId", userId);
-                dynamicParameters.Add("@targetIrf", targetIrf);
+                //dynamicParameters.Add("@targetIrf", targetIrf);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<UserList>(con, "usp_UpdateInterviewerActiveStatus", dynamicParameters,

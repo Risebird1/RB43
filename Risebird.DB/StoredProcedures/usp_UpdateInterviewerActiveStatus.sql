@@ -10,8 +10,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE usp_UpdateInterviewerActiveStatus
 @userId int,
-@status int,
-@targetIrf int
+@status int
+--@targetIrf int
 AS
 BEGIN
 
@@ -19,11 +19,9 @@ declare @hmVideoInstructionLink varchar(1000)
 
 if(@status = 1)
 Begin
-	if(@targetIrf > 0)
-	Begin
-		
-		set @hmVideoInstructionLink = (select AudioComment from IRF where id = @targetIrf)
-	end
+	
+	set @hmVideoInstructionLink = (select AudioComment from IRF where id = (select top 1 IRFId from TransInterviewer where UserId = @userId))
+
 	update UserList set IsActive = 1 where id = @userId
 
 	select EmailId, UserPassword, @hmVideoInstructionLink as HMVideoForTargetIRF from UserList where id = @userId
