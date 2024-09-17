@@ -3671,7 +3671,7 @@ namespace Risebird.Web.Controllers
             {
                 if (string.IsNullOrEmpty(candidateType))
                 {
-                    candidateType = CandidateTypeForClient.FutureScheduled.GetDescription();
+                    candidateType = CandidateTypeForClient.Scheduled.GetDescription();
                 }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
@@ -3767,7 +3767,7 @@ namespace Risebird.Web.Controllers
                     {
                         model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
                     }
-                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    if (candidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
                     {
                         model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
                     }
