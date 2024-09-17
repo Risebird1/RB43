@@ -3671,7 +3671,7 @@ namespace Risebird.Web.Controllers
             {
                 if (string.IsNullOrEmpty(candidateType))
                 {
-                    candidateType = CandidateTypeForClient.Scheduled.GetDescription();
+                    candidateType = CandidateTypeForClient.FutureScheduled.GetDescription();
                 }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
@@ -3738,7 +3738,7 @@ namespace Risebird.Web.Controllers
                         {
                             candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
                         }
-                        else
+                        else if (candidate.CurrentMeetingStatus.HasValue)
                         {
                             candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
                         }
@@ -3762,6 +3762,14 @@ namespace Risebird.Web.Controllers
                         {
                             candidate.CurrentStatus = "Cancelled";
                         }
+                    }
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
+                    }
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
                     }
                     if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                     {
