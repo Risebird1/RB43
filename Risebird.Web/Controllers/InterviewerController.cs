@@ -451,11 +451,13 @@ namespace Risebird.Web.Controllers
                             interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
                         }
                         string assessmentGroupList;
+                        int userId;
                         interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
+                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out userId))
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile has been added Successfully!";
-                            return RedirectToAction("Index");
+                            TempData["MessageInterviewerOnboarding"] = "Interviewer Profile has been added Successfully!";
+                            return RedirectToAction("EditInterviewerProfile", new { userId =  userId, showAddToSkillChannelOption  = true});
+                            //return RedirectToAction("Index");
                         }
                         else
                         {
@@ -489,7 +491,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditInterviewerProfile(int userId)
+        public async Task<IActionResult> EditInterviewerProfile(int userId, bool showAddToSkillChannelOption = false)
         {
             try
             {
@@ -500,9 +502,16 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
+                        model.ShowAddToSkillChannelOption = showAddToSkillChannelOption;
+
                         // Get all the select Lists
                         await GetAllSelectList(model);
+                        if (TempData["MessageInterviewerOnboarding"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageInterviewerOnboarding"].ToString();
+                            TempData.Remove("MessageInterviewerOnboarding");
 
+                        }
                         return View("EditInterviewerProfile", model);
                     }
                     else
@@ -723,6 +732,7 @@ namespace Risebird.Web.Controllers
             var AvailabilityStatus = from InterviewerAvailabilityStatus s in Enum.GetValues(typeof(InterviewerAvailabilityStatus))
                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.AvailabilityStatus = new SelectList(AvailabilityStatus, "ID", "Name");
+            model.SkillChannelList = new SelectList(await _interviewerService.GetApplicableSkillChannelsForInterviewerPostAdding(model.UserId), "id", "IRFId");
         }
 
         [HttpPost]
@@ -4101,17 +4111,17 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, string user)
+        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, int user, int irf)
         {
             //check link expiry befire hitting db
 
             try
             {
                 //dec = dec.Replace(" ", "+");
-                var userId = await _encryptionHelper.DecryptData(user);
-                if(!string.IsNullOrEmpty(userId))
+                //var userId = await _encryptionHelper.DecryptData(user);
+                if(user>0)//!string.IsNullOrEmpty(userId)
                 {
-                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, Convert.ToInt32(userId));
+                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, user, irf);
                     if(result != null)
                     {
                         return Json("Status updated successfully.");
