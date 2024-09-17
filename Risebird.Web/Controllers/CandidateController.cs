@@ -3738,6 +3738,10 @@ namespace Risebird.Web.Controllers
                         {
                             candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
                         }
+                        else
+                        {
+                            candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
+                        }
                         if (candidate.confirmationStatus != 2)
                         {
                             if (candidate.interviewDate < DateTime.Now && candidate.CurrentMeetingStatus == 2)
@@ -3912,6 +3916,10 @@ namespace Risebird.Web.Controllers
                     if (candidate.CurrentMeetingStatus == 4)
                     {
                         candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                    }
+                    else
+                    {
+                        candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
                     }
                     if (candidate.confirmationStatus != 2)
                     {
