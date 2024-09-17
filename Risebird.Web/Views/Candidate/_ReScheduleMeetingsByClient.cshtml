@@ -194,7 +194,7 @@
                                                     <td class="text-left">
 
 
-                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
                                                             <span title="ReSchedule Meeting" class="mdc-fab__icon material-icons"><i class="fas fa-calendar-alt" aria-hidden="true" style="font-size:16px;"></i></span>
                                                         </a>
 
