@@ -41,5 +41,6 @@ namespace Risebird.Entities.Data
         public string ClientIds { get; set; }
         public List<SelectListItem> ClientList { get; set; }
         public string[] ClientsArray { get; set; }
+        public string HMVideoForTargetIRF { get; set; }
     }
 }
