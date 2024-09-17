@@ -3671,7 +3671,7 @@ namespace Risebird.Web.Controllers
             {
                 if (string.IsNullOrEmpty(candidateType))
                 {
-                    candidateType = CandidateTypeForClient.Scheduled.GetDescription();
+                    candidateType = CandidateTypeForClient.FutureScheduled.GetDescription();
                 }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
@@ -3738,6 +3738,10 @@ namespace Risebird.Web.Controllers
                         {
                             candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
                         }
+                        else if (candidate.CurrentMeetingStatus.HasValue)
+                        {
+                            candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
+                        }
                         if (candidate.confirmationStatus != 2)
                         {
                             if (candidate.interviewDate < DateTime.Now && candidate.CurrentMeetingStatus == 2)
@@ -3758,6 +3762,14 @@ namespace Risebird.Web.Controllers
                         {
                             candidate.CurrentStatus = "Cancelled";
                         }
+                    }
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
+                    }
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
                     }
                     if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                     {
@@ -3912,6 +3924,10 @@ namespace Risebird.Web.Controllers
                     if (candidate.CurrentMeetingStatus == 4)
                     {
                         candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                    }
+                    else
+                    {
+                        candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
                     }
                     if (candidate.confirmationStatus != 2)
                     {

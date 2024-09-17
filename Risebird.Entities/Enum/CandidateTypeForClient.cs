@@ -26,6 +26,10 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "Reschedule Meeting")]
         [Description("Reschedule Meeting")]
-        RescheduleMeeting = 6
+        RescheduleMeeting = 6,
+        
+        [Display(Name = "Future Scheduled")]
+        [Description("Future Scheduled")]
+        FutureScheduled = 7
     }
 }
