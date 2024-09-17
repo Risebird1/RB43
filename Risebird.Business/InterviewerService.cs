@@ -96,9 +96,10 @@ namespace Risebird.Business
         //    }
         //}
 
-        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
+        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId)
         {
             assessmentGroupList = string.Empty;
+            userId = 0;
             try
             {
                 if (interviewerProfile.AssessmentGroupArray != null)
@@ -137,7 +138,7 @@ namespace Risebird.Business
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                int userId;
+                //int userId;
                 var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
                 if (result)
                 {
@@ -150,7 +151,7 @@ namespace Risebird.Business
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
                     if(userId>0)
                     {
-                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" +  _encryptionHelper.EncryptData(userId.ToString()).Result;
+                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();// _encryptionHelper.EncryptData(userId.ToString()).Result;+ "&irf=" + interviewerProfile.TargetIrfId.ToString()
 
                         string dropProfileButton ="";
                         //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
@@ -344,7 +345,7 @@ namespace Risebird.Business
                 //List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
                 //List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
                 TransInterviewerAccDetails AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result;
-
+                
                 // Assign the Lists to model
 
                 //ProfileModel.InterviewerSkill = SkillList;
@@ -1587,9 +1588,22 @@ namespace Risebird.Business
                 if (result != null)
                 {
                     //sendwelcomeEmailtointerviewer
-                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, "");
+                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, result.HMVideoForTargetIRF);
                 }
                 return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId)
+        {
+            try
+            {
+                return await _interviewerRepository.GetApplicableSkillChannelsForInterviewerPostAdding(userId);
             }
             catch (Exception ex)
             {

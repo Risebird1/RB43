@@ -115,5 +115,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
         Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
+        Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
     }
 }

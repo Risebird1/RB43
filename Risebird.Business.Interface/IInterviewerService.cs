@@ -10,7 +10,7 @@ namespace Risebird.Business.Interface
     {
         List<InterviewerProfileVM> GetInterviewers();
         //Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
-        bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList);
+        bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId);
         //Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
         bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList);
         Task<bool> DeleteInterviewerProfile(int id);
@@ -95,5 +95,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
         Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
+        Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
     }
 }

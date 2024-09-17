@@ -11,6 +11,7 @@ using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
 using System;
 using System.Net.Http.Headers;
+using System.Linq;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -297,7 +298,7 @@ namespace Risebird.Web.Controllers
                             // AIVerdict now contains 'No' or 'Yes' based on the condition
                             if (AIVerdict == "Yes")
                             {
-                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, errorMessage = string.Empty });
+                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                             }
                             else
