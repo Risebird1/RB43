@@ -298,12 +298,12 @@ namespace Risebird.Web.Controllers
                             // AIVerdict now contains 'No' or 'Yes' based on the condition
                             if (AIVerdict == "Yes")
                             {
-                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponse = response?.Data?.FirstOrDefault()?.Content?.Where(x => !x.Text.Value.Contains("Evaluate the resume"))?.FirstOrDefault()?.Text.Value, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                             }
                             else
                             {
-                                return Json( new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, errorMessage = string.Empty });
+                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponse = response?.Data?.FirstOrDefault()?.Content?.Where(x => !x.Text.Value.Contains("Evaluate the resume"))?.FirstOrDefault()?.Text.Value, errorMessage = string.Empty }) ;
                             }
 
                         }

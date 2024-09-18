@@ -132,6 +132,7 @@
                                 @Html.HiddenFor(m => m.DOB)
                                 @Html.HiddenFor(m => m.ResumeLink)
                                 @Html.HiddenFor(m => m.PrimarySpecializationForAcknowledgement)
+                                @Html.HiddenFor(m => m.AIResponse)
 
                                 <!-- Add Interviewer personal Details Start-->
                                 <div class="row">
@@ -1001,12 +1002,18 @@
             processData: false,
             data: formdata,
             success: function (data) {
+                debugger;
                 if (data != null && data.errorMessage == '') {
                     if (data.isfavourableVerdict) {
                         document.getElementById("divAIVerdict").style.display = "none";
                         document.getElementById("divEVverified").style.display = "block";
                         $("#ResumeLink").val(data.resumeLink);
                         $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
+                        if(data.aiResponse != null)
+                        {
+                            $("#AIResponse").val(data.aiResponse);
+
+                        }
                     }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
