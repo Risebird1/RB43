@@ -989,7 +989,7 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
+            if (msg.toLowerCase().includes("success")) {
                 swal.fire("Successful", '@ViewBag.Message', "success");
             }
             else {
