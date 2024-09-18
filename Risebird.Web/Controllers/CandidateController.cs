@@ -3931,7 +3931,7 @@ namespace Risebird.Web.Controllers
                     {
                         candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
                     }
-                    else
+                    else if (candidate.CurrentMeetingStatus.HasValue)
                     {
                         candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
                     }
