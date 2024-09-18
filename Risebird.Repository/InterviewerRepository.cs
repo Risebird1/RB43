@@ -460,7 +460,7 @@ namespace Risebird.Repository
             parameters.Add("@isVerified", entity.isVerified);
             parameters.Add("@CompanyName", entity.CompanyName);
             parameters.Add("@IsEmployed", entity.IsEmployed);
-            parameters.Add("@TargetIrfId", entity.TargetIrfId);
+            //parameters.Add("@TargetIrfId", entity.TargetIrfId);
             parameters.Add("@PrimarySpecializationForAcknowledgement", entity.PrimarySpecializationForAcknowledgement);
             //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
@@ -3438,6 +3438,32 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(int userId, int targetIrfId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@userId", userId);
+                parameters.Add("@targetIrfId", targetIrfId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddTargetSkillChannelToInterviewerPreOnboarding]", parameters,
+                    commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 

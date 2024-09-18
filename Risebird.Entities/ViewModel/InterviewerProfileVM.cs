@@ -241,5 +241,6 @@ namespace Risebird.Entities.ViewModel
         
         [Display(Name = "Target Skill Channel")]
         public int TargetIrfId { get; set; }
+        public string AIResponse { get; set; }
     }
 }

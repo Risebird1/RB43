@@ -455,7 +455,7 @@ namespace Risebird.Web.Controllers
                         interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out userId))
                         {
-                            TempData["MessageInterviewerOnboarding"] = "Interviewer Profile has been added Successfully!";
+                            TempData["MessageInterviewerOnboarding"] = "Assessment Groups mapped successfully. Kindly select the target Skill Channel from the drop-down to finish onboarding!";
                             return RedirectToAction("EditInterviewerProfile", new { userId =  userId, showAddToSkillChannelOption  = true});
                             //return RedirectToAction("Index");
                         }
@@ -545,64 +545,96 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
-                        string uploadedFileURL = string.Empty;
-
-                        if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                        if(interviewerProfile.ShowAddToSkillChannelOption)
                         {
-                            if (interviewerProfile.ResumeFile != null)
+
+                            if (await _interviewerService.AddTargetSkillChannelToInterviewerPreOnboarding(interviewerProfile))
                             {
-                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
-                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                                {
-                                    var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                                TempData["MessageInterviewer"] = "Interviewer onboarded successfully!";
+                                return RedirectToAction("Index");
+                                //return RedirectToAction("EditInterviewerProfile", new { userId = userId, showAddToSkillChannelOption = true });
 
-                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
-                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                                    uploadedFileURL = blob.Uri.ToString();
-                                    interviewerProfile.ResumeLink = uploadedFileURL;
-                                }
-
-
-                            }
-                            if (interviewerProfile.CodedResumeFile != null)
-                            {
-                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
-                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                                {
-                                    var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
-
-                                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
-                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                                    uploadedFileURL = blob.Uri.ToString();
-                                    interviewerProfile.CodedResumeLink = uploadedFileURL;
-                                }
-
-                            }
-                        }
-                        string assessmentGroupList;
-                        interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                        if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
-                        {
-                            TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
-                            return RedirectToAction("Index");
-                        }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(assessmentGroupList))
-                            {
-                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                             }
                             else
                             {
                                 TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+                                return RedirectToAction("Index");
+                                
+                                //if (!string.IsNullOrEmpty(assessmentGroupList))
+                                //{
+                                //    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                //}
+                                //else
+                                //{
+                                //    TempData["MessageInterviewer"] = "Failed to update the Interviewer";
 
+                                //}
+                                //return RedirectToAction("Index");
                             }
-                            return RedirectToAction("Index");
+
                         }
+                        else
+                        {
+                            string uploadedFileURL = string.Empty;
+
+                            if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                            {
+                                if (interviewerProfile.ResumeFile != null)
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                        || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                    {
+                                        var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+
+                                        await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                                        uploadedFileURL = blob.Uri.ToString();
+                                        interviewerProfile.ResumeLink = uploadedFileURL;
+                                    }
+
+
+                                }
+                                if (interviewerProfile.CodedResumeFile != null)
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                        || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                    {
+                                        var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+
+                                        await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                        uploadedFileURL = blob.Uri.ToString();
+                                        interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                    }
+
+                                }
+                            }
+                            string assessmentGroupList;
+                            interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                            if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
+                            {
+                                TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            {
+                                if (!string.IsNullOrEmpty(assessmentGroupList))
+                                {
+                                    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                }
+                                else
+                                {
+                                    TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+
+                                }
+                                return RedirectToAction("Index");
+                            }
+                        }
+                        
                     }
                     else
                     {
