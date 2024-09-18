@@ -801,6 +801,7 @@ namespace Risebird.Web.Controllers
                             employementdetails.MobileNumber = model.MobileNumber;
                             employementdetails.Name = model.uanDetails1?.FirstOrDefault().name;
                             employementdetails.isVerified = true;
+                            employementdetails.CompanyName = companyname;
                             if (model.summary != null)
                             {
                                 employementdetails.Isemployed = model.summary.isEmployed;
@@ -812,7 +813,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.message.Contains("Upstream"))
                         {
-                            employementdetails.message = "Fail to verify,please check the details and try again.";
+                            employementdetails.message = "Fail to verify , API didn't work, try after sometime";
                         }
                         else
                         {
