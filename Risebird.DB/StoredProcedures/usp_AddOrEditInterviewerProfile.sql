@@ -50,7 +50,6 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @isVerified bit,  
 @CompanyName varchar(100),  
 @IsEmployed bit,  
-@TargetIrfId int,
 @PrimarySpecializationForAcknowledgement varchar(250)=null,
 @loggedInUser varchar(50),  
 @AssessmentGroupDifference varchar(100),  
@@ -136,14 +135,7 @@ Begin
    
    
    select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;  
-   if(@TargetIrfId > 0)
-   Begin
-	   if not exists (select 1 from TransInterviewer where IRFId =@TargetIrfId and UserId = @UserId)
-	   Begin
-		   Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable) 
-		   values(@TargetIrfId,@v_ProfileId,@UserId,0,1) 
-	   End
-   End
+   
     select @outputUserId= @UserId     
    --delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId              
               

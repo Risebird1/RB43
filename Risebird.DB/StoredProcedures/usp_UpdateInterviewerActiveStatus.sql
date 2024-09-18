@@ -23,6 +23,7 @@ Begin
 	set @hmVideoInstructionLink = (select AudioComment from IRF where id = (select top 1 IRFId from TransInterviewer where UserId = @userId))
 
 	update UserList set IsActive = 1 where id = @userId
+	update TransInterviewer set IsActive = 1 where UserId = @userId
 
 	select EmailId, UserPassword, @hmVideoInstructionLink as HMVideoForTargetIRF from UserList where id = @userId
 end
