@@ -1625,5 +1625,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization)
+        {
+            try
+            {
+                return await _interviewerRepository.GetInterviewerPreOnboardingAIResponse(emailId, primarySpecialization);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
