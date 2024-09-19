@@ -3465,6 +3465,27 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailId);
+                    parameters.Add("@PrimarySpecialization", primarySpecialization);
+                    var result = await SqlMapper.QuerySingleAsync<string>(con, "usp_GetInterviewerPreOnboardingAIResponse", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 
 }
