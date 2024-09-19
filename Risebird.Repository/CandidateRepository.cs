@@ -1238,13 +1238,13 @@ namespace Risebird.Repository
                                     ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
-                                    interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    interviewDate = !string.IsNullOrEmpty(dt.Rows[i]["interviewDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
                                     IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
                                     JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
 
-                                    AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
-                                    InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
-                                    FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+                                    AddedOnDate = !string.IsNullOrEmpty(dt.Rows[i]["AddedOnDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
+                                    InvitationSentOnDate = !string.IsNullOrEmpty(dt.Rows[i]["InvitationSentOnDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
+                                    FirstScheduledOnDate = !string.IsNullOrEmpty(dt.Rows[i]["FirstScheduledOnDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
 
 
                                     //InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,

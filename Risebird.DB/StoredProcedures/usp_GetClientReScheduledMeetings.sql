@@ -45,7 +45,7 @@ join IRF on CTE.imid=IRF.id
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
-where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2)
+where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc                 
 end                
@@ -72,7 +72,7 @@ join IRF on CTE.imid=IRF.id
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
-where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2)
+where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc        
 end              
@@ -97,7 +97,7 @@ join IRF on CTE.imid=IRF.id
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
-where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2)
+where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc               
 		                
@@ -125,7 +125,7 @@ join IRF on CTE.imid=IRF.id
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
-where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2)
+where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc                  
 end                
@@ -156,7 +156,7 @@ join IRF on CTE.imid=IRF.id
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
-where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2)
+where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate
 order by CTE.dtCreatedOn desc                        
                      
@@ -228,7 +228,7 @@ join InterviewComments ic on im.id=ic.interviewid
 join IRF on im.IRFId=IRF.IRFId                  
 join Client cl on cl.id=IRF.ClientId      
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus    
-where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2         
+where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1        
 order by dtCreatedOn desc                           
                       
 End                        

@@ -9092,6 +9092,58 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<IRF>> GetUserDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetUserDetailsStatsCount", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetUserStatsDetailedView(int irfid, string emailid, string type, DateTime startDate, DateTime enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfid", irfid);
+                    parameters.Add("@type", type);
+                    parameters.Add("@emailid", emailid);
+                    parameters.Add("@startdate", startDate);
+                    parameters.Add("@endDate", enddate);
+                    parameters.Add("@timenow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetUserStatsDetailedView", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
-} 
+}
 
