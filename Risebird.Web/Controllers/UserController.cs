@@ -80,7 +80,7 @@ namespace Risebird.Web.Controllers
                         model = model.Where(c => filter.Profile.Contains(c.profileName)
                         && ((filter.IsActive != null && filter.IsActive.Count() > 0) ? filter.IsActive.Contains(c.IsActive) : c.IsActive == false)).ToList();
                     }
-                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR")
                     {
                         return View(model);
                     }
@@ -257,8 +257,17 @@ namespace Risebird.Web.Controllers
                         List<Profile> profiles = await _profileService.GetProfile();
 
                         List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter", "MappingAdmin" };
+                        List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller", "InterviewerManagement" };
+                        if (profileName != "Admin")
+                        {
+                            profilesToExclude.Add("SupportAdmin");
+                            profilesToExclude.Add("Admin");
+                        }
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
-
+                        if (profileName == "SeniorHR")
+                        {
+                            profiles = profiles.Where(x => profilesToInclude.Contains(x.Name.ToString())).ToList();
+                        }
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
                         await GetClientsSelectList(user);
                         return View("UserUpdate", user);

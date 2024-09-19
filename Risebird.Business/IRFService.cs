@@ -4335,5 +4335,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<IRF>> GetUserDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetUserDetailsStatsCount(startDate, endDate, profile, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetUserStatsDetailedView(int irfid, string emailid, string type, DateTime startDate, DateTime enddate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetUserStatsDetailedView(irfid, emailid, type, startDate, enddate);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
