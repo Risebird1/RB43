@@ -117,5 +117,6 @@ namespace Risebird.Repository.Interface
         Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(int userId, int targetIrfId);
+        Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization);
     }
 }
