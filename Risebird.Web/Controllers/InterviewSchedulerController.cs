@@ -1444,6 +1444,11 @@ namespace Risebird.Web.Controllers
                     model.SkillSetsevaluate = result.FirstOrDefault().SkillSetsevaluate;
                     //Get Candidate Information for Skill channel
                     var _candidatedetails = await _interviewSchedulerservice.CheckCandidateDetailsByEmail(model.InterviewChannelId, CandidateEmail);
+                    if (_candidatedetails == null)
+                    {
+                        CandidateEmail = CandidateEmail?.Trim().Replace(" ", "+");
+                        _candidatedetails = await _interviewSchedulerservice.CheckCandidateDetailsByEmail(model.InterviewChannelId, CandidateEmail);
+                    }
                     if (_candidatedetails != null)
                     {
                         model.Name = _candidatedetails.CandidateName != "" ? _candidatedetails.CandidateName : "";
