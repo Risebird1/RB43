@@ -148,6 +148,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ where Isnull(im.RedoInterview,0)=0
  order by im.interviewDate desc
   End                              
  End                                  
@@ -182,6 +183,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ where Isnull(im.RedoInterview,0)=0
  order by im.interviewDate desc
         
    End                                 
@@ -215,6 +217,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ where Isnull(im.RedoInterview,0)=0
  order by im.interviewDate desc
                       
   End          
@@ -246,6 +249,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ where Isnull(im.RedoInterview,0)=0
  order by im.interviewDate desc
                            
   End              
@@ -279,6 +283,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ where Isnull(im.RedoInterview,0)=0
  order by im.interviewDate desc
    End                                  
  End                                  
@@ -310,6 +315,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ where Isnull(im.RedoInterview,0)=0
  order by im.interviewDate desc
  
  End                         

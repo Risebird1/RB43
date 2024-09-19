@@ -186,5 +186,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetProjectInterviewMeetings(int id, string profileName, string email);
         Task<IEnumerable<ProjectStatsVM>> GetPartnerDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<IEnumerable<CandidateExcelData>> GetPartnerDetailsStatsDetailedView(int userid, string type, DateTime startDate, DateTime enddate);
+        Task<IEnumerable<IRF>> GetUserDetailsStatsCount(DateTime startDate, DateTime endDate, string profile, string emailid);
+        Task<IEnumerable<CandidateExcelData>> GetUserStatsDetailedView(int irfid, string emailid, string type, DateTime startDate, DateTime enddate);
     }
 }

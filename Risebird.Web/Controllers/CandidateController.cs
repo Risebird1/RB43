@@ -3736,7 +3736,10 @@ namespace Risebird.Web.Controllers
                         candidate.IsQCRequired = client.IsQCRequired;
                         if (candidate.CurrentMeetingStatus == 4)
                         {
-                            candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                            if (candidate.CurrentInterviewStatus.HasValue)
+                            {
+                                candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                            }
                         }
                         else if (candidate.CurrentMeetingStatus.HasValue)
                         {
@@ -3936,7 +3939,10 @@ namespace Risebird.Web.Controllers
                 {
                     if (candidate.CurrentMeetingStatus == 4)
                     {
-                        candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                        if (candidate.CurrentInterviewStatus.HasValue)
+                        {
+                            candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                        }
                     }
                     else if (candidate.CurrentMeetingStatus.HasValue)
                     {
