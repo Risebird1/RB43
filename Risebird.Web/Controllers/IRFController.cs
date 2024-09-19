@@ -10170,6 +10170,49 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        #region Client User SKill Channel Stats
+        [HttpGet]
+        public async Task<IActionResult> UserChannelDetailsStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            if (!isClientLogin)
+            {
+                ViewBag.PageStatus = "Public";
+            }
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
+            if (Emailid != emailid)
+            {
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            var irfList = new List<ProjectStatsVM>();
+            if (HttpContext.Session.GetString("PartnersStatsFilters") == null)
+            {
+                irfList = (await _irfService.GetPartnerDetailsStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PartnersStatsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetPartnerDetailsStatsCount(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetPartnerDetailsStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                }
+            }
+            return View(irfList);
+        }
+        #endregion
     }
 }

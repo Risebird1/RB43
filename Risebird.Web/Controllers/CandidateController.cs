@@ -3763,7 +3763,7 @@ namespace Risebird.Web.Controllers
                             candidate.CurrentStatus = "Cancelled";
                         }
                     }
-                    
+
                     if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
                     {
                         model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
@@ -3815,7 +3815,14 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Whatsappflag = false;
                     }
-                    model = model.OrderByDescending(x => x.interviewDate).ToList();
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.OrderBy(x => x.interviewDate).ToList();
+                    }
+                    else
+                    {
+                        model = model.OrderByDescending(x => x.interviewDate).ToList();
+                    }
                     return View(model);
                 }
                 else
