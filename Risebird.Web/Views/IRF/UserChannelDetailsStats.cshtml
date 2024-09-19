@@ -1,0 +1,425 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.IRF>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Interview Channel Stats";
+    ViewBag.PageHeader = "Interview Channel";
+    if (ViewBag.PageStatus == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserStatsFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContextAccessor.HttpContext.Session.GetString("UserStatsFilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+}
+<style>
+    .DetailLink td {
+        color: darkblue;
+    }
+
+    .DetailLink:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+<style>
+    .modal-dialog {
+        height: 900px !important;
+    }
+
+    .modal-content {
+        /* 80% of window height */
+        height: 60%;
+    }
+
+</style>
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123941/stacktable.js"></script>
+<script>
+    $('table').stacktable();
+</script>
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Skill Channel Stats</h4></div>
+                </div>
+                <input type="hidden" value="@ViewBag.Type" id="hidtype" />
+                <div class="pull-left">
+                </div>
+                <div class="pull-right">
+                    <div style="float:right">
+                        <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+                        @if (ViewBag.PageStatus == "Public" || ViewBag.IsCLientLogin == true)
+                        {
+                            <input type="hidden" value="@ViewBag.emailid" id="hiddemail" />
+                            <input type="hidden" value="@ViewBag.uniqueid" id="hidduniqueid" />
+                            <input type="hidden" value="@ViewBag.IsCLientLogin" id="hiddLoginStatus" />
+                            @if (ViewBag.PageStatus == "Public")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
+                        }
+                        @if (ViewBag.PageStatus != "Public")
+                        {
+                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF", new { type = ViewBag.Type })'"></i></span>
+                        }
+                    </div>
+                    <div class="note-filter" style="text-align: right;width: auto;padding-top: 8px;"> Note: To visualize break-up of candidates 'Added' before 30 days, use Filter option</div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <form action="@Url.Action("UserChannelDetailsStats","IRF",new { emailid=ViewBag.emailid, uniqueid = ViewBag.uniqueid, isClientLogin = ViewBag.IsClientLogin })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <div class="form-group">
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12 pull-right">
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="scrollbar int-table">
+                                    <div id="tableID" class="second style-2" style="overflow-x:scroll">
+                                        <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    <th>JD Title</th>
+                                                    <th>Total Candidates</th>
+                                                    <th>Completed Interviews</th>
+                                                    <th>Report Pending</th>
+                                                    <th>Cold Candidate</th>
+                                                    <th>Not Scheduled Count</th>
+                                                    <th>Rescheduled Count</th>
+                                                    <th>Future Scheduled Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    <th>JD Title</th>
+                                                    <th>Total Candidates</th>
+                                                    <th>Completed Interviews</th>
+                                                    <th>Report Pending</th>
+                                                    <th>Cold Candidate</th>
+                                                    <th>Not Scheduled Count</th>
+                                                    <th>Rescheduled Count</th>
+                                                    <th>Future Scheduled Count</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @if (Model != null && Model.Count() > 0)
+                                                {
+                                                    foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td style="color: #23466f;">@item.IRFId</td>
+                                                            <td style="color: #23466f;">@item.JDTiltle</td>
+                                                            <td class="text-center"> <span class="count">@item.CandidateCount</span> </td>
+                                                            <td style="color:#2680c7;cursor:pointer">
+                                                                <a target="_blank" href='@Url.Action("UserStatsDetailedView", "IRF", new { irfId = item.id, irfName = item.IRFId,type="Completed",uniqueid=ViewBag.uniqueid,emailid=ViewBag.emailid })'>
+                                                                    @item.CompletedInterviews
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.CompletedInterviews * 100) / @item.CandidateCount)
+                                                                    }%
+                                                                    }
+                                                                </a>
+                                                            </td>
+                                                            <td><span class="count">@item.PendingCount</span> </td>
+                                                            <td style="color:#2680c7;cursor:pointer">
+                                                                <a target="_blank" href='@Url.Action("UserStatsDetailedView", "IRF", new { irfId = item.id, irfName = item.IRFId,type="ColdCandidate",uniqueid=ViewBag.uniqueid,emailid=ViewBag.emailid })'>
+                                                                    @item.ColdCandidateCount
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.ColdCandidateCount * 100) / @item.CandidateCount)
+                                                                    }% }
+                                                                </a>
+                                                            </td>
+                                                            <td style="color:#2680c7;cursor:pointer">
+                                                                <a target="_blank" href='@Url.Action("UserStatsDetailedView", "IRF", new { irfId = item.id, irfName = item.IRFId,type="NotScheduled",uniqueid=ViewBag.uniqueid,emailid=ViewBag.emailid })'>
+                                                                    @item.NotScheduledCount
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.NotScheduledCount * 100) / @item.CandidateCount)
+                                                                    }% }
+                                                                </a>
+                                                            </td>
+                                                            <td style="color:#2680c7">
+                                                                <a target="_blank" href='@Url.Action("UserStatsDetailedView", "IRF", new { irfId = item.id, irfName = item.IRFId,type="Reschedule",uniqueid=ViewBag.uniqueid,emailid=ViewBag.emailid })'>
+                                                                    @item.ReScheduledCount
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.ReScheduledCount * 100) / @item.CandidateCount)
+                                                                    }% }
+                                                                </a>
+                                                            </td>
+                                                            <td style="color:#2680c7">
+                                                                <a target="_blank" href='@Url.Action("UserStatsDetailedView", "IRF", new { irfId = item.id, irfName = item.IRFId,type="Futureschedule",uniqueid=ViewBag.uniqueid,emailid=ViewBag.emailid })'>
+                                                                    @item.FutureScheduledMeetings
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
+                                                                    }% }
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                        <!-- end col-md-12 -->
+                    </div>
+                    <!-- end row -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contents of first window -->
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
+@await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
+
+<script src="~/js/checkintervieweravailabilitybymail.js?v=2024"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+    });
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+
+        var form = $("#form").serialize();
+    }
+</script>
+
+<script>
+    function searchResult() {
+        $('#irfTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#irfTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        var table = $('#irfTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+    };
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#irfTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#irfTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#irfTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+    function Startloader() {
+        $(".loader").show();
+        $(".dataloading").hide();
+    }
+    function Stoploader() {
+        $(".loader").hide();
+        $(".dataloading").show();
+    }
+</script>
+
+@if (ViewBag.PageStatus == "Public")
+{
+    <script>
+        $(document).ready(function () {
+            document.getElementById("main-panel").classList.remove("main-panel");
+        });
+        function ResetFilter() {
+            var email = $("#hiddemail").val();
+            var uniqueid = $("#hidduniqueid").val();
+            var loginStatus = $("#hiddLoginStatus").val();
+            window.location.href = "/IRF/ResetUserChannelDetailsStats?emailid=" + email + "&uniqueid=" + uniqueid + "&isClientLogin=" + loginStatus;
+        }
+    </script>
+}
+else
+{
+    <script>
+        function ResetFilter() {
+            window.location.href = "/IRF/ResetUserChannelDetailsStats";
+        }
+    </script>
+}
+
+<script src="~/js/filtervalidation.js?v=2024"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script>
+    $(".nav-tabs li.active").next('li').find('a').tab('show');
+    $(".nav-tabs li.active").prev('li').find('a').tab('show');
+</script>
+<script>
+    function interviewstatuslistdetails(projectid, projectname, type) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/ProjectSkillChannelStatsDetailedView",
+            data: { irfid: projectid, irfname: projectname, type: type },
+            success: function (data) {
+                $("#divInterviewdetailsView").html('');
+                $("#divInterviewdetailsView").html(data);
+            }
+        });
+    }
+</script>
