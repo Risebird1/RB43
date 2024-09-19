@@ -116,6 +116,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <a id="id_aiResponseUrl" href="#" target="_blank" style="display:none">Click here to review AI Verdict</a>
+                            </div>
                         </div>
                         @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" })
                         <div id="divEVverified" style="display:none">
@@ -1018,7 +1021,12 @@
 </script>
 <script>
     function GenerateAIVerdict() {
-        document.getElementById("id_btn_generateAIVerdict").disabled = true;
+        var button = document.getElementById("id_btn_generateAIVerdict");
+
+        button.disabled = true;
+
+        // Change the button text to "Processing...may take upto 30s! Please wait!"
+        button.innerHTML = "Processing...may take upto 30s! Please wait!";
         var primarySpecialization = $("#PrimarySpecializationForAIVerdict").val().trim();
         var emailId = $("#txt_EmailId").val().trim();
         
@@ -1043,24 +1051,40 @@
                         document.getElementById("divEVverified").style.display = "block";
                         $("#ResumeLink").val(data.resumeLink);
                         $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
-                        if(data.aiResponse != null)
-                        {
-                            $("#AIResponse").val(data.aiResponse);
+                        if (data.aiResponseHref != null && data.aiResponseHref != "") {
+                            document.getElementById("id_aiResponseUrl").style.display = "block";
+                            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
+                            //$("#AIResponse").val(data.aiResponse);
+                            button.innerHTML = "Processed! Click to Regenerate!";
+                            button.disabled = false;
 
                         }
                     }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
-                        //document.getElementById("id_btn_generateAIVerdict").disabled = true;
+                        
+                        if (data.aiResponseHref != null && data.aiResponseHref != "") {
+                            document.getElementById("id_aiResponseUrl").style.display = "block";
+                            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
+                            //$("#AIResponse").val(data.aiResponse);
+                            
+
+                        }
+                        button.innerHTML = "Processed! Click to Regenerate!";
+                        button.disabled = false;
+                        @* button.disabled = false;
+                        button.innerHTML = "Generate AI Verdict"; *@
                     }
                 }
                 else if (data != null && data.errorMessage != '') {
                     swal.fire(data.errorMessage);
-                    document.getElementById("id_btn_generateAIVerdict").disabled = false;
+                    button.disabled = false;
+                    button.innerHTML = "Generate AI Verdict";
                 }
                 else {
                     swal.fire("Error generating verdict. Please try again.");
-                    document.getElementById("id_btn_generateAIVerdict").disabled = false;
+                    button.disabled = false;
+                    button.innerHTML = "Generate AI Verdict";
                 }
 
             }
