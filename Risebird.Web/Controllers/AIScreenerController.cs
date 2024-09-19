@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System;
 using System.Net.Http.Headers;
 using System.Linq;
+using iTextSharp.text.pdf;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -267,10 +268,19 @@ namespace Risebird.Web.Controllers
                             };
                             var response = await _assistantServiceHelper.ScreenAsync(request);
                             var responseInJson = JsonConvert.SerializeObject(response);
-                            bool saveOperationResult;
+                            bool saveOperationResult = false;
+                            string aiResponseUrl = string.Empty;
                             if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                             {
                                 saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson, loggedInUser);
+                            }
+                            if(saveOperationResult)
+                            {
+                                aiResponseUrl = Url.Action("PreOnboardingAIVerdictDetails", "AIScreener",
+                                new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
+                                Request.Scheme);
+
+                                //aiResponseUrl = Request.Scheme + "://" + Request.Host.Value + $"/AIScreener/PreOnboardingAIVerdictDetails?emailId={emailId}&primarySpecialization={primarySpecialization}";
                             }
                             string OpenAIScreeningResponse = responseInJson; // Example input string
                             string AIVerdict = "Yes"; // Default value
@@ -298,18 +308,18 @@ namespace Risebird.Web.Controllers
                             // AIVerdict now contains 'No' or 'Yes' based on the condition
                             if (AIVerdict == "Yes")
                             {
-                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponse = response?.Data?.FirstOrDefault()?.Content?.Where(x => !x.Text.Value.Contains("Evaluate the resume"))?.FirstOrDefault()?.Text.Value, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                             }
                             else
                             {
-                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponse = response?.Data?.FirstOrDefault()?.Content?.Where(x => !x.Text.Value.Contains("Evaluate the resume"))?.FirstOrDefault()?.Text.Value, errorMessage = string.Empty }) ;
+                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty }) ;
                             }
 
                         }
                         else
                         {
-                            return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, errorMessage = "Please select a file." });
+                            return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = string.Empty, errorMessage = "Please select a file." });
                         }
                     }
                     else
@@ -331,5 +341,51 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        public async Task<IActionResult> PreOnboardingAIVerdictDetails(string emailId, string primarySpecialization, string resumeLink)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var response = await _interviewerService.GetInterviewerPreOnboardingAIResponse(emailId, primarySpecialization);
+                        ViewBag.InterviewerEmail = emailId;
+                        ViewBag.ResumeLink = resumeLink;
+                        ViewBag.PrimarySpecialization = primarySpecialization;
+                        
+                        if (response != null)
+                        {
+                            var modal = JsonConvert.DeserializeObject<RunResult>(response);
+                            return View(modal);
+
+                        }
+                        else
+                        {
+                            return View(new RunResult());
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View(new RunResult());
+            }
+        }
     }
 }
