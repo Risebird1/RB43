@@ -36,7 +36,7 @@ Begin
 		End
 		else
 		Begin
-			update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @screeningResponseJson, AIVerdict =@AIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+			update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @screeningResponseJson, AIVerdict =@AIVerdict, ModifiedBy =@PerformedBy, ModifiedAt =@timeNow where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
 		End
 	  
 End
