@@ -3486,6 +3486,30 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<FLNConversionVM>> GetFLNConversionData(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@startDate", startDate);
+                dynamicParameters.Add("@endDate", endDate);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                dynamicParameters.Add("@loggedInUser", loggedInUser);
+                //dynamicParameters.Add("@targetIrf", targetIrf);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<FLNConversionVM>(con, "usp_GetFLNConversionData", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }
