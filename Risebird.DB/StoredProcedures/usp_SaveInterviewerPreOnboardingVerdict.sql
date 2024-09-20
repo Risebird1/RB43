@@ -34,6 +34,10 @@ Begin
 			insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy)
 			values (@EmailId, @PrimarySpecialization, @screeningResponseJson, @AIVerdict, @timeNow, @PerformedBy)
 		End
+		else
+		Begin
+			update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @screeningResponseJson, AIVerdict =@AIVerdict, ModifiedBy =@PerformedBy, ModifiedAt =@timeNow where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+		End
 	  
 End
 

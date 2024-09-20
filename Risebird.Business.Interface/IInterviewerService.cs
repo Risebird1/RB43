@@ -98,5 +98,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(InterviewerProfileVM interviewerProfile);
         Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization);
+        Task<IEnumerable<FLNConversionVM>> GetFLNConversionData(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
     }
 }
