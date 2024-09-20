@@ -196,7 +196,12 @@
                                                             @if (ViewBag.Type != "ColdCandidate" && ViewBag.Type != "NotScheduled")
                                                             {
                                                                 <td>@item.InterviewerCodedName</td>
-                                                                <td><a target="_blank" href="@item.ReportLink">Report</a></td>
+                                                                <td>
+                                                                    @if (!string.IsNullOrWhiteSpace(item.ReportLink))
+                                                                    {
+                                                                        <a target="_blank" href="@item.ReportLink">Report</a>
+                                                                    }
+                                                                </td>
                                                                 <td><span class="count">@item.TechScoreone</span></td>
                                                                 <td>
                                                                     @if (item.InterviewStatus == "Marginally Selected")

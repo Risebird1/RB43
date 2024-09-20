@@ -135,8 +135,8 @@
     }
 
     /*.mob_h {
-                                                display: none !important
-                                                  }*/
+                                                        display: none !important
+                                                          }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -411,7 +411,7 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                 {
-                                    <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
@@ -419,7 +419,7 @@
                                             </div>
                                         </button>
                                     </a>
-                                    <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
@@ -427,7 +427,7 @@
                                             </div>
                                         </button>
                                     </a>
-                                    <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
@@ -435,11 +435,22 @@
                                             </div>
                                         </button>
                                     </a>
-                                    <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
                                                 Multi-Stack Stats
+                                            </div>
+                                        </button>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a target="_blank" href="@Url.Action("UserChannelDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Interview Channel Stats
                                             </div>
                                         </button>
                                     </a>

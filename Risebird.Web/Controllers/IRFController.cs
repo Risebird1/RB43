@@ -10170,6 +10170,112 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        #region Client User SKill Channel Stats
+        [HttpGet]
+        public async Task<IActionResult> UserChannelDetailsStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            if (!isClientLogin)
+            {
+                ViewBag.PageStatus = "Public";
+            }
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
+            if (Emailid != emailid)
+            {
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            var irfList = new List<IRF>();
+            if (HttpContext.Session.GetString("UserStatsFilters") == null)
+            {
+                irfList = (await _irfService.GetUserDetailsStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("UserStatsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetUserDetailsStatsCount(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetUserDetailsStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                }
+            }
+            return View(irfList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UserChannelDetailsStats(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("UserStatsFilters", JsonConvert.SerializeObject(filter));
+            }
+            return RedirectToAction("UserChannelDetailsStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetUserChannelDetailsStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            try
+            {
+                HttpContext.Session.Remove("UserStatsFilters");
+                return RedirectToAction("UserChannelDetailsStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> UserStatsDetailedView(int irfId, string irfName, string type, string emailid, string uniqueid)
+        {
+            try
+            {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+                }
+                DateTime startDate = DateTime.Now.AddDays(-30);
+                var enddate = DateTime.Now.AddDays(7);
+                if (HttpContext.Session.GetString("PartnersStatsFilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PartnersStatsFilters"));
+                    startDate = filter.StartDate.Value;
+                    enddate = filter.EndDate.Value.AddDays(1);
+                }
+                var irfList = (await _irfService.GetUserStatsDetailedView(irfId, emailid, type, startDate, enddate))?.ToList();
+                irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                //foreach (var item in irfList)
+                //{
+                //    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                //}
+                ViewBag.projectname = irfName;
+                ViewBag.type = type;
+                ViewBag.PageType = "UserStats";
+                return View("ProjectSkillChannelStatsDetailedView", irfList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { id = uniqueid });
+            }
+        }
+        #endregion
     }
 }
