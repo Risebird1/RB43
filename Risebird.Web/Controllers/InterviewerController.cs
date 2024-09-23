@@ -357,7 +357,12 @@ namespace Risebird.Web.Controllers
                         model.Country = "26";
                         // Get all the select Lists
                         await GetAllSelectList(model);
+                        if (TempData["MessageInterviewerManagement"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageInterviewerManagement"].ToString();
+                            TempData.Remove("MessageInterviewerManagement");
 
+                        }
                         return View("AddInterviewerProfile", model);
                     }
                     else
@@ -499,7 +504,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (showAddToSkillChannelOption && profileName == "InterviewerManagement"))
                     {
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
                         model.ShowAddToSkillChannelOption = showAddToSkillChannelOption;
@@ -535,30 +540,33 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
+            string profileName = string.Empty;
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
                     {
                         if(interviewerProfile.ShowAddToSkillChannelOption)
                         {
 
                             if (await _interviewerService.AddTargetSkillChannelToInterviewerPreOnboarding(interviewerProfile))
                             {
-                                TempData["MessageInterviewer"] = "Interviewer onboarded successfully!";
-                                return RedirectToAction("Index");
+                                TempData["MessageInterviewerManagement"] = "Interviewer onboarded successfully!";
+                                //return RedirectToAction("Index");
+                                return RedirectToAction("AddInterviewerProfile");
                                 //return RedirectToAction("EditInterviewerProfile", new { userId = userId, showAddToSkillChannelOption = true });
 
                             }
                             else
                             {
-                                TempData["MessageInterviewer"] = "Failed to update the Interviewer";
-                                return RedirectToAction("Index");
+                                TempData["MessageInterviewerManagement"] = "Failed to update the Interviewer";
+                                return RedirectToAction("AddInterviewerProfile");
+                                //return RedirectToAction("Index");
                                 
                                 //if (!string.IsNullOrEmpty(assessmentGroupList))
                                 //{
@@ -649,8 +657,18 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["MessageInterviewer"] = "Failed to update the Interviewer";
-                return RedirectToAction("Index");
+                if((interviewerProfile !=null && interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                {
+                    TempData["MessageInterviewerManagement"] = "Failed to update the Interviewer";
+                    return RedirectToAction("Index");
+
+                }
+                else
+                {
+                    TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+                    return RedirectToAction("Index");
+
+                }
             }
         }
 
