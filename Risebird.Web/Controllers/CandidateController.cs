@@ -6234,5 +6234,181 @@ namespace Risebird.Web.Controllers
             return View(candidateList);
         }
 
+        public async Task<IActionResult> CandidateSearch(string emailid, string id, string candidateType = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(candidateType))
+                {
+                    candidateType = CandidateTypeForClient.FutureScheduled.GetDescription();
+                }
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                if (client != null)
+                {
+                    var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+                    _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
+                    var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+                    if (string.IsNullOrEmpty(logovalue))
+                    {
+                        HttpContext.Session.SetString("Logo", "");
+                    }
+                    else
+                        HttpContext.Session.SetString("Logo", logovalue);
+                    var model = new List<CandidateTimelineVM>();
+                    ViewBag.emailid = emailid;
+                    ViewBag.id = id;
+                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                    HttpContext.Session.Remove("PublicCandidateStatusfilters");
+                    var candidateData = new List<CandidateTimelineData>();
+
+                    int dataType = 2;
+                    if (candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                    {
+                        dataType = 1;
+                    }
+                    var Startdate = DateTime.Now.AddDays(-30);
+                    var Enddate = DateTime.Now.AddDays(15);
+                    if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            Startdate = filter.StartDate.Value;
+                            Enddate = filter.EndDate.Value;
+                        }
+                    }
+                    if (client.ClientName == "FoundIt (Monster.com)")
+                    {
+                        model = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), dataType, emailid)).ToList();
+                    }
+                    else
+                    {
+                        model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
+                    }
+
+                    if (candidateData == null)
+                    {
+                        return RedirectToAction("PublicCandidateStatus", new { id = id });
+                    }
+
+                    foreach (var candidate in model)
+                    {
+                        candidate.IsClientCancelInterview = client.IsClientCancelInterview;
+                        candidate.IsRedoInterview = client.IsRedoInterview;
+                        candidate.IsQCRequired = client.IsQCRequired;
+                        if (candidate.CurrentMeetingStatus == 4)
+                        {
+                            if (candidate.CurrentInterviewStatus.HasValue)
+                            {
+                                candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
+                            }
+                        }
+                        else if (candidate.CurrentMeetingStatus.HasValue)
+                        {
+                            candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
+                        }
+                        if (candidate.confirmationStatus != 2)
+                        {
+                            if (candidate.interviewDate < DateTime.Now && candidate.CurrentMeetingStatus == 2)
+                            {
+                                candidate.CurrentStatus = "Status Pending";
+                            }
+                            else if (candidate.interviewDate < DateTime.Now && candidate.CurrentStatus == "Scheduled")
+                            {
+                                if (candidate.CurrentMeetingStatus != null)
+                                    candidate.CurrentStatus = ((MeetingStatus)candidate.CurrentMeetingStatus).GetDescription();
+                            }
+                            else if (candidate.CurrentMeetingStatus == 2)
+                            {
+                                candidate.CurrentStatus = "Scheduled";
+                            }
+                        }
+                        else
+                        {
+                            candidate.CurrentStatus = "Cancelled";
+                        }
+                    }
+
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
+                    }
+                    else if (candidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
+                    }
+                    else if (candidateType == CandidateTypeForClient.ReportPending.GetDescription())
+                    {
+                        model = model.Where(x => x.CurrentStatus == "Status Pending").ToList();
+                    }
+
+                    if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                        filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                        filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                        if (filter.HREmail != null)
+                        {
+                            model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                        }
+                        if (filter.ProfileSource != null)
+                        {
+                            model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                        }
+                        if (filter.MeetingStatus != null)
+                        {
+                            model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                        }
+                    }
+                    var role = await _clientService.GetClientRoleByEmailId(emailid);
+                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                    ViewBag.profile = "Client";
+                    ViewBag.ClientId = client.ClientId;
+                    ViewBag.PageStatus = "Public";
+                    ViewBag.CandidateType = candidateType;
+                    if (Emailid != emailid)
+                    {
+                        return RedirectToAction("PublicAllMeetings", new { id = id });
+                    }
+                    var Whatsapp = _userService.GetWhatsappno(emailid);
+                    if (Whatsapp == null)
+                    {
+                        ViewBag.Whatsappflag = true;
+                    }
+                    else
+                    {
+                        ViewBag.Whatsappflag = false;
+                    }
+                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    {
+                        model = model.OrderBy(x => x.interviewDate).ToList();
+                    }
+                    else
+                    {
+                        model = model.OrderByDescending(x => x.interviewDate).ToList();
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("PublicCandidateStatus", new { id = id });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
+        }
+
+
     }
 }
