@@ -2066,56 +2066,8 @@
 
 </script>
 <script>
-    function ColdCandidateByClient(emailid) {
-        $(".loader").show();
-        $.ajax({
-            url: '/Candidate/GetColdCandidatesListByClient',
-            type: 'GET',
-            data: { 'emailid': emailid },
-            success: function (data) {
-                $(".loader").hide();
-                $('#tab3').html('');
-                $('#tab3').html(data);
-            }
-        });
-    }
-    function NotProcessedResumeByClient(emailid) {
-        $(".loader").show();
-        $.ajax({
-            url: '/Candidate/GetNotProcessedResumeByClient',
-            type: 'GET',
-            data: { 'emailid': emailid },
-            success: function (data) {
-                $(".loader").hide();
-                $('#tab4').html('');
-                $('#tab4').html(data);
-            }
-        });
-    }
-
-    function RescheduleMeetingByClient(emailid) {
-        $(".loader").show();
-        $.ajax({
-            url: '/Candidate/ReScheduleMeetingsByClient',
-            type: 'GET',
-            data: { 'emailid': emailid },
-            success: function (data) {
-                $(".loader").hide();
-                $('#tab6').html('');
-                $('#tab6').html(data);
-            }
-        });
-    }
-
-
-
-
-</script>
-
-<script>
     function ChangeTab(type) {
         var currentUrl = window.location.href;
-
         // Find the index of the substring after which substitution should occur
         var originalString = currentUrl;
         var substringToFind = "candidateType=";
@@ -2125,17 +2077,12 @@
         if (indexOfSubstring !== -1) {
             // Define the new substring to replace the original part
             //var newSubstring = "modified";
-
             // Create the new string by substituting the part after the substring
             newString = originalString.substring(0, indexOfSubstring + substringToFind.length) + type;//+ originalString.substring(indexOfSubstring + substringToFind.length);
-
-
         }
         else {
             newString = originalString + '&candidateType=' + type;
         }
-
-
         window.location.href = newString;
     }
 </script>
