@@ -6267,16 +6267,16 @@ namespace Risebird.Web.Controllers
                     int dataType = 2;
                     var Startdate = DateTime.Now.AddDays(-30);
                     var Enddate = DateTime.Now.AddDays(15);
-                    if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                    if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
                     {
-                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("AllCandidateSearchfilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             Startdate = filter.StartDate.Value;
                             Enddate = filter.EndDate.Value;
                         }
                     }
-                    model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
+                    model = (await _candidateService.GetAllCandidateSearchbyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
 
                     if (candidateData == null)
                     {
@@ -6290,7 +6290,7 @@ namespace Risebird.Web.Controllers
                         candidate.IsQCRequired = client.IsQCRequired;
                         if (candidate.CurrentMeetingStatus == 4)
                         {
-                            if (candidate.CurrentInterviewStatus.HasValue)
+                            if (candidate.CurrentInterviewStatus.HasValue))
                             {
                                 candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
                             }
@@ -6321,22 +6321,9 @@ namespace Risebird.Web.Controllers
                         }
                     }
 
-                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
+                    if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
                     {
-                        model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
-                    }
-                    else if (candidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
-                    {
-                        model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
-                    }
-                    else if (candidateType == CandidateTypeForClient.ReportPending.GetDescription())
-                    {
-                        model = model.Where(x => x.CurrentStatus == "Status Pending").ToList();
-                    }
-
-                    if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
-                    {
-                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("AllCandidateSearchfilters"));
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
                         filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
                         filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
@@ -6372,14 +6359,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Whatsappflag = false;
                     }
-                    if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
-                    {
-                        model = model.OrderBy(x => x.interviewDate).ToList();
-                    }
-                    else
-                    {
-                        model = model.OrderByDescending(x => x.interviewDate).ToList();
-                    }
+                    model = model.OrderByDescending(x => x.interviewDate).ToList();
                     return View(model);
                 }
                 else
@@ -6393,7 +6373,37 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { id = id });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> CandidateSearch(CandidateTimelineFilter filter, string emailid, string id, string candidateType = null)
+        {
+            try
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("AllCandidateSearchfilters", JsonConvert.SerializeObject(filter));
+                }
+                return RedirectToAction("CandidateSearch", new { emailid = emailid, id = id, candidateType = candidateType });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetCandidateSearchFilter(string emailid, string id)
+        {
+            try
+            {
+                HttpContext.Session.Remove("AllCandidateSearchfilters");
+                return RedirectToAction("CandidateSearch", new { emailid = emailid, id = id });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
+            }
 
-
+        }
     }
 }

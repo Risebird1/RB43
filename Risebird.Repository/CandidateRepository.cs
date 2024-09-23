@@ -1686,6 +1686,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
-
+        public async Task<IEnumerable<CandidateTimelineVM>> GetAllCandidateSearchbyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateTimelineVM>(con, "usp_GetAllCandidateSearchbyDateStatus", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
