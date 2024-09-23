@@ -6238,10 +6238,6 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(candidateType))
-                {
-                    candidateType = CandidateTypeForClient.FutureScheduled.GetDescription();
-                }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
@@ -6269,10 +6265,6 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
-                    if (candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
-                    {
-                        dataType = 1;
-                    }
                     var Startdate = DateTime.Now.AddDays(-30);
                     var Enddate = DateTime.Now.AddDays(15);
                     if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
@@ -6284,14 +6276,7 @@ namespace Risebird.Web.Controllers
                             Enddate = filter.EndDate.Value;
                         }
                     }
-                    if (client.ClientName == "FoundIt (Monster.com)")
-                    {
-                        model = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), dataType, emailid)).ToList();
-                    }
-                    else
-                    {
-                        model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
-                    }
+                    model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
 
                     if (candidateData == null)
                     {
