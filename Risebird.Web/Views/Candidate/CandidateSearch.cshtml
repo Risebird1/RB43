@@ -4,7 +4,6 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
-@using Risebird.Entities.Enum
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Candidates Status";
@@ -26,13 +25,13 @@
     filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContextAccessor.HttpContext.Session.GetString("AllCandidateSearchfilters"));
     strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
-    datetype = filter.DateType != null ? filter.DateType : string.Empty;
+    //datetype = filter.DateType != null ? filter.DateType : string.Empty;
 
     MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
-    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
-    ScheduleStatus = filter.ScheduleStatus != null ? filter.ScheduleStatus : new string[] { };
+    //InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    //ScheduleStatus = filter.ScheduleStatus != null ? filter.ScheduleStatus : new string[] { };
     HREmail = filter.HREmail != null ? filter.HREmail : new string[] { };
-    ProfileSource = filter.ProfileSource != null ? filter.ProfileSource : new string[] { };
+    //ProfileSource = filter.ProfileSource != null ? filter.ProfileSource : new string[] { };
 
 }
 @{
@@ -45,7 +44,6 @@
 }
 <link href="~/Newassets/css/interviewer.css?v=2024" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
-@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css?v=2024" />
 <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
@@ -407,7 +405,7 @@
                                                         @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                                                         {
                                                             <li onclick="ChangeTab('ProcessedCandidate')" rel="tab1"><span>16707</span><span>Processed Resume</span></li>
-                                                            <li onclick="ChangeTab('NotProcessedResume')" rel="tab4">Not Processed Resume</li>
+                                                            <li onclick="ChangeTab('NotProcessedResume')" rel="tab4"><span class="count-number">598</span><span>Not Processed Resume</span></li>
                                                         }
                                                         else
                                                         {
@@ -893,7 +891,7 @@
         </div>
     </div>
 </div>
-    </div>
+
 <div id="myModal" class="modal modal-bg" style="z-index:100">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -936,13 +934,14 @@
 <script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        debugger;
         $("#ResetFilter").click(function () {
             ResetFilter();
         })
         if ('@filter' != "") {
             ApplySessionFilter();
         }
-    })
+    });
 
     function ResetFilter() {
         window.location.href = "/Candidate/ResetCandidateSearchFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
@@ -951,20 +950,14 @@
         debugger;
         var strtDte = '@strtDte';
         var endDte = '@endDte';
-        var datetype = '@datetype';
         var hrEmail = @Html.Raw(Json.Serialize(HREmail));
         var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
-        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
-        var scheduleStatus = @Html.Raw(Json.Serialize(ScheduleStatus));
-        var profileSource = @Html.Raw(Json.Serialize(ProfileSource));
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
-        document.getElementById("Datetype_" + datetype).checked = true;
+        //document.getElementById("Datetype_" + datetype).checked = true;
         $("#HREmail").val(hrEmail);
         $("#MeetingStatus").val(meetingStatus);
-        $("#InterviewStatus").val(interviewStatus);
-        $("#ScheduleStatus").val(scheduleStatus);
-        $("#ProfileSource").val(profileSource);
+        //$("#ProfileSource").val(profileSource);
         var form = $("#form").serialize();
 
     }
