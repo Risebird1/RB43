@@ -1,0 +1,1207 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.CandidateTimelineVM>
+@using Risebird.Entities.Enum
+@using Risebird.CommonHelper
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Candidates Status";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
+    string datetype = string.Empty;
+    string[] MeetingStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] ScheduleStatus = new string[] { };
+    string[] HREmail = new string[] { };
+    string[] ProfileSource = new string[] { };
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContextAccessor.HttpContext.Session.GetString("AllCandidateSearchfilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+    //datetype = filter.DateType != null ? filter.DateType : string.Empty;
+
+    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
+    //InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    //ScheduleStatus = filter.ScheduleStatus != null ? filter.ScheduleStatus : new string[] { };
+    HREmail = filter.HREmail != null ? filter.HREmail : new string[] { };
+    //ProfileSource = filter.ProfileSource != null ? filter.ProfileSource : new string[] { };
+
+}
+@{
+    string currentUser = string.Empty;
+    if (!string.IsNullOrEmpty(ViewBag.emailid))
+    {
+        currentUser = ViewBag.emailid;
+
+    }
+}
+<link href="~/Newassets/css/interviewer.css?v=2024" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css?v=2024" />
+<script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+
+
+    .mb10 {
+        margin-bottom: 10px
+    }
+
+</style>
+
+<style>
+    body {
+        background: #FFF !important;
+    }
+
+    .sidebar-mini .sidebar:hover {
+        width: 80px !important;
+    }
+
+
+    .modal-backdrop {
+        visibility: hidden !important;
+    }
+
+    .modal.in {
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .navbar {
+        position: fixed;
+    }
+</style>
+
+<style>
+    .candidate-search .name-field {
+        width: max-content;
+    }
+
+    .candidate-search .contact-fill {
+        width: 17px !important;
+        display: block;
+        float: right;
+        position: relative;
+        top: -1px;
+        margin: 0px 4px;
+    }
+
+    .candidate-search ul.tabs {
+        margin: 0;
+        padding: 0;
+        float: left;
+        list-style: none;
+        border-bottom: 1px #ccc solid;
+        width: 100%;
+    }
+
+        .candidate-search ul.tabs li {
+            float: left;
+            margin: 0;
+            cursor: pointer;
+            padding: 0px 21px;
+            line-height: 31px;
+            text-align: center;
+            background-color: #fff;
+            color: #666;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .candidate-search ul.tabs li span {
+                display: block;
+                line-height: 25px;
+            }
+
+
+            .candidate-search ul.tabs li:hover {
+                border-bottom: 2px #ccc solid;
+                color: #837b7b;
+            }
+
+            .candidate-search ul.tabs li.active {
+                background-color: #fff;
+                color: #073760;
+                font-weight: 600;
+                border-bottom: 2px solid #57aef4;
+                display: block;
+            }
+
+                .candidate-search ul.tabs li.active .count-number {
+                    color: #073760 !important;
+                }
+
+    .candidate-search .tab_container {
+        border: 0px;
+        border-top: none;
+        clear: both;
+        float: left;
+        width: 100%;
+        background: #fff;
+        overflow: auto;
+    }
+
+    .candidate-search .tab_content {
+        padding: 10px 15px;
+        display: none;
+    }
+
+    .candidate-search .tabs-wrapper {
+        top: 30px;
+    }
+
+    .candidate-search .tab_drawer_heading {
+        display: none;
+    }
+
+    .count-number {
+        color: #eaa321 !important;
+        font-weight: 700 !important;
+        font-size: 16px;
+    }
+
+    .candidate-search .table-striped.table-bordered th {
+        background: #ffff !important;
+        border: 0px !important;
+    }
+
+    .candidate-search table.dataTable thead .sorting:after {
+        color: #fff;
+    }
+
+    .candidate-search .table-bordered td {
+        border-right: 0px solid #abadaf3d !important;
+    }
+
+    .candidate-search #candidateTable_filter input[type=search] {
+        width: 330px !important;
+        border: 1px #aba5a5a8 solid !important;
+    }
+
+    .candidate-search div.dataTables_wrapper div#candidateTable_length select {
+        border: 1px #aba5a5a8 solid !important;
+    }
+
+    .candidate-search #candidateTable_filter input[type=search]:-moz-placeholder {
+        font-weight: 600 !important;
+    }
+
+    .candidate-search #candidateTable_filter input[type=search]::placeholder {
+        font-weight: 600 !important;
+    }
+
+    .candidate-search #trigger-update {
+        right: 20px;
+    }
+
+    .candidate-search .table-bordered {
+        border: 0px solid #dee2e65e !important;
+    }
+
+        .candidate-search .table-bordered tr td {
+            border-left: 1px solid #dee2e65e !important;
+        }
+
+        .candidate-search .table-bordered td:last-child {
+            border-right: 1px solid #dee2e6 !important;
+        }
+
+    .candidate-search .table-striped tbody tr:nth-of-type(odd), .candidate-search .table-striped tbody tr:nth-of-type(even) {
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .candidate-search tr {
+        border-style: outset;
+    }
+
+    .candidate-search .table-striped tbody tr:nth-of-type(even), .candidate-search .table-striped tbody tr:nth-of-type(odd) {
+        box-shadow: none !important;
+    }
+
+    .candidate-search table.dataTable > thead > tr > th {
+        padding: 0px 5px;
+    }
+
+    .candidate-search input[type="date"].form-control {
+        box-shadow: none !important;
+        width: 100%;
+    }
+
+    .candidate-search .filter-box {
+        border: 1px #ccc solid;
+        margin: 0px 0px 0px 20px;
+    }
+
+        .candidate-search .filter-box .filter-head {
+            background: #eeeeee85;
+            padding: 5px 10px;
+            font-size: 17px;
+        }
+
+        .candidate-search .filter-box .filter-con {
+            padding: 20px;
+        }
+
+    @@media screen and (max-width:1024px) {
+        .candidate-search ul.tabs {
+            margin: 60px 0px 0px 0px;
+        }
+
+        .candidate-search .tabs-wrapper {
+            padding: 0px;
+        }
+    }
+
+    @@media screen and (max-width: 768px) {
+
+        .candidate-search .tabs-wrapper {
+            width: 95%;
+            padding: 0px;
+        }
+    }
+
+    @@media screen and (max-width: 767px) {
+        .candidate-search .tabs {
+            display: none;
+        }
+
+        .candidate-search #candidateTable_filter input[type=search] {
+            width: 225px !important;
+            border: 1px #dcd5d5a8 solid !important;
+        }
+
+        .content.client .candidate-search .client-tab #candidateTable_filter {
+            position: absolute;
+            left: -12px !important;
+            right: 73px !important;
+            top: -8px !important;
+            margin: 10px 0px 10px -11px;
+        }
+
+        .candidate-search .tabs-wrapper {
+            width: 100%;
+            margin-top: 0px;
+        }
+
+        .candidate-search .tab_drawer_heading {
+            background-color: #d3d2d2;
+            color: #fff;
+            border-top: 0px;
+            margin: 5px 0;
+            padding: 5px 20px;
+            display: block;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .d_active {
+            background-color: #666;
+            color: #fff;
+        }
+
+        .candidate-search .tab_content {
+            padding: 0px;
+        }
+
+        .candidate-search .tab_container .nopad {
+            padding: 0px !important;
+        }
+
+        .candidate-search .tab_container {
+            border: 0px !important;
+            padding: 10px;
+        }
+
+        .content.client .client-tab #candidateTable_filter {
+            position: absolute;
+            right: 20px;
+            top: -17px;
+            margin: 10px 0px 10px -11px;
+        }
+
+        .client-tab table.dataTable {
+            margin-top: 30px !important;
+        }
+    }
+
+    @@media screen and (max-width: 480px) {
+        .topheader-header .mobile-view {
+            clear: both;
+            position: relative;
+            top: -40px;
+            left: 120px;
+        }
+    }
+
+</style>
+<input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+<input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
+<div id="main-panel">
+    <div>
+        <div class="pt30 videocon">
+            <div class="col-md-12 nopad">
+                <div>
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="pull-right">
+                        <div class="topheader-header">
+                            <div class="mobile-view" style="position: absolute; top:50px;right: 30px;">
+                                <a href="#anchor" style="position:relative;left:-209px;top:-37px;">
+                                    <span class="filter">
+                                        <span id="status_2" style="vertical-align:top">
+                                            <span class="mdc-button__label"><span class="fa fa-filter"></span></span>
+                                            <span class="mdc-button__ripple"></span>
+                                        </span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content video client candidate">
+            <div class="row" style="background:#fff;">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+
+                            <div id="staffagency_candidatetimeline" data-intro="<span style='font-size:16px;'>Overview the summary of Candidate Status</span><hr class='btop' />1. Candidate Name<br/>2. JD Title<br/>3.Schedule Status<br/>4. Meeting Status<br/><a href='/Client/NotScheduledMeetings' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
+                                <div class="dataloading">
+
+                                    <div class="candidate-search public-url">
+
+                                        <div id="tableID" class="second">
+                                            <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+
+
+                                                <div class="clearfix"></div>
+                                                <div class="tabs-wrapper">
+                                                    @* <span id="status_3" style="position:relative;top:90px;left:250px;">
+                                                        <button style="background:none;border:0px;    color: grey;font-size: 14px;    font-weight: 600;" type="submit" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'">
+                                                            <svg style="padding-right:5px;color:grey" width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" /></svg>Export
+                                                        </button>
+                                                    </span> *@
+
+                                                    <ul class="tabs">
+                                                        @if (ViewBag.CandidateType == CandidateTypeSearch.NotProcessedResume.GetDescription())
+                                                        {
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.Processedcandidates.GetDescription()')" rel="tab1"><span></span><span>Processed Candidate</span></li>
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.NotProcessedResume.GetDescription()')" class="active" rel="tab4"><span class="count-number"></span><span>Not Processed Resume</span></li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.Processedcandidates.GetDescription()')" class="active" rel="tab1"><span class="count-number"></span><span>Processed Candidate</span></li>
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.NotProcessedResume.GetDescription()')" rel="tab4"><span class="count-number"></span><span>Not Processed Resume</span></li>
+                                                        }
+                                                    </ul>
+                                                    <div class="tab_container">
+
+                                                        <div id="tab1" class="tab_content">
+                                                            <div class="col-sm-8 nopad client-tab pull-left">
+
+                                                                <div class="table-responsive scrollbar style-2" style="overflow-x:scroll" @*id="style-2"*@>
+                                                                    <table id="candidateTable" class="table table-striped table-bordered dataTable journey" cellspacing="0" width="100%">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th style="text-align:left"></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tfoot>
+                                                                            <tr>
+                                                                                <th style="text-align:left"></th>
+                                                                            </tr>
+                                                                        </tfoot>
+                                                                        <tbody id="tblbodyTimeline">
+
+                                                                            @foreach (var item in Model)
+                                                                            {
+                                                                                var colorcode = "";
+
+                                                                                if (item.HasEmailDroppedOrBounced == true)
+                                                                                {
+                                                                                    colorcode = "#fa77775e";
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    colorcode = "#fff";
+                                                                                }
+                                                                                //var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                                                <tr data-changes="1" style="background:@colorcode">
+                                                                                    <td class="cadName text-left pl15" style="padding-top:20px;" valign="top">
+                                                                                        <div class="col-md-9">
+                                                                                            @if (item.HasEmailDroppedOrBounced == true)
+                                                                                            {
+                                                                                                <div class="absCenter">
+                                                                                                    <button class="infoButton" style="top:-5px;left:0px;">
+                                                                                                        <div class="infoButton-btn">
+                                                                                                            <span class="infoButton-btn-text">i</span>
+                                                                                                        </div>
+                                                                                                        <div class="infoButton-container">
+                                                                                                            <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
+                                                                                                        </div>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            }
+                                                                                            <div class="candidate-field">
+                                                                                                <span class="pull-left">
+                                                                                                    @if (item.CandidateName != null && item.CandidateName != "")
+                                                                                                    {
+                                                                                                        @if (item.CandidateName.Length > 35)
+                                                                                                        {
+                                                                                                            @if (item.reportcount > 1)
+                                                                                                            {
+                                                                                                                <p class="name-field" title="@item.CandidateName"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red;float:left;padding-right:5px;"></span> <span class="pull-left">@item.CandidateName.Substring(0, 35) ...</span> <span class="contact-fill"><img src="~/Newassets/img/contacts-fill-user-icon.png" /></span></p>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <p class="name-field" title="@item.CandidateName"> <span class="pull-left">@item.CandidateName.Substring(0, 35) ...</span><span class="contact-fill"><img src="~/Newassets/img/contacts-fill-user-icon.png" /></span></p>
+                                                                                                            }
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            @if (item.reportcount > 1)
+                                                                                                            {
+                                                                                                                <p class="name-field"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red;float:left;padding-right:5px;"></span><span class="pull-left"> @item.CandidateName</span> <span class="contact-fill"><img src="~/Newassets/img/contacts-fill-user-icon.png" /></span></p>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <p class="name-field"><span class="pull-left">@item.CandidateName</span> <span class="contact-fill"><img src="~/Newassets/img/contacts-fill-user-icon.png" /></span></p>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                </span><span class="pull-left">
+                                                                                                    @if (item.RedoInterview == true)
+                                                                                                    {
+                                                                                                        <p>Redo Interview</p>
+                                                                                                    }
+                                                                                                    else if (item.IsColdCandidate || item.InterviewId == 0)
+                                                                                                    {
+                                                                                                        @if (item.StatusValue == "In Progress")
+                                                                                                        {
+                                                                                                            <span class="current progress" style="font-size:12px; height:19px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "New")
+                                                                                                        {
+                                                                                                            <span class="current new" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Added")
+                                                                                                        {
+                                                                                                            <span class="current added" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Waiting For Response")
+                                                                                                        {
+                                                                                                            <span class="current waiting" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Scheduled")
+                                                                                                        {
+                                                                                                            <span class="current scheduled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Cancelled")
+                                                                                                        {
+                                                                                                            <span class="current cancelled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "No Show(Candidate)")
+                                                                                                        {
+                                                                                                            <span class="current noshowcandidate" style="font-size:12px;font-weight: 500;">@item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Irrelevant")
+                                                                                                        {
+                                                                                                            <span class="current irrelevant" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Duplicate")
+                                                                                                        {
+                                                                                                            <span style=" color: hotpink;font-weight: 500;font-size:12px">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Not Interested")
+                                                                                                        {
+                                                                                                            <span style=" color: purple;font-weight: 500;font-size:12px">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Got Another Offer")
+                                                                                                        {
+                                                                                                            <span style=" color: darkgreen;font-weight: 500;font-size:12px">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Hold")
+                                                                                                        {
+                                                                                                            <span style="color: orangered;font-weight: 500;font-size:12px;padding:1px 10px;background: #fad89b;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Meeting Status")
+                                                                                                        {
+                                                                                                            <div style="color: #c572ac;font-weight: 500; padding:2px; font-size: 12px;background: #e892c652;display: inline;">
+                                                                                                                @if (item.LatestComment != null && item.LatestComment != "")
+                                                                                                                {
+                                                                                                                    @if (item.LatestComment.Length > 20)
+                                                                                                                    {
+                                                                                                                        <div class="article">
+                                                                                                                            <p style="margin-bottom:0px;">
+                                                                                                                                @item.LatestComment.Substring(0, 20)
+                                                                                                                            </p>
+                                                                                                                            <p class="moretext_@item.CandidateId moretext">
+                                                                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
+                                                                                                                            </p>
+                                                                                                                        </div>
+                                                                                                                        <a onclick="moreless('@item.CandidateId')" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
+                                                                                                                            <p>
+                                                                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
+                                                                                                                            </p>
+                                                                                                                        </div>
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Invitation Sent")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Interview Status")
+                                                                                                        {
+                                                                                                            <div style="color:#4832d4ab;font-weight: 500; padding:2px; font-size: 12px;background:#d9d6ef94;display: inline;">
+                                                                                                                @if (item.LatestComment != null && item.LatestComment != "")
+                                                                                                                {
+                                                                                                                    @if (item.LatestComment.Length > 20)
+                                                                                                                    {
+                                                                                                                        <div class="article">
+                                                                                                                            <p style="margin-bottom:0px;">
+                                                                                                                                @item.LatestComment.Substring(0, 20)
+                                                                                                                            </p>
+                                                                                                                            <p class="moretext_@item.CandidateId moretext">
+                                                                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
+                                                                                                                            </p>
+                                                                                                                        </div>
+                                                                                                                        <a onclick="moreless('@item.CandidateId')" class="moreless-button" value="Readmore" id="read_@item.CandidateId" href="#">Read more</a>
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
+                                                                                                                            <p>
+                                                                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
+                                                                                                                            </p>
+                                                                                                                        </div>
+                                                                                                                    }
+                                                                                                                }
+                                                                                                                else
+                                                                                                                {
+                                                                                                                    <span> @item.StatusValue</span>
+                                                                                                                }
+                                                                                                            </div>
+
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Reminder Call")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Called Candidate")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Not Responding")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Not Reachable")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Wrong Number/Out of service")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                        else if (item.StatusValue == "Will schedule by themselves")
+                                                                                                        {
+                                                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                                @item.StatusValue
+                                                                                                            </span>
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        @if (item.CurrentStatus == "Selected")
+                                                                                                        {
+                                                                                                            <p class="current selected">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else if (item.CurrentStatus == "Rejected")
+                                                                                                        {
+                                                                                                            <p class="current rejected">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else if (item.CurrentStatus == "Scheduled")
+                                                                                                        {
+                                                                                                            <p class="current scheduled">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else if (item.CurrentStatus == "Cancelled")
+                                                                                                        {
+                                                                                                            <p class="current cancelled">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else if (item.CurrentStatus == "No Show(Candidate)")
+                                                                                                        {
+                                                                                                            <p class="current noshowcandidate">@item.CurrentStatus</p>
+                                                                                                        }
+
+                                                                                                        else if (item.CurrentStatus == "Strongly Selected")
+                                                                                                        {
+                                                                                                            <p class="current strongselected">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else if (item.CurrentStatus == "Marginally Selected")
+                                                                                                        {
+                                                                                                            <p class="current marginalselected">@item.CurrentStatus</p>
+                                                                                                        }
+
+                                                                                                        else if (item.CurrentStatus == "Strongly Rejected")
+                                                                                                        {
+                                                                                                            <p class="current strongrejected">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else if (item.CurrentStatus == "Marginally Rejected")
+                                                                                                        {
+                                                                                                            <p class="current marginalrejected">@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <p>@item.CurrentStatus</p>
+                                                                                                        }
+                                                                                                    }
+                                                                                                </span>
+
+                                                                                                <span class="candidate-field pull-left">
+                                                                                                    @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                                                    {
+                                                                                                        @if (item.PrimarySkill.Length > 40)
+                                                                                                        {
+                                                                                                            <p class="cadEmail text-left">
+                                                                                                                <a class="pskill" data-tooltip="@item.PrimarySkill">( @item.PrimarySkill.Substring(0, 40) ...)</a>
+                                                                                                            </p>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <p class="text-left">
+                                                                                                                <a class="pskill">(@item.PrimarySkill)</a>
+                                                                                                            </p>
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <p></p>
+                                                                                                    }
+
+                                                                                                </span>
+                                                                                            </div>
+                                                                                            <div class="candidate-field">Skill Id: @item.IRFname</div>
+
+
+                                                                                            <div class="candidate-field">
+                                                                                                @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
+                                                                                                {
+                                                                                                    @if (item.CandidateEmailId.Length > 50)
+                                                                                                    {
+                                                                                                        <p style="margin:5px 0px;" class="email-field" title="@item.CandidateEmailId"><b>Email:</b> @item.CandidateEmailId.Substring(0, 50) ...</p>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <p style="margin:5px 0px;" class="email-field"><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span> <span class="pull-left" style="margin-left:10px;"><b>Mobile:</b><i class="fa fa-phone" aria-hidden="true" style="color: #1f9208;padding: 0px 1px 0px 5px;font-family:FontAwesome;transform: rotate(6deg);left: 1px;position: relative;font-size: 16px;"></i> @item.Phone</span> </p>
+
+                                                                                                    }
+                                                                                                }
+                                                                                                <p style="margin:5px 0px;" class="email-field" hidden><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span> <span class="pull-left" style="margin-left:10px;"><b>Mobile:</b><i class="fa fa-phone" aria-hidden="true" style="color: #1f9208;padding: 0px 1px 0px 5px;font-family:FontAwesome;transform: rotate(6deg);left: 1px;position: relative;font-size: 16px;"></i> @item.Phone</span></p>
+                                                                                                @* @if (item.Phone != null && item.Phone != string.Empty)
+                                                                                            {
+                                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
+                                                                                            }*@
+                                                                                            </div>
+                                                                                            <div class="candidate-field">
+                                                                                                <p>Client Hr:@item.HREmail</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-3">
+                                                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                            {
+                                                                                                <div>
+                                                                                                    @if (item.RedoInterview == true || item.IsColdCandidate || item.InterviewId == 0 || item.CurrentStatus == "Scheduled" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Status Pending")
+                                                                                                    {
+                                                                                                        <p></p>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        @if (!item.IsReportBlocked)
+                                                                                                        {
+                                                                                                            <div stye="width:100%;float:left">
+                                                                                                                <a style="text-decoration:none;font-size:13px;font-weight:500" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
+                                                                                                                    <span title="Client Report">View Report <i class="fa fa-chevron-right" style="padding-left:4px;"></i></span>
+                                                                                                                </a>
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <p></p>
+                                                                                                        }
+                                                                                                    }
+                                                                                                </div>
+                                                                                            }
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="col-sm-4 nopad pull-left">
+                                                                <div id="anchor" class="filter-box">
+                                                                    <div class="filter-head">Filter(s) <span style="padding:5px 6px;line-height: 17px;color: #429a4c;display: block;font-size: 13px;">To visualize data older then 30 days and greater than 15 days, please apply filter</span></div>
+                                                                    <div class="filter-con">
+                                                                        <form action="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id, candidateType = ViewBag.CandidateType })" method="post" id="form" onsubmit="return checkfilterDate();">
+
+                                                                            <div class="publicmeeting">
+                                                                                <div class="row">
+                                                                                    <div>
+                                                                                        <div class="form-group">
+                                                                                            <label class="control-label  desp-label" for="StartDate">
+                                                                                                Start Date
+                                                                                            </label>
+                                                                                            <div style="border: 1px #ccc solid;">
+                                                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div class="form-group">
+                                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                                                End Date
+                                                                                            </label>
+                                                                                            <div style="border: 1px #ccc solid;">
+                                                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div class="form-group">
+                                                                                            <label class="control-label  desp-label" for="HREmail">
+                                                                                                JD Title
+                                                                                            </label>
+                                                                                            <div style="border: 1px #ccc solid;">
+                                                                                                <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                                                    @foreach (var item in (List<SelectListItem>)ViewBag.PrimarySkillList)
+                                                                                                    {
+                                                                                                        @if (item.Value != null && item.Value != "")
+                                                                                                        {
+                                                                                                            @* <option value="@item">@item</option> *@
+                                                                                                            @if (item.Selected)
+                                                                                                            {
+                                                                                                                <option value="@item.Value" selected>@item.Text</option>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <option value="@item.Value">@item.Text</option>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+
+                                                                                    <div>
+                                                                                        <div class="form-group">
+                                                                                            <label class="control-label  desp-label" for="MeetingStatus">
+                                                                                                Current Status
+                                                                                            </label>
+                                                                                            <div style="border: 1px #ccc solid;">
+                                                                                                <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                                                    @foreach (var item in (List<SelectListItem>)ViewBag.CurrentStatusList)
+                                                                                                    {
+                                                                                                        @if (item.Value != null && item.Value != "")
+                                                                                                        {
+                                                                                                            @if (item.Selected)
+                                                                                                            {
+                                                                                                                <option value="@item.Value" selected>@item.Text</option>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <option value="@item.Value">@item.Text</option>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 pull-right">
+                                                                                        <div class="form-group">
+                                                                                            <div>
+                                                                                                <div class="col-md-12 col-sm-12">
+                                                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
+                                                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                                                    </button>
+                                                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-bottom:10px;">
+                                                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- #tab1 -->
+
+                                                    </div>
+                                                    <!-- .tab_container -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal modal-bg" style="z-index:100">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Call Candidate!</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div>
+                    <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                </div>
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/BsMultiSelect.min.js"></script>
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=2024" />
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" asp-append-version="true"></script>
+
+<script src="~/Newassets/js/scrollBar.js" asp-append-version="true"></script>
+
+<script src="~/js/ModalFormServerValidation.js" asp-append-version="true"></script>
+
+<script src="~/js/common.js" asp-append-version="true"></script>
+<script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+        // $("#InterviewStatus").multiselect({
+        //     includeSelectAllOption: true,
+        //     selectedClass: 'active1',
+        //     buttonWidth: '100%',
+        //     maxHeight: 200
+        // });
+    });
+
+    function ResetFilter() {
+        window.location.href = "/Candidate/ResetCandidateSearchFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+    }
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var hrEmail = @Html.Raw(Json.Serialize(HREmail));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        //var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        //document.getElementById("Datetype_" + datetype).checked = true;
+        // $("#HREmail").val(hrEmail);
+        // $("#MeetingStatus").val(meetingStatus);
+        //$("#InterviewStatus").val(interviewStatus);
+        //$("#ProfileSource").val(profileSource);
+        var form = $("#form").serialize();
+
+    }
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#candidateTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#candidateTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#candidateTable").show();
+
+        }, 2000);
+    };
+
+
+    //// script for loader ends here
+</script>
+<script>
+    function searchResult() {
+        $('#candidateTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#candidateTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        var table = $('#candidateTable').DataTable({
+            order: [],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Candidate name or email ",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+    };
+</script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+
+        if (phoneNumber != null && phoneNumber.length >= 9) {
+            Twilio.Device.connect(params);
+        }
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function ModalButtonClick(candidateName, mobileNumber) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+</script>
+
+
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox").mCustomScrollbar();
+        });
+    })(jQuery);
+</script>
+<script src="~/js/filtervalidation.js?v=2024"></script>
+<script src="~/js/BsMultiSelect.min.js"></script>
+<script>
+    $(window).scroll(function () {
+        var sticky = $('.fixed-header'),
+            scroll = $(window).scrollTop();
+
+        if (scroll >= 80) sticky.addClass('fixedtop');
+        else sticky.removeClass('fixedtop');
+    });
+</script>
+
+
+
+
+<script>
+    // tabbed content
+    // http://www.entheosweb.com/tutorials/css/tabs.asp
+    $(".tab_content").hide();
+    $(".tab_content:first").show();
+
+    /* if in tab mode */
+    $("ul.tabs li").click(function () {
+
+        $(".tab_content").hide();
+        var activeTab = $(this).attr("rel");
+        $("#" + activeTab).fadeIn();
+
+        $("ul.tabs li").removeClass("active");
+        $(this).addClass("active");
+
+
+
+    });
+    /* if in drawer mode */
+    $(".tab_drawer_heading").click(function () {
+
+        $(".tab_content").hide();
+        var d_activeTab = $(this).attr("rel");
+        $("#" + d_activeTab).fadeIn();
+
+        $(".tab_drawer_heading").removeClass("d_active");
+        $(this).addClass("d_active");
+
+        $("ul.tabs li").removeClass("active");
+        $("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
+    });
+
+
+    /* Extra class "tab_last"
+       to add border to right side
+       of last tab */
+    $('ul.tabs li').last().addClass("tab_last");
+
+</script>
+<script>
+    function ChangeTab(type) {
+        var currentUrl = window.location.href;
+        // Find the index of the substring after which substitution should occur
+        var originalString = currentUrl;
+        var substringToFind = "candidateType=";
+        var indexOfSubstring = originalString.indexOf(substringToFind);
+        var newString;
+        // Check if the substring is found
+        if (indexOfSubstring !== -1) {
+            // Define the new substring to replace the original part
+            //var newSubstring = "modified";
+            // Create the new string by substituting the part after the substring
+            newString = originalString.substring(0, indexOfSubstring + substringToFind.length) + type;//+ originalString.substring(indexOfSubstring + substringToFind.length);
+        }
+        else {
+            newString = originalString + '&candidateType=' + type;
+        }
+        window.location.href = newString;
+    }
+</script>

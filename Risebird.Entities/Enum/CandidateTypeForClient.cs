@@ -27,7 +27,7 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Reschedule Meeting")]
         [Description("Reschedule Meeting")]
         RescheduleMeeting = 6,
-        
+
         [Display(Name = "Future Scheduled")]
         [Description("Future Scheduled")]
         FutureScheduled = 7,
@@ -35,9 +35,18 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Completed Meeting")]
         [Description("Completed Meeting")]
         CompletedMeeting = 8,
-        
+
         [Display(Name = "Report Pending")]
         [Description("Report Pending")]
         ReportPending = 9
+    }
+    public enum CandidateTypeSearch
+    {
+        [Description("Processed candidates")]
+        Processedcandidates = 1,
+
+        [Display(Name = "Not Processed Resume")]
+        [Description("Not Processed Resume")]
+        NotProcessedResume = 2
     }
 }
