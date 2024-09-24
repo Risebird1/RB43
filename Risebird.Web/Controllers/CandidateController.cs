@@ -3696,7 +3696,6 @@ namespace Risebird.Web.Controllers
                     ViewBag.id = id;
                     HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
-                    HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
@@ -6261,7 +6260,6 @@ namespace Risebird.Web.Controllers
                     ViewBag.id = id;
                     HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
-                    HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
@@ -6290,7 +6288,7 @@ namespace Risebird.Web.Controllers
                         candidate.IsQCRequired = client.IsQCRequired;
                         if (candidate.CurrentMeetingStatus == 4)
                         {
-                            if (candidate.CurrentInterviewStatus.HasValue))
+                            if (candidate.CurrentInterviewStatus.HasValue)
                             {
                                 candidate.CurrentStatus = ((InterviewStatus)candidate.CurrentInterviewStatus).GetDescription();
                             }
@@ -6325,15 +6323,10 @@ namespace Risebird.Web.Controllers
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("AllCandidateSearchfilters"));
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
-                        filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
                         filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                         if (filter.HREmail != null)
                         {
                             model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
-                        }
-                        if (filter.ProfileSource != null)
-                        {
-                            model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
                         }
                         if (filter.MeetingStatus != null)
                         {
@@ -6348,7 +6341,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.CandidateType = candidateType;
                     if (Emailid != emailid)
                     {
-                        return RedirectToAction("PublicAllMeetings", new { id = id });
+                        return RedirectToAction("PublicCandidateStatus", new { id = id });
                     }
                     var Whatsapp = _userService.GetWhatsappno(emailid);
                     if (Whatsapp == null)
