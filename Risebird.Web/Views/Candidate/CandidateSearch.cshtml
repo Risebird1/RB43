@@ -186,9 +186,11 @@
 
     .candidate-search #candidateTable_filter input[type=search] {
         width: 330px !important;
-        border: 1px #dcd5d5a8 solid !important;
+        border: 1px #aba5a5a8 solid !important;
     }
-
+    .candidate-search div.dataTables_wrapper div#candidateTable_length select{
+        border: 1px #aba5a5a8 solid !important;
+    }
         .candidate-search #candidateTable_filter input[type=search]:-moz-placeholder {
             font-weight: 600 !important;
         }
@@ -404,12 +406,12 @@
                                                     <ul class="tabs">
                                                         @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                                                         {
-                                                            <li onclick="ChangeTab('ProcessedCandidate')" rel="tab1"><span>16707</span><span>Processed Resume</span></li>
+                                                            <li onclick="ChangeTab('ProcessedCandidate')" rel="tab1"><span>16707</span><span>Processed Candidate</span></li>
                                                             <li onclick="ChangeTab('NotProcessedResume')" rel="tab4"><span class="count-number">598</span><span>Not Processed Resume</span></li>
                                                         }
                                                         else
                                                         {
-                                                            <li onclick="ChangeTab('ProcessedCandidate')" class="active" rel="tab1"><span class="count-number">16707</span><span>Processed Resume</span></li>
+                                                            <li onclick="ChangeTab('ProcessedCandidate')" class="active" rel="tab1"><span class="count-number">16707</span><span>Processed Candidate</span></li>
                                                             <li onclick="ChangeTab('NotProcessedResume')" rel="tab4"><span class="count-number">598</span><span>Not Processed Resume</span></li>
                                                         }
                                                     </ul>
@@ -726,25 +728,26 @@
                                                                                                 </span>
                                                                                             </div>
                                                                                             <div class="candidate-field">@item.IRFname</div>
-                                                                                            <div class="candidate-field">
-                                                                                                @if (item.Phone != null && item.Phone != string.Empty)
-                                                                                                {
-                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
-                                                                                                }
-                                                                                            </div>
+                                                                                            
+                                                                                           
                                                                                             <div class="candidate-field">
                                                                                                 @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
                                                                                                 {
-                                                                                                    @if (item.CandidateEmailId.Length > 30)
+                                                                                                    @if (item.CandidateEmailId.Length > 50)
                                                                                                     {
-                                                                                                        <p class="email-field" title="@item.CandidateEmailId">Email: @item.CandidateEmailId.Substring(0, 30) ...</p>
+                                                                                                        <p class="email-field" title="@item.CandidateEmailId">Email: @item.CandidateEmailId.Substring(0, 50) ...</p>
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        <p class="email-field">Email: @item.CandidateEmailId </p>
+                                                                                                        <p class="email-field"><span class="pull-left">Email: @item.CandidateEmailId</span> <span class="pull-left">Mobile:@item.Phone</span> </p>
+                                                                                                        
                                                                                                     }
                                                                                                 }
-                                                                                                <p class="email-field" hidden>Email: @item.CandidateEmailId </p>
+                                                                                                <p class="email-field" hidden><span class="pull-left">Email: @item.CandidateEmailId</span> <span class="pull-left">Mobile:@item.Phone</span></p>
+                                                                                                 @if (item.Phone != null && item.Phone != string.Empty)
+                                                                                                {
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
+                                                                                                }
                                                                                             </div>
                                                                                             <div class="candidate-field">
                                                                                                 <p>Client Hr:@item.HREmail</p>
