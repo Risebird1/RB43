@@ -3829,7 +3829,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("PublicCandidateStatus", new { id = id });
+                    return RedirectToAction("PublicAllMeetings", new { id = id });
                 }
             }
             catch (Exception ex)
@@ -6355,7 +6355,7 @@ namespace Risebird.Web.Controllers
                     foreach (var item in PrimarySkills)
                     {
                         bool selected = false;
-                        if (filterPrimarySkills.Contains(item))
+                        if (filterPrimarySkills != null && filterPrimarySkills.Contains(item))
                         {
                             selected = true;
                         }
@@ -6367,7 +6367,7 @@ namespace Risebird.Web.Controllers
                     foreach (var item in CurrentStatus)
                     {
                         bool selected = false;
-                        if (filterCurrentStatusSet.Contains(item))
+                        if (filterCurrentStatusSet != null && filterCurrentStatusSet.Contains(item))
                         {
                             selected = true;
                         }
