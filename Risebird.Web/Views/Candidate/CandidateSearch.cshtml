@@ -934,7 +934,6 @@
 <script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        debugger;
         $("#ResetFilter").click(function () {
             ResetFilter();
         })
@@ -947,7 +946,6 @@
         window.location.href = "/Candidate/ResetCandidateSearchFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
     }
     function ApplySessionFilter() {
-        debugger;
         var strtDte = '@strtDte';
         var endDte = '@endDte';
         var hrEmail = @Html.Raw(Json.Serialize(HREmail));
@@ -1104,7 +1102,7 @@
     })(jQuery);
 </script>
 <script src="~/js/filtervalidation.js?v=2024"></script>
-
+<script src="~/js/BsMultiSelect.min.js"></script>
 <script>
     $(window).scroll(function () {
         var sticky = $('.fixed-header'),
