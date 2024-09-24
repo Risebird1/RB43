@@ -727,11 +727,11 @@
 
                                                                                                 </span>
                                                                                             </div>
-                                                                                            @*<div class="candidate-field">@item.IRFname</div>*@
+                                                                                            <div class="candidate-field">@item.IRFname</div>
                                                                                             <div class="candidate-field">
                                                                                                 @if (item.Phone != null && item.Phone != string.Empty)
                                                                                                 {
-                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span> Call Candidate</span></span>
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
                                                                                                 }
                                                                                             </div>
                                                                                             <div class="candidate-field">
@@ -739,7 +739,7 @@
                                                                                                 {
                                                                                                     @if (item.CandidateEmailId.Length > 30)
                                                                                                     {
-                                                                                                        <p class="email-field" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 30) ...</p>
+                                                                                                        <p class="email-field" title="@item.CandidateEmailId">Email: @item.CandidateEmailId.Substring(0, 30) ...</p>
                                                                                                     }
                                                                                                     else
                                                                                                     {
@@ -772,7 +772,7 @@
                                                                                                         }
                                                                                                         else
                                                                                                         {
-                                                                                                            <p>No Report</p>
+                                                                                                            <p></p>
                                                                                                         }
                                                                                                     }
                                                                                                 </div>
@@ -948,7 +948,7 @@
         window.location.href = "/Candidate/ResetCandidateSearchFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
     }
     function ApplySessionFilter() {
-
+        debugger;
         var strtDte = '@strtDte';
         var endDte = '@endDte';
         var datetype = '@datetype';
