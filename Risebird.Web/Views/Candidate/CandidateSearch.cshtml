@@ -397,8 +397,8 @@
 
                                                 <div class="clearfix"></div>
                                                 <div class="tabs-wrapper">
-                                                    <span id="status_3" style="position:relative;top:85px;left:250px;">
-                                                        <button style="background:none;border:0px;    color: grey;font-size: 13px;    font-weight: 600;" type="submit" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'">
+                                                    <span id="status_3" style="position:relative;top:90px;left:250px;">
+                                                        <button style="background:none;border:0px;    color: grey;font-size: 14px;    font-weight: 600;" type="submit" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'">
                                                             <svg style="padding-right:5px;color:grey" width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" /></svg>Export
                                                         </button>
                                                     </span>
@@ -735,19 +735,19 @@
                                                                                                 {
                                                                                                     @if (item.CandidateEmailId.Length > 50)
                                                                                                     {
-                                                                                                        <p class="email-field" title="@item.CandidateEmailId">Email: @item.CandidateEmailId.Substring(0, 50) ...</p>
+                                                                                                        <p style="margin:5px 0px;" class="email-field" title="@item.CandidateEmailId"><b>Email:</b> @item.CandidateEmailId.Substring(0, 50) ...</p>
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        <p class="email-field"><span class="pull-left">Email: @item.CandidateEmailId</span> <span class="pull-left">Mobile:@item.Phone</span> </p>
+                                                                                                        <p style="margin:5px 0px;" class="email-field"><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span> <span class="pull-left" style="margin-left:10px;"><b>Mobile:</b><i class="fa fa-phone" aria-hidden="true" style="color: #1f9208;padding: 0px 1px 0px 5px;font-family:FontAwesome;transform: rotate(6deg);left: 1px;position: relative;font-size: 16px;"></i> @item.Phone</span> </p>
                                                                                                         
                                                                                                     }
                                                                                                 }
-                                                                                                <p class="email-field" hidden><span class="pull-left">Email: @item.CandidateEmailId</span> <span class="pull-left">Mobile:@item.Phone</span></p>
-                                                                                                 @if (item.Phone != null && item.Phone != string.Empty)
+                                                                                                <p style="margin:5px 0px;" class="email-field" hidden><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span> <span class="pull-left" style="margin-left:10px;"><b>Mobile:</b><i class="fa fa-phone" aria-hidden="true" style="color: #1f9208;padding: 0px 1px 0px 5px;font-family:FontAwesome;transform: rotate(6deg);left: 1px;position: relative;font-size: 16px;"></i> @item.Phone</span></p>
+                                                                                                @* @if (item.Phone != null && item.Phone != string.Empty)
                                                                                                 {
                                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
-                                                                                                }
+                                                                                                }*@
                                                                                             </div>
                                                                                             <div class="candidate-field">
                                                                                                 <p>Client Hr:@item.HREmail</p>
