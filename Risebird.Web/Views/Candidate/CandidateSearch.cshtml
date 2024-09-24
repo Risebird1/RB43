@@ -404,7 +404,7 @@
                                                     </span>
 
                                                     <ul class="tabs">
-                                                        @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                                                        @if (ViewBag.CandidateType == CandidateTypeSearch.NotProcessedResume.GetDescription())
                                                         {
                                                             <li onclick="ChangeTab('ProcessedCandidate')" rel="tab1"><span>16707</span><span>Processed Candidate</span></li>
                                                             <li onclick="ChangeTab('NotProcessedResume')" rel="tab4"><span class="count-number">598</span><span>Not Processed Resume</span></li>
@@ -824,11 +824,19 @@
                                                                                             </label>
                                                                                             <div style="border: 1px #ccc solid;">
                                                                                                 <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                                                    @foreach (var item in Model.Select(x => x.PrimarySkill).Distinct().ToList())
+                                                                                                    @foreach (var item in (List<SelectListItem>)ViewBag.PrimarySkillList)
                                                                                                     {
-                                                                                                        @if (item != null && item != "")
+                                                                                                        @if (item.Value != null && item.Value != "")
                                                                                                         {
-                                                                                                            <option value="@item">@item</option>
+                                                                                                            @* <option value="@item">@item</option> *@
+                                                                                                            @if (item.Selected)
+                                                                                                            {
+                                                                                                                <option value="@item.Value" selected>@item.Text</option>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <option value="@item.Value">@item.Text</option>
+                                                                                                            }
                                                                                                         }
                                                                                                     }
                                                                                                 </select>
@@ -844,11 +852,18 @@
                                                                                             </label>
                                                                                             <div style="border: 1px #ccc solid;">
                                                                                                 <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                                                    @foreach (var item in Model.Select(x => x.CurrentStatus).Distinct().ToList())
+                                                                                                    @foreach (var item in (List<SelectListItem>)ViewBag.CurrentStatusList)
                                                                                                     {
-                                                                                                        @if (item != null && item != "")
+                                                                                                        @if (item.Value != null && item.Value != "")
                                                                                                         {
-                                                                                                            <option value="@item">@item</option>
+                                                                                                            @if (item.Selected)
+                                                                                                            {
+                                                                                                                <option value="@item.Value" selected>@item.Text</option>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <option value="@item.Value">@item.Text</option>
+                                                                                                            }
                                                                                                         }
                                                                                                     }
                                                                                                 </select>
@@ -920,7 +935,7 @@
     </div>
 </div>
 
-
+<script src="~/js/BsMultiSelect.min.js"></script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 
@@ -943,6 +958,12 @@
         if ('@filter' != "") {
             ApplySessionFilter();
         }
+        // $("#InterviewStatus").multiselect({
+        //     includeSelectAllOption: true,
+        //     selectedClass: 'active1',
+        //     buttonWidth: '100%',
+        //     maxHeight: 200
+        // });
     });
 
     function ResetFilter() {
@@ -953,11 +974,13 @@
         var endDte = '@endDte';
         var hrEmail = @Html.Raw(Json.Serialize(HREmail));
         var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        //var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         //document.getElementById("Datetype_" + datetype).checked = true;
-        $("#HREmail").val(hrEmail);
-        $("#MeetingStatus").val(meetingStatus);
+        // $("#HREmail").val(hrEmail);
+        // $("#MeetingStatus").val(meetingStatus);
+        //$("#InterviewStatus").val(interviewStatus);
         //$("#ProfileSource").val(profileSource);
         var form = $("#form").serialize();
 

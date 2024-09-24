@@ -6237,6 +6237,10 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(candidateType))
+                {
+                    candidateType = CandidateTypeSearch.Processedcandidates.GetDescription();
+                }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
@@ -6263,6 +6267,10 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
+                    if (candidateType == CandidateTypeSearch.NotProcessedResume.GetDescription())
+                    {
+                        dataType = 1;
+                    }
                     var Startdate = DateTime.Now.AddDays(-30);
                     var Enddate = DateTime.Now.AddDays(15);
                     if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
@@ -6318,10 +6326,21 @@ namespace Risebird.Web.Controllers
                             candidate.CurrentStatus = "Cancelled";
                         }
                     }
-
+                    //JdTitle
+                    var PrimarySkillsSet = new List<SelectListItem>();
+                    var PrimarySkills = model.Select(x => x.PrimarySkill).Distinct();
+                    string[] filterPrimarySkills = new String[] { };
+                    //CurrentStatus
+                    var CurrentStatusSet = new List<SelectListItem>();
+                    var CurrentStatus = model.Select(x => x.CurrentStatus).Distinct();
+                    //var CurrentStatus1 = model.Select(x => x.StatusValue).Distinct();
+                    //CurrentStatus = CurrentStatus.Union(CurrentStatus1).Distinct();
+                    string[] filterCurrentStatusSet = new String[] { };
                     if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("AllCandidateSearchfilters"));
+                        filterPrimarySkills = filter.HREmail;
+                        filterCurrentStatusSet = filter.MeetingStatus;
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
                         filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                         if (filter.HREmail != null)
@@ -6333,6 +6352,30 @@ namespace Risebird.Web.Controllers
                             model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                         }
                     }
+                    foreach (var item in PrimarySkills)
+                    {
+                        bool selected = false;
+                        if (filterPrimarySkills.Contains(item))
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, item, selected);
+                        PrimarySkillsSet.Add(selectItem);
+                    }
+                    ViewBag.PrimarySkillList = PrimarySkillsSet;
+
+                    foreach (var item in CurrentStatus)
+                    {
+                        bool selected = false;
+                        if (filterCurrentStatusSet.Contains(item))
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, item, selected);
+                        CurrentStatusSet.Add(selectItem);
+                    }
+                    ViewBag.CurrentStatusList = CurrentStatusSet;
+
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
                     ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                     ViewBag.profile = "Client";

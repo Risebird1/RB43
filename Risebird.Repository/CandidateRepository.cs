@@ -1694,6 +1694,7 @@ namespace Risebird.Repository
                 parameters.Add("@EmailId", emailId);
                 parameters.Add("@startDate", startDate);
                 parameters.Add("@endDate", endDate);
+                parameters.Add("@datatype", datatype);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateTimelineVM>(con, "usp_GetAllCandidateSearchbyDateStatus", parameters,
