@@ -6237,6 +6237,10 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(candidateType))
+                {
+                    candidateType = CandidateTypeSearch.Processedcandidates.GetDescription();
+                }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
@@ -6263,6 +6267,10 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
+                    if (candidateType == CandidateTypeSearch.NotProcessedResume.GetDescription())
+                    {
+                        dataType = 1;
+                    }
                     var Startdate = DateTime.Now.AddDays(-30);
                     var Enddate = DateTime.Now.AddDays(15);
                     if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)

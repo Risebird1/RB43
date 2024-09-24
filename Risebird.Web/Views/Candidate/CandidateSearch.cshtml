@@ -402,15 +402,15 @@
                                                     </span>
 
                                                     <ul class="tabs">
-                                                        @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                                                        @if (ViewBag.CandidateType == CandidateTypeSearch.NotProcessedResume.GetDescription())
                                                         {
-                                                            <li onclick="ChangeTab('ProcessedCandidate')" rel="tab1"><span>16707</span><span>Processed Resume</span></li>
-                                                            <li onclick="ChangeTab('NotProcessedResume')" rel="tab4"><span class="count-number">598</span><span>Not Processed Resume</span></li>
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.Processedcandidates.GetDescription()')" rel="tab1"><span>16707</span><span>Processed Resume</span></li>
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.NotProcessedResume.GetDescription()')" class="active" rel="tab4"><span class="count-number">598</span><span>Not Processed Resume</span></li>
                                                         }
                                                         else
                                                         {
-                                                            <li onclick="ChangeTab('ProcessedCandidate')" class="active" rel="tab1"><span class="count-number"></span><span>Processed Resume</span></li>
-                                                            <li onclick="ChangeTab('NotProcessedResume')" rel="tab4"><span class="count-number"></span><span>Not Processed Resume</span></li>
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.Processedcandidates.GetDescription()')" class="active" rel="tab1"><span class="count-number"></span><span>Processed Resume</span></li>
+                                                            <li onclick="ChangeTab('@CandidateTypeSearch.NotProcessedResume.GetDescription()')" rel="tab4"><span class="count-number"></span><span>Not Processed Resume</span></li>
                                                         }
                                                     </ul>
                                                     <div class="tab_container">
