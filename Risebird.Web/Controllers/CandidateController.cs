@@ -3725,7 +3725,7 @@ namespace Risebird.Web.Controllers
 
                     if (candidateData == null)
                     {
-                        return RedirectToAction("PublicCandidateStatus", new { id = id });
+                        return RedirectToAction("PublicAllMeetings", new { id = id });
                     }
 
                     foreach (var candidate in model)
@@ -3835,7 +3835,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("PublicCandidateStatus", new { id = id });
+                return RedirectToAction("PublicAllMeetings", new { id = id });
             }
         }
 
