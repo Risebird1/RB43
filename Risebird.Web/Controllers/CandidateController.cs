@@ -4697,7 +4697,7 @@ namespace Risebird.Web.Controllers
             {
                 var model = new ResumeListViewModel();
                 model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId, emailid))?.ToList();
-                model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
+                model.ResumeList = model.ResumeList?.OrderBy(x => x.IsProcessed)?.ToList();
                 model.IRFName = irfName;
                 model.IRFId = irfId;
                 model.Profile = "Client";

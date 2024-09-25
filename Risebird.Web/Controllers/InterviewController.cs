@@ -2973,6 +2973,31 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenInterview");
             }
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> InterviewAssignYourself(int id, string InterviewDate)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
+                    {
+                        var result = await _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
+                        return Json(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Json("Fail to Assign,Please try Again.");
+        }
 
         [Authorize]
         [HttpGet]
