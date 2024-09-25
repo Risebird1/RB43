@@ -144,7 +144,7 @@
                                                         <tr id=@item.id>
                                                             <td class="text-center">
                                                                 @* <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button> *@
-                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate')" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
+                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate','@item.AudioComment','@item.CompanyDetails')" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
                                                             </td>
 
                                                             <td>
@@ -349,7 +349,46 @@
         </div>
     </div>
 </div>
-
+<div id="InterviewerAlert" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 600px !important;top:10px;">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar" style="background:#d61818!important;">
+                    <span class="mdc-fab__icon material-icons">
+                        <i class='fa fa-warning' style='color: white'></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Reminder</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
+                <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding:10px 20px;">
+                <div class="col-md-12 pull-left text-center">
+                    <h2 class="interviewerAlert" style="margin:0px;padding:0px;" id="txtconfirmmessage"></h2>
+                </div>
+                <div id="divvideoinstruction" style="display:none">
+                    <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
+                        <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
+                    </div>
+                    <video id="vidvideoinstruction" style="width:100%" controls="controls" preload="metadata">
+                        <source id="srcvideoinstruction" src='' type="video/mp4">
+                    </video>
+                </div>
+                <div id="divcompanytextinstruction" style="display:none;padding-top:10px;clear:both">
+                    <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
+                        <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=""> Click to view instruction</a>
+                    </div>
+                </div>
+                <div class="col-md-12 pull-left text-center">
+                    <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
+                    <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (ViewBag.Message != null)
 {
@@ -597,15 +636,55 @@
     }
 </script>
 <script>
-    function AssingInterviewYourSelf(id,interviewDate){
+     function openInterviewerAlert() {
+        var modal = document.getElementById("InterviewerAlert");
+        modal.style.display = "block";
+
+    }
+     function closeInterviewerAlert() {
+        var modal = document.getElementById("InterviewerAlert");
+        modal.style.display = "none";
+        location.reload();
+    }
+    function AssingInterviewYourSelf(id,interviewDate,videolink,textinstruction){
          $.ajax({
             type: "POST",
             url: "/Interview/InterviewAssignYourself",
             data: { id: id,interviewDate:interviewDate },
             success: function (data) {
-                alert(data);
+                $("#txtconfirmmessage").text(data);
+                openInterviewerAlert();
+                bindinterviewalertdetails(data,videolink,textinstruction);
             }
         });
+    }
+    function bindinterviewalertdetails(data,videolink,textinstruction){
+        if(data.includes('Successfully')){
+            if(videolink!='' && videolink!=null){
+                document.getElementById("divvideoinstruction").style.display="block";
+                var video = document.getElementById('vidvideoinstruction');
+                var sources = document.getElementById('srcvideoinstruction');
+                sources.src = videolink;
+                video.load();
+            }
+            else
+            {
+                document.getElementById("divvideoinstruction").style.display="none";
+            }
+            if(textinstruction!='' && textinstruction!=null){
+                document.getElementById("divcompanytextinstruction").style.display="block";
+                document.getElementById('companylinkId').href=textinstruction;
+            }
+            else
+            {
+                document.getElementById("divcompanytextinstruction").style.display="none";
+            }
+        }
+        else
+        {
+            document.getElementById("divvideoinstruction").style.display="none";
+            document.getElementById("divcompanytextinstruction").style.display="none";
+        }
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
