@@ -18,7 +18,6 @@ BEGIN
 Declare @Clientid int  
 Declare @RoleId int  
 Select @Clientid=cu.ClientId,@RoleId=RoleId From UserList ul join ClientUser cu on ul.id=cu.UserId where EmailId=@emailid and idProfile=4    
-Select * from ClientRole  
   
 DECLARE @tbl_Temp TABLE (                        
     IRFId INT                          

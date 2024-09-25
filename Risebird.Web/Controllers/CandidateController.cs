@@ -3742,7 +3742,7 @@ namespace Risebird.Web.Controllers
                             candidate.CurrentStatus = "Cancelled";
                         }
                     }
-
+                    model = model.Where(x => x.IsRedoInterview == false).ToList();
                     if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
                     {
                         model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();
@@ -3898,7 +3898,7 @@ namespace Risebird.Web.Controllers
                 _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(emailid), currentUrl);
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = new List<CandidateTimelineData>();
-                var Startdate = DateTime.Now.AddDays(-15);
+                var Startdate = DateTime.Now.AddDays(-30);
                 var Enddate = DateTime.Now.AddDays(7);
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                 {
@@ -4696,7 +4696,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = new ResumeListViewModel();
-                model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
+                model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId, emailid))?.ToList();
                 model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
                 model.IRFName = irfName;
                 model.IRFId = irfId;
