@@ -4227,6 +4227,105 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Apply(string id, string upt = null)//, int irf
+        {
+            //check link expiry befire hitting db
+
+            try
+            {
+                //dec = dec.Replace(" ", "+");
+                //var irfId = await _encryptionHelper.DecryptInteger(id);
+                var irfId = id;
+                if (!string.IsNullOrEmpty(irfId))//irfId.HasValue && irfId.Value > 0
+                {
+                    //first check if the irf id is valid
+                    bool isValid = true;
+                    if(isValid)
+                    {
+                        return View(new InterviewerDirectApplicationVM { EncryptedIrfId = id});
+
+                    }
+                    else
+                    {
+                        return Json("Invalid");
+                    }
+                    
+                }
+                else
+                {
+                    return Json("Bad Request!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Something's wrong. Please try again later.");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Apply(InterviewerDirectApplicationVM model)//, int irf
+        {
+            try
+            {
+                if(!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                else
+                {
+                    if (model.ResumeFile != null)
+                    {
+                        string uploadedFileURL= string.Empty;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+
+                            await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            model.ResumeLink = uploadedFileURL;
+                        }
+
+
+                    }
+                    //var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
+                    var irfId = model.EncryptedIrfId;
+                    if (!string.IsNullOrEmpty(irfId))//irfId.HasValue && irfId.Value>0
+                    {
+                        model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
+                        var result = await _interviewerService.SubmitInterviewerApplication(model);//, irf
+                        if (result)
+                        {
+                            return Json("Your application has been submitted successfully!");
+                        }
+                        else
+                        {
+                            return Json("Submission failed!");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Failed!");
+                    }
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Something's wrong. Please try again later.");
+            }
+
+        }
     }
 }
 

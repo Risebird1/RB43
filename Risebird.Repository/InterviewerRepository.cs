@@ -3510,6 +3510,30 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<bool> SubmitInterviewerApplication(InterviewerDirectApplicationVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", model.EmailId);
+                    parameters.Add("@ResumeLink", model.ResumeLink);
+                    parameters.Add("@Phone", model.Phone);
+                    parameters.Add("@IRFId", model.IRFId);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SubmitInterviewerApplication", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 
 }
