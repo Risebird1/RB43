@@ -19,14 +19,15 @@
 </script>
 
 <style>
-    .swal2-popup{
-        width:500px;
+    .swal2-popup {
+        width: 500px;
     }
-    .swal2-popup #swal2-content {
-    text-align: center;
-    color: #00000094;
-    font-weight: 400;
-}
+
+        .swal2-popup #swal2-content {
+            text-align: center;
+            color: #00000094;
+            font-weight: 400;
+        }
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -92,7 +93,7 @@
                                     <div class="clearfix"></div>
                                     <div class="col-sm-12 nopad">
                                         <div class="table-responsive" style="overflow-y:hidden">
-                                           
+
                                             <table id="OpeninterviewList" class="table table-striped table-bordered dataTable dtr-inline" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
@@ -105,29 +106,29 @@
                                                             <th class="disabled-sorting text-center">Actions</th>
                                                         }
                                                         <th>Date</th>
-                                                      @*  <th>Variable Pay</th>*@
+                                                        @*  <th>Variable Pay</th>*@
                                                         <th id="openinterview_2">Interview Details</th>
                                                         <th>JD-Skills</th>
                                                         @*<th id="openinterview_3">Resume</th>*@
-                                                       
+
                                                         @*<th id="openinterview_4">JD Link</th>*@
 
-                                                        
+
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
                                                     <tr>
                                                         <th class="disabled-sorting text-center">Actions</th>
                                                         <th>Date</th>
-                                                        
-                                                       @* <th>Variable Pay</th>*@
-                                                        
+
+                                                        @* <th>Variable Pay</th>*@
+
                                                         <th>Interview Details</th>
                                                         <th>JD-Skills</th>
-                                                       @* <th>Resume</th>*@
-                                                      
+                                                        @* <th>Resume</th>*@
+
                                                         @*<th>JD Link</th>*@
-                                                       
+
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -142,39 +143,41 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td class="text-center">
-                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
+                                                                @* <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button> *@
+                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate')" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
                                                             </td>
-                                                            
-                                                            <td> @item.interviewDate
-                                                                
-                                                            </td>
-                                                           
-                                                          @*  @if (item.IsNewSkillChannel)
-                                                            {
-                                                                <td>
-                                                                    <div class="techinfocontainer">
-                                                                        <span style="float:left;position:relative;left:8px;font-size:14px;"> ₹ 120</span>
-                                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion" style="left:17px;padding:0px;font-size:15px;top:5px;">
-                                                                           
-                                                                            <span class="tooltiptext">
-                                                                                
-                                                                                <p>₹ 50: Client Rating is 5/5 </p>
-                                                                                <p>₹ 20: Candidate Rating is 5/5 </p>
-                                                                                <p> Video Reward - 50 for India, 100 for US </p>
 
-                                                                            </span>
-                                                                        </i>
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>₹ 0 </td>
-                                                            }*@
-                                                           
+                                                            <td>
+                                                                @item.interviewDate
+
+                                                            </td>
+
+                                                            @*  @if (item.IsNewSkillChannel)
+                                                        {
+                                                        <td>
+                                                        <div class="techinfocontainer">
+                                                        <span style="float:left;position:relative;left:8px;font-size:14px;"> ₹ 120</span>
+                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion" style="left:17px;padding:0px;font-size:15px;top:5px;">
+
+                                                        <span class="tooltiptext">
+
+                                                        <p>₹ 50: Client Rating is 5/5 </p>
+                                                        <p>₹ 20: Candidate Rating is 5/5 </p>
+                                                        <p> Video Reward - 50 for India, 100 for US </p>
+
+                                                        </span>
+                                                        </i>
+                                                        </div>
+                                                        </td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>₹ 0 </td>
+                                                        }*@
+
                                                             <td style="padding-left:25px;">
-                                                                
-                                                                    @if (item.IsVideoRequired == true)
+
+                                                                @if (item.IsVideoRequired == true)
                                                                 {
                                                                     <div style="position:relative;width:fit-content">
                                                                         <div class="absCenter">
@@ -187,18 +190,18 @@
                                                                                 </div>
                                                                             </button>
                                                                         </div>
-                                                                        </div>
-                                                                    }
-                                                                
+                                                                    </div>
+                                                                }
+
                                                                 <span style="padding-left:5px;"> @item.candidateName</span>
-                                                            <span>
+                                                                <span>
                                                                     @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                     {
                                                                         <span class="pskill" style="font-weight: 600;font-size: 14px; display: block;">
                                                                             <span style="font-size: 13px;color: grey;padding: 0px 4px 0px 0px;">JD Title : </span>@item.JDTiltle
                                                                         </span>
                                                                     }
-                                                            </span>
+                                                                </span>
                                                                 <div style="width:100%;float:left"><span style="font-size: 14px;color: #898282;margin-top: 5px;display: inline-block">Client Name:</span>@item.ClientName</div>
 
 
@@ -215,14 +218,14 @@
                                                                 </button>
                                                                 <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
                                                             </td>
-                                                         @*   @if ( item.interviewDate<= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
-                                                            {
-                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }*@
+                                                            @*   @if ( item.interviewDate<= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
+                                                        {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No Resume</td>
+                                                        }*@
                                                             @*@if (item.JDLink != null && item.JDLink != "")
                                                         {
                                                         <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
@@ -233,7 +236,7 @@
                                                         }*@
 
 
-                                                            
+
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -359,7 +362,7 @@
             if (msg.includes("Success")) {
                 var codedname = $("#hidcodedname").val();
                 swal.fire("Assigned Successfully", '@ViewBag.Message', "success");
-                //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success"); 
+                //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success");
                 //swal.fire("For your privacy concerns", "Please join meeting using browser in private or incognito mode only with your coded name : " + codedname, "success");
             }
             else {
@@ -591,6 +594,18 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+</script>
+<script>
+    function AssingInterviewYourSelf(id,interviewDate){
+         $.ajax({
+            type: "POST",
+            url: "/Interview/InterviewAssignYourself",
+            data: { id: id,interviewDate:interviewDate },
+            success: function (data) {
+                alert(data);
+            }
+        });
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
