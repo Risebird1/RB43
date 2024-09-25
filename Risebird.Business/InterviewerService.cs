@@ -1649,5 +1649,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> SubmitInterviewerApplication(InterviewerDirectApplicationVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.SubmitInterviewerApplication(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
