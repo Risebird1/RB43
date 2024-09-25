@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -10277,5 +10278,42 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateInterviewerApplicationLink(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if(irfId >0)
+                    {
+                        //var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
+                        //var url = Url.Action("Apply", "Interviewer",
+                        //        new { id = encryptedId },
+                        //        Request.Scheme);
+
+                        var url = Url.Action("Apply", "Interviewer",
+                                new { id = irfId },
+                                Request.Scheme);
+                        return Json(url);
+                    }
+                    else
+                    {
+                        return Json(null);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Some error occured. Please try again!");
+                return Json(null);
+            }
+        }
     }
 }

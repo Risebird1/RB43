@@ -1,0 +1,46 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_SubmitInterviewerApplication'))
+BEGIN
+    DROP PROCEDURE dbo.usp_SubmitInterviewerApplication
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_SubmitInterviewerApplication]    
+
+@IRFId int,
+@ResumeLink varchar(max),  
+@EmailId varchar(100),
+@Phone varchar(20),
+@timeNow datetime
+ 
+AS    
+Begin  
+
+begin try
+	begin tran
+	if not exists (select top 1 id from InterviewerDirectApplication where irfid = @IRFId and EmailId = @EmailId)
+	Begin
+		Insert into InterviewerDirectApplication(IRFId, EmailId, Phone, ResumeLink, CreatedAt, CreatedBy)  
+		values(@IRFId, @EmailId, @Phone, @ResumeLink, @timeNow, @EmailId) 
+	End
+	 
+
+	commit tran
+end try
+begin catch
+	rollback transaction    
+	DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),    
+	@Severity int = ERROR_SEVERITY(),    
+	@State smallint = ERROR_STATE()    
+	RAISERROR (@Message, @Severity, @State)
+end catch
+
+
+
+End
+GO
+
