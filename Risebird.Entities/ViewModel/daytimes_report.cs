@@ -70,7 +70,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interview Channel")]
         public string InterviewChannelId { get; set; }
         [EmailAddress]
-        [Display(Name = "Client HR Coordinator")]
+        [Display(Name = "Client HR Coordinator Emailid")]
         public string HRCoordinator { get; set; }
         public string InterviewDate { get; set; }
         [Display(Name = "Upload Your Resume")]
