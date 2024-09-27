@@ -4161,7 +4161,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, int user)//, int irf
+        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, string user)//, int irf
         {
             //check link expiry befire hitting db
 
@@ -4169,9 +4169,11 @@ namespace Risebird.Web.Controllers
             {
                 //dec = dec.Replace(" ", "+");
                 //var userId = await _encryptionHelper.DecryptData(user);
-                if(user>0)//!string.IsNullOrEmpty(userId)
+                string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
+                var userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
-                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, user);//, irf
+                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
                     if (result != null)
                     {
                         return Json("Status updated successfully.");
@@ -4236,15 +4238,16 @@ namespace Risebird.Web.Controllers
             try
             {
                 //dec = dec.Replace(" ", "+");
-                //var irfId = await _encryptionHelper.DecryptInteger(id);
-                var irfId = id;
-                if (!string.IsNullOrEmpty(irfId))//irfId.HasValue && irfId.Value > 0
+                string decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                var irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                //var irfId = id;
+                if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
                 {
                     //first check if the irf id is valid
                     bool isValid = true;
                     if(isValid)
                     {
-                        return View(new InterviewerDirectApplicationVM { EncryptedIrfId = id});
+                        return View(new InterviewerDirectApplicationVM { EncryptedIrfId = decodedEncryptedId });
 
                     }
                     else
@@ -4272,51 +4275,88 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
+                //if(!ModelState.IsValid)
+                //{
+                //    return View(model);
+                //}
+                //else
+                //{
+                //    if (model.ResumeFile != null)
+                //    {
+                //        string uploadedFileURL= string.Empty;
+                //        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                //        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                //                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                //        {
+                //            var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+
+                //            await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+                //            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                //            var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                //            uploadedFileURL = blob.Uri.ToString();
+                //            model.ResumeLink = uploadedFileURL;
+                //        }
+
+
+                //    }
+                //    var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
+                //    //var irfId = model.EncryptedIrfId;
+                //    if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
+                //    {
+                //        model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
+                //        var result = await _interviewerService.SubmitInterviewerApplication(model);//, irf
+                //        if (result)
+                //        {
+                //            return Json("Your application has been submitted successfully!");
+                //        }
+                //        else
+                //        {
+                //            return Json("Submission failed!");
+                //        }
+                //    }
+                //    else
+                //    {
+                //        return Json("Failed!");
+                //    }
+                //}
+
+                if (model.ResumeFile != null)
                 {
-                    return View(model);
-                }
-                else
-                {
-                    if (model.ResumeFile != null)
+                    string uploadedFileURL = string.Empty;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                     {
-                        string uploadedFileURL= string.Empty;
-                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
-                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                        {
-                            var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+                        var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
 
-                            await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            model.ResumeLink = uploadedFileURL;
-                        }
-
-
+                        await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        model.ResumeLink = uploadedFileURL;
                     }
-                    //var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
-                    var irfId = model.EncryptedIrfId;
-                    if (!string.IsNullOrEmpty(irfId))//irfId.HasValue && irfId.Value>0
+
+
+                }
+                var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
+                //var irfId = model.EncryptedIrfId;
+                if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
+                {
+                    model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
+                    var result = await _interviewerService.SubmitInterviewerApplication(model);//, irf
+                    if (result)
                     {
-                        model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
-                        var result = await _interviewerService.SubmitInterviewerApplication(model);//, irf
-                        if (result)
-                        {
-                            return Json("Your application has been submitted successfully!");
-                        }
-                        else
-                        {
-                            return Json("Submission failed!");
-                        }
+                        return Json("Your application has been submitted successfully!");
                     }
                     else
                     {
-                        return Json("Failed!");
+                        return Json("Submission failed!");
                     }
                 }
-                
+                else
+                {
+                    return Json("Failed!");
+                }
 
             }
             catch (Exception ex)
@@ -4325,6 +4365,39 @@ namespace Risebird.Web.Controllers
                 return Json("Something's wrong. Please try again later.");
             }
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Applicants()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")//|| profileName== "InterviewerManagement"
+                    {
+                        var model = await _interviewerService.GetInterviewerApplicants(emailId);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
         }
     }
 }
