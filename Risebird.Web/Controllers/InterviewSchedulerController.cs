@@ -267,16 +267,16 @@ namespace Risebird.Web.Controllers
                     model.Uniqueid = result.FirstOrDefault().Uniqueid;
                     ViewBag.Start = 1;
                     model._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
-                    var _listhr = await _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
-                    var _staffing = await _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
-                    if (_staffing != null)
-                    {
-                        model._liststaffing = new SelectList(_staffing);
-                    }
-                    if (_listhr != null)
-                    {
-                        model._listhr = new SelectList(_listhr);
-                    }
+                    //var _listhr = await _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
+                    //var _staffing = await _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
+                    //if (_staffing != null)
+                    //{
+                    //    model._liststaffing = new SelectList(_staffing);
+                    //}
+                    //if (_listhr != null)
+                    //{
+                    //    model._listhr = new SelectList(_listhr);
+                    //}
                     if (model._IRFDetails == null)
                     {
                         model._IRFDetails = new ScheculeInterviewIRFVM();
@@ -1407,16 +1407,16 @@ namespace Risebird.Web.Controllers
                     model.Uniqueid = result.FirstOrDefault().Uniqueid;
                     ViewBag.Start = 1;
                     model._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
-                    var _listhr = await _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
-                    var _staffing = await _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
-                    if (_staffing != null)
-                    {
-                        model._liststaffing = new SelectList(_staffing);
-                    }
-                    if (_listhr != null)
-                    {
-                        model._listhr = new SelectList(_listhr);
-                    }
+                    //var _listhr = await _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
+                    //var _staffing = await _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
+                    //if (_staffing != null)
+                    //{
+                    //    model._liststaffing = new SelectList(_staffing);
+                    //}
+                    //if (_listhr != null)
+                    //{
+                    //    model._listhr = new SelectList(_listhr);
+                    //}
                     if (model._IRFDetails == null)
                     {
                         model._IRFDetails = new ScheculeInterviewIRFVM();
