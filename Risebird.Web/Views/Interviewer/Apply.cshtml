@@ -151,6 +151,7 @@
             $.ajax({
                 url: '/Interviewer/GetInterviwerExists',
                 type: 'POST',
+                async : false,
                 data: { 'interviewer': interviewer },
                 success: function (result) {
                     if (result) {
