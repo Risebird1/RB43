@@ -22,5 +22,26 @@ namespace Risebird.Entities.ViewModel
 
         [Required]
         public IFormFile ResumeFile { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string SkillChannelName { get; set; }
+        public string JDTiltle { get; set; }
+        public string JDTitleTwo { get; set; }
+        public bool IsIrfDeleted { get; set; }
+        public string AssessmentGroup { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public string ChannelOwner { get; set; }
+        public DateTime ChannelCreationDate { get; set; }
+        public string OpenAIResponse { get; set; }
+        public string AIVerdict { get; set; }
+        public DateTime? AIEvaluationGeneratedAt { get; set; }
+        public string AIEvaluationPerformedBy { get; set; }
+        public string CompanyName { get; set; }
+        public bool isVerified { get; set; }
+        public bool IsEmployed { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime? DOB { get; set; }
+        public string EVGeneratedBy { get; set; }
+        public DateTime EVGeneratedAt { get; set; }
     }
 }

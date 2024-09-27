@@ -120,5 +120,9 @@ namespace Risebird.Repository.Interface
         Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization);
         Task<IEnumerable<FLNConversionVM>> GetFLNConversionData(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> SubmitInterviewerApplication(InterviewerDirectApplicationVM model);
+        Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
+        Task<bool> SaveApplicantInterviewerAIVerdict(int id, string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
+        Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id);
+        Task<bool> UpdateApplicantsEmploymentDetails(InterviewerDirectApplicationVM obj, string loggedInUser);
     }
 }

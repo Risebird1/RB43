@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -18,6 +19,7 @@ namespace Risebird.CommonHelper
         private readonly string key;
         private readonly string genericKey;
         private readonly string baseEncodedKey;
+        private readonly byte[] _byteKey;
 
 
         public EncryptionHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
@@ -27,6 +29,7 @@ namespace Risebird.CommonHelper
             key = _configuration["EncryptionDetails:Key"];
             genericKey = _configuration["EncryptionDetails:GenericKey"];
             baseEncodedKey = _configuration["EncryptionDetails:BaseEncodedKey"];
+            _byteKey = Encoding.UTF8.GetBytes("ThisIsA32ByteLongKeyForAES256".PadRight(32).Substring(0, 32));
 
         }
 
@@ -229,44 +232,44 @@ namespace Risebird.CommonHelper
         //        return string.Empty;
         //    }
         //}
-        public async Task<string> EncryptInteger(int id)
-        {
-            try
-            {
-                byte[] encryptedBytes;
-                using (Aes aesAlg = Aes.Create())
-                {
-                    //aesAlg.Key = Encoding.UTF8.GetBytes(key);
-                    aesAlg.Key = Convert.FromBase64String(baseEncodedKey);
-                    aesAlg.GenerateIV(); // Generate a new IV
+        //public async Task<string> EncryptInteger(int id)
+        //{
+        //    try
+        //    {
+        //        byte[] encryptedBytes;
+        //        using (Aes aesAlg = Aes.Create())
+        //        {
+        //            //aesAlg.Key = Encoding.UTF8.GetBytes(key);
+        //            aesAlg.Key = Convert.FromBase64String(baseEncodedKey);
+        //            aesAlg.GenerateIV(); // Generate a new IV
 
-                    ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+        //            ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-                    using (MemoryStream msEncrypt = new MemoryStream())
-                    {
-                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                        {
-                            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                            {
-                                // Serialize the integer to a string and write to the crypto stream
-                                swEncrypt.Write(id.ToString());
-                            }
-                        }
+        //            using (MemoryStream msEncrypt = new MemoryStream())
+        //            {
+        //                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+        //                {
+        //                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+        //                    {
+        //                        // Serialize the integer to a string and write to the crypto stream
+        //                        swEncrypt.Write(id.ToString());
+        //                    }
+        //                }
 
-                        // Combine the IV and encrypted bytes
-                        encryptedBytes = aesAlg.IV.Concat(msEncrypt.ToArray()).ToArray();
-                    }
+        //                // Combine the IV and encrypted bytes
+        //                encryptedBytes = aesAlg.IV.Concat(msEncrypt.ToArray()).ToArray();
+        //            }
 
-                    // Return the Base64-encoded IV + cipher text
-                    return Convert.ToBase64String(encryptedBytes);
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return string.Empty;
-            }
-        }
+        //            // Return the Base64-encoded IV + cipher text
+        //            return Convert.ToBase64String(encryptedBytes);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return string.Empty;
+        //    }
+        //}
 
 
         //public async Task<int?> DecryptInteger(string encryptedId)
@@ -311,50 +314,121 @@ namespace Risebird.CommonHelper
         //    }
         //}
 
-        public async Task<int?> DecryptInteger(string encryptedId)
+        //public async Task<int?> DecryptInteger(string encryptedId)
+        //{
+        //    try
+        //    {
+        //        // Convert the encrypted string from Base64
+        //        byte[] fullCipher = Convert.FromBase64String(encryptedId);
+
+        //        using (Aes aesAlg = Aes.Create())
+        //        {
+        //            //aesAlg.Key = Encoding.UTF8.GetBytes(key);
+        //            aesAlg.Key = Convert.FromBase64String(baseEncodedKey);
+        //            // Extract the first 16 bytes (AES block size) for the IV
+        //            byte[] iv = fullCipher.Take(16).ToArray();
+        //            aesAlg.IV = iv;
+
+        //            // The rest is the encrypted data
+        //            byte[] cipherText = fullCipher.Skip(16).ToArray();
+
+        //            ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+        //            using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+        //            {
+        //                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+        //                {
+        //                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+        //                    {
+        //                        // Read the decrypted data as string
+        //                        string decryptedData = await srDecrypt.ReadToEndAsync();
+
+        //                        // Convert the decrypted string back to an integer
+        //                        return int.Parse(decryptedData);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
+
+        public async Task<string> EncryptInteger(int id)
         {
             try
             {
-                // Convert the encrypted string from Base64
-                byte[] fullCipher = Convert.FromBase64String(encryptedId);
-
                 using (Aes aesAlg = Aes.Create())
                 {
-                    //aesAlg.Key = Encoding.UTF8.GetBytes(key);
-                    aesAlg.Key = Convert.FromBase64String(baseEncodedKey);
-                    // Extract the first 16 bytes (AES block size) for the IV
-                    byte[] iv = fullCipher.Take(16).ToArray();
-                    aesAlg.IV = iv;
+                    aesAlg.Key = _byteKey;
+                    aesAlg.GenerateIV(); // Generate a new IV for each encryption
 
-                    // The rest is the encrypted data
-                    byte[] cipherText = fullCipher.Skip(16).ToArray();
+                    ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-                    ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-                    using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                    using (MemoryStream msEncrypt = new MemoryStream())
                     {
-                        using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                        {
-                            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                            {
-                                // Read the decrypted data as string
-                                string decryptedData = await srDecrypt.ReadToEndAsync();
+                        // Prepend the IV
+                        msEncrypt.Write(aesAlg.IV, 0, aesAlg.IV.Length);
 
-                                // Convert the decrypted string back to an integer
-                                return int.Parse(decryptedData);
-                            }
+                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            // Write the integer to the crypto stream
+                            await swEncrypt.WriteAsync(id.ToString());
                         }
+
+                        return Convert.ToBase64String(msEncrypt.ToArray());
                     }
                 }
             }
             catch (Exception ex)
             {
+                // Handle exception
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+        public async Task<int?> DecryptInteger(string encryptedId)
+        {
+            try
+            {
+                byte[] fullCipher = Convert.FromBase64String(encryptedId);
+
+                using (Aes aesAlg = Aes.Create())
+                {
+                    aesAlg.Key = _byteKey;
+
+                    // Extract the IV (the first 16 bytes)
+                    byte[] iv = new byte[16];
+                    Array.Copy(fullCipher, 0, iv, 0, iv.Length);
+                    aesAlg.IV = iv;
+
+                    // Extract the cipher text (remaining bytes after IV)
+                    byte[] cipherText = new byte[fullCipher.Length - iv.Length];
+                    Array.Copy(fullCipher, iv.Length, cipherText, 0, cipherText.Length);
+
+                    ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                    using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                    {
+                        // Read the decrypted integer from the stream
+                        string decryptedData = await srDecrypt.ReadToEndAsync();
+                        return int.Parse(decryptedData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-
-
 
     }
 }
