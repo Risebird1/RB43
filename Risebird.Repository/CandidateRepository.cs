@@ -313,12 +313,17 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId)
+        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, string emailid = null)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
+                if (string.IsNullOrWhiteSpace(emailid))
+                {
+                    emailid = "";
+                }
+                dynamicParameters.Add("@emailid", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidatesResumes", dynamicParameters,

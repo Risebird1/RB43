@@ -18,7 +18,7 @@ namespace Risebird.Business.Interface
         Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid);
         Task<Candidate> GetCandidatesDetails(int irfId, int candidateId);
         Task<bool> AddResume(List<CandidateResume> resumeList);
-        Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId);
+        Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, string emailid = null);
         Task<bool> DeleteCandidateResume(int id);
         Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId);
         Task<IEnumerable<CandidateTimelineVM>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
