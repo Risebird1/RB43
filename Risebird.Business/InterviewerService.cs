@@ -143,7 +143,7 @@ namespace Risebird.Business
                 if (result)
                 {
 
-                    string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + interviewerProfile.UserId;// _encryptionHelper.EncryptData(userId.ToString()).Result;+ "&irf=" + interviewerProfile.TargetIrfId.ToString()
+                    string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + _encryptionHelper.EncryptInteger(userId).Result;// interviewerProfile.UserId
 
                     string dropProfileButton = "";
                     //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
