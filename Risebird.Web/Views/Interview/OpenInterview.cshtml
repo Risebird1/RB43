@@ -28,6 +28,16 @@
             color: #00000094;
             font-weight: 400;
         }
+        .mandate-btn{
+        background: #fcf1e6;
+        border: 1px #b776272b solid;
+        color: #de8e48 !important;
+        font-size: 12px;
+        border-radius: 4px;
+        padding: 5px 7px !important;
+        font-weight: 700;
+
+        }
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -105,6 +115,7 @@
                                                         {
                                                             <th class="disabled-sorting text-center">Actions</th>
                                                         }
+                                                        <th>Instruction</th>
                                                         <th>Date</th>
                                                         @*  <th>Variable Pay</th>*@
                                                         <th id="openinterview_2">Interview Details</th>
@@ -119,6 +130,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th class="disabled-sorting text-center">Actions</th>
+                                                         <th>Instruction</th>
                                                         <th>Date</th>
 
                                                         @* <th>Variable Pay</th>*@
@@ -146,7 +158,9 @@
                                                                 @* <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button> *@
                                                                 <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate','@item.AudioComment','@item.CompanyDetails')" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
                                                             </td>
-
+                                                            <td>
+<button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel()"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
+ </td>
                                                             <td>
                                                                 @item.interviewDate
 
@@ -359,7 +373,7 @@
                         <i class='fa fa-warning' style='color: white'></i>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Reminder</h5>
+                <h5 class="modal-title pull-left">Mandatory Interview Instruction</h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
@@ -368,6 +382,9 @@
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert" style="margin:0px;padding:0px;" id="txtconfirmmessage"></h2>
                 </div>
+                <div class="col-md-12 pull-left text-center">
+                 <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
+                 </div>
                 <div id="divvideoinstruction" style="display:none">
                     <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
                         <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
@@ -381,10 +398,21 @@
                         <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=""> Click to view instruction</a>
                     </div>
                 </div>
-                <div class="col-md-12 pull-left text-center">
-                    <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
+
+                 <div id ="mandate-popup-btn" class="col-md-12 pull-left text-center" style="display:none">
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
                 </div>
+                <div  class="col-md-12  text-center" style="margin:0px auto;display: block;width: 335px;clear: both;">
+                    <div id="assign-btn"><button type="button" style="background:#28982399;float: left;" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK, Continue with assigning!</button></div>
+                    <div id ="unassign-btn" class="mdc-button button-warning" style="float: left;margin-left: 3px;">
+                <span onclick="()" title="Unassign Yourself" class="mdc-fab__icon material-icons">UNASSIGN</span>
+                </div>
+              
+              </div>
+
+                 
+
+
             </div>
         </div>
     </div>
@@ -636,6 +664,13 @@
     }
 </script>
 <script>
+       function InstructionModel(){
+        openInterviewerAlert();
+        $('#assign-btn').hide();
+        $('#unassign-btn').hide();
+        $('#txtconfirmmessage').hide();
+         $('#mandate-popup-btn').show();
+    }
      function openInterviewerAlert() {
         var modal = document.getElementById("InterviewerAlert");
         modal.style.display = "block";
