@@ -53,8 +53,10 @@
             data: { 'irfId': irfId },
             success: function (result) {
                 if (result != null) {
-                    link = result;
-                    $("#txtInterviewerApplicationLink").text(link);
+                    debugger;
+                    encodedUrl = result;
+                    let decodedUrl = decodeURIComponent(encodedUrl);
+                    $("#txtInterviewerApplicationLink").text(decodedUrl);
                 }
                 else {
                     swal.fire("Some error occured. Please try again!");
