@@ -22,6 +22,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.Web.Controllers
 {
@@ -765,8 +766,14 @@ namespace Risebird.Web.Controllers
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
         [HttpPost]
-        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber)
+        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber, int? applicantId)
         {
+            string loggedInUser;
+            loggedInUser = HttpContext.Session.GetString("email")?.Trim();
+            if(!string.IsNullOrEmpty(loggedInUser))
+            {
+                loggedInUser = loggedInUser.Replace("\"", "");
+            }
             var employementdetails = new EmploymentDetailsDM();
             if (!string.IsNullOrWhiteSpace(mobilenumber))
             {
@@ -842,6 +849,33 @@ namespace Risebird.Web.Controllers
                 employementdetails.message = "Fail to verify,please check the details and try again.";
             }
             employementdetails.CandidateEmail = employementdetails.CandidateEmail?.Trim();
+            if (applicantId.HasValue && employementdetails != null && employementdetails.message == null)
+            {
+                var model = new InterviewerDirectApplicationVM();
+                //update verification status in interviewer direct application table
+                string str = employementdetails.Name;
+                if (str != null)
+                {
+                    int index = str.IndexOf(" ");
+                    if (index > 0)
+                    {
+                        
+                        model.FirstName = str.Substring(0, index);
+                        model.LastName = str.Substring(index + 1);
+                    }
+                    else
+                    {
+                        model.FirstName = employementdetails.Name; 
+                    }
+                }
+                //model.isVerified = employementdetails.isVerified;   ASK THIS******************
+                model.isVerified = true;
+                model.IsEmployed = employementdetails.Isemployed;
+                model.CompanyName = employementdetails.CompanyName;
+                model.DOB = employementdetails.DOB;
+                model.id = applicantId.Value;
+                await _interviewerService.UpdateApplicantsEmploymentDetails(model, loggedInUser);
+            }
             return Json(employementdetails);
         }
 

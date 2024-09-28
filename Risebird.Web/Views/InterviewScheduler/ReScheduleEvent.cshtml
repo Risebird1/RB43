@@ -342,7 +342,7 @@
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
                                         </div>
-                                        @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
+                                        @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
                                         @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
                                     </div>
                                 }

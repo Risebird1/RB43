@@ -13,6 +13,8 @@ using System;
 using System.Net.Http.Headers;
 using System.Linq;
 using iTextSharp.text.pdf;
+using System.Net;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -385,6 +387,206 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return View(new RunResult());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApplicantAIScreening(int id)//, string applicantEmailId, string jdTitle, string ResumeLink
+        {
+            try
+            {
+                //string decodedResumeUrl = string.Empty;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var loggedInUser = HttpContext.Session.GetString("email")?.Trim();
+                    loggedInUser = loggedInUser.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        //if (!string.IsNullOrEmpty(ResumeLink))
+                        //{
+                        //    decodedResumeUrl = WebUtility.UrlDecode(ResumeLink);
+                        //}
+                        var aiEvaluation = await _interviewerService.GetApplicantInterviewerAIEvaluation(id);
+                        //ViewBag.InterviewerEmail = aiEvaluation.EmailId;
+                        //ViewBag.ResumeLink = aiEvaluation.ResumeLink;
+                        //ViewBag.PrimarySpecialization = aiEvaluation.JDTiltle;
+
+                        if (aiEvaluation != null)
+                        {
+                            if(aiEvaluation.OpenAIResponse != null)
+                            {
+                                var modal = JsonConvert.DeserializeObject<RunResult>(aiEvaluation.OpenAIResponse);
+                                return View(modal);
+
+                            }
+                            else
+                            {
+                                if (!string.IsNullOrEmpty(aiEvaluation.ResumeLink))
+                                {
+                                    //decodedResumeUrl = WebUtility.UrlDecode(ResumeLink);
+                                    var request = new ScreeningRequest
+                                    {
+                                        //Skills = skills,
+                                        JDTitle = aiEvaluation.JDTiltle,
+                                        ResumeLink = aiEvaluation.ResumeLink,
+                                        Type = ProfileNames.Interviewer
+                                    };
+                                    var response = await _assistantServiceHelper.ScreenAsync(request);
+                                    var responseInJson = JsonConvert.SerializeObject(response);
+                                    bool saveOperationResult = false;
+                                    string aiResponseUrl = string.Empty;
+                                    if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                                    {
+                                        saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdict(id, aiEvaluation.EmailId, aiEvaluation.JDTiltle, responseInJson, loggedInUser);
+                                    }
+
+                                    if (saveOperationResult)
+                                    {
+                                        aiResponseUrl = Url.Action("ApplicantAIEvaluation", "AIScreener",
+                                        new { id = id },
+                                        Request.Scheme);
+
+                                        //aiResponseUrl = Request.Scheme + "://" + Request.Host.Value + $"/AIScreener/ApplicantAIEvaluation?emailId={emailId}&primarySpecialization={primarySpecialization}";
+                                    }
+                                    string OpenAIScreeningResponse = responseInJson; // Example input string
+                                    string AIVerdict = "Yes"; // Default value
+                                    int verdictIndex = OpenAIScreeningResponse.ToLower().IndexOf("verdict");
+
+                                    if (verdictIndex != -1)
+                                    {
+                                        // Extract substring after the word 'verdict'
+                                        string verdictSubstr = OpenAIScreeningResponse.Substring(verdictIndex + 7, Math.Min(50, OpenAIScreeningResponse.Length - (verdictIndex + 7)));
+
+                                        // Remove 'annotation' and 'annotations' (case-insensitive)
+                                        verdictSubstr = verdictSubstr.Replace("annotation", "", StringComparison.OrdinalIgnoreCase)
+                                                                     .Replace("annotations", "", StringComparison.OrdinalIgnoreCase);
+
+                                        // Convert to lowercase for case-insensitive comparison
+                                        string lowerVerdict = verdictSubstr.ToLower();
+
+                                        // Check if it contains 'no', 'not', or 'doesn't'
+                                        if (lowerVerdict.Contains("no") || lowerVerdict.Contains("not") || lowerVerdict.Contains("doesn't"))
+                                        {
+                                            AIVerdict = "No";
+                                        }
+                                    }
+
+                                    // AIVerdict now contains 'No' or 'Yes' based on the condition
+                                    if (AIVerdict == "Yes")
+                                    {
+                                        if (aiEvaluation.IsEmployed && aiEvaluation.IsEmployed)
+                                        {
+                                            //call method to add Interviewer here
+                                            var obj = new InterviewerProfileVM();
+                                            obj.EmailId = aiEvaluation.EmailId;
+                                            obj.MobileNumber = aiEvaluation.Phone;
+                                            obj.ResumeLink = aiEvaluation.ResumeLink;
+                                            obj.CompanyName = aiEvaluation.CompanyName;
+                                            obj.isVerified = aiEvaluation.isVerified;
+                                            obj.IsEmployed = aiEvaluation.IsEmployed;
+                                            obj.DOB = aiEvaluation.DOB.HasValue ? aiEvaluation.DOB.Value : DateTime.Now;
+                                            obj.FirstName = aiEvaluation.FirstName;
+                                            obj.LastName = aiEvaluation.LastName;
+                                            obj.TargetIrfId = aiEvaluation.IRFId;
+                                            obj.AssessmentGroupId = aiEvaluation.AssessmentGroupId.ToString();
+                                            obj.PrimarySpecializationForAIVerdict = aiEvaluation.JDTiltle;
+                                            obj.Country = "";
+                                            obj.PrimarySpecializationForAcknowledgement = aiEvaluation.JDTiltle;
+                                            obj.AIResponse = aiEvaluation.OpenAIResponse;
+                                            obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
+                                            int userId;
+                                            string agList;
+                                            _interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId);
+                                        }
+                                        return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+
+                                    }
+                                    else
+                                    {
+                                        return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
+                                    }
+
+                                }
+                                else
+                                {
+                                    //return Json("Error generating AI response.");
+                                    return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "Resume Missing!" });
+                                }
+                            }
+                            
+                        }
+                        else
+                        {
+                            return Json(new { errorMessage = "Not Found!" });
+
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Error generating AI response.");
+                return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "Failed to generate verdict. Please try again." });
+            }
+        }
+
+        public async Task<IActionResult> ApplicantAIEvaluation(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var aiEvaluation = await _interviewerService.GetApplicantInterviewerAIEvaluation(id);
+                        ViewBag.InterviewerEmail = aiEvaluation.EmailId;
+                        ViewBag.ResumeLink = aiEvaluation.ResumeLink;
+                        ViewBag.PrimarySpecialization = aiEvaluation.JDTiltle;
+
+                        if (aiEvaluation != null)
+                        {
+                            var modal = JsonConvert.DeserializeObject<RunResult>(aiEvaluation.OpenAIResponse);
+                            return View("PreOnboardingAIVerdictDetails", modal);
+
+                        }
+                        else
+                        {
+                            return View("PreOnboardingAIVerdictDetails", new RunResult());
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("PreOnboardingAIVerdictDetails", new RunResult());
             }
         }
     }
