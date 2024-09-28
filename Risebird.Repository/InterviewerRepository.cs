@@ -460,7 +460,7 @@ namespace Risebird.Repository
             parameters.Add("@isVerified", entity.isVerified);
             parameters.Add("@CompanyName", entity.CompanyName);
             parameters.Add("@IsEmployed", entity.IsEmployed);
-            //parameters.Add("@TargetIrfId", entity.TargetIrfId);
+            parameters.Add("@TargetIrfId", entity.TargetIrfId);
             parameters.Add("@PrimarySpecializationForAcknowledgement", entity.PrimarySpecializationForAcknowledgement);
             //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
@@ -3523,6 +3523,104 @@ namespace Risebird.Repository
                     parameters.Add("@IRFId", model.IRFId);
                     parameters.Add("@timeNow", DateTime.Now);
                     var result = await SqlMapper.QueryAsync(con, "usp_SubmitInterviewerApplication", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@startDate", startDate);
+                dynamicParameters.Add("@endDate", endDate);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                dynamicParameters.Add("@loggedInUser", loggedInUser);
+                //dynamicParameters.Add("@targetIrf", targetIrf);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerDirectApplicationVM>(con, "usp_GetInterviewerApplicants", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveApplicantInterviewerAIVerdict(int id, string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    parameters.Add("@EmailId", emailId);
+                    parameters.Add("@PrimarySpecialization", PrimarySpecialization);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveApplicantInterviewerAIVerdict", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    var result = await SqlMapper.QuerySingleAsync<InterviewerDirectApplicationVM>(con, "usp_GetApplicantInterviewerAIEvaluation", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateApplicantsEmploymentDetails(InterviewerDirectApplicationVM obj, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", obj.id);
+                    parameters.Add("@isVerified", obj.isVerified);
+                    parameters.Add("@IsEmployed", obj.IsEmployed);
+                    parameters.Add("@CompanyName", obj.CompanyName);
+                    parameters.Add("@FirstName", obj.FirstName);
+                    parameters.Add("@LastName", obj.LastName);
+                    parameters.Add("@DOB", (obj.DOB.HasValue ? obj.DOB.Value : null));
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateApplicantsEmploymentDetails", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }

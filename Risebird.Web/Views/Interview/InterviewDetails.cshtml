@@ -23,7 +23,7 @@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="heading-txt">
             Review the below client instructions to get the meeting link<br />
-                @if (Model.IsVideoRequired == true)
+            @if (Model.IsVideoRequired == true)
             {
                 <div class="video-onmsg"><svg class="blink" style="color: #e12f2f;width: 28px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-5 0h-2v-2h2v2zm0-4h-2V8h2v4zm-1 10c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2z" fill="#e12f2f"></path></svg> Important Notice: Interview requires mandatory Video On of the interivewer</div>
             }
@@ -117,7 +117,7 @@
     </div>
     </div>*@
     @*Start: Pre Interview Screening Report *@
-    @Html.HiddenFor(m=>m.PreReportLink)
+    @Html.HiddenFor(m => m.PreReportLink)
     @if (!string.IsNullOrWhiteSpace(Model.PreReportLink))
     {
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
@@ -127,14 +127,14 @@
                         <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Pre-Interview Screening Report
                     </label>
                     <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
-                    <label style="visibility:hidden" for="checkbox_eight"></label>
+                        <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                        <label style="visibility:hidden" for="checkbox_eight"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" checked />
-                    <label for="hidden_fields_eight_1"></label>
-                    
-                    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                        <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" checked />
+                        <label for="hidden_fields_eight_1"></label>
+
+                        <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                        <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
 
                     </span>
                 </label>
@@ -147,7 +147,7 @@
                 </fieldset>
             </div>
         </div>
-   }
+    }
     @*End: Pre Interview Screening Report *@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
@@ -665,11 +665,11 @@
         </div>
     </div>
 
-   @* <div class="footer-nav">
-        <div class="button-wrapper">
-            <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
-           
-        </div>
+    @* <div class="footer-nav">
+    <div class="button-wrapper">
+    <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
+
+    </div>
     </div>*@
 </div>
 
@@ -699,21 +699,22 @@
                     <div class="col-md-12 pull-left text-center">
                         <h2 class="interviewerAlert" style="margin:0px;padding:0px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
                     </div>
-               }
+                }
 
-              @if (!string.IsNullOrEmpty(Model.AudioComment)){
-              <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
-                <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
-               </div>
-                <video style="width:100%" controls><source src="@Model.AudioComment"></video>
-               }
-                
+                @if (!string.IsNullOrEmpty(Model.AudioComment))
+                {
+                    <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
+                        <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
+                    </div>
+                    <video id="vidvideoinstruction" style="width:100%" controls><source src="@Model.AudioComment"></video>
+                }
+
                 @if (!string.IsNullOrEmpty(Model.CompanyDetails))
                 {
                     <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
-                     <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+                        <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
                     </div>
-             }
+                }
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
@@ -777,7 +778,7 @@
                 {
                     $("#techskills").empty().html(data);
                 }
-                
+
             }
         });
         var interviewId = @ViewBag.InterviewId;
@@ -1002,11 +1003,11 @@
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "block";
     }
-
-
     function closeInterviewerAlert() {
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "none";
+        var video = document.getElementById('vidvideoinstruction');
+        video.pause();
     }
 
 </script>

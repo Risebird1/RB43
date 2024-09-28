@@ -55,6 +55,7 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @AssessmentGroupDifference varchar(100),  
 @assessmentGroupList varchar(max) out,  
 @RemovedAssessmentGroups varchar(max)=null,
+@TargetIrfId int,
 @outputUserId int out
 AS              
 Begin
@@ -280,6 +281,17 @@ Declare @v_User_Id int;
  declare @skillId int = (select top 1 id from Skill where [Name] like '%' + @primaryAgSkill + '%')
  
  select @outputUserId=@v_User_Id 
+ if(@TargetIrfId > 0)
+ Begin
+	declare @rate int
+	set @rate =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @TargetIrfId) 
+				and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @TargetIrfId)
+				and CompanyType = (select CompanyType from IRF where id = @TargetIrfId))
+
+	 insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate)
+	 values (@TargetIrfId, @InterviewerProfileId, @v_User_Id, 1, 0, @rate)
+ End
+
 
   INSERT INTO [dbo].[TransInterviewerSkill]
 		(InterviewerProfileId, 
