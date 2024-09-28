@@ -142,8 +142,9 @@ namespace Risebird.Business
                 var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
                 if (result)
                 {
-
-                    string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + _encryptionHelper.EncryptInteger(userId).Result;// interviewerProfile.UserId
+                    var encryptedUserId = _encryptionHelper.EncryptInteger(userId).Result;
+                    var encodedUserId = System.Net.WebUtility.UrlEncode(encryptedUserId);
+                    string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + encodedUserId;// interviewerProfile.UserId
 
                     string dropProfileButton = "";
                     //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
