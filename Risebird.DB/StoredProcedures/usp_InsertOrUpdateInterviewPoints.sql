@@ -8,8 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-      
-        
 CREATE Procedure usp_InsertOrUpdateInterviewPoints              
 @interviewId int              
 As              
@@ -77,11 +75,7 @@ End
               
    if(@IsEmergency=1)                                  
      Begin                                  
-      If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                                  
-      begin                                          
-       Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                    
-      End                              
-   else If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                                  
+     If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                                  
        Begin                                          
         Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                                          
        End                             
@@ -91,10 +85,6 @@ End
       If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                                  
        Begin                                          
         Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                                          
-       End                                  
-      Else If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                                  
-       begin                                          
-        Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                                          
        End                                  
      END              
  if(@meetingStatus=2)            
@@ -124,7 +114,7 @@ End
  End        
  Else        
  Begin        
-  if(@VideoDuration>5 and @Interviewdate>='2023-05-01')        
+  if(@VideoDuration>5 and @Interviewdate>='2023-05-01' and @Interviewdate<'2024-10-01')        
   begin        
   set @VideoDuration=@VideoDuration-5;        
   end        
@@ -200,6 +190,6 @@ END
     update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@CandidateEmail,[Type]='Interview' where Interviewid = @interviewId and userid=@Userid and ([Type]='Interview' or [Type]='Redo') and Status='Pending'                             
   
     END                     
-END           
+END  
 GO  
   
