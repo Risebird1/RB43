@@ -53,7 +53,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
         Task<string> RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
 
-        Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string attachmentBase64String = null, string fileName = null);//, string irfName, string primarySkill
+        Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string attachmentBase64String = null, string fileName = null,bool? isMonthly= null);//, string irfName, string primarySkill
 
         //Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null);
         Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
