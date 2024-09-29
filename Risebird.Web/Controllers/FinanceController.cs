@@ -88,6 +88,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.submit = "false";
                     }
                     var verificationdate = new DateTime(2023, 05, 01);
+                    var verificationenddate = new DateTime(2024, 10, 01);
                     foreach (var item in model)
                     {
                         //var _onemoth = item.Date.AddMonths(1).DayOfWeek;
@@ -125,7 +126,7 @@ namespace Risebird.Web.Controllers
                             item.InterviewStatusDetails = "";
                             item.VideoDuration = 0;
                         }
-                        if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                        if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                         {
                             item.VideoDuration = item.VideoDuration - 5;
                         }
@@ -165,6 +166,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Interviewer")
                     {
                         var verificationdate = new DateTime(2023, 05, 01);
+                        var verificationenddate = new DateTime(2024, 10, 01);
                         if (string.IsNullOrWhiteSpace(type))
                         {
                             type = "Pending";
@@ -273,7 +275,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 12].Value = "Video";
                                         Sheet.Cells[i, 12].Style.Font.UnderLine = true;
                                         Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                                        if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                        if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                                         {
                                             item.VideoDuration = item.VideoDuration - 5;
                                         }
@@ -488,11 +490,12 @@ namespace Risebird.Web.Controllers
                 Tds = totalAmount - payableAmount;
             }
             var verificationdate = new DateTime(2023, 05, 01);
+            var verificationenddate = new DateTime(2024, 10, 01);
             foreach (var item in model)
             {
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                 item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
-                if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                 {
                     item.VideoDuration = item.VideoDuration - 5;
                 }
@@ -860,6 +863,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var verificationdate = new DateTime(2023, 05, 01);
+                        var verificationenddate = new DateTime(2024, 10, 01);
                         //var model = _meetingService.FetchAllFNDetail();
                         var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se.AddDays(1));
                         var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
@@ -969,7 +973,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 13].Value = "No Video";
                                     }
-                                    if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                    if (item.Date >= verificationdate && item.Date < verificationenddate  && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                                     {
                                         item.VideoDuration = item.VideoDuration - 5;
                                     }
@@ -1060,6 +1064,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var verificationdate = new DateTime(2023, 05, 01);
+                        var verificationenddate = new DateTime(2024, 10, 01);
                         var model = _meetingService.FetchAllFNDetail();
                         var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
@@ -1159,7 +1164,7 @@ namespace Risebird.Web.Controllers
                                             Sheet.Cells[i, 13].Value = "Video";
                                             Sheet.Cells[i, 13].Style.Font.UnderLine = true;
                                             Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                                            if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                            if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                                             {
                                                 item.VideoDuration = item.VideoDuration - 5;
                                             }
@@ -1678,6 +1683,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> GetPaymentHistoryDetailsView(int id)
         {
             var verificationdate = new DateTime(2023, 05, 01);
+            var verificationenddate = new DateTime(2024, 10, 01);
             var model = await _meetingService.GetPaymentHistoryDetailsView(id);
             //int totalAmount = model.Sum(x => x.Points);
             //int payableAmount = 0;
@@ -1692,7 +1698,7 @@ namespace Risebird.Web.Controllers
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                 item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                 item.CandidateRatingAmount = item.CandidateRatingAmount + item.ClientRatingAmount;
-                if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                if (item.Date >= verificationdate && item.Date < verificationenddate  && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                 {
                     item.VideoDuration = item.VideoDuration - 5;
                 }

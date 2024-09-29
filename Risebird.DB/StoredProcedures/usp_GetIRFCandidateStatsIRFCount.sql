@@ -21,11 +21,23 @@ DECLARE @tbl_Temp TABLE (
     IRFId INT                          
 );                        
 if(@profile='Client')      
-BEGIN      
+BEGIN     
+Declare @ClientRoleid int
+Select @ClientRoleid=RoleId From ClientUser cu join UserList ul on ul.id=cu.UserId where ul.EmailId=@emailid
+if(@ClientRoleid=9)
+begin
+INSERT INTO @tbl_Temp                        
+select distinct cs.IRFId from CandidateStatus cs join IRF on IRF.id=cs.IRFId join UserList ul on ul.id = irf.RisebirdHr       
+join ClientUser cu on cu.ClientId=IRF.ClientId join UserList uli on uli.id=cu.UserId
+Where uli.EmailId=@emailid and  [Status] =12 and cast(cs.[Date] as date) <= cast(@endDate as date) and cast(cs.[Date] as date) >= cast(@startDate as date)                    
+end
+else
+begin
 INSERT INTO @tbl_Temp                        
 select distinct cs.IRFId from CandidateStatus cs join IRF on IRF.id=cs.IRFId join UserList ul on ul.id = irf.RisebirdHr       
 join TransClientUser tc on tc.IRFId=IRF.id join UserList uli on uli.id=tc.ClientUserId      
- Where uli.EmailId=@emailid and  [Status] =12 and cast(cs.[Date] as date) <= cast(@endDate as date) and cast(cs.[Date] as date) >= cast(@startDate as date)                     
+Where uli.EmailId=@emailid and  [Status] =12 and cast(cs.[Date] as date) <= cast(@endDate as date) and cast(cs.[Date] as date) >= cast(@startDate as date)                     
+ end
 END      
 else      
 begin      
