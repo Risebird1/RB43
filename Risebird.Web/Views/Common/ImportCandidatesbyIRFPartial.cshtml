@@ -60,7 +60,7 @@
     </div>
 </div>
 
-<div id="importResultModal" class="modal modal-bg">
+<div id="importResultModal" class="modal modal-bg" style="z-index:1060">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -96,7 +96,7 @@
                     <h5 class="modal-title" id="id_projectimport_Title"> Import Candidates</h5>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+                    <span aria-hidden="true" id="importprojectPopUp" style="cursor:pointer;">&times;</span>
                 </button>
                 <div class="modal-body">
                     <div class="form-group text-center">
@@ -337,7 +337,7 @@
     // }
 </script>
 <script>
-    var projectspan = document.getElementById("id_projectimport_myModal");
+    var projectspan = document.getElementById("importprojectPopUp");
     // When the user clicks on <span> (x), close the modal
     projectspan.onclick = function () {
         var modal = document.getElementById("id_projectimport_myModal");
@@ -383,12 +383,26 @@
             processData: false,
             data: formdata,
             success: function (data) {
-                document.getElementById('myModal').style.display = "none";
-                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                bindresultdata(data);
+                document.getElementById("btnProjectImport").disabled = false;
                 document.getElementById('importResultModal').style.display = "block";
-                $('#importResultTableBody').html('');
-                $('#importResultTableBody').html(importMsg);
             }
         });
     }
+    function bindresultdata(data){
+        if(data.message=="success"){
+            var html='<table style="width:100%"><tr><td>Candidate</td><td>Status</td></tr>';
+            for(i=0;i<data.list.length;i++){
+                html+='<tr><td>'+data.list[i].emailId+'</td><td>'+data.list[i].onboardingStatus+'</td></tr>';
+            }
+            html+='</table>';
+            $('#importResultTableBody').empty().html(html);
+        }
+        else{
+             var importMsg = data.message.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                $('#importResultTableBody').html('');
+                $('#importResultTableBody').html(importMsg);
+        }
+    }
+
 </script>
