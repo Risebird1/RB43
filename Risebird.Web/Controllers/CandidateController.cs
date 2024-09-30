@@ -6310,23 +6310,33 @@ namespace Risebird.Web.Controllers
                     //CurrentStatus
                     var CurrentStatusSet = new List<SelectListItem>();
                     var CurrentStatus = model.Select(x => x.CurrentStatus).Distinct();
+                    string[] filterCurrentStatusSet = new String[] { };
                     //var CurrentStatus1 = model.Select(x => x.StatusValue).Distinct();
                     //CurrentStatus = CurrentStatus.Union(CurrentStatus1).Distinct();
-                    string[] filterCurrentStatusSet = new String[] { };
+                    //CurrentStatus
+                    var ClientHRList = new List<SelectListItem>();
+                    var ClientHrs = model.Select(x => x.HREmail).Distinct();
+                    string[] filterClientHrs = new String[] { };
                     if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("AllCandidateSearchfilters"));
-                        filterPrimarySkills = filter.HREmail;
+                        filterPrimarySkills = filter.JdTitle;
+                        filterClientHrs = filter.HREmail;
                         filterCurrentStatusSet = filter.MeetingStatus;
-                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                        filter.JdTitle = filter.JdTitle == null ? filter.JdTitle = model.Select(x => x.PrimarySkill).ToArray() : filter.JdTitle = filter.JdTitle;
+                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
                         filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                        if (filter.JdTitle != null)
+                        {
+                            model = model.Where(x => filter.JdTitle.Contains(x.PrimarySkill)).ToList();
+                        }
                         if (filter.HREmail != null)
                         {
-                            model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                            model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
                         }
                         if (filter.MeetingStatus != null)
                         {
-                            model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                            model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus) && !x.RedoInterview && !x.IsColdCandidate).ToList();
                         }
                     }
                     foreach (var item in PrimarySkills)
@@ -6352,6 +6362,18 @@ namespace Risebird.Web.Controllers
                         CurrentStatusSet.Add(selectItem);
                     }
                     ViewBag.CurrentStatusList = CurrentStatusSet;
+
+                    foreach (var item in ClientHrs)
+                    {
+                        bool selected = false;
+                        if (filterClientHrs != null && filterClientHrs.Contains(item))
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, item, selected);
+                        ClientHRList.Add(selectItem);
+                    }
+                    ViewBag.ClientHRList = ClientHRList;
 
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
                     ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
