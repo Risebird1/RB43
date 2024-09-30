@@ -1716,5 +1716,25 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<CountryCodeDetails>> GetAllCountryCodeDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CountryCodeDetails>(con, "usp_GetAllCountryCodeDetails", null,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

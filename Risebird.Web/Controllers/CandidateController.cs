@@ -6443,10 +6443,15 @@ namespace Risebird.Web.Controllers
         }
         #region Project Import Candidate
         [HttpGet]
-        public FileContentResult DownloadProjectTemplate()
+        public async Task<FileContentResult> DownloadProjectTemplate()
         {
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Import Template");
+            ExcelWorksheet Sheet1 = Ep.Workbook.Worksheets.Add("Country");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Project_Import_Template" + ".xlsx";
             try
             {
@@ -6466,6 +6471,24 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 5].Value = "Client HR Email ID";
                 Sheet.Cells[1, 6].Value = "Staffing Agency Email ID";
                 Sheet.Cells[1, 7].Value = "Country Code";
+
+                //Sheet second form country details
+                Sheet1.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet1.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet1.Cells["A1:P1"].Style.WrapText = true;
+                Sheet1.Column(1).Width = 40;
+                Sheet1.Cells[1, 1].Value = "Country Name";
+                Sheet1.Cells[1, 2].Value = "Country Code";
+
+                //fetch country code details
+                var countrycodes = await _candidateService.GetAllCountryCodeDetails();
+                int i = 2;
+                foreach (var item in countrycodes)
+                {
+                    Sheet1.Cells[i, 1].Value = item.Country;
+                    Sheet1.Cells[i, 2].Value = item.Code;
+                    i++;
+                }
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception)
