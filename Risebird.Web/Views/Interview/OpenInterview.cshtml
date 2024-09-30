@@ -679,6 +679,9 @@
         if($("#popupreload").val()=="true")
         {
             location.reload();
+        }else{
+            var video = document.getElementById('vidvideoinstruction');
+            video.pause();
         }
     }
     function AssingInterviewYourSelf(id,interviewDate,videolink,textinstruction){

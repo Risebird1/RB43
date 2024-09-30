@@ -6420,10 +6420,15 @@ namespace Risebird.Web.Controllers
         }
         #region Project Import Candidate
         [HttpGet]
-        public FileContentResult DownloadProjectTemplate()
+        public async Task<FileContentResult> DownloadProjectTemplate()
         {
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Import Template");
+            ExcelWorksheet Sheet1 = Ep.Workbook.Worksheets.Add("Country");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Project_Import_Template" + ".xlsx";
             try
             {
@@ -6443,6 +6448,24 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 5].Value = "Client HR Email ID";
                 Sheet.Cells[1, 6].Value = "Staffing Agency Email ID";
                 Sheet.Cells[1, 7].Value = "Country Code";
+
+                //Sheet second form country details
+                Sheet1.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet1.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet1.Cells["A1:P1"].Style.WrapText = true;
+                Sheet1.Column(1).Width = 40;
+                Sheet1.Cells[1, 1].Value = "Country Name";
+                Sheet1.Cells[1, 2].Value = "Country Code";
+
+                //fetch country code details
+                var countrycodes = await _candidateService.GetAllCountryCodeDetails();
+                int i = 2;
+                foreach (var item in countrycodes)
+                {
+                    Sheet1.Cells[i, 1].Value = item.Country;
+                    Sheet1.Cells[i, 2].Value = item.Code;
+                    i++;
+                }
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception)
@@ -6459,11 +6482,10 @@ namespace Risebird.Web.Controllers
             var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
             var ProjectUniqueid = formCollection["IRFName"].ToString();
             var emailid = formCollection["clientEmailId"].ToString();
+            var result = new CandidateExportStatus();
             try
             {
                 var linkurl = "https://" + Request.Host.ToString();
-                string result = string.Empty;
-
                 if (Request != null && formCollection.Files.Count > 0)
                 {
                     var file = formCollection.Files[0];
@@ -6529,11 +6551,11 @@ namespace Risebird.Web.Controllers
                                                 if (workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null || workSheet.Cells[rowIterator, 5] == null || workSheet.Cells[rowIterator, 5].Value == null
                                                     || workSheet.Cells[rowIterator, 7] == null || workSheet.Cells[rowIterator, 7].Value == null)
                                                 {
-                                                    result = "Failed! Candidate EmailId ,Client HR EmailId and Country Code are mandatory. Please check for the missing entries.";
+                                                    result.message = "Failed! Candidate EmailId ,Client HR EmailId and Country Code are mandatory. Please check for the missing entries.";
                                                 }
-                                                result = "Failed!";
+                                                result.message = "Failed!";
                                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                                return Json(result.ToString());
+                                                return Json(result);
                                             }
                                         }
                                     }
@@ -6541,35 +6563,46 @@ namespace Risebird.Web.Controllers
                                 if (candidateList != null && candidateList.Any())
                                 {
                                     var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, ProjectUniqueid);
-                                    return Json(new { result = resultset });
+                                    var _list = new List<CandidateExportStatusList>();
+                                    foreach (var item in resultset.list)
+                                    {
+                                        _list.Add(new CandidateExportStatusList { emailId = item.emailId, onboardingStatus = item.onboardingStatus });
+                                    }
+                                    result.message = "success";
+                                    result.list = _list;
+                                    return Json(result);
                                 }
                                 else
                                 {
-                                    return Json("No candidates to add!");
+                                    result.message = "No candidates to add!";
                                 }
                             }
                             else
                             {
-                                return Json("Please select valid file for import(.xls, .xslx)!");
+                                result.message = "Please select valid file for import(.xls, .xslx)!";
                             }
                         }
                         else
                         {
-                            return Json("Please select valid file for import(.xls, .xslx)!");
+                            result.message = "Please select valid file for import(.xls, .xslx)!";
                         }
                     }
                     else
                     {
-                        return Json("Failed to import candidates!");
+                        result.message = "Failed to import candidates!";
                     }
                 }
-                return Json("Please select valid file for import!");
+                else
+                {
+                    result.message = "Please select valid file for import!";
+                }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("Failed to import candidates!");
+                result.message = "Failed to import candidates!";
             }
+            return Json(result);
         }
         #endregion
     }

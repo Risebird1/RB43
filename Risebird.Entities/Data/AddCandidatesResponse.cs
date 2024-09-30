@@ -19,5 +19,18 @@ namespace Risebird.Entities.Data
         public string invitationMailDeliveryStatus { get; set; }//delivered ; not delivered; NA
         public string SchedulingLink { get; set; }//; NA
     }
-
+    public class CandidateExportStatus
+    {
+        public CandidateExportStatus()
+        {
+            list = new List<CandidateExportStatusList>();
+        }
+        public string message { get; set; }
+        public List<CandidateExportStatusList> list { get; set; }
+    }
+    public class CandidateExportStatusList
+    {
+        public string emailId { get; set; }
+        public string onboardingStatus { get; set; }
+    }
 }

@@ -606,6 +606,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<CountryCodeDetails>> GetAllCountryCodeDetails()
+        {
+            try
+            {
+                return await _candidateRepository.GetAllCountryCodeDetails();
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }
