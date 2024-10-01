@@ -1370,14 +1370,14 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string attachmentBase64String = null, string fileName = null)//, string irfName, string primarySkill
+        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string attachmentBase64String = null, string fileName = null, bool? isMonthly = null)//, string irfName, string primarySkill
         {
             try
             {
 
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = "Candidate status for yesterday (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")";
+                msg.Subject = isMonthly.HasValue && isMonthly.Value==true? "Master Candidate status Data till (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")" : "Candidate status for yesterday (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")";
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 foreach (var clientEmail in clientEmails)

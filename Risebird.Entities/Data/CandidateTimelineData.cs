@@ -55,6 +55,7 @@ namespace Risebird.Entities.Data
         public DateTime EndDate { get; set; }
         public bool IsDeleted { get; set; }
         public bool HasEmailDroppedOrBounced { get; set; }
+        public string Cancellationsource { get; set; }
     }
 }
 
