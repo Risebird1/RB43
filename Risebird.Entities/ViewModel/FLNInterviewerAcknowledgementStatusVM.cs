@@ -19,5 +19,7 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string Name { get; set; }
         public string AcknowledgementStatus { get; set; }
+        public string TargetSkillChannel { get; set; }
+        public string AssessmentGroup { get; set; }
     }
 }
