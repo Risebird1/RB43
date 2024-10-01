@@ -3766,7 +3766,7 @@ namespace Risebird.Web.Controllers
                             candidate.CurrentStatus = "Cancelled";
                         }
                     }
-                    model = model.Where(x => x.IsRedoInterview == false).ToList();
+                    model = model.Where(x => x.RedoInterview == false).ToList();
                     if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
                     {
                         model = model.Where(x => x.CurrentStatus == "Scheduled").ToList();

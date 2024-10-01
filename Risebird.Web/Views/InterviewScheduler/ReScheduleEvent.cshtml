@@ -350,6 +350,13 @@
                                 {
                                     @Html.HiddenFor(m => m.HRCoordinator)
                                 }
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.Guests, htmlAttributes: new { @class = "form-label" })
+                                    </div>
+                                    @Html.TextBoxFor(m => m.Guests, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    @Html.ValidationMessageFor(m => m.Guests, "", new { @class = "text-danger" })
+                                </div>
                                 @if (!Model.reschedulerequest)
                                 {
                                     <div class="form-group">

@@ -578,13 +578,13 @@ namespace Risebird.Web.Controllers
                             var portallink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + model._IRFDetails.inIRFid;
                             Mail _mail = new Mail
                             {
-                                TO = model.Email,
+                                TO = model.Email
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, portallink, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                             Mail _mail1 = new Mail
                             {
-                                TO = model.StaffingAgiencies + ";" + model.HRCoordinator,
+                                TO = model.Guests + ";" + model.HRCoordinator,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             _ = await _notificationHelper.SendInterviewInvite(_mail1, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
@@ -594,7 +594,7 @@ namespace Risebird.Web.Controllers
                             Mail _mail = new Mail
                             {
                                 TO = model.Email,
-                                CC = model.StaffingAgiencies + ";" + model.HRCoordinator,//zoomLink.accountemail,
+                                CC = model.Guests + ";" + model.HRCoordinator,//zoomLink.accountemail,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom || model.MeetingPlatform == MeetingPlatforms.TeamsMeet)
@@ -1305,7 +1305,7 @@ namespace Risebird.Web.Controllers
                             _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, portallink, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                             Mail _mail1 = new Mail
                             {
-                                TO = model.StaffingAgiencies + ";" + model.HRCoordinator,
+                                TO = model.Guests + ";" + model.HRCoordinator,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             _ = await _notificationHelper.SendInterviewInvite(_mail1, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
@@ -1315,7 +1315,7 @@ namespace Risebird.Web.Controllers
                             Mail _mail = new Mail
                             {
                                 TO = model.Email,
-                                CC = model.StaffingAgiencies + ";" + model.HRCoordinator,//zoomLink.accountemail,
+                                CC = model.Guests + ";" + model.HRCoordinator,//zoomLink.accountemail,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
@@ -1704,7 +1704,7 @@ namespace Risebird.Web.Controllers
                             _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, portallink, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                             Mail _mail1 = new Mail
                             {
-                                TO = model.StaffingAgiencies + ";" + model.HRCoordinator,
+                                TO = model.Guests + ";" + model.HRCoordinator,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             _ = await _notificationHelper.SendInterviewInvite(_mail1, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
@@ -1714,7 +1714,7 @@ namespace Risebird.Web.Controllers
                             Mail _mail = new Mail
                             {
                                 TO = model.Email,
-                                CC = model.StaffingAgiencies + ";" + model.HRCoordinator,//zoomLink.accountemail,
+                                CC = model.Guests + ";" + model.HRCoordinator,//zoomLink.accountemail,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
