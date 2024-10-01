@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[InterviewerDirectApplication](
 	[DOB] datetime NULL,
 	[EVGeneratedBy] [varchar](100) NULL,
 	[EVGeneratedAt] datetime NULL,
+	[ReferredBy] [varchar](200) NULL,
  CONSTRAINT [PK_InterviewerDirectApplication] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -148,6 +149,16 @@ WHERE Name IN (N'EVGeneratedBy')
 BEGIN
 	ALTER TABLE InterviewerDirectApplication
 	add EVGeneratedBy varchar(100) NULL
+END
+
+IF not EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'ReferredBy')
+    AND Object_ID = Object_ID(N'InterviewerDirectApplication'))
+BEGIN
+	ALTER TABLE InterviewerDirectApplication
+	add ReferredBy varchar(200) NULL
 END
 
 GO

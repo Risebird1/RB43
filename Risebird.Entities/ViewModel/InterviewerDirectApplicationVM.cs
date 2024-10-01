@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -43,5 +44,10 @@ namespace Risebird.Entities.ViewModel
         public DateTime? DOB { get; set; }
         public string EVGeneratedBy { get; set; }
         public DateTime EVGeneratedAt { get; set; }
+        
+        [DisplayName("Referred By")]
+        public string ReferredBy { get; set; }
+        public string AcknowledgementStatus { get; set; }
+
     }
 }
