@@ -688,12 +688,13 @@
                         <i class='fa fa-warning' style='color: white'></i>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Reminder</h5>
+                <h5 class="modal-title pull-left">Mandatory Interview Instruction</h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" style="padding:10px 20px;">
+                <div style="overflow-y:auto;max-height:440px;">
                 @if (Model.IsVideoRequired == true)
                 {
                     <div class="col-md-12 pull-left text-center">
@@ -706,7 +707,7 @@
                     <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
                         <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
                     </div>
-                    <video id="vidvideoinstruction" style="width:100%" controls><source src="@Model.AudioComment"></video>
+                    <video id="vidvideoinstruction" style="width:100%;height:260px;" controls><source src="@Model.AudioComment"></video>
                 }
 
                 @if (!string.IsNullOrEmpty(Model.CompanyDetails))
@@ -720,9 +721,11 @@
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
                 </div>
 
-
+                </div>
 
             </div>
+       
+        
         </div>
     </div>
 </div>
