@@ -24,6 +24,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
 
@@ -6530,6 +6531,7 @@ namespace Risebird.Web.Controllers
             var result = new CandidateExportStatus();
             try
             {
+                var _list = new List<CandidateExportStatusList>();
                 var linkurl = "https://" + Request.Host.ToString();
                 if (Request != null && formCollection.Files.Count > 0)
                 {
@@ -6590,6 +6592,10 @@ namespace Risebird.Web.Controllers
                                                 {
                                                     candidateList.Add(candidate);
                                                 }
+                                                else
+                                                {
+                                                    _list.Add(new CandidateExportStatusList { emailId = candidate.EmailId, onboardingStatus = "This Email Address domain is not allowed" });
+                                                }
                                             }
                                             catch (Exception ex)
                                             {
@@ -6608,7 +6614,6 @@ namespace Risebird.Web.Controllers
                                 if (candidateList != null && candidateList.Any())
                                 {
                                     var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, ProjectUniqueid);
-                                    var _list = new List<CandidateExportStatusList>();
                                     foreach (var item in resultset.list)
                                     {
                                         _list.Add(new CandidateExportStatusList { emailId = item.emailId, onboardingStatus = item.onboardingStatus });
