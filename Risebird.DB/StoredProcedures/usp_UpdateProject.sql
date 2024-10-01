@@ -11,16 +11,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE PROCEDURE [dbo].[usp_UpdateProject]
-
+Create PROCEDURE [dbo].[usp_UpdateProject]
 @id int,
 @Name varchar(200),
 @Location varchar(200),
 @ClientId varchar(200),
 @EndClient varchar(200),
-@ProjectOwnerId varchar(200)
-
-
+@ProjectOwnerId varchar(200),
+@ProjectTitle varchar(200)
 AS
 Begin
 
@@ -29,16 +27,12 @@ update Project set
 [Location]=@Location,
 [ClientId]=@ClientId,
 [EndClient]=@EndClient,
-[ProjectownerId]=@ProjectOwnerId
+[ProjectownerId]=@ProjectOwnerId,
+[ProjectTitle]=@ProjectTitle
 Where id =@id
 
 delete from ProjectIRFMapping where ProjectId=@id
-
-
 End
-
-
-
 GO
 
 

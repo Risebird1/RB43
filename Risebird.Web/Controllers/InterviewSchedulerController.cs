@@ -578,7 +578,7 @@ namespace Risebird.Web.Controllers
                             var portallink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + model._IRFDetails.inIRFid;
                             Mail _mail = new Mail
                             {
-                                TO = model.Email
+                                TO = model.Email,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
                             _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, portallink, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
