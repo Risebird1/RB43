@@ -1724,5 +1724,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                return await _interviewerRepository.GetFLNAcknowledgementStatus(loggedInUser, startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
