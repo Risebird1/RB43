@@ -342,7 +342,7 @@
                     </div>
 
                     <div class="col-md-6 form-field-calender pull-left" style="padding-left:3vw">
-                        <form action="/InterviewScheduler/CandidateScheduleEvent" enctype="multipart/form-data" method="post">
+                        <form action="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = ViewBag.id, CandidateEmail = Model.Email })" enctype="multipart/form-data" method="post">
                             <div>
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary()
@@ -398,46 +398,39 @@
                                     </div>
                                     @Html.TextBoxFor(m => m.InterviewChannelId, new { @readonly = "readonly", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
-                                @if (string.IsNullOrWhiteSpace(Model.HRCoordinator))
-                                {
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
-                                        </div>
-                                        @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
-                                        @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
-                                    </div>
-                                }
-                                else
-                                {
-                                    @Html.HiddenFor(m => m.HRCoordinator)
-                                }
-                                @* <div class="form-group">
+                                <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
                                     </div>
-                                    @if (Model._listhr != null && Model._listhr.Count() > 0)
-                                    {
-                                        @Html.DropDownListFor(m => m.HRCoordinator, Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
-                                    }
-                                    else
-                                    {
-                                        @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
-                                        @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
-                                    }
+                                    @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
+                                    @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
+                                </div>
+                                @* <div class="form-group">
+                                <div class="mandate">
+                                @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
+                                </div>
+                                @if (Model._listhr != null && Model._listhr.Count() > 0)
+                                {
+                                @Html.DropDownListFor(m => m.HRCoordinator, Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                }
+                                else
+                                {
+                                @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
+                                @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
+                                }
                                 </div> *@
                                 @* <div class="form-group">
-                                    <div class="mandate">
-                                        @Html.LabelFor(model => model.StaffingAgiencies, htmlAttributes: new { @class = "form-label" })
-                                    </div>
-                                    @if (Model._liststaffing != null && Model._liststaffing.Count() > 0)
-                                    {
-                                        @Html.DropDownListFor(m => m.StaffingAgiencies, Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
-                                    }
-                                    else
-                                    {
-                                        @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
-                                    }
+                                <div class="mandate">
+                                @Html.LabelFor(model => model.StaffingAgiencies, htmlAttributes: new { @class = "form-label" })
+                                </div>
+                                @if (Model._liststaffing != null && Model._liststaffing.Count() > 0)
+                                {
+                                @Html.DropDownListFor(m => m.StaffingAgiencies, Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                }
+                                else
+                                {
+                                @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                }
                                 </div> *@
                                 <div class="form-group">
                                     <div class="mandate">

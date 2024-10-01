@@ -27,7 +27,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                                                                                                                                    color: #9b9393;*/
+                                                                                                                                                                                        color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -277,7 +277,7 @@
                     </div>
 
                     <div class="col-md-6 form-field-calender pull-left" style="padding-left:3vw">
-                        <form action="/InterviewScheduler/ReScheduleEvent" enctype="multipart/form-data" method="post">
+                        <form action="@Url.Action("ReScheduleEvent", "InterviewScheduler", new { id = ViewBag.id, CandidateEmail = Model.Email })" enctype="multipart/form-data" method="post">
                             <div>
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary()

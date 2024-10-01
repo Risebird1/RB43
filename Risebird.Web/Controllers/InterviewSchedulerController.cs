@@ -359,7 +359,7 @@ namespace Risebird.Web.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> ScheduleEvent(ScheculeInterview model)
+        public async Task<IActionResult> ScheduleEvent(ScheculeInterview model, string id)
         {
             var timeZones1 = TimeZoneInfo.GetSystemTimeZones();
             List<SelectListItem> items = new List<SelectListItem>();
@@ -1148,7 +1148,7 @@ namespace Risebird.Web.Controllers
             return "Delete successfully";
         }
         [HttpPost]
-        public async Task<IActionResult> ReScheduleEvent(ScheculeInterview model)
+        public async Task<IActionResult> ReScheduleEvent(ScheculeInterview model, string id, string CandidateEmail)
         {
             var timeZones1 = TimeZoneInfo.GetSystemTimeZones();
             List<SelectListItem> items = new List<SelectListItem>();
@@ -1374,7 +1374,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                return View(model);
+                return RedirectToAction("CandidateScheduleEvent", new { id = id, CandidateEmail = CandidateEmail });
             }
         }
         #region Candidate Schedule Event With Pre filled details
@@ -1494,7 +1494,7 @@ namespace Risebird.Web.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> CandidateScheduleEvent(ScheculeInterview model)
+        public async Task<IActionResult> CandidateScheduleEvent(ScheculeInterview model, string id, string CandidateEmail)
         {
             var timeZones1 = TimeZoneInfo.GetSystemTimeZones();
             List<SelectListItem> items = new List<SelectListItem>();
@@ -1503,6 +1503,7 @@ namespace Risebird.Web.Controllers
                 items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
             }
             model.TimeZonesList = items;
+            ViewBag.id = id;
             if (ModelState.IsValid)
             {
                 ViewBag.Start = 2;
@@ -1743,7 +1744,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                return View(model);
+                return RedirectToAction("CandidateScheduleEvent", new { id = id, CandidateEmail = CandidateEmail });
             }
         }
         #endregion
