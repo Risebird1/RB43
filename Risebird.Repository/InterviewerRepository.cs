@@ -3521,6 +3521,7 @@ namespace Risebird.Repository
                     parameters.Add("@ResumeLink", model.ResumeLink);
                     parameters.Add("@Phone", model.Phone);
                     parameters.Add("@IRFId", model.IRFId);
+                    parameters.Add("@ReferredBy", model.ReferredBy);
                     parameters.Add("@timeNow", DateTime.Now);
                     var result = await SqlMapper.QueryAsync(con, "usp_SubmitInterviewerApplication", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
@@ -3631,6 +3632,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@startDate", startDate);
+                dynamicParameters.Add("@endDate", endDate);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                dynamicParameters.Add("@loggedInUser", loggedInUser);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<FLNInterviewerAcknowledgementStatusVM>(con, "usp_GetFLNAcknowledgementStatus", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 
