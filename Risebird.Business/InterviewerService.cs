@@ -96,7 +96,7 @@ namespace Risebird.Business
         //    }
         //}
 
-        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId)
+        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, bool? isApplicant = false)
         {
             assessmentGroupList = string.Empty;
             userId = 0;
@@ -142,14 +142,19 @@ namespace Risebird.Business
                 var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
                 if (result)
                 {
+                    if(isApplicant.HasValue && isApplicant.Value)
+                    {
+                        //var encryptedUserId = _encryptionHelper.EncryptInteger(userId).Result;
+                        //var encodedUserId = System.Net.WebUtility.UrlEncode(encryptedUserId);
 
-                    var encryptedUserId = _encryptionHelper.EncryptInteger(userId).Result;
-                    var encodedUserId = System.Net.WebUtility.UrlEncode(encryptedUserId);
-                    string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + encodedUserId;// interviewerProfile.UserId
+                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();//encodedUserId;// interviewerProfile.UserId
 
-                    string dropProfileButton = "";
-                    //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                        string dropProfileButton = "";
+                        //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
+                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+
+                    }
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
                     activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;

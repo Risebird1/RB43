@@ -3521,6 +3521,7 @@ namespace Risebird.Repository
                     parameters.Add("@ResumeLink", model.ResumeLink);
                     parameters.Add("@Phone", model.Phone);
                     parameters.Add("@IRFId", model.IRFId);
+                    parameters.Add("@ReferredBy", model.ReferredBy);
                     parameters.Add("@timeNow", DateTime.Now);
                     var result = await SqlMapper.QueryAsync(con, "usp_SubmitInterviewerApplication", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);

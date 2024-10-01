@@ -4168,9 +4168,25 @@ namespace Risebird.Web.Controllers
             try
             {
                 //dec = dec.Replace(" ", "+");
-                //var userId = await _encryptionHelper.DecryptData(user);
-                string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
-                var userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+
+                int id;
+                int? userId = new int?();
+                // Try to convert the string to an integer
+                bool success = int.TryParse(user, out id);
+
+                // Check if the conversion was successful
+                if (success)
+                {
+                    userId = id;
+                }
+                else
+                {
+                    string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
+                    userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                }
+
+                    //var userId = await _encryptionHelper.DecryptData(user);
+                
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
                     var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf

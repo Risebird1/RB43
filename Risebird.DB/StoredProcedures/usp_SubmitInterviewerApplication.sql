@@ -15,6 +15,7 @@ CREATE PROCEDURE [dbo].[usp_SubmitInterviewerApplication]
 @ResumeLink varchar(max),  
 @EmailId varchar(100),
 @Phone varchar(20),
+@ReferredBy varchar(200)=null,
 @timeNow datetime
  
 AS    
@@ -26,8 +27,8 @@ begin try
 	Begin
 		if not exists (select top 1 id from InterviewerDirectApplication where irfid = @IRFId and EmailId = @EmailId)
 		Begin
-			Insert into InterviewerDirectApplication(IRFId, EmailId, Phone, ResumeLink, CreatedAt, CreatedBy)  
-			values(@IRFId, @EmailId, @Phone, @ResumeLink, @timeNow, @EmailId) 
+			Insert into InterviewerDirectApplication(IRFId, EmailId, Phone, ResumeLink, CreatedAt, CreatedBy, ReferredBy)  
+			values(@IRFId, @EmailId, @Phone, @ResumeLink, @timeNow, @EmailId, @ReferredBy) 
 		End 
 	End
 

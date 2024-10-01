@@ -10289,10 +10289,10 @@ namespace Risebird.Web.Controllers
                     if(irfId >0)
                     {
                         var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
-                        var url = Url.Action("Apply", "Interviewer",
-                                new { id = encryptedId },
-                                Request.Scheme);
-
+                        //var url = Url.Action("Apply", "Interviewer",
+                        //        new { id = encryptedId },
+                        //        Request.Scheme);
+                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + encryptedId;
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = irfId },
                         //        Request.Scheme);
