@@ -8775,15 +8775,15 @@ namespace Risebird.Web.Controllers
             var level = await _irfRepository.GetLevelTech();
             //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
             //            select new { ID = (int)s, Name = s.GetDescription() };
-            var Skillset = await _irfRepository.GetSkills();
-            if (Skillset != null)
-            {
-                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-            }
+            //var Skillset = await _irfRepository.GetSkills();
+            //if (Skillset != null)
+            //{
+            //    Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            //}
             foreach (var item in transTechSkills)
             {
                 item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
-                item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                //item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             var colectionone = transTechSkills.Where(x => x.SkillSet != 2).ToList();
             var colectiontwo = transTechSkills.Where(x => x.SkillSet == 2).ToList(); //Other Skill
