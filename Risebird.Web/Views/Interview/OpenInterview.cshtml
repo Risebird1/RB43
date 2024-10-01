@@ -159,7 +159,7 @@
                                                                 <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate','@item.AudioComment','@item.CompanyDetails')" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
                                                             </td>
                                                             <td>
-                                                                <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
+                                                                <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
                                                             </td>
                                                             <td>
                                                                 @item.interviewDate
@@ -373,15 +373,16 @@
                         <i class='fa fa-warning' style='color: white'></i>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Mandatory Interview Instruction</h5>
+                <h5 class="modal-title pull-left" style="padding-top:0px;">Mandatory Interview Instruction</h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <input type="hidden" id="popupreload" />
             <div class="modal-body" style="padding:10px 20px;">
+                <div style="overflow-y:auto;max-height:440px;">
                 <div class="col-md-12 pull-left text-center">
-                    <h2 class="interviewerAlert" style="margin:0px;padding:0px;" id="txtconfirmmessage"></h2>
+                    <h2 class="interviewerAlert" style="margin:0px;padding:0px!important;" id="txtconfirmmessage"></h2>
                 </div>
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
@@ -390,9 +391,11 @@
                     <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
                         <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
                     </div>
-                    <video id="vidvideoinstruction" style="width:100%" controls="controls" preload="metadata">
+                    
+                    <video id="vidvideoinstruction" style="width:100%;height:260px;" controls="controls" preload="metadata">
                         <source id="srcvideoinstruction" src='' type="video/mp4">
                     </video>
+                   
                 </div>
                 <div id="divcompanytextinstruction" style="display:none;padding-top:10px;clear:both">
                     <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
@@ -400,7 +403,7 @@
                     </div>
                 </div>
 
-                <div id="mandate-popup-btn" class="col-md-12 pull-left text-center" style="display:none">
+                <div id="mandate-popup-btn" class="col-md-12 text-center" style="display:none">
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
                 </div>
                 @* <div class="col-md-12  text-center" style="margin:0px auto;display: block;width: 335px;clear: both;">
@@ -410,6 +413,9 @@
                 </div>
                 </div> *@
             </div>
+            </div>
+        
+        
         </div>
     </div>
 </div>
