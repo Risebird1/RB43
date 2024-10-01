@@ -39,7 +39,7 @@
                             </button>
 
                         </div>
-                                    
+
                         <div class="">
                             <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import" onclick="ImportQuickCandidates()">
 
@@ -60,7 +60,7 @@
     </div>
 </div>
 
-<div id="importResultModal" class="modal modal-bg">
+<div id="importResultModal" class="modal modal-bg" style="z-index:1060">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -82,6 +82,49 @@
 
     </div>
 </div>
+<div id="id_projectimport_myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                        </span>
+                    </div>
+                    <h5 class="modal-title" id="id_projectimport_Title"> Import Candidates</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="importprojectPopUp" style="cursor:pointer;">&times;</span>
+                </button>
+                <div class="modal-body">
+                    <div class="form-group text-center">
+                        <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadProjectTemplate", "Candidate")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+                    </div>
+                    @using (Html.BeginForm("ImportQuickProjectCandidates", "Candidate", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="form-group">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;height:40px!important;background: #65cbcb3d;border:0px;width:330px">
+                                <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                    <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idProjectExcelFile" />
+                                </div>
+                            </button>
+                        </div>
+                        <div class="">
+                            <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnProjectImport" value="Import" onclick="ImportQuickProjectCandidates()">
+                        </div>
+                        <input type="hidden" id="id_projectimport_IRFId" name="IRFId">
+                        <input type="hidden" id="id_projectimport_IRFName" name="IRFName">
+                        <input type="hidden" id="id_projectimport_JDTiltle" name="JDTiltle">
+                        <input type="hidden" id="id_projectimport_IsSendInvite" name="IsSendInvite" value="true">
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
      $("form").on("change", ".file-upload-field", function () {
         $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
@@ -95,7 +138,7 @@
         var modal = document.getElementById("id_import_myModal");
         modal.style.display = "none";
     }
-    
+
     var clientEmailId = '';
 
     function OpenImportModal(irfId, irfName, emailid,JDTiltle) {
@@ -171,7 +214,7 @@
     //         confirmButtonText: 'Yes, import!',
     //         preConfirm: function () {
     //             return new Promise(function (resolve, reject) {
-                    
+
     //                 ImportQuickCandidates();
     //                 $.ajax({
     //                     url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
@@ -292,4 +335,74 @@
     //             }
     //         })
     // }
+</script>
+<script>
+    var projectspan = document.getElementById("importprojectPopUp");
+    // When the user clicks on <span> (x), close the modal
+    projectspan.onclick = function () {
+        var modal = document.getElementById("id_projectimport_myModal");
+        modal.style.display = "none";
+    }
+
+    function OpenProjectImportModal(irfId, irfName, emailid,JDTiltle) {
+        //document.getElementById("id_import_IsSendInvite").value = value;
+        clientEmailId = emailid;
+        // Get the modal
+        var modal = document.getElementById("id_projectimport_myModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        document.getElementById("id_projectimport_IRFId").value = irfId;
+        document.getElementById("id_projectimport_IRFName").value = irfName;
+        document.getElementById("id_projectimport_JDTiltle").value = JDTiltle;
+        document.getElementById("id_projectimport_Title").innerHTML = '';
+        document.getElementById("id_projectimport_Title").innerHTML = 'Import Candidates for ' + irfName + '<span style="padding:0px 5px;color:green;text-transform: capitalize;display: block;font-size: 18px;"> (' +JDTiltle+ ')</span>';
+
+    }
+    function ImportQuickProjectCandidates() {
+        document.getElementById("btnProjectImport").disabled = true;
+        var irfExcelId = document.getElementById("id_projectimport_IRFId").value;
+        var irfExcelName = document.getElementById("id_projectimport_IRFName").value;
+        var jdtitleName = document.getElementById("id_projectimport_JDTiltle").value;
+
+        var excel_file = $("#idProjectExcelFile")[0].files[0];
+        var isSendInvite = document.getElementById("id_projectimport_IsSendInvite").value;
+
+
+        var formdata = new FormData();
+        formdata.append('IRFId', irfExcelId);
+        formdata.append('IsSendInvite', isSendInvite);
+        formdata.append('excel_file', excel_file);
+        formdata.append('IRFName', irfExcelName);
+        formdata.append('clientEmailId', clientEmailId);
+
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/ImportQuickProjectCandidates",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                bindresultdata(data);
+                document.getElementById("btnProjectImport").disabled = false;
+                document.getElementById('importResultModal').style.display = "block";
+            }
+        });
+    }
+    function bindresultdata(data){
+        if(data.message=="success"){
+            var html='<table style="width:100%"><tr><td>Candidate</td><td>Status</td></tr>';
+            for(i=0;i<data.list.length;i++){
+                html+='<tr><td>'+data.list[i].emailId+'</td><td>'+data.list[i].onboardingStatus+'</td></tr>';
+            }
+            html+='</table>';
+            $('#importResultTableBody').empty().html(html);
+        }
+        else{
+             var importMsg = data.message.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                $('#importResultTableBody').html('');
+                $('#importResultTableBody').html(importMsg);
+        }
+    }
+
 </script>

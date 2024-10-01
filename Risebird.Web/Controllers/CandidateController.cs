@@ -6333,23 +6333,33 @@ namespace Risebird.Web.Controllers
                     //CurrentStatus
                     var CurrentStatusSet = new List<SelectListItem>();
                     var CurrentStatus = model.Select(x => x.CurrentStatus).Distinct();
+                    string[] filterCurrentStatusSet = new String[] { };
                     //var CurrentStatus1 = model.Select(x => x.StatusValue).Distinct();
                     //CurrentStatus = CurrentStatus.Union(CurrentStatus1).Distinct();
-                    string[] filterCurrentStatusSet = new String[] { };
+                    //CurrentStatus
+                    var ClientHRList = new List<SelectListItem>();
+                    var ClientHrs = model.Select(x => x.HREmail).Distinct();
+                    string[] filterClientHrs = new String[] { };
                     if (HttpContext.Session.GetString("AllCandidateSearchfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("AllCandidateSearchfilters"));
-                        filterPrimarySkills = filter.HREmail;
+                        filterPrimarySkills = filter.JdTitle;
+                        filterClientHrs = filter.HREmail;
                         filterCurrentStatusSet = filter.MeetingStatus;
-                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                        filter.JdTitle = filter.JdTitle == null ? filter.JdTitle = model.Select(x => x.PrimarySkill).ToArray() : filter.JdTitle = filter.JdTitle;
+                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
                         filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                        if (filter.JdTitle != null)
+                        {
+                            model = model.Where(x => filter.JdTitle.Contains(x.PrimarySkill)).ToList();
+                        }
                         if (filter.HREmail != null)
                         {
-                            model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                            model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
                         }
                         if (filter.MeetingStatus != null)
                         {
-                            model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                            model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus) && !x.RedoInterview && !x.IsColdCandidate).ToList();
                         }
                     }
                     foreach (var item in PrimarySkills)
@@ -6375,6 +6385,18 @@ namespace Risebird.Web.Controllers
                         CurrentStatusSet.Add(selectItem);
                     }
                     ViewBag.CurrentStatusList = CurrentStatusSet;
+
+                    foreach (var item in ClientHrs)
+                    {
+                        bool selected = false;
+                        if (filterClientHrs != null && filterClientHrs.Contains(item))
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, item, selected);
+                        ClientHRList.Add(selectItem);
+                    }
+                    ViewBag.ClientHRList = ClientHRList;
 
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
                     ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
@@ -6441,5 +6463,192 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        #region Project Import Candidate
+        [HttpGet]
+        public async Task<FileContentResult> DownloadProjectTemplate()
+        {
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Import Template");
+            ExcelWorksheet Sheet1 = Ep.Workbook.Worksheets.Add("Country");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Project_Import_Template" + ".xlsx";
+            try
+            {
+
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 8;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Name";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "Resume Link - open access weblink";
+                Sheet.Cells[1, 4].Value = "Phone(With Country code) 918105232345";
+                Sheet.Cells[1, 5].Value = "Client HR Email ID";
+                Sheet.Cells[1, 6].Value = "Staffing Agency Email ID";
+                Sheet.Cells[1, 7].Value = "Country Code";
+
+                //Sheet second form country details
+                Sheet1.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet1.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet1.Cells["A1:P1"].Style.WrapText = true;
+                Sheet1.Column(1).Width = 40;
+                Sheet1.Cells[1, 1].Value = "Country Name";
+                Sheet1.Cells[1, 2].Value = "Country Code";
+
+                //fetch country code details
+                var countrycodes = await _candidateService.GetAllCountryCodeDetails();
+                int i = 2;
+                foreach (var item in countrycodes)
+                {
+                    Sheet1.Cells[i, 1].Value = item.Country;
+                    Sheet1.Cells[i, 2].Value = item.Code;
+                    i++;
+                }
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Download failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ImportQuickProjectCandidates(IFormCollection formCollection)
+        {
+            var Projectid = Convert.ToInt32((formCollection["IRFId"].ToString()));
+            var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
+            var ProjectUniqueid = formCollection["IRFName"].ToString();
+            var emailid = formCollection["clientEmailId"].ToString();
+            var result = new CandidateExportStatus();
+            try
+            {
+                var linkurl = "https://" + Request.Host.ToString();
+                if (Request != null && formCollection.Files.Count > 0)
+                {
+                    var file = formCollection.Files[0];
+                    if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+                    {
+                        FileInfo fi = new FileInfo(file.FileName);
+                        if (fi.Extension == ".xls" || fi.Extension == ".xlsx")
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                            if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                || fileMimeType == "application/vnd.ms-excel")
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                string fileName = file.FileName;
+                                string fileContentType = file.ContentType;
+                                byte[] fileBytes = new byte[file.Length];
+                                var data = file.OpenReadStream();
+                                var candidateList = new List<CandidateQuickAddModel>();
+                                using (var package = new ExcelPackage(file.OpenReadStream()))
+                                {
+                                    var currentSheet = package.Workbook.Worksheets;
+                                    var workSheet = currentSheet.First();
+                                    var noOfCol = workSheet.Dimension.End.Column;
+                                    var noOfRow = workSheet.Dimension.End.Row;
+                                    var ClientEmailid = "";
+                                    //await _candidateService.FetchBillingownerById(IRFId);
+                                    var ClientDomain = string.Empty;
+                                    if (string.IsNullOrWhiteSpace(ClientEmailid))
+                                    {
+                                        ClientDomain = "risebird.io";
+                                    }
+                                    else
+                                    {
+                                        ClientDomain = ClientEmailid.Split("@")[1];
+                                    }
+                                    for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                                    {
+                                        if (workSheet.Cells[rowIterator, 2].Value != null)
+                                        {
+                                            try
+                                            {
+                                                string str = (workSheet.Cells[rowIterator, 4] != null && workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString() : string.Empty;
+                                                int numberOfLetters = !string.IsNullOrEmpty(str) ? str.ToCharArray().Length : 0;
+                                                var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
+                                                var candidate = new CandidateQuickAddModel
+                                                {
+                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
+                                                    ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,
+                                                    Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,
+                                                    WhatsappNumber = string.Empty,
+                                                    ClientHREmail = workSheet.Cells[rowIterator, 5].Value.ToString().ToLower(),
+                                                    ProfileSource = workSheet.Cells[rowIterator, 6].Value != null ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                                    countryCode = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty
+                                                };
+                                                if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
+                                                {
+                                                    candidateList.Add(candidate);
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                if (workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null || workSheet.Cells[rowIterator, 5] == null || workSheet.Cells[rowIterator, 5].Value == null
+                                                    || workSheet.Cells[rowIterator, 7] == null || workSheet.Cells[rowIterator, 7].Value == null)
+                                                {
+                                                    result.message = "Failed! Candidate EmailId ,Client HR EmailId and Country Code are mandatory. Please check for the missing entries.";
+                                                }
+                                                result.message = "Failed!";
+                                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                return Json(result);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (candidateList != null && candidateList.Any())
+                                {
+                                    var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, ProjectUniqueid);
+                                    var _list = new List<CandidateExportStatusList>();
+                                    foreach (var item in resultset.list)
+                                    {
+                                        _list.Add(new CandidateExportStatusList { emailId = item.emailId, onboardingStatus = item.onboardingStatus });
+                                    }
+                                    result.message = "success";
+                                    result.list = _list;
+                                    return Json(result);
+                                }
+                                else
+                                {
+                                    result.message = "No candidates to add!";
+                                }
+                            }
+                            else
+                            {
+                                result.message = "Please select valid file for import(.xls, .xslx)!";
+                            }
+                        }
+                        else
+                        {
+                            result.message = "Please select valid file for import(.xls, .xslx)!";
+                        }
+                    }
+                    else
+                    {
+                        result.message = "Failed to import candidates!";
+                    }
+                }
+                else
+                {
+                    result.message = "Please select valid file for import!";
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                result.message = "Failed to import candidates!";
+            }
+            return Json(result);
+        }
+        #endregion
     }
 }

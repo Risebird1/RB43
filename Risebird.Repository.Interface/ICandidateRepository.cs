@@ -48,5 +48,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook();
         Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data);
         Task<IEnumerable<CandidateTimelineVM>> GetAllCandidateSearchbyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
+        Task<IEnumerable<CountryCodeDetails>> GetAllCountryCodeDetails();
     }
 }
