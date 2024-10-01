@@ -10953,7 +10953,7 @@ section {
     margin-left: 92px;
 }
 
-#id_import_myModal, #id_projectimport_myModal .file-upload-wrapper {
+#id_import_myModal .file-upload-wrapper, #id_projectimport_myModal .file-upload-wrapper {
     position: relative;
     width: 100%;
     height: 45px;
@@ -10962,7 +10962,7 @@ section {
     text-overflow: ellipsis;
 }
 
-    #id_import_myModal, #id_projectimport_myModal .file-upload-wrapper:before {
+    #id_import_myModal .file-upload-wrapper:before, #id_projectimport_myModal .file-upload-wrapper:before {
         content: "";
         position: absolute;
         top: 0;
@@ -10980,41 +10980,41 @@ section {
         border-radius: 0 5px 5px 0;
     }
 
-    #id_import_myModal, #id_projectimport_myModal .file-upload-wrapper:after {
-        content: attr(data-text);
-        font-size: 14px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 10px 0px;
-        display: block;
-        width: 300px;
-        pointer-events: none;
-        z-index: 20;
-        height: 45px;
-        line-height: 22px;
-        color: #545252f2;
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        #id_import_myModal .file-upload-wrapper:after, #id_projectimport_myModal .file-upload-wrapper:after {
+            content: attr(data-text);
+            font-size: 14px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 10px 0px;
+            display: block;
+            width: 300px;
+            pointer-events: none;
+            z-index: 20;
+            height: 45px;
+            line-height: 22px;
+            color: #545252f2;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    #id_import_myModal, #id_projectimport_myModal .file-upload-wrapper input {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 99;
-        height: 40px;
-        margin: 0;
-        padding: 0;
-        display: block;
-        cursor: pointer;
-        width: 100%;
-    }
+        #id_import_myModal .file-upload-wrapper input, #id_projectimport_myModal .file-upload-wrapper input {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99;
+            height: 40px;
+            margin: 0;
+            padding: 0;
+            display: block;
+            cursor: pointer;
+            width: 100%;
+        }
 
 .cadEmail [data-tooltip]:hover:before {
     left: 85px;
