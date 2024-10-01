@@ -116,6 +116,8 @@ namespace Risebird.Entities.ViewModel
         public string urlid { get; set; }
         public int SkillSetsevaluate { get; set; }
         public int Interviewduration { get; set; }
+        [Display(Name = "Guests")]
+        public string Guests { get; set; }
     }
     public class TimeslotsVM
     {
