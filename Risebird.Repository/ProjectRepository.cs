@@ -181,7 +181,7 @@ namespace Risebird.Repository
                     Random rnd = new Random();
                     int nums = rnd.Next(10, 99);
                     projectDetails.ProjectUniqueid = "RB" + projectDetails.ClientId.ToString() + (results.FirstOrDefault() + 1).ToString("D5") + nums.ToString();
-                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn,ProjectUniqueid,SkillSetsevaluate ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn,@ProjectUniqueid,@SkillSetsevaluate);";
+                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn,ProjectUniqueid,SkillSetsevaluate,ProjectTitle ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn,@ProjectUniqueid,@SkillSetsevaluate,@ProjectTitle);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         projectDetails.Name,
@@ -192,7 +192,8 @@ namespace Risebird.Repository
                         projectDetails.CreatedOn,
                         IsDeleted = false,
                         projectDetails.ProjectUniqueid,
-                        projectDetails.SkillSetsevaluate
+                        projectDetails.SkillSetsevaluate,
+                        projectDetails.ProjectTitle
 
                     });
                     var projectList = SqlMapper.QueryAsync<Project>(
@@ -285,6 +286,7 @@ namespace Risebird.Repository
                 parameters.Add("@EndClient", projectDetails.EndClient);
                 parameters.Add("@Location", projectDetails.Location);
                 parameters.Add("@ProjectOwnerId", projectDetails.ProjectOwnerId);
+                parameters.Add("@ProjectTitle", projectDetails.ProjectTitle);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

@@ -37,5 +37,7 @@ namespace Risebird.Entities.ViewModel
         public string ProjectStatus { get; set; }
         public string ProjectUniqueid { get; set; }
         public int SkillSetsevaluate { get; set; }
+        [DisplayName("Project Title")]
+        public string ProjectTitle { get; set; }
     }
 }
