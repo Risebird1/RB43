@@ -400,7 +400,7 @@
                     </div>
 
                     <div class="col-md-6 form-field-calender pull-left" style="padding-left:3vw">
-                        <form action="@Url.Action("ReScheduleEvent", "ScheduleEvent", new { id = ViewBag.id })" enctype="multipart/form-data" method="post">
+                        <form action="@Url.Action("ScheduleEvent", "InterviewScheduler", new { id = ViewBag.id })" enctype="multipart/form-data" method="post">
                             <div>
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary()
