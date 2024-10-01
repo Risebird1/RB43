@@ -22,11 +22,16 @@ Begin
 
 begin try
 	begin tran
-	if not exists (select top 1 id from InterviewerDirectApplication where irfid = @IRFId and EmailId = @EmailId)
+	if not exists (select top 1 id from UserList where EmailId = @EmailId)
 	Begin
-		Insert into InterviewerDirectApplication(IRFId, EmailId, Phone, ResumeLink, CreatedAt, CreatedBy)  
-		values(@IRFId, @EmailId, @Phone, @ResumeLink, @timeNow, @EmailId) 
+		if not exists (select top 1 id from InterviewerDirectApplication where irfid = @IRFId and EmailId = @EmailId)
+		Begin
+			Insert into InterviewerDirectApplication(IRFId, EmailId, Phone, ResumeLink, CreatedAt, CreatedBy)  
+			values(@IRFId, @EmailId, @Phone, @ResumeLink, @timeNow, @EmailId) 
+		End 
 	End
+
+	
 	 
 
 	commit tran
