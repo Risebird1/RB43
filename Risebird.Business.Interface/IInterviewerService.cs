@@ -10,7 +10,7 @@ namespace Risebird.Business.Interface
     {
         List<InterviewerProfileVM> GetInterviewers();
         //Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
-        bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId);
+        bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, bool? isApplicant = false);
         //Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
         bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList);
         Task<bool> DeleteInterviewerProfile(int id);
@@ -104,5 +104,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveApplicantInterviewerAIVerdict(int id, string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
         Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id);
         Task<bool> UpdateApplicantsEmploymentDetails(InterviewerDirectApplicationVM obj, string loggedInUser);
+        Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
     }
 }

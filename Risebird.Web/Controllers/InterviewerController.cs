@@ -4168,9 +4168,25 @@ namespace Risebird.Web.Controllers
             try
             {
                 //dec = dec.Replace(" ", "+");
-                //var userId = await _encryptionHelper.DecryptData(user);
-                string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
-                var userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+
+                int id;
+                int? userId = new int?();
+                // Try to convert the string to an integer
+                bool success = int.TryParse(user, out id);
+
+                // Check if the conversion was successful
+                if (success)
+                {
+                    userId = id;
+                }
+                else
+                {
+                    string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
+                    userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                }
+
+                    //var userId = await _encryptionHelper.DecryptData(user);
+                
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
                     var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
@@ -4381,6 +4397,39 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")//|| profileName== "InterviewerManagement"
                     {
                         var model = await _interviewerService.GetInterviewerApplicants(emailId);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FLNInterviewersAcknowledgementStatus()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")//|| profileName== "InterviewerManagement"
+                    {
+                        var model = await _interviewerService.GetFLNAcknowledgementStatus(emailId);
                         return View(model);
                     }
                     else
