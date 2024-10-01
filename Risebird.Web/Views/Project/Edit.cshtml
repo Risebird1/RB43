@@ -90,6 +90,15 @@
                                         @Html.EditorFor(model => model.ProjectUniqueid, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                     </div>
                                 </div>
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.ProjectTitle, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                        </div>
+                                        @Html.EditorFor(model => model.ProjectTitle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.ProjectTitle, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
                                 @* <div class="col-md-4 col-sm-4 pr-1">
                             <div class="form-group">
                             <div class="mandate">
