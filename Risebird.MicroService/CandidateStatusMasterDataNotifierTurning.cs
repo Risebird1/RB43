@@ -65,7 +65,7 @@ namespace Risebird.MicroService
            
                 var startingDate = new DateTime(2024, 4, 1);
                 candidateData = (await _candidateService.GetCandidateTimelinebyDate(startingDate, DateTime.Now, "danijel.j@turing.com")).ToList();
-
+                log.LogInformation($" CandidateStatusMasterDataNotifierTurning called data sp with count : {candidateData.Count}");
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -204,7 +204,8 @@ namespace Risebird.MicroService
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:S1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 12;
+                log.LogInformation($" CandidateStatusMasterDataNotifierTurning data prepared");
+                int startColumn = 1; int endColumn = 13;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -284,10 +285,10 @@ namespace Risebird.MicroService
 
                         i++;
                     }
-
+                    log.LogInformation($" CandidateStatusMasterDataNotifierTurning excel prepared");
                     fileName = fileName.Replace(" ", "_");
                     await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), null, Convert.ToBase64String(Ep.GetAsByteArray()), fileName,true);
-
+                    log.LogInformation($" CandidateStatusMasterDataNotifierTurning mail sent.");
                 }
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning completed at: {DateTime.Now}");
             }
