@@ -222,7 +222,7 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 9].Value = "Current Status Date";
                 Sheet.Cells[1, 10].Value = "Profile Source";
                 Sheet.Cells[1, 11].Value = "Skill Channel ID";
-                Sheet.Cells[1, 11].Value = "Cancellation Source(For Cancelled Candidate Status)";
+                Sheet.Cells[1, 12].Value = "Cancellation Source(For Cancelled Candidate Status)";
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -282,7 +282,7 @@ namespace Risebird.MicroService
                             Sheet.Cells[i, 10].Value = string.Empty;
                         }
                         Sheet.Cells[i, 11].Value = item.IRFName;
-                        Sheet.Cells[i, 11].Value = item.CancellationSource;
+                        Sheet.Cells[i, 12].Value = item.CancellationSource;
 
                         i++;
                     }
