@@ -1,4 +1,3 @@
-using EllipticCurve.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,6 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -296,6 +294,7 @@ namespace Risebird.MicroService
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                throw ex;
             }
         }
 
