@@ -3139,7 +3139,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
         {
@@ -6474,7 +6474,7 @@ namespace Risebird.Web.Controllers
             }
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Import Template");
-            ExcelWorksheet Sheet1 = Ep.Workbook.Worksheets.Add("Country");
+            ExcelWorksheet Sheet1 = Ep.Workbook.Worksheets.Add("Country Code");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Project_Import_Template" + ".xlsx";
             try
             {
@@ -6653,6 +6653,52 @@ namespace Risebird.Web.Controllers
                 result.message = "Failed to import candidates!";
             }
             return Json(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProjectPublicCandidates(int id, string projectName, string emailid, string uniqueid)
+        {
+            try
+            {
+                var profileName = "Client";
+                ViewBag.IRFName = projectName;
+                ViewBag.IRFId = id;
+                ViewBag.profile = profileName;
+                ViewBag.emailid = emailid;
+                var meetings = (await _irfService.GetProjectInterviewMeetings(id, profileName, emailid))?.ToList();
+                var candidateList = (await _irfService.GetProjectCandidates(id, emailid))?.ToList();
+
+                ViewBag.ButtonAccess = true;
+                ViewBag.IsClientCancelInterview = true;
+                //if (profileName == "Client")
+                //{
+                //    var client = await _userRepository.GetClientUserDetailsByIRF(emailid, id);
+                //    if (client == null || (client != null && !client.IsRecruiterActive))
+                //    {
+                //        ViewBag.ButtonAccess = false;
+                //    }
+                //    ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
+                //    var ClientRole = client?.Role;
+                //    ViewBag.ClientRole = ClientRole;
+                //}
+                if (candidateList != null && candidateList.Count > 0)
+                {
+                    candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                    candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
+                    candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); x.HeuristicsscoreDesc = ((Heuristicsscorelevel)x.Heuristicsscore).GetDescription(); });
+                }
+                if (TempData["SuccessErrorMessageCandidate"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                    TempData.Remove("SuccessErrorMessageCandidate");
+                }
+                ViewBag.AccessType = "Public";
+                return View("GetCandidates", candidateList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
         }
         #endregion
     }
