@@ -68,6 +68,7 @@ namespace Risebird.Entities.ViewModel
         public string SchedulerUniqueid { get; set; }
         public DateTime EndDate { get; set; }
         public bool HasEmailDroppedOrBounced { get; set; }
+        public int CandidateAging { get; set; }
     }
 
     public class TimelineStatus

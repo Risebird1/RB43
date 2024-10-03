@@ -15,9 +15,12 @@ AS
 BEGIN     
 if(@Type='Project')  
 Begin  
+Declare @ClientId int
+Select @ClientId=cu.ClientId From ClientUser cu join UserList ul on ul.id=cu.UserId where ul.EmailId=@Emailid
 Select pr.id,pr.Name as ProjectName,pr.ProjectUniqueid,Count(pim.id) IRFCount,pr.ProjectTitle as JDTiltle 
 from Project pr join ProjectIRFMapping pim on pim.ProjectId=pr.id join  
 IRF on IRF.id=pim.IRFId  
+where IRF.Clientid=@ClientId
 group by pr.id,pr.Name,pr.ProjectUniqueid,pr.ProjectTitle  
 End  
 else  

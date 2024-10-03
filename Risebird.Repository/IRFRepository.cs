@@ -9144,6 +9144,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<Candidate>> GetProjectCandidates(int id, string emailId = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Projectid", id);
+                dynamicParameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetProjectCandidates", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
