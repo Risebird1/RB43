@@ -336,6 +336,11 @@
                                                                                     <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
                                                                                 </div>
                                                                             </a>
+                                                                            <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetProjectPublicCandidates", "Candidate" , new { id = item.id, projectName = item.ProjectName, emailid = ViewBag.emailid,uniqueid = ViewBag.id})" title="Candidate List">
+                                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
+                                                                                    <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                                </div>
+                                                                            </a>
                                                                         }
                                                                     </td>
                                                                 }
