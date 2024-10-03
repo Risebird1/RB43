@@ -39,12 +39,13 @@ left join ColdCandidateInfos  cci on c.id=cci.FKCandidateId
 where  tcul.EmailId=@Emailid and c.ProfileSource=@Emailid and irf.Clientid=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IRF.IsDeleted,0)=0 and ISNULL(cci.IsColdCandidate,0) !=1 and ISNULL(im.IsDeleted,0)=0                     
 GROUP BY IRF.id,ul.Emailid,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')),Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,
 ul.MobileNumber,IRF.JobCountry, cm.id ,ulir.EmailId,c.id)
-Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue
+Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue,DATEDIFF(Day,CandidateAddStatus.PerformedOn,Getdate()) as interviewtimedifference
 From CTE join InterviewMeetings im on im.interviewdate=CTE.dtCreatedOn and im.candidateEmail=CTE.candidateEmail       
 join IRF on CTE.imid=IRF.id                  
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
+outer apply(select top 1 cs.Date as PerformedOn From CandidateStatus cs where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
 where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc                 
@@ -66,12 +67,13 @@ left join ColdCandidateInfos  cci on c.id=cci.FKCandidateId
 where  tcul.EmailId=@Emailid and c.ClientHRAttemptContact=@Emailid and irf.Clientid=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IRF.IsDeleted,0)=0 and ISNULL(cci.IsColdCandidate,0) !=1 and ISNULL(im.IsDeleted,0)=0                     
 GROUP BY IRF.id,ul.Emailid,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')),Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,
 ul.MobileNumber,IRF.JobCountry, cm.id ,ulir.EmailId,c.id)
-Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue
+Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue,DATEDIFF(Day,CandidateAddStatus.PerformedOn,Getdate()) as interviewtimedifference
 From CTE join InterviewMeetings im on im.interviewdate=CTE.dtCreatedOn and im.candidateEmail=CTE.candidateEmail       
 join IRF on CTE.imid=IRF.id                  
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
+outer apply(select top 1 cs.Date as PerformedOn From CandidateStatus cs where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
 where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc        
@@ -91,12 +93,13 @@ left join ColdCandidateInfos  cci on c.id=cci.FKCandidateId
 where  irf.Clientid=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IRF.IsDeleted,0)=0 and ISNULL(cci.IsColdCandidate,0) !=1 and ISNULL(im.IsDeleted,0)=0                     
 GROUP BY IRF.id,ul.Emailid,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')),Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,
 ul.MobileNumber,IRF.JobCountry, cm.id ,ulir.EmailId,c.id)
-Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue
+Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue,DATEDIFF(Day,CandidateAddStatus.PerformedOn,Getdate()) as interviewtimedifference
 From CTE join InterviewMeetings im on im.interviewdate=CTE.dtCreatedOn and im.candidateEmail=CTE.candidateEmail       
 join IRF on CTE.imid=IRF.id                  
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
+outer apply(select top 1 cs.Date as PerformedOn From CandidateStatus cs where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
 where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc               
@@ -119,12 +122,13 @@ left join ColdCandidateInfos  cci on c.id=cci.FKCandidateId
 where tcul.EmailId=@Emailid and  irf.Clientid=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IRF.IsDeleted,0)=0 and ISNULL(cci.IsColdCandidate,0) !=1 and ISNULL(im.IsDeleted,0)=0                     
 GROUP BY IRF.id,ul.Emailid,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')),Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,
 ul.MobileNumber,IRF.JobCountry, cm.id ,ulir.EmailId,c.id)
-Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue
+Select CTE.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue,DATEDIFF(Day,CandidateAddStatus.PerformedOn,Getdate()) as interviewtimedifference
 From CTE join InterviewMeetings im on im.interviewdate=CTE.dtCreatedOn and im.candidateEmail=CTE.candidateEmail       
 join IRF on CTE.imid=IRF.id                  
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on cl.id=IRF.ClientId  
 outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as CandidateStatus    
+outer apply(select top 1 cs.Date as PerformedOn From CandidateStatus cs where cs.IRFId=CTE.imid and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
 where (MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2 or im.RedoInterview=1)
 and CTE.dtCreatedOn>=@Startdate and CTE.dtCreatedOn<=@Enddate 
 order by CTE.dtCreatedOn desc                  
@@ -234,7 +238,4 @@ order by dtCreatedOn desc
 End                        
 End                        
 End     
-  
-    
-  
 GO
