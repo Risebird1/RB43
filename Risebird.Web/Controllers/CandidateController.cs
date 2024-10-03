@@ -3724,11 +3724,6 @@ namespace Risebird.Web.Controllers
                         model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
                     }
 
-                    if (candidateData == null)
-                    {
-                        return RedirectToAction("PublicAllMeetings", new { id = id });
-                    }
-
                     foreach (var candidate in model)
                     {
                         candidate.IsClientCancelInterview = client.IsClientCancelInterview;
