@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 //using OfficeOpenXml.Core.ExcelPackage;
@@ -41,7 +40,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("CandidateStatusMasterDataNotifierTurning")]
-        public async Task Run([TimerTrigger("0 0 3 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
+        public async Task Run([TimerTrigger("0 0 5 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
         {
             try
             {
