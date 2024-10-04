@@ -4055,7 +4055,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 8].Value = string.Empty;
                         }
-                        Sheet.Cells[i, 9].Value = item.IRFName;
+                        Sheet.Cells[i, 9].Value = item.IRFname;
                         Sheet.Cells[i, 10].Value = item.HREmail;
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.InterviewId + "&irfId=" + item.IRFId + "&isClient=true";
                         try
