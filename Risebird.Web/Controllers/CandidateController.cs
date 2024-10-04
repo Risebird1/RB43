@@ -3724,11 +3724,6 @@ namespace Risebird.Web.Controllers
                         model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
                     }
 
-                    if (candidateData == null)
-                    {
-                        return RedirectToAction("PublicAllMeetings", new { id = id });
-                    }
-
                     foreach (var candidate in model)
                     {
                         candidate.IsClientCancelInterview = client.IsClientCancelInterview;
@@ -4060,7 +4055,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 8].Value = string.Empty;
                         }
-                        Sheet.Cells[i, 9].Value = item.IRFName;
+                        Sheet.Cells[i, 9].Value = item.IRFname;
                         Sheet.Cells[i, 10].Value = item.HREmail;
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.InterviewId + "&irfId=" + item.IRFId + "&isClient=true";
                         try
