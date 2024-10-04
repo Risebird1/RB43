@@ -5,7 +5,6 @@
   
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Aspose.HTML" Version="24.9.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
     <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.2.0" />
