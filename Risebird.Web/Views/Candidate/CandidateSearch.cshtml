@@ -499,7 +499,7 @@
                                                                                                     {
                                                                                                         <p>Redo Interview</p>
                                                                                                     }
-                                                                                                    else if (item.IsColdCandidate || item.InterviewId == 0)
+                                                                                                    else if ((item.IsColdCandidate && item.StatusValue != "Meeting Status" && item.StatusValue != "Interview Status") || item.InterviewId == 0)
                                                                                                     {
                                                                                                         @if (item.StatusValue == "In Progress")
                                                                                                         {
