@@ -35,8 +35,8 @@
     }
 
     /*.mob_h {
-                                                                                                                                       display: none !important
-                                                                                                                                }*/
+                                                                                                                                                   display: none !important
+                                                                                                                                            }*/
 
     .tox-notifications-container {
         display: none
@@ -68,21 +68,18 @@
 
                     </div>
                 </div>
-                @if (ViewBag.ClientRole == "Business Owner" || ViewBag.ClientRole == "Client Admin" || ViewBag.ClientRole == "Head HR")
-                {
-                    <div class="col-md-8  m-w-60 pull-left" style="padding-top:30px;">
-                        @if (ViewBag.Type == "SkillChannel")
-                        {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Project','@ViewBag.emailid','@ViewBag.id')"><strong>Project Interviews</strong></div>
-                        }
-                        else
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Project','@ViewBag.emailid','@ViewBag.id')"><strong>Project Interviews</strong></div>
-                        }
-                    </div>
-                }
+                <div class="col-md-8  m-w-60 pull-left" style="padding-top:30px;">
+                    @if (ViewBag.Type == "SkillChannel")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Project','@ViewBag.emailid','@ViewBag.id')"><strong>Project Interviews</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('SkillChannel','@ViewBag.emailid','@ViewBag.id')"><strong>Skill Channel Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Project','@ViewBag.emailid','@ViewBag.id')"><strong>Project Interviews</strong></div>
+                    }
+                </div>
                 <div class="col-md-4 m-w-40 pull-left mob-ht">
                     @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                     {
@@ -321,27 +318,24 @@
                                                                 </span>
                                                                 </button>*@
 
-                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                                                        {
-                                                                            <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
-                                                                                <span onclick="OpenProjectImportModal('@item.id', '@item.ProjectUniqueid', '@ViewBag.emailid','@item.ProjectName')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
-                                                                            </button>
-                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("ProjectMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , ProjectUniqueid = item.ProjectUniqueid,meetingtype="Select",projectid=item.id})" title="Selected Meetings">
-                                                                                <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background:#30a73099;">
-                                                                                    <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
-                                                                                </div>
-                                                                            </a>
-                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("ProjectMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , ProjectUniqueid = item.ProjectUniqueid,meetingtype="Reject",projectid=item.id})" title="Rejected Meetings">
-                                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18a1;">
-                                                                                    <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
-                                                                                </div>
-                                                                            </a>
-                                                                            <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetProjectPublicCandidates", "Candidate" , new { id = item.id, projectName = item.ProjectName, emailid = ViewBag.emailid,uniqueid = ViewBag.id})" title="Candidate List">
-                                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
-                                                                                    <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
-                                                                                </div>
-                                                                            </a>
-                                                                        }
+                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
+                                                                            <span onclick="OpenProjectImportModal('@item.id', '@item.ProjectUniqueid', '@ViewBag.emailid','@item.ProjectName')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
+                                                                        </button>
+                                                                        <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("ProjectMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , ProjectUniqueid = item.ProjectUniqueid,meetingtype="Select",projectid=item.id})" title="Selected Meetings">
+                                                                            <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background:#30a73099;">
+                                                                                <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
+                                                                            </div>
+                                                                        </a>
+                                                                        <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("ProjectMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , ProjectUniqueid = item.ProjectUniqueid,meetingtype="Reject",projectid=item.id})" title="Rejected Meetings">
+                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18a1;">
+                                                                                <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                            </div>
+                                                                        </a>
+                                                                        <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetProjectPublicCandidates", "Candidate" , new { id = item.id, projectName = item.ProjectName, emailid = ViewBag.emailid,uniqueid = ViewBag.id})" title="Candidate List">
+                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
+                                                                                <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                            </div>
+                                                                        </a>
                                                                     </td>
                                                                 }
                                                             </tr>
