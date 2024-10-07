@@ -6,8 +6,8 @@ CREATE TABLE [dbo].[PreOnboardingInterviewerAIVerdict](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[EmailId] [varchar](100) NOT NULL,
 	[PrimarySpecialization] [varchar](250) NOT NULL,
-	[OpenAIResponse] [varchar](max) NOT NULL,
-	[AIVerdict] [varchar](50) NOT NULL,
+	[OpenAIResponse] [varchar](max) NULL,
+	[AIVerdict] [varchar](50) NULL,
 	[CreatedAt][datetime] Null,
 	[ModifiedAt][datetime] NULL,
 	[CreatedBy][varchar](100) NOT NULL,
@@ -29,6 +29,25 @@ BEGIN
 	ALTER COLUMN EmailId VARCHAR(100);
 END
 
+IF EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'OpenAIResponse')
+    AND Object_ID = Object_ID(N'PreOnboardingInterviewerAIVerdict'))
+BEGIN
+	ALTER TABLE PreOnboardingInterviewerAIVerdict
+	ALTER COLUMN OpenAIResponse varchar(max) NULL;
+END
+
+IF EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'AIVerdict')
+    AND Object_ID = Object_ID(N'PreOnboardingInterviewerAIVerdict'))
+BEGIN
+	ALTER TABLE PreOnboardingInterviewerAIVerdict
+	ALTER COLUMN AIVerdict varchar(50) NULL;
+END
 
 GO
 
