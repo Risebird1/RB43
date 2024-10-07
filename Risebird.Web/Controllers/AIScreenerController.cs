@@ -306,16 +306,23 @@ namespace Risebird.Web.Controllers
                                     AIVerdict = "No";
                                 }
                             }
-
+                            else
+                            {
+                                AIVerdict = "Sorry! Could not be determined!";//
+                            }
                             // AIVerdict now contains 'No' or 'Yes' based on the condition
                             if (AIVerdict == "Yes")
                             {
                                 return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                             }
-                            else
+                            else if(AIVerdict == "No")
                             {
                                 return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty }) ;
+                            }
+                            else
+                            {
+                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, errorMessage = "API Failure! Verdict bypassed!" });//we bypass the verdict in this case as the api is not a 100% reliable
                             }
 
                         }
@@ -472,6 +479,10 @@ namespace Risebird.Web.Controllers
                                             AIVerdict = "No";
                                         }
                                     }
+                                    else
+                                    {
+                                        AIVerdict = string.Empty;
+                                    }
 
                                     // AIVerdict now contains 'No' or 'Yes' based on the condition
                                     if (AIVerdict == "Yes")
@@ -503,9 +514,14 @@ namespace Risebird.Web.Controllers
                                         return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                                     }
-                                    else
+                                    else if(AIVerdict == "No")
                                     {
                                         return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
+
+                                    }
+                                    else
+                                    {
+                                        return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "API Failure! Verdict bypassed!" });
                                     }
 
                                 }
