@@ -468,12 +468,32 @@ namespace Risebird.Web.Controllers
                         {
                             if (!string.IsNullOrEmpty(assessmentGroupList))
                             {
-                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                if (profileName == "InterviewerManagement")
+                                {
+                                    //TempData["MessageAddInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    ViewBag.Message = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    return View(interviewerProfile);
+                                }
+                                else
+                                {
+                                    TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+
+                                }
                             }
                             else
                             {
-                                TempData["MessageInterviewer"] = "Failed to add Interviewer Profile.";
+                                if (profileName == "InterviewerManagement")
+                                {
+                                    //TempData["MessageAddInterviewer"] = "Failed to add Interviewer Profile.";
+                                    ViewBag.Message = "Failed to add Interviewer Profile.";
+                                    return View(interviewerProfile);
+                                }
+                                else
+                                {
+                                    TempData["MessageInterviewer"] = "Failed to add Interviewer Profile.";
+                                }
                             }
+                            
                             return RedirectToAction("Index");
                         }
                     }
