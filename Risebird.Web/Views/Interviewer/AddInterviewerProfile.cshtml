@@ -1081,6 +1081,17 @@
 
                         }
                     }
+                    else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed"))
+                    {
+                        swal.fire("Bypassing AI Verdict due to API failure...");
+
+                        document.getElementById("divAIVerdict").style.display = "none";
+                        document.getElementById("divEVverified").style.display = "block";
+                        $("#ResumeLink").val(data.resumeLink);
+                        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
+                        button.innerHTML = "Bypassing...";
+                        button.disabled = true;
+                    }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
                         

@@ -370,13 +370,21 @@
             data: { id: id },
             success: function (data) {
                 debugger;
-                if (data != null && data.errorMessage == '') {
+                if (data != null && (data.errorMessage == '' || data.errorMessage.includes('bypassed'))) {
                     if (data.isfavourableVerdict) {
                         document.getElementById("id_aiVerdict_" + id).innerHTML = 'Yes';
 
                         document.getElementById('id_aiUrl_' + id).style.display = "block";
 
-                        swal.fire("Processed with favourable verdict! Acknowledgent sent to the interviewer: " + emailId + ' against skill channel: ' + skillChannelName + '.');
+                        swal.fire("Processed with favourable verdict! Acknowledgement sent to the interviewer: " + emailId + ' against skill channel: ' + skillChannelName + '.');
+                        //buttonAI.disabled = false;
+                    }
+                    else if (!data.isfavourableVerdict && data.errorMessage.includes('bypassed')) {
+                        document.getElementById("id_aiVerdict_" + id).innerHTML = 'Bypassed';
+
+                        //document.getElementById('id_aiUrl_' + id).style.display = "block";
+
+                        swal.fire("API Failure! Verdict bypassed! Acknowledgement sent to the interviewer: " + emailId + ' against skill channel: ' + skillChannelName + '.');
                         //buttonAI.disabled = false;
                     }
                     else {

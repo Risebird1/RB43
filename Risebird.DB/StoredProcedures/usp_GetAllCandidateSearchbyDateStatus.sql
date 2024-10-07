@@ -56,7 +56,7 @@ left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12  
 inner join TransClientUser tcu on IRF.id=tcu.IRFId                                
 left join UserList ulc on tcu.ClientUserId = ulc.id 
-where ulc.EmailId = @EmailId and ca.ClientHRAttemptContact=@EmailId and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)
+where ulc.EmailId = @EmailId and ca.ClientHRAttemptContact=@EmailId and cs.Date>=@startDate and cs.Date<@endDate and IRF.ClientId=@Clientid and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.CandidateEmailId,CTE.CandidateName,CTE.IRFname,CTE.PrimarySkill,
 CTE.Phone,CTE.HREmail,CTE.interviewDate,CTE.CalendlyLink,CTE.ProfileSource,im.RedoInterview,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,CTE.IsColdCandidate,
@@ -109,7 +109,7 @@ left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                              
 inner join TransClientUser tcu on IRF.id=tcu.IRFId                                
 left join UserList ulc on tcu.ClientUserId = ulc.id   
-where ulc.EmailId = @EmailId and ca.ProfileSource=@EmailId and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)
+where ulc.EmailId = @EmailId and ca.ProfileSource=@EmailId and cs.Date>=@startDate and cs.Date<@endDate and IRF.ClientId=@Clientid and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.CandidateEmailId,CTE.CandidateName,CTE.IRFname,CTE.PrimarySkill,
 CTE.Phone,CTE.HREmail,CTE.interviewDate,CTE.CalendlyLink,CTE.ProfileSource,im.RedoInterview,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,CTE.IsColdCandidate,
@@ -156,7 +156,7 @@ join UserList ul on ul.id=cm.UserId
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId    
 left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.IRFId
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                              
-where cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)
+where cs.Date>=@startDate and cs.Date<@endDate and IRF.ClientId=@Clientid and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.CandidateEmailId,CTE.CandidateName,CTE.IRFname,CTE.PrimarySkill,
 CTE.Phone,CTE.HREmail,CTE.interviewDate,CTE.CalendlyLink,CTE.ProfileSource,im.RedoInterview,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,CTE.IsColdCandidate,
@@ -207,7 +207,7 @@ left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                              
 inner join TransClientUser tcu on IRF.id=tcu.IRFId                                
 left join UserList ulc on tcu.ClientUserId = ulc.id   
-where ulc.EmailId = @EmailId AND cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)
+where ulc.EmailId = @EmailId AND cs.Date>=@startDate and cs.Date<@endDate and IRF.ClientId=@Clientid and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.CandidateEmailId,CTE.CandidateName,CTE.IRFname,CTE.PrimarySkill,
 CTE.Phone,CTE.HREmail,CTE.interviewDate,CTE.CalendlyLink,CTE.ProfileSource,im.RedoInterview,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,CTE.IsColdCandidate,
