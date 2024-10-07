@@ -1066,7 +1066,7 @@
             data: formdata,
             success: function (data) {
                 debugger;
-                if (data != null && data.errorMessage == '') {
+                if (data != null && (data.errorMessage == '' || data.errorMessage.includes("bypassed"))) {
                     if (data.isfavourableVerdict) {
                         document.getElementById("divAIVerdict").style.display = "none";
                         document.getElementById("divEVverified").style.display = "block";
@@ -1081,8 +1081,8 @@
 
                         }
                     }
-                    else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed"))
-                    {
+                    else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed")) {
+                        debugger;
                         swal.fire("Bypassing AI Verdict due to API failure...");
 
                         document.getElementById("divAIVerdict").style.display = "none";
@@ -1094,19 +1094,19 @@
                     }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
-                        
+
                         if (data.aiResponseHref != null && data.aiResponseHref != "") {
                             document.getElementById("id_aiResponseUrl").style.display = "block";
                             document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
                             //$("#AIResponse").val(data.aiResponse);
-                            
+
 
                         }
                         button.innerHTML = "Processed! Click to Regenerate!";
                         button.disabled = false;
-                        @* button.disabled = false;
-                        button.innerHTML = "Generate AI Verdict"; *@
-                    }
+    @* button.disabled = false;
+                            button.innerHTML = "Generate AI Verdict"; *@
+                        }
                 }
                 else if (data != null && data.errorMessage != '') {
                     swal.fire(data.errorMessage);
