@@ -35,8 +35,8 @@
     }
 
     /*.mob_h {
-                                                                                                                                                   display: none !important
-                                                                                                                                            }*/
+                                                                                                                                                               display: none !important
+                                                                                                                                                        }*/
 
     .tox-notifications-container {
         display: none
@@ -176,10 +176,7 @@
                                                                 <th style="text-align:left">JD-Skills</th>
                                                                 <th>JD</th>
                                                                 <th class="text-center">Candidate Submission</th>
-                                                                @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                                                {
-                                                                    <th class="disabled-sorting text-center">Actions</th>
-                                                                }
+                                                                <th class="disabled-sorting text-center">Actions</th>
                                                             }
                                                             else
                                                             {
@@ -236,13 +233,13 @@
                                                                                 <span class="fas fa-upload"></span>
                                                                             </span>
                                                                         </button>
-                                                                      
+
                                                                         <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
                                                                             <span onclick="OpenImportModal('@item.id', '@item.IRFId', '@ViewBag.emailid','@item.JDTiltle')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
                                                                         </button>
 
-                                                                          @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                                                                      {*@
+                                                                        @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                {*@
                                                                         <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
                                                                             <a data-tooltip="Check resume upload status here" target="_blank" title="" href="javascript:void"> <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span></a>
                                                                         </button>
@@ -263,7 +260,7 @@
                                                                         }
 
 
-                                                                
+
 
                                                                         @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
                                                                 {*@
@@ -274,9 +271,10 @@
                                                                         </a>
                                                                         @* }*@
                                                                     </td>
-                                                                    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                                                    {
-                                                                        <td class="text-center">
+
+                                                                    <td class="text-center">
+                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                        {
                                                                             <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
                                                                                 <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
                                                                                     <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
@@ -302,11 +300,11 @@
                                                                                     <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" style="position:relative;left:-1px;top:-1px"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                                 </button>
                                                                             }
-                                                                            <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
-                                                                                <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { irfId =item.id, irfName =item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
-                                                                            </button>
-                                                                        </td>
-                                                                    }
+                                                                        }
+                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
+                                                                            <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { irfId =item.id, irfName =item.IRFId,emailid=ViewBag.emailid})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
+                                                                        </button>
+                                                                    </td>
                                                                 }
                                                                 else
                                                                 {
