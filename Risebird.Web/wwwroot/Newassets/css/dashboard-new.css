@@ -3518,6 +3518,7 @@ table.journey td.cadSkill {
     line-height: 1.3;
     white-space: normal;
     border-radius: 5px;
+    font-weight:500;
 }
 
 .table-bordered.journey td, .table-bordered.journey th {
@@ -3711,7 +3712,7 @@ table.interviewertable th, table.interviewertable td {
 /* Triangle hack to make tooltip look like a speech bubble */
 .talk-bubble [data-tooltip]:after, .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:after, [data-tooltip]:after {
     position: absolute;
-    bottom: 70%;
+    bottom:80%;
     left: 50%;
     margin-left: -5px;
     width: 0;
@@ -6582,8 +6583,8 @@ input[type=search]:focus {
 }
 
 .fa-times {
-    -webkit-animation: blink-1 2s infinite both;
-    animation: blink-1 2s infinite both;
+    -webkit-animation: blink-1 3s infinite both;
+    animation: blink-1 3s infinite both;
 }
 
 
@@ -9558,7 +9559,7 @@ option {
     }
 
     to {
-        opacity: 0.5;
+        opacity: 0.4;
     }
 }
 
@@ -11018,6 +11019,17 @@ section {
 
 .cadEmail [data-tooltip]:hover:before {
     left: 85px;
+}
+.resume-note {
+    width: 95%;
+    font-size: 14.6px;
+    float: left;
+    line-height: 12px;
+    color: green;
+    text-align: center;
+    background: #89dd8924;
+    margin: 0px 0px;
+    padding: 9px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -12498,7 +12510,12 @@ section {
         width: 100%;
         float: left;
     }
-
+    .resume-note {
+        width: 100%;
+        font-size: 13px;
+        float: left;
+        line-height: 20px;
+    }
     .modal-full-size {
         margin-left: 0px !important;
     }
