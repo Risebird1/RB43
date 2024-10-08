@@ -3756,7 +3756,7 @@ namespace Risebird.Repository
                     }
 
 
-                    return "Candidates imported successfully.Resume parsing is under process, check resume upload status by clicking adjacent blue icon after 15-30 minutes";
+                    return "Candidates imported successfully.";
                 }
 
             }
