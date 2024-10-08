@@ -3455,7 +3455,7 @@ namespace Risebird.Web.Controllers
                                     var result = await _candidateService.AddResume(resumeList);
                                     if (result)
                                     {
-                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded Successfully!";
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded Successfully! Resume parsing is under process, check resume upload status by clicking adjacent blue icon after 15-30 minutes";
                                     }
                                     else
                                     {
