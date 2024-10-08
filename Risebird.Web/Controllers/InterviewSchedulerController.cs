@@ -10,6 +10,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -314,6 +315,7 @@ namespace Risebird.Web.Controllers
                             model.HRCoordinator = _candidatedetails.ClientHrContact != "" ? _candidatedetails.ClientHrContact : "";
                             model.StaffingAgiencies = _candidatedetails.staffingAgency != "" ? _candidatedetails.staffingAgency : "";
                             model.MobileNumber = _candidatedetails.MobileNumber != "" ? _candidatedetails.MobileNumber : "";
+                            model.HRCoordinator = model.HRCoordinator.IsEmailAddressValid() ? model.HRCoordinator : string.Empty;
                             if (!string.IsNullOrEmpty(_candidatedetails.candidateEmail))
                             {
                                 model.reschedulerequest = true;
@@ -1457,6 +1459,7 @@ namespace Risebird.Web.Controllers
                         model.HRCoordinator = _candidatedetails.ClientHrContact != "" ? _candidatedetails.ClientHrContact : "";
                         model.StaffingAgiencies = _candidatedetails.staffingAgency != "" ? _candidatedetails.staffingAgency : "";
                         model.MobileNumber = _candidatedetails.MobileNumber != "" ? _candidatedetails.MobileNumber : "";
+                        model.HRCoordinator = model.HRCoordinator.IsEmailAddressValid() ? model.HRCoordinator : string.Empty;
                     }
                 }
                 else
