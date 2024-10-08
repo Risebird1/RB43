@@ -693,7 +693,11 @@
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
+            <div class="col-md-12 pull-left text-center" style="background: #edf4f9b5;margin: 10px 10px 0px 10px;padding: 10px;width: auto;">
+                <h2 class="blink" style="font-size: 16px; line-height: 23px;color: green;"><b>Candidate ID</b> verification is mandatory for this <b>interview authenticity and payment</b> . Ask candidate to show any <b>ID card</b> at the start of the interview.</h2>
+            </div>
             <div class="modal-body" style="padding:10px 20px;">
+             
                 <div style="overflow-y:auto;max-height:440px;">
                 @if (Model.IsVideoRequired == true)
                 {

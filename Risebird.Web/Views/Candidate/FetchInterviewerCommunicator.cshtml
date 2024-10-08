@@ -230,15 +230,23 @@
                                                                         <td>No JD</td>
                                                                     }
                                                                     <td class="text-center">
+
                                                                         <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
                                                                             <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public');" title="Upload Resumes">
                                                                                 <span class="fas fa-upload"></span>
                                                                             </span>
                                                                         </button>
-
+                                                                      
                                                                         <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Import Candidates" style="background:#42a5f5;">
                                                                             <span onclick="OpenImportModal('@item.id', '@item.IRFId', '@ViewBag.emailid','@item.JDTiltle')" title="Import Candidates"><i class='fas fa-file-import' style="font-size:13px;position:relative;left:-1px;"></i></span>
                                                                         </button>
+
+                                                                          @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                      {*@
+                                                                        <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
+                                                                            <a data-tooltip="Check resume upload status here" target="_blank" title="" href="javascript:void"> <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span></a>
+                                                                        </button>
+                                                                        @*  }*@
 
                                                                         @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                         {
@@ -255,12 +263,7 @@
                                                                         }
 
 
-                                                                        @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
-                                                                {*@
-                                                                        <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                            <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span class="fas fa-file"></span></span>
-                                                                        </button>
-                                                                        @*  }*@
+                                                                
 
                                                                         @* @if (!(bool)(ViewBag.IsClientLogin ?? false))
                                                                 {*@
