@@ -373,6 +373,8 @@ namespace Risebird.Entities.ViewModel
         public string JDTitleTwo { get; set; }
         public int PerSuccessRate { get; set; }
         public string CodeSnippetTwo { get; set; }
+        public string Recommendation { get; set; }
+        public string RecommendationComments { get; set; }
     }
 
     public class VedioComments
