@@ -8338,9 +8338,9 @@ namespace Risebird.Web.Controllers
                         {
                             if (model != null)
                             {
-                                if (model.Where(x => x.IsSME)?.Count() > 5)
+                                if (model.Where(x => x.IsSME)?.Count() > 25)
                                 {
-                                    ModelState.AddModelError("", "Cannot add more than 5 Subject Matter Experts for an Assessment Group!");
+                                    ModelState.AddModelError("", "Cannot add more than 25 Subject Matter Experts for an Assessment Group!");
                                     ViewBag.AssessmentGroupName = assessmentGroupName;
                                     ViewBag.IsValid = "False";
                                     return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);

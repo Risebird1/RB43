@@ -45,10 +45,10 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@IsCandidateavailability bit,
 	@IsMeetingAutoCancelled bit,
 	@IsMeetingNotificationSend bit,
-	@SkillChannelSME int = null,
+	--@SkillChannelSME int = null,
 	@ModifiedBy varchar(100) = null,
 	@timeNow datetime,
-	@isSMEChanged bit output,
+	--@isSMEChanged bit output,
 	@IsLocked bit,
 	--@InterviewDuration int,
 	--@IsFixedInterviewduration bit,
@@ -62,6 +62,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 	@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
+	@SMEBulkData AS [dbo].[CommonId_TableType] READONLY,
 	@IsNewSkillChannel bit = null,
 	@TechRubricType varchar(20) = null,
 	@IsVideoRequired bit
@@ -292,42 +293,45 @@ FROM
 	SELECT hrbd.IRFId, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId  
 	
 	  
-	set @isSMEChanged = 0
+	--set @isSMEChanged = 0
+	delete from SkillChannelSMEs where IRFId =@id
 
-	if(@SkillChannelSME is not null and @SkillChannelSME > 0)
-	Begin
-		if not exists(select top 1 id from SkillChannelSMEs where IRFId = @id)
-		Begin
-			insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
-			values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
+	insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+	select @id, id, @ModifiedBy, @timeNow from @SMEBulkData
+	--if(@SkillChannelSME is not null and @SkillChannelSME > 0)
+	--Begin
+	--	if not exists(select top 1 id from SkillChannelSMEs where IRFId = @id)
+	--	Begin
+	--		insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+	--		values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
 
-			set @isSMEChanged = 1
+	--		set @isSMEChanged = 1
 
-		End
-		Else
-		Begin
+	--	End
+	--	Else
+	--	Begin
 
-			update SkillChannelSMEs set IsDeleted = 1, DeletedBy = @ModifiedBy, @isSMEChanged = 1 where IRFId = @id and InterviewerProfileId != @SkillChannelSME
+	--		update SkillChannelSMEs set IsDeleted = 1, DeletedBy = @ModifiedBy, @isSMEChanged = 1 where IRFId = @id and InterviewerProfileId != @SkillChannelSME
 
 
-			if exists (select top 1 id from SkillChannelSMEs where irfid = @id and InterviewerProfileId = @SkillChannelSME and (IsDeleted is null or IsDeleted = 0))
-			Begin
-				set @isSMEChanged = 0
+	--		if exists (select top 1 id from SkillChannelSMEs where irfid = @id and InterviewerProfileId = @SkillChannelSME and (IsDeleted is null or IsDeleted = 0))
+	--		Begin
+	--			set @isSMEChanged = 0
 
-			End
-			else
-			Begin
+	--		End
+	--		else
+	--		Begin
 
-				insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
-				values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
+	--			insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+	--			values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
 
-			End
+	--		End
 
-		End
+	--	End
 		
 	
 	
-	End
+	--End
 
 	Declare @imid TABLE  
 (  
