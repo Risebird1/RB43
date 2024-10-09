@@ -2283,6 +2283,19 @@ namespace Risebird.Repository
                         hRDt.Rows.Add(irfDetails.id, item.UserId);
                     }
 
+                    DataTable smeDt = new DataTable();
+
+                    if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF) !=null)
+                    {
+                        smeDt.Columns.Add("id", typeof(int));
+                        //irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId
+                        foreach (var item in irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF))
+                        {
+                            smeDt.Rows.Add(item.InterviewerProfileId);
+                        }
+                    }
+                    
+
                     SqlCommand cmdUpdateIRF = new SqlCommand("usp_UpdateIRFDetails", con);
                     cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
 
@@ -2391,8 +2404,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillChannelSME", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillChannelSME", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
 
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
@@ -2428,11 +2441,11 @@ namespace Risebird.Repository
                     bool isSMEChanged = false;
 
 
-                    SqlParameter isSMEChangedParam = new SqlParameter();
-                    isSMEChangedParam.ParameterName = "@isSMEChanged";
-                    isSMEChangedParam.DbType = DbType.Boolean;
-                    isSMEChangedParam.Direction = ParameterDirection.Output;
-                    cmdUpdateIRF.Parameters.Add(isSMEChangedParam);
+                    //SqlParameter isSMEChangedParam = new SqlParameter();
+                    //isSMEChangedParam.ParameterName = "@isSMEChanged
+                    //isSMEChangedParam.DbType = DbType.Boolean;
+                    //isSMEChangedParam.Direction = ParameterDirection.Output;
+                    //cmdUpdateIRF.Parameters.Add(isSMEChangedParam);
 
 
 
@@ -2526,14 +2539,18 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@HRBulkData"].Value = hRDt;
                     }
-
+                    if (smeDt != null && smeDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@SMEBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@SMEBulkData"].Value = smeDt;
+                    }
                     con.Open();
 
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
-                    isSMEChanged = Convert.ToBoolean(cmdUpdateIRF?.Parameters["@isSMEChanged"]?.Value);
+                    //isSMEChanged = Convert.ToBoolean(cmdUpdateIRF?.Parameters["@isSMEChanged"]?.Value);
                     if (removedTechSkills != null)
                     {
                         foreach (var removedTechSkill in removedTechSkills)
@@ -2646,6 +2663,7 @@ namespace Risebird.Repository
                         }
                     }
                     return new Tuple<bool, bool>(true, isSMEChanged);
+                    //return true;
                     //return Tuple(<true, isSMEChanged>);
                 }
 

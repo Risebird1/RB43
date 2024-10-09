@@ -133,7 +133,7 @@ namespace Risebird.Business
                     if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
                     {
                         //send notification to the sme here
-                        var smeEmail = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
+                        var smeEmails = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x => x.EmailId);
                         string channelOwner = string.Empty;
                         var client = (await _clientService.GetClient(irfDetails.ClientId))?.Name;
 
@@ -141,7 +141,7 @@ namespace Risebird.Business
                         {
                             channelOwner = (await _userRepository.GetUser(irfDetails.RisebirdHr)).EmailId;
                         }
-                        await _notificationHelper.SendAssignedNotificationToSME(smeEmail, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
+                        await _notificationHelper.SendAssignedNotificationToSME(smeEmails, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
                     }
 
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -775,10 +775,10 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
 
-                    if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF) && result.Item2)
+                    if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))//&& result.Item2
                     {
                         //send notification to the sme here
-                        var smeEmail = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
+                        var smeEmails = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x=>x.EmailId);
                         string channelOwner = string.Empty;
                         var client = (await _clientService.GetClient(model.ClientId))?.Name;
 
@@ -786,7 +786,7 @@ namespace Risebird.Business
                         {
                             channelOwner = (await _userRepository.GetUser(model.RisebirdHr)).EmailId;
                         }
-                        await _notificationHelper.SendAssignedNotificationToSME(smeEmail, model.IRFId, client, model.JDTiltle, model.PrimarySkillInvite, channelOwner);
+                        await _notificationHelper.SendAssignedNotificationToSME(smeEmails, model.IRFId, client, model.JDTiltle, model.PrimarySkillInvite, channelOwner);
                     }
 
                     var activityTrackerModel = new ActivityTrackerVM();

@@ -2959,14 +2959,17 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendAssignedNotificationToSME(string smeEmail, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner)
+        public async Task<string> SendAssignedNotificationToSME(IEnumerable<string> smeEmails, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner)
         {
             try
             {
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = "You have been assigned as a Subject Matter Expert.";
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(smeEmail, null));
+                foreach (var smeEmail in smeEmails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(smeEmail, null));
+                }
 
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(channelOwner, null));
 
