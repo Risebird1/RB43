@@ -7,7 +7,14 @@
 @{
     ViewData["Title"] = "Get Email Recipients";
     ViewBag.PageHeader = "Mail Recipients";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.pagetype == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
@@ -37,7 +44,7 @@
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
-                       
+
                         <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Mail Recipients</h4></div>
@@ -45,15 +52,15 @@
                     <div class="pull-left">
                         @if (ViewBag.recipientType == "Interviewer")
                         {
-                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack')"><strong>Interviewer</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
                         }
                         else if (ViewBag.recipientType == "Candidate")
                         {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack')"><strong>Interviewer</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
                         }
-                        
+
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
@@ -63,18 +70,21 @@
                             </button>
                         </div>
                         <div class="pull-right client-ms">
-                            @if (ViewBag.ReturnBack== 1)
+                            @if (ViewBag.pagetype != "Public")
                             {
+                                @if (ViewBag.ReturnBack == 1)
+                                {
 
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                                </button>
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                        <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                        <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                    </button>
+                                }
                             }
                         </div>
                     </div>
@@ -104,7 +114,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("GetEmailRecipientsBounceAndDropped","Dashboard", new { recipientType = ViewBag.recipientType,returnBack=ViewBag.ReturnBack})" method="post" id="form">
+                                        <form action="@Url.Action("GetEmailRecipientsBounceAndDropped","Dashboard", new { recipientType = ViewBag.recipientType,returnBack=ViewBag.ReturnBack,pagetype=ViewBag.pagetype})" method="post" id="form">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -237,7 +247,7 @@
                                                 <th>Activity/Status Date</th>
                                                 <th>Skill Channel Name</th>
                                                 <th>Interview Date</th>
-                                                
+
                                                 <th>Channel Owner</th>
                                                 <th>Candidate Mobile</th>
                                                 <th>Candidate Resume</th>
@@ -255,7 +265,7 @@
                                                 <th>Activity/Status Date</th>
                                                 <th>Skill Channel Name</th>
                                                 <th>Interview Date</th>
-                                                
+
                                                 <th>Channel Owner</th>
                                                 <th>Candidate Mobile</th>
                                                 <th>Candidate Resume</th>
@@ -308,7 +318,7 @@
                                                         <td>@item.ActivityDate</td>
                                                         <td>@item.SkillChannelName</td>
                                                         <td>@item.interviewDate</td>
-                                                       
+
                                                         <td>@item.ChannelOwner</td>
                                                         <td style="padding:0px 7px;">
                                                             <span class="call-area">
@@ -338,27 +348,27 @@
                                                             <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                                 <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                             </button>
-                                                      @if (ViewBag.recipientType == "Candidate")
-                                                      {
-                                                        @if (!string.IsNullOrEmpty(item.candidateEmail))
-                                                        {
-                                                        <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
-                                                                <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName =item.IRFId, irfId =item.InterviewId , emailId = item.candidateEmail, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                            </span>
-                                                        </button>
-                                                        }
+                                                            @if (ViewBag.recipientType == "Candidate")
+                                                            {
+                                                                @if (!string.IsNullOrEmpty(item.candidateEmail))
+                                                                {
+                                                                    <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                        <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName =item.IRFId, irfId =item.InterviewId , emailId = item.candidateEmail, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
 
-                                                        else
-                                                        {
-                                                        <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
-                                                            <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                            </span>
-                                                        </button>
+                                                                else
+                                                                {
+                                                                    <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                                                        <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                        </span>
+                                                                    </button>
 
-                                                        }
-                                                        }
+                                                                }
+                                                            }
                                                         </td>
                                                     </tr>
                                                     i = i + 1;
@@ -404,7 +414,7 @@
         $('body').removeClass("modal-open");
     });
     function ResetFilter() {
-        window.location.href = "/Dashboard/ResetRecipientActivityDetails?returnBack=" + @ViewBag.ReturnBack;
+        window.location.href = "/Dashboard/ResetRecipientActivityDetails?returnBack=" + @ViewBag.ReturnBack+"&pagetype="@ViewBag.Pagetype;
     }
 
     function ApplySessionFilter() {
@@ -450,10 +460,18 @@
 
 <script>
 
-    function Changeurldetails(recipientType,returnBack) {
-        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + returnBack;
+    function Changeurldetails(recipientType, returnBack, pagetype) {
+        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + returnBack + "&pagetype=" + pagetype;
     }
 </script>
+@if (ViewBag.Pagetype == "Public")
+{
+    <script>
+        $(document).ready(function () {
+            $("#main-panel").removeClass("main-panel");
+        });
+    </script>
+}
 <script src="~/js/common.js?v=2024"></script>
 
 

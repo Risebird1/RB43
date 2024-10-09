@@ -2,6 +2,7 @@
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 
 namespace Risebird.CommonHelper
@@ -19,15 +20,31 @@ namespace Risebird.CommonHelper
 
         public bool ValidateEmailAddress(string email)
         {
+            //try
+            //{
+            //    Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            //    Match match = regex.Match(email);
+            //    return match.Success;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            //    return false;
+            //}
             try
             {
-                Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-                Match match = regex.Match(email);
-                return match.Success;
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    MailAddress m = new MailAddress(email);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            catch (Exception ex)
+            catch (FormatException)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
