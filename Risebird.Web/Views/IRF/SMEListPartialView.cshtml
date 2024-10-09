@@ -34,7 +34,7 @@
 
                                     <td>@Model[i].EmailId</td>
                                     <td>@Model[i].InterviewerName</td>
-                                    <td class="text-center">@Html.CheckBox("SkillChannelSMEs[" + i + "].IsSelectedForIRF", Model[i].IsSelectedForIRF, new {@id = "SkillChannelSMEs_" + i + "__IsSelectedForIRF", @onClick = "ckChange(this)"})</td>
+                                    <td class="text-center">@Html.CheckBox("SkillChannelSMEs[" + i + "].IsSelectedForIRF", Model[i].IsSelectedForIRF, new {@id = "SkillChannelSMEs_" + i + "__IsSelectedForIRF"/* , @onClick = "ckChange(this)" */})</td>
                                     
 
                                     
@@ -99,10 +99,10 @@ function DisableEnableCheckboxes(checkBoxItems){
 }
 
 </script>
-@if(containsSelectedForIRF)
+@* @if(containsSelectedForIRF)
 {
     <script>
         DisableEnableCheckboxes(checkBoxItems);
 
     </script>
-}
+} *@
