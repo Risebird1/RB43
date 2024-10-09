@@ -21,6 +21,10 @@
                 </div>
                 <input type="hidden" value="@ViewBag.emailid" id="hiddemailid" />
                 <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
+              
+                <h2 class="resume-note"><strong>Note:</strong> If your resumes are not processed successfully, Use settings icon to add such resumes manually. Processed resume will appear in adjacent candidate list button on manage interviews page</h2>
+                
+                
                 <div class="pull-right">
                     @Html.ActionLink("Back", "FetchInterviewerCommunicator", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                 </div>

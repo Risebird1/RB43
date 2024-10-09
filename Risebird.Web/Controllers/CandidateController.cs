@@ -3004,6 +3004,10 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public string ImportQuickCandidatesPublic(IFormCollection formCollection)
         {
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
             var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
             var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
             var IRFName = formCollection["IRFName"].ToString();
@@ -3063,7 +3067,7 @@ namespace Risebird.Web.Controllers
                                                 var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
                                                 var candidate = new CandidateQuickAddModel
                                                 {
-                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    Name = workSheet.Cells[rowIterator, 1].Value != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
                                                     EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
                                                     ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
                                           ? workSheet.Cells[rowIterator, 3].Value.ToString()
@@ -3455,7 +3459,7 @@ namespace Risebird.Web.Controllers
                                     var result = await _candidateService.AddResume(resumeList);
                                     if (result)
                                     {
-                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded Successfully!";
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded Successfully! Resume parsing is under process, check resume upload status by clicking adjacent blue icon after 15-30 minutes";
                                     }
                                     else
                                     {
@@ -5421,7 +5425,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName)
+        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName, string emailid)
         {
             if (_env.IsDevelopment())
             {
@@ -5434,7 +5438,7 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird_" + DateTime.Now.ToString("dd/MM/yyyy") + "_CandidateUpdates_" + irfName + ".xlsx";
             try
             {
-                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId);
+                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
                 if (model == null)
                 {
                     model = new List<CandidateExcelData>();
@@ -6574,7 +6578,7 @@ namespace Risebird.Web.Controllers
                                                 var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
                                                 var candidate = new CandidateQuickAddModel
                                                 {
-                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    Name = workSheet.Cells[rowIterator, 1].Value != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
                                                     EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
                                                     ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,
                                                     Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,

@@ -173,8 +173,6 @@
 
         var excel_file = $("#idExcelFile")[0].files[0];
         var isSendInvite = document.getElementById("id_import_IsSendInvite").value;
-
-
         var formdata = new FormData();
         formdata.append('IRFId', irfExcelId);
         formdata.append('IsSendInvite', isSendInvite);
@@ -189,8 +187,7 @@
             processData: false,
             data: formdata,
             success: function (data) {
-                debugger;
-                document.getElementById('myModal').style.display = "none";
+                //document.getElementById('myModal').style.display = "none";
                 var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
                 document.getElementById('importResultModal').style.display = "block";
                 $('#importResultTableBody').html('');
