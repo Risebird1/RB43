@@ -135,8 +135,8 @@
     }
 
     /*.mob_h {
-                                                                                        display: none !important
-                                                                                          }*/
+                                                                                            display: none !important
+                                                                                              }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -482,11 +482,17 @@
                                 @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
                                 {
                                     @* <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                <div class="d-lg-inline-flex pad3">
+                                Not Processed Resume
+                                </div>
+                                </button> *@
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
-                                            Not Processed Resume
+                                            Probable NoShow
                                         </div>
-                                    </button> *@
+                                    </button>
                                     <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
@@ -2376,15 +2382,19 @@
         var url = "/Dashboard/GetEmailRecipientsBounceAndDropped?pagetype=Public";
         window.open(url, "_blank");
     }
-   @*  function NotProcessedResumeByClient(emailid,id) {
+    function CandidateProbableNoShow(emailid, id) {
+        var url = "/Interview/CandidateProbableNoShow?id=" + id + "&Emailid=" + emailid;
+        window.open(url, "_blank");
+    }
+    @*  function NotProcessedResumeByClient(emailid,id) {
         var url = "/Candidate/GetNotProcessedResumeByClient?emailid="+emailid+"&id="+id;
         window.open(url, "_blank");
-    } *@
+        } *@
 </script>
 <script>
-    // tabbed content
-    // http://www.entheosweb.com/tutorials/css/tabs.asp
-    $(".tab_content").hide();
+        // tabbed content
+        // http://www.entheosweb.com/tutorials/css/tabs.asp
+        $(".tab_content").hide();
     $(".tab_content:first").show();
 
     /* if in tab mode */

@@ -3868,11 +3868,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates()
+        public async Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates(string Emailid)
         {
             try
             {
-                return await _meetingRespository.GetProbableNoShowCandidates();
+                return await _meetingRespository.GetProbableNoShowCandidates(Emailid);
             }
             catch (Exception e)
             {
