@@ -5409,12 +5409,13 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetNotProcessedResumeByClient(string emailid)
+        public async Task<IActionResult> GetNotProcessedResumeByClient(string emailid, string id)
         {
             try
             {
                 var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
                 return PartialView("_GetNotProcessedResumeByClientPartial", data);
+                //return View(data);
 
             }
             catch (Exception ex)
