@@ -254,7 +254,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ClientReviewVM>> FetchInterviewsReview();
         Task<bool> BacklinkFailInterviewStatusUpdate(int id);
         Task<bool> UpdateProbableNoShowCandidates();
-        Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates();
+        Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates(string Emailid);
         Task<bool> UpdateProbableNoShowInterviewers();
         Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId);
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
