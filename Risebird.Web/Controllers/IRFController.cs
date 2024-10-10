@@ -10286,13 +10286,14 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if(irfId >0)
+                    
+                    if (irfId >0)
                     {
-                        var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
+                        //var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = encryptedId },
                         //        Request.Scheme);
-                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + encryptedId;
+                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + irfId.ToString();
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = irfId },
                         //        Request.Scheme);

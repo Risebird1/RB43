@@ -4273,9 +4273,25 @@ namespace Risebird.Web.Controllers
 
             try
             {
+                int resultId;
+                int? irfId = new int?();
+                // Try to convert the string to an integer
+                bool success = int.TryParse(id, out resultId);
+                string decodedEncryptedId = string.Empty;
+                // Check if the conversion was successful
+                if (success)
+                {
+                    irfId = resultId;
+                }
+                else
+                {
+                    decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                    irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                }
+
                 //dec = dec.Replace(" ", "+");
-                string decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
-                var irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                //string decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                //var irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
                 //var irfId = id;
                 if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
                 {
@@ -4283,7 +4299,7 @@ namespace Risebird.Web.Controllers
                     bool isValid = true;
                     if(isValid)
                     {
-                        return View(new InterviewerDirectApplicationVM { EncryptedIrfId = decodedEncryptedId });
+                        return View(new InterviewerDirectApplicationVM { IRFId = irfId.Value, EncryptedIrfId = decodedEncryptedId });
 
                     }
                     else
@@ -4374,7 +4390,9 @@ namespace Risebird.Web.Controllers
 
 
                 }
-                var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
+
+                int? irfId = model.IRFId;
+                //var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
                 //var irfId = model.EncryptedIrfId;
                 if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
                 {
