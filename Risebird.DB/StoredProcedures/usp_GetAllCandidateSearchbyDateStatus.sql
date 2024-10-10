@@ -226,5 +226,25 @@ outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join C
 where CTE2.IRFId=cs.IRFId and CTE2.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct 
 end
 end
+--Not Processed Resume
+else if(@datatype=1)
+begin
+if(@roleId=1 or @roleId=4)
+begin
+select irf.IRFId as IRFname, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId
+from CandidateResume cr   
+join IRF on irf.id = cr.IRFId  
+left join UserList ul on ul.id=cr.AddedBy
+where irf.ClientId =@clientId and cr.IsProcessed = 0  and ul.EmailId=@EmailId
+order by irf.IRFId  
+end
+else
+begin
+ select irf.IRFId as IRFname, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId from CandidateResume cr   
+ join IRF on irf.id = cr.IRFId  
+ where irf.ClientId =@clientId and cr.IsProcessed = 0   
+ order by irf.IRFId  
+end
+end
 END
 GO
