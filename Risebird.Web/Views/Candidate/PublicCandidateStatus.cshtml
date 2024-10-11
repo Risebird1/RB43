@@ -135,8 +135,8 @@
     }
 
     /*.mob_h {
-                                                                                                            display: none !important
-                                                                                                              }*/
+                                                                                                        display: none !important
+                                                                                                          }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -444,14 +444,14 @@
                                             </div>
                                         </button>
                                     </a>
-                                    @* <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
                                                 Multi-Stack Stats
                                             </div>
                                         </button>
-                                    </a> *@
+                                    </a>
                                 }
                                 else
                                 {
@@ -485,12 +485,6 @@
                                         Probable NoShow
                                     </div>
                                 </button>
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
-                                    <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad3">
-                                        Bounced/Dropped Mails
-                                    </div>
-                                </button>
                                 @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
                                 {
                                     @* <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
@@ -499,7 +493,12 @@
                                 Not Processed Resume
                                 </div>
                                 </button> *@
-
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                        <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Bounced/Dropped Mails
+                                        </div>
+                                    </button>
                                     <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement()" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
