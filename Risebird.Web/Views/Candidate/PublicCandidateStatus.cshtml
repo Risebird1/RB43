@@ -135,8 +135,8 @@
     }
 
     /*.mob_h {
-                                                                                        display: none !important
-                                                                                          }*/
+                                                                                            display: none !important
+                                                                                              }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -479,17 +479,20 @@
                                 <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
                                 </button>*@
                                 }
-
-
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 4px 5px 3px;">
-                                    <span class="topheader-link"><i class="fa fa-users" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad3">
-                                        Manage Interviews
-                                    </div>
-                                </button>
-
                                 @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
                                 {
+                                    @* <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                <div class="d-lg-inline-flex pad3">
+                                Not Processed Resume
+                                </div>
+                                </button> *@
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                        <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Probable NoShow
+                                        </div>
+                                    </button>
                                     <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
@@ -499,11 +502,17 @@
                                     <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement()" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
-                                            Live Interview Co-ordination
+                                            Live Co-ordination
                                         </div>
                                     </button>
                                 }
 
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 4px 5px 3px;">
+                                    <span class="topheader-link"><i class="fa fa-users" style="color:#fff"></i></span>
+                                    <div class="d-lg-inline-flex pad3">
+                                        Manage Interviews
+                                    </div>
+                                </button>
                             </div>
 
                             <div class="mobile-view">
@@ -675,7 +684,7 @@
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active">Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
-                                                            @* <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li> *@
+                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.ReportPending.GetDescription())
                                                         {
@@ -685,6 +694,7 @@
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
+                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
                                                         {
@@ -694,6 +704,7 @@
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
+                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                         }
                                                         else
                                                         {
@@ -703,6 +714,7 @@
                                                             <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
+                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                         }
 
 
@@ -2370,11 +2382,19 @@
         var url = "/Dashboard/GetEmailRecipientsBounceAndDropped?pagetype=Public";
         window.open(url, "_blank");
     }
+    function CandidateProbableNoShow(emailid, id) {
+        var url = "/Interview/CandidateProbableNoShow?id=" + id + "&Emailid=" + emailid;
+        window.open(url, "_blank");
+    }
+    @*  function NotProcessedResumeByClient(emailid,id) {
+        var url = "/Candidate/GetNotProcessedResumeByClient?emailid="+emailid+"&id="+id;
+        window.open(url, "_blank");
+        } *@
 </script>
 <script>
-    // tabbed content
-    // http://www.entheosweb.com/tutorials/css/tabs.asp
-    $(".tab_content").hide();
+        // tabbed content
+        // http://www.entheosweb.com/tutorials/css/tabs.asp
+        $(".tab_content").hide();
     $(".tab_content:first").show();
 
     /* if in tab mode */
