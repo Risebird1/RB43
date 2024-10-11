@@ -370,15 +370,16 @@
                 var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
                 document.getElementById("txt_Age").value = age.toString();
             });
-        $("#txt_EmailId").change(function () {
+        @* $("#txt_EmailId").change(function () {
             checkEmailid();
-        });
+        }); *@
     });
     var emailidvalidation = "";
     function checkEmailid() {
         $.ajax({
             url: '/Interviewer/EmailIdVilidation',
             type: 'POST',
+            async: false,
             data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
             success: function (data) {
                 emailidvalidation = data;
@@ -907,6 +908,7 @@
             $.ajax({
                 url: '/Aadhaar/EvVerification',
                 type: 'POST',
+                async: false,
                 data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
                 success: function (result) {
                     if (result.message == null) {
@@ -951,6 +953,7 @@
                 $.ajax({
                     url: '/Interviewer/GetInterviwerExists',
                     type: 'POST',
+                    async: false,
                     data: { 'interviewer': interviewer },
                     success: function (result) {
                         if (result) {
@@ -1066,7 +1069,7 @@
             data: formdata,
             success: function (data) {
                 debugger;
-                if (data != null && data.errorMessage == '') {
+                if (data != null && (data.errorMessage == '' || data.errorMessage.includes("bypassed"))) {
                     if (data.isfavourableVerdict) {
                         document.getElementById("divAIVerdict").style.display = "none";
                         document.getElementById("divEVverified").style.display = "block";
@@ -1081,8 +1084,8 @@
 
                         }
                     }
-                    else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed"))
-                    {
+                    else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed")) {
+                        debugger;
                         swal.fire("Bypassing AI Verdict due to API failure...");
 
                         document.getElementById("divAIVerdict").style.display = "none";
@@ -1094,19 +1097,19 @@
                     }
                     else {
                         swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
-                        
+
                         if (data.aiResponseHref != null && data.aiResponseHref != "") {
                             document.getElementById("id_aiResponseUrl").style.display = "block";
                             document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
                             //$("#AIResponse").val(data.aiResponse);
-                            
+
 
                         }
                         button.innerHTML = "Processed! Click to Regenerate!";
                         button.disabled = false;
-                        @* button.disabled = false;
-                        button.innerHTML = "Generate AI Verdict"; *@
-                    }
+    @* button.disabled = false;
+                            button.innerHTML = "Generate AI Verdict"; *@
+                            }
                 }
                 else if (data != null && data.errorMessage != '') {
                     swal.fire(data.errorMessage);
