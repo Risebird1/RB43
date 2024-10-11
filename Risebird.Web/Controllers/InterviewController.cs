@@ -9217,6 +9217,7 @@ namespace Risebird.Web.Controllers
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                     return x;
                 }).ToList();
+                model = model.OrderByDescending(x => x.interviewDate);
                 return View(model);
             }
             catch (Exception ex)
