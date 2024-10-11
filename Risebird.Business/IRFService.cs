@@ -4362,6 +4362,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<int>> GetIRFList(int ClientId)
+        {
+            try
+            {
+                return await _irfRepository.GetIRFList(ClientId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<Candidate>> GetProjectCandidates(int id, string emailId = null)
         {
             try

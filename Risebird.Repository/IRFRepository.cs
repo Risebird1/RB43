@@ -9182,6 +9182,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<IEnumerable<int>> GetIRFList(int ClientId)
+        {
+            try
+            {
+                var query = "Select id from IRF where ClientId = @clientId";
+                var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@IsDeleted", 0);
+                dynamicParameters.Add("@clientId", ClientId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
