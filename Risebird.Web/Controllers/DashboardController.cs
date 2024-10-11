@@ -39,12 +39,14 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
         private readonly ICandidateService _candidateService;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
-            IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService)
+            IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
+            IAssistantServiceHelper assistantServiceHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -59,6 +61,7 @@ namespace Risebird.Web.Controllers
             _meetingRespository = meetingRespository;
             _zoomHelper = zoomHelper;
             _candidateService = candidateService;
+            _assistantServiceHelper = assistantServiceHelper;
         }
 
         [Authorize]
@@ -76,6 +79,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        //_ = await _assistantServiceHelper.DeleteFiles();
+                        //_ = await _assistantServiceHelper.DeleteVectors();
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart

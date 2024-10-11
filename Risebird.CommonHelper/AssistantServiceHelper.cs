@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Google.Apis.Drive.v3.Data;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -434,6 +435,169 @@ namespace Risebird.CommonHelper
         }
 
 
+        private async Task<FilesList> ListFiles()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/files")
+                {
+                    Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                };
+
+                var response = await client.SendAsync(request);
+
+                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
+                return files;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> DeleteFiles()
+        {
+            try
+            {
+                var filesList =await ListFiles();
+                if(filesList != null && filesList.data != null && filesList.data.Count()>0)
+                {
+
+                    Parallel.ForEach(filesList?.data, item =>
+                    {
+                        HttpClient client = new HttpClient();
+
+                        var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
+                        {
+                            Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                        };
+
+                        var response = client.SendAsync(request).Result;
+
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                        //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
+                        //return files;
+                    }
+                    );
+                    //foreach (var item in filesList?.data)
+                    //{
+                    //    HttpClient client = new HttpClient();
+
+                    //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
+                    //    {
+                    //        Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                    //    };
+
+                    //    var response = await client.SendAsync(request);
+
+                    //    response.EnsureSuccessStatusCode();
+                    //    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    //    //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
+                    //    //return files;
+                    //}
+                    await DeleteFiles();
+                }
+                
+                return true;
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        private async Task<FilesList> ListVectors()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/vector_stores")
+                {
+                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" }}//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                };
+
+                var response = await client.SendAsync(request);
+
+                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                FilesList vectors = JsonConvert.DeserializeObject<FilesList>(responseContent);//FilesList: used the same type for vector list
+                return vectors;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> DeleteVectors()
+        {
+            try
+            {
+                var vectorsList = await ListVectors();
+                if(vectorsList != null && vectorsList.data != null && vectorsList.data.Count() > 0)
+                {
+                    Parallel.ForEach(vectorsList?.data, item =>
+                    {
+                        HttpClient client = new HttpClient();
+
+                        var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
+                        {
+                            Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                        };
+
+                        var response =  client.SendAsync(request).Result;
+
+                        response.EnsureSuccessStatusCode();
+                        var responseContent =  response.Content.ReadAsStringAsync().Result;
+
+                        //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
+                        //return files;
+                    }
+                    );
+                    //foreach (var item in vectorsList?.data)
+                    //{
+                    //    HttpClient client = new HttpClient();
+
+                    //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
+                    //    {
+                    //        Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                    //    };
+
+                    //    var response = await client.SendAsync(request);
+
+                    //    response.EnsureSuccessStatusCode();
+                    //    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    //    //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
+                    //    //return files;
+                    //}
+                    await DeleteVectors();
+                }
+                
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 
     public class VectorStore
@@ -474,6 +638,17 @@ namespace Risebird.CommonHelper
         public string assistant_id { get; set; }
         public Thread thread { get; set; }
         //public MetaData metadata { get; set; }
+    }
+
+    public class FilesList
+    {
+        public List<FileObj> data { get; set; }
+       
+    }
+
+    public class FileObj
+    {
+        public string id { get; set; }
     }
 
 }
