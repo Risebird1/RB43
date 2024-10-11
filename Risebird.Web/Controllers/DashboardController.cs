@@ -79,8 +79,6 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-                        //_ = await _assistantServiceHelper.DeleteFiles();
-                        //_ = await _assistantServiceHelper.DeleteVectors();
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart
