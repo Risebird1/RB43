@@ -39,12 +39,14 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
         private readonly ICandidateService _candidateService;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
-            IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService)
+            IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
+            IAssistantServiceHelper assistantServiceHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -59,6 +61,7 @@ namespace Risebird.Web.Controllers
             _meetingRespository = meetingRespository;
             _zoomHelper = zoomHelper;
             _candidateService = candidateService;
+            _assistantServiceHelper = assistantServiceHelper;
         }
 
         [Authorize]
@@ -2733,9 +2736,8 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType, int returnBack)
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType, int returnBack, string pagetype)
         {
             try
             {
@@ -2747,7 +2749,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
                     ViewBag.ReturnBack = returnBack;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         IEnumerable<MailRecipientActivityDetailsVM> recipients = null;
 
@@ -2786,6 +2788,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.recipientType = recipientType;
 
                         ViewBag.UserProfile = profileName;
+                        ViewBag.pagetype = pagetype;
 
                         return View(recipients);
                     }
@@ -2805,42 +2808,18 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(MailActivityFilter filter, string recipientType, int returnBack)
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(MailActivityFilter filter, string recipientType, int returnBack, string pagetype)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (filter != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    ViewBag.ReturnBack = returnBack;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                    {
-
-                        if (filter != null)
-                        {
-                            filter.RecipientType = recipientType;
-                            filter.returnBack = returnBack;
-                            HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
-                        }
-
-                        return RedirectToAction("GetEmailRecipientsBounceAndDropped"/*, new { recipientType = filter.RecipientType }*/);
-
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    filter.RecipientType = recipientType;
+                    filter.returnBack = returnBack;
+                    HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
                 }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { pagetype = pagetype });
             }
             catch (Exception ex)
             {
@@ -2848,21 +2827,13 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ResetRecipientActivityDetails(int returnBack)
+        public async Task<IActionResult> ResetRecipientActivityDetails(int returnBack, string pagetype)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    HttpContext.Session.Remove("MailActivityFilters");
-                    return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { returnBack = returnBack });
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                HttpContext.Session.Remove("MailActivityFilters");
+                return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { returnBack = returnBack, pagetype = pagetype });
             }
             catch (Exception ex)
             {

@@ -7491,7 +7491,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _meetingService.GetProbableNoShowCandidates();
+                        var model = await _meetingService.GetProbableNoShowCandidates(emailid);
                         model = model.Select(x =>
                         {
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
@@ -9200,5 +9200,32 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+        #region Client Public URL : ProbableNoShow
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> CandidateProbableNoShow(string id, string Emailid)
+        {
+            try
+            {
+                var model = await _meetingService.GetProbableNoShowCandidates(Emailid);
+                if (model == null)
+                {
+                    model = new List<MeetingVM>();
+                }
+                model = model.Select(x =>
+                {
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+                model = model.OrderByDescending(x => x.interviewDate);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
+        }
+        #endregion
     }
 }

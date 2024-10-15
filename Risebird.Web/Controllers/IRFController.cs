@@ -8338,9 +8338,9 @@ namespace Risebird.Web.Controllers
                         {
                             if (model != null)
                             {
-                                if (model.Where(x => x.IsSME)?.Count() > 5)
+                                if (model.Where(x => x.IsSME)?.Count() > 25)
                                 {
-                                    ModelState.AddModelError("", "Cannot add more than 5 Subject Matter Experts for an Assessment Group!");
+                                    ModelState.AddModelError("", "Cannot add more than 25 Subject Matter Experts for an Assessment Group!");
                                     ViewBag.AssessmentGroupName = assessmentGroupName;
                                     ViewBag.IsValid = "False";
                                     return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);
@@ -10286,13 +10286,14 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if(irfId >0)
+                    
+                    if (irfId >0)
                     {
-                        var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
+                        //var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = encryptedId },
                         //        Request.Scheme);
-                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + encryptedId;
+                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + irfId.ToString();
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = irfId },
                         //        Request.Scheme);

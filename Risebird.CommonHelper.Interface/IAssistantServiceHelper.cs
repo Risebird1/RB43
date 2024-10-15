@@ -8,5 +8,7 @@ namespace Risebird.CommonHelper.Interface
     {
         //Task<CandidateScreeningResponse> ScreenCandidateAsync(ScreeningRequest request);
         Task<RunResult> ScreenAsync(ScreeningRequest request);
+        Task<bool> DeleteVectors();
+        Task<bool> DeleteFiles();
     }
 }

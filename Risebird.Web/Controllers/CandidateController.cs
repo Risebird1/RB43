@@ -1211,7 +1211,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement")
                     {
                         //TODO to check in future
                         var model = await _irfService.GetCandidate(id, Convert.ToInt32(irfId));
@@ -1260,7 +1260,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement")
                     {
                         if (!string.IsNullOrEmpty(model.EmailId))
                         {
@@ -3004,6 +3004,10 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public string ImportQuickCandidatesPublic(IFormCollection formCollection)
         {
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
             var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
             var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
             var IRFName = formCollection["IRFName"].ToString();
@@ -3063,7 +3067,7 @@ namespace Risebird.Web.Controllers
                                                 var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
                                                 var candidate = new CandidateQuickAddModel
                                                 {
-                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    Name = workSheet.Cells[rowIterator, 1].Value != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
                                                     EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
                                                     ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
                                           ? workSheet.Cells[rowIterator, 3].Value.ToString()
@@ -5405,12 +5409,13 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetNotProcessedResumeByClient(string emailid)
+        public async Task<IActionResult> GetNotProcessedResumeByClient(string emailid, string id)
         {
             try
             {
                 var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
                 return PartialView("_GetNotProcessedResumeByClientPartial", data);
+                //return View(data);
 
             }
             catch (Exception ex)
@@ -5421,7 +5426,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName)
+        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName, string emailid)
         {
             if (_env.IsDevelopment())
             {
@@ -5434,7 +5439,7 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird_" + DateTime.Now.ToString("dd/MM/yyyy") + "_CandidateUpdates_" + irfName + ".xlsx";
             try
             {
-                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId);
+                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
                 if (model == null)
                 {
                     model = new List<CandidateExcelData>();
@@ -6574,7 +6579,7 @@ namespace Risebird.Web.Controllers
                                                 var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
                                                 var candidate = new CandidateQuickAddModel
                                                 {
-                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    Name = workSheet.Cells[rowIterator, 1].Value != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
                                                     EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
                                                     ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,
                                                     Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,
@@ -6693,6 +6698,143 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
+        }
+        #endregion
+        #region Add Candidate by Client
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> AddCandidateByClient(string requestid, string requestname, int resumeid, string type, string uniqueid, string emailids)
+        {
+            try
+            {
+                ViewBag.type = type;
+                ViewBag.uniqueid = uniqueid;
+                ViewBag.emailids = emailids;
+                var model = new Candidate
+                {
+                    IRFId = Convert.ToInt32(requestid),
+                    IRFName = requestname
+                };
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                if (resumeid > 0)
+                {
+                    model.ResumeLink = await _candidateService.FetchCandidateResumeById(resumeid);
+                    model.Candidateesumeid = resumeid;
+                }
+                if (TempData["SuccessErrorMessageCandidate"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                    TempData.Remove("SuccessErrorMessageCandidate");
+                }
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = uniqueid });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCandidateByClient(Candidate model, string emailids, string type, string uniqueid)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(emailids))
+                {
+                    emailids = HttpContext.Session.GetString("email")?.Trim();
+                    emailids = emailids.Replace("\"", "");
+                }
+                if (!string.IsNullOrEmpty(model.EmailId))
+                {
+                    model.EmailId = model.EmailId.ToLower();
+                }
+
+                var ClientEmailid = string.Empty;// await _candidateService.FetchBillingownerById(model.IRFId);
+                var ClientDomain = string.Empty;
+                if (string.IsNullOrWhiteSpace(ClientEmailid))
+                {
+                    ClientDomain = "risebird.io";
+                }
+                else
+                {
+                    ClientDomain = ClientEmailid.Split("@")[1];
+                }
+                string result = string.Empty;
+                if ((model.EmailId.Split("@").Contains("risebird.io")) /*|| model.EmailId.Split("@").Contains(ClientDomain)*/) //HttpContext.Session.GetString("IRFId")
+                {
+                    if (ClientDomain == "risebird.io")
+                    {
+                        result = "Domain @Risebird.io is prohibited for a candidate";
+                    }
+                    else
+                    {
+                        result = "Domain @Risebird.io and " + ClientDomain + " is prohibited for a candidate";
+                    }
+                }
+                else
+                {
+                    if (model.ResumeFile != null)
+                    {
+                        string uploadedFileURL = string.Empty;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.ResumeFile.FileName, "resumes", model.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            model.ResumeLink = uploadedFileURL;
+                        }
+                    }
+                    result = await _irfService.AddCandidate(model, emailids, model.profileName);
+                    var candidateList = new List<CandidateQuickAddModel>();
+                    var candidate = new CandidateQuickAddModel
+                    {
+                        IRFId = model.IRFId,
+                        Name = model.Name?.Trim(),
+                        EmailId = model.EmailId?.Trim().ToLower(),
+                        ResumeLink = model.ResumeLink,
+                        Phone = model.Phone,
+                        WhatsappNumber = model.WhatsappNumber,
+                        ClientHREmail = emailids,
+                        ProfileSource = emailids,
+                        countryCode = model.Location
+                    };
+                    candidateList.Add(candidate);
+                    if (type == "Project")
+                    {
+                        var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, model.IRFName);
+                        result = resultset.list?.FirstOrDefault().onboardingStatus;
+                    }
+                    else
+                    {
+                        var linkurl = "https://" + Request.Host.ToString();
+                        result = (await _irfService.AddQuickMultipleCandidates(candidateList, emailids, "Client", model.IRFId, true, linkurl)).ToString();
+                        if (result.Contains("successfully"))
+                        {
+                            result = "Candidate Added Successfully";
+                        }
+                    }
+                    if (model.Candidateesumeid > 0)
+                    {
+                        var linkurl = "https://" + Request.Host.ToString();
+                        await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
+                        var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids, linkurl);
+                    }
+                }
+                TempData["SuccessErrorMessageMarketPlace1"] = result;
+                return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailids, type = type, id = uniqueid });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageMarketPlace1"] = "Adding candidate failed";
+                return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailids, type = type, id = uniqueid });
             }
         }
         #endregion

@@ -6609,13 +6609,14 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates()
+        public async Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates(string Emailid)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", Emailid);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetProbableNoShowCandidates", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
