@@ -1355,6 +1355,7 @@ namespace Risebird.Repository
                     parameters.Add("@PerformedBy", loggedInEmailId);
                     parameters.Add("@PerformedAt", DateTime.Now);
                     parameters.Add("@CommunicationalProficiency", reportDetails.CommunicationalProficiency);
+                    parameters.Add("@CandidateIDVerificationStatus", reportDetails.CandidateIDVerificationStatus);
                     parameters.Add("@InterviewStatusTwo", reportDetails.InterviewStatusTwo);
                     parameters.Add("@MeetingStatusTwo", reportDetails.MeetingStatusTwo);
                     if (string.IsNullOrWhiteSpace(reportDetails.InterviewerCommentTwo))
