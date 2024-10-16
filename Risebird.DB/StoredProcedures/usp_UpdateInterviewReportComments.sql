@@ -26,7 +26,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewReportComments](
   @MeetingStatusTwo int,      
   @InterviewerCommentTwo varchar(max),
   @CodeSnippet varchar(200),
-  @CodeSnippetTwo varchar(200))        
+  @CodeSnippetTwo varchar(200),
+  @CandidateIDVerificationStatus int = null)        
 AS          
 Begin Try          
   BEGIN TRAN UpdateUser           
@@ -56,7 +57,8 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
   ModifiedBy = @PerformedBy,      
   ModifiedOn = @PerformedAt,      
   TotalTechScore = @totalTechSkillScore,      
-  CommunicationalProficiency=@CommunicationalProficiency      
+  CommunicationalProficiency=@CommunicationalProficiency,
+  CandidateIDVerificationStatus = @CandidateIDVerificationStatus
      WHERE interviewId = @InterviewId          
           
                               
@@ -78,7 +80,8 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
   CreatedBy,      
   CreatedOn,      
   TotalTechScore,      
-  CommunicationalProficiency)           
+  CommunicationalProficiency,
+  CandidateIDVerificationStatus)           
      VALUES          
        (@interviewId,          
         @InterviewStatus,          
@@ -94,7 +97,8 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
   @PerformedBy,      
   @PerformedAt,      
   @totalTechSkillScore,      
-  @CommunicationalProficiency)          
+  @CommunicationalProficiency,
+  @CandidateIDVerificationStatus)          
         
      IF NOT EXISTS(SELECT 1 FROM InterviewReport where InterviewId= @InterviewId)        
      BEGIN        
