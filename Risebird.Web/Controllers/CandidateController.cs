@@ -6693,9 +6693,8 @@ namespace Risebird.Web.Controllers
                     IRFId = Convert.ToInt32(requestid),
                     IRFName = requestname
                 };
-                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                var countrycodes = await _candidateService.GetAllCountryCodeDetails();
+                model.Heuristicsscorelist = new SelectList(countrycodes, "Code", "Country");
                 if (resumeid > 0)
                 {
                     model.ResumeLink = await _candidateService.FetchCandidateResumeById(resumeid);
