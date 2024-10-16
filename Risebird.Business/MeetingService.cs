@@ -1257,6 +1257,7 @@ namespace Risebird.Business
                 reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 reportModel.Heuristicsscore = irfDetails.Heuristicsscore;
                 reportModel.TechRubricType = irfDetails.TechRubricType;
+                reportModel.CandidateIDVerificationStatus = interviewDetails.CandidateIDVerificationStatus;
                 return reportModel;
             }
             catch (Exception e)

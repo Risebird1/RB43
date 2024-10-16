@@ -105,7 +105,31 @@
                                                             <td>@item.AIVerdict</td>
                                                             <td>@item.FLN</td>
                                                             <td>@item.AddedOn</td>
-                                                            <td>@item.CompanyName</td>
+                                                            <td>
+                                                                @if (item.CompanyName != null && item.CompanyName != "")
+                                                            {
+                                                                @if (item.CompanyName.Length > 30)
+                                                                {
+
+                                                                    <div class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.CompanyName"><span>@item.CompanyName.Substring(0,30)... </span> </a>
+
+                                                                    </div>
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <div class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.CompanyName"><span>@item.CompanyName</span> </a>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <span></span>
+                                                            }
+
+                                                            </td>
                                                             @if (item.ResumeLink != null && item.ResumeLink != "")
                                                             {
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")

@@ -375,6 +375,9 @@ namespace Risebird.Entities.ViewModel
         public string CodeSnippetTwo { get; set; }
         public string Recommendation { get; set; }
         public string RecommendationComments { get; set; }
+
+        [Display(Name = "Candidate ID Verification Status")]
+        public int? CandidateIDVerificationStatus { get; set; }
     }
 
     public class VedioComments
