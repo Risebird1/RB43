@@ -302,7 +302,7 @@
                                                                     {
                                                                         @if (item.Name.Length > 20)
                                                                         {
-                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                            <div class="cadName" style="margin-top:10px;">
                                                                                 @if (item.HasEmailDroppedOrBounced == true)
                                                                                 {
                                                                                     <div class="absCenter">
@@ -384,7 +384,7 @@
                                                                     }
                                                                     @if (item.IsColdCandidate)
                                                                     {
-                                                                        <span class="cold-mark">Cold Candidate Marked</span>
+                                                                        <span class="cold-mark" style="top:-86px;">Cold Candidate Marked</span>
                                                                     }
 
                                                                 </td>
@@ -830,9 +830,9 @@
                                                                     @if (!item.IsColdCandidate)
                                                                     {
                                                                         <div style="float:left">
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:22px!important;height:22px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;margin: 0px 0px 0px 3px;">
+                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:18px!important;height:20px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;left:-3px;margin: 0px 0px 0px 3px;">
                                                                                 <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                    <img src="~/img/approve-blk.png" width="16" style="max-width: 15px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                                    <img src="~/img/approve-blk.png"  style="position: relative;top: -1.5px;left:-2px;max-width:18px;" />
                                                                                 </span>
                                                                             </button>
                                                                         </div>
