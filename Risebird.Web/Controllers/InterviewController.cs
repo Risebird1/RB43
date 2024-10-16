@@ -3084,6 +3084,10 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                if(model!=null && model.CandidateIDVerificationStatus.HasValue && model.CandidateIDVerificationStatus.Value>0)
+                {
+                    model.CandidateIDVerificationStatusDesc = ((CandidateIDVerificationOptionEnum)(model.CandidateIDVerificationStatus)).GetDescription();
+                }
                 await ReportSkillSetandSeperate(model);
                 if (model == null)
                 {
