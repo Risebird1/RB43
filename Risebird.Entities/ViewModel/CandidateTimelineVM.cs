@@ -69,6 +69,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime EndDate { get; set; }
         public bool HasEmailDroppedOrBounced { get; set; }
         public int CandidateAging { get; set; }
+        public string ResumeLink { get; set; }
     }
 
     public class TimelineStatus
