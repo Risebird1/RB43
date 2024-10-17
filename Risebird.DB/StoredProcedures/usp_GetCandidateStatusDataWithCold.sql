@@ -58,7 +58,7 @@ join IRF on IRF.id =tctv.IRFId
 join UserList ul on ul.id = tctv.UserId  
 join Candidate ca on ca.IRFId=tctv.IRFId and ca.CandidateMasterId=tctv.CandidateMasterId
 outer Apply (Select top 1 cso.StatusValue,DateAdd(Minute,330,cs.Date) as Date From CandidateStatus cs join CandidateStatusOptionsMst cso on cso.id=cs.Status where cs.IRFId=ca.IRFId and cs.CandidateId=ca.CandidateMasterId order by cs.Date desc) csc
-where IRF.ClientId = 177 and CandidateLatestStatus in ('NOTSCHEDULED','COLDCANDIDATE')
+where IRF.ClientId = @clientId and CandidateLatestStatus in ('NOTSCHEDULED','COLDCANDIDATE')
               
 End    
     

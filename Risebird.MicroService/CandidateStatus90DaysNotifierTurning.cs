@@ -1,19 +1,15 @@
-using EllipticCurve.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
-//using OfficeOpenXml.Core.ExcelPackage;
+using OfficeOpenXml;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,24 +37,26 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("CandidateStatus90DaysNotifierTurning")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
+        public async Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
         {
             try
             {
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning executed at: {DateTime.Now}");
 
                 var mailList = new List<string>() { "prem@risebird.io", 
-                    //"amika.s@turing.com", 
-                    //"annu.s@turing.com", 
-                    //"ashutosh@risebird.io",
-                    //"danijel.j@turing.com",
-                    //"neha.khaitan@turing.com",
-                    //"parth.gohel@turing.com",
-                    //"priyanka.k@turing.com",
-                    //"soumya.m@turing.com",
+                    "amika.s@turing.com", 
+                    "annu.s@turing.com", 
+                    "ashutosh@risebird.io",
+                    "danijel.j@turing.com",
+                    "neha.khaitan@turing.com",
+                    "parth.gohel@turing.com",
+                    "priyanka.k@turing.com",
+                    "soumya.m@turing.com",
                     "prashanth_k@risebird.io",
-                    "harshit_jajoo@risebird.io"
+                    "harshit_jajoo@risebird.io",
+                    "tanishka_gupta@risebird.io"
                 };
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 ExcelPackage Ep = new ExcelPackage();
                 ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Status");
                 string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
@@ -69,7 +67,7 @@ namespace Risebird.MicroService
                 candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database SP executed at: {DateTime.Now}");
                 candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
-                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
+               candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
 
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database Data Count Without COld count: {candidateDatawithoutCold.Count} and with cold count: {candidateDatawithCold.Count} executed at: {DateTime.Now}");
 
@@ -107,6 +105,7 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 19].Value = "Interviewer(Encoded)";
                 Sheet.Cells[1, 20].Value = "Report Link";
                 Sheet.Cells[1, 21].Value = "InterviewerComment";
+                Sheet.Cells[1, 22].Value = "Cancellation Source";
                 int i = 2;
                 if (candidateDatawithoutCold.Count() > 0)
                 {
@@ -136,6 +135,8 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 19].Value = item.InterviewerCodedName ?? string.Empty;
                         Sheet.Cells[i, 20].Value = item.ExecutiveReportLink;
                         Sheet.Cells[i, 21].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 22].Value = item.Cancellationsource;
+                        i++;
                     }
 
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning without cold data parsed in excel sheet at: {DateTime.Now}");
@@ -156,15 +157,15 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 9].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
-                        Sheet.Cells[i, 17].Value = cold.CandidateLatestStatus;                       
-                        
+                        Sheet.Cells[i, 17].Value = cold.CandidateLatestStatus;
+                        i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
                 }
                
 
                 fileName = fileName.Replace(" ", "_");
-                    await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), null, Convert.ToBase64String(Ep.GetAsByteArray()), fileName);
+                    await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), null, Convert.ToBase64String(Ep.GetAsByteArray()), fileName,true);
 
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with notification mail sent at: {DateTime.Now}");
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning completed at: {DateTime.Now}");

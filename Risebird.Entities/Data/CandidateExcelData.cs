@@ -15,6 +15,7 @@ namespace Risebird.Entities.Data
         public int id { get; set; }
 
         public string ExecutiveReportLink { get; set; }
+        public string Cancellationsource { get; set; }
         public int Irfintid { get; set; }
         public string IRFId { get; set; }
         public DateTime? interviewDate { get; set; }
