@@ -67,20 +67,12 @@ namespace Risebird.MicroService
                 candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
                 var candidateDatawithCold = new List<CandidateExcelData>();
                 candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
-                //if (model == null)
-                //{
-                //    model = new List<CandidateExcelData>();
-                //}
+                log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database SP executed at: {DateTime.Now}");
                 candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
-                var skillslist = candidateDatawithoutCold?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
-                var skillsTwolist = candidateDatawithoutCold?.FirstOrDefault().TechSkillReportTwoCollection?.Select(x => x.SkillName).Distinct();
+                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
 
-                string jdtitle = string.Empty;
-                jdtitle = skillslist.FirstOrDefault();
+                log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database Data Count Without COld count: {candidateDatawithoutCold.Count} and with cold count: {candidateDatawithCold.Count} executed at: {DateTime.Now}");
 
-                string jdtitleTwo = string.Empty;
-                jdtitleTwo = skillsTwolist.FirstOrDefault();
-               
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
@@ -146,7 +138,7 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 21].Value = item.InterviewerComment;
                     }
 
-
+                    log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning without cold data parsed in excel sheet at: {DateTime.Now}");
 
                         foreach (var cold in candidateDatawithCold)
                     {
@@ -167,19 +159,14 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 17].Value = cold.CandidateLatestStatus;                       
                         
                     }
-                   
+                    log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
                 }
-                //else
-                //{
-                //    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
-                //    Rng.Value = "No data available!";
-                //    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-                //}
+               
 
                 fileName = fileName.Replace(" ", "_");
                     await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), null, Convert.ToBase64String(Ep.GetAsByteArray()), fileName);
 
-                
+                log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with notification mail sent at: {DateTime.Now}");
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning completed at: {DateTime.Now}");
             }
             catch (Exception ex)
