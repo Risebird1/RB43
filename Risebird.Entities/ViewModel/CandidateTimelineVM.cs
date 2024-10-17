@@ -70,6 +70,7 @@ namespace Risebird.Entities.ViewModel
         public bool HasEmailDroppedOrBounced { get; set; }
         public string CancellationSource { get; set; }
         public int CandidateAging { get; set; }
+        public string ResumeLink { get; set; }
     }
 
     public class TimelineStatus
