@@ -74,6 +74,33 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithoutColdDate(DateTime startDate, DateTime endDate, int clientId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateStatusDataWithoutColdDate(startDate, endDate, clientId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithColdDate(DateTime startDate, DateTime endDate, int clientId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateStatusDataWithColdDate(startDate, endDate, clientId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         //public async Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail)
         //{
         //    try
