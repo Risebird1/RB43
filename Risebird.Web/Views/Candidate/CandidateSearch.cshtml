@@ -756,9 +756,18 @@
                                                                                             <div class="candidate-field">
                                                                                                 <p>Client Hr:@item.HREmail</p>
                                                                                             </div>
+                                                                                            @if (ViewBag.CandidateType == CandidateTypeSearch.NotProcessedResume.GetDescription())
+                                                                                            {
+                                                                                                <div class="candidate-field">
+                                                                                                    <a target="_blank" href="@item.ResumeLink">Resume</a>
+                                                                                                </div>
+                                                                                                <div class="candidate-field">
+                                                                                                    <p>Add On:@item.interviewDate</p>
+                                                                                                </div>
+                                                                                            }
                                                                                         </div>
                                                                                         <div class="col-md-3">
-                                                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency" && ViewBag.CandidateType != CandidateTypeSearch.NotProcessedResume.GetDescription())
                                                                                             {
                                                                                                 <div>
                                                                                                     @if (item.RedoInterview == true || item.IsColdCandidate || item.InterviewId == 0 || item.CurrentStatus == "Scheduled" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Status Pending")

@@ -231,7 +231,7 @@ else if(@datatype=1)
 begin
 if(@roleId=1 or @roleId=4)
 begin
-select irf.IRFId as IRFname, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId
+select irf.IRFId as IRFname, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn as interviewDate, cr.AddedBy, cr.IRFId,ul.EmailId as HREmail
 from CandidateResume cr   
 join IRF on irf.id = cr.IRFId  
 left join UserList ul on ul.id=cr.AddedBy
@@ -240,8 +240,10 @@ order by irf.IRFId
 end
 else
 begin
- select irf.IRFId as IRFname, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId from CandidateResume cr   
+ select irf.IRFId as IRFname, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn as interviewDate, cr.AddedBy, cr.IRFId,ul.EmailId as HREmail 
+ from CandidateResume cr   
  join IRF on irf.id = cr.IRFId  
+ left join UserList ul on ul.id=cr.AddedBy
  where irf.ClientId =@clientId and cr.IsProcessed = 0   
  order by irf.IRFId  
 end
