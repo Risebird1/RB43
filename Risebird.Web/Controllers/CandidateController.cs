@@ -1188,7 +1188,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement")
                     {
                         //TODO to check in future
                         var model = await _irfService.GetCandidate(id, Convert.ToInt32(irfId));
@@ -1237,7 +1237,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement")
                     {
                         if (!string.IsNullOrEmpty(model.EmailId))
                         {
@@ -6693,9 +6693,8 @@ namespace Risebird.Web.Controllers
                     IRFId = Convert.ToInt32(requestid),
                     IRFName = requestname
                 };
-                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                var countrycodes = await _candidateService.GetAllCountryCodeDetails();
+                model.Heuristicsscorelist = new SelectList(countrycodes, "Code", "Country");
                 if (resumeid > 0)
                 {
                     model.ResumeLink = await _candidateService.FetchCandidateResumeById(resumeid);
