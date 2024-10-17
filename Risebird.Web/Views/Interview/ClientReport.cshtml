@@ -353,12 +353,15 @@
 
                                             <h4>@Model.JDTiltle</h4>*@
                                                 <div class="report-heading">
-                                                    Date of Interview
+                                                    Date of Interview:
                                                 </div>
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
-                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;">Interviewer Coded Name: </div>
+                                               <div class="" style="color:green;margin: 10px 0px 0px 0px;">Id Verification Status: </div>
+                                                <h5 style="color:#445346;font-size:15px;">@Model.CandidateIDVerificationStatus</h5>
+
+                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
                                                 @if (Model.CommunicationalProficiency != 0)
                                                 {
