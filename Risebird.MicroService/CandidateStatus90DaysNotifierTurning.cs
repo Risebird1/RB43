@@ -100,12 +100,12 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 16].Value = "Completed On";
 
                 Sheet.Cells[1, 17].Value = "Latest Status";
-
-                Sheet.Cells[1, 18].Value = "Client Hr";
-                Sheet.Cells[1, 19].Value = "Interviewer(Encoded)";
-                Sheet.Cells[1, 20].Value = "Report Link";
-                Sheet.Cells[1, 21].Value = "InterviewerComment";
-                Sheet.Cells[1, 22].Value = "Cancellation Source";
+                Sheet.Cells[1, 18].Value = "Cancellation Source";
+                Sheet.Cells[1, 19].Value = "Client Hr";
+                Sheet.Cells[1, 20].Value = "Interviewer(Encoded)";
+                Sheet.Cells[1, 21].Value = "Report Link";
+                Sheet.Cells[1, 22].Value = "InterviewerComment";
+                
                 int i = 2;
                 if (candidateDatawithoutCold.Count() > 0)
                 {
@@ -130,12 +130,13 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 15].Value = item.VideoLink;
                         Sheet.Cells[i, 16].Value = item.completedDate;
                         Sheet.Cells[i, 17].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 18].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 18].Value = item.Cancellationsource;
+                        Sheet.Cells[i, 19].Value = item.ClientHrContact;
 
-                        Sheet.Cells[i, 19].Value = item.InterviewerCodedName ?? string.Empty;
-                        Sheet.Cells[i, 20].Value = item.ExecutiveReportLink;
-                        Sheet.Cells[i, 21].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 22].Value = item.Cancellationsource;
+                        Sheet.Cells[i, 20].Value = item.InterviewerCodedName ?? string.Empty;
+                        Sheet.Cells[i, 21].Value = item.ExecutiveReportLink;
+                        Sheet.Cells[i, 22].Value = item.InterviewerComment;
+                        
                         i++;
                     }
 
