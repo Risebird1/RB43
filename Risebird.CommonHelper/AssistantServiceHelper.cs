@@ -76,6 +76,7 @@ namespace Risebird.CommonHelper
                 string threadId = string.Empty;
                 if (!string.IsNullOrEmpty(fileId))
                 {
+                    //await Task.Delay(60000);
                     threadId = await CreateThreadAsync(requestModel, fileId);
                 }
                 else
@@ -105,6 +106,10 @@ namespace Risebird.CommonHelper
                             break;
                     }
                     var messages = await ListRunMessages(threadId);
+                    if(messages!=null && messages.Data.First().Content.FirstOrDefault().Text.Value.Contains("persistent issue") && !string.IsNullOrEmpty(fileId))
+                    {
+                        return await RecreateThread(requestModel, fileId);
+                    }
                     return messages;
                 }
                 else
@@ -121,6 +126,53 @@ namespace Risebird.CommonHelper
             }
         }
 
+        private async Task<RunResult> RecreateThread( ScreeningRequest requestModel, string fileId)
+        {
+            await Task.Delay(15000);
+            string threadId = string.Empty;
+            if (!string.IsNullOrEmpty(fileId))
+            {
+                //await Task.Delay(60000);
+                threadId = await CreateThreadAsync(requestModel, fileId);
+            }
+            else
+            {
+                return null;
+            }
+            string runId;
+            //now create a run
+            if (!string.IsNullOrEmpty(threadId))
+            {
+                runId = await CreateRun(threadId, requestModel.Type);
+            }
+            else
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrEmpty(runId))
+            {
+                string runStatus = string.Empty;
+                //retrieve a run
+                while (runStatus != "completed")
+                {
+                    await Task.Delay(5000);
+                    runStatus = await RetrieveRun(runId, threadId);
+                    if (runStatus == "failed")
+                        break;
+                }
+                var messages = await ListRunMessages(threadId);
+                if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") && !string.IsNullOrEmpty(fileId))
+                {
+                    messages = await RecreateThread(requestModel, fileId);
+                }
+                return messages;
+            }
+            else
+            {
+                return null;
+            }
+        }
         private async Task<string> CreateRun(string threadId, string profileType)
         {
             try
@@ -401,18 +453,42 @@ namespace Risebird.CommonHelper
                 threadRequest = new Thread
                 {
                     messages = new List<Message>
-                        {
-                            new Message { role = "assistant", content = queryContent}
-                        },
-                    tool_resources = new ToolResources()
                     {
-                        file_search = new FileSearch
-                        {
-                            vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
-
+                        new Message { 
+                            role = "assistant", content = queryContent, 
+                            attachments = new List<object>
+                            {
+                                new
+                                {
+                                    file_id = fileId, // Optional file ID
+                                    tools = new List<object>
+                                    {
+                                        new
+                                        {
+                                            type = "code_interpreter" // Required tool type
+                                        },
+                                        new
+                                        {
+                                            type = "file_search" // Required tool type
+                                        }
+                                    }
+                                }//,
+                                // Additional attachment objects can be added here
+                            }
                         }
-                    }
+                    }//,
+
+
+                    //tool_resources = new ToolResources()
+                    //{
+                    //    file_search = new FileSearch
+                    //    {
+                    //        vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
+
+                    //    }
+                    //}
                 };
+
                 string jsonContent = JsonConvert.SerializeObject(threadRequest);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
@@ -609,14 +685,21 @@ namespace Risebird.CommonHelper
     {
         public string role { get; set; }
         public string content { get; set; }
+        //public List<AttachmentObj> attachments { get; set; }
+        public List<object> attachments { get; set; }
     }
 
+    public class AttachmentObj
+    {
+        public string file_id { get; set; }
+        public List<VectorStore> vector_stores { get; set; }
+    }
 
     public class Thread
     {
         //public string assistant_id { get; set; }
         public List<Message> messages { get; set; }
-        public ToolResources tool_resources { get; set; }
+        //public ToolResources tool_resources { get; set; }
     }
     public class ToolResources
     {
