@@ -59,7 +59,7 @@ OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as C
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus  
 where ca.IRFId = @IRFId and ca.ClientHRAttemptContact = @emailId) Cnd        
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
-ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
+ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im left join      
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId      
@@ -94,7 +94,7 @@ OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as C
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus  
 where ca.IRFId = @IRFId and ca.ProfileSource = @emailId) Cnd        
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
-ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
+ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im left join      
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId      
@@ -130,7 +130,7 @@ OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as C
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus  
 where ca.IRFId = @IRFId) Cnd        
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
-ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
+ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im left join      
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId     
