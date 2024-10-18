@@ -183,7 +183,7 @@ namespace Risebird.Web.Controllers
                         bool saveOperationResult = true;
                         if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                         {
-                            saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson);
+                            saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson.Replace("'", ""));
                         }
 
                         if (saveOperationResult)
@@ -274,7 +274,7 @@ namespace Risebird.Web.Controllers
                             string aiResponseUrl = string.Empty;
                             if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                             {
-                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson, loggedInUser);
+                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
                             }
                             if(saveOperationResult)
                             {
@@ -446,7 +446,7 @@ namespace Risebird.Web.Controllers
                                     string aiResponseUrl = string.Empty;
                                     if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                                     {
-                                        saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdict(id, aiEvaluation.EmailId, aiEvaluation.JDTiltle, responseInJson, loggedInUser);
+                                        saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdict(id, aiEvaluation.EmailId, aiEvaluation.JDTiltle, responseInJson.Replace("'", ""), loggedInUser);
                                     }
 
                                     if (saveOperationResult)

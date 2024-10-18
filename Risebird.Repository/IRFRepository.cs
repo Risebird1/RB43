@@ -8802,7 +8802,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@userId", userId);
-                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson.Replace("'", ""));
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerOpenAIScreeningResults", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
