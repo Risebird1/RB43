@@ -30,9 +30,11 @@
     .tox-notifications-container {
         display: none
     }
-    .navbar{
-        z-index:1!important;
+
+    .navbar {
+        z-index: 1 !important;
     }
+
     .less {
         color: red !important
     }
@@ -358,8 +360,11 @@
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
-                                               <div class="" style="color:green;margin: 10px 0px 0px 0px;">Id Verification Status: </div>
-                                                <h5 style="color:#445346;font-size:15px;">@Model.CandidateIDVerificationStatus</h5>
+                                                <div class="" style="color:green;margin: 10px 0px 0px 0px;">Id Verification Status: </div>
+                                                @{
+                                                    var candidateidverification = Model.CandidateIDVerificationStatus.HasValue ? ((CandidateIDVerificationOptionEnum)Convert.ToInt32(Model.CandidateIDVerificationStatus)).GetDescription() : string.Empty;
+                                                }
+                                                <h5 style="color:#445346;font-size:15px;">@candidateidverification</h5>
 
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
@@ -617,8 +622,9 @@
                                                             {
                                                                 meetingcolor = "darkorange";
                                                             }
-                                                            <div class="interview-status" style="font-size:16px;"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong>
-                                                                
+                                                            <div class="interview-status" style="font-size:16px;">
+                                                                <span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong>
+
                                                                 @if (Model.InterviewStatus == 1)
                                                                 {
                                                                     <button style="font-size: 12px;color: #fff;border: 0px;background: #8f8a8a;border-radius:4px;line-height: 18px;height: 21px;padding: 0px 4px;" type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
@@ -630,8 +636,9 @@
                                                         {
                                                             <div class="interview-status" style="font-size:16px;"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></div>
                                                         }
-@*                                                        <button type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
-*@                                                    </div>
+                                                        @*                                                        <button type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
+                                                *@
+                                                    </div>
                                                 }
 
                                             </div>
@@ -680,8 +687,8 @@
                                                     </h3>
                                                 </div>
                                                 <div>
-                                                     @{
-                                                        string rubricDisplayStatus =  Model.TechRubricType == TechRubricTypes.Advanced ? "block" : "none";
+                                                    @{
+                                                        string rubricDisplayStatus = Model.TechRubricType == TechRubricTypes.Advanced ? "block" : "none";
                                                     }
                                                     @if (Model.TechSkillReportCollection != null)
                                                     {
@@ -718,15 +725,15 @@
 
                                                                     <span class="rqlevel" style="margin:5px 0px 0px 0px;width:100%;float:left">
 
-                                                                         @if (@Model.TechSkillReportCollection[i].Concepts != null && @Model.TechSkillReportCollection[i].Concepts != "")
+                                                                        @if (@Model.TechSkillReportCollection[i].Concepts != null && @Model.TechSkillReportCollection[i].Concepts != "")
                                                                         {
                                                                             @if (@Model.TechSkillReportCollection[i].Concepts.Length > 30)
                                                                             {
-                                                                               <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b> <a  href="#" data-tooltip="@Model.TechSkillReportCollection[i].Concepts"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b> <a href="#" data-tooltip="@Model.TechSkillReportCollection[i].Concepts"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
                                                                             }
                                                                             else
                                                                             {
-                                                                              <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b>  <span  style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts</span>
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b>  <span style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts</span>
                                                                             }
 
                                                                         }
@@ -735,31 +742,31 @@
 
 
                                                                     @*    <span class="techinfocontainer pull-left">
-                                                                                    <i class="fa fa-info-circle techinfoicon tooltipquestion">
-                                                                                        <span class="tooltiptext">
-                                                                                            <p style="margin-bottom:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
-                                                                                            
-                                                                                        </span>
-                                                                                    </i>
-                                                                                </span>*@
-                                                                        
-@*                                                                        <b>@Model.TechSkillReportCollection[i].Concepts</b></span>
-                                                                               
-*@                                                                    <br/>  <span class="rqlevel" style="margin:5px 0px 0px 0px;width:100%;float:left">
-    @if (@Model.TechSkillReportCollection[i].Natureofquestion != null && @Model.TechSkillReportCollection[i].Natureofquestion != "")
+                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                        <span class="tooltiptext">
+                                                        <p style="margin-bottom:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+
+                                                        </span>
+                                                        </i>
+                                                        </span>*@
+
+                                                                    @*                                                                        <b>@Model.TechSkillReportCollection[i].Concepts</b></span>
+
+                                                        *@                                                                    <br />  <span class="rqlevel" style="margin:5px 0px 0px 0px;width:100%;float:left">
+                                                                        @if (@Model.TechSkillReportCollection[i].Natureofquestion != null && @Model.TechSkillReportCollection[i].Natureofquestion != "")
                                                                         {
                                                                             @if (@Model.TechSkillReportCollection[i].Natureofquestion.Length > 30)
                                                                             {
-                                                                              <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <a  href="#" data-tooltip="@Model.TechSkillReportCollection[i].Natureofquestion"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <a href="#" data-tooltip="@Model.TechSkillReportCollection[i].Natureofquestion"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
                                                                             }
                                                                             else
                                                                             {
-                                                                              <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <span  style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion</span>
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <span style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion</span>
                                                                             }
 
                                                                         }
-    
-   </span>
+
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         }
@@ -1339,7 +1346,7 @@
 
 <script src="~/js/transcriptfunctionalities.js?v=2024"></script>
 
-@if (Model.IsTranscript  && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))//&& ViewBag.profile == "Client"
+@if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))//&& ViewBag.profile == "Client"
 {
     <script>
 
