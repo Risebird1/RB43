@@ -49,19 +49,21 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Mail Recipients</h4></div>
                     </div>
-                    <div class="pull-left">
-                        @if (ViewBag.recipientType == "Interviewer")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
-                        }
-                        else if (ViewBag.recipientType == "Candidate")
-                        {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
-                        }
-
-                    </div>
+                    @if (ViewBag.pagetype != "Public")
+                    {
+                        <div class="pull-left">
+                            @if (ViewBag.recipientType == "Interviewer")
+                            {
+                                <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
+                            }
+                            else if (ViewBag.recipientType == "Candidate")
+                            {
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
+                            }
+                        </div>
+                    }
                     <div class="pull-right client-ms">
                         <div style="float:left">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">

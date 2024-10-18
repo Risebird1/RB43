@@ -21,10 +21,10 @@
     </div>
 </div>
 <script>
-    function AddClientCandidate(requestid, name, emailid, uniqueid, type) {
+    function AddClientCandidate(requestid, name, emailid, uniqueid, type,resumeid,ClientHREmailId) {
         $.ajax({
             url: '/Candidate/AddCandidateByClient',
-            data: { 'requestid': requestid, 'requestname': name, 'type': type, 'uniqueid': uniqueid, 'emailids': emailid },
+            data: { 'requestid': requestid, 'requestname': name, 'type': type, 'uniqueid': uniqueid, 'emailids': emailid,'resumeid':resumeid,'ClientHREmailId':ClientHREmailId },
             success: function (data) {
                 $('#addCandidatelist').html('');
                 $('#addCandidatelist').html(data);

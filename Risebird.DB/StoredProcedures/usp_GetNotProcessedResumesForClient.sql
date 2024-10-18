@@ -20,7 +20,7 @@ if(@clientId is not null and @clientId > 0)
 Begin 
 if(@ClientRoleid=1 or @ClientRoleid=4)
 begin
-select irf.IRFId as IRFName, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId
+select irf.IRFId as IRFName, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId,cr.id,ul.EmailId as ClientHREmailId
 from CandidateResume cr   
 join IRF on irf.id = cr.IRFId  
 left join UserList ul on ul.id=cr.AddedBy
@@ -29,8 +29,10 @@ order by irf.IRFId
 end
 else
 begin
- select irf.IRFId as IRFName, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId from CandidateResume cr   
- join IRF on irf.id = cr.IRFId  
+ select irf.IRFId as IRFName, cr.ResumeLink, cr.IsResumeParsed, cr.IsResumeParsingFailed, cr.IsEmailMissing, cr.AddedOn, cr.AddedBy, cr.IRFId,cr.id,ul.EmailId as ClientHREmailId
+ from CandidateResume cr   
+ join IRF on irf.id = cr.IRFId 
+ left join UserList ul on ul.id=cr.AddedBy
  where irf.ClientId =@clientId and cr.IsProcessed = 0   
  order by irf.IRFId  
 end
