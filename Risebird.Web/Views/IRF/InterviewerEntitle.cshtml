@@ -96,7 +96,7 @@
                                                          </button></a>
 
                                                  <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #7e97bab3!important; border: 1px #7e97bab3!important;">
-                                                   <span onclick="javascript:getIRFMembers('@item.id');" title="Interviewers List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
+                                                   <span onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.id', '@item.AssessmentGroup');" title="Interviewers' List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
                                                   </button>
 
                                                     <button class="btn shadow btn-xs sharp me-1" aria-label="Skill Channel List" style="width:25px!important;height:25px!important;position:relative; background: #a673b182!important; border: 1px #d8c4dd82 solid!important;">
@@ -307,7 +307,7 @@
         </div>
     </div>
 </div>
-<div id="interviewerMemberModal" class="modal modal-bg">
+@* <div id="interviewerMemberModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -324,7 +324,8 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
+@await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
 <div id="SkillChannelListModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -510,6 +511,9 @@
         });
     }
 </script>
+
+<script src="~/js/assessmentgroupfunctionalities.js"></script>
+
 <script>
     function searchResult() {
         $('#entitleTable').DataTable();
@@ -548,23 +552,23 @@
         });
 
     };
-    var closeMember = document.getElementById("membersPopUp");
-    closeMember.onclick = function () {
-        var modal = document.getElementById("interviewerMemberModal");
-        modal.style.display = "none";
-    }
-    function getIRFMembers(id) {
-        $.ajax({
-            url: '/IRF/GetAssessmentGroupInterviewerMembers',
-            data: { 'Assessmentid': id },
-            success: function (data) {
-                var modal = document.getElementById("interviewerMemberModal");
-                modal.style.display = "block";
-                $('#memberTableBody').html('');
-                $('#memberTableBody').html(data);
-            }
-        });
-    }
+    // var closeMember = document.getElementById("membersPopUp");
+    // closeMember.onclick = function () {
+    //     var modal = document.getElementById("interviewerMemberModal");
+    //     modal.style.display = "none";
+    // }
+    // function getIRFMembers(id) {
+    //     $.ajax({
+    //         url: '/IRF/GetAssessmentGroupInterviewerMembers',
+    //         data: { 'Assessmentid': id },
+    //         success: function (data) {
+    //             var modal = document.getElementById("interviewerMemberModal");
+    //             modal.style.display = "block";
+    //             $('#memberTableBody').html('');
+    //             $('#memberTableBody').html(data);
+    //         }
+    //     });
+    // }
     var closelist = document.getElementById("listmembersPopUp");
     closelist.onclick = function () {
         var modal = document.getElementById("SkillChannelListModal");
