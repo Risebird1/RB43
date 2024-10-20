@@ -36,5 +36,6 @@ namespace Risebird.Entities.ViewModel
         // public bool IsActive { get; set; }
         public string IsAvailable { get; set; }
         public string CampaignName { get; set; }
+        public string SchedulerUniqueid { get; set; }
     }
 }
