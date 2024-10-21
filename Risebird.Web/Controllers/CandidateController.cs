@@ -5414,9 +5414,16 @@ namespace Risebird.Web.Controllers
             try
             {
                 var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
-                return PartialView("_GetNotProcessedResumeByClientPartial", data);
-                //return View(data);
-
+                ViewBag.emailid = emailid;
+                ViewBag.id = id;
+                ViewBag.Type = "SkillChannel";
+                //return PartialView("_GetNotProcessedResumeByClientPartial", data);
+                if (TempData["SuccessErrorMessageMarketPlace1"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageMarketPlace1"].ToString();
+                    TempData.Remove("SuccessErrorMessageMarketPlace1");
+                }
+                return View(data);
             }
             catch (Exception ex)
             {
@@ -6704,7 +6711,7 @@ namespace Risebird.Web.Controllers
         #region Add Candidate by Client
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> AddCandidateByClient(string requestid, string requestname, int resumeid, string type, string uniqueid, string emailids)
+        public async Task<IActionResult> AddCandidateByClient(string requestid, string requestname, int resumeid, string type, string uniqueid, string emailids, string ClientHREmailId)
         {
             try
             {
@@ -6722,6 +6729,7 @@ namespace Risebird.Web.Controllers
                 {
                     model.ResumeLink = await _candidateService.FetchCandidateResumeById(resumeid);
                     model.Candidateesumeid = resumeid;
+                    model.ClientHRAttemptContact = ClientHREmailId;
                 }
                 if (TempData["SuccessErrorMessageCandidate"] != null)
                 {
@@ -6800,7 +6808,7 @@ namespace Risebird.Web.Controllers
                         ResumeLink = model.ResumeLink,
                         Phone = model.Phone,
                         WhatsappNumber = model.WhatsappNumber,
-                        ClientHREmail = emailids,
+                        ClientHREmail = string.IsNullOrWhiteSpace(model.ClientHRAttemptContact) ? emailids : model.ClientHRAttemptContact,
                         ProfileSource = emailids,
                         countryCode = model.Location
                     };
@@ -6827,12 +6835,20 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 TempData["SuccessErrorMessageMarketPlace1"] = result;
+                if (model.Candidateesumeid > 0)
+                {
+                    return RedirectToAction("GetNotProcessedResumeByClient", new { emailid = emailids, type = type, id = uniqueid });
+                }
                 return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailids, type = type, id = uniqueid });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageMarketPlace1"] = "Adding candidate failed";
+                if (model.Candidateesumeid > 0)
+                {
+                    return RedirectToAction("GetNotProcessedResumeByClient", new { emailid = emailids, type = type, id = uniqueid });
+                }
                 return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailids, type = type, id = uniqueid });
             }
         }
