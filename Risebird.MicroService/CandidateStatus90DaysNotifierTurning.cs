@@ -144,7 +144,7 @@ namespace Risebird.MicroService
                         //Sheet.Cells[i, 20].Value = item.InterviewerCodedName ?? string.Empty;
                         Sheet.Cells[i, 13].Value = item.ExecutiveReportLink;
                         //Sheet.Cells[i, 22].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 14].Value = item.CurrentStatusDate;
+                        Sheet.Cells[i, 14].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString() : string.Empty; 
 
                         i++;
                     }
@@ -168,7 +168,8 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 10].Value = cold.CandidateLatestStatus;
                         //Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = cold.CurrentStatus;
-                        Sheet.Cells[i, 14].Value = cold.CurrentStatusDate;
+                        Sheet.Cells[i, 12].Value = cold.ClientHrContact;
+                        Sheet.Cells[i, 14].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString() : string.Empty;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
