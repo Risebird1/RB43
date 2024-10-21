@@ -2678,7 +2678,7 @@ namespace Risebird.Web.Controllers
                     interviewmanagement = interviewmanagement.Select(x => { x.LastMeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.LastMeetingStatus)).GetDescription(); return x; }).ToList();
 
                 }
-                interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; })?.OrderByDescending(x => x.interviewDate).ToList();
                 return View(interviewmanagement);
             }
             else
