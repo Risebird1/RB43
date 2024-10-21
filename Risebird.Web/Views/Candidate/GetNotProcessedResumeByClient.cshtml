@@ -17,10 +17,10 @@
 <div id="main-panel">
     <div class="content  client">
         <div class="pt30">
-            <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="col-md-12 nopad">
             </div>
             <div class="row">
-                <div class="mdc-card card" style="background:#fff">
+                <div class="mdc-card card" style="background:#fff;padding-top: 15px;">
                     <div>
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
@@ -28,14 +28,14 @@
                         <div class="dataloading">
                             <div class="toolbar">
                                 <div class="table-responsive scrollbar style-2" style="overflow-x:scroll">
-                                    <table id="mailsTable1" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                    <table id="mailsTable1" class="table table-striped table-bordered table-responsive" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>Skill Channel</th>
                                                 <th>Resume</th>
                                                 <th>Email Missing</th>
                                                 <th>AddedOn</th>
-                                                <th>Action</th>
+                                                <th style="text-align:center">Action</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -64,7 +64,7 @@
                                                         }
                                                     </td>
                                                     <td>@item.AddedOn</td>
-                                                    <td>
+                                                    <td style="text-align:center">
                                                         @{
                                                             var fileName = string.Empty;
                                                             if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
