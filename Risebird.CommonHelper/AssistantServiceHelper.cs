@@ -76,7 +76,7 @@ namespace Risebird.CommonHelper
                 string threadId = string.Empty;
                 if (!string.IsNullOrEmpty(fileId))
                 {
-                    //await Task.Delay(60000);
+                    await Task.Delay(15000);//60000
                     threadId = await CreateThreadAsync(requestModel, fileId);
                 }
                 else
@@ -106,7 +106,7 @@ namespace Risebird.CommonHelper
                             break;
                     }
                     var messages = await ListRunMessages(threadId);
-                    if(messages!=null && messages.Data.First().Content.FirstOrDefault().Text.Value.Contains("persistent issue") && !string.IsNullOrEmpty(fileId))
+                    if(messages!=null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
                         return await RecreateThread(requestModel, fileId);
                     }
