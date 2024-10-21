@@ -360,7 +360,7 @@
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
-                                                <div class="" style="color:green;margin: 10px 0px 0px 0px;">Id Verification Status: </div>
+                                                <div class="" style="color:green;margin: 10px 0px 0px 0px;">Candidate ID Verification Status: </div>
                                                 @{
                                                     var candidateidverification = Model.CandidateIDVerificationStatus.HasValue ? ((CandidateIDVerificationOptionEnum)Convert.ToInt32(Model.CandidateIDVerificationStatus)).GetDescription() : string.Empty;
                                                 }
