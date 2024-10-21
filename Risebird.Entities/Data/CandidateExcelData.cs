@@ -65,5 +65,7 @@ namespace Risebird.Entities.Data
         public string PreReportLink { get; set; }
         public string PreReportUsername { get; set; }
         public string PreReportPassword { get; set; }
+        public string CurrentStatus { get; set; }
+        public DateTime? CurrentStatusDate { get; set; }
     }
 }
