@@ -19,6 +19,7 @@ namespace Risebird.Repository.Interface
         Task<List<InterviewerProfessional>> GetEmployerListById(int id);
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
+        IEnumerable<string> CheckEmailIdExists(string emailId);
         IEnumerable<LevelTech> GetLevelTech();
         List<ExperienceRange> GetExperienceRange();
         List<JobFunction> GetJobFunction();

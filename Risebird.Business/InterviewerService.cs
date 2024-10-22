@@ -332,7 +332,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<string> CheckEmailIdExists(string emailId)
+        {
+            try
+            {
+                return _interviewerRepository.CheckEmailIdExists(emailId);
+            }
 
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public InterviewerProfileVM GetInterviewerProfileById(int userid)
         {
             try

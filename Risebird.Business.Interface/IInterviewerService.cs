@@ -21,6 +21,7 @@ namespace Risebird.Business.Interface
         //To retrieve the NickNames
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
+        IEnumerable<string> CheckEmailIdExists(string emailId);
         InterviewerProfileVM GetInterviewerProfileById(int userid);
         InterviewerProfileVM GetInterviewerMyProfileById(int userid);
         InterviewerProfessional GetEmployerById(int Id);
