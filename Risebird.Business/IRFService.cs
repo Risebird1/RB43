@@ -4389,5 +4389,17 @@ namespace Risebird.Business
             }
 
         }
+        public async Task<bool> AddAGInterviewerToSkillChannel(int irfId, int userId, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.AddAGInterviewerToSkillChannel(irfId, userId, loggedInUser);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
