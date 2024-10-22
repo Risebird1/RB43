@@ -141,6 +141,21 @@
 
 
     </style>
+        @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+        {
+            var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+            profileName = profileName.Trim('"');
+            @if (profileName == "Client")
+            {
+                 
+                <script
+                    src='//in.fw-cdn.com/32144757/1144927.js'
+                    chat='true' widgetId='2dc3e8b1-b8f0-4d83-9319-33b08fafc91e'>
+                </script>
+            
+            }
+        }
+   
 </head>
 <body class="sidebar-mini" style="padding-right:0px!important;">
 

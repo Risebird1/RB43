@@ -1476,7 +1476,7 @@
                                                                     </button>
                                                                 </span>
                                                                 <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #7e97bab3!important; border: 1px #7e97bab3!important;">
-                                                                    <span onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.AssessmentGroupId', '@item.AssessmentGroup');" title="Interviewers' List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
+                                                                    <span onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.AssessmentGroupId', '@item.AssessmentGroup', '@item.irfIntId', '@item.IRFId');" title="Interviewers' List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
                                                                 </button>
                                                                 @if (ViewBag.actionstatus == "InterviewCount")
                                                                 {
@@ -2048,6 +2048,7 @@
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
+@await Html.PartialAsync("~/Views/IRF/AddAGInterviewerToIRFPartial.cshtml")
 
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
