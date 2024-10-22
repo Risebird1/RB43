@@ -861,7 +861,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult EmailIdVilidation(string EmailId, int UserId)
         {
-            IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
+            //IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
+            IEnumerable<string> EmailIdList = _interviewerService.CheckEmailIdExists(EmailId);
             if (EmailIdList.Contains(EmailId.ToUpper()))
             {
                 var role = _interviewerService.GetUserRolebyEmailid(EmailId);
