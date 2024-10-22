@@ -27,7 +27,7 @@ Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.Ema
 count(im.id) as TotalInterviews, CTE.ResumeLink,CTE.Isavailable as AvailableStatus,ul.IsActive,  
 iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey as MCQSetsValue,cid.inviteId,  
 msl.PartitionKey as SMCQId,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,  
-CTE.RedMarker, agla.IsAvailable as IsAGLevelAvailable, agla.CreatedOn as AGAvailabilityCreatedAt, agla.ModifiedOn as AGAvailabilityModifiedAt         
+CTE.RedMarker, agla.CreatedOn as AGAvailabilityCreatedAt, agla.IsAvailable as IsAGLevelAvailable, agla.ModifiedAt as AGAvailabilityModifiedAt           
 From CTE join Userlist ul on CTE.Userid=ul.id         
 join @temp tp on tp.AssessmentGroupId=CTE.value
 left join InterviewMeetings im on im.interviewer=ul.EmailId  and (im.confirmationStatus=1 or im.confirmationStatus is null)        
@@ -36,10 +36,11 @@ left join AssessmentGroup ag on ag.id=CTE.value
 left join MCQSets ms on ms.id=ag.MCQSetsValue    
 left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and cid.candidateEmail=ul.EmailId  
 left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId  
-left join AGLevelAvailability agla on agla.InterviewerProfileId = cte.id  
+--left join AGLevelAvailability agla on agla.InterviewerProfileId = cte.id  
+outer apply ((select top 1 CreatedOn, IsAvailable, ModifiedAt from AGLevelAvailability where AssessmentGroupId = @Assessmentid and InterviewerProfileId = (select id from InterviewerProfile where UserId = CTE.UserId) order by id desc)) agla
 where ul.IsActive=1 
 group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.MCQCandidateid,ag.AssessmentVerificationType,  
-ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker ,agla.IsAvailable, agla.CreatedOn, agla.ModifiedOn    
+ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker ,agla.IsAvailable, agla.CreatedOn, agla.ModifiedAt    
   
 End  
 else  
@@ -51,7 +52,7 @@ Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.Ema
 count(im.id) as TotalInterviews, CTE.ResumeLink,CTE.Isavailable as AvailableStatus,ul.IsActive,  
 iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey as MCQSetsValue,cid.inviteId,  
 msl.PartitionKey as SMCQId,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,  
-CTE.RedMarker, agla.IsAvailable as IsAGLevelAvailable, agla.CreatedOn as AGAvailabilityCreatedAt, agla.ModifiedOn as AGAvailabilityModifiedAt         
+CTE.RedMarker, agla.CreatedOn as AGAvailabilityCreatedAt, agla.IsAvailable as IsAGLevelAvailable, agla.ModifiedAt as AGAvailabilityModifiedAt         
 From CTE join Userlist ul on CTE.Userid=ul.id         
 left join InterviewMeetings im on im.interviewer=ul.EmailId  and (im.confirmationStatus=1 or im.confirmationStatus is null)        
 left join InterviewerAssessmentVerifications iav on iav.UserId=ul.id and iav.AssessmentId=CTE.value    
@@ -59,11 +60,13 @@ left join AssessmentGroup ag on ag.id=CTE.value
 left join MCQSets ms on ms.id=ag.MCQSetsValue    
 left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and cid.candidateEmail=ul.EmailId  
 left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId  
-left join AGLevelAvailability agla on agla.InterviewerProfileId = cte.id  
+--left join AGLevelAvailability agla on agla.InterviewerProfileId = cte.id  
+outer apply ((select top 1 CreatedOn, IsAvailable, ModifiedAt from AGLevelAvailability where AssessmentGroupId = @Assessmentid and InterviewerProfileId = (select id from InterviewerProfile where UserId = CTE.UserId) order by id desc)) agla
 where CTE.value = @Assessmentid and ul.IsActive=1      
 group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.MCQCandidateid,ag.AssessmentVerificationType,  
-ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker ,agla.IsAvailable, agla.CreatedOn , agla.ModifiedOn    
-End  
+ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker, agla.IsAvailable, agla.CreatedOn, agla.ModifiedAt    
+order by EmailId
+End   
   
 END  
 GO
