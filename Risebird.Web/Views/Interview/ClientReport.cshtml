@@ -360,8 +360,11 @@
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
-                                               <div class="" style="color:green;margin: 10px 0px 0px 0px;">Id Verification Status: </div>
-                                                <h5 style="color:#445346;font-size:15px;">@Model.CandidateIDVerificationStatusDesc</h5>
+                                                <div class="" style="color:green;margin: 10px 0px 0px 0px;">Candidate ID Verification Status: </div>
+                                                @{
+                                                    var candidateidverification = Model.CandidateIDVerificationStatus.HasValue ? ((CandidateIDVerificationOptionEnum)Convert.ToInt32(Model.CandidateIDVerificationStatus)).GetDescription() : string.Empty;
+                                                }
+                                                <h5 style="color:#445346;font-size:15px;">@candidateidverification</h5>
 
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
