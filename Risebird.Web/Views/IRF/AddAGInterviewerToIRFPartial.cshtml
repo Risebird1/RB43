@@ -1,0 +1,63 @@
+﻿
+<div id="addInterviewerModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="id_addInterviewerModal_Heading">Add Interviewer</h5>
+            </div>
+            <button onclick="closeAddInterviewerModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="id_addInterviewerBody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+
+                    <label style="font-size:14px;" id="id_AddOperationConfirmation">Are you sure you want to add the interviewer to the skill channel?</label>
+                    <input type="hidden" id="hdnInterviewerEmailId">
+                    <input type="hidden" id="hdnInterviewerUserId">
+                    <input type="hidden" id="hdnInterviewerIRFId">
+                    @* <label style="font-size:14px;">Comment</label>
+                    <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div> *@
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="AddInterviewerToIRF()" id="btnAddInterviewer">Add</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function closeAddInterviewerModal() {
+        var modal = document.getElementById("addInterviewerModal");
+        modal.style.display = "none";
+    }
+    function OpenAddInterviewerModal(emailId, irfName, userId, irfId) {
+        debugger;
+        var modal = document.getElementById("addInterviewerModal");
+        modal.style.display = "block";
+        $('#hdnInterviewerEmail').val(emailId);
+        $('#hdnInterviewerUserId').val(userId);
+        $('#hdnInterviewerIRFId').val(irfId);
+        document.getElementById("id_AddOperationConfirmation").innerHTML = ''
+        document.getElementById("id_AddOperationConfirmation").innerHTML = 'Are you sure you want to add the interviewer ' + emailId + ' to the skill channel ' + irfName + '?';
+        
+    }
+    function AddInterviewerToIRF() {
+        var userId = $('#hdnInterviewerUserId').val();
+        var irfId = $('#hdnInterviewerIRFId').val();
+        $.ajax({
+                url: '/IRF/AddInterviewerToIRF',
+                data: { 'irfId': irfId, 'userId': userId },
+                type: "POST",
+                success: function (data) {
+                    alert(data);
+                    closeAddInterviewerModal();
+                }
+        });
+    }
+</script>

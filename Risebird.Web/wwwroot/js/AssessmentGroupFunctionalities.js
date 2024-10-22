@@ -5,10 +5,10 @@
         var modal = document.getElementById("interviewerMemberModal");
         modal.style.display = "none";
     }
-    function GetAssessmentGroupInterviewerMembers(id, agName) {
+    function GetAssessmentGroupInterviewerMembers(id, agName, irfId = null, irfName = null) {
         $.ajax({
             url: '/IRF/GetAssessmentGroupInterviewerMembers',
-            data: { 'Assessmentid': id },
+            data: { 'Assessmentid': id, 'irfId' : irfId, 'irfName' : irfName },
             success: function (data) {
                 var modal = document.getElementById("interviewerMemberModal");
                 var modal = document.getElementById("interviewerMemberModal");
