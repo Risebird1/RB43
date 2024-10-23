@@ -52,6 +52,7 @@
                                                 <th>Actual Meeting Status</th>
                                                 <th>Channel Owner</th>
                                                 <th style="text-align:center">Call</th>
+                                                <th style="text-align:center">Action</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -63,6 +64,7 @@
                                                 <th>Actual Meeting Status</th>
                                                 <th>Channel Owner</th>
                                                 <th style="text-align:center">Call</th>
+                                                <th style="text-align:center">Action</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -83,6 +85,11 @@
                                                             {
                                                                 <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
                                                             }
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn btn-reschedule shadow btn-xs sharp me-1" title="Reschudule Interview">
+                                                                <span onclick="ReschuduleMeeting(@item.Interviewid,'@item.CalendlyLink.Split("=").LastOrDefault()','@item.IRFId','@item.candidateEmail')"><i class="fas fa-calendar-alt" style="color:#fff;font-size:13px;position:relative;top:-1px;" aria-hidden="true"></i></span>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 }
@@ -128,7 +135,54 @@
         });
     }
 </script>
-
+<script>
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting and reschedule?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reschedule!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/InterviewScheduler/GenerateCandidatescheuleLink',
+                        method: 'POST',
+                        data: {
+                            'CandidateEmailid': candidateEmailid,
+                            'interviewid': interviewid,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid,
+                            'schedulertype': 1
+                        },
+                        success: function (result) {
+                            location.href = result;
+                            //window.open(result, '_blank');
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error rescheduling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                //location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'reschedule cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
 
 
 

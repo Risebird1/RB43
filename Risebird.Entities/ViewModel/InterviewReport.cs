@@ -393,6 +393,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Candidate ID Verification Status")]
         public int? CandidateIDVerificationStatus { get; set; }
         public string CandidateIDVerificationStatusDesc { get; set; }
+        public bool IsReportwhitelabel { get; set; }
 
     }
     public class RBInterviewDetails

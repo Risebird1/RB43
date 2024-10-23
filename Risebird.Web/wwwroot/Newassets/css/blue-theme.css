@@ -769,7 +769,7 @@ textarea::-webkit-scrollbar-thumb {
 
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
+    border:1px #42a5f5 solid !important;
     color: #42a5f5 !important;
 }
 

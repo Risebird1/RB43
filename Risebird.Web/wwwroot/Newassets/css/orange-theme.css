@@ -698,7 +698,7 @@ table.journey {
 }
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #ea6e24 !important;
+    border:1px  #ea6e24 solid !important;
     color: #ea6e24 !important;
 }
 
