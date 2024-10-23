@@ -678,6 +678,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<string> CheckEmailIdExists(string emailId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(
+                        con, "select Upper(EmailId) from [dbo].[UserList] where EmailId = @EmailId", parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<LevelTech> GetLevelTech()
         {
             try

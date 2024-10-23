@@ -382,6 +382,7 @@
             async: false,
             data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
             success: function (data) {
+                debugger;
                 emailidvalidation = data;
                 if (data != "Not") {
                     $("#err_txt_EmailId").text(data);
@@ -862,6 +863,7 @@
 
     }
     function Checkvalidation() {
+        debugger;
     @* var techSkillItems = $('[id^="InterviewerSkill"]');
             //var oldVal = $("#QuestionsCollection_0__Timing").val();
             for (i = 0; i < techSkillItems.length; i++) {
@@ -876,6 +878,7 @@
             } *@
             checkEmailid();
         if (emailidvalidation != "") {
+            alert('EmailId verification failed!');
             return false;
         }
         //document.getElementById('SkillCollection_Error').innerHTML = "";

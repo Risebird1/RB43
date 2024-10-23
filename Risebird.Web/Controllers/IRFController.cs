@@ -6913,13 +6913,15 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        public async Task<IActionResult> GetAssessmentGroupInterviewerMembers(int Assessmentid, int irfId, string irfName)
         {
             try
             {
                 ViewBag.Type = "ALL";
                 var model = await _irfService.GetAssessmentGroupInterviewerMembers(Assessmentid);
                 model = model.Select(x => { x.AvailableStatus = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.AvailableStatus)).GetDescription(); return x; }).ToList();
+                ViewBag.IRFId = irfId;
+                ViewBag.IRFName = irfName;
                 return PartialView("IRFInterviewerMembersPartial", model);
             }
             catch (Exception ex)
@@ -10314,6 +10316,49 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 //return Json("Some error occured. Please try again!");
                 return Json(null);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddInterviewerToIRF(int irfId, int userId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var result = await _irfService.AddAGInterviewerToSkillChannel(irfId, userId, emailid);
+                        if(result)
+                        {
+                            return Json("Added successfully!");
+
+                        }
+                        else
+                        {
+                            return Json("Sorry! Failed to add!");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                    
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Some error occured. Please try again!");
+                return Json("An error has occured. Failed to add!");
             }
         }
     }

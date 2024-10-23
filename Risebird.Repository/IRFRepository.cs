@@ -9182,6 +9182,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<bool> AddAGInterviewerToSkillChannel(int irfId, int userId, string loggedInEmailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@userId", userId);
+                dynamicParameters.Add("@irfId", irfId);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                dynamicParameters.Add("@AddedBy", loggedInEmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync(con, "usp_AddAGInterviewerToSkillChannel", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
