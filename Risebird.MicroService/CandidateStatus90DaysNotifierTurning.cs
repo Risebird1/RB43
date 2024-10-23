@@ -119,10 +119,10 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 4].Value = item.ResumeLink;
                         Sheet.Cells[i, 5].Value = item.JDTiltle;
                         Sheet.Cells[i, 6].Value = item.IRFId;
-                        Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
                         //Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
-                        Sheet.Cells[i, 8].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
-                        Sheet.Cells[i, 9].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 8].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 9].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
 
                         //Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
                         if (item.confirmationStatus == "Cancelled")
@@ -144,7 +144,7 @@ namespace Risebird.MicroService
                         //Sheet.Cells[i, 20].Value = item.InterviewerCodedName ?? string.Empty;
                         Sheet.Cells[i, 13].Value = item.ExecutiveReportLink;
                         //Sheet.Cells[i, 22].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 14].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString() : string.Empty; 
+                        Sheet.Cells[i, 14].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty; 
 
                         i++;
                     }
@@ -162,14 +162,14 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 5].Value = cold.JDTiltle;
                         Sheet.Cells[i, 6].Value = cold.IRFId;
 
-                        Sheet.Cells[i, 7].Value = cold.AddedOnDate.HasValue ? cold.AddedOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 7].Value = cold.AddedOnDate.HasValue ? cold.AddedOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
                         //Sheet.Cells[i, 8].Value = cold.InvitationSentOnDate.HasValue ? cold.InvitationSentOnDate.Value.ToString() : string.Empty;
-                        Sheet.Cells[i, 8].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 8].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 10].Value = cold.CandidateLatestStatus;
                         //Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = cold.CurrentStatus;
                         Sheet.Cells[i, 12].Value = cold.ClientHrContact;
-                        Sheet.Cells[i, 14].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 14].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
