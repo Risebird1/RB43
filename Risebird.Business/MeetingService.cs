@@ -1258,6 +1258,7 @@ namespace Risebird.Business
                 reportModel.Heuristicsscore = irfDetails.Heuristicsscore;
                 reportModel.TechRubricType = irfDetails.TechRubricType;
                 reportModel.CandidateIDVerificationStatus = interviewDetails.CandidateIDVerificationStatus;
+                reportModel.IsReportwhitelabel = interviewDetails.IsReportwhitelabel;
                 return reportModel;
             }
             catch (Exception e)

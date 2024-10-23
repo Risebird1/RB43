@@ -32,6 +32,7 @@ CREATE TABLE [dbo].[Client](
             [PlanType][int]null,
             [tenantId][varchar](50) NULL,
             [IsVideoRequired][bit] NULL,
+            [IsReportwhitelabel][bit] NULL,
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -318,6 +319,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add IsVideoRequired bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsReportwhitelabel')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add IsReportwhitelabel bit
 END
 
 END

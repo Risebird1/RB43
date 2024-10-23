@@ -398,7 +398,7 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
 }
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #524c4cab !important;
+    border:1px #524c4cab solid !important;
     color: #fff !important;
 }
 

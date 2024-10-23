@@ -471,7 +471,7 @@ namespace Risebird.Functions
                         cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
-                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
+                        //masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
                             masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));

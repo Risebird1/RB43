@@ -3084,7 +3084,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
-                if(model!=null && model.CandidateIDVerificationStatus.HasValue && model.CandidateIDVerificationStatus.Value>0)
+                if (model != null && model.CandidateIDVerificationStatus.HasValue && model.CandidateIDVerificationStatus.Value > 0)
                 {
                     model.CandidateIDVerificationStatusDesc = ((CandidateIDVerificationOptionEnum)(model.CandidateIDVerificationStatus)).GetDescription();
                 }
@@ -7864,6 +7864,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientLogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 }
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+                //if (model.IsReportwhitelabel)
+                //{
+                //    ViewBag.ClientLogo = "";
+                //    ViewBag.Risebirdlogo = "";
+                //}
                 //if (profileName == "Client")
                 //{
                 //    var client = await _userRepository.GetClientUserDetails(email);
