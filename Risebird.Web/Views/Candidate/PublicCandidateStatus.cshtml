@@ -798,7 +798,10 @@
                                                                                 @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                 {
                                                                                     <th class="text-left">Interview Date</th>
-                                                                                    <th>Meeting Link</th>
+                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.ReportPending.GetDescription())
+                                                                                    {
+                                                                                        <th>Meeting Link</th>
+                                                                                    }
                                                                                 }
                                                                                 @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                 {
@@ -821,7 +824,10 @@
                                                                                 @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                 {
                                                                                     <th class="text-left">Interview Date</th>
-                                                                                    <th>Meeting Link</th>
+                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.ReportPending.GetDescription())
+                                                                                    {
+                                                                                        <th>Meeting Link</th>
+                                                                                    }
                                                                                 }
 
                                                                                 @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
@@ -1028,7 +1034,7 @@
 
                                                                                     }
 
-                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.ReportPending.GetDescription() && ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                     {
                                                                                         <td>
                                                                                             @if (item.CurrentStatus == "Selected" || item.CurrentStatus == "Rejected" || item.CurrentStatus == "Strongly Selected" || item.CurrentStatus == "Marginally Selected" || item.CurrentStatus == "Strongly Rejected" || item.CurrentStatus == "Marginally Rejected" || item.CurrentStatus == "Proxy")
