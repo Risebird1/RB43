@@ -10,8 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-  
-    
 CREATE PROCEDURE [dbo].[usp_GetProbableNoShowCandidates]        
 @Emailid varchar(200)
 AS        
@@ -22,7 +20,7 @@ if(@Clientid>0)
 Begin
 if(@Roleid=1)
 begin
-  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner  
+  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner ,IRF.CalendlyLink,im.id as Interviewid 
 from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
@@ -37,7 +35,7 @@ order by im.interviewDate desc
 end
 else if(@Roleid=4)
 begin
-select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner  
+select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner,IRF.CalendlyLink,im.id as Interviewid  
 from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
@@ -51,7 +49,7 @@ where ca.ProfileSource=@Emailid
 end
 else if(@Roleid=9)
 begin
-select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner  
+select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner,IRF.CalendlyLink,im.id as Interviewid  
 from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
@@ -62,7 +60,7 @@ where IRF.ClientId=@Clientid
 end
 else
 begin
-select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner  
+select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner,IRF.CalendlyLink,im.id as Interviewid  
 from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
@@ -76,7 +74,7 @@ end
 End
 else
 Begin
-  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner  
+  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner,IRF.CalendlyLink,im.id as Interviewid,im.id as Interviewid  
 from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
