@@ -111,8 +111,6 @@
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
-            @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
-        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>*@
         }
     </div>
     <div id="reportForm" class="content client">
@@ -418,41 +416,7 @@
         </div>
     </footer>
 </div>
-<div id="PublicUrlShareModel" class="modal modal-bg">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
-                </div>
-                <h5 class="modal-title pull-left">Public Share Url</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="video-url">
-                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
-                            <p class="special-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                <span id="special_text" class="special-text__tooltip">
-                                    Copy Link
-                                </span>
-                            </p>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-12 ">
-                    <div class="text-right">
-                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 <div id="myRaitingPopup" class="modal modal-wrap modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -720,34 +684,7 @@
             pdf.save(filename + ".pdf")
         });
     }*@
-    function GeneratePublicUrl(index) {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "block";
-        var urlcurrent = window.location.href;
-        if (index == 1) {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveCandidateReport");
-            urlcurrent = urlcurrent.replace("ProctorReport", "ExecutiveCandidateReport");
-        }
-        else {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
-            urlcurrent = urlcurrent.replace("ProctorReport", "InstaAddReport");
-        }
-        $("#txtvideoUrls").text(urlcurrent);
-    }
-    function closePublicUrlShareModel() {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "none";
-    }
-    function copyToClipboard(element) {
-        var temp = $("<input>");
-        $("body").append(temp);
-        temp.val($(element).text()).select();
-        document.execCommand("copy");
-        temp.remove();
-        $('#special_text').text('Copied');
-    }
+   
 </script>
 
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>

@@ -27,15 +27,17 @@ namespace Risebird.MicroService
         private readonly ICandidateRepository _candidateRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         public CandidateLatestStatus(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IInterviewerService interviewerService,
-            IApplicationErrorLogger applicationErrorLogger, ICandidateRepository candidateRepository, IClientService clientService)
+            IApplicationErrorLogger applicationErrorLogger, ICandidateRepository candidateRepository, IClientService clientService, IEncryptionHelper encryptionHelper)
         {
             _httpRequestHelper = httpRequestHelper;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _candidateRepository = candidateRepository;
             _clientService = clientService;
+            _encryptionHelper = encryptionHelper;
             //employementapikey = _configuration["EmploymentVerfication:apikey"];
         }
 
@@ -124,7 +126,7 @@ namespace Risebird.MicroService
                                 var meetingstatus = !string.IsNullOrWhiteSpace(result.MeetingStatus.ToString()) ? Convert.ToInt32(result.MeetingStatus) : 0;
                                 if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
                                 {
-                                    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId={result.id}&irfId={result.irfintid}&isClient=true";
+                                    executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(result.id), result.irfintid);
                                 }
                                 //Create JD Based Info
                                 List<SkillDetails> _skills = new List<SkillDetails>();
@@ -398,6 +400,16 @@ namespace Risebird.MicroService
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
+        }
+
+        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        {
+            var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
+            var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
+            meetingid = meetingid.Replace("+", "_");
+            irf = irf.Replace("+", "_");
+            var reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            return reportlink;
         }
     }
 }

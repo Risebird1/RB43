@@ -27,9 +27,10 @@ namespace Risebird.MicroService
         private readonly IClientService _clientService;
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         public InterviewChannelCandidates(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
-            IClientService clientService, ICandidateService candidateService, IIRFRepository irfRepository)
+            IClientService clientService, ICandidateService candidateService, IIRFRepository irfRepository, IEncryptionHelper encryptionHelper)
         {
             _httpRequestHelper = httpRequestHelper;
             _configuration = configuration;
@@ -37,6 +38,7 @@ namespace Risebird.MicroService
             _clientService = clientService;
             _candidateService = candidateService;
             _irfRepository = irfRepository;
+            _encryptionHelper = encryptionHelper;
         }
         [FunctionName("InterviewChannelCandidates")]
         public async Task<IActionResult> Run(
@@ -181,7 +183,7 @@ namespace Risebird.MicroService
                                 var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus.ToString()) ? Convert.ToInt32(item.MeetingStatus) : 0;
                                 if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
                                 {
-                                    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId={item.id}&irfId={item.irfintid}&isClient=true";
+                                    executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), item.irfintid);
                                 }
                                 //Create JD Based Info
                                 List<SkillDetails> _skills = new List<SkillDetails>();
@@ -291,6 +293,15 @@ namespace Risebird.MicroService
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function threw exception with message {ex.Message} at {DateTime.Now}");
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
+        }
+        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        {
+            var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
+            var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
+            meetingid = meetingid.Replace("+", "_");
+            irf = irf.Replace("+", "_");
+            var reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            return reportlink;
         }
     }
 }

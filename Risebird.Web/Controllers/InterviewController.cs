@@ -68,6 +68,7 @@ namespace Risebird.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IConverter _converter;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -85,7 +86,7 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository,
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
-            IConverter converter, IAssistantServiceHelper assistantServiceHelper)//IConverter converter,
+            IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -114,6 +115,7 @@ namespace Risebird.Web.Controllers
             _contextAccessor = contextAccessor;
             _converter = converter;
             _assistantServiceHelper = assistantServiceHelper;
+            _encryptionHelper = encryptionHelper;
         }
 
 
@@ -5648,10 +5650,21 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ExecutiveCandidateReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public async Task<IActionResult> ExecutiveReport(string meetingid, string irf)
         {
             try
             {
+                meetingid = meetingid.Replace("_", "+");
+                irf = irf.Replace("_", "+");
+                var interviewId = await _encryptionHelper.DecryptIntegerValue(meetingid, "ExecutiveReport");
+                var irfId = await _encryptionHelper.DecryptIntegerValue(irf, "ExecutiveReport");
+                if (interviewId == 0 || irfId == 0)
+                {
+                    var _model = new InterviewReport();
+                    return View("ClientReport", _model);
+                }
+                bool isClient = true;
+                bool isClientSelected = false;
                 //bool isInterviewer = false;
                 ViewBag.IRFID = irfId;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
@@ -5668,46 +5681,22 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.IsClient = isClient;
                     ViewBag.IsClientSelected = isClientSelected;
-                    //model.IsInterviewer = isInterviewer;
-                    //model.PreviousMeetingStatus = model.MeetingStatus;
-                    //model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                     model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                     await GetStatusList(model, irfId, 0);
-                    //var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
-                    //var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
-                    //if (menus != null)
-                    //{
-                    //    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
-                    //    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
-                    //}
                     ViewBag.PageStatus = "PublicExternal";
-                    //ViewBag.PageReport = "";
                     ViewBag.PageReport = "PublicExternal";
-                    if (model.IsProctor)
-                    {
-                        return View("ProctorReport", model);
-                    }
-                    else if (isClient)
-                    {
-                        return View("ClientReport", model);
-                    }
-                    else
-                    {
-                        return View("AddReport", model);
-                    }
+                    return View("ClientReport", model);
                 }
                 else
                 {
                     return RedirectToAction("AllMeetings");
                 }
-
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
-
         }
 
         [HttpGet]
