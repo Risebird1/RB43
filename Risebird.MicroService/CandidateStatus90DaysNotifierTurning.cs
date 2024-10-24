@@ -179,7 +179,7 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 10].Value = cold.CandidateLatestStatus;
                         //Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = cold.CurrentStatus;
-                        Sheet.Cells[i, 12].Value = cold.ClientHrContact;
+                        Sheet.Cells[i, 12].Value = cold.ClientHrContact; 
                         Sheet.Cells[i, 14].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
                         if (cold.NoOfInterviews > 0)
                         {
