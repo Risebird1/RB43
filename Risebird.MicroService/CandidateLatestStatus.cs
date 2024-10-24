@@ -124,7 +124,7 @@ namespace Risebird.MicroService
                                 var meetingstatus = !string.IsNullOrWhiteSpace(result.MeetingStatus.ToString()) ? Convert.ToInt32(result.MeetingStatus) : 0;
                                 if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
                                 {
-                                    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={result.id}&irfId={result.irfintid}&isClient=true";
+                                    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId={result.id}&irfId={result.irfintid}&isClient=true";
                                 }
                                 //Create JD Based Info
                                 List<SkillDetails> _skills = new List<SkillDetails>();

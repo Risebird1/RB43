@@ -4061,7 +4061,7 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 9].Value = item.IRFname;
                         Sheet.Cells[i, 10].Value = item.HREmail;
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.InterviewId + "&irfId=" + item.IRFId + "&isClient=true";
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.InterviewId + "&irfId=" + item.IRFId + "&isClient=true";
                         try
                         {
                             Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
@@ -5208,7 +5208,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = item.ClientHrContact;
                         Sheet.Cells[i, 9].Value = item.IRFId;
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + id + "&isClient=true";
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + id + "&isClient=true";
                         try
                         {
                             Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
@@ -5644,7 +5644,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
                             ++colDataNumber;
@@ -5925,7 +5925,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         ++colPendDataNumber;
                         try
                         {
