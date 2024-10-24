@@ -189,7 +189,7 @@ namespace Risebird.MicroService
                         {
                             Sheet.Cells[i, 15].Value = "Not Yet Scheduled";
                         }
-                        Sheet.Cells[i, 16].Value = item.NoOfInterviews;
+                        Sheet.Cells[i, 16].Value = cold.NoOfInterviews;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
