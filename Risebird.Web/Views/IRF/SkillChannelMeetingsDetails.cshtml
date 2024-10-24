@@ -144,7 +144,7 @@
                                                                 }
                                                                 @*                                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, IsSelected = true })'>Report</a> </td>
                                                             *@
-                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ExecutiveReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, isClient = true })'>Report</a> </td>
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ExecutiveCandidateReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, isClient = true })'>Report</a> </td>
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
