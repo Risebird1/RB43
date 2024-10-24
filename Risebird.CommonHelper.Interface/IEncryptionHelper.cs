@@ -11,5 +11,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> DecryptData(string encryptedData);
         Task<string> EncryptInteger(int id);
         Task<int?> DecryptInteger(string encryptedId);
+        Task<string> EncryptIntegerValue(int id, string type);
+        Task<int> DecryptIntegerValue(string encryptedId, string type);
     }
 }
