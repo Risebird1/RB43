@@ -9565,9 +9565,10 @@ namespace Risebird.Web.Controllers
                 }
                 var irfList = (await _irfService.GetGetDayStatsByClientUserDetailedView(irfintid, type, startDate, enddate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                var portallink = "https://" + Request.Host.ToString();
                 foreach (var item in irfList)
                 {
-                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                    item.ReportLink = await GenerateExecutiveReportURl(portallink, Convert.ToInt32(item.id), item.Irfintid);
                 }
                 ViewBag.projectname = IRFId;
                 ViewBag.type = type;
@@ -9816,9 +9817,10 @@ namespace Risebird.Web.Controllers
                 }
                 var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                var portallink = "https://" + Request.Host.ToString();
                 foreach (var item in irfList)
                 {
-                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                    item.ReportLink = await GenerateExecutiveReportURl(portallink, Convert.ToInt32(item.id), item.Irfintid);
                 }
                 if (type == "SelectedRejected")
                 {
@@ -9863,9 +9865,10 @@ namespace Risebird.Web.Controllers
                 }
                 var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                var portallink = "https://" + Request.Host.ToString();
                 foreach (var item in irfList)
                 {
-                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                    item.ReportLink = await GenerateExecutiveReportURl(portallink, Convert.ToInt32(item.id), item.Irfintid);
                 }
 
                 Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
@@ -10060,9 +10063,10 @@ namespace Risebird.Web.Controllers
                 }
                 var irfList = (await _irfService.GetProjectSkillChannelStatsDetailedView(projectid, type, startDate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                var portallink = "https://" + Request.Host.ToString();
                 foreach (var item in irfList)
                 {
-                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                    item.ReportLink = await GenerateExecutiveReportURl(portallink, Convert.ToInt32(item.id), item.Irfintid);
                 }
                 ViewBag.projectname = projectname;
                 ViewBag.type = type;
@@ -10157,9 +10161,10 @@ namespace Risebird.Web.Controllers
                 }
                 var irfList = (await _irfService.GetPartnerDetailsStatsDetailedView(userid, type, startDate, enddate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                var portallink = "https://" + Request.Host.ToString();
                 foreach (var item in irfList)
                 {
-                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                    item.ReportLink = await GenerateExecutiveReportURl(portallink, Convert.ToInt32(item.id), item.Irfintid);
                 }
                 ViewBag.projectname = partnername;
                 ViewBag.type = type;
@@ -10288,8 +10293,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    
-                    if (irfId >0)
+
+                    if (irfId > 0)
                     {
                         //var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
                         //var url = Url.Action("Apply", "Interviewer",
@@ -10333,7 +10338,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var result = await _irfService.AddAGInterviewerToSkillChannel(irfId, userId, emailid);
-                        if(result)
+                        if (result)
                         {
                             return Json("Added successfully!");
 
@@ -10347,7 +10352,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -10361,5 +10366,16 @@ namespace Risebird.Web.Controllers
                 return Json("An error has occured. Failed to add!");
             }
         }
+        #region Executive Report 
+        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        {
+            var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
+            var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
+            meetingid = meetingid.Replace("+", "_");
+            irf = irf.Replace("+", "_");
+            var reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            return reportlink;
+        }
+        #endregion
     }
 }

@@ -61,6 +61,7 @@ namespace Risebird.Web.Controllers
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IWebHostEnvironment _env;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
@@ -69,7 +70,7 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
             IAadhaarService aadhaarService, IZoomHelper zoomHelper,
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env)
+            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env, IEncryptionHelper encryptionHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -95,6 +96,7 @@ namespace Risebird.Web.Controllers
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _interviewSchedulerservice = interviewSchedulerservice;
             _env = env;
+            _encryptionHelper = encryptionHelper;
         }
 
         [HttpGet]
@@ -4061,7 +4063,7 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 9].Value = item.IRFname;
                         Sheet.Cells[i, 10].Value = item.HREmail;
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.InterviewId + "&irfId=" + item.IRFId + "&isClient=true";
+                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.InterviewId), item.IRFId);
                         try
                         {
                             Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
@@ -5208,7 +5210,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = item.ClientHrContact;
                         Sheet.Cells[i, 9].Value = item.IRFId;
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + id + "&isClient=true";
+                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), id);
                         try
                         {
                             Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
@@ -5644,7 +5646,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
+                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), irfId);
                         try
                         {
                             ++colDataNumber;
@@ -5925,7 +5927,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveCandidateReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
+                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), irfId);
                         ++colPendDataNumber;
                         try
                         {
@@ -6851,6 +6853,32 @@ namespace Risebird.Web.Controllers
                 }
                 return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailids, type = type, id = uniqueid });
             }
+        }
+        #endregion
+        #region Executive Report 
+        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        {
+            var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
+            var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
+            meetingid = meetingid.Replace("+", "_");
+            irf = irf.Replace("+", "_");
+            var reportlink = string.Empty;
+            if (portalurl.LastOrDefault() == '/')
+            {
+                reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            }
+            else
+            {
+                reportlink = portalurl + "/Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            }
+            return reportlink;
+        }
+        [HttpPost]
+        public async Task<JsonResult> GenerateExecutiveReportLink(int interviewid, int irfid)
+        {
+            var portallink = "https://" + Request.Host.ToString();
+            var reportlink = await GenerateExecutiveReportURl(portallink, interviewid, irfid);
+            return Json(reportlink);
         }
         #endregion
     }

@@ -126,11 +126,11 @@
                                                 }
                                                 <td class="text-center">
 
-                                             
 
-                                                     <div class="btn btn-edit shadow btn-xs sharp-btn me-1" aria-label="Edit client user" >
+
+                                                    <div class="btn btn-edit shadow btn-xs sharp-btn me-1" aria-label="Edit client user">
                                                         <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user"><i class='fa fa-pencil' style='color: white'></i></span>
-                                                      </div>
+                                                    </div>
 
 
 
@@ -140,28 +140,29 @@
                                                     @if (item.IsActive)
 
                                                     {
-                                                       
-                                                          <div class="btn btn-reset shadow btn-xs sharp-btn me-1" aria-label="Reset Navigation">
-                                                            <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');">
-<i class='fa fa-refresh'></i></span>
-                                                      </div>
-                                                        
 
-                                                  <div class="btn btn-share shadow btn-xs sharp-btn me-1" aria-label="Share Public URL">
-                                                   <span onclick="javascript:SendPublicURL('@item.EmailId');"><i class="fa fa-share-alt" aria-hidden="true"></i></span>
-                                                      </div>
-                                                
-                                               
+                                                        <div class="btn btn-reset shadow btn-xs sharp-btn me-1" aria-label="Reset Navigation">
+                                                            <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');">
+                                                                <i class='fa fa-refresh'></i>
+                                                            </span>
+                                                        </div>
+
+
+                                                        <div class="btn btn-share shadow btn-xs sharp-btn me-1" aria-label="Share Public URL">
+                                                            <span onclick="javascript:SendPublicURL('@item.EmailId');"><i class="fa fa-share-alt" aria-hidden="true"></i></span>
+                                                        </div>
+
+
                                                         @if (ViewBag.Profile != "SeniorHR")
                                                         {
-                                                             <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL">
+                                                            <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL">
                                                                 <span onclick="javascript:CopyPublicUrl('@item.EmailId');"><i class='fa fa-clone'></i></span>
-                                                      </div>
-                                                
-@*
-                                                            <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                            </button>*@
+                                                            </div>
+
+                                                            @*
+                                                <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                </button>*@
                                                         }
                                                     }
                                                 </td>
