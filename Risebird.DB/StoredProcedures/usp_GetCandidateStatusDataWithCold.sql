@@ -52,15 +52,17 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interview
 La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword 
 
 select IRF.IRFId,ul.EmailId as candidateEmail, concat(ul.FirstName, ' ', ul.LastName) as candidateName,ul.MobileNumber,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ca.ClientHRAttemptContact as ClientHrContact,tctv.ResumeLink,csc.StatusValue as CurrentStatus,
-CandidateLatestStatus,tctv.AddedOnDate,tctv.FirstScheduledOnDate,'' as ExecutiveReportLink,csc.Date as CurrentStatusDate
+CandidateLatestStatus,tctv.AddedOnDate,tctv.FirstScheduledOnDate,'' as ExecutiveReportLink,csc.Date as CurrentStatusDate,InterviewCount.NoOfInterviews
 from @TemporaryCandidateTableVariable tctv  
 join IRF on IRF.id =tctv.IRFId  
 join UserList ul on ul.id = tctv.UserId  
 join Candidate ca on ca.IRFId=tctv.IRFId and ca.CandidateMasterId=tctv.CandidateMasterId
 outer Apply (Select top 1 cso.StatusValue,DateAdd(Minute,330,cs.Date) as Date From CandidateStatus cs join CandidateStatusOptionsMst cso on cso.id=cs.Status where cs.IRFId=ca.IRFId and cs.CandidateId=ca.CandidateMasterId order by cs.Date desc) csc
+outer apply(select Count(id) as NoOfInterviews from InterviewMeetings where IRFId=IRF.IRFId and candidateEmail=ul.EmailId) InterviewCount
 where IRF.ClientId = @clientId and CandidateLatestStatus in ('NOTSCHEDULED','COLDCANDIDATE')
               
 End    
+    
     
   
 GO

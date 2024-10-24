@@ -67,5 +67,7 @@ namespace Risebird.Entities.Data
         public string PreReportPassword { get; set; }
         public string CurrentStatus { get; set; }
         public DateTime? CurrentStatusDate { get; set; }
+        public int NoOfInterviews { get; set; }
+        public string CancelledBy { get; set; }
     }
 }
