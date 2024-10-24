@@ -5648,7 +5648,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public async Task<IActionResult> ExecutiveCandidateReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
             {
