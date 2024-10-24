@@ -22,10 +22,11 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
 
         private readonly ICandidateService _candidateService;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         private readonly string connectionString;
 
-        public CandidateStatus90DaysNotifierTurning(IConfiguration configuration, ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        public CandidateStatus90DaysNotifierTurning(IConfiguration configuration, ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
         {
             _configuration = configuration;
             _candidateService = candidateService;
@@ -33,7 +34,7 @@ namespace Risebird.MicroService
 
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-
+            _encryptionHelper = encryptionHelper;
         }
 
         [FunctionName("CandidateStatus90DaysNotifierTurning")]
@@ -106,6 +107,10 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 13].Value = "Report Link";
                 //Sheet.Cells[1, 22].Value = "InterviewerComment";
                 Sheet.Cells[1, 14].Value = "Current Status Date";
+                Sheet.Cells[1, 15].Value = "Schedule Status";
+                Sheet.Cells[1, 16].Value = "Schedule Count";
+                Sheet.Cells[1, 17].Value = "Last Cancelled By";
+                Sheet.Cells[1, 18].Value = "Cancellation Source";
 
                 int i = 2;
                 if (candidateDatawithoutCold.Count() > 0)
@@ -142,10 +147,16 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 12].Value = item.ClientHrContact;
 
                         //Sheet.Cells[i, 20].Value = item.InterviewerCodedName ?? string.Empty;
-                        Sheet.Cells[i, 13].Value = item.ExecutiveReportLink;
+                        if (item.CandidateLatestStatus.ToUpper().Contains("SELECTED") || item.CandidateLatestStatus.ToUpper().Contains("REJECTED"))
+                        {
+                            Sheet.Cells[i, 13].Value = await GenerateExecutiveReportURl("https://portal.risebird.io/", item.id, item.Irfintid);
+                        }
                         //Sheet.Cells[i, 22].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 14].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty; 
-
+                        Sheet.Cells[i, 14].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 15].Value = "Scheduled";
+                        Sheet.Cells[i, 16].Value = item.NoOfInterviews;
+                        Sheet.Cells[i, 17].Value = item.CancelledBy;
+                        Sheet.Cells[i, 18].Value = item.Cancellationsource;
                         i++;
                     }
 
@@ -170,6 +181,14 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 11].Value = cold.CurrentStatus;
                         Sheet.Cells[i, 12].Value = cold.ClientHrContact;
                         Sheet.Cells[i, 14].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                        if (cold.NoOfInterviews > 0)
+                        {
+                            Sheet.Cells[i, 15].Value = "Scheduled";
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 15].Value = "Not Yet Scheduled";
+                        }
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
@@ -187,6 +206,15 @@ namespace Risebird.MicroService
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
-
+        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        {
+            var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
+            var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
+            meetingid = meetingid.Replace("+", "_");
+            irf = irf.Replace("+", "_");
+            var reportlink = string.Empty;
+            reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            return reportlink;
+        }
     }
 }
