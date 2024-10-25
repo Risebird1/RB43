@@ -3207,7 +3207,7 @@ namespace Risebird.Web.Controllers
 
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"//
                     {
                         if (model.AudioFile != null)
                         {
@@ -3410,7 +3410,7 @@ namespace Risebird.Web.Controllers
                             }
                             return RedirectToAction("MyInterview");
                         }
-                    }
+                    }   
                     else
                     {
                         return RedirectToAction("Index", "Interview");
