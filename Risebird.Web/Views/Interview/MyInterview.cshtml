@@ -630,7 +630,7 @@
 
                                                                                     </span>
                                                                                 </div>
-                                                                           @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                           @*@if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                                 {
                                                                                         <div class="call-sec" style="width:100%;float:left;margin: 4px 0px 10px 0px;">
                                                                                         <span class="call-area">
@@ -641,7 +641,7 @@
                                                                                         </span>
                                                                                        Call
                                                                                     </div>
-                                                                                }
+                                                                                }*@
 
                                                                             }
                                                                             else
@@ -670,7 +670,7 @@
 
                                                                                     </span>
                                                                                 </div>
-                                                                                @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                              @*  @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                                 {
                                                                                     <div class="call-sec" style="width:100%;float:left;margin:5px 0px 10px 0px;">
                                                                                         <span class="call-area">
@@ -679,9 +679,9 @@
                                                                                                 <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" style="position:relative;top:4px;" /></span>
                                                                                             }
                                                                                         </span>
-                                                                                       @* @item.MobileNumber*@ Call
+                                                                                        Call
                                                                                     </div>
-                                                                                }
+                                                                                }*@
 
                                                                             }
                                                                         }
