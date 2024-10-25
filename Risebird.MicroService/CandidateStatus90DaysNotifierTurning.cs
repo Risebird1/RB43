@@ -88,17 +88,26 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 5].Value = "Added On";
                 Sheet.Cells[1, 6].Value = "Schedule Status";
                 Sheet.Cells[1, 7].Value = "Phone";
-                Sheet.Cells[1, 8].Value = "Meeting Status";
-                Sheet.Cells[1, 9].Value = "Latest Status";
-                Sheet.Cells[1, 10].Value = "Current Status Date";
+                
+                Sheet.Cells[1, 8].Value = "Latest Status";
+                Sheet.Cells[1, 9].Value = "Current Status Date";
+                Sheet.Cells[1, 10].Value = "Profile Source";
+
                 Sheet.Cells[1, 11].Value = "Skill Channel ID";
                 Sheet.Cells[1, 12].Value = "Scheduled On";// note: there could be multiple schedules of a candidate. This date belongs to the first entry of scheduled for the candidate for the skill channel.
                 Sheet.Cells[1, 13].Value = "Interview Date";
-                Sheet.Cells[1, 14].Value = "Last Cancelled By";
-                Sheet.Cells[1, 15].Value = "Cancellation Source";
-                Sheet.Cells[1, 16].Value = "Report Link";
-                Sheet.Cells[1, 17].Value = "Schedule Count";
+                Sheet.Cells[1, 14].Value = "Reschdeule By Candidate";
+                Sheet.Cells[1, 15].Value = "Reschdeule By Turing";
+                Sheet.Cells[1, 16].Value = "Reschdeule By Risebird";
 
+
+                Sheet.Cells[1, 17].Value = "Last Cancelled By";
+                Sheet.Cells[1, 18].Value = "Cancellation Source";
+                Sheet.Cells[1, 19].Value = "Report Link";
+                Sheet.Cells[1, 20].Value = "Cost To Turing";
+
+                Sheet.Cells[1, 21].Value = "Schedule Count";
+                Sheet.Cells[1, 22].Value = "Meeting Status";
                 //Sheet.Cells[1, 4].Value = "Resume";
                 //Sheet.Cells[1, 8].Value = "Invite Sent On";
                 //Sheet.Cells[1, 11].Value = "Confirmation Status";
@@ -119,32 +128,32 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 2].Value = item.candidateEmail;
                         Sheet.Cells[i, 3].Value = item.JDTiltle;
                         Sheet.Cells[i, 4].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 5].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 5].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 6].Value = "Scheduled";
                         Sheet.Cells[i, 7].Value = item.MobileNumber ?? string.Empty;
-                        if (item.confirmationStatus == "Cancelled")
-                        {
-                            Sheet.Cells[i, 8].Value = "Cancelled";
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 8].Value = item.MeetingStatus ?? string.Empty;
-                        }
-                        Sheet.Cells[i, 9].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 10].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                       
+                        Sheet.Cells[i, 8].Value = item.CandidateLatestStatus;
+                        Sheet.Cells[i, 9].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         //Sheet.Cells[i, 4].Value = item.ResumeLink;
                         Sheet.Cells[i, 11].Value = item.IRFId;
                         //Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
-                        Sheet.Cells[i, 12].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
-                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
-                        Sheet.Cells[i, 14].Value = item.CancelledBy;
-                        Sheet.Cells[i, 15].Value = item.Cancellationsource;
+                        Sheet.Cells[i, 12].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 17].Value = item.CancelledBy;
+                        Sheet.Cells[i, 18].Value = item.Cancellationsource;
                         if (item.CandidateLatestStatus.ToUpper().Contains("SELECTED") || item.CandidateLatestStatus.ToUpper().Contains("REJECTED"))
                         {
-                            Sheet.Cells[i, 16].Value = await GenerateExecutiveReportURl("https://portal.risebird.io/", item.id, item.Irfintid);
+                            Sheet.Cells[i, 19].Value = await GenerateExecutiveReportURl("https://portal.risebird.io/", item.id, item.Irfintid);
                         }
-                        Sheet.Cells[i, 17].Value = item.NoOfInterviews;
-
+                        Sheet.Cells[i, 21].Value = item.NoOfInterviews;
+                        if (item.confirmationStatus == "Cancelled")
+                        {
+                            Sheet.Cells[i, 22].Value = "Cancelled";
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 22].Value = item.MeetingStatus ?? string.Empty;
+                        }
                         //Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 13].Value = item.InterviewStatus ?? string.Empty;
                         //Sheet.Cells[i, 14].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
@@ -165,26 +174,27 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 2].Value = cold.candidateEmail;
                         Sheet.Cells[i, 3].Value = cold.JDTiltle;
                         Sheet.Cells[i, 4].Value = cold.ClientHrContact;
-                        Sheet.Cells[i, 5].Value = cold.AddedOnDate.HasValue ? cold.AddedOnDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 5].Value = cold.AddedOnDate.HasValue ? cold.AddedOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         if (cold.NoOfInterviews > 0)
                         {
                             Sheet.Cells[i, 6].Value = "Scheduled";
-                            Sheet.Cells[i, 17].Value = cold.NoOfInterviews;
+                            Sheet.Cells[i, 21].Value = cold.NoOfInterviews;
                         }
                         else
                         {
                             Sheet.Cells[i, 6].Value = "Not Yet Scheduled";
                         }
                         Sheet.Cells[i, 7].Value = cold.MobileNumber ?? string.Empty;
-                        Sheet.Cells[i, 8].Value = cold.CandidateLatestStatus;
-                        Sheet.Cells[i, 9].Value = cold.CurrentStatus;
-                        Sheet.Cells[i, 10].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString("MM-dd-yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 8].Value = cold.CurrentStatus;
+                        Sheet.Cells[i, 9].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 11].Value = cold.IRFId;
+                        Sheet.Cells[i, 12].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 13].Value = cold.interviewDate.HasValue ? cold.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
                 }
-
 
                 fileName = fileName.Replace(" ", "_");
                 await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), null, Convert.ToBase64String(Ep.GetAsByteArray()), fileName, true);
