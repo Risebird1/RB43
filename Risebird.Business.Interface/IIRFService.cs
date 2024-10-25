@@ -190,5 +190,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateExcelData>> GetUserStatsDetailedView(int irfid, string emailid, string type, DateTime startDate, DateTime enddate);
         Task<IEnumerable<Candidate>> GetProjectCandidates(int id, string emailId = null);
         Task<bool> AddAGInterviewerToSkillChannel(int irfId, int userId, string loggedInUser);
+        Task<IEnumerable<int>> GetIRFList(int ClientId);
     }
 }
