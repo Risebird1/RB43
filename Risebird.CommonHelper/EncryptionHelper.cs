@@ -457,8 +457,9 @@ namespace Risebird.CommonHelper
                             // Write the integer to the crypto stream
                             await swEncrypt.WriteAsync(id.ToString());
                         }
-
-                        return Convert.ToBase64String(msEncrypt.ToArray());
+                        var _encriptvalue = Convert.ToBase64String(msEncrypt.ToArray());
+                        _encriptvalue = _encriptvalue.Replace("+", "_");
+                        return _encriptvalue;
                     }
                 }
             }
@@ -473,6 +474,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                encryptedId = encryptedId.Replace("_", "+");
                 byte[] fullCipher = Convert.FromBase64String(encryptedId);
 
                 using (Aes aesAlg = Aes.Create())
