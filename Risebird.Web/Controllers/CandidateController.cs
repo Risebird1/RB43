@@ -6837,8 +6837,6 @@ namespace Risebird.Web.Controllers
         {
             var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
             var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
-            meetingid = meetingid.Replace("+", "_");
-            irf = irf.Replace("+", "_");
             var reportlink = string.Empty;
             if (portalurl.LastOrDefault() == '/')
             {
