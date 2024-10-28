@@ -79,6 +79,57 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithoutColdDate(DateTime startDate, DateTime endDate, int clientId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@clientId", clientId);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateExcelData>(con, "usp_GetCandidateStatusDataWithoutCold", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithColdDate(DateTime startDate, DateTime endDate, int clientId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@clientId", clientId);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateExcelData>(con, "usp_GetCandidateStatusDataWithCold", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+               
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         public async Task<IEnumerable<CandidateLastStatus>> GetCandidateLastStatus()
         {
