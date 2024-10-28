@@ -124,7 +124,7 @@ if @EmailId is not null
     end as [Name],ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,              
     ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,              
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
-    ic.InterviewStatus as CurrentInterviewStatus, --qcfr.QCStatus,              
+    ic.InterviewStatus as CurrentInterviewStatus,im.Cancellationsource, --qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,             
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
     from Candidate ca               

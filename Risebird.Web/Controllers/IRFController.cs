@@ -10371,9 +10371,15 @@ namespace Risebird.Web.Controllers
         {
             var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
             var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
-            meetingid = meetingid.Replace("+", "_");
-            irf = irf.Replace("+", "_");
-            var reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            var reportlink = string.Empty;
+            if (portalurl.LastOrDefault() == '/')
+            {
+                reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            }
+            else
+            {
+                reportlink = portalurl + "/Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            }
             return reportlink;
         }
         #endregion

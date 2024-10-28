@@ -578,30 +578,7 @@ namespace Risebird.Web.Controllers
                         model.Add(candidateTimeline);
                     }
                 }
-                //if (profileName == "Client")
-                //{
-                //    var newModel = new List<CandidateTimelineVM>();
-                //    foreach (var item in model)
-                //    {
-                //        if (item.IsIRFArchived)
-                //        {
-                //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
-                //            if (date != null && date.HasValue)
-                //            {
-                //                if (date?.Date >= DateTime.Now.AddDays(-30).Date)
-                //                {
-                //                    newModel.Add(item);
-                //                }
-                //            }
-
-                //        }
-                //        else
-                //        {
-                //            newModel.Add(item);
-                //        }
-                //    }
-                //    model = newModel;
-                //}
+               
 
                 if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                 {
@@ -6860,8 +6837,6 @@ namespace Risebird.Web.Controllers
         {
             var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
             var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
-            meetingid = meetingid.Replace("+", "_");
-            irf = irf.Replace("+", "_");
             var reportlink = string.Empty;
             if (portalurl.LastOrDefault() == '/')
             {

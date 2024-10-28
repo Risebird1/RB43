@@ -5654,8 +5654,6 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                meetingid = meetingid.Replace("_", "+");
-                irf = irf.Replace("_", "+");
                 var interviewId = await _encryptionHelper.DecryptIntegerValue(meetingid, "ExecutiveReport");
                 var irfId = await _encryptionHelper.DecryptIntegerValue(irf, "ExecutiveReport");
                 if (interviewId == 0 || irfId == 0)
