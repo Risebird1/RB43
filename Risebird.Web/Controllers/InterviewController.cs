@@ -3207,7 +3207,7 @@ namespace Risebird.Web.Controllers
 
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"//
+                    if (profileName == "Admin" || profileName == "Interviewer")// || profileName == "Quality Controller"// //|| profileName == "SupportAdmin"
                     {
                         if (model.AudioFile != null)
                         {
@@ -7134,6 +7134,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.PageFrom = "Completed";
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        ViewBag.profile = profileName;
                         List<MeetingVM> modelList = new List<MeetingVM>();
                         modelList = await _meetingService.GetRedoInterviewList();
                         modelList = modelList.Select(x =>
