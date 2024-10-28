@@ -2628,7 +2628,7 @@
                         confirmButtonText: 'Close!',
                         allowOutsideClick: false
                     }).then(function () {
-
+                        captureclick('EnergencyDashBoard', 'Reschedule', id);
     @*  window.open(window.location.href = "/InterviewScheduler/ScheduleEvent?id=" + $('#scheduleUniqueid').val() + "&interviewid=" + $('#imid').val(), '_blank') *@
     @*  window.open("/InterviewScheduler/ScheduleEvent?id=" + scheduleUniqueid + "&interviewid=" + id, '_blank') *@
     @*   window.open('ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid)', '_blank') *@
@@ -2646,6 +2646,29 @@
             })
 
 
+    }
+</script>
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
     }
 </script>
 <script src="~/js/twiliocallmaker.js?v=2024"></script>

@@ -697,9 +697,9 @@
                                                                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
                                                                         </button>
                                                                         <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
-                                                                         @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled){
+                                                                         @*@if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled){
                                                                             <div style="width:100%;float:left"><span style="font-size: 14px;color: #898282;margin-top: 5px;display: inline-block">Client Name:</span>@item.ClientName</div>
-                                                                         }
+                                                                         }*@
                                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                             {
                                                                                 <div style="font-size:14px;color: chocolate;font-weight: 600;width:100%;float:left;"><div style="float:left;margin-right:10px;"><span style="font-weight: 500;font-size: 14px;color: #918d8d;margin-top:9px;display: inline-block;padding-right:5px;">Interview Price:</span>₹ @(
