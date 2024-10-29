@@ -124,7 +124,8 @@ namespace Risebird.Web.Controllers
                         {
                             item.MeetingStatusDetails = "";
                         }
-                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)" && item.MeetingStatusDetails != "No Show")
+                        //if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)" && item.MeetingStatusDetails != "No Show")
+                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                         {
                             item.MeetingStatusDetails = "Unassign Meeting within 1/2 hr";
                             item.InterviewStatusDetails = "";
