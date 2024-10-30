@@ -299,7 +299,10 @@
                                                         <td>@item.candidateEmail</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.interviewer</td>
-                                                         <td>@item.MobileNumber</td>
+                                                         <td>
+                                                           <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.MobileNumber', '@item.interviewer',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer."><img src="/img/calling.png" width="20"></span>
+
+                                                             @item.MobileNumber</td>
                                                         <td>@item.risebirdHR</td>
                                                          @if (ViewBag.Type != "OnTimeIM")
                                                         {
@@ -415,6 +418,7 @@
 </div>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 <script type="text/javascript">
 
@@ -625,3 +629,4 @@
     }
 </script>
 <script src="~/js/filtervalidation.js?v=2024"></script>
+<script src="~/js/twiliocallmaker.js?v=2024"></script>
