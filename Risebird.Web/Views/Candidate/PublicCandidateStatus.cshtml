@@ -54,15 +54,15 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 <script>
-     $(document).ready(function () {
-    $("#dropbtnStats").click(function (e) {
-        $("#dropdown-contentStats").show();
-        e.stopPropagation();
-      });
-     });
+    $(document).ready(function () {
+        $("#dropbtnStats").click(function (e) {
+            $("#dropdown-contentStats").show();
+            e.stopPropagation();
+        });
+    });
 
     $(document).click(function () {
-       $("#dropdown-contentStats").hide();
+        $("#dropdown-contentStats").hide();
     });
 </script>
 <style>
@@ -150,11 +150,13 @@
         min-width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
         z-index: 1;
-       left: 10%;
+        left: 10%;
     }
-     #dropdown-contentStats a:hover {
-       background: #eaeaf1 !important;
-       }
+
+        #dropdown-contentStats a:hover {
+            background: #eaeaf1 !important;
+        }
+
         #dropdown-contentStats:before {
             content: "";
             display: block;
@@ -181,7 +183,6 @@
         background-color: #ddd;
     }
 
-   
 </style>
 
 <style>
@@ -196,8 +197,8 @@
     }
 
     /*.mob_h {
-                                                                                                                            display: none !important
-                                                                                                                              }*/
+                                                                                                                                    display: none !important
+                                                                                                                                      }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -470,108 +471,110 @@
                                 </div>
 
                                 </button> *@
-                                <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" style="margin:5px 8px 5px 3px;">
-                                    <button type="button" data-toggle="tooltip" data-placement="top">
-                                        <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Total Candidates
-                                        </div>
-                                    </button>
-                                </a>
-
-                                <button id="dropbtnStats" style="margin-right:8px;position:relative;">
-                                    <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff;font-size: 11px;"></i></span>
-                                    <font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-left: 5px;color:#817c7c;font-weight: 700;"> Stats</font>
-                                </button>
-                                <div id="dropdown-contentStats">
-                                    @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
-                                    {
-
-                                        <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;">
-                                            <button type="button" data-toggle="tooltip" data-placement="top">
-                                                <div class="d-lg-inline-flex pad3">
-                                                    Partner Stats
-                                                </div>
-                                            </button>
-                                        </a>
-                                        <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
-                                            <button type="button" data-toggle="tooltip" data-placement="top">
-                                                <div class="d-lg-inline-flex pad3">
-                                                    Project-Id Stats
-                                                </div>
-                                            </button>
-                                        </a>
-                                        <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
-                                            <button type="button" data-toggle="tooltip" data-placement="top">
-                                                <div class="d-lg-inline-flex pad3">
-                                                    Interview Channel Stats
-                                                </div>
-                                            </button>
-                                        </a>
-                                        <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
-                                            <button type="button" data-toggle="tooltip" data-placement="top">
-                                                <div class="d-lg-inline-flex pad3">
-                                                    Multi-Stack Stats
-                                                </div>
-                                            </button>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a target="_blank" href="@Url.Action("UserChannelDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
-                                            <button type="button" data-toggle="tooltip" data-placement="top">
-                                                <div class="d-lg-inline-flex pad3">
-                                                    Interview Channel Stats
-                                                </div>
-                                            </button>
-                                        </a>
-                                    }
-                                </div>
-                                @if (ViewBag.ClientRole != "Client Admin")
+                                @if (ViewBag.ClientRole != "Reviewer")
                                 {
-                                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                    <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" style="margin:5px 8px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Total Candidates
+                                            </div>
+                                        </button>
+                                    </a>
+
+                                    <button id="dropbtnStats" style="margin-right:8px;position:relative;">
+                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff;font-size: 11px;"></i></span>
+                                        <font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-left: 5px;color:#817c7c;font-weight: 700;"> Stats</font>
+                                    </button>
+                                    <div id="dropdown-contentStats">
+                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                        {
+
+                                            <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;">
+                                                <button type="button" data-toggle="tooltip" data-placement="top">
+                                                    <div class="d-lg-inline-flex pad3">
+                                                        Partner Stats
+                                                    </div>
+                                                </button>
+                                            </a>
+                                            <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
+                                                <button type="button" data-toggle="tooltip" data-placement="top">
+                                                    <div class="d-lg-inline-flex pad3">
+                                                        Project-Id Stats
+                                                    </div>
+                                                </button>
+                                            </a>
+                                            <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
+                                                <button type="button" data-toggle="tooltip" data-placement="top">
+                                                    <div class="d-lg-inline-flex pad3">
+                                                        Interview Channel Stats
+                                                    </div>
+                                                </button>
+                                            </a>
+                                            <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
+                                                <button type="button" data-toggle="tooltip" data-placement="top">
+                                                    <div class="d-lg-inline-flex pad3">
+                                                        Multi-Stack Stats
+                                                    </div>
+                                                </button>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a target="_blank" href="@Url.Action("UserChannelDetailsStats", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })" style="margin:5px 4px 5px 3px;">
+                                                <button type="button" data-toggle="tooltip" data-placement="top">
+                                                    <div class="d-lg-inline-flex pad3">
+                                                        Interview Channel Stats
+                                                    </div>
+                                                </button>
+                                            </a>
+                                        }
+                                    </div>
+                                    @if (ViewBag.ClientRole != "Client Admin")
+                                    {
+                                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
                                 </button>*@
-                                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                                 <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
                                 </button>*@
-                                    @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                        @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                                 </button>*@
-                                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
                                 </button>*@
-                                }
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
-                                    <span class="topheader-link"><i class="fa fa-user-times" style="color:#fff;font-size:11px;"></i></span>
-                                    <div class="d-lg-inline-flex pad3">
-                                        Probable NoShow
-                                    </div>
-                                </button>
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
-                                    <span class="topheader-link">
-                                        <img src="~/Newassets/img/bounce-email.png" style="left: -1px;position: relative;width: 19px;" />
-                                    </span>
-                                    <div class="d-lg-inline-flex pad3">
-                                        Bounced/Dropped Mails
-                                    </div>
-                                </button>
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
-                                    <span class="topheader-link"><img src="~/Newassets/img/not-processed-resume.png" style="width:15px;" /></span>
-                                    <div class="d-lg-inline-flex pad3">
-                                        Not Processed Resume
-                                    </div>
-                                </button>
-                                @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
-                                {
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement()" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
-                                        <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                    }
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
+                                        <span class="topheader-link"><i class="fa fa-user-times" style="color:#fff;font-size:11px;"></i></span>
                                         <div class="d-lg-inline-flex pad3">
-                                            Live Co-ordination
+                                            Probable NoShow
                                         </div>
                                     </button>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
+                                        <span class="topheader-link">
+                                            <img src="~/Newassets/img/bounce-email.png" style="left: -1px;position: relative;width: 19px;" />
+                                        </span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Bounced/Dropped Mails
+                                        </div>
+                                    </button>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                        <span class="topheader-link"><img src="~/Newassets/img/not-processed-resume.png" style="width:15px;" /></span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Not Processed Resume
+                                        </div>
+                                    </button>
+                                    @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
+                                    {
+                                        <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement()" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
+                                            <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Live Co-ordination
+                                            </div>
+                                        </button>
+                                    }
                                 }
-
                                 <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 8px 5px 3px;">
                                     <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                     <div class="d-lg-inline-flex pad3">
@@ -2457,15 +2460,15 @@
         var url = "/Interview/CandidateProbableNoShow?id=" + id + "&Emailid=" + emailid;
         window.open(url, "_blank");
     }
-     function NotProcessedResumeByClient(emailid,id) {
-        var url = "/Candidate/GetNotProcessedResumeByClient?emailid="+emailid+"&id="+id;
+    function NotProcessedResumeByClient(emailid, id) {
+        var url = "/Candidate/GetNotProcessedResumeByClient?emailid=" + emailid + "&id=" + id;
         window.open(url, "_blank");
-        }
+    }
 </script>
 <script>
-        // tabbed content
-        // http://www.entheosweb.com/tutorials/css/tabs.asp
-        $(".tab_content").hide();
+    // tabbed content
+    // http://www.entheosweb.com/tutorials/css/tabs.asp
+    $(".tab_content").hide();
     $(".tab_content:first").show();
 
     /* if in tab mode */
@@ -2517,33 +2520,33 @@
             }
         });
     }
-   @*  function NotProcessedResumeByClient(emailid) {
+    @*  function NotProcessedResumeByClient(emailid) {
         $(".loader").show();
         $.ajax({
-            url: '/Candidate/GetNotProcessedResumeByClient',
-            type: 'GET',
-            data: { 'emailid': emailid },
-            success: function (data) {
-                $(".loader").hide();
-                $('#tab4').html('');
-                $('#tab4').html(data);
-            }
+        url: '/Candidate/GetNotProcessedResumeByClient',
+        type: 'GET',
+        data: { 'emailid': emailid },
+        success: function (data) {
+        $(".loader").hide();
+        $('#tab4').html('');
+        $('#tab4').html(data);
+        }
         });
-    } *@
+        } *@
 
-    function RescheduleMeetingByClient(emailid) {
-        $(".loader").show();
-        $.ajax({
-            url: '/Candidate/ReScheduleMeetingsByClient',
-            type: 'GET',
-            data: { 'emailid': emailid },
-            success: function (data) {
-                $(".loader").hide();
-                $('#tab6').html('');
-                $('#tab6').html(data);
-            }
-        });
-    }
+        function RescheduleMeetingByClient(emailid) {
+            $(".loader").show();
+            $.ajax({
+                url: '/Candidate/ReScheduleMeetingsByClient',
+                type: 'GET',
+                data: { 'emailid': emailid },
+                success: function (data) {
+                    $(".loader").hide();
+                    $('#tab6').html('');
+                    $('#tab6').html(data);
+                }
+            });
+        }
 
 
 
