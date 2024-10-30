@@ -36,7 +36,7 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section interviewer">
 
-                        @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();" }))
+                        @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data"})) @* , @onsubmit = "return Checkvalidation();"  *@
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -945,10 +945,7 @@
         }
         document.getElementById('SkillCollection_Error').innerHTML = "";
         return true;
-        //if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
-        //    return true;
-        //}
-        //return false;
+        
     }
     //function CheckvalidationforProfile() {
     //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
