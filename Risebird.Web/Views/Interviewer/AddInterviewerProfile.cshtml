@@ -122,7 +122,7 @@
                         </div>
                         @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" })
                         <div id="divEVverified" style="display:none">
-                            @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
+                            @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @id = "InterviewerProfileform" })) @* , @onsubmit = "return Checkvalidation();" *@
                             {
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -864,28 +864,14 @@
     }
     function Checkvalidation() {
         debugger;
-    @* var techSkillItems = $('[id^="InterviewerSkill"]');
-            //var oldVal = $("#QuestionsCollection_0__Timing").val();
-            for (i = 0; i < techSkillItems.length; i++) {
-            //var temp = $("#QuestionsCollection_" + i + "__Timing").val();
-            var temp = $("#" + techSkillItems[i].id).val();
-            if (temp == null || temp == '') {
-            document.getElementById('SkillCollection_Error').innerHTML = "Please fill all the details under the Interviewer Skills Details section.";
-            $("#" + techSkillItems[i].id).focus();
-            return false;
-            }
+    
+        checkEmailid();
 
-            } *@
-            checkEmailid();
         if (emailidvalidation != "") {
             alert('EmailId verification failed!');
             return false;
         }
-        //document.getElementById('SkillCollection_Error').innerHTML = "";
-        //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
-        //    return true;
-        //}
-        //return false;
+        
     }
     //function CheckvalidationforProfile() {
     //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {

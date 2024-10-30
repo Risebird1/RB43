@@ -120,7 +120,12 @@ namespace Risebird.Web.Controllers
                             var _lastdate = item.Date.AddMonths(2).AddDays(-(item.Date.AddMonths(1).Day + 1));
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
-                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)" && item.MeetingStatusDetails != "No Show")
+                        if (string.IsNullOrWhiteSpace(item.MeetingStatusDetails))
+                        {
+                            item.MeetingStatusDetails = "";
+                        }
+                        //if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)" && item.MeetingStatusDetails != "No Show")
+                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                         {
                             item.MeetingStatusDetails = "Unassign Meeting within 1/2 hr";
                             item.InterviewStatusDetails = "";
@@ -973,7 +978,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 13].Value = "No Video";
                                     }
-                                    if (item.Date >= verificationdate && item.Date < verificationenddate  && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                    if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                                     {
                                         item.VideoDuration = item.VideoDuration - 5;
                                     }
@@ -1698,7 +1703,7 @@ namespace Risebird.Web.Controllers
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                 item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                 item.CandidateRatingAmount = item.CandidateRatingAmount + item.ClientRatingAmount;
-                if (item.Date >= verificationdate && item.Date < verificationenddate  && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                 {
                     item.VideoDuration = item.VideoDuration - 5;
                 }
