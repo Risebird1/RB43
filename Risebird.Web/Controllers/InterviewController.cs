@@ -3207,7 +3207,7 @@ namespace Risebird.Web.Controllers
 
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer")// || profileName == "Quality Controller"// //|| profileName == "SupportAdmin"
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
                     {
                         if (model.AudioFile != null)
                         {
