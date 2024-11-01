@@ -3779,6 +3779,7 @@ namespace Risebird.Web.Controllers
                     }
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
                     ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                    ViewBag.ClientRole = "Reviewer";
                     ViewBag.profile = "Client";
                     ViewBag.ClientId = client.ClientId;
                     ViewBag.PageStatus = "Public";
@@ -4525,6 +4526,7 @@ namespace Risebird.Web.Controllers
                 model = await _meetingService.FetchSchedulingLinks(emailid, type);
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                ViewBag.ClientRole = "Reviewer";
                 if (model != null)
                 {
                     if (TempData["SuccessErrorMessageMarketPlace1"] != null)
