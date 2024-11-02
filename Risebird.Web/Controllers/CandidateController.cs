@@ -24,7 +24,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
 
@@ -578,7 +577,7 @@ namespace Risebird.Web.Controllers
                         model.Add(candidateTimeline);
                     }
                 }
-               
+
 
                 if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                 {

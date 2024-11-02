@@ -1,4 +1,3 @@
-using EllipticCurve.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,6 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,7 +32,7 @@ namespace Risebird.MicroService
             _configuration = configuration;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
-            
+
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
 
@@ -47,9 +45,9 @@ namespace Risebird.MicroService
             {
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning executed at: {DateTime.Now}");
 
-                var mailList = new List<string>() { "prem@risebird.io", 
-                    "amika.s@turing.com", 
-                    "annu.s@turing.com", 
+                var mailList = new List<string>() { "prem@risebird.io",
+                    "amika.s@turing.com",
+                    "annu.s@turing.com",
                     "ashutosh@risebird.io",
                     "danijel.j@turing.com",
                     "neha.khaitan@turing.com",
@@ -67,10 +65,10 @@ namespace Risebird.MicroService
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-              
+
                     var firstData = new CandidateTimelineData();
 
-               
+
                     if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
                         var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
@@ -211,7 +209,7 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 4].Value = "Client HR Email";
                 Sheet.Cells[1, 5].Value = "Candidated Added On/At";
                 Sheet.Cells[1, 6].Value = "Schedule Status";
-                Sheet.Cells[1, 7].Value = "Phone";    
+                Sheet.Cells[1, 7].Value = "Phone";
                 Sheet.Cells[1, 8].Value = "Current Status";
                 Sheet.Cells[1, 9].Value = "Current Status Date";
                 Sheet.Cells[1, 10].Value = "Profile Source";

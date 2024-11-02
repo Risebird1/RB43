@@ -778,7 +778,7 @@ namespace Risebird.Business
                     if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))//&& result.Item2
                     {
                         //send notification to the sme here
-                        var smeEmails = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x=>x.EmailId);
+                        var smeEmails = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x => x.EmailId);
                         string channelOwner = string.Empty;
                         var client = (await _clientService.GetClient(model.ClientId))?.Name;
 
