@@ -1,5 +1,5 @@
 using Dapper;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -21,9 +21,9 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
         private readonly IDashboarRepository _dashboardRespository;
         private readonly IWhatsAppHelper _whatsAppHelper;
-
+        private readonly ILogger log;
         private readonly string _connection;
-        public InterviewerFeedbackRemainder(IConfiguration configuration, IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
+        public InterviewerFeedbackRemainder(ILoggerFactory loggerFactory, IConfiguration configuration, IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -31,9 +31,10 @@ namespace Risebird.MicroService
             _dashboardRespository = dashboardRespository;
             _whatsAppHelper = whatsAppHelper;
             _connection = _configuration["ConnectionString:DBConnectionString"];
+            log = loggerFactory.CreateLogger<InterviewerFeedbackRemainder>();
         }
-        [FunctionName("InterviewerFeedbackRemainder")]
-        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("InterviewerFeedbackRemainder")]
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try

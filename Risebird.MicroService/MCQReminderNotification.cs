@@ -1,5 +1,5 @@
 using Dapper;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -20,17 +20,18 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly string connectionString;
-
-        public MCQReminderNotification(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
+        private readonly ILogger log;
+        public MCQReminderNotification(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _whatsAppHelper = whatsAppHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            log = loggerFactory.CreateLogger<MCQReminderNotification>();
         }
-        [FunctionName("MCQReminderNotification")]
-        public async Task Run([TimerTrigger("0 0 10 * * *")] TimerInfo myTimer, ILogger log)//Daily 10 AM
+        [Function("MCQReminderNotification")]
+        public async Task Run([TimerTrigger("0 0 10 * * *")] TimerInfo myTimer)//Daily 10 AM
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _mcqlist = await FetchApp_MCQReminderDetails();

@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -25,12 +25,12 @@ namespace Risebird.MicroService
         private readonly IZoomHelper _zoomHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly ITeamsMeetingHelper _iteamsMeetingHelper;
-
+        private readonly ILogger log;
         private readonly string ContainerName;
         private readonly string TranscriptsContainer;
         //private readonly string SASConnectionString;
 
-        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper, ITeamsMeetingHelper iteamsMeetingHelper)
+        public ZoomService(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper, ITeamsMeetingHelper iteamsMeetingHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,10 +42,11 @@ namespace Risebird.MicroService
             TranscriptsContainer = _configuration["SASURLSettings:TranscriptsContainer"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
             _iteamsMeetingHelper = iteamsMeetingHelper;
+            log = loggerFactory.CreateLogger<ZoomService>();
 
         }
-        [FunctionName("ZoomService")]
-        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log) //after every 30 min
+        [Function("ZoomService")]
+        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer) //after every 30 min
         {
             try
             {

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -12,6 +11,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.MicroService;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -30,32 +30,27 @@ namespace ScreenBackgroundJobs
         private readonly IAadhaarRepository _aadhaarRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly string client_code;
-        //private readonly string api_key;
-        //private readonly string salt;
-        //private readonly string apiendpoint;
+        private readonly ILogger log;
         private readonly string faceCompareApiendpoint;
         private readonly string faceCompare_api_key;
         private readonly string faceCompare_salt;
         private static readonly RestClient client = new RestClient();
-        public UploadAndVerifyCandidateImage(IConfiguration configuration, IAadhaarRepository aadhaarRepository, IApplicationErrorLogger applicationErrorLogger)
+        public UploadAndVerifyCandidateImage(ILoggerFactory loggerFactory, IConfiguration configuration, IAadhaarRepository aadhaarRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             //_applicationErrorLogger = applicationErrorLogger;
             _aadhaarRepository = aadhaarRepository;
             client_code = _configuration["AadhaarApiDetails:client_code"];
-            //api_key = _configuration["AadhaarApiDetails:api_key"];
-            //salt = _configuration["AadhaarApiDetails:salt"];
-            //apiendpoint = _configuration["AadhaarApiDetails:endPoint"];
+            log = loggerFactory.CreateLogger<UploadAndVerifyCandidateImage>();
             faceCompareApiendpoint = _configuration["AadhaarApiDetails:faceCompareEndPoint"];
             faceCompare_api_key = _configuration["AadhaarApiDetails:faceCompareApiKey"];
             faceCompare_salt = _configuration["AadhaarApiDetails:faceCompareSalt"];
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        [FunctionName("UploadAndVerifyCandidateImage")]
+        [Function("UploadAndVerifyCandidateImage")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UploadAndVerifyCandidateImage")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UploadAndVerifyCandidateImage")] HttpRequest req)
         {
             try
             {

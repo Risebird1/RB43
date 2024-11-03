@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -19,17 +19,19 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
         private readonly IUserService _userService;
         private readonly IIRFService _irfService;
+        private readonly ILogger log;
 
-        public SkillChannelStatsNotification(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IUserService userService, IIRFService irfService)
+        public SkillChannelStatsNotification(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IUserService userService, IIRFService irfService)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _userService = userService;
             _irfService = irfService;
+            log = loggerFactory.CreateLogger<SkillChannelStatsNotification>();
         }
-        [FunctionName("SkillChannelStatsNotification")]
-        public async Task Run([TimerTrigger("0 0 0 * * 6")] TimerInfo myTimer, ILogger log)//Every Saturday
+        [Function("SkillChannelStatsNotification")]
+        public async Task Run([TimerTrigger("0 0 0 * * 6")] TimerInfo myTimer)//Every Saturday
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try

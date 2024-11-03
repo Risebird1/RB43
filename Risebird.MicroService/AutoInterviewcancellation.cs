@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -17,8 +17,9 @@ namespace Risebird.MicroService
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly IMeetingService _meetingService;
+        private readonly ILogger log;
 
-        public AutoInterviewcancellation(IIRFService irfService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IIRFRepository irfRepository, IMeetingService meetingService)
+        public AutoInterviewcancellation(ILoggerFactory loggerFactory, IIRFService irfService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IIRFRepository irfRepository, IMeetingService meetingService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -26,10 +27,11 @@ namespace Risebird.MicroService
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _meetingService = meetingService;
+            log = loggerFactory.CreateLogger<AutoInterviewcancellation>();
         }
 
-        [FunctionName("AutoInterviewcancellation")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("AutoInterviewcancellation")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function(AutoInterviewcancellation) executed at: {DateTime.Now}");
             try

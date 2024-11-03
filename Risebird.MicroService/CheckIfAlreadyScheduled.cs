@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.Repository.Interface;
 using System.Threading.Tasks;
@@ -11,15 +10,16 @@ namespace Risebird.MicroService
     public class CheckIfAlreadyScheduled
     {
         private readonly IMeetingRespository _meetingRespository;
-        public CheckIfAlreadyScheduled(IMeetingRespository meetingRespository)
+        private readonly ILogger log;
+        public CheckIfAlreadyScheduled(ILoggerFactory loggerFactory, IMeetingRespository meetingRespository)
         {
             _meetingRespository = meetingRespository;
+            log = loggerFactory.CreateLogger<CheckIfAlreadyScheduled>();
         }
 
-        [FunctionName("CheckIfAlreadyScheduled")]
+        [Function("CheckIfAlreadyScheduled")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
         {
             string email = req.Query["email"];
 

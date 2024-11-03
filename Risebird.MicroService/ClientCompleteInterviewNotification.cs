@@ -31,7 +31,7 @@
 //            _whatsAppHelper = whatsAppHelper;
 //            _aadhaarService = aadhaarService;
 //        }
-//        [FunctionName("ClientCompleteInterviewNotification")]
+//        [Function("ClientCompleteInterviewNotification")]
 //        public async Task Run([TimerTrigger("0 0 9 * * *")] TimerInfo myTimer, ILogger log)//Every day
 //        {
 //            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");

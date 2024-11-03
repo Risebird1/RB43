@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
@@ -17,17 +17,18 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
+        private readonly ILogger log;
 
-        public DeleteOldZoomMeetingsService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
+        public DeleteOldZoomMeetingsService(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
             _zoomHelper = zoomHelper;
-
+            log = loggerFactory.CreateLogger<DeleteOldZoomMeetingsService>();
         }
-        [FunctionName("DeleteOldZoomMeetingsService")]
-        public async Task Run([TimerTrigger("0 0 3 * * *")] TimerInfo myTimer, ILogger log) //daily at 3 am ; 0 * * * * *   0 0 3 * * *
+        [Function("DeleteOldZoomMeetingsService")]
+        public async Task Run([TimerTrigger("0 0 3 * * *")] TimerInfo myTimer) //daily at 3 am ; 0 * * * * *   0 0 3 * * *
         {
             try
             {

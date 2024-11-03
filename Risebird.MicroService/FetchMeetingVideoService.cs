@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -23,8 +23,9 @@ namespace Risebird.MicroService
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IZoomHelper _zoomHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly ILogger log;
 
-        public FetchMeetingVideoService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
+        public FetchMeetingVideoService(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -32,10 +33,11 @@ namespace Risebird.MicroService
             _meetingRespository = meetingRespository;
             _zoomHelper = zoomHelper;
             _sasUrlHelper = sasUrlHelper;
+            log = loggerFactory.CreateLogger<FetchMeetingVideoService>();
         }
 
-        [FunctionName("FetchMeetingVideoService")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("FetchMeetingVideoService")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try

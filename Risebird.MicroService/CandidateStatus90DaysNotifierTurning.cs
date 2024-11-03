@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
@@ -20,25 +20,25 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
-
+        private readonly ILogger log;
         private readonly ICandidateService _candidateService;
         private readonly IEncryptionHelper _encryptionHelper;
 
         private readonly string connectionString;
 
-        public CandidateStatus90DaysNotifierTurning(IConfiguration configuration, ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
+        public CandidateStatus90DaysNotifierTurning(ILoggerFactory loggerFactory, IConfiguration configuration, ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
         {
             _configuration = configuration;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
-
+            log = loggerFactory.CreateLogger<CandidateStatus90DaysNotifierTurning>();
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             _encryptionHelper = encryptionHelper;
         }
 
-        [FunctionName("CandidateStatus90DaysNotifierTurning")]
-        public async Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
+        [Function("CandidateStatus90DaysNotifierTurning")]
+        public async Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo myTimer)//0 0 0 * * *
         {
             try
             {

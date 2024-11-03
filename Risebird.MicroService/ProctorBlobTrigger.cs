@@ -22,7 +22,7 @@
 //            _applicationErrorLogger = applicationErrorLogger;
 //            _meetingRespository = meetingRespository;
 //        }
-//        [FunctionName("ProctorBlobTrigger")]
+//        [Function("ProctorBlobTrigger")]
 //        public async Task Run([BlobTrigger("reports/{name}", Connection = "proctoringreport")] Stream myBlob, string name, ILogger log)
 //        {
 //            log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");

@@ -33,7 +33,7 @@
 //            connectionString = _configuration["ConnectionString:DBConnectionString"];
 //        }
 
-//        [FunctionName("InterviewWindUpCall")]
+//        [Function("InterviewWindUpCall")]
 //        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
 //        {
 //            log.LogInformation($"InterviewWindUpCall : C# Timer trigger function started executing at: {DateTime.Now}");

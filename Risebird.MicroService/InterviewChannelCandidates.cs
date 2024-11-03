@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -28,8 +27,8 @@ namespace Risebird.MicroService
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly IEncryptionHelper _encryptionHelper;
-
-        public InterviewChannelCandidates(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
+        private readonly ILogger log;
+        public InterviewChannelCandidates(ILoggerFactory loggerFactory, IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
             IClientService clientService, ICandidateService candidateService, IIRFRepository irfRepository, IEncryptionHelper encryptionHelper)
         {
             _httpRequestHelper = httpRequestHelper;
@@ -39,11 +38,11 @@ namespace Risebird.MicroService
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _encryptionHelper = encryptionHelper;
+            log = loggerFactory.CreateLogger<InterviewChannelCandidates>();
         }
-        [FunctionName("InterviewChannelCandidates")]
+        [Function("InterviewChannelCandidates")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "InterviewChannel/Candidates")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "InterviewChannel/Candidates")] HttpRequest req)
         {
             try
             {

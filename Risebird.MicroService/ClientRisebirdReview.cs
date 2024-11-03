@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -20,8 +20,9 @@ namespace Risebird.MicroService
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly IAadhaarService _aadhaarService;
         private readonly IUserService _userService;
+        private readonly ILogger log;
 
-        public ClientRisebirdReview(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IIRFService irfService, IWhatsAppHelper whatsAppHelper, IAadhaarService aadhaarService, IUserService userService)
+        public ClientRisebirdReview(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IIRFService irfService, IWhatsAppHelper whatsAppHelper, IAadhaarService aadhaarService, IUserService userService)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -31,9 +32,11 @@ namespace Risebird.MicroService
             _whatsAppHelper = whatsAppHelper;
             _aadhaarService = aadhaarService;
             _userService = userService;
+            log = loggerFactory.CreateLogger<ClientRisebirdReview>();
         }
-        [FunctionName("ClientRisebirdReview")]
-        public async Task Run([TimerTrigger("0 0 10 * * 2")] TimerInfo myTimer, ILogger log)
+
+        [Function("ClientRisebirdReview")]
+        public async Task Run([TimerTrigger("0 0 10 * * 2")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _interviewsdetails = await _userService.GetClientUsersForReviewNotification();

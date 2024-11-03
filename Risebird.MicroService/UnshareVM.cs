@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -15,18 +15,19 @@ namespace Risebird.MicroService
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly string connectionString;
+        private readonly ILogger log;
 
-        public UnshareVM(IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, IApplicationErrorLogger applicationErrorLogger)
+        public UnshareVM(ILoggerFactory loggerFactory, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-
+            log = loggerFactory.CreateLogger<UnshareVM>();
         }
 
-        [FunctionName("UnshareVM")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("UnshareVM")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
 
             // delete from transVMuser all candidates to whom the vm was shared 2 hours or before back
