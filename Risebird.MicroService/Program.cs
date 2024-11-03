@@ -54,6 +54,7 @@ namespace Risebird.MicroService
                      .AddJsonFile("appsettings.json", true, true)
                      .AddJsonFile("local.settings.json", true, true)
                      .AddEnvironmentVariables()
+                     .AddCommandLine(Environment.GetCommandLineArgs())
                      .Build();
                     services.AddSingleton<IConfiguration>(configuration);
 
