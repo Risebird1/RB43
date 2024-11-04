@@ -259,7 +259,7 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                            @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -271,9 +271,9 @@
                                                             Action
                                                         </th>
                                                     }
-                                                     @if (ViewBag.actionstatus == "PotentialRiskByClient")
+                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
-                                                      
+
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
@@ -455,7 +455,7 @@
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
-                                            
+
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
                                                         <th>Action</th>
@@ -468,7 +468,7 @@
                                                         <th>Current Status</th>
                                                         <th>Availibility Response Date</th>
                                                         @*<th>Mobile</th>*@
-                                                        
+
 
                                                     }
                                                     @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
@@ -487,7 +487,7 @@
                                                         <th>Rated</th>
                                                         <th>Payment SLA Status</th>
                                                         <th>Red Marker</th>
-                                                       
+
                                                     }
                                                 </tr>
                                             </thead>
@@ -505,9 +505,9 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                     @if (ViewBag.actionstatus == "PotentialRiskByClient")
+                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
-                                                       
+
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
 
@@ -701,7 +701,7 @@
                                                     }
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
-                                                    { 
+                                                    {
                                                         <th>Action</th>
 
                                                         <th>Interviewer Name</th>
@@ -713,7 +713,7 @@
                                                         <th>Current Status</th>
                                                         <th>Availibility Response Date</th>
                                                         @*<th>Mobile</th>*@
-                                                       
+
                                                     }
 
                                                     @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
@@ -731,7 +731,7 @@
                                                         <th>Rated</th>
                                                         <th>Payment SLA Status</th>
                                                         <th>Red Marker</th>
-                                                       
+
                                                     }
                                                 </tr>
                                             </tfoot>
@@ -779,9 +779,9 @@
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                             <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                         </button>
-                                                                    </span>                                                                    
+                                                                    </span>
                                                                 }
-                                                                
+
 
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
@@ -820,9 +820,10 @@
                                                                 </button>
                                                             </td>
                                                         }
-                                                          @if (ViewBag.actionstatus == "PotentialRiskByClient"){
+                                                        @if (ViewBag.actionstatus == "PotentialRiskByClient")
+                                                        {
 
-                                                          <td align="center">
+                                                            <td align="center">
 
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
@@ -846,7 +847,7 @@
                                                             </td>
 
 
-                                                            }
+                                                        }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
                                                             <td class="meeting-detail-icon">
@@ -901,37 +902,37 @@
                                                         }
                                                         @if (ViewBag.actionstatus == "MeetingStatus")
                                                         {
-                                                                    <td>
-                                                                        @if (ViewBag.ProfileName == "Admin")
-                                                                        {
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                                <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
-                                                                            </button>
-                                                                        }
-                                                                        
+                                                            <td>
+                                                                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
+                                                                    </button>
+                                                                }
+
 
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
-                                                                                <span>
-                                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                                        <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                                    </button>
-                                                                                </span>
+                                                                    <span>
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                        </button>
+                                                                    </span>
                                                                 }
 
-                                                                    </td>
+                                                            </td>
                                                         }
 
                                                         @if (ViewBag.actionstatus == "QCPendingReport")
                                                         {
-                                                                    <td>
-                                                                        <span>
-                                                                            <a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="ProxyFormDetails('@item.Interviewid',true,'QCPendingReport')">
-                                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Proxy Form" style=" position: relative; top: -1px;">
-                                                                                    <i style="font-size: 16px; position: relative; top: -1px;" class="fa fa-wpforms"></i>
-                                                                                </button>
-                                                                            </a>
-                                                                        </span>
+                                                            <td>
+                                                                <span>
+                                                                    <a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="ProxyFormDetails('@item.Interviewid',true,'QCPendingReport')">
+                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Proxy Form" style=" position: relative; top: -1px;">
+                                                                            <i style="font-size: 16px; position: relative; top: -1px;" class="fa fa-wpforms"></i>
+                                                                        </button>
+                                                                    </a>
+                                                                </span>
 
 
                                                                 @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
@@ -942,67 +943,67 @@
                                                         </button>
                                                         </a> *@
 
-                                                                        <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                                <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                            </button>
-                                                                        </a>
-                                                                        @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
-                                                                        {
-                                                                            <span class="interview_9">
-                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                                    <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
-                                                                                </button>
-                                                                            </span>
-                                                                        }
-                                                                        
-
-                                                                        <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
-                                                                                <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
-                                                                            </button>
-                                                                        </a>
-
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
-                                                                            <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
-                                                                                <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
-                                                                            </div>
+                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                    </button>
+                                                                </a>
+                                                                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                                                                {
+                                                                    <span class="interview_9">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                            <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
                                                                         </button>
+                                                                    </span>
+                                                                }
 
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
-                                                                            <span onclick="OpenRedoRequestFormModel('@item.imid','@item.intervieweStatusStatDesc','QCPendingReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                                                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                                                                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </button>
+
+                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
+                                                                        <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
+                                                                    </button>
+                                                                </a>
+
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
+                                                                    <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
+                                                                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                                                                    </div>
+                                                                </button>
+
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                    <span onclick="OpenRedoRequestFormModel('@item.imid','@item.intervieweStatusStatDesc','QCPendingReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
-                                                                                <span>
-                                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                                        <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                                    </button>
-                                                                                </span>
+                                                                    <span>
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                        </button>
+                                                                    </span>
                                                                 }
-                                                                        <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate QC Report" style="text-decoration:none;">
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
-                                                                                <span title="Generate QC Report" class="mdc-fab__icon material-icons"><img src="~/img/qc-icon.png" style="width:16px;" /></span>
-                                                                            </button>
-                                                                        </a>
+                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate QC Report" style="text-decoration:none;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
+                                                                        <span title="Generate QC Report" class="mdc-fab__icon material-icons"><img src="~/img/qc-icon.png" style="width:16px;" /></span>
+                                                                    </button>
+                                                                </a>
                                                                 @if (ViewBag.emailid == "tanishka_gupta@risebird.io")
                                                                 {
-                                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
-                                                                                    <span onclick="javascript:DeleteQuestionsDiscussed('@item.imid', '@item.interviewer', '@item.candidateEmail', '@item.interviewDate.ToString()');" title="Delete Questions Discussed" class="mdc-fab__icon material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                                                    </span>
-                                                                                </button>
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
+                                                                        <span onclick="javascript:DeleteQuestionsDiscussed('@item.imid', '@item.interviewer', '@item.candidateEmail', '@item.interviewDate.ToString()');" title="Delete Questions Discussed" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        </span>
+                                                                    </button>
                                                                 }
 
-                                                                    </td>
+                                                            </td>
 
                                                         }
-                                                         @if (ViewBag.actionstatus == "QCReport")
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <td>
 
@@ -1039,7 +1040,7 @@
 
                                                         }
 
-                                                       
+
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
@@ -1702,11 +1703,11 @@
                                                             <td>@item.ChannelOwner</td>
                                                         }
 
-                                                       
+
 
 
                                                         @*@if ((ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))*@
-                                                       
+
 
                                                         @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                         { @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
@@ -1777,7 +1778,7 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                           
+
                                                         }
                                                         @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
                                                         {
@@ -1877,7 +1878,7 @@
                                                                 </td>
                                                             }
 
-                                                          
+
                                                         }
 
                                                     </tr>
