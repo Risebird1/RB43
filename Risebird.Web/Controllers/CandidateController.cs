@@ -5516,7 +5516,7 @@ namespace Risebird.Web.Controllers
                     if (isDrive.HasValue && isDrive.Value)
                     {
                         //int j = 19;
-                        foreach (var item in skillslist)
+                        foreach (var item in skillsTwolist)
                         {
                             j++;
                             Sheet.Cells[1, j].Value = item;
