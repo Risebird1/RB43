@@ -578,7 +578,7 @@ namespace Risebird.Web.Controllers
                         model.Add(candidateTimeline);
                     }
                 }
-               
+
 
                 if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                 {
@@ -5436,9 +5436,12 @@ namespace Risebird.Web.Controllers
 
                 string jdtitle = string.Empty;
                 jdtitle = skillslist.FirstOrDefault();
+                skillslist = model?.FirstOrDefault().SkillList;
 
                 string jdtitleTwo = string.Empty;
                 jdtitleTwo = skillsTwolist.FirstOrDefault();
+                skillsTwolist = model?.FirstOrDefault().SkillListTwo;
+
                 int? clientId = model?.FirstOrDefault()?.ClientId;
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
