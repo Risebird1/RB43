@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -12,14 +12,15 @@ namespace Risebird.MicroService
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
-
-        public InterviewLateReportPenalty(IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
+        private readonly ILogger log;
+        public InterviewLateReportPenalty(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
+            log = loggerFactory.CreateLogger<InterviewLateReportPenalty>();
         }
-        [FunctionName("InterviewLateReportPenalty")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("InterviewLateReportPenalty")]
+        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
         {
             try
             {

@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -17,9 +17,9 @@ namespace Risebird.MicroService
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly string PasswordTimePeriod;
         private readonly IInterviewerService _interviewerService;
+        private readonly ILogger log;
 
-
-        public RemoveHistoryBefore90Days(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, IInterviewerService interviewerService)
+        public RemoveHistoryBefore90Days(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, IInterviewerService interviewerService)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -27,9 +27,10 @@ namespace Risebird.MicroService
             _whatsAppHelper = whatsAppHelper;
             PasswordTimePeriod = _configuration["PasswordAging:TimePeriod"];
             _interviewerService = interviewerService;
+            log = loggerFactory.CreateLogger<RemoveHistoryBefore90Days>();
         }
-        [FunctionName("RemoveHistoryBefore90Days")]
-        public async Task Run([TimerTrigger("0 0 1 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("RemoveHistoryBefore90Days")]
+        public async Task Run([TimerTrigger("0 0 1 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger(RemoveHistoryBefore90Days) function started executing at: {DateTime.Now}");
             try

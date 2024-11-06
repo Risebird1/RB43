@@ -2,16 +2,16 @@
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Data;
-using System.Threading.Tasks;
-using System;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
-    public class InterviewerAvailabilityRepository:IInterviewerAvailabilityRepository
+    public class InterviewerAvailabilityRepository : IInterviewerAvailabilityRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -71,7 +71,7 @@ namespace Risebird.Repository
                             item.Hour_09_TO_10, item.Hour_10_TO_11, item.Hour_11_TO_12, item.Hour_12_TO_13,
                             item.Hour_13_TO_14, item.Hour_14_TO_15, item.Hour_15_TO_16, item.Hour_16_TO_17,
                             item.Hour_17_TO_18, item.Hour_18_TO_19, item.Hour_19_TO_20, item.Hour_20_TO_21,
-                            item.Hour_21_TO_22, item.Hour_22_TO_23, item.Hour_23_TO_00,item.CreatedOn,item.ModifiedOn,item.CreatedBy,item.ModifiedBy
+                            item.Hour_21_TO_22, item.Hour_22_TO_23, item.Hour_23_TO_00, item.CreatedOn, item.ModifiedOn, item.CreatedBy, item.ModifiedBy
                             );
                     }
 

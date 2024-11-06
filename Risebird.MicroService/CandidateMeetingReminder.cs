@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -25,8 +25,9 @@ namespace Risebird.MicroService
         private readonly ITwilioHelper _twilioHelper;
         private readonly IConfiguration _configuration;
         private readonly string candidateDashboard;
+        private readonly ILogger log;
 
-        public CandidateMeetingReminder(IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IMeetingService meetingService, IIRFService irfService, IIRFRepository irfRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, IConfiguration configuration)
+        public CandidateMeetingReminder(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IMeetingService meetingService, IIRFService irfService, IIRFRepository irfRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, IConfiguration configuration)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -38,9 +39,11 @@ namespace Risebird.MicroService
             _twilioHelper = twilioHelper;
             _configuration = configuration;
             candidateDashboard = _configuration["CandidateDashBoard:UseDashboard"];
+            log = loggerFactory.CreateLogger<CandidateMeetingReminder>();
         }
-        [FunctionName("CandidateMeetingReminder")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+
+        [Function("CandidateMeetingReminder")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             string timeZoneValue = string.Empty;

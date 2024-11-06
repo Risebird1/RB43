@@ -60,7 +60,7 @@ namespace Risebird.Web.Controllers
         IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService,
         INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository,
         IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService,
-        IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, 
+        IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper,
         IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper)
 
         {
@@ -398,7 +398,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         string uploadedFileURL = string.Empty;
-                        
+
                         //if (string.IsNullOrEmpty(interviewerProfile.ResumeLink) && (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null))
                         //{
                         //    if (interviewerProfile.ResumeFile != null)
@@ -461,7 +461,7 @@ namespace Risebird.Web.Controllers
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out userId))
                         {
                             TempData["MessageInterviewerOnboarding"] = "Assessment Groups mapped successfully. Kindly select the target Skill Channel from the drop-down to finish onboarding!";
-                            return RedirectToAction("EditInterviewerProfile", new { userId =  userId, showAddToSkillChannelOption  = true});
+                            return RedirectToAction("EditInterviewerProfile", new { userId = userId, showAddToSkillChannelOption = true });
                             //return RedirectToAction("Index");
                         }
                         else
@@ -493,7 +493,7 @@ namespace Risebird.Web.Controllers
                                     TempData["MessageInterviewer"] = "Failed to add Interviewer Profile.";
                                 }
                             }
-                            
+
                             return RedirectToAction("Index");
                         }
                     }
@@ -571,7 +571,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
                     {
-                        if(interviewerProfile.ShowAddToSkillChannelOption)
+                        if (interviewerProfile.ShowAddToSkillChannelOption)
                         {
 
                             if (await _interviewerService.AddTargetSkillChannelToInterviewerPreOnboarding(interviewerProfile))
@@ -587,7 +587,7 @@ namespace Risebird.Web.Controllers
                                 TempData["MessageInterviewerManagement"] = "Failed to update the Interviewer";
                                 return RedirectToAction("AddInterviewerProfile");
                                 //return RedirectToAction("Index");
-                                
+
                                 //if (!string.IsNullOrEmpty(assessmentGroupList))
                                 //{
                                 //    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
@@ -662,7 +662,7 @@ namespace Risebird.Web.Controllers
                                 return RedirectToAction("Index");
                             }
                         }
-                        
+
                     }
                     else
                     {
@@ -677,7 +677,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                if((interviewerProfile !=null && interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                if ((interviewerProfile != null && interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
                 {
                     TempData["MessageInterviewerManagement"] = "Failed to update the Interviewer";
                     return RedirectToAction("Index");
@@ -2592,7 +2592,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "HR"  || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")//|| profileName == "InterviewerManagement"
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")//|| profileName == "InterviewerManagement"
                     {
                         if (model.CodedResumeFile != null)
                         {
@@ -4206,8 +4206,8 @@ namespace Risebird.Web.Controllers
                     userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
                 }
 
-                    //var userId = await _encryptionHelper.DecryptData(user);
-                
+                //var userId = await _encryptionHelper.DecryptData(user);
+
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
                     var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
@@ -4224,7 +4224,7 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Bad Request.");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -4298,7 +4298,7 @@ namespace Risebird.Web.Controllers
                 {
                     //first check if the irf id is valid
                     bool isValid = true;
-                    if(isValid)
+                    if (isValid)
                     {
                         return View(new InterviewerDirectApplicationVM { IRFId = irfId.Value, EncryptedIrfId = decodedEncryptedId });
 
@@ -4307,7 +4307,7 @@ namespace Risebird.Web.Controllers
                     {
                         return Json("Invalid");
                     }
-                    
+
                 }
                 else
                 {

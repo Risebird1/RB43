@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -14,21 +14,21 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
-
+        private readonly ILogger log;
 
         private readonly string ContainerName;
         //private readonly string SASConnectionString;
 
-        public ComputeProbableNoShowCandidates(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
+        public ComputeProbableNoShowCandidates(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
-
+            log = loggerFactory.CreateLogger<ComputeProbableNoShowCandidates>();
         }
 
-        [FunctionName("ComputeProbableNoShowCandidates")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("ComputeProbableNoShowCandidates")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");
 

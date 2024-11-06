@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,19 +19,19 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ICandidateRepository _candidateRepository;
-
-        public CandidateStatusUpdateWebhookNotifier(IConfiguration configuration,
+        private readonly ILogger log;
+        public CandidateStatusUpdateWebhookNotifier(ILoggerFactory loggerFactory, IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
             ICandidateRepository candidateRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _candidateRepository = candidateRepository;
-
+            log = loggerFactory.CreateLogger<CandidateStatusUpdateWebhookNotifier>();
         }
 
-        [FunctionName("CandidateStatusUpdateWebhookNotifier")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)//0 */5 * * * *
+        [Function("CandidateStatusUpdateWebhookNotifier")]
+        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)//0 */5 * * * *
         {
             log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");
 

@@ -1,5 +1,5 @@
 using Dapper;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -17,21 +17,22 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
-
+        private readonly ILogger log;
 
         private readonly string connectionString;
         //private readonly string SASConnectionString;
 
-        public EmailtoInterviewer(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        public EmailtoInterviewer(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            log = loggerFactory.CreateLogger<EmailtoInterviewer>();
         }
 
-        [FunctionName("EmailtoInterviewer")]
-        public async Task Run([TimerTrigger("0 0 8,16 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("EmailtoInterviewer")]
+        public async Task Run([TimerTrigger("0 0 8,16 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"EmailtoInterviewer : C# Timer trigger function started executing  at: {DateTime.Now}");
 

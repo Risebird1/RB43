@@ -13,6 +13,9 @@ namespace Risebird.Entities.Data
             TechSkillReportTwoCollection = new List<TechSkillReport>();
         }
         public int id { get; set; }
+
+        public string ExecutiveReportLink { get; set; }
+        public string Cancellationsource { get; set; }
         public int Irfintid { get; set; }
         public string IRFId { get; set; }
         public DateTime? interviewDate { get; set; }
@@ -62,5 +65,9 @@ namespace Risebird.Entities.Data
         public string PreReportLink { get; set; }
         public string PreReportUsername { get; set; }
         public string PreReportPassword { get; set; }
+        public string CurrentStatus { get; set; }
+        public DateTime? CurrentStatusDate { get; set; }
+        public int NoOfInterviews { get; set; }
+        public string CancelledBy { get; set; }
     }
 }

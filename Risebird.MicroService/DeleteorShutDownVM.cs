@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -16,17 +16,20 @@ namespace Risebird.MicroService
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly IVmHelper _vmhelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ILogger log;
 
-        public DeleteorShutDownVM(IConfiguration configuration, IAzureHelper azureHelper, IProctorInterviewsRepository proctorInterviewsRepository, IVmHelper vmhelper, IApplicationErrorLogger applicationErrorLogger)
+        public DeleteorShutDownVM(ILoggerFactory loggerFactory, IConfiguration configuration, IAzureHelper azureHelper, IProctorInterviewsRepository proctorInterviewsRepository, IVmHelper vmhelper, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _vmhelper = vmhelper;
             _applicationErrorLogger = applicationErrorLogger;
+            log = loggerFactory.CreateLogger<DeleteorShutDownVM>();
         }
-        [FunctionName("DeleteorShutDownVM")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+
+        [Function("DeleteorShutDownVM")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _listvm = await _proctorInterviewsRepository.GetDeleteorShutdownVMList();

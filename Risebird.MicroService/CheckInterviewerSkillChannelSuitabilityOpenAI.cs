@@ -1,5 +1,6 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 //using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -19,11 +20,11 @@ namespace Risebird.MicroService
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IIRFRepository _irfRepository;
         private readonly IAzureStorageHelper _azureStorageHelper;
-
+        private readonly ILogger log;
 
         //private readonly string ContainerName;
 
-        public CheckInterviewerSkillChannelSuitabilityOpenAI(IConfiguration configuration,
+        public CheckInterviewerSkillChannelSuitabilityOpenAI(ILoggerFactory loggerFactory, IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
             IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository,
             IAzureStorageHelper azureStorageHelper)
@@ -33,10 +34,10 @@ namespace Risebird.MicroService
             _assistantServiceHelper = assistantServiceHelper;
             _irfRepository = irfRepository;
             _azureStorageHelper = azureStorageHelper;
-
+            log = loggerFactory.CreateLogger<CheckInterviewerSkillChannelSuitabilityOpenAI>();
         }
 
-        [FunctionName("CheckInterviewerSkillChannelSuitabilityOpenAI")]
+        [Function("CheckInterviewerSkillChannelSuitabilityOpenAI")]
         public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * * , ILogger log
         {
             //log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");

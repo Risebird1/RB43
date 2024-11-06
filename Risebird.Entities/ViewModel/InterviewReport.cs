@@ -389,7 +389,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Candidate Solution File")]
         public IFormFile CandidateFileTwo { get; set; }
         public string TechRubricType { get; set; }
-        
+
         [Display(Name = "Candidate ID Verification Status")]
         public int? CandidateIDVerificationStatus { get; set; }
         public string CandidateIDVerificationStatusDesc { get; set; }

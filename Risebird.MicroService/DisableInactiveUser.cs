@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -13,16 +13,16 @@ namespace Risebird.MicroService
 
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IUserRepository _userRespository;
+        private readonly ILogger log;
 
-
-        public DisableInactiveUser(IApplicationErrorLogger applicationErrorLogger, IUserRepository userRespository)
+        public DisableInactiveUser(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IUserRepository userRespository)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _userRespository = userRespository;
-
+            log = loggerFactory.CreateLogger<DisableInactiveUser>();
         }
-        [FunctionName("DisableInactiveUser")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
+        [Function("DisableInactiveUser")]
+        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer)//0 0 0 * * *
         {
             log.LogInformation($"DisableInactiveUser Timer trigger function started executing at: {DateTime.Now}");
 

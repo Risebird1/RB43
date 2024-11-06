@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -13,18 +13,18 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ICalendlyHelper _calendlyHelper;
+        private readonly ILogger log;
 
 
-
-        public UpdateIRFCalendlyResourceUri(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ICalendlyHelper calendlyHelper)
+        public UpdateIRFCalendlyResourceUri(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ICalendlyHelper calendlyHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _calendlyHelper = calendlyHelper;
-
+            log = loggerFactory.CreateLogger<UpdateIRFCalendlyResourceUri>();
         }
-        [FunctionName("UpdateIRFCalendlyResourceUri")]
-        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)//runs every 2 minutes
+        [Function("UpdateIRFCalendlyResourceUri")]
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer)//runs every 2 minutes
         {
             try
             {

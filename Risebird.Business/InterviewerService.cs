@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
-using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -25,7 +24,7 @@ namespace Risebird.Business
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IEncryptionHelper _encryptionHelper;
 
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, 
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger,
             IUserService userService, IMeetingRespository meetingRespository,
             INotificationHelper notificationHelper, IPasswordHelper passwordHelper,
             IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper)
@@ -142,7 +141,7 @@ namespace Risebird.Business
                 var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
                 if (result)
                 {
-                    if(isApplicant.HasValue && isApplicant.Value)
+                    if (isApplicant.HasValue && isApplicant.Value)
                     {
                         //var encryptedUserId = _encryptionHelper.EncryptInteger(userId).Result;
                         //var encodedUserId = System.Net.WebUtility.UrlEncode(encryptedUserId);
@@ -162,7 +161,7 @@ namespace Risebird.Business
                     activityTrackerModel.Summary = "Add Interviewer";
                     activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
-                    
+
                 }
                 return result;
             }
@@ -363,7 +362,7 @@ namespace Risebird.Business
                 //List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
                 //List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
                 TransInterviewerAccDetails AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result;
-                
+
                 // Assign the Lists to model
 
                 //ProfileModel.InterviewerSkill = SkillList;
@@ -1601,7 +1600,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result =  await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId);
+                var result = await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId);
 
                 if (result != null)
                 {
@@ -1633,7 +1632,7 @@ namespace Risebird.Business
         {
             try
             {
-                if(await _interviewerRepository.AddTargetSkillChannelToInterviewerPreOnboarding(interviewerProfile.UserId, interviewerProfile.TargetIrfId))
+                if (await _interviewerRepository.AddTargetSkillChannelToInterviewerPreOnboarding(interviewerProfile.UserId, interviewerProfile.TargetIrfId))
                 {
                     string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + interviewerProfile.UserId;// _encryptionHelper.EncryptData(userId.ToString()).Result;+ "&irf=" + interviewerProfile.TargetIrfId.ToString()
 

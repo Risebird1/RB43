@@ -1,10 +1,10 @@
 using Dapper;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Auth;
-using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using SendGrid.Helpers.Mail;
@@ -22,21 +22,22 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
-
+        private readonly ILogger log;
 
         private readonly string connectionString;
         //private readonly string SASConnectionString;
 
-        public SetUpReminder(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        public SetUpReminder(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            log = loggerFactory.CreateLogger<SetUpReminder>();
         }
 
-        [FunctionName("SetUpReminder")]
-        public async Task Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("SetUpReminder")]
+        public async Task Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"SetUpReminder : C# Timer trigger function started executing at: {DateTime.Now}");
 

@@ -29,7 +29,7 @@
 
 
 //        }
-//        [FunctionName("FetchTwilioCallRecordingData")]
+//        [Function("FetchTwilioCallRecordingData")]
 //        public async Task Run([TimerTrigger("0 */20 * * * *")] TimerInfo myTimer, ILogger log)
 //        {
 //            try

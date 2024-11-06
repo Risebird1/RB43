@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -14,16 +14,17 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly ILogger log;
 
-
-        public OpenInterviewsNotification(IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+        public OpenInterviewsNotification(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            log = loggerFactory.CreateLogger<OpenInterviewsNotification>();
         }
-        [FunctionName("OpenInterviewsNotification")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log) //after every 30 minutes
+        [Function("OpenInterviewsNotification")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer) //after every 30 minutes
         {
             try
             {

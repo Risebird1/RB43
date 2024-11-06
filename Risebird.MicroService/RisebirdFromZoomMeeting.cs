@@ -1,8 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -22,14 +21,17 @@ namespace Risebird.MicroService
     {
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public RisebirdFromZoomMeeting(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        private readonly ILogger log;
+
+        public RisebirdFromZoomMeeting(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _configuration = configuration;
+            log = loggerFactory.CreateLogger<RisebirdFromZoomMeeting>();
         }
 
-        [FunctionName("RisebirdFromZoomMeeting")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
+        [Function("RisebirdFromZoomMeeting")]
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();

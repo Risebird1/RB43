@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -15,16 +15,18 @@ namespace Risebird.MicroService
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IDashboarRepository _dashboardRepository;
+        private readonly ILogger log;
 
-        public AIQualityCheckBatchRun(IApplicationErrorLogger applicationErrorLogger,
+        public AIQualityCheckBatchRun(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger,
             IDashboarRepository dashboardRepository)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _dashboardRepository = dashboardRepository;
+            log = loggerFactory.CreateLogger<AIQualityCheckBatchRun>();
         }
 
-        [FunctionName("AIQualityCheckBatchRun")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */5 * * * *
+        [Function("AIQualityCheckBatchRun")]
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * *
         {
             log.LogInformation($"AIQualityCheckBatchRun : C# Timer trigger function started executing  at: {DateTime.Now}");
 

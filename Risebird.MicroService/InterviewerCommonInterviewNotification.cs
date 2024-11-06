@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -20,8 +20,9 @@ namespace Risebird.MicroService
         private readonly IInterviewerService _interviewerService;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private IClientService _clientService;
+        private readonly ILogger log;
 
-        public InterviewerCommonInterviewNotification(IConfiguration configuration, IInterviewerService interviewerService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, IClientService clientService)
+        public InterviewerCommonInterviewNotification(ILoggerFactory loggerFactory, IConfiguration configuration, IInterviewerService interviewerService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, IClientService clientService)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -29,10 +30,11 @@ namespace Risebird.MicroService
             _interviewerService = interviewerService;
             _whatsAppHelper = whatsAppHelper;
             _clientService = clientService;
+            log = loggerFactory.CreateLogger<InterviewerCommonInterviewNotification>();
         }
 
-        [FunctionName("InterviewerCommonInterviewNotification")]
-        public async Task Run([TimerTrigger("0 0 8,16,21 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("InterviewerCommonInterviewNotification")]
+        public async Task Run([TimerTrigger("0 0 8,16,21 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -92,7 +94,7 @@ namespace Risebird.MicroService
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
-        public async void SendMailtoClient()
+        public async Task SendMailtoClient()
         {
             //Start : create time with previous run and current
             DateTime _stdt = new DateTime();
