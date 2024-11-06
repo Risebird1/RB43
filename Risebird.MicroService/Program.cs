@@ -1,6 +1,7 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -62,7 +63,7 @@ namespace Risebird.MicroService
 
                     services.AddSingleton<HttpClientHelper>();
                     services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
-                    //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
                     services.AddScoped<INotificationHelper, NotificationHelper>();
                     services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
                     services.AddScoped<IUserService, UserService>();
