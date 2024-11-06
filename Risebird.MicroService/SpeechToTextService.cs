@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +25,8 @@ namespace Risebird.MicroService
         private readonly ISpeechToTextHelper _speechToTextHelper;
         private readonly string connectionString;
         private string result = string.Empty;
-        public SpeechToTextService(IAzureHelper azureHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISpeechToTextHelper speechToTextHelper)
+        private readonly ILogger log;
+        public SpeechToTextService(ILoggerFactory loggerFactory, IAzureHelper azureHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISpeechToTextHelper speechToTextHelper)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
@@ -34,13 +34,12 @@ namespace Risebird.MicroService
             _azureStorageHelper = azureStorageHelper;
             _speechToTextHelper = speechToTextHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-
+            log = loggerFactory.CreateLogger<SpeechToTextService>();
         }
 
-        [FunctionName("SpeechToTextService")]
+        [Function("SpeechToTextService")]
         public async Task<IActionResult> Run(
-           [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "SpeechToTextService")] HttpRequest req,
-           ILogger log)
+           [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "SpeechToTextService")] HttpRequest req)
         {
             try
             {
@@ -53,7 +52,7 @@ namespace Risebird.MicroService
                 var fileName = urlArray[urlLength - 1];
                 var audioBlob = _azureStorageHelper.GetBlobDataAsBlob("audios", fileName);
 
-                RecognitionWithPushAudioStreamAsync(audioBlob.OpenReadAsync().Result, log).Wait();
+                RecognitionWithPushAudioStreamAsync(audioBlob.OpenReadAsync().Result).Wait();
 
 
                 log.LogInformation($"Recognition finished  at: {DateTime.Now}");
@@ -86,7 +85,7 @@ namespace Risebird.MicroService
 
         }
 
-        public async Task RecognitionWithPushAudioStreamAsync(Stream audioStream, ILogger log)
+        public async Task RecognitionWithPushAudioStreamAsync(Stream audioStream)
         {
             log.LogInformation($"Recognition started at: {DateTime.Now}");
 

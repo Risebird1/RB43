@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 //using OfficeOpenXml.Core.ExcelPackage;
@@ -22,10 +22,10 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
         private readonly IExcelHelper _excelHelper;
         private readonly IClientRepository _clientRepository;
-
+        private readonly ILogger log;
         private readonly string connectionString;
 
-        public CandidateStatusNotifier(IConfiguration configuration, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IIRFRepository irfRepository, INotificationHelper notificationHelper, IExcelHelper excelHelper, IClientRepository clientRepository)
+        public CandidateStatusNotifier(ILoggerFactory loggerFactory, IConfiguration configuration, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IIRFRepository irfRepository, INotificationHelper notificationHelper, IExcelHelper excelHelper, IClientRepository clientRepository)
         {
             _configuration = configuration;
             _candidateRepository = candidateRepository;
@@ -35,11 +35,11 @@ namespace Risebird.MicroService
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             _excelHelper = excelHelper;
             _clientRepository = clientRepository;
-
+            log = loggerFactory.CreateLogger<CandidateStatusNotifier>();
         }
 
-        [FunctionName("CandidateStatusNotifier")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
+        [Function("CandidateStatusNotifier")]
+        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer)//0 0 0 * * *
         {
             try
             {

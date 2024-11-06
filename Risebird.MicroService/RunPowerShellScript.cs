@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -20,21 +19,20 @@ namespace Risebird.MicroService
     {
         private readonly IConfiguration _configuration;
         private readonly IAzureHelper _azureHelper;
-        //private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
+        private readonly ILogger log;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public RunPowerShellScript(IConfiguration configuration, IAzureHelper azureHelper, IApplicationErrorLogger applicationErrorLogger)
+        public RunPowerShellScript(ILoggerFactory loggerFactory, IConfiguration configuration, IAzureHelper azureHelper, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
-            //_proctorInterviewsRepository = proctorInterviewsRepository;
+            log = loggerFactory.CreateLogger<RunPowerShellScript>();
             _applicationErrorLogger = applicationErrorLogger;
 
         }
-        [FunctionName("RunPowerShellScript")]
+        [Function("RunPowerShellScript")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "RunPowerShellScript")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "RunPowerShellScript")] HttpRequest req)
         {
             log.LogInformation("RunPowerShellScript HTTP trigger function processed a request.");
 

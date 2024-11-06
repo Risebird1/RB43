@@ -1,5 +1,5 @@
 //using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
@@ -22,16 +22,19 @@ namespace Risebird.MicroService
         private readonly string accountKey;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IAzureStorageService _azureStorageService;
-        public AzureStorageList(IConfiguration configuration, IAzureStorageService azureStorageService, IApplicationErrorLogger applicationErrorLogger)
+        private readonly ILogger log;
+
+        public AzureStorageList(ILoggerFactory loggerFactory, IConfiguration configuration, IAzureStorageService azureStorageService, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _azureStorageService = azureStorageService;
             _applicationErrorLogger = applicationErrorLogger;
             accountName = _configuration["StorageSettings:StorageName"];
             accountKey = _configuration["StorageSettings:SecretKey"];
+            log = loggerFactory.CreateLogger<AzureStorageList>();
         }
-        [FunctionName("AzureStorageList")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("AzureStorageList")]
+        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try

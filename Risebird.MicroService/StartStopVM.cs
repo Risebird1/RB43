@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -20,18 +19,18 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IAzureHelper _azureHelper;
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
+        private readonly ILogger log;
 
-        public StartStopVM(IConfiguration configuration, IAzureHelper azureHelper, IProctorInterviewsRepository proctorInterviewsRepository)
+        public StartStopVM(ILoggerFactory loggerFactory, IConfiguration configuration, IAzureHelper azureHelper, IProctorInterviewsRepository proctorInterviewsRepository)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _proctorInterviewsRepository = proctorInterviewsRepository;
-
+            log = loggerFactory.CreateLogger<StartStopVM>();
         }
-        [FunctionName("StartStopVM")]
+        [Function("StartStopVM")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "StartStopVM")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "StartStopVM")] HttpRequest req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 

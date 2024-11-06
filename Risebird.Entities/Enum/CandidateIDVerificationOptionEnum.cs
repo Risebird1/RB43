@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.Enum
 {
@@ -19,7 +14,7 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Not Verified")]
 
         NotVerified = 2,
-        
+
 
         [Description("Candidate Disagreed")]
         [Display(Name = "Candidate Disagreed")]

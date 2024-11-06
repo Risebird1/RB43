@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -21,8 +21,9 @@ namespace Risebird.MicroService
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+        private readonly ILogger log;
 
-        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ICalendlyHelper calendlyHelper, IInterviewSchedulerRepository interviewSchedulerRepository)
+        public SendMeetingNotification(ILoggerFactory loggerFactory, IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ICalendlyHelper calendlyHelper, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -31,9 +32,10 @@ namespace Risebird.MicroService
             _whatsAppHelper = whatsAppHelper;
             _calendlyHelper = calendlyHelper;
             _interviewSchedulerRepository = interviewSchedulerRepository;
+            log = loggerFactory.CreateLogger<SendMeetingNotification>();
         }
-        [FunctionName("SendMeetingNotification")]
-        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("SendMeetingNotification")]
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer)
         {
 
 

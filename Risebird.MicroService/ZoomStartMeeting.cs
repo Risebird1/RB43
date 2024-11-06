@@ -41,7 +41,7 @@
 
 
 //        }
-//        [FunctionName("ZoomStartMeeting")]
+//        [Function("ZoomStartMeeting")]
 //        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
 //        {
 //            //var date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss");

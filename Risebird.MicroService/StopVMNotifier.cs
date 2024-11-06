@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -15,16 +15,17 @@ namespace Risebird.MicroService
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
-
-        public StopVMNotifier(IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        private readonly ILogger log;
+        public StopVMNotifier(ILoggerFactory loggerFactory, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
+            log = loggerFactory.CreateLogger<StopVMNotifier>();
         }
-        [FunctionName("StopVMNotifier")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("StopVMNotifier")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
 
             // delete from transVMuser all candidates to whom the vm was shared 2 hours or before back

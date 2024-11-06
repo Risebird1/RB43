@@ -1,9 +1,9 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
-using OfficeOpenXml;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -20,25 +20,25 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
-
+        private readonly ILogger log;
         private readonly ICandidateService _candidateService;
         private readonly IEncryptionHelper _encryptionHelper;
 
         private readonly string connectionString;
 
-        public CandidateStatus90DaysNotifierTurning(IConfiguration configuration, ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
+        public CandidateStatus90DaysNotifierTurning(ILoggerFactory loggerFactory, IConfiguration configuration, ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
         {
             _configuration = configuration;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
-
+            log = loggerFactory.CreateLogger<CandidateStatus90DaysNotifierTurning>();
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             _encryptionHelper = encryptionHelper;
         }
 
-        [FunctionName("CandidateStatus90DaysNotifierTurning")]
-        public async Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
+        [Function("CandidateStatus90DaysNotifierTurning")]
+        public async Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo myTimer)//0 0 0 * * *
         {
             try
             {
@@ -89,7 +89,7 @@ namespace Risebird.MicroService
                 Sheet.Cells[1, 5].Value = "Added On";
                 Sheet.Cells[1, 6].Value = "Schedule Status";
                 Sheet.Cells[1, 7].Value = "Phone";
-                
+
                 Sheet.Cells[1, 8].Value = "Latest Status";
                 Sheet.Cells[1, 9].Value = "Current Status Date";
                 Sheet.Cells[1, 10].Value = "Profile Source";
@@ -132,7 +132,7 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 5].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 6].Value = "Scheduled";
                         Sheet.Cells[i, 7].Value = item.MobileNumber ?? string.Empty;
-                       
+
                         Sheet.Cells[i, 8].Value = item.CandidateLatestStatus;
                         Sheet.Cells[i, 9].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         //Sheet.Cells[i, 4].Value = item.ResumeLink;

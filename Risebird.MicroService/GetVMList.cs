@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,18 +15,18 @@ namespace Risebird.MicroService
 
         private readonly IConfiguration _configuration;
         private readonly IAzureHelper _azureHelper;
+        private readonly ILogger log;
         //private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
 
-        public GetVMList(IConfiguration configuration, IAzureHelper azureHelper)
+        public GetVMList(ILoggerFactory loggerFactory, IConfiguration configuration, IAzureHelper azureHelper)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
-
+            log = loggerFactory.CreateLogger<GetVMList>();
         }
-        [FunctionName("GetVMList")]
+        [Function("GetVMList")]
         public string Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetVMList")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetVMList")] HttpRequest req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 

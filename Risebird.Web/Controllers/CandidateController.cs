@@ -24,7 +24,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
 
@@ -578,7 +577,7 @@ namespace Risebird.Web.Controllers
                         model.Add(candidateTimeline);
                     }
                 }
-               
+
 
                 if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                 {
@@ -5436,9 +5435,12 @@ namespace Risebird.Web.Controllers
 
                 string jdtitle = string.Empty;
                 jdtitle = skillslist.FirstOrDefault();
+                skillslist = model?.FirstOrDefault().SkillList;
 
                 string jdtitleTwo = string.Empty;
                 jdtitleTwo = skillsTwolist.FirstOrDefault();
+                skillsTwolist = model?.FirstOrDefault().SkillListTwo;
+
                 int? clientId = model?.FirstOrDefault()?.ClientId;
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -5516,7 +5518,7 @@ namespace Risebird.Web.Controllers
                     if (isDrive.HasValue && isDrive.Value)
                     {
                         //int j = 19;
-                        foreach (var item in skillslist)
+                        foreach (var item in skillsTwolist)
                         {
                             j++;
                             Sheet.Cells[1, j].Value = item;

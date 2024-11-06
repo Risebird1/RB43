@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -28,8 +27,9 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly ILogger log;
 
-        public CandidateLatestStatus(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IInterviewerService interviewerService,
+        public CandidateLatestStatus(ILoggerFactory loggerFactory, IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IInterviewerService interviewerService,
             IApplicationErrorLogger applicationErrorLogger, ICandidateRepository candidateRepository, IClientService clientService, IEncryptionHelper encryptionHelper)
         {
             _httpRequestHelper = httpRequestHelper;
@@ -38,13 +38,12 @@ namespace Risebird.MicroService
             _candidateRepository = candidateRepository;
             _clientService = clientService;
             _encryptionHelper = encryptionHelper;
-            //employementapikey = _configuration["EmploymentVerfication:apikey"];
+            log = loggerFactory.CreateLogger<CandidateLatestStatus>();
         }
 
-        [FunctionName("CandidateLatestStatus")]
+        [Function("CandidateLatestStatus")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
         {
             try
             {

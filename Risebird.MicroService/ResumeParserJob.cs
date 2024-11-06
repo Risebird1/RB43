@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -30,10 +30,9 @@ namespace Risebird.MicroService
         private readonly IValidationHelper _validationHelper;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
 
-        //private readonly string ContainerName;
-        //private readonly string SASConnectionString;
+        private readonly ILogger log;
 
-        public ResumeParserJob(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
+        public ResumeParserJob(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
             ISASUrlHelper sasUrlHelper, IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
@@ -50,13 +49,11 @@ namespace Risebird.MicroService
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _validationHelper = validationHelper;
             _assistantServiceHelper = assistantServiceHelper;
-            //ContainerName = _configuration["SASURLSettings:ContainerName"];
-            //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
-
-
+            log = loggerFactory.CreateLogger<ResumeParserJob>();
         }
-        [FunctionName("ResumeParserJob")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */5 * * * *
+
+        [Function("ResumeParserJob")]
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * *
         {
             try
             {

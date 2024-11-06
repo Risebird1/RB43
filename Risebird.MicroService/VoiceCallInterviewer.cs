@@ -1,5 +1,5 @@
 using Dapper;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -19,20 +19,21 @@ namespace Risebird.MicroService
     {
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-
+        private readonly ILogger log;
 
         private readonly string connectionString;
         //private readonly string SASConnectionString;
 
-        public VoiceCallInterviewer(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        public VoiceCallInterviewer(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            log = loggerFactory.CreateLogger<VoiceCallInterviewer>();
         }
 
-        [FunctionName("VoiceCallInterviewer")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("VoiceCallInterviewer")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"VoiceCallInterviewer : C# Timer trigger function started executing at: {DateTime.Now}");
 
