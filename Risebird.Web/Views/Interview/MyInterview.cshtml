@@ -782,7 +782,7 @@
                                                                         @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                             {
                                                                                 <td class="cadName text-center" onclick="captureclick('Meeting','Meeting','@item.id')">
-                                                                                    <a style="border-radius: 5px !important;width: 175px;margin: 0px auto;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" target="_blank" title="Meeting Link" href="/Interview/InterviewDetails?id=@item.irfIntId&interviewId=@item.id">Meeting Link</a>
+                                                                                    <a style="border-radius: 5px !important;width: 145px;margin: 0px auto;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" target="_blank" title="Meeting Link" href="/Interview/InterviewDetails?id=@item.irfIntId&interviewId=@item.id">Meeting Link</a>
                                                                                 </td>
                                                                             }
                                                                             else
