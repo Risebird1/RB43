@@ -40,7 +40,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveCandidateCodedResume(Candidate model);
         Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email);
         Task<List<CandidateResume>> GetNotProcessedResumeByClientRepository(string Email);
-        Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId,string emailid);
+        Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid);
         Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId);
         Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson);
         Task<IEnumerable<InterviewChannelDetails>> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser, string jobId);
@@ -49,5 +49,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data);
         Task<IEnumerable<CandidateTimelineVM>> GetAllCandidateSearchbyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
         Task<IEnumerable<CountryCodeDetails>> GetAllCountryCodeDetails();
+        Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithColdDate(DateTime startDate, DateTime endDate, int clientId);
+        Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithoutColdDate(DateTime startDate, DateTime endDate, int clientId);
     }
 }

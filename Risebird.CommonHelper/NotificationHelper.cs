@@ -15,7 +15,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -1377,7 +1376,7 @@ namespace Risebird.CommonHelper
 
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = isMonthly.HasValue && isMonthly.Value==true? "Master Candidate status Data till (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")" : "Candidate status for yesterday (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")";
+                msg.Subject = isMonthly.HasValue && isMonthly.Value == true ? "Last 90 Days Candidate status Data Sent on (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")" : "Candidate status for yesterday (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")";
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 foreach (var clientEmail in clientEmails)
@@ -3321,8 +3320,8 @@ namespace Risebird.CommonHelper
                 msg.Subject = "Risebird Onboarding Acknowledgement";
                 var toMails = interviewerEmailId;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
-                
-                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, yesButton};//asessmentGroups, dropButton 
+
+                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, yesButton };//asessmentGroups, dropButton 
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerAcknowledgementTemplateV2.html");
 
                 string msgBody = string.Format(rawEmail, parameters);

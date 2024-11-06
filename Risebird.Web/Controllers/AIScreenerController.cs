@@ -8,13 +8,9 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using System.Threading.Tasks;
 using System;
 using System.Net.Http.Headers;
-using System.Linq;
-using iTextSharp.text.pdf;
-using System.Net;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
+using System.Threading.Tasks;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -276,7 +272,7 @@ namespace Risebird.Web.Controllers
                             {
                                 saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
                             }
-                            if(saveOperationResult)
+                            if (saveOperationResult)
                             {
                                 aiResponseUrl = Url.Action("PreOnboardingAIVerdictDetails", "AIScreener",
                                 new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
@@ -316,9 +312,9 @@ namespace Risebird.Web.Controllers
                                 return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                             }
-                            else if(AIVerdict == "No")
+                            else if (AIVerdict == "No")
                             {
-                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty }) ;
+                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
                             }
                             else
                             {
@@ -340,8 +336,8 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                
-                
+
+
             }
             catch (Exception ex)
             {
@@ -365,7 +361,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.InterviewerEmail = emailId;
                         ViewBag.ResumeLink = resumeLink;
                         ViewBag.PrimarySpecialization = primarySpecialization;
-                        
+
                         if (response != null)
                         {
                             var modal = JsonConvert.DeserializeObject<RunResult>(response);
@@ -422,7 +418,7 @@ namespace Risebird.Web.Controllers
 
                         if (aiEvaluation != null)
                         {
-                            if(aiEvaluation.OpenAIResponse != null)
+                            if (aiEvaluation.OpenAIResponse != null)
                             {
                                 var modal = JsonConvert.DeserializeObject<RunResult>(aiEvaluation.OpenAIResponse);
                                 return View(modal);
@@ -514,7 +510,7 @@ namespace Risebird.Web.Controllers
                                         return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                                     }
-                                    else if(AIVerdict == "No")
+                                    else if (AIVerdict == "No")
                                     {
                                         return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
 
@@ -531,7 +527,7 @@ namespace Risebird.Web.Controllers
                                     return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "Resume Missing!" });
                                 }
                             }
-                            
+
                         }
                         else
                         {

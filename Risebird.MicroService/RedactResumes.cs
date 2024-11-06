@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
@@ -23,9 +23,9 @@ namespace Risebird.MicroService
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly ILogger log;
 
-
-        public RedactResumes(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
+        public RedactResumes(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IInterviewerRepository interviewerRepository,
             ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
         {
@@ -36,9 +36,10 @@ namespace Risebird.MicroService
             _sasUrlHelper = sasUrlHelper;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _interviewerRepository = interviewerRepository;
+            log = loggerFactory.CreateLogger<RedactResumes>();
         }
-        [FunctionName("RedactResumes")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */5 * * * *
+        [Function("RedactResumes")]
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * *
         {
             try
             {

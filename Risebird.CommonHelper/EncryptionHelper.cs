@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;

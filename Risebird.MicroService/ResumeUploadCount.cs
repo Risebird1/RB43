@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -17,15 +17,16 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
-
-        public ResumeUploadCount(IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+        private readonly ILogger log;
+        public ResumeUploadCount(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            log = loggerFactory.CreateLogger<ResumeUploadCount>();
         }
-        [FunctionName("ResumeUploadCount")]
-        public async Task Run([TimerTrigger("0 0 */8 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("ResumeUploadCount")]
+        public async Task Run([TimerTrigger("0 0 */8 * * *")] TimerInfo myTimer)
         {
             try
             {

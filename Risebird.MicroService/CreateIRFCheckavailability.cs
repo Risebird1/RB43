@@ -33,7 +33,7 @@
 //            _irfRepository = irfRepository;
 //        }
 
-//        [FunctionName("CreateIRFCheckavailability")]
+//        [Function("CreateIRFCheckavailability")]
 //        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
 //        {
 //            log.LogInformation($"CreateIRFCheckavailability : C# Timer trigger function started executing  at: {DateTime.Now}");

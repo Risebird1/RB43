@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -23,11 +23,11 @@ namespace Risebird.MicroService
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IZoomHelper _zoomHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
-
+        private readonly ILogger log;
         private readonly string ContainerName;
         //private readonly string SASConnectionString;
 
-        public InstantMeetingVideoUpload(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
+        public InstantMeetingVideoUpload(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -37,11 +37,11 @@ namespace Risebird.MicroService
             _sasUrlHelper = sasUrlHelper;
             ContainerName = _configuration["SASURLSettings:ContainerName"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
-
+            log = loggerFactory.CreateLogger<InstantMeetingVideoUpload>();
 
         }
-        [FunctionName("InstantMeetingVideoUpload")]
-        public async Task Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer, ILogger log) //after every 6 hours
+        [Function("InstantMeetingVideoUpload")]
+        public async Task Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer) //after every 6 hours
         {
             try
             {

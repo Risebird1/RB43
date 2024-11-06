@@ -2285,7 +2285,7 @@ namespace Risebird.Repository
 
                     DataTable smeDt = new DataTable();
 
-                    if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF) !=null)
+                    if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF) != null)
                     {
                         smeDt.Columns.Add("id", typeof(int));
                         //irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId
@@ -2294,7 +2294,7 @@ namespace Risebird.Repository
                             smeDt.Rows.Add(item.InterviewerProfileId);
                         }
                     }
-                    
+
 
                     SqlCommand cmdUpdateIRF = new SqlCommand("usp_UpdateIRFDetails", con);
                     cmdUpdateIRF.CommandType = CommandType.StoredProcedure;

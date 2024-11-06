@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,21 +18,20 @@ namespace Risebird.MicroService
     public class CaptureSendgridEvents
     {
         private readonly IConfiguration _configuration;
-
+        private readonly ILogger log;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ISendGridRepository _sendGridRepository;
-        public CaptureSendgridEvents(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, ISendGridRepository sendGridRepository)
+        public CaptureSendgridEvents(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, ISendGridRepository sendGridRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _sendGridRepository = sendGridRepository;
-
+            log = loggerFactory.CreateLogger<CaptureSendgridEvents>();
         }
 
-        [FunctionName("CaptureSendgridEvents")]
+        [Function("CaptureSendgridEvents")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CaptureSendgridEvents")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CaptureSendgridEvents")] HttpRequest req)
         {
             try
             {

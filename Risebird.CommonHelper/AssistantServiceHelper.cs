@@ -1,5 +1,4 @@
-﻿using Google.Apis.Drive.v3.Data;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -106,7 +105,7 @@ namespace Risebird.CommonHelper
                             break;
                     }
                     var messages = await ListRunMessages(threadId);
-                    if(messages!=null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
+                    if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
                         return await RecreateThread(requestModel, fileId);
                     }
@@ -126,7 +125,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private async Task<RunResult> RecreateThread( ScreeningRequest requestModel, string fileId)
+        private async Task<RunResult> RecreateThread(ScreeningRequest requestModel, string fileId)
         {
             await Task.Delay(15000);
             string threadId = string.Empty;
@@ -454,8 +453,8 @@ namespace Risebird.CommonHelper
                 {
                     messages = new List<Message>
                     {
-                        new Message { 
-                            role = "assistant", content = queryContent, 
+                        new Message {
+                            role = "assistant", content = queryContent,
                             attachments = new List<object>
                             {
                                 new
@@ -541,8 +540,8 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var filesList =await ListFiles();
-                if(filesList != null && filesList.data != null && filesList.data.Count()>0)
+                var filesList = await ListFiles();
+                if (filesList != null && filesList.data != null && filesList.data.Count() > 0)
                 {
 
                     Parallel.ForEach(filesList?.data, item =>
@@ -582,9 +581,9 @@ namespace Risebird.CommonHelper
                     //}
                     await DeleteFiles();
                 }
-                
+
                 return true;
-                
+
             }
             catch (Exception ex)
             {
@@ -601,7 +600,7 @@ namespace Risebird.CommonHelper
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/vector_stores")
                 {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" }}//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
                 };
 
                 var response = await client.SendAsync(request);
@@ -624,7 +623,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var vectorsList = await ListVectors();
-                if(vectorsList != null && vectorsList.data != null && vectorsList.data.Count() > 0)
+                if (vectorsList != null && vectorsList.data != null && vectorsList.data.Count() > 0)
                 {
                     Parallel.ForEach(vectorsList?.data, item =>
                     {
@@ -635,10 +634,10 @@ namespace Risebird.CommonHelper
                             Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
                         };
 
-                        var response =  client.SendAsync(request).Result;
+                        var response = client.SendAsync(request).Result;
 
                         response.EnsureSuccessStatusCode();
-                        var responseContent =  response.Content.ReadAsStringAsync().Result;
+                        var responseContent = response.Content.ReadAsStringAsync().Result;
 
                         //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
                         //return files;
@@ -663,7 +662,7 @@ namespace Risebird.CommonHelper
                     //}
                     await DeleteVectors();
                 }
-                
+
                 return true;
 
             }
@@ -726,7 +725,7 @@ namespace Risebird.CommonHelper
     public class FilesList
     {
         public List<FileObj> data { get; set; }
-       
+
     }
 
     public class FileObj

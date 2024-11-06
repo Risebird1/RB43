@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
@@ -13,16 +13,17 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IInterviewerRepository _interviewerRepository;
         private readonly INotificationHelper _notificationHelper;
-
-        public InterviewerRedMarkers(IApplicationErrorLogger applicationErrorLogger, IInterviewerRepository interviewerRepository, INotificationHelper notificationHelper)
+        private readonly ILogger log;
+        public InterviewerRedMarkers(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IInterviewerRepository interviewerRepository, INotificationHelper notificationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _interviewerRepository = interviewerRepository;
             _notificationHelper = notificationHelper;
+            log = loggerFactory.CreateLogger<InterviewerRedMarkers>();
         }
 
-        [FunctionName("InterviewerRedMarkers")]
-        public async Task Run([TimerTrigger("0 0 9 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("InterviewerRedMarkers")]
+        public async Task Run([TimerTrigger("0 0 9 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _list = await _interviewerRepository.FecthUpcomingInterviewsRedMarkers();

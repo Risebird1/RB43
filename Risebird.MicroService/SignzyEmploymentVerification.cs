@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -27,7 +26,8 @@ namespace Risebird.MicroService
         private readonly IInterviewerService _interviewerService;
         private readonly string employementapikey;
         private readonly string employementendpoint;
-        public SignzyEmploymentVerification(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IAadhaarRepository aadhaarRepository, IInterviewerService interviewerService)
+        private readonly ILogger log;
+        public SignzyEmploymentVerification(ILoggerFactory loggerFactory, IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IAadhaarRepository aadhaarRepository, IInterviewerService interviewerService)
         {
             _httpRequestHelper = httpRequestHelper;
             _configuration = configuration;
@@ -35,12 +35,12 @@ namespace Risebird.MicroService
             employementapikey = _configuration["EmploymentVerfication:apikey"];
             employementendpoint = _configuration["EmploymentVerfication:endPoint"];
             _interviewerService = interviewerService;
+            log = loggerFactory.CreateLogger<SignzyEmploymentVerification>();
         }
 
-        [FunctionName("SignzyEmploymentVerification")]
+        [Function("SignzyEmploymentVerification")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
             string name = req.Query["name"];

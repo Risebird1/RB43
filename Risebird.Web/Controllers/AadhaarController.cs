@@ -22,7 +22,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.Web.Controllers
 {
@@ -770,7 +769,7 @@ namespace Risebird.Web.Controllers
         {
             string loggedInUser;
             loggedInUser = HttpContext.Session.GetString("email")?.Trim();
-            if(!string.IsNullOrEmpty(loggedInUser))
+            if (!string.IsNullOrEmpty(loggedInUser))
             {
                 loggedInUser = loggedInUser.Replace("\"", "");
             }
@@ -859,13 +858,13 @@ namespace Risebird.Web.Controllers
                     int index = str.IndexOf(" ");
                     if (index > 0)
                     {
-                        
+
                         model.FirstName = str.Substring(0, index);
                         model.LastName = str.Substring(index + 1);
                     }
                     else
                     {
-                        model.FirstName = employementdetails.Name; 
+                        model.FirstName = employementdetails.Name;
                     }
                 }
                 //model.isVerified = employementdetails.isVerified;   ASK THIS******************
