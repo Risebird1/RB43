@@ -3410,7 +3410,7 @@ namespace Risebird.Web.Controllers
                             }
                             return RedirectToAction("MyInterview");
                         }
-                    }   
+                    }
                     else
                     {
                         return RedirectToAction("Index", "Interview");

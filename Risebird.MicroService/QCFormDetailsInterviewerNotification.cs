@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -17,15 +17,17 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly ILogger log;
 
-        public QCFormDetailsInterviewerNotification(IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+        public QCFormDetailsInterviewerNotification(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            log = loggerFactory.CreateLogger<QCFormDetailsInterviewerNotification>();
         }
-        [FunctionName("QCFormDetailsInterviewerNotification")]
-        public async Task Run([TimerTrigger("0 59 23 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("QCFormDetailsInterviewerNotification")]
+        public async Task Run([TimerTrigger("0 59 23 * * *")] TimerInfo myTimer)
         {
             try
             {

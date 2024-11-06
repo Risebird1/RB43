@@ -117,7 +117,7 @@ namespace Risebird.Repository
                     return await SqlMapper.QueryAsync<CandidateExcelData>(con, "usp_GetCandidateStatusDataWithCold", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
-               
+
             }
             catch (SqlException ex)
             {

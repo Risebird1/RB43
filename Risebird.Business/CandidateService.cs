@@ -571,7 +571,7 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId,string emailid)
+        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid)
         {
             try
             {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,22 +18,22 @@ namespace Risebird.MicroService
     public class SendCampaignMails
     {
         private readonly IConfiguration _configuration;
-
+        private readonly ILogger log;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private readonly IEncryptionHelper _encryptionHelper;
-        public SendCampaignMails(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
+        public SendCampaignMails(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _encryptionHelper = encryptionHelper;
+            log = loggerFactory.CreateLogger<SendCampaignMails>();
         }
 
-        [FunctionName("SendCampaignMails")]
+        [Function("SendCampaignMails")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "SendCampaignMails")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "SendCampaignMails")] HttpRequest req)
         {
             try
             {

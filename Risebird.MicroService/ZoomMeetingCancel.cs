@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
@@ -16,18 +16,19 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IMeetingService _meetingService;
         private readonly IZoomHelper _zoomHelper;
+        private readonly ILogger log;
 
-
-        public ZoomMeetingCancel(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
+        public ZoomMeetingCancel(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
             IMeetingService meetingService, IZoomHelper zoomHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingService = meetingService;
             _zoomHelper = zoomHelper;
+            log = loggerFactory.CreateLogger<ZoomMeetingCancel>();
         }
-        [FunctionName("ZoomMeetingCancel")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("ZoomMeetingCancel")]
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var candidatemeetinglist = await _meetingService.FetchCandidateZoomMeetingsIdForCancel();

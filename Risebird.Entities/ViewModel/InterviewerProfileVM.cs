@@ -238,7 +238,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySpecializationForAcknowledgement { get; set; }
         public bool ShowAddToSkillChannelOption { get; set; }
         public SelectList SkillChannelList { get; set; }
-        
+
         [Display(Name = "Target Skill Channel")]
         public int TargetIrfId { get; set; }
         public string AIResponse { get; set; }

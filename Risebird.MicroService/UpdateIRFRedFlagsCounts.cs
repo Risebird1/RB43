@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
@@ -11,14 +11,15 @@ namespace Risebird.MicroService
     {
         private readonly IConfiguration _configuration;
         private readonly IIRFService _irfService;
-
-        public UpdateIRFRedFlagsCounts(IConfiguration configuration, IIRFService irfService)
+        private readonly ILogger log;
+        public UpdateIRFRedFlagsCounts(ILoggerFactory loggerFactory, IConfiguration configuration, IIRFService irfService)
         {
             _configuration = configuration;
             _irfService = irfService;
+            log = loggerFactory.CreateLogger<UpdateIRFRedFlagsCounts>();
         }
-        [FunctionName("UpdateIRFRedFlagsCounts")]
-        public async Task Run([TimerTrigger("0 0 2 * * *")] TimerInfo myTimer, ILogger log)
+        [Function("UpdateIRFRedFlagsCounts")]
+        public async Task Run([TimerTrigger("0 0 2 * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             await _irfService.UpdateIRFRedFlags();

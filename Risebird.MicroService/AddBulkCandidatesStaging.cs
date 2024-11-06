@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -27,8 +26,9 @@ namespace Risebird.MicroService
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly IIRFService _irfService;
+        private readonly ILogger log;
 
-        public AddBulkCandidatesStaging(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
+        public AddBulkCandidatesStaging(ILoggerFactory loggerFactory, IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
             IClientService clientService, ICandidateService candidateService, IIRFRepository irfRepository, IIRFService irfService)
         {
             _httpRequestHelper = httpRequestHelper;
@@ -38,11 +38,11 @@ namespace Risebird.MicroService
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _irfService = irfService;
+            log = loggerFactory.CreateLogger<AddBulkCandidatesStaging>();
         }
-        [FunctionName("AddBulkCandidatesStaging")]
+        [Function("AddBulkCandidatesStaging")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Staging/Candidates/Add")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Staging/Candidates/Add")] HttpRequest req)
         {
             try
             {

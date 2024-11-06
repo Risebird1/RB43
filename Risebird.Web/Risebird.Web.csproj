@@ -21,14 +21,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.HTML" Version="24.5.0" />
+    <PackageReference Include="Aspose.HTML" Version="24.10.0" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="ExcelDataReader" Version="3.7.0" />
     <PackageReference Include="HtmlToPdfConverter.Core" Version="2.0.0" />
-    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.4" />
     <PackageReference Include="MediaToolkit" Version="1.1.0.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
@@ -47,7 +47,7 @@
 
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.58.1" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.1" />
     <PackageReference Include="Microsoft.Identity.Web" Version="2.16.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
@@ -56,7 +56,7 @@
     <PackageReference Include="OfficeOpenXml.Extends" Version="1.0.6" />
     <PackageReference Include="RestClient" Version="3.1024.23771" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="Twilio" Version="6.2.0" />
+    <PackageReference Include="Twilio" Version="7.6.0" />
     <PackageReference Include="Twilio.AspNet.Core" Version="7.0.0" />
     <PackageReference Include="VirusTotalNet" Version="2.1.0" />
     <PackageReference Include="X.PagedList.Mvc" Version="8.0.7" />

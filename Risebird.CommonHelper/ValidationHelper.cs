@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using System;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
 
 namespace Risebird.CommonHelper
 {

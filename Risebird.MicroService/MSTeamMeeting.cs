@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Entities.ViewModel;
@@ -15,15 +14,16 @@ namespace Risebird.MicroService
     public class MSTeamMeeting
     {
         private readonly AuthenticationService _authenticationService;
-        public MSTeamMeeting(AuthenticationService authenticationService)
+        private readonly ILogger log;
+        public MSTeamMeeting(ILoggerFactory loggerFactory, AuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
+            log = loggerFactory.CreateLogger<MSTeamMeeting>();
         }
 
-        [FunctionName("MSTeamMeeting")]
+        [Function("MSTeamMeeting")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "MSTeamMeeting")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "MSTeamMeeting")] HttpRequest req)
         {
             var accountEmail = req.Headers["accountEmail"].ToString();
             if (!string.IsNullOrEmpty(accountEmail))

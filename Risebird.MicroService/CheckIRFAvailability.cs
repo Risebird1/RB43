@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -22,7 +21,7 @@ namespace Risebird.MicroService
     public class CheckIRFAvailability
     {
         private readonly IConfiguration _configuration;
-
+        private readonly ILogger log;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFService _irfService;
         private readonly INotificationHelper _notificationHelper;
@@ -30,7 +29,7 @@ namespace Risebird.MicroService
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IIRFRepository _irfRepository;
 
-        public CheckIRFAvailability(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
+        public CheckIRFAvailability(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
             IIRFService irfService, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             IEncryptionHelper encryptionHelper, IIRFRepository irfRepository)
         {
@@ -41,12 +40,12 @@ namespace Risebird.MicroService
             _whatsAppHelper = whatsAppHelper;
             _encryptionHelper = encryptionHelper;
             _irfRepository = irfRepository;
+            log = loggerFactory.CreateLogger<CheckIRFAvailability>();
         }
 
-        [FunctionName("CheckIRFAvailability")]
+        [Function("CheckIRFAvailability")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
         {
             try
             {

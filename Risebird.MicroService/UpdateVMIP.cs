@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -22,27 +22,27 @@ namespace Risebird.MicroService
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly string connectionString;
-
-        public UpdateVMIP(IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, IApplicationErrorLogger applicationErrorLogger)
+        private readonly ILogger log;
+        public UpdateVMIP(ILoggerFactory loggerFactory, IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-
+            log = loggerFactory.CreateLogger<UpdateVMIP>();
         }
-        [FunctionName("UpdateVMIP")]
-        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("UpdateVMIP")]
+        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"UpdateVMIP Timer trigger function executed at: {DateTime.Now}");
 
             var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
-            UpdateAzureVmIPsnOSType(vmsInDb, log);//update ips of the vms
+            UpdateAzureVmIPsnOSType(vmsInDb);//update ips of the vms
             log.LogInformation($"UpdateVMIP Timer trigger function completed at: {DateTime.Now}");
         }
 
-        public void UpdateAzureVmIPsnOSType(IEnumerable<VMProperties> vmListFromDB, ILogger log)
+        public void UpdateAzureVmIPsnOSType(IEnumerable<VMProperties> vmListFromDB)
         {
             var finalVmList = new List<VMProperties>();
             string osType = string.Empty;

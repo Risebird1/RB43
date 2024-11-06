@@ -1,4 +1,4 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -22,18 +22,19 @@ namespace Risebird.MicroService
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly INotificationHelper _notificationHelper;
         private readonly string connectionString;
+        private readonly ILogger log;
 
-        public UpdateVMStatus(IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, INotificationHelper notificationHelper)
+        public UpdateVMStatus(ILoggerFactory loggerFactory, IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-
+            log = loggerFactory.CreateLogger<UpdateVMStatus>();
         }
-        [FunctionName("UpdateVMStatus")]
-        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
+        [Function("UpdateVMStatus")]
+        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             //Get all the VMs whose status' need to be checked
