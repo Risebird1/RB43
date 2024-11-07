@@ -49,7 +49,7 @@ body {
     font-size: 11px !important;
     color: #fff;
     border-radius: 0px !important;
-    border:0px!important;
+    border:0px;
 }
 
 .sharp.btn-xs {
@@ -731,7 +731,7 @@ table tr td.relatedvideo:hover {
     color: white;
     font-size: 14px !important;
     line-height: 6px;
-    padding: 12px 15px;
+    padding: 10px 15px;
     background: #dbecff;
     color: #54a5f5;
     border-radius: 22px;
