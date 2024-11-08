@@ -5350,17 +5350,6 @@ namespace Risebird.Web.Controllers
 
             return new string(randomArray);
         }
-        public async Task<IActionResult> Test(string id, int IRFId)
-        {
-            var model = new CandidateIRFDetailsVM();
-            return View(model);
-        }
-        public async Task<IActionResult> Test1(string id, int IRFId)
-        {
-            var model = new CandidateIRFDetailsVM();
-            return View(model);
-        }
-
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetColdCandidatesListByClient(string emailid)
