@@ -9670,6 +9670,8 @@ namespace Risebird.Web.Controllers
                 {
                     meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5 && !x.RedoInterview)?.ToList();
                 }
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 return View(meetings);
             }
             catch (Exception ex)

@@ -68,6 +68,11 @@
                                                             <th id="intselmeet_5">Confirmation Status</th>
                                                             <th id="intselmeet_6">Meeting Status</th>
                                                             <th id="intselmeet_7">Selection Status</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                <th>Interviewer</th>
+                                                                <th>Interviewer Status</th>
+                                                            }
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -82,6 +87,11 @@
                                                             <th>Confirmation Status</th>
                                                             <th>Meeting Status</th>
                                                             <th>Selection Status</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                <th>Interviewer</th>
+                                                                <th>Interviewer Status</th>
+                                                            }
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
@@ -178,7 +188,11 @@
                                                                 <td> @item.confirmationStatus</td>
                                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                                 <td> @item.intervieweStatusStatDesc </td>
-
+                                                                @if (ViewBag.ClientRole == "Reviewer")
+                                                                {
+                                                                    <td>@item.InterviewerName</td>
+                                                                    <td>@item.ShortListstatus</td>
+                                                                }
                                                                 <td class="text-right action">
                                                                     @* @if (ViewBag.profile != "Client" )
                                                                 {
