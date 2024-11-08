@@ -387,7 +387,7 @@ namespace Risebird.Entities.ViewModel
         //public int Surcharge { get; set; }
         public bool IsNewSkillChannel { get; set; }
         public string LogoLink { get; set; }
-        public int Interviewduration { get; set; }
+        //public int Interviewduration { get; set; }
         public int FlatRate { get; set; }
         public string AffindaEmbedUrl { get; set; }
         public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
