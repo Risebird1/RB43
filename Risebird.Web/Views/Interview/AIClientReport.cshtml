@@ -1651,6 +1651,7 @@
             confirmButtonText: confirmationButtonText,
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
+                    captureclick('Interviewer Status', action, interviewid);
                     $.ajax({
                         type: "POST",
                         url: "/Interview/RemoveOrShortlistInterviewer",
@@ -1684,6 +1685,29 @@
                 )
             }
         })
+    }
+</script>
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
     }
 </script>
 <script>
