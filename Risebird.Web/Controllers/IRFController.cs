@@ -4448,6 +4448,13 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.Profile = "";
+                if (HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                }
                 ViewBag.Type = "IRF";
                 var model = await _irfService.GetIRFInterviewerMembers(irfId);
                 return PartialView("IRFInterviewerMembersPartial", model);
