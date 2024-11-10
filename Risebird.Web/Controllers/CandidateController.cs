@@ -23,7 +23,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using X.PagedList;
+using X.PagedList.Extensions;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
 

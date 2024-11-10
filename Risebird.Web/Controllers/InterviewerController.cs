@@ -21,7 +21,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Risebird.Web.Controllers
 {

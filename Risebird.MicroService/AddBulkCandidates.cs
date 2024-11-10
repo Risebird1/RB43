@@ -28,7 +28,7 @@ namespace Risebird.MicroService
         private readonly IIRFService _irfService;
         private readonly ILogger log;
 
-        public AddBulkCandidates(ILoggerFactory loggerFactory,IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
+        public AddBulkCandidates(ILoggerFactory loggerFactory, IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
             IClientService clientService, ICandidateService candidateService, IIRFRepository irfRepository, IIRFService irfService)
         {
             _httpRequestHelper = httpRequestHelper;
