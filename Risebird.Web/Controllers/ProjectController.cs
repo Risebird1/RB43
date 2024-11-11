@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList;
+using X.PagedList.Extensions;
 namespace Risebird.Web.Controllers
 {
     public class ProjectController : Controller
