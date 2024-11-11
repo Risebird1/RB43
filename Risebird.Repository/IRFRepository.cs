@@ -1250,6 +1250,7 @@ namespace Risebird.Repository
 
                     if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
+                        //irfDetails.InterviewerCollection = (IList<TransInterviewer>)irfDetails.InterviewerCollection.Distinct();
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
@@ -1257,7 +1258,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
-                        foreach (var item in irfDetails.InterviewerCollection)
+                        foreach (var item in irfDetails.InterviewerCollection.Distinct())
                         {
                             interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
                         }

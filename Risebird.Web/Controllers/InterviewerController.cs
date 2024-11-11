@@ -4170,15 +4170,23 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetInterviwerExists(string interviewer)
         {
-            var role = _interviewerService.GetUserRolebyEmailid(interviewer);
+            try
+            {
+                var role = _interviewerService.GetUserRolebyEmailid(interviewer);
 
-            if (!string.IsNullOrWhiteSpace(role))
-            {
-                return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
+                if (!string.IsNullOrWhiteSpace(role))
+                {
+                    return Json("This mail id already exists in our system as " + role + ". Please check and add accordingly.");
+                }
+                else
+                {
+                    return Json(null);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Json(null);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Some error occured. Please try again.");
             }
         }
         [HttpGet]
