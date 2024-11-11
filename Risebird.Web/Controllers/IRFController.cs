@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Risebird.Web.Controllers
 {
@@ -4448,6 +4448,13 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.Profile = "";
+                if (HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                }
                 ViewBag.Type = "IRF";
                 var model = await _irfService.GetIRFInterviewerMembers(irfId);
                 return PartialView("IRFInterviewerMembersPartial", model);
@@ -9670,6 +9677,8 @@ namespace Risebird.Web.Controllers
                 {
                     meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5 && !x.RedoInterview)?.ToList();
                 }
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 return View(meetings);
             }
             catch (Exception ex)

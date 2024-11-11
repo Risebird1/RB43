@@ -23,7 +23,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using X.PagedList;
+using X.PagedList.Extensions;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
 
@@ -5350,17 +5350,6 @@ namespace Risebird.Web.Controllers
 
             return new string(randomArray);
         }
-        public async Task<IActionResult> Test(string id, int IRFId)
-        {
-            var model = new CandidateIRFDetailsVM();
-            return View(model);
-        }
-        public async Task<IActionResult> Test1(string id, int IRFId)
-        {
-            var model = new CandidateIRFDetailsVM();
-            return View(model);
-        }
-
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetColdCandidatesListByClient(string emailid)

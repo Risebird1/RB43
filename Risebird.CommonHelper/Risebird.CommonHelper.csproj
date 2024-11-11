@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,7 @@
     <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="Sendgrid" Version="9.29.3" />
-    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="27.1.57" />
+    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="27.1.58" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <PackageReference Include="Twilio" Version="7.6.0" />

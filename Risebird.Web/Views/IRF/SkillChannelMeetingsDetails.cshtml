@@ -68,6 +68,11 @@
                                                             <th id="intselmeet_5">Confirmation Status</th>
                                                             <th id="intselmeet_6">Meeting Status</th>
                                                             <th id="intselmeet_7">Selection Status</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                <th>Interviewer</th>
+                                                                <th>Interviewer Status</th>
+                                                            }
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -82,6 +87,11 @@
                                                             <th>Confirmation Status</th>
                                                             <th>Meeting Status</th>
                                                             <th>Selection Status</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                <th>Interviewer</th>
+                                                                <th>Interviewer Status</th>
+                                                            }
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
@@ -178,7 +188,11 @@
                                                                 <td> @item.confirmationStatus</td>
                                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                                 <td> @item.intervieweStatusStatDesc </td>
-
+                                                                @if (ViewBag.ClientRole == "Reviewer")
+                                                                {
+                                                                    <td>@item.InterviewerName</td>
+                                                                    <td>@item.ShortListstatus</td>
+                                                                }
                                                                 <td class="text-right action">
                                                                     @* @if (ViewBag.profile != "Client" )
                                                                 {
@@ -335,6 +349,7 @@
             confirmButtonText: confirmationButtonText,
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
+                    captureclick('Interviewer Status', action, interviewid);
                     $.ajax({
                         type: "POST",
                         url: "/Interview/RemoveOrShortlistInterviewer",
@@ -368,5 +383,28 @@
                 )
             }
         })
+    }
+</script>
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
     }
 </script>

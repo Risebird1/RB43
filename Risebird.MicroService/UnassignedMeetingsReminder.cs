@@ -33,7 +33,7 @@ namespace Risebird.MicroService
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
-            connectionString = _configuration["ConnectionString:DBConnectionString"]; 
+            connectionString = _configuration["ConnectionString:DBConnectionString"];
             log = loggerFactory.CreateLogger<UnassignedMeetingsReminder>();
         }
 
