@@ -227,6 +227,7 @@
                                                     <th>Skill Channel ID</th>
                                                     <th>Jd Title</th>
                                                     <th>Interview Date</th>
+                                                    <th>Interview Duration</th>
                                                     <th>Candidate Name</th>
                                                        <th>Interviewer Joinedon</th>
                                                      
@@ -249,6 +250,7 @@
                                                     <th>Skill Channel ID</th>
                                                     <th>Jd Title</th>
                                                     <th>Interview Date</th>
+                                                     <th>Interview Duration</th>
                                                     <th>Candidate Name</th>
                                                       <th>Interviewer Joinedon</th>
                                                     <th>Candidate Email</th>
@@ -273,6 +275,15 @@
                                                         <td>@item.IRFId </td>
                                                         <td>@item.JDTiltle</td>
                                                         <td>@item.interviewDate </td>
+                                                       
+                                                             @if (item.interviewDuration != null)
+                                                               {
+                                                            <td>  @item.interviewDuration (mins)</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         <td style="padding-left:30px;">
                                                              @if (item.IsVideoRequired == true) {
                                                                        <div style="position:relative;width: fit-content">
