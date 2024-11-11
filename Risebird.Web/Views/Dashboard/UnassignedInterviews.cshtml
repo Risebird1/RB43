@@ -318,7 +318,7 @@
                                                     }
 
                                                     @if (ViewBag.actionstatus == "QCPendingReport")
-                                                    {
+                                                    {  <th>Interview Duration</th>
                                                         <th>Interviewer Joinedon</th>
 
                                                     }
@@ -550,7 +550,7 @@
                                                     }
 
                                                     @if (ViewBag.actionstatus == "QCPendingReport")
-                                                    {
+                                                    {     <th>Interview Duration</th>
                                                         <th>Interviewer Joinedon</th>
 
                                                     }
@@ -1136,6 +1136,14 @@
                                                         }
                                                         @if (ViewBag.actionstatus == "QCPendingReport")
                                                         {
+                                                            @if (item.interviewDuration != null)
+                                                            {
+                                                                <td>  @item.interviewDuration (mins)</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
                                                             <td class="intime-on" style="padding-left:30px;">
                                                                 @if (item.IsVideoRequired == true)
                                                                 {
