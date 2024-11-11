@@ -398,8 +398,13 @@
 </style>
 <script>
     function SaveInterviewerBillingRate(billingrate, Userid, IRFid) {
-        // alert("Userid: " + Userid);
-        // alert("IRFid:" + IRFid);
-        // alert("billingrate: " + billingrate);
+        $.ajax({
+            type:'POST',
+            url: '/IRF/SaveInterviewerBillingRate',
+            data: { 'billingrate': billingrate, 'Userid': Userid, 'IRFid': IRFid },
+            success: function (data) {
+
+            }
+        });
     }
 </script>

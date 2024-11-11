@@ -268,5 +268,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Candidate>> GetProjectCandidates(int id, string emailId = null);
         Task<bool> AddAGInterviewerToSkillChannel(int irfId, int userId, string loggedInEmailId);
         Task<IEnumerable<int>> GetIRFList(int ClientId);
+        Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid);
     }
 }
