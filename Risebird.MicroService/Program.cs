@@ -12,9 +12,6 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -167,7 +164,7 @@ namespace Risebird.MicroService
                     services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
                     services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
                 }).Build();
-             host.Run();
+            host.Run();
         }
     }
 }

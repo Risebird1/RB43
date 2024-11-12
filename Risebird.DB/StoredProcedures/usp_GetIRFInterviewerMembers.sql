@@ -9,8 +9,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE PROCEDURE [dbo].[usp_GetIRFInterviewerMembers]  
+Create PROCEDURE [dbo].[usp_GetIRFInterviewerMembers]  
 @IRFId int  
 AS  
 Begin      
@@ -21,15 +20,16 @@ Begin
   0 as TotalQCInterviews,ul.MobileNumber,ul.uniqueid,(ul.FirstName+' '+ul.LastName) as InterviewerName,ti.IsActive,ti.IsAvailable,
   IRF.SendIntervieweravailbilityOn,IsNull(DATEDIFF(SECOND, IRF.SendIntervieweravailbilityOn, GetDate()),0) as AvailbilityHour,
   ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,ti.PerSuccessRate,IRF.JDLink,
-  IRF.JDTiltle as JDTitle,IRF.InterviewDuration, ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction
+  IRF.JDTiltle as JDTitle,IRF.InterviewDuration, ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction,ibr.BillingRate
   from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId      
   join UserList ul on ul.id = ti.UserId      
   join IRF on irf.id = ti.IRFId  
   left join AGCampaigns agc on agc.id = ti.CampaignId
+  left join InterviewerBillingRate ibr on ibr.IRFId=ti.IRFId and ibr.Userid=ti.UserId
   where irf.id=@IRFId and ti.IsActive=1 and ul.IsActive=1     --and ti.IsAvailable=1 
   group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ipr.UserId, irf.IRFId, ti.AIVerdict, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,ti.IsActive,ti.IsAvailable,
   IRF.SendIntervieweravailbilityOn,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,
-  ti.PerSuccessRate,IRF.JDLink,IRF.JDTiltle,IRF.InterviewDuration,ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction, agc.CampaignName   
+  ti.PerSuccessRate,IRF.JDLink,IRF.JDTiltle,IRF.InterviewDuration,ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction, agc.CampaignName,ibr.BillingRate   
       
  --insert into @commonTable       
  -- select tqc.IRFId, 'QCInterviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,      
@@ -62,6 +62,7 @@ Begin
 --select * from @commonTable         
       
 End 
+
 GO
 
 
