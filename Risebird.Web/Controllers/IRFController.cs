@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Risebird.Web.Controllers
 {
@@ -10389,6 +10389,22 @@ namespace Risebird.Web.Controllers
                 reportlink = portalurl + "/Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
             }
             return reportlink;
+        }
+        #endregion
+        #region Client Billing Rate
+        [HttpPost]
+        public async Task<JsonResult> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid)
+        {
+            try
+            {
+                await _irfService.SaveInterviewerBillingRate(billingrate, Userid, IRFid);
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
+            }
         }
         #endregion
     }
