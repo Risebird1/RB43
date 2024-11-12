@@ -75,6 +75,7 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Company Name</th>
+                                                    <th>QC Interviewer</th>
                                                     <th>Recommendation</th>
                                                     <th>Recommendation Comments </th>
                                                     <th>Action</th>
@@ -93,6 +94,7 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Company Name</th>
+                                                    <th>QC Interviewer</th>
                                                     <th>Recommendation</th>
                                                     <th>Recommendation Comments </th>
                                                     <th>Action</th>
@@ -115,31 +117,34 @@
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CompanyName</td>
+                                                        <td>
+                                                            <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.QCInterviewer')">@item.QCInterviewer</c>
+                                                        </td>
                                                         <td>@item.Recommendation</td>
                                                         <td>
-                                                                @if (item.RecommendationComments != null && item.RecommendationComments != "")
+                                                            @if (item.RecommendationComments != null && item.RecommendationComments != "")
+                                                            {
+                                                                @if (item.RecommendationComments.Length > 35)
                                                                 {
-                                                                    @if (item.RecommendationComments.Length > 35)
-                                                                    {
                                                                     <div class="article">
                                                                         <p style="margin-bottom:0px;">
-                                                                                @item.RecommendationComments.Substring(0, 35)
+                                                                            @item.RecommendationComments.Substring(0, 35)
                                                                         </p>
                                                                         <p class="moretext_@item.id moretext">
-                                                                                @item.RecommendationComments.Substring(35, @item.RecommendationComments.Length - 35)
+                                                                            @item.RecommendationComments.Substring(35, @item.RecommendationComments.Length - 35)
                                                                         </p>
                                                                     </div>
                                                                     <a onclick="moreless('@item.Interviewid')" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
+                                                                }
+                                                                else
+                                                                {
                                                                     <div class="article">
                                                                         <p>
-                                                                          @item.RecommendationComments.Substring(0, @item.RecommendationComments.Length)
+                                                                            @item.RecommendationComments.Substring(0, @item.RecommendationComments.Length)
                                                                         </p>
                                                                     </div>
-                                                                    }
                                                                 }
+                                                            }
                                                         </td>
                                                         <td class="text-center">
                                                             @if (ViewBag.Type == "Completed")
@@ -157,7 +162,7 @@
                                                             </button>
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.Interviewid, irfId=item.irfIntId})">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                 <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                    <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                 </button>
                                                             </a>
                                                         </td>
@@ -257,7 +262,7 @@
             $("#meeting").show();
         }, 2000);
     };
-     function Changeurldetails(type) {
+    function Changeurldetails(type) {
         window.location.href = "/Dashboard/TechQCDetails?type=" + type;
     }
 </script>
