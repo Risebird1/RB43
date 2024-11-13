@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -77,6 +78,8 @@ namespace Risebird.Entities.ViewModel
         public string RecommendationComments { get; set; }
         [Display(Name = "Interviewer Video")]
         public string InterviewerVideo { get; set; }
+        [Display(Name = "Correct Interview flow followed")]
+        public string CorrectInterview{ get; set; }
     }
     public class PaymentSlabsVM
     {

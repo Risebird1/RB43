@@ -34,7 +34,7 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @isQcDone bit,  
 @techqc bit,  
 @Recommendation varchar(15),  
-@RecommendationComments varchar(250),  
+@RecommendationComments varchar(500),  
 @InterviewerVideo varchar(250)  
 AS    
 BEGIN    

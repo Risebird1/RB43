@@ -210,8 +210,9 @@
 
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
                         {
+                            @if(ViewBag.profile != "Interviewer"){
                             <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px" value="Generate PDF" onclick="getPDF()"></div>
-                        }
+                            }}
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
                         {
                             <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" value="Generate Secure URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>

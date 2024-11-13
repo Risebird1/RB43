@@ -27,7 +27,7 @@ CREATE TABLE [dbo].[PaymentSLADetails](
 	[isQcDone] [bit] NULL,
 	[Recommendation] [varchar](15) NULL,
 	[IsTechQCDone] [bit] NULL,
-    [RecommendationComments] [varchar](250) NULL,
+    [RecommendationComments] [varchar](500) NULL,
     [InterviewerVideo] [varchar](250) NULL,
  CONSTRAINT [PK_PaymentSLADetails] PRIMARY KEY CLUSTERED 
 (
@@ -89,7 +89,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'PaymentSLADetails'))
 BEGIN
     ALTER TABLE PaymentSLADetails
-    Add RecommendationComments varchar(250)
+    Add RecommendationComments varchar(500)
 END
 IF NOT EXISTS(
     SELECT *
