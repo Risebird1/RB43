@@ -86,5 +86,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<Surcharges>> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId);
         Task<IEnumerable<TransInterviewer>> GetTransInterviewersWithNegativeAIVerdict();
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAIQCNegativeVerdictReports();
+        Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed();
     }
 }

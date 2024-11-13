@@ -1122,5 +1122,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed()
+        {
+            try
+            {
+                return await _dashboardRespository.GetCandidatesWhoHaventConfirmed();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
     }
 }
