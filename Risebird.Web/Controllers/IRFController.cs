@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Risebird.Web.Controllers
 {

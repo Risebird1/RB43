@@ -11,7 +11,6 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using Risebird.MicroService;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
