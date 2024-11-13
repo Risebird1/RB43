@@ -173,6 +173,8 @@ namespace Risebird.Entities.ViewModel
         public string AssessmentGroupDifference { get; set; }
         public string RemovedAssessmentGroups { get; set; }
         public string[] AssessmentGroupArrayOld { get; set; }
+        
+        [Required]
         public string[] AssessmentGroupArray { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
         public string Senioritylevel { get; set; }

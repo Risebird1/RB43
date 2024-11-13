@@ -2018,5 +2018,32 @@ namespace Risebird.Repository
             }
             return null;
         }
+        /// <summary>
+        /// Gets the list of all the candidates/interviews scheduled for the past 7 days for which the candidates have not confirmed their presence/availability 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetCandidatesWhoHaventConfirmed", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
