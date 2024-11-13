@@ -57,7 +57,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Client</th>
-                                                    <th>Confirmation Status</th>
+                                                    <th>Meeting Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Call Candidate</th>
                                                     <th>Actions</th>
@@ -72,7 +72,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Client</th>
-                                                    <th>Confirmation Status</th>
+                                                    <th>Meeting Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Call Candidate</th>
                                                     <th>Actions</th>
@@ -251,7 +251,7 @@
     //// script for loader ends here
 </script>
 
-@* <script>
+<script>
     function Cancelinvite(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId, elementId) {
 
         swal.fire({
@@ -266,9 +266,9 @@
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: '/Candidate/PublicCancelInterview',
+                        url: '/Candidate/CancelInterviewV2',
                         type: 'POST',
-                        data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
+                        data: { 'interviewId': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
                         success: function (data) {
                             if (data != null && data.toLowerCase().includes('success')) {
                                 resolve(data);
@@ -313,4 +313,4 @@
 
 
     }
-</script> *@
+</script>
