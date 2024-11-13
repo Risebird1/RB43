@@ -782,7 +782,7 @@ namespace Risebird.Web.Controllers
                     employementdetails = new EmploymentDetailsDM();
                     //TODO: Update According to blacklist data pr deployement
                     var model = await EmployementVerificationDetails(candidateemail, mobilenumber);
-                    if (string.IsNullOrWhiteSpace(model.message))
+                    if (string.IsNullOrWhiteSpace(model.message) && !string.IsNullOrEmpty(model.CandidateEmail) && (model.CandidateEmail.ToLower() == candidateemail.ToLower()))
                     {
                         var companyname = model.summary?.recentEmployerData.establishmentName;
                         var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
@@ -819,7 +819,11 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.message.Contains("Upstream"))
                         {
-                            employementdetails.message = "Fail to verify , API didn't work, try after sometime";
+                            employementdetails.message = "Failed to verify , API didn't work, try after sometime";
+                        }
+                        else if(model.CandidateEmail.ToLower() != candidateemail.ToLower())
+                        {
+                            employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
                         }
                         else
                         {
@@ -832,6 +836,10 @@ namespace Risebird.Web.Controllers
                     if (!string.IsNullOrWhiteSpace(employementdetails.message))
                     {
                         employementdetails.message = "No employement records are found, so we don't process further.";
+                    }
+                    else if (string.IsNullOrEmpty(employementdetails.CandidateEmail) || employementdetails.CandidateEmail.ToLower() != candidateemail.ToLower())
+                    {
+                        employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
                     }
                     else
                     {

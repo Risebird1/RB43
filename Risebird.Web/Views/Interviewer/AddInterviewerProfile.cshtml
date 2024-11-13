@@ -166,7 +166,7 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">  @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                            <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
+                                            <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple" required>
                                                 @foreach (var item in Model.AssessmentGroupList.ToList())
                                                 {
                                                     @if (item != null)
@@ -862,7 +862,7 @@
         }
 
     }
-    function Checkvalidation() {
+    @* function Checkvalidation() {
         debugger;
     
         checkEmailid();
@@ -872,7 +872,7 @@
             return false;
         }
         
-    }
+    } *@
     //function CheckvalidationforProfile() {
     //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
     //    //    $("#err_assessmentgroup").text("");
@@ -890,7 +890,7 @@
     //}
 </script>
 <script>
-    function VerifyEVandNext() {
+    @* function VerifyEVandNext() {
         var mobilenumber = $("#txt_evmobile").val();
         var candidateEmailid = $("#txt_evEmailId").val();
         if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
@@ -929,7 +929,7 @@
             swal.fire("Please enter Mobile Number and Email Address.");
         }
 
-    }
+    } *@
 </script>
 <script>
     var clickverification = 0;
