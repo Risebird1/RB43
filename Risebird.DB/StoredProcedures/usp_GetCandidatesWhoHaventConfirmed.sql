@@ -20,7 +20,7 @@ Begin
 	join Client cl on cl.id = irf.ClientId
 	left join InterviewComments ic on ic.InterviewId = im.id
 	join UserList ul on ul.EmailId = im.candidateEmail
-	where cast(interviewDate as date) >= cast(DATEADD(day, -7, @timeNow) as date)
+	where cast(interviewDate as date) >= cast(@timeNow as date) and  cast(interviewDate as date) <= cast(DATEADD(day, 7, @timeNow) as date)
 	and (MeetingStatus = 2 or MeetingStatus is null)
 	and (CandidateResponse = 0 or CandidateResponse is null)
 	and confirmationStatus = 1

@@ -57,8 +57,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Client</th>
-                                                    <th>Confirmation Status</th>
-                                                    <th>Meeting Status</th>
+                                                    
                                                     <th>Call Candidate</th>
                                                     <th>Actions</th>
 
@@ -72,8 +71,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Client</th>
-                                                    <th>Confirmation Status</th>
-                                                    <th>Meeting Status</th>
+                                                    
                                                     <th>Call Candidate</th>
                                                     <th>Actions</th>
 
@@ -109,8 +107,7 @@
                                                                 <td></td>
                                                             }
                                                             <td>@item.Client</td>
-                                                            <td>@item.confirmationStatus</td>
-                                                            <td>@item.MeetingStatusStatusDesc</td>
+                                                            
                                                             <td style="padding:0px 7px;">
                                                                 <span class="call-area">
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -251,7 +248,7 @@
     //// script for loader ends here
 </script>
 
-@* <script>
+<script>
     function Cancelinvite(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId, elementId) {
 
         swal.fire({
@@ -266,9 +263,9 @@
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: '/Candidate/PublicCancelInterview',
+                        url: '/Candidate/CancelInterviewV2',
                         type: 'POST',
-                        data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
+                        data: { 'interviewId': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
                         success: function (data) {
                             if (data != null && data.toLowerCase().includes('success')) {
                                 resolve(data);
@@ -313,4 +310,4 @@
 
 
     }
-</script> *@
+</script>
