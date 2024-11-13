@@ -1289,8 +1289,12 @@
         $.ajax({
             url: '/Dashboard/GetDateWiseInterviews',
             data: { 'date': date },
-            success: function (data) {
-                UpdateInterviewTrackingGraph(JSON.parse(data.meetingsData), JSON.parse(data.meetingsDataLabels));
+            success: function (dataSuccess) {
+                UpdateInterviewTrackingGraph(JSON.parse(dataSuccess.meetingsData), JSON.parse(dataSuccess.meetingsDataLabels));
+            },
+            error: function (error) {
+                
+                //reject(error)
             }
         });
     }

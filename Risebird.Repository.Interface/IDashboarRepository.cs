@@ -86,5 +86,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<TransInterviewer>> GetTransInterviewersWithNegativeAIVerdict();
         Task<IEnumerable<Meeting>> GetQCPendingReportsForAIQC();
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAIQCNegativeVerdictReports();
+        Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed();
     }
 }

@@ -134,7 +134,6 @@
 </script>
 <script>
     function uploadResume() {
-       
         var IRFId=  $('#IRFId').val();
         var IRFName= $('#IRFName').val();
         var IRFType = $('#IRFType').val();
@@ -154,9 +153,10 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (result) {
-                    swal.fire(result).then(function () {
-                        location.reload(true);
-                    });
+                    // swal.fire(result).then(function () {
+                    //     location.reload(true);
+                    // });
+                    swal.fire(result);
                     closeUploadResumeModal();
 
                 },

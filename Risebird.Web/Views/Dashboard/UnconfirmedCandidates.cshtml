@@ -1,0 +1,316 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities.Data
+
+@{
+    ViewData["Title"] = "Not Confirmed Candidates";
+    ViewBag.PageHeader = "Not Confirmed Candidates";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+}
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Not Confirmed Candidates</h4></div>
+                </div>
+
+                @* <div class="pull-right">
+                    <div>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                    </div>
+                </div> *@
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div>
+
+                                    <div id="tableID" class="second" style="overflow-x:scroll">
+                                        <table id="unconfirmedCandidatesTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Skill Channel</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Client</th>
+                                                    <th>Confirmation Status</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Call Candidate</th>
+                                                    <th>Actions</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Skill Channel</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Client</th>
+                                                    <th>Confirmation Status</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Call Candidate</th>
+                                                    <th>Actions</th>
+
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+
+                                                @if (Model != null && Model.Count() > 0)
+                                                {
+                                                    foreach (var item in Model)
+                                                    {
+
+                                                        <tr>
+                                                            @if (!string.IsNullOrEmpty(item.candidateName))
+                                                            {
+                                                                <td> @item.candidateName </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+
+                                                            
+                                                            <td>@item.candidateEmail</td>
+                                                            <td>@item.IRFId</td>
+                                                            <td>@item.interviewDate</td>
+                                                            @if (!string.IsNullOrEmpty(item.interviewer))
+                                                            {
+                                                                <td> @item.interviewer </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            <td>@item.Client</td>
+                                                            <td>@item.confirmationStatus</td>
+                                                            <td>@item.MeetingStatusStatusDesc</td>
+                                                            <td style="padding:0px 7px;">
+                                                                <span class="call-area">
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>
+                                                                    }
+                                                                </span>
+                                                                @* @item.MobileNumber *@
+                                                            </td>
+                                                            <td>
+                                                                @if (ViewBag.Profile == ProfileNames.Admin || ViewBag.Profile == ProfileNames.SupportAdmin || ViewBag.Profile == ProfileNames.SeniorHR)
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                        <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Reschedule Invite" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                        </span>
+                                                                    </button>
+
+                                                                    @if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                                    {
+                                                                        <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+                                                                    }
+                                                                }
+
+                                                            </td>
+
+
+                                                        </tr>
+
+
+                                                    }
+                                                }
+
+                                            </tbody>
+
+                                        </table>
+
+
+
+
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    
+
+   @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+</div>
+
+<script src="~/js/TwilioCallMaker.js"></script>
+<script>
+
+    function searchResult() {
+        $('#unconfirmedCandidatesTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#unconfirmedCandidatesTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+            var table = $('#unconfirmedCandidatesTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            order: [[1, 'desc']]
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    };
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#unconfirmedCandidatesTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#unconfirmedCandidatesTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    }
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#unconfirmedCandidatesTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+@* <script>
+    function Cancelinvite(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId, elementId) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Interview for " + CandidateEmail + " under skill channel " + skillChannelName + " dated " + interviewdate + " will be cancelled! Cancelled meetings cannot be confirmed back.",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: "Don't",
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/PublicCancelInterview',
+                        type: 'POST',
+                        data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success')) {
+                                resolve(data);
+
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+
+                        }
+                    });
+
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Cancelled!',
+                    type: 'success',
+                    html: '<p>Meeting cancelled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    //window.location = "/IRF/Index";
+                    //location.reload(true);
+                    document.getElementById(elementId).style.display = "none";
+                })
+
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Aborted!',
+                    'Meeting remains confirmed! :)',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+</script> *@
