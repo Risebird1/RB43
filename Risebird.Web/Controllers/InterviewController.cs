@@ -8750,7 +8750,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyQualityControlledInterviews()
+        public async Task<IActionResult> MyQualityControlledInterviews(string type)
         {
             try
             {
@@ -8768,6 +8768,16 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        if (type == "Completed")
+                        {
+                            ViewBag.Type = "Completed";
+                            meetings = meetings.Where(x => x.IsQC == true).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "Pending";
+                            meetings = meetings.Where(x => x.IsQC == false).ToList();
                         }
                         return View(meetings);
                     }
