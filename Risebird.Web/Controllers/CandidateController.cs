@@ -4469,6 +4469,71 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// this method is a replica of PublicCancelInterview the only difference being that authentication is being performed so as to find the logged in User. do not confuse 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="interviewDate"></param>
+        /// <param name="candidateEmail"></param>
+        /// <param name="IRFId"></param>
+        /// <param name="zoomMeetingId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CancelInterviewV2(int interviewId, DateTime interviewDate, string candidateEmail, int IRFId, string zoomMeetingId = null)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                {
+                    if (await _meetingService.PublicCancelInterview(interviewId, emailId))
+                    {
+                        var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
+                        var updatedStatus = await _irfRepository.UpdateCancellationSource(interviewId, emailId);
+                        var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, interviewId);
+                        var result = await _candidateService.FetchChannelOwnerandInterviewer(interviewId);
+                        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(interviewId);
+                        List<string> interviewers = new List<string>();
+                        if (!string.IsNullOrEmpty(result.interviewer))
+                        {
+                            interviewers.Add(result.interviewer);
+                        }
+                        if (!string.IsNullOrEmpty(result.EmailId))
+                        {
+                            interviewers.Add(result.EmailId);
+                        }
+                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, interviewId);
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, interviewId);
+                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, IRFId, interviewId);
+
+                        if (!string.IsNullOrEmpty(zoomMeetingId))
+                        {
+                            await DeleteMeetingLink(zoomMeetingId);
+                        }
+
+                        return Json($"Invitation for candidate {candidateEmail} has been cancelled Successfully!");
+                    }
+                    else
+                    {
+                        return Json($"Sorry! Could not cancel invite for candidate {candidateEmail}!");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json($"Sorry! Could not cancel invite for candidate {candidateEmail}!");
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> FetchSchedulingLinks(string emailid)
