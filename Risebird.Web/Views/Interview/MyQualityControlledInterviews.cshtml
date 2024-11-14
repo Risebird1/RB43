@@ -51,7 +51,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Candidate</th>
-                                                    <th>JD Link</th>
+                                                    <th>Instruction</th>
                                                     @* <th>Channel Owner</th> *@
                                                     <th>Action</th>
                                                 </tr>
@@ -62,7 +62,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Candidate</th>
-                                                    <th>JD Link</th>
+                                                    <th>Instruction</th>
                                                     @* <th>Channel Owner</th> *@
                                                     <th>Action</th>
                                                 </tr>
@@ -75,13 +75,13 @@
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.NickName</td>
                                                         <td>@item.candidateEmail</td>
-                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                        @if (item.FeedbackAudioLink != null && item.FeedbackAudioLink != "")
                                                         {
-                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                            <td>  <a id="jdlinkId" target="_blank" title="Interview Instruction" href=@item.FeedbackAudioLink>Instruction</a></td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No JD</td>
+                                                            <td></td>
                                                         }
                                                         @* <td>@item.ChannelOwner</td> *@
                                                         <td class="text-center">
