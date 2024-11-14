@@ -22,16 +22,16 @@
 
 
 <script>
-    function PaymentSLADetails(interviewid, candidateEmail, interviewer, isapproved, pagetype, isqcDone, techqc) {
+    function PaymentSLADetails(interviewid,candidateName, interviewer, isapproved, pagetype, isqcDone, techqc ) {
         $.ajax({
             url: '/Interview/GetPaymentSlaDetails',
-            data: { 'interviewid': interviewid, 'interviewer': interviewer, 'isapproved': isapproved, 'pagetype': pagetype, 'isQcDone': isqcDone, 'techqc': techqc },
+            data: { 'interviewid': interviewid, 'candidateName': candidateName, 'interviewer': interviewer, 'isapproved': isapproved, 'pagetype': pagetype, 'isQcDone': isqcDone, 'techqc': techqc },
             type: "GET",
             success: function (data) {
                 openPaymentSLAModel();
                 $('#divPaymentSlamodel').html('');
                 $('#divPaymentSlamodel').html(data);
-                $("#txtheaderPayment").text('( ' + candidateEmail + ' )');
+                $("#txtheaderPayment").text('( ' + candidateName + ' )');
             }
         });
     }
