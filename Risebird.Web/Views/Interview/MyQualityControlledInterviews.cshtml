@@ -15,9 +15,19 @@
                         <h4 class="card-title"></h4>
                         <h4 class="card-title">My QC Interviews</h4>
                     </div>
-
-
                 </div>
+            </div>
+            <div class="pull-left">
+                @if (ViewBag.Type == "Pending")
+                {
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
+                }
+                else if (ViewBag.Type == "Completed")
+                {
+                    <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
+                }
             </div>
         </div>
     </div>
@@ -40,7 +50,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Candidate</th>
-                                                    <th>JD Link</th>
+                                                    <th>Instruction</th>
                                                     @* <th>Channel Owner</th> *@
                                                     <th>Action</th>
                                                 </tr>
@@ -51,7 +61,7 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Candidate</th>
-                                                    <th>JD Link</th>
+                                                    <th>Instruction</th>
                                                     @* <th>Channel Owner</th> *@
                                                     <th>Action</th>
                                                 </tr>
@@ -64,13 +74,13 @@
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.NickName</td>
                                                         <td>@item.candidateEmail</td>
-                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                        @if (item.FeedbackAudioLink != null && item.FeedbackAudioLink != "")
                                                         {
-                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                            <td>  <a id="jdlinkId" target="_blank" title="Interview Instruction" href=@item.FeedbackAudioLink>Instruction</a></td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No JD</td>
+                                                            <td></td>
                                                         }
                                                         @* <td>@item.ChannelOwner</td> *@
                                                         <td class="text-center">
@@ -122,6 +132,8 @@
 
         });
     }
-
+    function Changeurldetails(type) {
+        window.location.href = "/Interview/MyQualityControlledInterviews?type=" + type;
+    }
 
 </script>

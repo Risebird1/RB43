@@ -20,134 +20,134 @@
     }
 }
 <div class="scrollbar" id="style-2">
-<div id="tableID" class="second">
-    <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Interview Date</th>
-                <th>Candidate</th>
-                <th>Skill Channel</th>
-                @if (string.IsNullOrEmpty(clientEmailId))
+    <div id="tableID" class="second">
+        <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Interview Date</th>
+                    <th>Candidate</th>
+                    <th>Skill Channel</th>
+                    @if (string.IsNullOrEmpty(clientEmailId))
+                    {
+                        <th>Client</th>
+
+                    }
+                    <th>Meeting Status</th>
+                    <th>Interview Status</th>
+                    <th>Report</th>
+                    <th>Interviewer Joining Time</th>
+                    @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
+                    {
+                        <th>Tech QC</th>
+                    }
+
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Interview Date</th>
+                    <th>Candidate</th>
+                    <th>Skill Channel</th>
+                    @if (string.IsNullOrEmpty(clientEmailId))
+                    {
+                        <th>Client</th>
+
+                    }
+                    <th>Meeting Status</th>
+                    <th>Interview Status</th>
+                    <th>Report</th>
+                    <th>Interviewer Joining Time</th>
+                    @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
+                    {
+                        <th>Tech QC</th>
+                    }
+                </tr>
+            </tfoot>
+            <tbody>
+
+                @if (Model != null && Model.Count() > 0)
                 {
-                    <th>Client</th>
+                    foreach (var item in Model)
+                    {
+                        <tr>
 
-                }
-                <th>Meeting Status</th>
-                <th>Interview Status</th>
-                <th>Report</th>
-                <th>Interviewer Joining Time</th>
-                @if (ViewBag.ClientEmailId == null)
-                {
-                    <th>Tech QC</th>
-                }
-
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>Interview Date</th>
-                <th>Candidate</th>
-                <th>Skill Channel</th>
-                @if (string.IsNullOrEmpty(clientEmailId))
-                {
-                    <th>Client</th>
-
-                }
-                <th>Meeting Status</th>
-                <th>Interview Status</th>
-                <th>Report</th>
-                <th>Interviewer Joining Time</th>
-                @if (ViewBag.ClientEmailId == null)
-                {
-                    <th>Tech QC</th>
-                }
-            </tr>
-        </tfoot>
-        <tbody>
-
-            @if (Model != null && Model.Count() > 0)
-            {
-                foreach (var item in Model)
-                {
-                    <tr>
-
-                        <td>@item.interviewDate</td>
-                        <td>@item.candidateEmail</td>
-                        <td>@item.SkillChannel</td>
-                        @if (string.IsNullOrEmpty(clientEmailId))
-                        {
-                            <td>@item.Client</td>
-
-                        }
-                        @if (item.MeetingStatus.HasValue && ((MeetingStatus)item.MeetingStatus == MeetingStatus.NoShowInterviewer || (MeetingStatus)item.MeetingStatus == MeetingStatus.NoShow))
-                        {
-                            <td>No Show</td>
-                        }
-                        else
-                        {
-                            <td>@(item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0 ? ((MeetingStatus)item.MeetingStatus).GetDescription() : "NA") </td>
-                        }
-
-                        @if (ViewBag.StatType == StatsTypes.Selected || ViewBag.StatType == StatsTypes.Rejected
-                       || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy)
-                        {
-                            <td>@(item.InterviewStatus.HasValue && item.InterviewStatus.Value > 0 ? ((InterviewStatus)item.InterviewStatus).GetDescription() : "NA") </td>
-
-                        }
-                        else
-                        {
-                            <td>NA</td>
-                        }
-                        <td>
-                            @if (item.InterviewStatus.HasValue && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
+                            <td>@item.interviewDate</td>
+                            <td>@item.candidateEmail</td>
+                            <td>@item.SkillChannel</td>
+                            @if (string.IsNullOrEmpty(clientEmailId))
                             {
-                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId=item.interviewId, irfId = item.irfId, IsSelected = true })'>
-                                    Report
-                                </a>
+                                <td>@item.Client</td>
+
+                            }
+                            @if (item.MeetingStatus.HasValue && ((MeetingStatus)item.MeetingStatus == MeetingStatus.NoShowInterviewer || (MeetingStatus)item.MeetingStatus == MeetingStatus.NoShow))
+                            {
+                                <td>No Show</td>
                             }
                             else
                             {
-                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false })'>
-                                    Report
-                                </a>
+                                <td>@(item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0 ? ((MeetingStatus)item.MeetingStatus).GetDescription() : "NA") </td>
                             }
 
-                        </td>
-                        <td>
-                            @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
-                        </td>
-                        @if (ViewBag.ClientEmailId == null)
-                        {
+                            @if (ViewBag.StatType == StatsTypes.Selected || ViewBag.StatType == StatsTypes.Rejected
+                           || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy)
+                            {
+                                <td>@(item.InterviewStatus.HasValue && item.InterviewStatus.Value > 0 ? ((InterviewStatus)item.InterviewStatus).GetDescription() : "NA") </td>
+
+                            }
+                            else
+                            {
+                                <td>NA</td>
+                            }
                             <td>
-                                <div class="form-group">
-                                    <div class="switch-btn">
-                                        @* <span class="on-off">Off</span> *@
-                                        <div class="material-toggle">
-                                            @if (item.isTechQC)
-                                            {
-                                                <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,false)" checked="checked" value="false" name="Move To Tech QC">
-                                            }
-                                            else
-                                            {
-                                                <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,true)" value="false" name="Move To Tech QC">
-                                            }
-                                            <label for="MoveToCP_@item.interviewId" class=""></label>
-                                        </div>
-                                        @* <span class="on-off">On</span> *@
-                                    </div>
-                                </div>
+                                @if (item.InterviewStatus.HasValue && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
+                                {
+                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId=item.interviewId, irfId = item.irfId, IsSelected = true })'>
+                                        Report
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false })'>
+                                        Report
+                                    </a>
+                                }
+
                             </td>
-                        }
-                    </tr>
+                            <td>
+                                @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
+                            </td>
+                            @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
+                            {
+                                <td>
+                                    <div class="form-group">
+                                        <div class="switch-btn">
+                                            @* <span class="on-off">Off</span> *@
+                                            <div class="material-toggle">
+                                                @if (item.isTechQC)
+                                                {
+                                                    <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,false)" checked="checked" value="false" name="Move To Tech QC">
+                                                }
+                                                else
+                                                {
+                                                    <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,true)" value="false" name="Move To Tech QC">
+                                                }
+                                                <label for="MoveToCP_@item.interviewId" class=""></label>
+                                            </div>
+                                            @* <span class="on-off">On</span> *@
+                                        </div>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
 
+                    }
                 }
-            }
 
-        </tbody>
+            </tbody>
 
-    </table>
+        </table>
 
-</div>
+    </div>
 </div>
 <script>
     function UpdateTechQCDetails(interviewid, activestatus) {

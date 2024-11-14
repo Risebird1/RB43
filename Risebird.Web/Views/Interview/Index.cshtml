@@ -476,8 +476,15 @@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th id='start'>Skill Channel ID</th>
                                                     <th>Interview Date</th>
+                                                    @if(ViewBag.profile != "Quality Controller"){
                                                     <th>Candidate Details</th>
+                                                    }
+                                                    else
+                                                    {<th>Candidate Name</th>
+                                                    }
+                                                      @if(ViewBag.profile != "Quality Controller"){
                                                     <th>Mobile Number</th>
+                                                      }
                                                     @*Hide Columns for Cancel Intervies*@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
@@ -540,8 +547,18 @@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th>Skill Channel ID</th>
                                                     <th>Interview Date</th>
-                                                    <th>Candidate Details</th>
-                                                    <th>Mobile Number</th>
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Candidate Details</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Mobile Number</th>
+                                                    }
                                                     @*Hide Columns for Cancel Intervies*@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
@@ -831,7 +848,9 @@
                                                                         </div>
                                                                         </div>
                                                                     }
-                                                                <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
+                                                                     
+                                                                     <span class="name-field"> @* <a onclick="directopenChat('@item.candidateEmail')"> *@<span class="dot" style="background-color:green"></span>@item.candidateName @* </a> *@ </span>
+                                                                      
                                                             }
                                                             else
                                                             {   
@@ -851,7 +870,7 @@
                                                                     }
                                                                 <span class="name-field">  @item.candidateName</span>
                                                             }
-
+                                                            @if(ViewBag.profile != "Quality Controller"){
                                                             @if (item.zoomLink != null && item.zoomLink != "")
                                                             {
                                                                 <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
@@ -860,7 +879,10 @@
                                                             {
                                                                 <span class="email-field" style="color:red"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
                                                             }
+                                                              
+                                                              }
                                                         </td>
+                                                        @if(ViewBag.profile != "Quality Controller"){
                                                         <td style="padding:0px 7px;">
                                                             <span class="call-area">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -870,6 +892,7 @@
                                                             </span>
                                                             @item.MobileNumber
                                                         </td>
+                                                        }
                                                         @*Hide Columns for Cancel Intervies*@
                                                         @if (ViewBag.Type != CancelInterviews)
                                                         {
