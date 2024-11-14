@@ -57,7 +57,8 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Client</th>
-                                                    
+                                                    <th>Channel Owner</th>
+                                                    <th>Client HR</th>
                                                     <th>Call Candidate</th>
                                                     <th>Actions</th>
 
@@ -71,7 +72,8 @@
                                                     <th>Interview Date</th>
                                                     <th>Interviewer</th>
                                                     <th>Client</th>
-                                                    
+                                                    <th>Channel Owner</th>
+                                                    <th>Client HR</th>
                                                     <th>Call Candidate</th>
                                                     <th>Actions</th>
 
@@ -107,6 +109,16 @@
                                                                 <td></td>
                                                             }
                                                             <td>@item.Client</td>
+                                                            <td>@item.ChannelOwner</td>
+                                                            @if(!string.IsNullOrEmpty(item.ClientHrContact))
+                                                            {
+                                                                <td>@item.ClientHrContact</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                 <td>@item.ClientHRAttemptContact</td>
+
+                                                            }
                                                             
                                                             <td style="padding:0px 7px;">
                                                                 <span class="call-area">
@@ -115,23 +127,31 @@
                                                                         <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>
                                                                     }
                                                                 </span>
-                                                                @* @item.MobileNumber *@
+                                                                @item.MobileNumber
                                                             </td>
                                                             <td>
                                                                 @if (ViewBag.Profile == ProfileNames.Admin || ViewBag.Profile == ProfileNames.SupportAdmin || ViewBag.Profile == ProfileNames.SeniorHR)
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
-                                                                        <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Reschedule Invite" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                        </span>
-                                                                    </button>
-
+                                                                    
                                                                     @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                     {
                                                                         <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CancelInviteAndReschedule(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', '@item.scheduleUniqueid')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:1px;width:25px!important;height:25px!important" title="Cancel Interview and Schedule Interview"><span class="fal fa-times" style="font-size:13px;line-height:27px;animation:none;"></span></span></span>
+                                                                    
                                                                     }
                                                                 }
+                                                                @if (ViewBag.Profile == ProfileNames.Admin || ViewBag.Profile == ProfileNames.SupportAdmin)
+                                                                {
+                                                                    <a style="text-decoration: none;" target="_blank" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.irfIntId })" title="Edit">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit" style="position:relative;top:2px;">
+                                                                            <span title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
 
+                                                                }
+
+                                                                
                                                             </td>
 
 
@@ -310,4 +330,117 @@
 
 
     }
+</script>
+<script>
+    function CancelInviteAndReschedule(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId, scheduleUniqueid) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Interview for " + CandidateEmail + " under skill channel " + skillChannelName + " dated " + interviewdate + " will be cancelled! Cancelled meetings cannot be confirmed back.",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: "Don't",
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/CancelInterviewV2',
+                        type: 'POST',
+                        data: { 'interviewId': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success')) {
+                                resolve(data);
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+
+                        }
+                    });
+
+                })
+            },
+            allowOutsideClick: false
+        })
+            .then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Cancelled!',
+                        type: 'success',
+                        html: '<p>Meeting cancelled.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        captureclick('EnergencyDashBoard', 'Reschedule', id);
+    @*  window.open(window.location.href = "/InterviewScheduler/ScheduleEvent?id=" + $('#scheduleUniqueid').val() + "&interviewid=" + $('#imid').val(), '_blank') *@
+    @*  window.open("/InterviewScheduler/ScheduleEvent?id=" + scheduleUniqueid + "&interviewid=" + id, '_blank') *@
+    @*   window.open('ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid)', '_blank') *@
+                            ReschuduleMeeting(id, scheduleUniqueid, IRFid, CandidateEmail);
+                    })
+
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Aborted!',
+                        'Meeting remains confirmed! :)',
+                        'error'
+                    )
+                }
+            })
+
+
+    }
+
+    
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting and reschedule?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reschedule!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/InterviewScheduler/GenerateCandidatescheuleLink',
+                        method: 'POST',
+                        data: {
+                            'CandidateEmailid': candidateEmailid,
+                            'interviewid': interviewid,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid,
+                            'schedulertype': 2
+                        },
+                        success: function (result) {
+                            window.open(result, '_blank');
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error rescheduling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                //location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'reschedule cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+
 </script>
