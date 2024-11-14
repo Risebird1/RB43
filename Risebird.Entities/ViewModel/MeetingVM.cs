@@ -51,6 +51,7 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         //[Required(ErrorMessage = "Please enter Client HR Email Id.")]
         public string ClientHrContact { get; set; }
+        public string ClientHRAttemptContact { get; set; }
         public string ClientEmail { get; set; }
         public string Comment { get; set; }
 
