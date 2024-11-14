@@ -317,9 +317,10 @@
 
                                                         }
                                                         @*Turing*@
-
+                                                       @if(ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer" ){
                                                         <div class="report-heading">Candidate Name</div>
                                                         <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                       }
                                                     }
                                                     else
                                                     {
@@ -338,16 +339,19 @@
                                                             </div>
                                                         }
                                                         @*Turing*@
-
+                                                         @if(ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer" ){
                                                         <div class="report-heading">Candidate Name</div>
                                                         <h2>@Model.CandidateName</h2>
+                                                         }
                                                     }
                                                 }
+                                                 @if(ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer" ){
                                                 <div class="report-heading">
                                                     Email Id:
                                                 </div>
 
                                                 <h4>@Model.CandidateEmail</h4>
+                                                 }
 
                                                 @*<div class="report-heading">
                                             Position
