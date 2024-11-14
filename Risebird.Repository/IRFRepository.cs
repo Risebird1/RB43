@@ -9227,6 +9227,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFid", IRFid);
+                dynamicParameters.Add("@Userid", Userid);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                dynamicParameters.Add("@billingrate", billingrate);
+                dynamicParameters.Add("@billingtype", "USD");
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync(con, "Usp_SaveInterviewerBillingRate", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

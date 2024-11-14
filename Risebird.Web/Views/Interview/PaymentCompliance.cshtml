@@ -48,6 +48,10 @@
     {
             <li><b>Proctoring Ignorance:</b><div class="tags"> @Model.ProctoringIgnorance</div></li>
     }
+        @if (!string.IsNullOrWhiteSpace(Model.InterviewerVideo))
+    {
+            <li><b>Interviewer Video:</b><div class="tags"> @Model.InterviewerVideo</div></li>
+    }
     </ul>
 </div>
 @*<script type="text/javascript">

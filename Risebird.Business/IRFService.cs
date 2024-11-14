@@ -4401,5 +4401,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid)
+        {
+            try
+            {
+                return await _irfRepository.SaveInterviewerBillingRate(billingrate, Userid, IRFid);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

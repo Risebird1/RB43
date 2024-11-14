@@ -14,7 +14,7 @@ Create PROCEDURE [dbo].[usp_GetCompletedInterviewMeetings]
 AS                 
 Begin  
 select distinct im.id imid,im.IRFId, im.interviewDate,im.candidateEmail,im.ClientHrContact, im.interviewer, ulin.mobilenumber,                 
-im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsVideoRequired,ic.VideoLink,ic.InterviewerComment,            
+im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,pm.DurationSelectedMin as interviewDuration,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsVideoRequired,ic.VideoLink,ic.InterviewerComment,            
 ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus,ul.EmailId as risebirdHR,ulin.FirstName as InterviewerName,    
 im.HRCoordinatorEmailId,cl.[Name] as Client,tqc.id as QCPresent,  
 imjt.Joinedon,im.IsEmergency,im.EIAssigned
@@ -28,6 +28,7 @@ left join userlist ulin on ulin.emailid= im.interviewer
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                  
 left join Client cl on cl.id = irf.ClientId    
 left join PaymentSLADetails tqc on tqc.Interviewid=im.id  and ISNULL(tqc.isQcDone,0)=1  
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
 Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
 where IsNull(IsProctor,0)=0 and im.interviewDate >= @startDate AND im.interviewDate < @endDate and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)   
 and ISNULL(im.RedoInterview,0)=0  

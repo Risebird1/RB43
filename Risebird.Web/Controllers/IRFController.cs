@@ -10391,5 +10391,21 @@ namespace Risebird.Web.Controllers
             return reportlink;
         }
         #endregion
+        #region Client Billing Rate
+        [HttpPost]
+        public async Task<JsonResult> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid)
+        {
+            try
+            {
+                await _irfService.SaveInterviewerBillingRate(billingrate, Userid, IRFid);
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
+            }
+        }
+        #endregion
     }
 }

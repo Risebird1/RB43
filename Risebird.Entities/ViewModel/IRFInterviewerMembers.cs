@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         public int UserId { get; set; }
         public string IRFName { get; set; }
         public string AIVerdict { get; set; }
+        public int BillingRate { get; set; }
     }
     public class AssessmentIRFListVM
     {
