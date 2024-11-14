@@ -230,8 +230,9 @@
                                                     <th>Interview Duration</th>
                                                     <th>Candidate Name</th>
                                                        <th>Interviewer Joinedon</th>
-                                                     
-                                                    <th>Candidate Email</th>
+                                                      @if(ViewBag.profile != "Quality Controller"){
+                                                      <th>Candidate Email</th>
+                                                      }
                                                     <th>Client Name</th>
                                                     <th>Interviewer</th>
                                                     <th>Mobile Number</th>
@@ -253,7 +254,9 @@
                                                      <th>Interview Duration</th>
                                                     <th>Candidate Name</th>
                                                       <th>Interviewer Joinedon</th>
-                                                    <th>Candidate Email</th>
+                                                      @if(ViewBag.profile != "Quality Controller"){
+                                                    <th>Candidate Email</th> 
+                                                      }
                                                     <th>Client Name</th>
                                                     <th>Interviewer</th>
                                                     <th>Mobile Number</th>
@@ -305,9 +308,10 @@
                                                             <div style="float:left">@item.Joinedon </div>
                                                             
                                                         </td>
-
+                                                        @if(ViewBag.profile != "Quality Controller"){
                                                        
-                                                        <td>@item.candidateEmail</td>
+                                                       <td>@item.candidateEmail</td> 
+                                                        }
                                                         <td>@item.Client</td>
                                                         <td>@item.interviewer</td>
                                                          <td>
