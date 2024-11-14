@@ -15,20 +15,19 @@
                         <h4 class="card-title"></h4>
                         <h4 class="card-title">My QC Interviews</h4>
                     </div>
-                    <div class="pull-left">
-                        @if (ViewBag.Type == "Pending")
-                        {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
-                        }
-                        else if (ViewBag.Type == "Completed")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
-                        }
-                    </div>
-
                 </div>
+            </div>
+            <div class="pull-left">
+                @if (ViewBag.Type == "Pending")
+                {
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
+                }
+                else if (ViewBag.Type == "Completed")
+                {
+                    <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending QC</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('Completed')"><strong>Completed QC</strong></div>
+                }
             </div>
         </div>
     </div>

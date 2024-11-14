@@ -35,7 +35,8 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @techqc bit,  
 @Recommendation varchar(15),  
 @RecommendationComments varchar(500),  
-@InterviewerVideo varchar(250)  
+@InterviewerVideo varchar(250) , 
+@CorrectInterview varchar(15)  
 AS    
 BEGIN    
 Declare @Userid int         
@@ -64,15 +65,16 @@ Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,    
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,    
 UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved,    
-PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation,IsTechQCDone= @techqc,RecommendationComments=@RecommendationComments,InterviewerVideo=@InterviewerVideo   
+PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation,IsTechQCDone= @techqc,RecommendationComments=@RecommendationComments,InterviewerVideo=@InterviewerVideo,
+CorrectInterview=@CorrectInterview
 where Interviewid=@Interviewid    
 end    
 else    
 begin    
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,    
-LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone,RecommendationComments,InterviewerVideo)     
+LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone,RecommendationComments,InterviewerVideo,CorrectInterview)     
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,    
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc,@RecommendationComments,@InterviewerVideo)     
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc,@RecommendationComments,@InterviewerVideo,@CorrectInterview)     
 end    
 end  
 If(@isapproved=1)    

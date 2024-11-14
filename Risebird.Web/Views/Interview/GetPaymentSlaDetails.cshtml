@@ -36,8 +36,8 @@
             z-index: 998;
         }
         /*
-                    Different arrow positioning
-                    */
+                        Different arrow positioning
+                        */
         .popup.arrow-top:before {
             left: calc(10% - 10px);
             top: -4px;
@@ -857,7 +857,7 @@
                                                 <li>
                                                     @if (Model.InterviewerVideo.Split(",").Contains("Stretched Video After Candidate Left"))
                                                     {
-                                                        <input type="checkbox" id="checkboxFiftyFour" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Stretched Video After Candidate Left" /> <label style="padding:3px 8px;"  for="checkboxFiftyFour">Stretched Video After Candidate Left</label>
+                                                        <input type="checkbox" id="checkboxFiftyFour" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Stretched Video After Candidate Left" /> <label style="padding:3px 8px;" for="checkboxFiftyFour">Stretched Video After Candidate Left</label>
                                                     }
                                                     else
                                                     {
@@ -933,25 +933,23 @@
 
                         <div class="col-md-6 col-sm-6">
                             <div class="form-group">
-                                    <div class="accordion-group">
-                                        <div class="accordion-heading">
-                                            <a class="accordion-toggle">
-                                                @Html.LabelFor(model => model.CorrectInterview, htmlAttributes: new { @class = "label-name" })
-                                            </a>
-                                        </div>
-                                        <div class="accordion-body" style="margin-bottom:15px;">
-                                            <div class="accordion-inner">
-                                                <div class="custom-select">
-
-                                                 @Html.RadioButtonFor(model => model.CorrectInterview, "No") No
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(model => model.CorrectInterview, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body" style="margin-bottom:15px;">
+                                        <div class="accordion-inner">
+                                            <div class="custom-select">
+                                                @Html.RadioButtonFor(model => model.CorrectInterview, "No") No
                                                 @Html.RadioButtonFor(model => model.CorrectInterview, "Yes") Yes
-                                                  
-                                                </div>
                                             </div>
                                         </div>
-                                      
                                     </div>
+
                                 </div>
+                            </div>
 
 
 
@@ -1649,7 +1647,7 @@
         $('input[value=Shortlist]').prop('checked', false);
     })
 
-      $(document).ready(function () {
-    $('input[value=No]').prop('checked', true);
-       })
+    $(document).ready(function () {
+        $('input[value=No]').prop('checked', true);
+    })
 </script>
