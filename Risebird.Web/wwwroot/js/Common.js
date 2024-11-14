@@ -52,7 +52,7 @@ function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
                 confirmButtonText: 'Close!',
                 allowOutsideClick: false
             }).then(function () {
-                //location.reload(true);
+                location.reload(true);
             })
         }
         else if (result.dismiss === 'cancel') {

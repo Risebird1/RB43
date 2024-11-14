@@ -537,6 +537,7 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("MessageInterviewerOnboarding");
 
                         }
+                        ViewBag.Profile = profileName;
                         return View("EditInterviewerProfile", model);
                     }
                     else
