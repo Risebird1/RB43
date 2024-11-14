@@ -805,7 +805,7 @@
                                                         @if (ViewBag.actionstatus == "CancelledInterviewCount")
                                                         {
                                                             <td>
-                                                                <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Reschedule Invite">
                                                                     <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                     </span>
