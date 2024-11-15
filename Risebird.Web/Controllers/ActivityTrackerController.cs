@@ -265,6 +265,25 @@ namespace Risebird.Web.Controllers
             await _activityTrackerService.SaveCaptureClickDetails(model);
             return Json("");
         }
+        [HttpPost]
+        public async Task<JsonResult> CaptureInterviewerRelatedPageClick(string type, string currenturl, string buttonaction, int interviewid, int interviewerid)
+        {
+            string emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+            }
+            var model = new CapturePageDM();
+            model.ButtonAction = buttonaction;
+            model.currenturl = currenturl;
+            model.Functiontype = type;
+            model.PerformedBy = emailid;
+            model.Interviewid = interviewid;
+            model.Interviewerid = interviewerid;
+            await _activityTrackerService.SaveCaptureInterviewerRelatedPageClick(model);
+            return Json("");
+        }
         #endregion
     }
 }
