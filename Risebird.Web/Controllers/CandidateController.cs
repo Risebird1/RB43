@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -4525,7 +4526,7 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                    
+
             }
             catch (Exception ex)
             {
@@ -6910,6 +6911,140 @@ namespace Risebird.Web.Controllers
             var portallink = "https://" + Request.Host.ToString();
             var reportlink = await GenerateExecutiveReportURl(portallink, interviewid, irfid);
             return Json(reportlink);
+        }
+        #endregion
+        #region Test Data Excel For turing
+        public async Task<FileContentResult> TestFile()
+        {
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Status");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
+            try
+            {
+                var strtdate = "01-10-2024";
+                var enddate = "01-11-2024";
+                var candidateDatawithoutCold = new List<CandidateExcelData>();
+                candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(Convert.ToDateTime(strtdate), Convert.ToDateTime(enddate), 177)).ToList();
+                var candidateDatawithCold = new List<CandidateExcelData>();
+                candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(Convert.ToDateTime(strtdate), Convert.ToDateTime(enddate), 177)).ToList();
+                candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
+
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 26;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Candidate name";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "Primary Skill";
+                Sheet.Cells[1, 4].Value = "Client Hr";
+                Sheet.Cells[1, 5].Value = "Added On";
+                Sheet.Cells[1, 6].Value = "Schedule Status";
+                Sheet.Cells[1, 7].Value = "Phone";
+
+                Sheet.Cells[1, 8].Value = "Latest Status";
+                Sheet.Cells[1, 9].Value = "Current Status Date";
+                Sheet.Cells[1, 10].Value = "Profile Source";
+
+                Sheet.Cells[1, 11].Value = "Skill Channel ID";
+                Sheet.Cells[1, 12].Value = "Scheduled On";// note: there could be multiple schedules of a candidate. This date belongs to the first entry of scheduled for the candidate for the skill channel.
+                Sheet.Cells[1, 13].Value = "Interview Date";
+                Sheet.Cells[1, 14].Value = "Reschdeule By Candidate";
+                Sheet.Cells[1, 15].Value = "Reschdeule By Turing";
+                Sheet.Cells[1, 16].Value = "Reschdeule By Risebird";
+
+
+                Sheet.Cells[1, 17].Value = "Last Cancelled By";
+                Sheet.Cells[1, 18].Value = "Cancellation Source";
+                Sheet.Cells[1, 19].Value = "Report Link";
+                Sheet.Cells[1, 20].Value = "Cost To Turing";
+
+                Sheet.Cells[1, 21].Value = "Schedule Count";
+                Sheet.Cells[1, 22].Value = "Meeting Status";
+
+                int i = 2;
+                if (candidateDatawithoutCold.Count() > 0)
+                {
+                    foreach (var item in candidateDatawithoutCold)
+                    {
+                        Sheet.Cells[i, 1].Value = item.candidateName;
+                        Sheet.Cells[i, 2].Value = item.candidateEmail;
+                        Sheet.Cells[i, 3].Value = item.JDTiltle;
+                        Sheet.Cells[i, 4].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 5].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 6].Value = "Scheduled";
+                        Sheet.Cells[i, 7].Value = item.MobileNumber ?? string.Empty;
+
+                        Sheet.Cells[i, 8].Value = item.CandidateLatestStatus;
+                        Sheet.Cells[i, 9].Value = item.CurrentStatusDate.HasValue ? item.CurrentStatusDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 11].Value = item.IRFId;
+                        Sheet.Cells[i, 12].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 17].Value = item.CancelledBy;
+                        Sheet.Cells[i, 18].Value = item.Cancellationsource;
+                        if (item.CandidateLatestStatus.ToUpper().Contains("SELECTED") || item.CandidateLatestStatus.ToUpper().Contains("REJECTED"))
+                        {
+                            Sheet.Cells[i, 19].Value = await GenerateExecutiveReportURl("https://portal.risebird.io/", item.id, item.Irfintid);
+                            Sheet.Cells[i, 20].Value = item.BillingRate;
+                        }
+                        if (item.CandidateLatestStatus.ToUpper().Contains("RESCHEDULE") && (item.MeetingStatus.ToUpper().Contains("No Show(Candidate)") || item.MeetingStatus.ToUpper() == "No Show"))
+                        {
+                            Sheet.Cells[i, 20].Value = item.BillingRate * 30 / 100;
+                        }
+
+                        Sheet.Cells[i, 21].Value = item.NoOfInterviews;
+                        if (item.confirmationStatus == "Cancelled")
+                        {
+                            Sheet.Cells[i, 22].Value = "Cancelled";
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 22].Value = item.MeetingStatus ?? string.Empty;
+                        }
+                        i++;
+                    }
+
+                    foreach (var cold in candidateDatawithCold)
+                    {
+
+                        Sheet.Cells[i, 1].Value = cold.candidateName;
+                        Sheet.Cells[i, 2].Value = cold.candidateEmail;
+                        Sheet.Cells[i, 3].Value = cold.JDTiltle;
+                        Sheet.Cells[i, 4].Value = cold.ClientHrContact;
+                        Sheet.Cells[i, 5].Value = cold.AddedOnDate.HasValue ? cold.AddedOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        if (cold.NoOfInterviews > 0)
+                        {
+                            Sheet.Cells[i, 6].Value = "Scheduled";
+                            Sheet.Cells[i, 21].Value = cold.NoOfInterviews;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "Not Yet Scheduled";
+                        }
+                        Sheet.Cells[i, 7].Value = cold.MobileNumber ?? string.Empty;
+                        Sheet.Cells[i, 8].Value = cold.CurrentStatus;
+                        Sheet.Cells[i, 9].Value = cold.CurrentStatusDate.HasValue ? cold.CurrentStatusDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 11].Value = cold.IRFId;
+                        Sheet.Cells[i, 12].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 13].Value = cold.interviewDate.HasValue ? cold.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
+                        Sheet.Cells[i, 20].Value = 0;
+                        Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
+                        i++;
+                    }
+                }
+                fileName = fileName.Replace(" ", "_");
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
         }
         #endregion
     }
