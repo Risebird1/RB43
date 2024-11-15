@@ -111,5 +111,35 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> SaveCaptureInterviewerRelatedPageClick(CapturePageDM model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@currenturl", model.currenturl);
+                parameters.Add("@PerformedBy", model.PerformedBy);
+                parameters.Add("@Functiontype", model.Functiontype);
+                parameters.Add("@ButtonAction", model.ButtonAction);
+                parameters.Add("@PerformedOn", DateTime.Now);
+                parameters.Add("@Interviewid", model.Interviewid);
+                parameters.Add("@Interviewerid", model.Interviewerid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_SaveInterviewerRelatedClickDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

@@ -69,5 +69,6 @@ namespace Risebird.Entities.Data
         public DateTime? CurrentStatusDate { get; set; }
         public int NoOfInterviews { get; set; }
         public string CancelledBy { get; set; }
+        public int BillingRate { get; set; }
     }
 }

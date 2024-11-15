@@ -83,7 +83,7 @@ INSERT INTO @tbl_InterviewerSelected
 select ir.IRFId,im.interviewer, count(distinct im.id) from @tbl_RelevantIRFs ir  
 join InterviewMeetings im on im.IRFId=ir.IRFId  
 left join InterviewComments ic on ic.InterviewId = im.id    
-where (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6)    
+where (ic.InterviewStatus = 2 or ic.InterviewStatus = 4) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6 or ic.MeetingStatus = 8)    
 group by ir.IRFId,im.interviewer    
  if(@Role='SeniorHR')  
  Begin  
@@ -172,7 +172,7 @@ INSERT INTO @tbl_InterviewerRejected
 select ir.IRFId,im.interviewer, count(distinct im.id) from @tbl_RelevantIRFs ir  
 join InterviewMeetings im on im.IRFId=ir.IRFId  
 left join InterviewComments ic on ic.InterviewId = im.id    
-where (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 7)    
+where (ic.InterviewStatus = 3 or ic.InterviewStatus = 5) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 7)    
 group by ir.IRFId,im.interviewer    
 if(@Role='SeniorHR')  
 BEGIN   
