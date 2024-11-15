@@ -10,5 +10,6 @@ namespace Risebird.Entities.Data
         public string Functiontype { get; set; }
         public string ButtonAction { get; set; }
         public int Interviewid { get; set; }
+        public int Interviewerid { get; set; }
     }
 }
