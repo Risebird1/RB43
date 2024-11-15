@@ -1593,6 +1593,7 @@
 
 </script>
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
+<script src="~/js/buttonclickevent.js"></script>
 <script>
 
     function closeCallPopUp() {
@@ -2351,28 +2352,7 @@
             }
         });
     }
-    var actionclick = 1;
-    function captureInterviewerRelatedclick(type, buttonaction, interviewid, interviewerid) {
-        var currenturl = window.location.href;
-        if (actionclick == 1) {
-            actionclick = 0;
-            $.ajax({
-                url: '/ActivityTracker/CaptureInterviewerRelatedPageClick',
-                method: 'POST',
-                async: true,
-                data: {
-                    'type': type,
-                    'currenturl': currenturl,
-                    'buttonaction': buttonaction,
-                    'interviewid': interviewid,
-                    'interviewerid': interviewerid
-                },
-                success: function (result) {
-                    actionclick = 1;
-                }
-            });
-        }
-    }
+    
 </script>
 <div id="interviewerAssessmentModal" class="modal modal-bg">
     <!-- Modal content -->
