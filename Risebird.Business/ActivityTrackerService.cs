@@ -46,5 +46,18 @@ namespace Risebird.Business
             }
             return false;
         }
+        public async Task<bool> SaveCaptureInterviewerRelatedPageClick(CapturePageDM model)
+        {
+            try
+            {
+                return await _activityTrackerRepository.SaveCaptureInterviewerRelatedPageClick(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
     }
 }

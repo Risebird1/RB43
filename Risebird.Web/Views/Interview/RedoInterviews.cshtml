@@ -55,7 +55,9 @@
                                                     <th>Skill Channel ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
+                                                      @if(ViewBag.profile != "Quality Controller"){
                                                     <th>Candidate Email</th>
+                                                      }
                                                     <th>Client Name</th>
                                                     <th>Interviewer</th>
                                                     <th>Channel Owner</th>
@@ -69,7 +71,9 @@
                                                     <th>Skill Channel ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
+                                                      @if(ViewBag.profile != "Quality Controller"){
                                                     <th>Candidate Email</th>
+                                                      }
                                                     <th>Client Name</th>
                                                     <th>Interviewer</th>
                                                     <th>Channel Owner</th>
@@ -86,7 +90,9 @@
                                                         <td>@item.IRFId </td>
                                                         <td>@item.interviewDate </td>
                                                         <td>@item.candidateName</td>
+                                                          @if(ViewBag.profile != "Quality Controller"){
                                                         <td>@item.candidateEmail</td>
+                                                          }
                                                         <td>@item.Client</td>
                                                         <td>@item.interviewer</td>
                                                         <td>@item.risebirdHR</td>

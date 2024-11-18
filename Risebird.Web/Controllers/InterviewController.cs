@@ -8055,7 +8055,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone, bool techqc)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string candidateName, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone, bool techqc)
         {
             try
             {
@@ -8073,6 +8073,7 @@ namespace Risebird.Web.Controllers
                 model.isapprovedchecked = isapproved;
                 model.isQcDone = isQcDone;
                 model.techqc = techqc;
+                model.candidateName = candidateName;
                 if (techqc)
                 {
                     if (string.IsNullOrWhiteSpace(model.Recommendation))
@@ -8750,7 +8751,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyQualityControlledInterviews()
+        public async Task<IActionResult> MyQualityControlledInterviews(string type)
         {
             try
             {
@@ -8768,6 +8769,16 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        if (type == "Completed")
+                        {
+                            ViewBag.Type = "Completed";
+                            meetings = meetings.Where(x => x.IsQC == true).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "Pending";
+                            meetings = meetings.Where(x => x.IsQC == false).ToList();
                         }
                         return View(meetings);
                     }
