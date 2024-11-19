@@ -2045,5 +2045,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<PQIDetails>> GetTotalInterviewerRiskIRFDetails(string uniqueid, string Email)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@uniqueid", uniqueid);
+                parameters.Add("@Email", Email);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_AllInterviewerPQIHighDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
