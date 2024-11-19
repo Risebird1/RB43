@@ -30,26 +30,29 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interviewer IRF Details</h4></div>
                 </div>
-                <div class="pull-left">
-                    @if (ViewBag.Type == "Selection")
-                    {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
-                    }
-                    else if (ViewBag.Type == "Rejection")
-                    {
-                        <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
-                    }
-                    else
-                    {
-                        <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
-                    }
-                </div>
+                @if (ViewBag.InterviewerStatus != "TotalInterviewer")
+                {
+                    <div class="pull-left">
+                        @if (ViewBag.Type == "Selection")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
+                        }
+                        else if (ViewBag.Type == "Rejection")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
+                        }
+                    </div>
+                }
                 <div class="pull-right">
                     <div>
                         <div class="pull-left" style="margin-left:10px">
@@ -93,7 +96,7 @@
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                     <th>Interviewer</th>
                                                     @if (ViewBag.PageStatus != "Public")
                                                     {
@@ -105,27 +108,37 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Completed Interview</th>
-                                                    @if (ViewBag.Type == "Selection")
+                                                    @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                     {
-                                                        <th>Selected Interview</th>
-                                                        <th>Selection Rate(%)</th>
-                                                    }
-                                                    else if (ViewBag.Type == "NegativeCandidate")
-                                                    {
-                                                        <th>Negative Rating Interviews</th>
+                                                        @if (ViewBag.Type == "Selection")
+                                                        {
+                                                            <th>Selected Interview</th>
+                                                            <th>Selection Rate(%)</th>
+                                                        }
+                                                        else if (ViewBag.Type == "NegativeCandidate")
+                                                        {
+                                                            <th>Negative Rating Interviews</th>
+                                                        }
+                                                        else
+                                                        {
+                                                            <th>Rejected Interview</th>
+                                                            <th>Rejection Rate(%)</th>
+                                                        }
                                                     }
                                                     else
                                                     {
+                                                        <th>Selected Interview</th>
+                                                        <th>Selection Rate(%)</th>
                                                         <th>Rejected Interview</th>
                                                         <th>Rejection Rate(%)</th>
                                                     }
-                                                   @*  <th>Company Name</td> *@
-                                                   
+                                                    @*  <th>Company Name</td> *@
+
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                     <th>Interviewer</th>
                                                     @if (ViewBag.PageStatus != "Public")
                                                     {
@@ -137,22 +150,32 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Completed Interview</th>
-                                                    @if (ViewBag.Type == "Selection")
+                                                    @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                     {
-                                                        <th>Selected Interview</th>
-                                                        <th>Selection Rate(%)</th>
-                                                    }
-                                                    else if (ViewBag.Type == "NegativeCandidate")
-                                                    {
-                                                        <th>Negative Rating Interviews</th>
+                                                        @if (ViewBag.Type == "Selection")
+                                                        {
+                                                            <th>Selected Interview</th>
+                                                            <th>Selection Rate(%)</th>
+                                                        }
+                                                        else if (ViewBag.Type == "NegativeCandidate")
+                                                        {
+                                                            <th>Negative Rating Interviews</th>
+                                                        }
+                                                        else
+                                                        {
+                                                            <th>Rejected Interview</th>
+                                                            <th>Rejection Rate(%)</th>
+                                                        }
                                                     }
                                                     else
                                                     {
+                                                        <th>Selected Interview</th>
+                                                        <th>Selection Rate(%)</th>
                                                         <th>Rejected Interview</th>
                                                         <th>Rejection Rate(%)</th>
                                                     }
-                                                   @*  <td>Company Name</td> *@
-                                                   
+                                                    @*  <td>Company Name</td> *@
+
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -204,7 +227,50 @@
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.TotalCompletedMeetings</td>
-                                                        @if (ViewBag.Type == "Selection")
+                                                        @if (ViewBag.InterviewerStatus != "TotalInterviewer")
+                                                        {
+                                                            @if (ViewBag.Type == "Selection")
+                                                            {
+                                                                <td>@item.TotalSelected</td>
+                                                                <td>
+                                                                    @if (ViewBag.PageStatus == "Public")
+                                                                    {
+                                                                        <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">
+                                                                            @item.selectionrate %
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">
+                                                                            @item.selectionrate %
+                                                                        </a>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                            else if (ViewBag.Type == "NegativeCandidate")
+                                                            {
+                                                                <td>@item.NegativeRating</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.TotalRejected</td>
+                                                                <td>
+                                                                    @if (ViewBag.PageStatus == "Public")
+                                                                    {
+                                                                        <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">
+                                                                            @item.rejectionrate %
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">
+                                                                            @item.rejectionrate %
+                                                                        </a>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                        }
+                                                        else
                                                         {
                                                             <td>@item.TotalSelected</td>
                                                             <td>
@@ -221,13 +287,6 @@
                                                                     </a>
                                                                 }
                                                             </td>
-                                                        }
-                                                        else if (ViewBag.Type == "NegativeCandidate")
-                                                        {
-                                                            <td>@item.NegativeRating</td>
-                                                        }
-                                                        else
-                                                        {
                                                             <td>@item.TotalRejected</td>
                                                             <td>
                                                                 @if (ViewBag.PageStatus == "Public")
@@ -244,37 +303,37 @@
                                                                 }
                                                             </td>
                                                         }
-                                                  @*       <td>
+                                                        @*       <td>
 
-                                                            @if (item.CompanyName != null && item.CompanyName != "")
-                                                            {
-                                                                @if (item.CompanyName.Length > 30)
-                                                                {
+                                                    @if (item.CompanyName != null && item.CompanyName != "")
+                                                    {
+                                                    @if (item.CompanyName.Length > 30)
+                                                    {
 
-                                                                    <div class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.CompanyName"><span class="email-field">@item.CompanyName.Substring(0,30)... </span> </a>
+                                                    <div class="cadEmail">
+                                                    <a onclick="" data-tooltip="@item.CompanyName"><span class="email-field">@item.CompanyName.Substring(0,30)... </span> </a>
 
-                                                                    </div>
-                                                                }
+                                                    </div>
+                                                    }
 
-                                                                else
-                                                                {
-                                                                    <div class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.CompanyName"><span>@item.CompanyName</span> </a>
-                                                                    </div>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <span></span>
-                                                            }
+                                                    else
+                                                    {
+                                                    <div class="cadEmail">
+                                                    <a onclick="" data-tooltip="@item.CompanyName"><span>@item.CompanyName</span> </a>
+                                                    </div>
+                                                    }
+                                                    }
+                                                    else
+                                                    {
+                                                    <span></span>
+                                                    }
 
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        </td> *@
-                                                        
+
+
+
+
+                                                    </td> *@
+
                                                     </tr>
                                                 }
                                             </tbody>
@@ -364,9 +423,9 @@
     };
 </script>
 <script>
-    function Changeurldetails(type, uniqueid,returnBack) {
+    function Changeurldetails(type, uniqueid, returnBack) {
         if (uniqueid == "" || uniqueid == null) {
-            window.location.href = "/Dashboard/InterviewerIRFDetails?type=" + type+"&returnBack=" + returnBack;
+            window.location.href = "/Dashboard/InterviewerIRFDetails?type=" + type + "&returnBack=" + returnBack;
         }
         else {
             window.location.href = "/Dashboard/InterviewerRiskIRFDetails?type=" + type + "&uniqueid=" + uniqueid;
