@@ -197,8 +197,8 @@
     }
 
     /*.mob_h {
-                                                                                                                                                                        display: none !important
-                                                                                                                                                                          }*/
+                                                                                                                                                                                    display: none !important
+                                                                                                                                                                                      }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -425,6 +425,14 @@
                             <div class="topheader-link-wrap">
                                 @if (ViewBag.ClientRole == "Reviewer")
                                 {
+                                    <a target="_blank" href="@Url.Action("TotalInterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })" style="margin:5px 8px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top">
+                                            <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
+                                            <div class="d-lg-inline-flex pad3">
+                                                Total Interviewer
+                                            </div>
+                                        </button>
+                                    </a>
                                     <a target="_blank" href="@Url.Action("InterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })" style="margin:5px 8px 5px 3px;">
                                         <button type="button" data-toggle="tooltip" data-placement="top" style="margin:5px 4px 5px 3px;">
                                             <span class="topheader-link">
@@ -434,8 +442,8 @@
                                                 <path d="M 45 55.087 c -12.612 0 -22.874 -10.261 -22.874 -22.873 c 0 -0.552 0.448 -1 1 -1 s 1 0.448 1 1 c 0 11.509 9.364 20.873 20.874 20.873 c 0.552 0 1 0.447 1 1 S 45.552 55.087 45 55.087 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill:#fff; fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
                                                 <path d="M 66.873 33.214 c -0.553 0 -1 -0.448 -1 -1 c 0 -11.51 -9.363 -20.874 -20.873 -20.874 c -0.552 0 -1 -0.448 -1 -1 s 0.448 -1 1 -1 c 12.612 0 22.873 10.261 22.873 22.874 C 67.873 32.766 67.426 33.214 66.873 33.214 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill:#fff; fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
                                                 <path d="M 40.62 45.273 c -0.568 0 -1.132 -0.233 -1.547 -0.69 l -6.517 -7.176 c -0.351 -0.385 -0.544 -0.885 -0.544 -1.406 v -4.727 c 0 -0.871 0.525 -1.637 1.338 -1.951 c 0.813 -0.314 1.716 -0.099 2.302 0.545 l 4.902 5.397 c 0.034 0.036 0.09 0.039 0.127 0.008 l 13.854 -11.902 c 0.626 -0.54 1.481 -0.66 2.234 -0.314 c 0.752 0.345 1.219 1.073 1.219 1.9 v 5.096 c 0 0.61 -0.266 1.188 -0.728 1.586 L 41.984 44.763 C 41.586 45.105 41.102 45.273 40.62 45.273 z M 34.111 31.18 c -0.011 0 -0.025 0.002 -0.041 0.009 c -0.059 0.022 -0.059 0.057 -0.059 0.085 l 0.024 4.788 l 6.518 7.177 c 0.033 0.037 0.089 0.039 0.126 0.008 l 15.276 -13.124 l 0.031 -5.166 l -0.15 -0.069 L 41.984 36.791 c -0.867 0.744 -2.145 0.665 -2.911 -0.181 l -4.902 -5.397 C 34.157 31.198 34.141 31.18 34.111 31.18 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill:#fff; fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
-                                                            </g>
-                                                        </svg>
+                                                                        </g>
+                                                                    </svg>
                                             </span>
                                             <div class="d-lg-inline-flex pad3">
                                                 Interviewer Monitoring

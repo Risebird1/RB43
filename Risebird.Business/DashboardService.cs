@@ -1134,7 +1134,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<List<PQIDetails>> GetTotalInterviewerRiskIRFDetails(string uniqueid = null, string Email = null)
+        {
+            try
+            {
+                return await _dashboardRespository.GetTotalInterviewerRiskIRFDetails(uniqueid, Email);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
