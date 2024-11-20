@@ -71,6 +71,18 @@
                 </div>
                 <input type="hidden" value="@ViewBag.Type" id="hidtype" />
                 <div class="pull-left">
+                    @if (ViewBag.Type == "SingleStack")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('SingleStack','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Single-Stack</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('MultiStack','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Multi-Stack</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('SingleStack','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Single-Stack</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('MultiStack','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Multi-Stack</strong></div>
+                    }
+                </div>
+                <div class="pull-left">
                 </div>
                 <div class="pull-right">
                     <div style="float:right">
@@ -126,7 +138,7 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("ProjectSkillChannelStats","IRF",new { emailid=ViewBag.emailid, uniqueid = ViewBag.uniqueid, isClientLogin = ViewBag.IsClientLogin })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                            <form action="@Url.Action("ProjectSkillChannelStats","IRF",new { tabtype=ViewBag.Type ,emailid=ViewBag.emailid, uniqueid = ViewBag.uniqueid, isClientLogin = ViewBag.IsClientLogin })" method="post" id="form" onsubmit="return checkfilterDate();">
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-6 border-rv">
@@ -179,6 +191,18 @@
                                                     <th>Project</th>
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
+                                                    @if (ViewBag.Type == "SingleStack")
+                                                    {
+                                                        <th>Selected Interviews</th>
+                                                        <th>Rejected Interviews</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Both Selected</th>
+                                                        <th>Both Rejected</th>
+                                                        <th>Primary Select Secondary Reject</th>
+                                                        <th>Primary Reject Secondary Select</th>
+                                                    }
                                                     <th>Report Pending</th>
                                                     <th>Cold Candidate</th>
                                                     <th>Not Scheduled Count</th>
@@ -192,6 +216,18 @@
                                                     <th>Project</th>
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
+                                                    @if (ViewBag.Type == "SingleStack")
+                                                    {
+                                                        <th>Selected Interviews</th>
+                                                        <th>Rejected Interviews</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Both Selected</th>
+                                                        <th>Both Rejected</th>
+                                                        <th>Primary Select Secondary Reject</th>
+                                                        <th>Primary Reject Secondary Select</th>
+                                                    }
                                                     <th>Report Pending</th>
                                                     <th>Cold Candidate</th>
                                                     <th>Not Scheduled Count</th>
@@ -218,6 +254,72 @@
                                                                     }
                                                                 </a>
                                                             </td>
+                                                            @if (ViewBag.Type == "SingleStack")
+                                                            {
+                                                                <td style="color:#2680c7;cursor:pointer">
+                                                                    <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Selected",uniqueid=ViewBag.uniqueid })'>
+                                                                        @item.SelectedMeetings
+                                                                        { @if (item.CompletedInterviews > 0)
+                                                                        {
+                                                                            @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%
+                                                                        }
+                                                                    </a>
+                                                                </td>
+                                                                <td style="color:#2680c7;cursor:pointer">
+                                                                    <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Selected",uniqueid=ViewBag.uniqueid })'>
+                                                                        @item.RejectedMeetings
+                                                                        { @if (item.CompletedInterviews > 0)
+                                                                        {
+                                                                            @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%
+                                                                        }
+                                                                    </a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:#2680c7;cursor:pointer">
+                                                                    <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Selected",uniqueid=ViewBag.uniqueid })'>
+                                                                        @item.SelectedMeetings
+                                                                        { @if (item.CompletedInterviews > 0)
+                                                                        {
+                                                                            @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%
+                                                                        }
+                                                                    </a>
+                                                                </td>
+                                                                <td style="color:#2680c7;cursor:pointer">
+                                                                    <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Rejected",uniqueid=ViewBag.uniqueid })'>
+                                                                        @item.RejectedMeetings
+                                                                        { @if (item.CompletedInterviews > 0)
+                                                                        {
+                                                                            @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%
+                                                                        }
+                                                                    </a>
+                                                                </td>
+                                                                <td style="color:#2680c7;cursor:pointer">
+                                                                    <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="SelectedNRejected",uniqueid=ViewBag.uniqueid })'>
+                                                                        @item.SelectedRejectMeetings
+                                                                        { @if (item.CompletedInterviews > 0)
+                                                                        {
+                                                                            @((item.SelectedRejectMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%
+                                                                        }
+                                                                    </a>
+                                                                </td>
+                                                                <td style="color:#2680c7;cursor:pointer">
+                                                                    <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="RejectedNSelected",uniqueid=ViewBag.uniqueid })'>
+                                                                        @item.RejectSelectedMeetings
+                                                                        { @if (item.CompletedInterviews > 0)
+                                                                        {
+                                                                            @((item.RejectSelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%
+                                                                        }
+                                                                    </a>
+                                                                </td>
+                                                            }
                                                             <td><span class="count">@item.PendingCount</span> </td>
                                                             <td style="color:#2680c7;cursor:pointer">
                                                                 <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="ColdCandidate",uniqueid=ViewBag.uniqueid })'>
@@ -239,20 +341,20 @@
                                                             </td>
                                                             <td style="color:#2680c7">
                                                                 <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Reschedule",uniqueid=ViewBag.uniqueid })'>
-                                                                @item.ReScheduledCount
-                                                                { @if (item.CandidateCount > 0)
-                                                                {
-                                                                    @((item.ReScheduledCount * 100) / @item.CandidateCount)
-                                                                }% }
+                                                                    @item.ReScheduledCount
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.ReScheduledCount * 100) / @item.CandidateCount)
+                                                                    }% }
                                                                 </a>
                                                             </td>
                                                             <td style="color:#2680c7">
                                                                 <a target="_blank" href='@Url.Action("ProjectSkillChannelStatsDetailedView", "IRF", new { projectid=item.id,projectname=item.ProjectName,type="Futureschedule",uniqueid=ViewBag.uniqueid })'>
-                                                                @item.FutureScheduledMeetings
-                                                                { @if (item.CandidateCount > 0)
-                                                                {
-                                                                    @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
-                                                                }% }
+                                                                    @item.FutureScheduledMeetings
+                                                                    { @if (item.CandidateCount > 0)
+                                                                    {
+                                                                        @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
+                                                                    }% }
                                                                 </a>
                                                             </td>
                                                         </tr>
@@ -421,5 +523,8 @@ else
                 $("#divInterviewdetailsView").html(data);
             }
         });
+    }
+    function Changeurldetails(type, emailid, uniqueid, isclient) {
+        window.location.href = "/IRF/ProjectSkillChannelStats?tabtype=" + type + "&emailid=" + emailid + "&isClientLogin=" + isclient + "&uniqueid=" + uniqueid;
     }
 </script>
