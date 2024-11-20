@@ -90,7 +90,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateExcelData>(con, "usp_GetCandidateStatusDataWithoutCold", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
                 }
 
             }
@@ -115,7 +115,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateExcelData>(con, "usp_GetCandidateStatusDataWithCold", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
                 }
 
             }
