@@ -3040,7 +3040,8 @@
             }
         }
         if (tab_skill == "SkillCollection" || tab_skill == "SkillTwoCollection") {
-            var selectedValue = document.querySelector('input[name="TechRubricType"]:checked').value;
+            //var selectedValue = document.querySelector('input[name="TechRubricType"]:checked').value;
+            var selectedValue = '@TechRubricTypes.Advanced';
             if(selectedValue == '@TechRubricTypes.Advanced'){
                 var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
                 var drpdowns2 = $('[id^=' + tab_skill + '][id$="Concepts"]');

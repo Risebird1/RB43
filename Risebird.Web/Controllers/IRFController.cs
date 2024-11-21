@@ -936,7 +936,8 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetAddIRFProperties(IRFVm model)
         {
-            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var AssessmentsGroups = await _irfService.GetAllMAGs();
             var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {

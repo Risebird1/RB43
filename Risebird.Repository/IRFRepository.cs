@@ -9250,6 +9250,24 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<AssignmentVM>> GetAllMAGs()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    return await SqlMapper.QueryAsync<AssignmentVM>(con, "usp_GetAllMAGs", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 

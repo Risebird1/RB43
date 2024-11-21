@@ -10,5 +10,6 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> ScreenAsync(ScreeningRequest request);
         Task<bool> DeleteVectors();
         Task<bool> DeleteFiles();
+        Task<RunResult> GenerateTechRubric(string jobTitle);
     }
 }
