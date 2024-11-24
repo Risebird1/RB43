@@ -514,6 +514,7 @@
                                                     {
                                                         <tr>
                                                             <td><strong>@item.ToShortDateString()</strong></td>
+                                                            @if(ViewBag.profileName != "Quality Controller"){
                                                             <td onclick="openInterviewManagement('@item')" style="cursor:pointer">
                                                                 <strong>
                                                                     @* @Model.InterviewManagement.Where(x => x.interviewDate == item).Count() / *@
@@ -521,7 +522,19 @@
                                                                     <span style="color:green"> @Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.Joinedon != null && x.PerformedOn != null && x.IsRescheduleNotificationSent == 0).Count()</span> /
                                                                     <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && x.PerformedOn != null && ((x.TotalCount == 1 && x.IsMeetingNotificationSent == 1) || (x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.IsRescheduleNotificationSent == 1) || (x.IsMeetingNotificationSent == 1 && x.Joinedon == null))).Count()</span>
                                                                 </strong>
-                                                            </td>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                              <td  style="cursor:pointer">
+                                                                <strong>
+                                                                    @* @Model.InterviewManagement.Where(x => x.interviewDate == item).Count() / *@
+                                                                    @Model.InterviewManagement.Where(x => x.interviewDate == item && x.IsMeetingNotificationSent == 1 && x.PerformedOn != null).Count() /
+                                                                    <span style="color:green"> @Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.Joinedon != null && x.PerformedOn != null && x.IsRescheduleNotificationSent == 0).Count()</span> /
+                                                                    <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && x.PerformedOn != null && ((x.TotalCount == 1 && x.IsMeetingNotificationSent == 1) || (x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.IsRescheduleNotificationSent == 1) || (x.IsMeetingNotificationSent == 1 && x.Joinedon == null))).Count()</span>
+                                                                </strong>
+                                                                </td>  
+                                                            }
                                                         </tr>
                                                     }
                                                 </tbody>
