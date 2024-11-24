@@ -25,7 +25,7 @@ BEGIN
 --and im.interviewer!=@emailID  
 --order by interviewDate desc  
   
-select distinct im.interviewDate,irf.JDLink,irf.id as irfIntId,irf.IRFId,im.interviewer,im.candidateEmail,im.id as imid,ipi.NickName,irf.CompanyDetails as FeedbackAudioLink  
+select distinct im.interviewDate,irf.JDLink,irf.id as irfIntId,irf.IRFId,im.interviewer,im.candidateEmail,im.candidateName,im.id as imid,ipi.NickName,irf.CompanyDetails as FeedbackAudioLink  
 from TechQualityDetails tqoi  
 Join InterviewMeetings im on tqoi.Interviewid=im.id  
 join IRF irf on im.IRFId=irf.IRFId   
