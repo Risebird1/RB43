@@ -131,5 +131,6 @@ namespace Risebird.Entities.Data
         public string PreReportPassword { get; set; }
         public bool IsVideoRequired { get; set; }
         public string TechRubricType { get; set; }
+        public bool IsCandidateVerification { get; set; }
     }
 }
