@@ -3894,6 +3894,7 @@ namespace Risebird.Web.Controllers
             ExcelWorksheet SheetCold = Ep.Workbook.Worksheets.Add("Cold");
             ExcelWorksheet SheetNpr = Ep.Workbook.Worksheets.Add("Not Processed Resumes");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
+
             try
             {
                 var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
@@ -3966,6 +3967,9 @@ namespace Risebird.Web.Controllers
                         model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                     }
                 }
+
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
 
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
@@ -4040,17 +4044,20 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 9].Value = item.IRFname;
                         Sheet.Cells[i, 10].Value = item.HREmail;
-                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.InterviewId), item.IRFId);
-                        try
+                        if (ClientRole != "HRs" && ClientRole != "Staffing Agency")
                         {
-                            Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 11].Value = "Executive Report";
-                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                        }
-                        catch (Exception)
-                        {
-                            Sheet.Cells[i, 11].Value = "No Report";
+                            var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.InterviewId), item.IRFId);
+                            try
+                            {
+                                Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                                Sheet.Cells[i, 11].Value = "Executive Report";
+                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 11].Value = "No Report";
+                            }
                         }
                         if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
                         {
@@ -5479,6 +5486,8 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird_" + DateTime.Now.ToString("dd/MM/yyyy") + "_CandidateUpdates_" + irfName + ".xlsx";
             try
             {
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
                 var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
                 if (model == null)
                 {
@@ -5588,11 +5597,7 @@ namespace Risebird.Web.Controllers
                     }
                     Sheet.Cells[1, ++j].Value = $"Interview Status ({jdtitleTwo})"; //"Interview Status (Stack 2)";//$"Interview Status {jdtitleTwo}";
                     Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
-
                 }
-
-
-
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -5680,20 +5685,22 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
-                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), irfId);
-                        try
+                        if (ClientRole != "HRs" && ClientRole != "Staffing Agency")
                         {
-                            ++colDataNumber;
-                            Sheet.Cells[i, colDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, colDataNumber].Value = "Executive Report";
-                            Sheet.Cells[i, colDataNumber].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), irfId);
+                            try
+                            {
+                                ++colDataNumber;
+                                Sheet.Cells[i, colDataNumber].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                                Sheet.Cells[i, colDataNumber].Value = "Executive Report";
+                                Sheet.Cells[i, colDataNumber].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, colDataNumber].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, colDataNumber].Value = "No Report";
+                            }
                         }
-                        catch (Exception)
-                        {
-                            Sheet.Cells[i, colDataNumber].Value = "No Report";
-                        }
-
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         //try
                         //{
@@ -5712,8 +5719,6 @@ namespace Risebird.Web.Controllers
                         int jV = colDataNumber;
                         if (isDrive.HasValue && isDrive.Value)
                         {
-
-
                             foreach (var skillvalue in skillslist)
                             {
                                 jV++;
@@ -5727,13 +5732,11 @@ namespace Risebird.Web.Controllers
                             }
                             jV++;
                             Sheet.Cells[i, jV].Value = totalskillscore; //  / totalskillscount;
-
                         }
                         else
                         {
                             foreach (var skillvalue in skillslist)
                             {
-
                                 var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
                                 if (skilldata != null)
                                 {

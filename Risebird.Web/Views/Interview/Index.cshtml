@@ -491,9 +491,18 @@
                                                         <th>Type</th>
 
                                                         <th>JD Title</th>
+                                                         @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Meeting Link</th>
+                                                    }
+                                                     @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Interviewer Portal</th>
+                                                    }
+                                                     @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Candidate Portal</th>
+                                                    }
                                                         <th>Company Name</th>
                                                         <th>Red Markers</th>
                                                         <th>Interveiwer</th>
@@ -503,13 +512,16 @@
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
+                                                         @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Resume</th>
+                                                    }
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
 
-
+                                                         @if (ViewBag.profile != "Quality Controller"){
                                                         <th>Client HR</th>
-
+                                                    }
 
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
@@ -564,9 +576,18 @@
                                                     {
                                                         <th>Type</th>
                                                         <th>JD Title</th>
+                                                         @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Meeting Link</th>
+                                                    }
+                                                     @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Interviewer Portal</th>
+                                                    }
+                                                     @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Candidate Portal</th>
+                                                    }
                                                         <th>Company Name</th>
                                                         <th>Red Markers</th>
                                                         <th>Interviewer</th>
@@ -576,12 +597,15 @@
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
+                                                         @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                         <th>Resume</th>
+                                                    }
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
-
+                                                     @if (ViewBag.profile != "Quality Controller"){
                                                         <th>Client HR</th>
-
+                                                    }
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
                                                         <th>Video Duration</th>
@@ -687,7 +711,7 @@
                                                                         @if (item.interviewDate.AddHours(1) >= DateTime.Now || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Quality Controller")
                                                                         {
                                                                             <span class="interview_7">
-                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit" onclick="captureInterviewerRelatedclick('Interview', 'Edit',@item.imid,0)">
                                                                                     <span onclick="location.href = '@Url.Action("Edit", "Interview" , new { id=item.imid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                                 </button>
                                                                             </span>
@@ -906,7 +930,8 @@
                                                             }
 
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
-
+                                                             @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                             @if (item.zoomLink != null && item.zoomLink != "")
                                                             {
                                                                 <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
@@ -915,16 +940,23 @@
                                                             {
                                                                 <td><span style="color:red">No Meeting Link</span></td>
                                                             }
+                                                    }
+                                                     @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                             <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
                                                                 <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
                                                                     <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
                                                                 </div>
                                                             </td>
+                                                    }
+                                                     @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                             <td onclick="captureclick('Meeting','CandidatePortal','@item.imid')">
                                                                 <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
                                                                     <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
                                                                 </div>
                                                             </td>
+                                                    }
                                                             @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                             {
                                                                 @if (item.CompanyName.Length > 30)
@@ -1135,7 +1167,8 @@
                                                             {
                                                                 <td>No Response</td>
                                                             }
-
+                                                             @if (ViewBag.profile != "Quality Controller")
+                                                    {
                                                             @if (item.resumeLink != null && item.resumeLink != "")
                                                             {
                                                                 <td>
@@ -1147,6 +1180,7 @@
                                                             {
                                                                 <td>No Resume</td>
                                                             }
+                                                    }
                                                             @if (item.JDLink != null && item.JDLink != "")
                                                             {
                                                                 <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
@@ -1159,7 +1193,7 @@
 
                                                             <td> @item.risebirdHR</td>
 
-
+                                                            @if (ViewBag.profile != "Quality Controller"){
                                                             @if (item.IsHrOnline == 1)
                                                             {
                                                                 <td>
@@ -1169,10 +1203,10 @@
                                                             else
                                                             {
                                                                 <td>
-                                                                    @item.CandidateClientHR
+                                                                  <span style="color:red"> @item.CandidateClientHR</span> 
                                                                 </td>
                                                             }
-
+                                                        }
 
                                                             <td> @item.ClientName </td>
 
@@ -1763,6 +1797,7 @@
 
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/common.js"></script>
+<script src="~/js/buttonclickevent.js"></script>
 <script>
     function closeBlackListCompanyModal() {
         var modal = document.getElementById("BlckListCompanyModal");

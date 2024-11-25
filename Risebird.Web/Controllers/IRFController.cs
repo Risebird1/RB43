@@ -9997,7 +9997,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ProjectSkillChannelStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        public async Task<IActionResult> ProjectSkillChannelStats(string tabtype, string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             ViewBag.emailid = emailid;
             ViewBag.uniqueid = uniqueid;
@@ -10036,24 +10036,37 @@ namespace Risebird.Web.Controllers
                     irfList = (await _irfService.GetProjectSkillChannelStatsCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
                 }
             }
+            if (string.IsNullOrWhiteSpace(tabtype))
+            {
+                tabtype = "SingleStack";
+            }
+            ViewBag.Type = tabtype;
+            if (tabtype == "SingleStack")
+            {
+                irfList = irfList.Where(x => x.SkillSetsevaluate == 1).ToList();
+            }
+            else if (tabtype == "MultiStack")
+            {
+                irfList = irfList.Where(x => x.SkillSetsevaluate > 1).ToList();
+            }
             return View(irfList);
         }
         [HttpPost]
-        public async Task<IActionResult> ProjectSkillChannelStats(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        public async Task<IActionResult> ProjectSkillChannelStats(SkillChannelDetailsFilter filter, string tabtype, string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             if (filter != null)
             {
                 HttpContext.Session.SetString("ProjectSkillChannelStatsFilters", JsonConvert.SerializeObject(filter));
             }
-            return RedirectToAction("ProjectSkillChannelStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            return RedirectToAction("ProjectSkillChannelStats", new { tabtype = tabtype, emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
         }
         [HttpGet]
-        public async Task<IActionResult> ResetProjectSkillChannelStats(string emailid, bool isClientLogin = false, string uniqueid = null)
+        public async Task<IActionResult> ResetProjectSkillChannelStats(string tabtype, string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             try
             {
                 HttpContext.Session.Remove("ProjectSkillChannelStatsFilters");
-                return RedirectToAction("ProjectSkillChannelStats", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+                return RedirectToAction("ProjectSkillChannelStats", new { tabtype = tabtype, emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
             }
             catch (Exception ex)
             {
@@ -10080,6 +10093,14 @@ namespace Risebird.Web.Controllers
                     item.ReportLink = await GenerateExecutiveReportURl(portallink, Convert.ToInt32(item.id), item.Irfintid);
                 }
                 ViewBag.projectname = projectname;
+                if (type == "SelectedNRejected")
+                {
+                    type = "Primary Select and Secondary Reject";
+                }
+                else if (type == "RejectedNSelected")
+                {
+                    type = "Primary Reject and Secondary Select";
+                }
                 ViewBag.type = type;
                 ViewBag.PageType = "ProjectStats";
                 return View(irfList);

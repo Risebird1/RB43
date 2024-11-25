@@ -3162,6 +3162,22 @@ namespace Risebird.Web.Controllers
             var model = await _dashboardService.GetInterviewerIRFDetails(type, uniqueid);
             return View("InterviewerIRFDetails", model);
         }
+        public async Task<IActionResult> TotalInterviewerRiskIRFDetails(string uniqueid)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid?.Replace("\"", "");
+            if (string.IsNullOrEmpty(emailid))
+            {
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+            ViewBag.Profile = "Client";
+            ViewBag.Emailid = emailid;
+            ViewBag.PageStatus = "Public";
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.InterviewerStatus = "TotalInterviewer";
+            var model = await _dashboardService.GetTotalInterviewerRiskIRFDetails(uniqueid);
+            return View("InterviewerIRFDetails", model);
+        }
         #endregion
         public async Task<IActionResult> TechQCDetails(string type, int ReturnBack)
         {
@@ -4008,7 +4024,7 @@ namespace Risebird.Web.Controllers
                             //x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
                             return x;
                         }).ToList();
-                        
+
                         return View(model);
                     }
                     else
