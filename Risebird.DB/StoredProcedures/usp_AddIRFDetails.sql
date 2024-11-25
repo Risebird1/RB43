@@ -52,7 +52,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
-@TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV3] READONLY,--TransTechSkill2_TableType
+@TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV4] READONLY,--TransTechSkill2_TableType, TransTechSkill_TableTypeV3
 @InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
@@ -196,9 +196,12 @@ Begin
 					[IRFId] ,    
 					[LevelId],    
 					[SkillId],    
-					[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet])    
+					[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet], [SkillName])    
     
-					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit,tsbd.isEliminationskill,tsbd.SkillSet FROM @TechSkillBulkData tsbd
+					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, 
+					tsbd.Timelimit,tsbd.isEliminationskill,tsbd.SkillSet, tsbd.SkillName FROM @TechSkillBulkData tsbd
+					
+					
 					--interviewers
 
 					INSERT INTO [dbo].[TransInterviewer](  
@@ -298,9 +301,9 @@ FROM
 								 [ClonableIRFId] ,      
 								 [LevelId],      
 								 [SkillId],      
-								 [Weightage],[Concepts],[Natureofquestion],[Timelimit])      
+								 [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill], [SkillName])      
       
-								 SELECT @idClonableIrf, tsbd.LevelId, tsbd.[SkillId], tsbd.[Weightage], tsbd.[Concepts], tsbd.[Natureofquestion], tsbd.[Timelimit]  FROM @TechSkillBulkData tsbd
+								 SELECT @idClonableIrf, tsbd.LevelId, tsbd.[SkillId], tsbd.[Weightage], tsbd.[Concepts], tsbd.[Natureofquestion], tsbd.[Timelimit], tsbd.isEliminationskill, tsbd.SkillName  FROM @TechSkillBulkData tsbd
 
 
 								  delete from TransClonableIRFInterviewer where ClonableIRFId= @idClonableIrf  
@@ -333,10 +336,10 @@ FROM
 								 [ClonableIRFId] ,    
 								 [UserId],    
 								 [Skill],    
-								 [Question])    
+								 [Question], [SkillName])    
     
-								Select distinct @idClonableIrf, @createdByUserId, sk.id as SkillId, ts.Comment as Question From TechSkillComments ts 
-								join IRF on IRF.id=ts.IRFId join Skill sk on sk.id=ts.Skill 
+								Select distinct @idClonableIrf, @createdByUserId, 0, ts.Comment as Question, SkillName From TechSkillComments ts 
+								join IRF on IRF.id=ts.IRFId --join Skill sk on sk.id=ts.Skill 
 								where AssessmentGroupId = @assessmentGroupId 
 
 							End
