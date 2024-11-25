@@ -5487,6 +5487,10 @@ namespace Risebird.Web.Controllers
             try
             {
                 var client = await _userRepository.GetClientUserDetails(emailid);
+                if (client == null)
+                {
+                    client = new ClientUserVM();
+                }
                 var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
                 var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
                 if (model == null)
