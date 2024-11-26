@@ -4043,5 +4043,13 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+
+        public async Task<IActionResult> SkillChannelInterviewerBilling()
+        {
+           
+            var model = new List<IRFDetailsList>();
+            return View(model);
+        }
     }
 }
