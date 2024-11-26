@@ -88,5 +88,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAIQCNegativeVerdictReports();
         Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed();
         Task<List<PQIDetails>> GetTotalInterviewerRiskIRFDetails(string uniqueid = null, string Email = null);
+        Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList();
     }
 }

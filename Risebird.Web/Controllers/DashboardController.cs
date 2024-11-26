@@ -4044,12 +4044,50 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> SkillChannelInterviewerBilling()
         {
-           
-            var model = new List<IRFDetailsList>();
-            return View(model);
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance")
+                    {
+                        var model = await _dashboardService.GetAllSkillChannelsList();
+                        if (model == null)
+                        {
+                            model = new List<IRFDetailsList>();
+                        }
+                        model = model.Select(x =>
+                        {
+                            x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore) ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription() : string.Empty;
+                            x.CompanyType = !string.IsNullOrWhiteSpace(x.CompanyType) ? ((CompanyType)Convert.ToInt32(x.CompanyType)).GetDescription() : string.Empty;
+                            x.JobCountry = x.JobCountry == "2" ? "Onsite" : "Offshore";
+                            return x;
+                        }).ToList();
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }
