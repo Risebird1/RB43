@@ -2280,7 +2280,8 @@ namespace Risebird.Web.Controllers
             }
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
-                model.InterviewerMembers = await _irfService.GetIRFInterviewerMembers(model.id);
+                var interviewersmembers = await _irfService.GetIRFInterviewerMembers(model.id);
+                model.InterviewerMembers = interviewersmembers?.Where(x => x.IsActive).ToList();
                 model.InterviewerCollection = new List<TransInterviewer>();
                 model.EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
                 model.QualityController = new List<TransQualityController>();
@@ -4456,7 +4457,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                 }
                 ViewBag.Type = "IRF";
-                var model = await _irfService.GetIRFInterviewerMembers(irfId);
+                var interviewersmembers = await _irfService.GetIRFInterviewerMembers(irfId);
+                var model = interviewersmembers?.Where(x => x.IsActive).ToList();
                 return PartialView("IRFInterviewerMembersPartial", model);
             }
             catch (Exception ex)
@@ -10428,5 +10430,35 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        [HttpGet]
+        public async Task<IActionResult> GetIRFInterviewerBillingMembers(int irfId, string type)
+        {
+            try
+            {
+                ViewBag.Profile = "";
+                if (HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                }
+                ViewBag.Type = "IRF";
+                var model = await _irfService.GetIRFInterviewerMembers(irfId);
+                if (type == "Active")
+                {
+                    model = model?.Where(x => x.IsActive).ToList();
+                }
+                else if (type == "Inactive")
+                {
+                    model = model?.Where(x => !x.IsActive).ToList();
+                }
+                return PartialView("IRFInterviewerMembersPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

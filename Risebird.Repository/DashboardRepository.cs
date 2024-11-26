@@ -2071,5 +2071,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<IRFDetailsList>(con, "usp_SkillChannelsList", null,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
