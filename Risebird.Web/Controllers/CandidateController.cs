@@ -6841,7 +6841,7 @@ namespace Risebird.Web.Controllers
                             model.ResumeLink = uploadedFileURL;
                         }
                     }
-                    result = await _irfService.AddCandidate(model, emailids, model.profileName);
+                    // result = await _irfService.AddCandidate(model, emailids, model.profileName);
                     var candidateList = new List<CandidateQuickAddModel>();
                     var candidate = new CandidateQuickAddModel
                     {
@@ -6868,6 +6868,10 @@ namespace Risebird.Web.Controllers
                         if (result.Contains("successfully"))
                         {
                             result = "Candidate Added Successfully";
+                        }
+                        else if (result.Contains("Duplicate candidate"))
+                        {
+                            result = "Duplicate Candidate";
                         }
                     }
                     if (model.Candidateesumeid > 0)
