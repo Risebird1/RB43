@@ -1146,6 +1146,17 @@ namespace Risebird.Business
             }
             return null;
         }
-
+        public async Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList()
+        {
+            try
+            {
+                return await _dashboardRespository.GetAllSkillChannelsList();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
