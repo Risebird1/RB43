@@ -30,7 +30,8 @@ namespace Risebird.Entities.Data
     {
         //public Recent_employer_data recent_employer_data { get; set; }
         public Recent_employer_data recentEmployerData { get; set; }
-        public bool isEmployed { get; set; }
+        public string isEmployed { get; set; }
+        public bool dateOfExitMarked { get; set; }
         public int uanCount { get; set; }
     }
     public class Recent_employer_data
