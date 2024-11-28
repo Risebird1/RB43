@@ -33,13 +33,14 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  completedDate datetime null,  
  PreReportLink varchar(500) NULL,  
  PreReportUsername varchar(50) NULL,  
- PreReportPassword varchar(50) NULL  
+ PreReportPassword varchar(50) NULL,
+ Requestor varchar(150) NULL
 );              
    
 INSERT INTO @TemporaryCandidateTableVariable                  
 select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink    
 ,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,  
-La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword          
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword,ca.ClientHRAttemptContact as Requestor                          
 from  Candidate ca            
 join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)            
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
@@ -49,10 +50,10 @@ outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) J
 where cs.[Status] = 12 and irf.ClientId=177 and  [Date] between @StartDate and @EndDate  
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink    
 , Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,  
-La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword   
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword,ca.ClientHRAttemptContact   
   
 select IRF.IRFId,ul.EmailId as candidateEmail, concat(ul.FirstName, ' ', ul.LastName) as candidateName,ul.MobileNumber,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ca.ClientHRAttemptContact as ClientHrContact,tctv.ResumeLink,csc.StatusValue as CurrentStatus,  
-CandidateLatestStatus,tctv.AddedOnDate,tctv.FirstScheduledOnDate,'' as ExecutiveReportLink,csc.Date as CurrentStatusDate,InterviewCount.NoOfInterviews,im.interviewDate  
+CandidateLatestStatus,tctv.AddedOnDate,tctv.FirstScheduledOnDate,'' as ExecutiveReportLink,csc.Date as CurrentStatusDate,InterviewCount.NoOfInterviews,im.interviewDate,tctv.Requestor  
 from @TemporaryCandidateTableVariable tctv    
 join IRF on IRF.id =tctv.IRFId    
 join UserList ul on ul.id = tctv.UserId    
