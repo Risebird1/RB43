@@ -125,13 +125,6 @@
                                                             <th>Rejection Rate(%)</th>
                                                         }
                                                     }
-                                                    else
-                                                    {
-                                                        <th>Selected Interview</th>
-                                                        <th>Selection Rate(%)</th>
-                                                        <th>Rejected Interview</th>
-                                                        <th>Rejection Rate(%)</th>
-                                                    }
                                                     @*  <th>Company Name</td> *@
 
                                                 </tr>
@@ -167,13 +160,6 @@
                                                             <th>Rejection Rate(%)</th>
                                                         }
                                                     }
-                                                    else
-                                                    {
-                                                        <th>Selected Interview</th>
-                                                        <th>Selection Rate(%)</th>
-                                                        <th>Rejected Interview</th>
-                                                        <th>Rejection Rate(%)</th>
-                                                    }
                                                     @*  <td>Company Name</td> *@
 
                                                 </tr>
@@ -183,11 +169,14 @@
                                                 {
                                                     <tr>
                                                         <td class="text-center">
-                                                            <span>
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer" style="width:27px!important;height:27px!important;position:relative;top:2px;">
-                                                                    <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                </button>
-                                                            </span>
+                                                            @if (ViewBag.InterviewerStatus != "TotalInterviewer")
+                                                            {
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer" style="width:27px!important;height:27px!important;position:relative;top:2px;">
+                                                                        <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                    </button>
+                                                                </span>
+                                                            }
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
                                                                 <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.interviewer', '@item.id');" title="Delete" class="mdc-fab__icon material-icons">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
@@ -269,39 +258,6 @@
                                                                     }
                                                                 </td>
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>@item.TotalSelected</td>
-                                                            <td>
-                                                                @if (ViewBag.PageStatus == "Public")
-                                                                {
-                                                                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">
-                                                                        @item.selectionrate %
-                                                                    </a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">
-                                                                        @item.selectionrate %
-                                                                    </a>
-                                                                }
-                                                            </td>
-                                                            <td>@item.TotalRejected</td>
-                                                            <td>
-                                                                @if (ViewBag.PageStatus == "Public")
-                                                                {
-                                                                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">
-                                                                        @item.rejectionrate %
-                                                                    </a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">
-                                                                        @item.rejectionrate %
-                                                                    </a>
-                                                                }
-                                                            </td>
                                                         }
                                                         @*       <td>
 
