@@ -8529,14 +8529,14 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
-                var level = await _irfRepository.GetLevelTech();
-                level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-                ViewBag.LevelTech = new SelectList(level, "id", "Name");
+                //var level = await _irfRepository.GetLevelTech();
+                //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
+                //ViewBag.LevelTech = new SelectList(level, "id", "Name");
                 //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
                 //                 select new { ID = (int)s, Name = s.GetDescription() };
                 //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
-                var Skillset = await _irfRepository.GetSkills();
-                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                //var Skillset = await _irfRepository.GetSkills();
+                //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
@@ -8785,7 +8785,7 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> DeliveryHeadSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-            var level = await _irfRepository.GetLevelTech();
+            //var level = await _irfRepository.GetLevelTech();
             //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
             //            select new { ID = (int)s, Name = s.GetDescription() };
             //var Skillset = await _irfRepository.GetSkills();
@@ -8795,7 +8795,7 @@ namespace Risebird.Web.Controllers
             //}
             foreach (var item in transTechSkills)
             {
-                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
+                item.LevelName = ((LevelTechEnum)(item.LevelId)).GetDescription();
                 //item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             var colectionone = transTechSkills.Where(x => x.SkillSet != 2).ToList();
