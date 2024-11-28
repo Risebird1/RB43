@@ -836,6 +836,7 @@ namespace Risebird.Web.Controllers
                     irfDetails.JobCountry = irfDetails.DisJobCountry;
                     irfDetails.CompanyType = irfDetails.DisCompanyType;
                     irfDetails.SkillSetsevaluate = irfDetails.DisSkillSetsevaluate;
+                    irfDetails.TechRubricType = TechRubricTypes.Advanced;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         string uploadedFileURL = string.Empty;
@@ -936,7 +937,8 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetAddIRFProperties(IRFVm model)
         {
-            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var AssessmentsGroups = await _irfService.GetAllMAGs();
             var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
@@ -973,15 +975,15 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
             }
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            var level = await _irfRepository.GetLevelTech();
-            level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-            ViewBag.LevelTech = new SelectList(level, "id", "Name");
-            var Skillset = await _irfRepository.GetSkills();
-            //if (Skillset != null)
-            //{
-            //    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
-            //}
-            ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+            //var level = await _irfRepository.GetLevelTech();
+            //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
+            //ViewBag.LevelTech = new SelectList(level, "id", "Name");
+            //var Skillset = await _irfRepository.GetSkills();
+            ////if (Skillset != null)
+            ////{
+            ////    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            ////}
+            //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
             //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
@@ -2206,7 +2208,8 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var AssessmentsGroups = await _irfService.GetAllMAGs();
             var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
@@ -2220,16 +2223,16 @@ namespace Risebird.Web.Controllers
 
             ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            var level = await _irfRepository.GetLevelTech();
-            level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-            ViewBag.LevelTech = new SelectList(level, "id", "Name");
+            //var level = await _irfRepository.GetLevelTech();
+            //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
+            //ViewBag.LevelTech = new SelectList(level, "id", "Name");
 
-            var skillset = await _irfRepository.GetSkills();
-            if (skillset != null)
-            {
-                skillset = skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-            }
-            ViewBag.Skill = new SelectList(skillset, "id", "Name");
+            //var skillset = await _irfRepository.GetSkills();
+            //if (skillset != null)
+            //{
+            //    skillset = skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            //}
+            //ViewBag.Skill = new SelectList(skillset, "id", "Name");
             if (!model.IsClone)
             {
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");

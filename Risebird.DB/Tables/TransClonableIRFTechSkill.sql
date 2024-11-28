@@ -11,9 +11,11 @@ CREATE TABLE [dbo].[TransClonableIRFTechSkill](
 	[Concepts] [varchar](50) NULL,
 	[Natureofquestion] [varchar](50) NULL,
 	[Timelimit] [int] NULL,
+	[isEliminationskill] [bit] NULL,
+	[SkillName][varchar](500) Null,
 	CONSTRAINT [FK_TransClonableIRFTechSkill_ClonableIRFId] FOREIGN KEY([ClonableIRFId]) REFERENCES [dbo].[ClonableSkillChannel] ([id]),
 	CONSTRAINT [FK_TransClonableIRFTechSkill_LevelId] FOREIGN KEY([LevelId]) REFERENCES [dbo].[LevelTech] ([id]),
-	CONSTRAINT [FK_TransClonableIRFTechSkill_SkillId] FOREIGN KEY([SkillId]) REFERENCES [dbo].[Skill] ([id]),
+	--CONSTRAINT [FK_TransClonableIRFTechSkill_SkillId] FOREIGN KEY([SkillId]) REFERENCES [dbo].[Skill] ([id]),
  CONSTRAINT [PK_TransClonableIRFTechSkill] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -21,6 +23,30 @@ CREATE TABLE [dbo].[TransClonableIRFTechSkill](
 ) ON [PRIMARY]
 
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillName')
+      AND Object_ID = Object_ID(N'TransClonableIRFTechSkill'))
+BEGIN
+    ALTER TABLE TransClonableIRFTechSkill
+    Add SkillName varchar(500)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'isEliminationskill')
+      AND Object_ID = Object_ID(N'TransClonableIRFTechSkill'))
+BEGIN
+    ALTER TABLE TransClonableIRFTechSkill
+    Add isEliminationskill bit
+END
+
+
+
+
 
 GO
 

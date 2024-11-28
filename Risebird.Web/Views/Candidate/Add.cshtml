@@ -52,13 +52,13 @@
                                         @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
                                     </div>
-                                    @if (Model.profileName != "Client")
+                                    @* @if (Model.profileName != "Client")
                                     {
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
                                             @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
                                         </div>
-                                    }
+                                    } *@
                                     @*<div class="form-group">
                                 @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })

@@ -45,8 +45,8 @@ BEGIN
 	Where InterviewId =@InterviewId
 
 
-	delete from QuestionsDiscussed where InterviewId=@InterviewId
-	delete from TechSkillReport where InterviewId=@InterviewId
+	--delete from QuestionsDiscussed where InterviewId=@InterviewId
+	--delete from TechSkillReport where InterviewId=@InterviewId
 	--delete from SkillGeneralReport where InterviewId=@InterviewId
 	delete from ProctoringReport where InterviewId=@InterviewId
 END

@@ -4413,5 +4413,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<AssignmentVM>> GetAllMAGs()
+        {
+            try
+            {
+                return await _irfRepository.GetAllMAGs();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

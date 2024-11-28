@@ -18,7 +18,8 @@ AS
 BEGIN
 
 SET NOCOUNT ON;
-
+declare @interviewId int = (select top 1 InterviewId from @QuestionsDiscussedBulkData)
+delete from QuestionsDiscussed where InterviewId=@interviewId
 --This row performs bulk copy of object DataTable to Table in SQL
 INSERT INTO [dbo].[QuestionsDiscussed](
 	[InterviewId] ,
