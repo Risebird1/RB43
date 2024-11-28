@@ -1224,14 +1224,15 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
                         techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
                         techSkillDt.Columns.Add("SkillSet", typeof(int));
+                        techSkillDt.Columns.Add("SkillName", typeof(string));
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
-                            if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
+                            if (string.IsNullOrEmpty(item.Concepts))//|| irfDetails.TechRubricType == TechRubricTypes.Basic
                             {
                                 item.Concepts = "";
                             }
-                            if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
+                            if (string.IsNullOrEmpty(item.Natureofquestion))// || irfDetails.TechRubricType == TechRubricTypes.Basic
                             {
                                 item.Natureofquestion = "";
                             }
@@ -1240,7 +1241,7 @@ namespace Risebird.Repository
                                 item.Timelimit = 0;
                                 item.isEliminationskill = false;
                             }
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
+                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
                         }
                     }
 
@@ -2170,26 +2171,28 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
                     techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
                     techSkillDt.Columns.Add("SkillSet", typeof(int));
+                    techSkillDt.Columns.Add("SkillName", typeof(string));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if (item.SkillId != 0)
+                        //if (item.SkillId != 0)
+                        //{
+                            
+                        //}
+                        if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                         {
-                            if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
-                            {
-                                item.Concepts = "";
-                            }
-                            if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
-                            {
-                                item.Natureofquestion = "";
-                            }
-                            if (irfDetails.TechRubricType == TechRubricTypes.Basic)
-                            {
-                                item.Timelimit = 0;
-                                item.isEliminationskill = false;
-                            }
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
+                            item.Concepts = "";
                         }
+                        if (string.IsNullOrEmpty(item.Natureofquestion) || irfDetails.TechRubricType == TechRubricTypes.Basic)
+                        {
+                            item.Natureofquestion = "";
+                        }
+                        if (irfDetails.TechRubricType == TechRubricTypes.Basic)
+                        {
+                            item.Timelimit = 0;
+                            item.isEliminationskill = false;
+                        }
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
 
                     }
 
@@ -2748,7 +2751,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tts.*, Skill.[Name] as SkillName, IRF.TechRubricType from TransTechSkill tts join Skill on tts.SkillId=Skill.id join IRF on irf.id = tts.IRFId where tts.IRFId = @IRFId";
+                var query = "Select tts.*, IRF.TechRubricType from TransTechSkill tts join IRF on irf.id = tts.IRFId where tts.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -9249,6 +9252,24 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<IEnumerable<AssignmentVM>> GetAllMAGs()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    return await SqlMapper.QueryAsync<AssignmentVM>(con, "usp_GetAllMAGs", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

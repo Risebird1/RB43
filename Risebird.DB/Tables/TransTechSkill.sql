@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[TransTechSkill](
 	[Timelimit] [int] NULL,
 	[isEliminationskill] [bit] NULL,
 	[SkillSet] [int] NULL,
+    [SkillName][varchar](500) Null,
  CONSTRAINT [PK_TransTechSkill] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -30,8 +31,8 @@ ALTER TABLE [dbo].[TransTechSkill]  WITH CHECK ADD FOREIGN KEY([LevelId])
 REFERENCES [dbo].[LevelTech] ([id])
 GO
 
-ALTER TABLE [dbo].[TransTechSkill]  WITH CHECK ADD FOREIGN KEY([SkillId])
-REFERENCES [dbo].[Skill] ([id])
+--ALTER TABLE [dbo].[TransTechSkill]  WITH CHECK ADD FOREIGN KEY([SkillId])
+--REFERENCES [dbo].[Skill] ([id])
 GO
 IF NOT EXISTS(
     SELECT *
@@ -89,4 +90,14 @@ IF EXISTS(
 BEGIN
     ALTER TABLE TransTechSkill
     ALTER COLUMN Natureofquestion VARCHAR(200);
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillName')
+      AND Object_ID = Object_ID(N'TransTechSkill'))
+BEGIN
+    ALTER TABLE TransTechSkill
+    Add SkillName varchar(500)
 END

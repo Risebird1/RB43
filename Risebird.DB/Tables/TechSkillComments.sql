@@ -9,6 +9,7 @@ Begin
 	[Skill] [int] NULL,
 	[Comment] [varchar](max) NULL,
 	[UserId][int] NULL,
+	[SkillName][varchar](500) NULL,
 	 CONSTRAINT [PK_TechSkillComments] PRIMARY KEY CLUSTERED 
 	(
 		[id] ASC
@@ -35,6 +36,16 @@ Begin
 		Alter table TechSkillComments
 		Add UserId int
 	END
+	IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'SkillName')
+		  AND Object_ID = Object_ID(N'TechSkillComments'))
+	BEGIN
+		Alter table TechSkillComments
+		Add SkillName varchar(250)
+	END
+
 End
 
 GO

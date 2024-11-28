@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Apis.Calendar.v3.Data;
+using iTextSharp.text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -8,7 +11,10 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 //using System.Web.Mvc;
@@ -25,11 +31,13 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IInterviewerService _interviewerService;
+        private readonly IIRFRepository _irfRepository;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
             IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper,
-            IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService)
+            IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
+            IIRFRepository irfRepository)
         {
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,6 +46,8 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _azureStorageHelper = azureStorageHelper;
             _interviewerService = interviewerService;
+            _irfRepository = irfRepository;
+
         }
 
 
@@ -599,6 +609,81 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return View("PreOnboardingAIVerdictDetails", new RunResult());
+            }
+        }
+
+        public async Task<IActionResult> GenerateTechRubricUsingOpenAI(string jobTitle)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var result = await _assistantServiceHelper.GenerateTechRubric(jobTitle);
+                        ViewBag.jobTitle = jobTitle;
+                        
+                        if (result != null)
+                        {
+                            var model = JsonConvert.DeserializeObject<RubricSchema>(result.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            var techSkills = new List<TransSkill>();
+                            if(model != null && model.Rubric != null)
+                            {
+                                foreach (var skill in model.Rubric)
+                                {
+                                    var techSkill = new TransSkill();
+
+                                    string levelDesc = skill.ProficiencyLevel; // The string to match
+
+                                    // Parse the string into an enum value
+                                    if (Enum.TryParse(typeof(LevelTechEnum), levelDesc, true, out var parsedLevel))
+                                    {
+                                        // Cast the result to its integer value
+                                        techSkill.LevelId = (int)parsedLevel;
+                                    }
+                                    techSkill.SkillName = skill.Skill;
+                                    techSkill.Weightage = skill.Weight;
+                                    if(skill.CoreConcepts != null)
+                                    {
+                                        techSkill.Concepts = string.Join(",", skill.CoreConcepts);
+                                    }
+                                    techSkill.Natureofquestion = skill.KeyExpectations;
+                                    techSkill.Timelimit = Convert.ToInt16(skill.EvaluationTime);
+                                    techSkill.isEliminationskill = (skill.Mandatory != null && skill.Mandatory.ToLower()=="yes") ? true : false;
+
+                                    techSkills.Add(techSkill);
+
+                                }
+                            }
+                            var viewModal = new IRFVm();
+                            viewModal.SkillCollection = techSkills;
+                            return PartialView("_TechRubricUsingOpenAIPartial", viewModal);
+
+                        }
+                        else
+                        {
+                            return View("_TechRubricUsingOpenAIPartial", new IRFVm());
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

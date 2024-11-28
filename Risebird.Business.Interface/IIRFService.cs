@@ -192,5 +192,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddAGInterviewerToSkillChannel(int irfId, int userId, string loggedInUser);
         Task<IEnumerable<int>> GetIRFList(int ClientId);
         Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid);
+        Task<IEnumerable<AssignmentVM>> GetAllMAGs();
     }
 }

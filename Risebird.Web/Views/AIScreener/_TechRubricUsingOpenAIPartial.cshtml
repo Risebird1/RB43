@@ -1,0 +1,149 @@
+﻿@* @model List<Risebird.Entities.ViewModel.TransSkill>*@
+@model Risebird.Entities.ViewModel.IRFVm
+@using Risebird.Entities.Enum
+
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="table-responsive-sm question-discussed">
+        @* <input type="text" id="txtinterviewerskills" value="@ViewBag.InterviewerSkills" hidden /> *@
+        <table class="table table-bordered mbn" id="SkillTable">
+            <thead>
+                <tr>
+
+                    <th width="18%" class="table_heading">Level<span class="red">*</span></th>
+                    <th width="25%" class="table_heading">Skill Name<span class="red">*</span></th>
+                    <th width="35%" class="table_heading advancedRubricField" style="margin-right:2px">Concepts</th>
+                    <th width="25%" class="table_heading advancedRubricField" style="margin-right:2px">Expectations</th>
+                    <th width="10%" class="table_heading advancedRubricField" style="margin-right:2px">Time limit</th>
+                     <th class="table_heading">Weightage <span class="red">*</span></th>
+                    <th width="10%" class="table_heading advancedRubricField" >Is Elimination Skill</th>
+                    <th class="table_heading text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                {
+                    <tr>
+                        <td width="18%">
+                            @Html.DropDownList("SkillCollection[0].LevelId", Html.GetEnumSelectList<LevelTechEnum>(), "Select", new { @class = "select-css form-control" })
+
+                        </td>
+                        <td width="25%" style="float:left;margin-right:2px">
+                            <input class="form-control text-box single-line" id="SkillCollection_0__SkillName" name="SkillCollection[0].SkillName" type="text">
+                        </td>
+                        
+                        <td width="20%" class="advancedRubricField" style="float:left;margin-right:2px">
+                            <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="150">
+                        </td>
+                        <td width="15%" class="advancedRubricField" style="float:left;margin-right:2px">
+                            <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="150">
+                        </td>
+                        <td width="10%" class="advancedRubricField" style="float:left;margin-right:2px">
+                            <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                        </td>
+                        <td width="10%">
+                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                        </td>
+                        <td width="10%" class="advancedRubricField" style="text-align:center;float:left">
+                            @Html.CheckBox("SkillCollection[0].isEliminationskill")  @*, new { @checked = "checked" }*@
+                        </td>
+                        <td class="action text-center">
+
+                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillName','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit', 'isEliminationskill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+
+                        </td>
+                    </tr>
+
+                }
+                else
+                {
+                    for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                    {
+                        <tr>
+
+                            <td width="18%">
+
+                                @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, Html.GetEnumSelectList<LevelTechEnum>(), new { @class = "form-control select-css"})
+                                @* , @name = $"SkillCollection[{i}].LevelId", @id = $"SkillCollection_{i}__LevelId" *@
+                            </td>
+                            <td width="25%">
+                                <div class="tooltipskill pull-left" style="width:90%">
+                               <span class="tooltipskilltext">@Model.SkillCollection[i].SkillName</span>
+                                @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                            </div>
+                            </td>
+                             <td width="20%" class="advancedRubricField">
+                                  <div class="tooltipskill pull-left" style="width:90%">
+                                    <span class="tooltipskilltext">@Model.SkillCollection[i].Concepts</span>
+
+                                @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                           </div>
+                            </td>
+                             <td width="15%" class="advancedRubricField">
+                                 <div class="tooltipskill pull-left" style="width:90%">
+                                  <span class="tooltipskilltext" style="left:-45%"> @Model.SkillCollection[i].Natureofquestion</span>
+
+                                @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                            </div>
+                            </td>
+                            <td width="10%">
+                                @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                            </td>
+                           
+                           
+                            <td width="10%" class="advancedRubricField" >
+                                @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
+                            </td>
+                            <td width="10%" class="advancedRubricField">
+                                @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
+                            </td>
+                            <td class="action text-center">
+                                <div>
+
+                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillName','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit', 'isEliminationskill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                    }
+                }
+
+
+            </tbody>
+        </table>
+        <label class="text-danger" id="SkillCollection_WeightageError"></label>
+        <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+        <div style="display:flex">
+            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;border-radius: 4px !important;top: -17px;position: relative;font-size: 13px !important; text-transform: none;   background: #9bdf9b !important;height: 39px !important;line-height: 39px;" onclick="RegenerateScoreRubic()">
+
+                <span> <img src="~/img/regenerate.png" style="max-width: 22px!important;position:relative;left: -3px;top: -3px;" /></span>
+                ReGenerate TechScoreRubic
+            </button>
+        </div>
+
+    </div>
+</div>
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
+
+
+<script>
+    function RegenerateScoreRubic() {
+        debugger;
+         $('#id_rubricsDiv').html('');
+        GenerateTechRubricUsingOpenAI();
+    }
+
+
+
+
+</script>
+
+
+
+
+
