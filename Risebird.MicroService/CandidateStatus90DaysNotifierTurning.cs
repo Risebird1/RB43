@@ -194,7 +194,7 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 12].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 13].Value = cold.interviewDate.HasValue ? cold.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
-                        Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(item.Requestor) ? item.Requestor.Split("@").LastOrDefault() : string.Empty;
+                        Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(cold.Requestor) ? cold.Requestor.Split("@").LastOrDefault() : string.Empty;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
