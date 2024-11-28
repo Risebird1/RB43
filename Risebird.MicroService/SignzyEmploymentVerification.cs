@@ -141,7 +141,7 @@ namespace Risebird.MicroService
                 _interviewer.isVerified = true;
                 if (convertedResponse.summary != null)
                 {
-                    _interviewer.IsEmployed = convertedResponse.summary.isEmployed;
+                    _interviewer.IsEmployed = convertedResponse.summary.dateOfExitMarked;
                     _interviewer.CompanyName = convertedResponse.summary.recentEmployerData.establishmentName;
                 }
                 else

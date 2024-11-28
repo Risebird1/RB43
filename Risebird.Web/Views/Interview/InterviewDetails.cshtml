@@ -693,49 +693,53 @@
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
-            <div class="col-md-12 pull-left text-left" style="background: #edf4f9b5;margin: 10px 10px 0px 10px;padding: 10px 10px 0px 10px;width: auto;">
-                <h2 style="font-size: 16px; line-height: 23px;color: green;"><b>1. Candidate ID verification :</b>  is mandatory for this interview authenticity and payment. <br/> &nbsp;&nbsp;&nbsp;Ask candidate to show any <b>ID card</b> at the start of the interview.</h2>
-            </div>
+            @if (Model.IsCandidateVerification)
+            {
+                <div class="col-md-12 pull-left text-left" style="background: #edf4f9b5;margin: 10px 10px 0px 10px;padding: 10px 10px 0px 10px;width: auto;">
+                    <h2 style="font-size: 16px; line-height: 23px;color: green;"><b> Candidate ID verification :</b>  is mandatory for this interview authenticity and payment. <br /> &nbsp;&nbsp;&nbsp;Ask candidate to show any <b>ID card</b> at the start of the interview.</h2>
+                </div>
+            }
             <div class="modal-body" style="padding:0px 20px 0px 10px;">
-             
+
                 <div style="overflow-y:auto;max-height:440px;">
-                @if (Model.IsVideoRequired == true)
-                {
-                    <div class="col-md-12 pull-left text-left">
-                        <h2 class="interviewerAlert" style="margin:0px;padding:0px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
-                    </div>
-                }
-                 <h2 style="font-size: 16px; line-height: 23px;color: green;"><strong>2. Bring Your Own Questions :</strong>
-                <ul style="0px 10px 0px 20px">
-                <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: green;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
-                 <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: green;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;">Using suggested questions as it is would result in 100% payment deduction</li>
-               </ul>
-                @if (!string.IsNullOrEmpty(Model.AudioComment))
-                {
-                    <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
-                        SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;">( Video explanation )</span>
+                    @if (Model.IsVideoRequired == true)
+                    {
+                        <div class="col-md-12 pull-left text-left">
+                            <h2 class="interviewerAlert" style="margin:0px;padding:0px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
+                        </div>
+                    }
+                    <h2 style="font-size: 16px; line-height: 23px;color: green;">
+                        <strong>Bring Your Own Questions :</strong>
+                        <ul style="0px 10px 0px 20px">
+                            <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: green;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
+                            <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: green;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;">Using suggested questions as it is would result in 100% payment deduction</li>
+                        </ul>
+                        @if (!string.IsNullOrEmpty(Model.AudioComment))
+                        {
+                            <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
+                                SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;">( Video explanation )</span>
 
-                    </div>
-                    <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
-                }
+                            </div>
+                            <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
+                        }
 
-                @if (!string.IsNullOrEmpty(Model.CompanyDetails))
-                {
-                    <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
-                            SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> <a style="color:#0d6efd;text-decoration: margin-bottom:8px; line-height: 21px; none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
-                        
-                    
-                    </div>
-                }
-                <div class="col-md-12 pull-left text-center">
-                    <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
-                </div>
+                        @if (!string.IsNullOrEmpty(Model.CompanyDetails))
+                        {
+                            <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
+                                SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> <a style="color:#0d6efd;text-decoration: margin-bottom:8px; line-height: 21px; none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+
+
+                            </div>
+                        }
+                        <div class="col-md-12 pull-left text-center">
+                            <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
+                        </div>
 
                 </div>
 
             </div>
-       
-        
+
+
         </div>
     </div>
 </div>
@@ -787,8 +791,7 @@
                 //bindSkillData(data.colectionone, data.colectiontwo);
                 debugger;
                 console.log(data);
-                if(data != null)
-                {
+                if (data != null) {
                     $("#techskills").empty().html(data);
                 }
 
@@ -989,15 +992,13 @@
                 countcheck = countcheck + 1;
             }
         });
-        if($('#PreReportLink').val()==null || $('#PreReportLink').val()=='')
-        {
+        if ($('#PreReportLink').val() == null || $('#PreReportLink').val() == '') {
             if (countcheck == 7) {
                 $(".join-button").removeClass('disable-link')
                 //enable meeting link
             }
         }
-        else
-        {
+        else {
             if (countcheck == 7) {
                 $(".join-button").removeClass('disable-link')
             }
