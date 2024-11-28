@@ -28,6 +28,7 @@ namespace Risebird.CommonHelper
         private readonly string reportQCAssistantId;
         private readonly string reportQCVectorStoreId;
         private readonly string resumeParserAssistantId;
+        private readonly string rubricGeneratorAssistantId;
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -43,6 +44,7 @@ namespace Risebird.CommonHelper
             reportQCAssistantId = _configuration["OpenAI:InterviewerReportQCAssistantId"];
             reportQCVectorStoreId = _configuration["OpenAI:ReportQCVectorStoreId"];
             resumeParserAssistantId = _configuration["OpenAI:ResumeParserAssistantId"];
+            rubricGeneratorAssistantId = _configuration["OpenAI:RubricGeneratorAssistantId"];
 
         }
 
@@ -172,28 +174,39 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-        private async Task<string> CreateRun(string threadId, string profileType)
+        private async Task<string> CreateRun(string threadId, string profileType = null)
         {
             try
             {
                 HttpClient client = new HttpClient();
                 string assistantId = string.Empty;
-                if (profileType == ProfileNames.Candidate)
+                if(!string.IsNullOrEmpty(profileType))
                 {
-                    assistantId = candidateScreenerAssistantId;
-                }
-                else if (profileType == ProfileNames.Interviewer)
-                {
-                    assistantId = interviewerScreenerAssistantId;
-                }
-                else if (profileType == ProfileNames.ResumeParserAIAssistant)
-                {
-                    assistantId = resumeParserAssistantId;
+                    if (profileType == ProfileNames.Candidate)
+                    {
+                        assistantId = candidateScreenerAssistantId;
+                    }
+                    else if (profileType == ProfileNames.Interviewer)
+                    {
+                        assistantId = interviewerScreenerAssistantId;
+                    }
+                    else if (profileType == ProfileNames.ResumeParserAIAssistant)
+                    {
+                        assistantId = resumeParserAssistantId;
+                    }
+                    else
+                    {
+                        assistantId = reportQCAssistantId;
+                    }
+
                 }
                 else
                 {
-                    assistantId = reportQCAssistantId;
+                    assistantId = rubricGeneratorAssistantId;
                 }
+                
+
+
                 var requestBody = new
                 {
                     assistant_id = assistantId//(profileType == ProfileNames.Candidate ? candidateScreenerAssistantId : interviewerScreenerAssistantId)
@@ -384,7 +397,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel, string fileId)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null)
         {
             try
             {
@@ -395,63 +408,39 @@ namespace Risebird.CommonHelper
                 };
 
                 string queryContent = string.Empty;
-                if (requestModel.Type == ProfileNames.Candidate)
+
+                if(requestModel != null)
                 {
-                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}.";
-                }
-                else if (requestModel.Type == ProfileNames.Interviewer)
-                {
-                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {requestModel.JDTitle}.";
-                }
-                else if (requestModel.Type == ProfileNames.QualityController)
-                {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant.";
+                    if (requestModel.Type == ProfileNames.Candidate)
+                    {
+                        queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}.";
+                    }
+                    else if (requestModel.Type == ProfileNames.Interviewer)
+                    {
+                        queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {requestModel.JDTitle}.";
+                    }
+                    else if (requestModel.Type == ProfileNames.QualityController)
+                    {
+                        queryContent = $"Generate an output as per the instructions fed to the assistant.";
+
+                    }
+                    else if (requestModel.Type == ProfileNames.ResumeParserAIAssistant)
+                    {
+                        queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
+                    }
 
                 }
-                else if (requestModel.Type == ProfileNames.ResumeParserAIAssistant)
+                else //case for generating tech skill rubric
                 {
-                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
-
+                    queryContent = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitleForRubrics}.";
                 }
+                
                 var threadRequest = new Thread();
-                //if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
-                //{
-                //    threadRequest = new Thread
-                //    {
-                //        messages = new List<Message>
-                //        {
-                //            new Message { role = "assistant", content = queryContent}
-                //        },
-                //        tool_resources = new ToolResources()
-                //        {
-                //            file_search = new FileSearch
-                //            {
-                //                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
-
-                //            }
-                //        }
-                //    };
-                //}
-                //else if(requestModel.Type == ProfileNames.QualityController)
-                //{
-                //    threadRequest = new Thread
-                //    {
-                //        messages = new List<Message>
-                //        {
-                //            new Message { role = "assistant", content = queryContent}
-                //        },
-                //        tool_resources = new ToolResources()
-                //        {
-                //            file_search = new FileSearch
-                //            {
-                //                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId} } }
-                //            }
-                //        }
-                //    };
-                //}
-                threadRequest = new Thread
+                if (requestModel != null && !string.IsNullOrEmpty(fileId))
                 {
-                    messages = new List<Message>
+                    threadRequest = new Thread
+                    {
+                        messages = new List<Message>
                     {
                         new Message {
                             role = "assistant", content = queryContent,
@@ -478,15 +467,30 @@ namespace Risebird.CommonHelper
                     }//,
 
 
-                    //tool_resources = new ToolResources()
-                    //{
-                    //    file_search = new FileSearch
-                    //    {
-                    //        vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
+                        //tool_resources = new ToolResources()
+                        //{
+                        //    file_search = new FileSearch
+                        //    {
+                        //        vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
 
-                    //    }
-                    //}
-                };
+                        //    }
+                        //}
+                    };
+                }
+                else
+                {
+                    threadRequest = new Thread
+                    {
+                        messages = new List<Message>
+                        {
+                            new Message {
+                                role = "assistant", content = queryContent
+
+                            }
+                        }
+
+                    };
+                }
 
                 string jsonContent = JsonConvert.SerializeObject(threadRequest);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -673,6 +677,65 @@ namespace Risebird.CommonHelper
             }
         }
 
+
+        public async Task<RunResult> GenerateTechRubric(string jobTitle)
+        {
+            try
+            {
+                
+                string threadId = string.Empty;
+                threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
+                //if (!string.IsNullOrEmpty(fileId))
+                //{
+                //    await Task.Delay(15000);//60000
+                    
+                //}
+                //else
+                //{
+                //    return null;
+                //}
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId);
+                }
+                else
+                {
+                    return null;
+                }
+
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(4000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+                    //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
+                    //{
+                    //    return await RecreateThread(requestModel, fileId);
+                    //}
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
     public class VectorStore

@@ -12,7 +12,7 @@ Create PROCEDURE [dbo].[usp_GetTransInterviewersForOpenAIScreening]
 As
 Begin
 
- select distinct top 3 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
+ select distinct top 2 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
  irf.JDTiltle as JDTitle, irf.CreatedOn, ConvertedFromDocResumeLink 
  into #TempTable
  from TransInterviewer ti
