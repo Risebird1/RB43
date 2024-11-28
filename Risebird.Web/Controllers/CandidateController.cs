@@ -6924,6 +6924,12 @@ namespace Risebird.Web.Controllers
             return Json(reportlink);
         }
         #endregion
+        #region Meeting L2 Status
+        public async Task<IActionResult> SelectedMeetings()
+        {
+            return View();
+        }
+        #endregion
         #region Test Data Excel For turing
         public async Task<FileContentResult> TestFile()
         {
