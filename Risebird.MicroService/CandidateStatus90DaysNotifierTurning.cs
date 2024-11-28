@@ -109,6 +109,7 @@ namespace Risebird.MicroService
 
                 Sheet.Cells[1, 21].Value = "Schedule Count";
                 Sheet.Cells[1, 22].Value = "Meeting Status";
+                Sheet.Cells[1, 23].Value = "Requestor";
                 //Sheet.Cells[1, 4].Value = "Resume";
                 //Sheet.Cells[1, 8].Value = "Invite Sent On";
                 //Sheet.Cells[1, 11].Value = "Confirmation Status";
@@ -155,6 +156,7 @@ namespace Risebird.MicroService
                         {
                             Sheet.Cells[i, 22].Value = item.MeetingStatus ?? string.Empty;
                         }
+                        Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(item.Requestor) ? item.Requestor.Split("@").LastOrDefault() : string.Empty;
                         //Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 13].Value = item.InterviewStatus ?? string.Empty;
                         //Sheet.Cells[i, 14].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
@@ -192,6 +194,7 @@ namespace Risebird.MicroService
                         Sheet.Cells[i, 12].Value = cold.FirstScheduledOnDate.HasValue ? cold.FirstScheduledOnDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 13].Value = cold.interviewDate.HasValue ? cold.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
+                        Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(item.Requestor) ? item.Requestor.Split("@").LastOrDefault() : string.Empty;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
