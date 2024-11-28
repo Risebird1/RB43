@@ -10,7 +10,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_GetCandidateStatusDataWithoutCold]   
+Create PROCEDURE [dbo].[usp_GetCandidateStatusDataWithoutCold]   
 @clientId int,                    
 @startDate datetime,                    
 @endDate datetime                    
@@ -32,13 +32,14 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  completedDate datetime null,        
  PreReportLink varchar(500) NULL,        
  PreReportUsername varchar(50) NULL,        
- PreReportPassword varchar(50) NULL        
+ PreReportPassword varchar(50) NULL,
+ Requestor varchar(150) NULL
 );                    
          
 INSERT INTO @TemporaryCandidateTableVariable                        
 select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink          
 ,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,        
-La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword                
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword,ca.ClientHRAttemptContact as Requestor                
 from  Candidate ca                  
 join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)                  
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId        
@@ -48,7 +49,7 @@ outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) J
 where cs.[Status] = 12 and irf.ClientId=177 and  [Date] between @startDate and @endDate-- cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)                  
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink          
 , Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,        
-La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword              
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword,ca.ClientHRAttemptContact              
          
          
 ----completed          
@@ -59,7 +60,7 @@ ice.InterviewerComment as InterviewerCommentTwo,
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,          
 tctv.FirstScheduledOninterviewDate, tctv.completedDate        
 , 1 as isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, im.Cancellationsource,CONCAT('https://portal.risebird.io/Interview/ExecutiveReport?interviewId=', im.id,'&irfId=',IRF.id,'&isClient=true') as ExecutiveReportLink,      
-csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate  
+csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate,tctv.Requestor  
 from @TemporaryCandidateTableVariable tctv          
 join InterviewMeetings im on im.id = tctv.InterviewId          
 join IRF on IRF.IRFId=im.IRFId          
@@ -89,7 +90,7 @@ ice.InterviewerComment as InterviewerCommentTwo,
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,          
 tctv.FirstScheduledOninterviewDate,'' as completedDate, 1 as isQcDone, irf.IsDrive,        
 ipr.NickName as InterviewerCodedName, im.Cancellationsource,'' as ExecutiveReportLink,      
-csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate    
+csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate,tctv.Requestor    
 from @TemporaryCandidateTableVariable tctv          
 join InterviewMeetings im on im.id = tctv.InterviewId          
 join IRF on IRF.IRFId=im.IRFId          
@@ -115,7 +116,7 @@ ice.InterviewerComment as InterviewerCommentTwo
 , tctv.ResumeLink, CandidateLatestStatus,          
 tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate,'' as completedDate, 1 as isQcDone, irf.IsDrive,          
  ipr.NickName as InterviewerCodedName, im.Cancellationsource,'' as ExecutiveReportLink,      
- csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate    
+ csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate,tctv.Requestor    
 from @TemporaryCandidateTableVariable tctv          
 join InterviewMeetings im on im.id = tctv.InterviewId          
 join InterviewComments ic on ic.InterviewId=im.id          
@@ -138,7 +139,7 @@ ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.
 ice.InterviewerComment as InterviewerCommentTwo,        
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,          
 tctv.FirstScheduledOninterviewDate,'' as completedDate, 1 as isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName,  im.Cancellationsource,'' as ExecutiveReportLink,      
-csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate    
+csc.Date as CurrentStatusDate,IRF.id as Irfintid,InterviewCount.NoOfInterviews,cscancel.CancelledBy,ibr.BillingRate,tctv.Requestor    
 from @TemporaryCandidateTableVariable tctv          
 join InterviewMeetings im on im.id = tctv.InterviewId          
 join IRF on IRF.IRFId=im.IRFId          
