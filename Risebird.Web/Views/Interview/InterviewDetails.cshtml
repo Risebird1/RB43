@@ -777,7 +777,6 @@
             });
         });
         //End For Audio
-
         id = @ViewBag.id;
         $.ajax({
             type: "POST",
@@ -785,7 +784,6 @@
             data: { id: id },
             success: function (data) {
                 //bindSkillData(data.colectionone, data.colectiontwo);
-                debugger;
                 console.log(data);
                 if(data != null)
                 {
@@ -1020,7 +1018,10 @@
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "none";
         var video = document.getElementById('vidvideoinstruction');
-        video.pause();
+        if(video != null){
+            video.pause();
+        }
+        
     }
 
 </script>

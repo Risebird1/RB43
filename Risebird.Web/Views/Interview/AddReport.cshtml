@@ -544,8 +544,8 @@
                                                                     <th>Actual Weightage</th>
                                                                  @*    <th class="table_heading" style="display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
                                                                       <th class="table_heading" style="display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>*@
-                                                                       <th  class="table_heading" style="display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
-                                                                         <th  class="table_heading" style="display:@(rubricDisplayStatus)">Is Elimination Skill</th>
+                                                                       @* <th  class="table_heading" style="display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
+                                                                         <th  class="table_heading" style="display:@(rubricDisplayStatus)">Is Elimination Skill</th> *@
    
                                                                 </tr>
                                                             </thead>
@@ -581,7 +581,7 @@
                                                                             </td>
 
                                                                             <td>
-                                                                                @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                                @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, Html.GetEnumSelectList<LevelTechEnum>(), "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                             </td>
                                                                             <td>
@@ -590,18 +590,11 @@
                                                                             <td>
                                                                                 @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
                                                                             </td>
-                                                                            @*<td  style="display:@rubricDisplayStatus">
-                                                                                <input style="width:350px;font-size:13px;font-weight:500;" class=text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50", readonly = "readonly" >
-                                                                            </td>
-                                                                            <td  style="display:@rubricDisplayStatus">
-                                                                                <input style="width:350px;font-size:13px;font-weight:500;border: 1.5px #ccc solid !important;" class="text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50" ,readonly = "readonly">
-                                                                            </td>*@
-                                                                            <td  style="display:@rubricDisplayStatus">
+                                                                            
+                                                                            @* <td  style="display:@rubricDisplayStatus">
                                                                                 <input style="font-size:13px;font-weight:500;height:42px;width:100px;border: 1.5px #ccc solid !important;" class="text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
-                                                                            </td>
-                                                                            <td style="display:@rubricDisplayStatus" class="text-center">
-                                                                                @Html.CheckBox("SkillCollection[0].isEliminationskill"),@*, new { @checked = "checked" }*@
-                                                                            </td>
+                                                                            </td> *@
+                                                                            
                                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                                         </tr>
@@ -1179,7 +1172,7 @@
                                                                                     </td>
 
                                                                                     <td>
-                                                                                        @Html.DropDownListFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateTwoOverAll(this.id, this.value)" })
+                                                                                        @Html.DropDownListFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId, Html.GetEnumSelectList<LevelTechEnum>(), "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateTwoOverAll(this.id, this.value)" })
 
                                                                                     </td>
                                                                                     <td>
