@@ -6925,9 +6925,132 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Meeting L2 Status
-        public async Task<IActionResult> SelectedMeetings()
+        public async Task<IActionResult> AllSelectedMeetings(string emailid, string id)
         {
-            return View();
+            try
+            {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                if (client != null)
+                {
+                    ViewBag.ClientRole = client.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty;
+                    var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+                    if (string.IsNullOrEmpty(logovalue))
+                    {
+                        HttpContext.Session.SetString("Logo", "");
+                    }
+                    else
+                        HttpContext.Session.SetString("Logo", logovalue);
+                    var model = new List<CandidateTimelineVM>();
+                    ViewBag.emailid = emailid;
+                    ViewBag.id = id;
+                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+
+                    var selectedMeeting = new List<MeetingVM>();
+                    var meetings = new List<MeetingVM>();
+
+                    var Startdate = DateTime.Now.AddDays(-30);
+                    var Enddate = DateTime.Now.AddDays(15);
+
+                    if (HttpContext.Session.GetString("AllSelectedMeetingsfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("AllSelectedMeetingsfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            Startdate = filter.StartDate.Value;
+                            Enddate = filter.EndDate.Value;
+                        }
+                    }
+                    meetings = (await _meetingService.GetClientSelectedMeetings(emailid, true, Startdate, Enddate)).ToList();
+
+                    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDescription = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.InterviewStatusDescription = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); return x; }).ToList();
+
+                    //if (HttpContext.Session.GetString("AllSelectedMeetingsfilters") != null)
+                    //{
+                    //    var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("AllSelectedMeetingsfilters"));
+                    //    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = selectedMeeting.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                    //    filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = selectedMeeting.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
+                    //    filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = selectedMeeting.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
+                    //    filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = selectedMeeting.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
+                    //    filter.ClientName = filter.ClientName == null ? filter.ClientName = selectedMeeting.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                    //    filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                    //    filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                    //    filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                    //    filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
+
+                    //    meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                    //    && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+                    //    && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
+                    //    && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                    //     && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                    //    && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                    //    && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                    //    && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
+                    //    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
+                    //}
+
+                    //if (TempData["SuccessErrorMessageInterview"] != null)
+                    //{
+                    //    ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                    //    TempData.Remove("SuccessErrorMessageInterview");
+                    //}
+                    //if (TempData["SuccessErrorMessageQCForm"] != null)
+                    //{
+                    //    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                    //    TempData.Remove("SuccessErrorMessageQCForm");
+                    //}
+                    ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
+                    ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
+                    return View(meetings);
+                }
+                else
+                {
+                    return RedirectToAction("PublicCandidateStatus", new { id = id });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AllSelectedMeetings(SelectedPriorityViewFilter filter, string emailid, string id)
+        {
+            try
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("AllSelectedMeetingsfilters", JsonConvert.SerializeObject(filter));
+                }
+                return RedirectToAction("AllSelectedMeetings", new { emailid = emailid, id = id });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { id = id });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetAllSelectedMeetingsFilter(string emailid, string id)
+        {
+            try
+            {
+                HttpContext.Session.Remove("AllSelectedMeetingsfilters");
+                return RedirectToAction("AllSelectedMeetings", new { emailid = emailid, id = id });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
+            }
+
         }
         #endregion
         #region Test Data Excel For turing

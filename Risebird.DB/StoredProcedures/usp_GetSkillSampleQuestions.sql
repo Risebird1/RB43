@@ -12,7 +12,8 @@ Create PROCEDURE [dbo].[usp_GetSkillSampleQuestions]
 @IRFId int
 AS
 Begin
-Select tsc.*, sk.[Name] as SkillName from SkillChannelSampleQuestions tsc 
-	join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId
+
+	Select tsc.* from SkillChannelSampleQuestions tsc where IRFId = @IRFId
+
 END
 GO

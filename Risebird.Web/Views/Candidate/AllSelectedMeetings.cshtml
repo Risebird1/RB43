@@ -1,0 +1,492 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Newtonsoft.Json;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Selected Candidate";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
+    string datetype = string.Empty;
+    string[] MeetingStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] ScheduleStatus = new string[] { };
+    string[] HREmail = new string[] { };
+    string[] ProfileSource = new string[] { };
+    string[] JdTitle = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("AllSelectedMeetingsfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContextAccessor.HttpContext.Session.GetString("AllSelectedMeetingsfilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+}
+<script>
+    var Header = "Interview Selected Meetings";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
+<input type="hidden" id="hidtxtemailid" value="@ViewBag.emailid" />
+<input type="hidden" id="hidtxtid" value="@ViewBag.id" />
+<div id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                </div>
+
+                <div class="pull-right client-ms">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-bs-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("AllSelectedMeetings", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div id="tableID">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad">
+                                            <div class="table-responsive">
+                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="border-left: 0px !important;" id='start'>Interview Date</th>
+                                                            <th>Skill Channel</th>
+                                                            <th>Candidate Name</th>
+                                                            <th id="intselmeet_3">Report Link</th>
+                                                            <th id="intselmeet_4">Resume</th>
+                                                            <th>Client HR</th>
+                                                            <th id="intselmeet_5">Confirmation Status</th>
+                                                            <th id="intselmeet_6">Meeting Status</th>
+                                                            <th id="intselmeet_7">Selection Status</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                <th>Interviewer</th>
+                                                                <th>Interviewer Status</th>
+                                                            }
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th style="border-left: 0px !important;">Interview Date</th>
+                                                            <th>Skill Channel</th>
+                                                            <th>Candidate Name</th>
+                                                            <th>Report Link</th>
+                                                            <th>Resume</th>
+                                                            <th>Client HR</th>
+                                                            <th>Confirmation Status</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Selection Status</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                <th>Interviewer</th>
+                                                                <th>Interviewer Status</th>
+                                                            }
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody id="tblbodySelectedInterviewMeeting">
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                            <tr id="@item.imid" data-changes="1">
+                                                                <td> @item.interviewDate </td>
+                                                                <td> @item.IRFId </td>
+                                                                @if (item.candidateName != null && item.candidateName != "")
+                                                                {
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 13)
+                                                                    {
+                                                                        <td>
+                                                                            <span class="call-area">
+                                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                {
+                                                                                    <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate"><img src="~/img/calling.png" width="17" /></span>
+                                                                                }
+                                                                            </span>
+
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 13)...  </a>
+
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @if (item.candidateName.Length > 13)
+                                                                        {
+                                                                            <td class="cadName">
+
+                                                                                <span class="call-area">
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate"><img src="~/img/calling.png" width="17" style="rotate:9deg;" /></span>
+                                                                                    }
+                                                                                </span>
+
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 13)... </a>
+
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <span class="call-area">
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate"><img src="~/img/calling.png" width="17" style="rotate: 9deg;" /></span>
+                                                                                    }
+                                                                                </span>
+                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td>
+                                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
+
+                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                {
+                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 18)
+                                                                    {
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>@item.ClientHrContact.Substring(0, 18)... </a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>
+                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact</a>
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+                                                                <td> @item.confirmationStatus</td>
+                                                                <td> @item.MeetingStatusDescription </td>
+                                                                <td> @item.InterviewStatusDescription </td>
+                                                                @if (ViewBag.ClientRole == "Reviewer")
+                                                                {
+                                                                    <td>@item.InterviewerName</td>
+                                                                    <td>@item.ShortListstatus</td>
+                                                                }
+                                                                <td class="text-right action">
+                                                                    <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
+                                                                            data-toggle="ajax-modal" data-target="#addComment"
+                                                                            data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.imid })" style="width:25px!important;height:25px!important;">
+                                                                        <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
+                                                                    </button>
+                                                                    <button id="selectedcandidate_9" class="btn btn-rating shadow btn-xs sharp me-1" aria-label="Client Feedback" title="Client Feedback" style="background: #54a5f6;width:25px!important;height:25px!important;border-color:#72ade8;">
+                                                                        <span onclick="OpenL2Model(@item.imid)">
+                                                                            <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+
+                                                                        </span>
+                                                                    </button>
+                                                                    @if (ViewBag.meetingtype == "Select")
+                                                                    {
+                                                                        <a onclick="removeOrShortlistInterviewer(@item.imid,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
+                                                                            <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Shortlist Interviewer" style="background:#c3df82fc;border-color:#dbee7699;width:25px!important;height:25px!important;">
+                                                                                <span title="Shortlist Interviewer"><img style="max-width:18px;position:relative;left:-2px;top:-1px;" src="~/Newassets/img/shortlist-icon.png" /></span>
+                                                                            </div>
+                                                                        </a>
+                                                                        <a onclick="removeOrShortlistInterviewer(@item.imid,'Rejected')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
+                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Remove Interviewer" style="background: #de4f3eb3;width:25px!important;height:25px!important;">
+                                                                                <span title="Remove Interviewer"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size: 11px;"></span><span class="fa fa-trash" style="color:#fff;font-size: 8px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                            </div>
+                                                                        </a>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+        <!-- end row -->
+    </div>
+</div>
+
+<div id="modal_clientComment_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script>
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_L2StatusUpdate.cshtml")
+<script src="~/js/twiliocallmaker.js"></script>
+<script src="~/js/executivereport.js"></script>
+<script src="~/js/filtervalidation.js?v=2024"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+    });
+
+    function ResetFilter() {
+        window.location.href = "/Candidate/ResetAllSelectedMeetingsFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+    }
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var hrEmail = @Html.Raw(Json.Serialize(HREmail));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var jdTitle = @Html.Raw(Json.Serialize(JdTitle));
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        var form = $("#form").serialize();
+
+    }
+</script>
+<script>
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+</script>
+<script>
+    function removeOrShortlistInterviewer(interviewid, action) {
+        var bodyText;
+        var confirmationButtonText;
+        var successHtmlText;
+        if (action == 'Rejected') {
+            bodyText = 'Do you want to terminate this interviewer from taking further interviews for this Skill Channel?';
+            confirmationButtonText = 'Yes, Remove it!';
+            successHtmlText = '<p>The Interviewer has been removed.</p>';
+        }
+        else {
+            bodyText = 'Do you want to shortlist this interviewer?';
+            confirmationButtonText = 'Yes';
+            successHtmlText = '<p>The Interviewer has been shortlisted.</p>';
+        }
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: bodyText,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmationButtonText,
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    captureclick('Interviewer Status', action, interviewid);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Interview/RemoveOrShortlistInterviewer",
+                        data: { 'interviewid': interviewid, 'action': action },
+                        success: function (result) {
+                            resolve(result);
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Successful!',
+                    type: 'success',
+                    html: successHtmlText,
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Operation cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
+    }
+</script>

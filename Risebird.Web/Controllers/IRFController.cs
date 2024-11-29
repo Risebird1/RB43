@@ -8742,7 +8742,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
+                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.SkillName, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
 
                     if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                     {
