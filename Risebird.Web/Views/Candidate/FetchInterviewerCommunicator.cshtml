@@ -35,8 +35,8 @@
     }
 
     /*.mob_h {
-                                                                                                                                                                                                   display: none !important
-                                                                                                                                                                                            }*/
+                                                                                                                                                                                                                   display: none !important
+                                                                                                                                                                                                            }*/
 
     .tox-notifications-container {
         display: none
@@ -85,6 +85,14 @@
                     {
                         <div>
                             <div class="desktop-view">
+                                <a target="_blank" href="@Url.Action("AllSelectedMeetings", "Candidate", new { emailid= ViewBag.emailid, id = ViewBag.id })">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: -95px;">
+                                        <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
+                                        <div class="d-lg-inline-flex">
+                                            Selected Meetings
+                                        </div>
+                                    </button>
+                                </a>
                                 <div class="topheader-link-wrap">
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: -95px;">
                                         <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>

@@ -7062,8 +7062,8 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
             try
             {
-                var strtdate = "01-10-2024";
-                var enddate = "01-11-2024";
+                var strtdate = DateTime.Now.AddDays(-90);//"01-10-2024";
+                var enddate = DateTime.Now;// "01-11-2024";
                 var candidateDatawithoutCold = new List<CandidateExcelData>();
                 candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(Convert.ToDateTime(strtdate), Convert.ToDateTime(enddate), 177)).ToList();
                 var candidateDatawithCold = new List<CandidateExcelData>();
