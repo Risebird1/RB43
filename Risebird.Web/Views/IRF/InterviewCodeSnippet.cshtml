@@ -45,7 +45,7 @@
                             <tbody>
                                 <tr>
                                     <td class="b-right" style="vertical-align:top; border-right: 1px #dbd8d8a1 solid;">
-                                        @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control", @style = "width:180px;" })
+                                        @Html.DropDownList("SkillCollection[0].SkillName", (SelectList)ViewBag.Skills, new { @class = "select-css form-control", @style = "width:180px;" })
                                     </td>
                                     <td class="b-right" style="border-right: 1px #dbd8d8a1 solid;">
                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:315px;">
@@ -179,7 +179,7 @@
         $form.data("validator", null);
 
         var options = @Html.Raw(Json.Serialize(ViewBag.Skills));
-        $("#SkillCollection_" + finalIndex + "__Skill" + " option").remove();
+        $("#SkillCollection_" + finalIndex + "__SkillName" + " option").remove();
 
         $(options).each(function () {
             var option = $("<option />");
@@ -188,7 +188,7 @@
             //Set Value part.
             option.val(this.value);
             //Add the Option element to DropDownList.
-            $("#SkillCollection_" + finalIndex + "__Skill").append(option);
+            $("#SkillCollection_" + finalIndex + "__SkillName").append(option);
         });
     }
 

@@ -24,22 +24,19 @@ begin
 
 	if(@profile=1)--Admin
 	begin
-		Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc 
-		join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId
+		Select tsc.* from TechSkillComments tsc where IRFId = @IRFId
 	end
 	else
 	begin 
 		declare @userId int
 		set @userId = (select id from UserList where EmailId like @emailId)
 
-		Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc 
-		join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId and UserId = @userId
+		Select tsc.* from TechSkillComments tsc where IRFId = @IRFId and UserId = @userId
 	end
 end
 else
 begin
-	Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc 
-	join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId
+	Select tsc.* from TechSkillComments tsc where IRFId = @IRFId
 end
 
 END

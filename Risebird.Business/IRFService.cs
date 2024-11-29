@@ -374,21 +374,41 @@ namespace Risebird.Business
         }
 
 
-        public async Task<IEnumerable<Skill>> GetTechSkills(int id)
+        //public async Task<IEnumerable<Skill>> GetTechSkills(int id)
+        //{
+        //    try
+        //    {
+        //        List<Skill> list = new List<Skill>();
+        //        var skills = await _irfRepository.GetSkillsbyIRFid(id);
+        //        //var result = await _irfRepository.GetSkills();
+        //        foreach (var item in skills ?? new List<TransSkill>())
+        //        {
+        //            //var obj = result.FirstOrDefault(x => x.id == item.SkillId);
+        //            list.Add(new Skill { Name = item.SkillName});
+        //        }
+        //        return list;
+
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+
+
+        /// <summary>
+        /// This is the evolved version of the above method that fetches skills saved against a skill channel
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<string>> GetIRFTechSkills(int irfId)
         {
             try
             {
-                List<Skill> list = new List<Skill>();
-                var skills = await _irfRepository.GetSkillsbyIRFid(id);
-                var result = await _irfRepository.GetSkills();
-                foreach (var item in skills ?? new List<TransSkill>())
-                {
-
-                    var obj = result.FirstOrDefault(x => x.id == item.SkillId);
-                    list.Add(obj);
-                }
-
-                return list;
+                var skills = await _irfRepository.GetSkillsbyIRFid(irfId);
+                return skills?.Select(x=>x.SkillName);
 
             }
 

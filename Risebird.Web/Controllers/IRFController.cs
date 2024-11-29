@@ -1294,16 +1294,18 @@ namespace Risebird.Web.Controllers
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
                     //var techSkills = new List<Skill>();
-                    var skills = await _irfService.GetTechSkills(id);
+                    //var skills = await _irfService.GetTechSkills(id);
+                    var skills = await _irfService.GetIRFTechSkills(id);
 
                     //foreach (var skill in skills)
                     //{
                     //    techSkills.Add(new Skill { id = skill.id, Name = skill.Name?.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description?.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
                     //}
-                    ViewBag.Skills = new SelectList(skills, "id", "Name");
+                    //ViewBag.Skills = new SelectList(skills, "id", "Name");
                     //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
                     //model.SkillsOptionsData = model.SkillsOptionsData?.Replace("\t", "").Replace("\n", "").Replace("\r", "");
                     //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                    ViewBag.Skills = new SelectList(skills);
                     //model.SkillsOptionsData = JsonConvert.SerializeObject(techSkills);
                     model.IRFId = id;
                     model.Profile = profileName;
@@ -1347,14 +1349,16 @@ namespace Risebird.Web.Controllers
                     {
                         if (ModelState.IsValid)
                         {
-                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId)).Where(x => x.UserId == model.UserId);
+                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.SkillName, x.UserId)).Where(x => x.UserId == model.UserId);
 
                             if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                             {
                                 //duplicates exist
                                 ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
-                                var skills = await _irfService.GetTechSkills(model.IRFId);
-                                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                                //var skills = await _irfService.GetTechSkills(model.IRFId);
+                                //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                                var skills = await _irfService.GetIRFTechSkills(model.IRFId);
+                                ViewBag.Skills = new SelectList(skills);
                                 //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
                                 model.Profile = profileName;
                                 return View(model);
@@ -1373,8 +1377,10 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            var skills = await _irfService.GetTechSkills(model.IRFId);
-                            ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            //var skills = await _irfService.GetTechSkills(model.IRFId);
+                            //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            var skills = await _irfService.GetIRFTechSkills(model.IRFId);
+                            ViewBag.Skills = new SelectList(skills);
                             //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
 
                             model.Profile = profileName;
@@ -8710,8 +8716,10 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 TechSkillComments model = new TechSkillComments();
-                var skills = await _irfService.GetTechSkills(id);
-                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                //var skills = await _irfService.GetTechSkills(id);
+                var skills = await _irfService.GetIRFTechSkills(id);
+                //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                ViewBag.Skills = new SelectList(skills);
                 model.IRFId = id;
                 model.Profile = profileName;
                 model.CreatedBy = emailid;
@@ -8734,7 +8742,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
+                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.SkillName, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
 
                     if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                     {
@@ -9602,8 +9610,10 @@ namespace Risebird.Web.Controllers
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid?.Replace("\"", "");
             TechSkillComments model = new TechSkillComments();
-            var skills = await _irfService.GetTechSkills(irfid);
-            ViewBag.Skills = new SelectList(skills, "id", "Name");
+            //var skills = await _irfService.GetTechSkills(irfid);
+            //ViewBag.Skills = new SelectList(skills, "id", "Name");
+            var skills = await _irfService.GetIRFTechSkills(irfid);
+            ViewBag.Skills = new SelectList(skills);
             model.IRFId = irfid;
             model.interviewid = id;
             model.Profile = profileName;

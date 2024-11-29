@@ -20,8 +20,8 @@ Begin
 	REFERENCES [dbo].[IRF] ([id])
 	
 
-	ALTER TABLE [dbo].[TechSkillComments]  WITH CHECK ADD FOREIGN KEY([Skill])
-	REFERENCES [dbo].[Skill] ([id])
+	--ALTER TABLE [dbo].[TechSkillComments]  WITH CHECK ADD FOREIGN KEY([Skill])
+	--REFERENCES [dbo].[Skill] ([id])
 End
 
 Else
@@ -45,7 +45,15 @@ Begin
 		Alter table TechSkillComments
 		Add SkillName varchar(250)
 	END
-
+	IF EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'SkillName')
+		  AND Object_ID = Object_ID(N'TechSkillComments'))
+	BEGIN
+		ALTER TABLE TechSkillComments
+		ALTER COLUMN SkillName VARCHAR(500) NULL;
+	END
 End
 
 GO
