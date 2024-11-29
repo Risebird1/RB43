@@ -12,7 +12,7 @@ GO
 
 Create PROCEDURE [dbo].[usp_AddTechSkillComments]    
 (    
-   @TechSkillCommentsBulkData AS [dbo].[TechSkillComments_TableType] READONLY,  
+   @TechSkillCommentsBulkData AS [dbo].[TechSkillComments_TableTypeV2] READONLY,--TechSkillComments_TableType  
    @IRFId int,
    @userId int
 )    
@@ -33,10 +33,11 @@ BEGIN
     [IRFId] ,    
     [Skill],    
     [Comment],  
-    [UserId])    
+    [UserId],
+	[SkillName])    
      
     
-   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId FROM @TechSkillCommentsBulkData tscbd
+   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId, tscbd.SkillName FROM @TechSkillCommentsBulkData tscbd
 
   end
   else
@@ -47,10 +48,11 @@ BEGIN
     [IRFId] ,    
     [Skill],    
     [Comment],  
-    [UserId])    
+    [UserId],
+	[SkillName])    
      
     
-   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId FROM @TechSkillCommentsBulkData tscbd
+   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId, tscbd.SkillName FROM @TechSkillCommentsBulkData tscbd
   end
      
   
