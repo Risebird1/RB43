@@ -7,12 +7,27 @@ CREATE TABLE [dbo].[SkillChannelSampleQuestions](
 	[Skill] [int] NULL,
 	[Comment] [varchar](500) NULL,
 	[CreatedBy] [varchar](150) NULL,
+	[SkillName] [varchar](500) NULL,
  CONSTRAINT [PK_SkillChannelSampleQuestions] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+else
+Begin
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillName')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add SkillName varchar(500)
+END
+
+End
 GO
 
 
