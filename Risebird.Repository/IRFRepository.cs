@@ -3087,10 +3087,11 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("Skill", typeof(int));
                     techSkillCommentsDt.Columns.Add("Comment", typeof(string));
                     techSkillCommentsDt.Columns.Add("UserId", typeof(int));
+                    techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
 
                     foreach (var item in obj.SkillCollection)
                     {
-                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt32(item.Skill), item.Comment, item.UserId);
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.UserId, item.SkillName);
                     }
 
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);

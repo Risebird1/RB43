@@ -51,7 +51,7 @@
                                                     <tr>
                                                         <td class="b-right">
 
-                                                            @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+                                                            @Html.DropDownList("SkillCollection[0].SkillName", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
                                                         </td>
 
@@ -72,7 +72,7 @@
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
                                                                 @*<span id="btnPlus_0" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
-                                                                <span style="float:right;" id="btnMinus_0" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                <span style="float:right;" id="btnMinus_0" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                             </div>
                                                         </td>
                                                         <td class="HiddenUserIdElement">
@@ -100,24 +100,24 @@
                                                             <td>
                                                                 @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)@*|| Model.Profile=="Admin"*@)
 {
-@Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+@Html.DropDownListFor(m => m.SkillCollection[i].SkillName, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
 }
 else
 {
 var newList = new List<SelectListItem>();
-newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
+newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].SkillName, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].SkillName).FirstOrDefault()?.Text });
 
 if (newList != null && newList.Count() > 0)
 {
-    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
+    @Html.DropDownListFor(m => m.SkillCollection[i].SkillName, newList, new { @class = "select-css form-control" })
 }
 else
 {
     var handleList = new List<SelectListItem>();
-    handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = Model.SkillCollection[i].SkillName });
+    handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].SkillName, Text = Model.SkillCollection[i].SkillName });
 
-    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
+    @Html.DropDownListFor(m => m.SkillCollection[i].SkillName, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
 
 }
 }
@@ -174,7 +174,7 @@ else
                                                                     @{
                                                                         string displayStatus = isDeletetable ? "block" : "none";
                                                                     }
-                                                                    <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                 </div>
 
                                                             </td>
