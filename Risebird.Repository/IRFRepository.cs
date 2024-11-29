@@ -7780,9 +7780,10 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("Skill", typeof(int));
                     techSkillCommentsDt.Columns.Add("Comment", typeof(string));
                     techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
+                    techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
                     foreach (var item in obj.SkillCollection)
                     {
-                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt32(item.Skill), item.Comment, item.CreatedBy);
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName);
                     }
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
                     cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
