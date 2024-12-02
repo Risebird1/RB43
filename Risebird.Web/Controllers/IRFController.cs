@@ -2213,9 +2213,17 @@ namespace Risebird.Web.Controllers
 
                 }
             }
+            DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
+            var AssessmentsGroups = new List<AssignmentVM>();
+            if (model.CreatedOn < absoluteTime)
+            {
+                AssessmentsGroups = _interviewerService.FetchAssessmentGroups().ToList();
+            }
+            else
+            {
+                AssessmentsGroups = (await _irfService.GetAllMAGs()).ToList();
 
-            //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var AssessmentsGroups = await _irfService.GetAllMAGs();
+            }
             var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
@@ -2224,7 +2232,7 @@ namespace Risebird.Web.Controllers
             AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
             if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
             {
-                AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
+                AssessmentsGroups = AssessmentsGroups.Union(_listassessment).ToList();
             }
 
             ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
