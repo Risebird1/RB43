@@ -1084,7 +1084,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid)
+        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid,int projectid)
         {
             try
             {
@@ -1101,6 +1101,7 @@ namespace Risebird.Repository
                     adapter.SelectCommand.CommandTimeout = 600;
                     adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
                     adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
+                    adapter.SelectCommand.Parameters.AddWithValue("@projectid", projectid);
                     if (string.IsNullOrWhiteSpace(emailid))
                     {
                         emailid = "";

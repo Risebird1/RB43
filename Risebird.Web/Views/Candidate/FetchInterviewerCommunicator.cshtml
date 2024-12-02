@@ -35,8 +35,8 @@
     }
 
     /*.mob_h {
-                                                                                                                                                                                                   display: none !important
-                                                                                                                                                                                            }*/
+                                                                                                                                                                                                                   display: none !important
+                                                                                                                                                                                                            }*/
 
     .tox-notifications-container {
         display: none
@@ -85,9 +85,17 @@
                     {
                         <div>
                             <div class="desktop-view">
+                                <a target="_blank" href="@Url.Action("AllSelectedMeetings", "Candidate", new { emailid= ViewBag.emailid, id = ViewBag.id })">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: 35px; background: #8fd28f !important;">
+                                        <span style="float:left;margin-right: 5px;"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i></span>
+                                        <div class="d-lg-inline-flex">
+                                            Selected Meetings
+                                        </div>
+                                    </button>
+                                </a>
                                 <div class="topheader-link-wrap">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: -95px;">
-                                        <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right:0px;">
+                                        <span style="float:left;margin-right:5px;"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Calibration Meetings
                                         </div>
@@ -136,8 +144,8 @@
                                         </div>
 
                                         <div class="clearfix"></div>
-                                        <div class="col-sm-12 nopad">
-                                            <div class="table-responsive">
+                                        <div class="col-sm-12 scrollbar nopad" id="style-2">
+                                            <div>
                                                 <table id="InterviewerCommunicatorList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
@@ -249,7 +257,7 @@
                                                                             </button>
 
                                                                             <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                                <a data-tooltip="Check resume upload status here" target="_blank" title="" href="javascript:void"> <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span></a>
+                                                                                 <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span>
                                                                             </button>
                                                                         }
 
@@ -348,6 +356,9 @@
                                                                                     <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
                                                                                 </div>
                                                                             </a>
+                                                                            <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
+                                                                                <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { projectid =item.id, irfName =item.ProjectName,emailid=ViewBag.emailid})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
+                                                                            </button>
                                                                         }
                                                                     </td>
                                                                 }
