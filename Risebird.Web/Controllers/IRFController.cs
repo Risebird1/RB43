@@ -2213,7 +2213,7 @@ namespace Risebird.Web.Controllers
 
                 }
             }
-            DateTime absoluteTime = new DateTime(2024, 2, 12, 16, 30, 0);
+            DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
             var AssessmentsGroups = new List<AssignmentVM>();
             if (model.CreatedOn < absoluteTime)
             {
