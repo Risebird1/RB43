@@ -493,6 +493,7 @@
 
 
                                                         @Html.HiddenFor(m => m.Type)
+                                                        @Html.HiddenFor(m => m.TechRubricType)
                                                         @*<div class="form-group">
                                                     @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
                                                     @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
@@ -515,7 +516,7 @@
                                         <h3 class="tab_drawer_heading" rel="tab-3">Tech Skill</h3>
                                         <div class="tab-box" id="tab-3">
                                             <div class="tab-main-box">
-                                                <div class="row">
+                                                @* <div class="row">
                                                     <div class="form-group">
                                                         <label class="radio-inline">
                                                             @Html.RadioButtonFor(model => model.TechRubricType, TechRubricTypes.Basic, new { @onchange = "RubricTypeChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) @TechRubricTypes.Basic<br />
@@ -525,113 +526,16 @@
                                                         </label>
 
                                                     </div>
+                                                </div> *@
+                                                 <div class="loader text-center" style="padding: 100px 0px;">
+                                                    <h1 style="font-size: 18px;color: #42a5f5; padding: 30px 0px;    font-family: 'Roboto';font-weight:600">Please wait for 15 - 20 secs while data is loading...</h1>
+                                                        <img src="~/Newassets/img/newloader.gif" />
                                                 </div>
-                                                <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="table-responsive-sm">
-                                                            <input type="text" id="txtinterviewerskills" value="@ViewBag.InterviewerSkills" hidden />
-                                                            <table class="table table-bordered mbn" id="SkillTable">
-                                                                <thead>
-                                                                    <tr>
-
-                                                                        <th width="10%"  class="table_heading">Level<span class="red">*</span></th>
-                                                                        <th width="25%"  class="table_heading">Skill Name<span class="red">*</span></th>
-                                                                        <th class="table_heading">Weightage <span class="red">*</span></th>
-                                                                        <th width="35%"  class="table_heading advancedRubricField" style="float:left;margin-right:2px;display:none">Concepts</th>
-                                                                        <th width="25%"  class="table_heading advancedRubricField" style="float:left;margin-right:2px;display:none">Expectations</th>
-                                                                        <th width="14.5%" class="table_heading advancedRubricField" style="float:left;margin-right:2px;display:none">Time limit</th>
-                                                                        <th width="24.3%"  class="table_heading advancedRubricField" style="float:left;display:none">Is Elimination Skill</th>
-                                                                        <th  class="table_heading text-center">Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
-                                                                    {
-                                                                        <tr>
-                                                                            <td width="10%">
-                                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
-
-                                                                            </td>
-                                                                             <td width="25%">
-                                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
-                                                                            </td>
-                                                                            <td>
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                                                            </td>
-                                                                            <td width="35%"  class="advancedRubricField" style="float:left;margin-right:2px;display:none">
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="150">
-                                                                            </td>
-                                                                             <td width="25%" class="advancedRubricField" style="float:left;margin-right:2px;display:none">
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="150">
-                                                                            </td>
-                                                                            <td width="15%" class="advancedRubricField" style="float:left;margin-right:2px;display:none">
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
-                                                                            </td>
-                                                                            <td  width="23.6%" class="advancedRubricField" style="text-align:center;float:left;display:none">
-                                                                                @Html.CheckBox("SkillCollection[0].isEliminationskill")  @*, new { @checked = "checked" }*@
-                                                                            </td>
-                                                                            <td class="action text-center">
-
-                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit', 'isEliminationskill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-
-                                                                            </td>
-                                                                        </tr>
-
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        for (int i = 0; i < Model.SkillCollection.Count(); i++)
-                                                                        {
-                                                                            <tr>
-
-                                                                                <td width="10%">
-
-                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
-
-                                                                                </td>
-                                                                                 <td width="25%">
-                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
-                                                                                </td>
-
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
-                                                                                </td>
-                                                                                <td width="35%"  class="advancedRubricField" style="display:none">
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
-                                                                                </td>
-                                                                                 <td width="25%" class="advancedRubricField" style="display:none">
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
-                                                                                </td>
-                                                                                 <td width="15%" class="advancedRubricField" style="display:none">
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
-                                                                                </td>
-                                                                                <td width="24.5%" class="advancedRubricField" style="display:none">
-                                                                                    @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
-                                                                                </td>
-                                                                                <td class="action text-center">
-                                                                                    <div>
-
-                                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit', 'isEliminationskill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
-
-                                                                        }
-                                                                    }
-
-
-                                                                </tbody>
-                                                            </table>
-                                                            <label class="text-danger" id="SkillCollection_WeightageError"></label>
-                                                            <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
-                                                        </div>
+                                                <div class="row" >
+                                                    <div id="id_rubricsDiv">
                                                     </div>
+                                                    
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="secondSkillSets" style="display:none">
                                                         <h2 style="font-size: 18px;padding:5px 10px;color: #7c7171;margin-bottom: 10px;background: rgb(217,233,245);background: linear-gradient(90deg, rgba(217,233,245,1) 35%, rgba(252,249,249,1) 100%);">Select for other skills</h2>
                                                         <div class="table-responsive-sm">
@@ -652,12 +556,13 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("SkillTwoCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                                                @Html.DropDownList("SkillTwoCollection[0].LevelId", Html.GetEnumSelectList<LevelTechEnum>(), "Select", new { @class = "select-css form-control " })
 
                                                                             </td>
-                                                                            <td>
-                                                                                @Html.DropDownList("SkillTwoCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                                            <td width="25%" style="float:left;margin-right:2px">
+                                                                                <input class="form-control text-box single-line" id="SkillTwoCollection_0__SkillName" name="SkillCollection[0].SkillName" type="text">
                                                                             </td>
+                                                                            
                                                                             <td>
                                                                                 <input class="form-control text-box single-line" id="SkillTwoCollection_0__Weightage" name="SkillTwoCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                             </td>
@@ -672,7 +577,7 @@
                                                                             </td>
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowSkillTwoCollection()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillTwoCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillTwoCollection','LevelId','SkillName','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -685,10 +590,12 @@
                                                                                     @Html.DropDownListFor(m => m.SkillTwoCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
 
                                                                                 </td>
-                                                                                <td>
+                                                                                @* <td>
                                                                                     @Html.DropDownListFor(m => m.SkillTwoCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                                </td> *@
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.SkillTwoCollection[i].SkillName, new { htmlAttributes = new { @class = "weight form-control text-box single-line"} })
                                                                                 </td>
-
                                                                                 <td>
                                                                                     @Html.EditorFor(m => m.SkillTwoCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
@@ -705,7 +612,7 @@
                                                                                 <td class="action text-center">
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowSkillTwoCollection()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillTwoCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillTwoCollection','LevelId','SkillName','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
@@ -1477,6 +1384,37 @@
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
 
+<script>
+    var isRubricGenerated = false;
+    function GenerateTechRubricUsingOpenAI(){
+        showloader();
+        const asgDropdown = document.getElementById("AssessmentGroupId");
+        const jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
+        
+        $.ajax({
+            type: "GET",
+            url: "/AIScreener/GenerateTechRubricUsingOpenAI",
+            data: { 'jobTitle': jobTitle },
+            success: function (data) {
+                debugger;
+                $('#id_rubricsDiv').html('');
+                if (data!=null && data.length > 0) {
+                    $('#id_rubricsDiv').html(data);
+                    hideloader();
+                    isRubricGenerated = true;
+                }
+                else{
+                    alert('Failed to generate Rubrics! Please try again.');
+                }
+
+            },
+            error: function (error) {
+
+                //reject(error)
+            }
+        });
+    }
+</script>
 @*<script>
         jQuery(document).ready(function ($) {
 
@@ -1531,6 +1469,19 @@
     });
 
 </script>
+<script type="text/javascript">
+   
+        function showloader() {
+           
+        $(".loader").show();
+        
+    }
+    function hideloader() {
+        $(".loader").hide();
+       
+    }
+ 
+ </script>
 <script>
     var smesLoadedForAssessmentGroup;
     var interviewerRate = 0;
@@ -2103,6 +2054,7 @@
     }
 
         function AddRow() {
+            debugger;
             //document.getElementById("btnUpload").disabled = false;
             var table = document.getElementById("SkillTable");
             var rowCount = table.rows.length;
@@ -2113,10 +2065,12 @@
 
             var $ttc = $("#SkillTable").find("tbody tr:last");
             var $tr = $ttc.clone();
+            console.log($tr);
             var trIndexReplaced = $("#SkillTable tr").length - 1;
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            $tr.find("input,select,hidden,text").attr("name", function () { // find name in the cloned row
                 var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+                console.log(parts);
                 return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
             }).attr("id", function () { // change id also
                 var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
@@ -2399,107 +2353,7 @@
             //document.getElementById("btnUpload").disabled = false;
 
         }
-    @*function AddRowEmergencyInterviewer() {
-            //document.getElementById("btnUpload").disabled = false;
-
-            var table = document.getElementById("EmergencyInterviewerTable");
-            var rowCount = table.rows.length;
-            //if (rowCount == 6) {
-            //    alert("Cannot add more than 5 Interviewers.");
-            //    return;
-            //}
-
-            var $ttc = $("#EmergencyInterviewerTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#EmergencyInterviewerTable tr").length - 1;
-
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
-
-
-
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-            $tr.find("input[type=number]").val("");
-            $tr.find("a").val("");
-
-            // add cloned row as last row
-            $("#EmergencyInterviewerTable").find("tbody tr:last").after($tr);
-
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            $.validator.unobtrusive.parse(document);
-            //document.getElementById("btnUpload").disabled = false;
-
-        }*@
-
-
-        function AddRowRecruiter() {
-            //document.getElementById("btnUpload").disabled = false;
-            var table = document.getElementById("recruiterTable");
-            var rowCount = table.rows.length;
-            //if (rowCount == 6) {
-            //    alert("Cannot add more than 5 Interviewers.");
-            //    return;
-            //}
-
-            var $ttc = $("#recruiterTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#recruiterTable tr").length - 1;
-
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
-
-
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-
-            $tr.find("a").val("");
-
-            // add cloned row as last row
-            $("#recruiterTable").find("tbody tr:last").after($tr);
-
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            $.validator.unobtrusive.parse(document);
-            //document.getElementById("btnUpload").disabled = false;
-
-        }
-
+    
         function AddRowResumeEvaluator() {
             //document.getElementById("btnUpload").disabled = false;
 
@@ -2727,44 +2581,6 @@
             }
         }
 
-    @*function InterviewerChanged(val, id) {
-            var index = id.split('_')[1];
-            var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
-            if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
-                return;
-            }
-            var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
-            var resumeElementid = 'InterviewerCollection_' + index + '__ResumeLink';
-            var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
-
-
-            $.ajax({
-                type: "GET",
-                async: false,
-                url: "/IRF/GetInterviewerSkillsAndResume",
-                data: { 'id': val },
-                success: function (result) {
-                    $("#" + skillElementid).val(result.primarySkill);
-                    //$("#" + resumeElementid).val(result.resumeLink);
-                    const anchorElement = document.getElementById(resumeElementid);
-                    anchorElement.href = result.resumeLink;
-                    $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
-
-                    if(result!=null && result.resumeLink !=null && result.resumeLink != '')
-                    {
-                        $("#" + resumeElementid).html("Resume");
-                    }
-                    else
-                    {
-                        $("#" + resumeElementid).html("No Resume");
-                    }
-                }
-            });
-
-            $("#" + rateElementid).val(interviewerRate);
-
-        }*@
-
         function EmergencyInterviewerChanged(val, id) {
             var index = id.split('_')[1];
             var searchFor = '[id^="EmergencyInterviewerCollection"][id$="UserId"]';
@@ -2855,85 +2671,6 @@
 
         }
 
-    @*function QCChanged(val, id) {
-            var index = id.split('_')[1];
-            var searchFor = '[id^="QualityController"][id$="UserId"]';
-
-            if (CheckDuplicate('QualityController', searchFor, val, index)) {
-                return;
-            }
-
-            // var index = id.charAt(18);
-            var skillElementid = 'QualityController_' + index + '__PrimarySkill';
-            var rateElementid = 'QualityController_' + index + '__PerSuccessRate';
-
-            $.ajax({
-                type: "GET",
-                url: "/IRF/GetInterviewerSkills",
-                data: { 'id': val },
-                success: function (data) {
-                    $("#" + skillElementid).val(data);
-                }
-            });
-
-
-
-            var countryType = $("#JobCountry").val();
-            //var profileType = $("#Heuristicsscore").val();
-
-            var interviewerQCRate;
-            if (countryType == "1") {
-                interviewerQCRate = 350;
-            }
-            else if (countryType == "2") {
-                interviewerQCRate = 500;
-            }
-            else {
-                interviewerQCRate = 0;
-            }
-            $("#" + rateElementid).val(interviewerQCRate);
-
-            //$.ajax({
-            //    type: "GET",
-            //    async: false,
-            //    url: "/IRF/GetInterviewerQCRate",
-            //    data: { 'userId': val },
-            //    success: function (data) {
-            //        $("#" + rateElementid).val(data);
-            //    }
-            //});
-
-
-
-            var countryType = $("#JobCountry").val();
-            //var profileType = $("#Heuristicsscore").val();
-
-            var interviewerQCRate;
-            if (countryType == "1") {
-                interviewerQCRate = 350;
-            }
-            else if (countryType == "2") {
-                interviewerQCRate = 500;
-            }
-            else {
-                interviewerQCRate = 0;
-            }
-            $("#" + rateElementid).val(interviewerQCRate);
-
-            //$.ajax({
-            //    type: "GET",
-            //    async: false,
-            //    url: "/IRF/GetInterviewerQCRate",
-            //    data: { 'userId': val },
-            //    success: function (data) {
-            //        $("#" + rateElementid).val(data);
-            //    }
-            //});
-
-
-        }*@
-
-
         $(document).ready(function () {
             //document.getElementById('CompanyType').value = 2;
 
@@ -2987,60 +2724,6 @@
             }
 
         });
-
-
-
-        function AddRowController() {
-
-            var table = document.getElementById("ControllerTable");
-            var rowCount = table.rows.length;
-            if (rowCount == 6) {
-                alert("Cannot add more than 5 Quality Controllers.");
-                return;
-            }
-
-            var $ttc = $("#ControllerTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#ControllerTable tr").length - 1;
-
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
-
-
-
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-
-            $tr.find("a").val("");
-
-            // add cloned row as last row
-            $("#AddRowController").find("tbody tr:last").after($tr);
-
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            $.validator.unobtrusive.parse(document);
-            document.getElementById("btnUpload").disabled = false;
-
-        }
-
-
 
         function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
             if ($(element).parents('tbody').find('tr').length === 1) {
@@ -3162,97 +2845,6 @@
 
 </script>
 
-@* <script>
-
-    document.body.className += "js";
-
-    var spinner = document.querySelector('.input');
-    var buttonUp = document.querySelector('.up');
-    var buttonDown = document.querySelector('.down');
-
-    buttonUp.onclick = function () {
-        var value = parseInt(spinner.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner.value = value;
-    };
-
-    buttonDown.onclick = function () {
-        var value = parseInt(spinner.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner.value = value;
-    };
-
-
-
-
-    var spinner1 = document.querySelector('.input-1');
-    var buttonUp1 = document.querySelector('.up-1');
-    var buttonDown1 = document.querySelector('.down-1');
-
-    buttonUp1.onclick = function () {
-        var value = parseInt(spinner1.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner1.value = value;
-    };
-
-    buttonDown1.onclick = function () {
-        var value = parseInt(spinner1.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner1.value = value;
-    };
-
-
-
-    //var spinner2 = document.querySelector('.input-2');
-    //var buttonUp2 = document.querySelector('.up-2');
-    //var buttonDown2 = document.querySelector('.down-2');
-
-    //buttonUp2.onclick = function () {
-    //    var value = parseInt(spinner2.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value++;
-    //    spinner2.value = value;
-    //};
-
-    //buttonDown2.onclick = function () {
-    //    var value = parseInt(spinner2.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value--;
-    //    spinner2.value = value;
-    //};
-
-
-
-
-    //var spinner3 = document.querySelector('.input-3');
-    //var buttonUp3 = document.querySelector('.up-3');
-    //var buttonDown3 = document.querySelector('.down-3');
-
-    //buttonUp3.onclick = function () {
-    //    var value = parseInt(spinner3.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value++;
-    //    spinner3.value = value;
-    //};
-
-    //buttonDown3.onclick = function () {
-    //    var value = parseInt(spinner3.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value--;
-    //    spinner3.value = value;
-    //};
-
-    //function PerMinRateInterviewer() {
-    //    $("#InterviewerCollection_0__PerSuccessRate").val($("#PerMintuteRate").val());
-    //}
-
-
-</script> *@
-
 
 <script>
     $('body').addClass('sidebar-mini js');
@@ -3262,7 +2854,6 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
-
 
         $("#btnPrev").click(function () {
             var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
@@ -3327,65 +2918,7 @@
                 }
                 document.getElementById("tab-7").style.display = "none";
             }
-    @*else if (activeTab.trim() == "Interviewer") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-7").addClass("active");
-                document.getElementById("tab-7").style.display = "block";
-                document.getElementById("tab-8").style.display = "none";
-            }*@
-            //else if (activeTab.trim() == "QC") {
-            //    $(".tab-menu li a").removeClass("active");
-            //    $("#rtab-8").addClass("active");
-            //    document.getElementById("tab-8").style.display = "block";
-            //    document.getElementById("tab-9").style.display = "none";
-            //}
-
-    @*else if (activeTab.trim() == "E.Interviewer") {
-                $(".tab-menu li a").removeClass("active");
-                //var isQcRequired = document.getElementById('IsQCRequired').checked;
-                //if (isQcRequired) {
-                //    $("#rtab-9").addClass("active");
-                //    document.getElementById("tab-9").style.display = "block";
-                //}
-                //else {
-                //    $("#rtab-8").addClass("active");
-                //    document.getElementById("tab-8").style.display = "block";
-                //}
-                $("#rtab-8").addClass("active");
-                document.getElementById("tab-8").style.display = "block";
-                document.getElementById("tab-10").style.display = "none";
-
-
-            }*@
-            //else if (activeTab.trim() == "Recommendation") {
-            //    $(".tab-menu li a").removeClass("active");
-            //    $("#rtab-10").addClass("active");
-            //    document.getElementById("tab-10").style.display = "block";
-            //    document.getElementById("tab-11").style.display = "none";
-            //}
-
-            //else if (activeTab.trim() == "Coordinator") {
-            //    $(".tab-menu li a").removeClass("active");
-            //    $("#rtab-10").addClass("active");
-            //    document.getElementById("tab-10").style.display = "block";
-            //    document.getElementById("tab-11").style.display = "none";
-            //    document.getElementById("btnNext").style.display = "block";
-            //    document.getElementById("btnUpload").style.display = "none";
-            //}
-    @* else if (activeTab.trim() == "Coordinator") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-7").addClass("active");
-                document.getElementById("tab-7").style.display = "block";
-                document.getElementById("tab-11").style.display = "none";
-
-            } *@
-    @* else if (activeTab.trim() == "Subject Matter Expert") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-11").addClass("active");
-                document.getElementById("tab-11").style.display = "block";
-                document.getElementById("tab-13").style.display = "none";
-            } *@
-            else if (activeTab.trim() == "Manage Channel") {
+            else if(activeTab.trim() == "Manage Channel"){
                 $(".tab-menu li a").removeClass("active");
                 //$("#rtab-13").addClass("active");
                 $("#rtab-7").addClass("active");
@@ -3404,17 +2937,9 @@
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 flag = !checkUniqueness();
-    @*if (document.getElementById('link').checked) {
-                    if ($('#CalendlyLink').val() == "") {
-                        $('#error_CalendlyLink').text("The CalendlyLink field is required.");
-                        flag = true;
-                    }
-                    else {
-                        $('#error_CalendlyLink').text("");
-                    }
-                }*@
+    
 
-                if ($('#BillingOwner').val() == "") {
+                if($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
                     flag = true;
 
@@ -3463,38 +2988,9 @@
                 }
             }
             else if (activeTab.trim() == "Job Details") {
-                //if ($('#JDTiltle').val() == "") {
-                //    $('#error_JDTiltle').text("The Job Profile field is required.");
-                //    flag = true;
-                //}
-                //else {
-                //    $('#error_JDTiltle').text("");
-                //}
-
-
+                
                 flag = IsJobProfileNameInvalid(); //Check JDTiltle
 
-    @* if ($('#ClientName').val() == "") {
-                    $('#error_ClientName').text("Project Name field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_ClientName').text("");
-                } *@
-    @* if ($('#PriorityLevel').val() == "") {
-                    $('#error_PriorityLevel').text("The PriorityLevel field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_PriorityLevel').text("");
-                } *@
-    @* if ($('#PrimarySkillInvite').val() == "") {
-                    $('#error_PrimarySkillInvite').text("Primary skill field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_PrimarySkillInvite').text("");
-                } *@
 
                 if ($('#JDLink').val() == "" && $('#JDFile').val() == "") {
                     $('#error_JDLink').text("JD field is required.");
@@ -3503,30 +2999,7 @@
                 else {
                     $('#error_JDLink').text("");
                 }
-                //if ($('#StartDate').val() != "") {
-                //    flag = !(checkStartDate($('#StartDate').val()));
-                //}
-    @* if ($('#StartDate').val() == "0001-01-01T00:00:00.000") {
-                    document.getElementById("startDateCheck").style.display = "block";
-                    document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
-                    flag = true;
-                }
-                else {
-                    document.getElementById("startDateCheck").innerHTML = "";
-                    document.getElementById("startDateCheck").style.display = "none";
-
-                }
-
-                if ($('#EndDate').val() == "0001-01-01T00:00:00.000") {
-                    document.getElementById("endDateCheck").style.display = "block";
-                    document.getElementById("endDateCheck").innerHTML = "Please set the End Date";
-                    flag = true;
-                }
-                else {
-                    document.getElementById("endDateCheck").innerHTML = "";
-                    document.getElementById("endDateCheck").style.display = "none";
-
-                } *@
+                
                 if ($('#RisebirdHr').val() == "") {
                     $('#error_RisebirdHr').text("The Channel Owner field is required.");
                     flag = true;
@@ -3542,41 +3015,17 @@
                     $('#error_JobLevel').text("");
                 }
 
-                //if ($('#NoOfPosition').val() == "") {
-                //    $('#error_NoOfPosition').text("The No of Positions field is required.");
-                //    flag = true;
-                //}
-                //else {
-                //    $('#error_NoOfPosition').text("");
-                //}
-
-    @* if ($('#NoOfIntterview').val() == "") {
-                    $('#error_NoOfIntterview').text("The No of Intterview field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_NoOfIntterview').text("");
-                } *@
-
-                //if ($('#PerMintuteRate').val() == "") {
-                //    $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
-                //    flag = true;
-                //}
-                //else {
-                //    $('#error_PerMintuteRate').text("");
-                //}
-                //if ($('#TotalBudget').val() == "") {
-                //    $('#error_TotalBudget').text("The Total Budget field is required.");
-                //    flag = true;
-                //}
-                //else {
-                //    $('#error_TotalBudget').text("");
-                //}
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-3").addClass("active");
                     document.getElementById("tab-3").style.display = "block";
                     document.getElementById("tab-2").style.display = "none";
+                    //GenerateTechRubricUsingOpenAI();
+                    if(!isRubricGenerated)
+                    {
+                        GenerateTechRubricUsingOpenAI();
+
+                    }
                 }
             }
 
@@ -3648,8 +3097,7 @@
                 flag = checkClientDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-    @*$("#rtab-8").addClass("active");
-                    document.getElementById("tab-8").style.display = "block";*@
+    
                     $("#rtab-12").addClass("active");
                     document.getElementById("tab-12").style.display = "block";
                     document.getElementById("btnNext").style.display = "none";
@@ -3658,57 +3106,7 @@
 
                 }
             }
-    @*else if (activeTab.trim() == "Interviewer") {
-                flag = checkInterviewerDetails();
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-11").addClass("active");
-                    document.getElementById("tab-11").style.display = "block";
-                    document.getElementById("tab-8").style.display = "none";
-
-                }
-            }*@
-            //else if (activeTab.trim() == "QC") {
-            //    flag = checkQcDetails();
-            //    if (!flag) {
-            //        $(".tab-menu li a").removeClass("active");
-            //        $("#rtab-10").addClass("active");
-            //        document.getElementById("tab-10").style.display = "block";
-            //        document.getElementById("tab-9").style.display = "none";
-            //    }
-            //}
-    @*else if (activeTab.trim() == "E.Interviewer") {
-                flag = checkEmergencyDetails();
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-11").addClass("active");
-                    document.getElementById("tab-11").style.display = "block";
-                    document.getElementById("tab-10").style.display = "none";
-
-                }
-            }*@
-
-    @* else if (activeTab.trim() == "Coordinator") {
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-13").addClass("active");
-                    document.getElementById("tab-13").style.display = "block";
-                    document.getElementById("tab-11").style.display = "none";
-                    GetSMEListForAssessmentGroup();
-                }
-            } *@
-    @* else if (activeTab.trim() == "Subject Matter Expert") {
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-12").addClass("active");
-                    document.getElementById("tab-12").style.display = "block";
-                    document.getElementById("btnNext").style.display = "none";
-                    document.getElementById("btnUpload").style.display = "block";
-                    document.getElementById("tab-13").style.display = "none";
-                }
-            } *@
-
-
+    
         });
     });
 
@@ -3806,7 +3204,8 @@
             }
         }
         if (tab_skill == "SkillCollection" || tab_skill == "SkillTwoCollection") {
-            var selectedValue = document.querySelector('input[name="TechRubricType"]:checked').value;
+            //var selectedValue = document.querySelector('input[name="TechRubricType"]:checked').value;
+            var selectedValue = '@TechRubricTypes.Advanced'
             if(selectedValue == '@TechRubricTypes.Advanced')
             {
                 var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');

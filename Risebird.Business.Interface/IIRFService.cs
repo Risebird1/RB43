@@ -14,7 +14,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Users> GetRiseBirdHR();
         string GetInterviewerSkills(int id);
         Interviewer GetInterviewerSkillsAndResume(int id);
-        Task<IEnumerable<Skill>> GetTechSkills(int id);
+        //Task<IEnumerable<Skill>> GetTechSkills(int id);
         Task<bool> AddSkillComments(TechSkillComments skillComments);
         Task<List<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> ArchiveIRF(int id);
@@ -192,5 +192,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddAGInterviewerToSkillChannel(int irfId, int userId, string loggedInUser);
         Task<IEnumerable<int>> GetIRFList(int ClientId);
         Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid);
+        Task<IEnumerable<AssignmentVM>> GetAllMAGs();
+        Task<IEnumerable<string>> GetIRFTechSkills(int irfId);
     }
 }

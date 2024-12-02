@@ -836,6 +836,7 @@ namespace Risebird.Web.Controllers
                     irfDetails.JobCountry = irfDetails.DisJobCountry;
                     irfDetails.CompanyType = irfDetails.DisCompanyType;
                     irfDetails.SkillSetsevaluate = irfDetails.DisSkillSetsevaluate;
+                    irfDetails.TechRubricType = TechRubricTypes.Advanced;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         string uploadedFileURL = string.Empty;
@@ -936,7 +937,8 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetAddIRFProperties(IRFVm model)
         {
-            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var AssessmentsGroups = await _irfService.GetAllMAGs();
             var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
@@ -973,15 +975,15 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
             }
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            var level = await _irfRepository.GetLevelTech();
-            level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-            ViewBag.LevelTech = new SelectList(level, "id", "Name");
-            var Skillset = await _irfRepository.GetSkills();
-            //if (Skillset != null)
-            //{
-            //    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
-            //}
-            ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+            //var level = await _irfRepository.GetLevelTech();
+            //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
+            //ViewBag.LevelTech = new SelectList(level, "id", "Name");
+            //var Skillset = await _irfRepository.GetSkills();
+            ////if (Skillset != null)
+            ////{
+            ////    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            ////}
+            //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
             //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
@@ -1292,16 +1294,18 @@ namespace Risebird.Web.Controllers
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
                     //var techSkills = new List<Skill>();
-                    var skills = await _irfService.GetTechSkills(id);
+                    //var skills = await _irfService.GetTechSkills(id);
+                    var skills = await _irfService.GetIRFTechSkills(id);
 
                     //foreach (var skill in skills)
                     //{
                     //    techSkills.Add(new Skill { id = skill.id, Name = skill.Name?.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description?.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
                     //}
-                    ViewBag.Skills = new SelectList(skills, "id", "Name");
+                    //ViewBag.Skills = new SelectList(skills, "id", "Name");
                     //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
                     //model.SkillsOptionsData = model.SkillsOptionsData?.Replace("\t", "").Replace("\n", "").Replace("\r", "");
                     //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                    ViewBag.Skills = new SelectList(skills);
                     //model.SkillsOptionsData = JsonConvert.SerializeObject(techSkills);
                     model.IRFId = id;
                     model.Profile = profileName;
@@ -1345,14 +1349,16 @@ namespace Risebird.Web.Controllers
                     {
                         if (ModelState.IsValid)
                         {
-                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId)).Where(x => x.UserId == model.UserId);
+                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.SkillName, x.UserId)).Where(x => x.UserId == model.UserId);
 
                             if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                             {
                                 //duplicates exist
                                 ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
-                                var skills = await _irfService.GetTechSkills(model.IRFId);
-                                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                                //var skills = await _irfService.GetTechSkills(model.IRFId);
+                                //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                                var skills = await _irfService.GetIRFTechSkills(model.IRFId);
+                                ViewBag.Skills = new SelectList(skills);
                                 //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
                                 model.Profile = profileName;
                                 return View(model);
@@ -1371,8 +1377,10 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            var skills = await _irfService.GetTechSkills(model.IRFId);
-                            ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            //var skills = await _irfService.GetTechSkills(model.IRFId);
+                            //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            var skills = await _irfService.GetIRFTechSkills(model.IRFId);
+                            ViewBag.Skills = new SelectList(skills);
                             //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
 
                             model.Profile = profileName;
@@ -2206,7 +2214,8 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var AssessmentsGroups = await _irfService.GetAllMAGs();
             var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
@@ -2220,16 +2229,16 @@ namespace Risebird.Web.Controllers
 
             ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            var level = await _irfRepository.GetLevelTech();
-            level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-            ViewBag.LevelTech = new SelectList(level, "id", "Name");
+            //var level = await _irfRepository.GetLevelTech();
+            //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
+            //ViewBag.LevelTech = new SelectList(level, "id", "Name");
 
-            var skillset = await _irfRepository.GetSkills();
-            if (skillset != null)
-            {
-                skillset = skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-            }
-            ViewBag.Skill = new SelectList(skillset, "id", "Name");
+            //var skillset = await _irfRepository.GetSkills();
+            //if (skillset != null)
+            //{
+            //    skillset = skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            //}
+            //ViewBag.Skill = new SelectList(skillset, "id", "Name");
             if (!model.IsClone)
             {
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
@@ -8526,14 +8535,14 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
-                var level = await _irfRepository.GetLevelTech();
-                level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-                ViewBag.LevelTech = new SelectList(level, "id", "Name");
+                //var level = await _irfRepository.GetLevelTech();
+                //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
+                //ViewBag.LevelTech = new SelectList(level, "id", "Name");
                 //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
                 //                 select new { ID = (int)s, Name = s.GetDescription() };
                 //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
-                var Skillset = await _irfRepository.GetSkills();
-                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                //var Skillset = await _irfRepository.GetSkills();
+                //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
@@ -8707,8 +8716,10 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 TechSkillComments model = new TechSkillComments();
-                var skills = await _irfService.GetTechSkills(id);
-                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                //var skills = await _irfService.GetTechSkills(id);
+                var skills = await _irfService.GetIRFTechSkills(id);
+                //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                ViewBag.Skills = new SelectList(skills);
                 model.IRFId = id;
                 model.Profile = profileName;
                 model.CreatedBy = emailid;
@@ -8731,7 +8742,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
+                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.SkillName, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
 
                     if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                     {
@@ -8782,7 +8793,7 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> DeliveryHeadSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-            var level = await _irfRepository.GetLevelTech();
+            //var level = await _irfRepository.GetLevelTech();
             //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
             //            select new { ID = (int)s, Name = s.GetDescription() };
             //var Skillset = await _irfRepository.GetSkills();
@@ -8792,7 +8803,7 @@ namespace Risebird.Web.Controllers
             //}
             foreach (var item in transTechSkills)
             {
-                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
+                item.LevelName = ((LevelTechEnum)(item.LevelId)).GetDescription();
                 //item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             var colectionone = transTechSkills.Where(x => x.SkillSet != 2).ToList();
@@ -9599,8 +9610,10 @@ namespace Risebird.Web.Controllers
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid?.Replace("\"", "");
             TechSkillComments model = new TechSkillComments();
-            var skills = await _irfService.GetTechSkills(irfid);
-            ViewBag.Skills = new SelectList(skills, "id", "Name");
+            //var skills = await _irfService.GetTechSkills(irfid);
+            //ViewBag.Skills = new SelectList(skills, "id", "Name");
+            var skills = await _irfService.GetIRFTechSkills(irfid);
+            ViewBag.Skills = new SelectList(skills);
             model.IRFId = irfid;
             model.interviewid = id;
             model.Profile = profileName;

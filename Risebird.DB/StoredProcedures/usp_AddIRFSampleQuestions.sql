@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO  
 Create PROCEDURE [dbo].[usp_AddIRFSampleQuestions]    
 (    
-   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableType] READONLY,  
+   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV2] READONLY,  --AddIRFSampleQuestions_TableType
    @IRFId int
 )    
 AS    
@@ -18,8 +18,8 @@ BEGIN
  begin try  
   begin tran 
 	
-   INSERT INTO SkillChannelSampleQuestions([IRFId] ,[Skill],[Comment], CreatedBy)    
-   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.CreatedBy FROM @IRFSampleQuestionsBulkData tscbd
+   INSERT INTO SkillChannelSampleQuestions([IRFId] ,[Skill],[Comment], CreatedBy, SkillName)    
+   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.CreatedBy, tscbd.SkillName FROM @IRFSampleQuestionsBulkData tscbd
   
 commit tran  
  end try  

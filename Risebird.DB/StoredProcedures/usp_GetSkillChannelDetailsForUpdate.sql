@@ -24,7 +24,7 @@ from IRF inner join Client cl on IRF.ClientId = cl.id where IRF.id = @irfId
   
   
 --tech skills details  
-Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @irfId  
+Select tts.* from TransTechSkill tts  where IRFId = @irfId  --join Skill on tts.SkillId=Skill.id
   
 --general skills details  
 Select * from TransSkillGeneral where IRFId = @irfId and @isGeneralSkillRequired = 1  

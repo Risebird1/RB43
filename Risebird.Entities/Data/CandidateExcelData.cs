@@ -70,5 +70,6 @@ namespace Risebird.Entities.Data
         public int NoOfInterviews { get; set; }
         public string CancelledBy { get; set; }
         public int BillingRate { get; set; }
+        public string Requestor { get; set; }
     }
 }

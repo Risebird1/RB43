@@ -13,26 +13,44 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_TechSkillReportBulkInsert]
 (
-      @TechSkillReportBulkData AS [dbo].[TechSkillReportV2_TableType] READONLY
+      @TechSkillReportBulkData AS [dbo].[TechSkillReportV3_TableType] READONLY--TechSkillReportV2_TableType
 )
 AS
 BEGIN
 
 SET NOCOUNT ON;
+ begin try  
+  begin tran
 
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[TechSkillReport](
-	[InterviewId] ,
-	[RequiredLevelId],
-	[SkillId],
-	[ActualLevelId],
-	[WeightageRequired],
-	[WeightageActual],
-	[TechComments],
-	[SkillSet])
+	declare @interviewId int = (select top 1 InterviewId from @TechSkillReportBulkData)
+	delete from TechSkillReport where InterviewId=@interviewId
+	--This row performs bulk copy of object DataTable to Table in SQL
+	INSERT INTO [dbo].[TechSkillReport](
+		[InterviewId] ,
+		[RequiredLevelId],
+		[SkillId],
+		[ActualLevelId],
+		[WeightageRequired],
+		[WeightageActual],
+		[TechComments],
+		[SkillSet],
+		[SkillName])
 
-SELECT * FROM @TechSkillReportBulkData
+	SELECT * FROM @TechSkillReportBulkData
 
+ commit tran  
+end try  
+begin catch  
+ 
+ rollback transaction  
+ 
+ DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),  
+  @Severity int = ERROR_SEVERITY(),  
+  @State smallint = ERROR_STATE()  
+  
+ RAISERROR (@Message, @Severity, @State)  
+  
+end catch  
 
 END
 GO

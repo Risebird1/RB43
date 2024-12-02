@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[TechSkillReport](
 	[WeightageActual] [float] NULL,
 	[TechComments] [varchar](500) NULL,
 	[SkillSet] [int] NULL,
+    [SkillName] [varchar](500) NULL,
  CONSTRAINT [PK_TechSkillReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -27,8 +28,8 @@ REFERENCES [dbo].[InterviewMeetings] ([id])
 ALTER TABLE [dbo].[TechSkillReport]  WITH CHECK ADD FOREIGN KEY([RequiredLevelId])
 REFERENCES [dbo].[LevelTech] ([id])
 
-ALTER TABLE [dbo].[TechSkillReport]  WITH CHECK ADD FOREIGN KEY([SkillId])
-REFERENCES [dbo].[Skill] ([id])
+--ALTER TABLE [dbo].[TechSkillReport]  WITH CHECK ADD FOREIGN KEY([SkillId])
+--REFERENCES [dbo].[Skill] ([id])
 
 END
 ELSE
@@ -41,6 +42,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TechSkillReport
     Add [TechComments] varchar(500)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillName')
+      AND Object_ID = Object_ID(N'TechSkillReport'))
+BEGIN
+    ALTER TABLE TechSkillReport
+    Add [SkillName] varchar(500)
 END
 END
 GO
