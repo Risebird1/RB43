@@ -571,11 +571,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid)
+        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid,int projectid)
         {
             try
             {
-                return await _candidateRepository.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
+                return await _candidateRepository.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid, projectid);
             }
             catch (Exception e)
             {
