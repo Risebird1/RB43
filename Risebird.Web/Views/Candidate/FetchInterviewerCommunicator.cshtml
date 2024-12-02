@@ -86,16 +86,16 @@
                         <div>
                             <div class="desktop-view">
                                 <a target="_blank" href="@Url.Action("AllSelectedMeetings", "Candidate", new { emailid= ViewBag.emailid, id = ViewBag.id })">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: -95px;">
-                                        <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: 35px; background: #8fd28f !important;">
+                                        <span style="float:left;margin-right: 5px;"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Selected Meetings
                                         </div>
                                     </button>
                                 </a>
                                 <div class="topheader-link-wrap">
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right: -95px;">
-                                        <span style="float:left"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right:0px;">
+                                        <span style="float:left;margin-right:5px;"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Calibration Meetings
                                         </div>
@@ -144,8 +144,8 @@
                                         </div>
 
                                         <div class="clearfix"></div>
-                                        <div class="col-sm-12 nopad">
-                                            <div class="table-responsive">
+                                        <div class="col-sm-12 scrollbar nopad" id="style-2">
+                                            <div>
                                                 <table id="InterviewerCommunicatorList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
@@ -257,7 +257,7 @@
                                                                             </button>
 
                                                                             <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                                <a data-tooltip="Check resume upload status here" target="_blank" title="" href="javascript:void"> <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span></a>
+                                                                                 <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span>
                                                                             </button>
                                                                         }
 
