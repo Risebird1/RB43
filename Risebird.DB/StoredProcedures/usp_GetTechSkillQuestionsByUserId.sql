@@ -25,18 +25,18 @@ Begin
 
 	if(@profile = 'Admin')
 	begin
-		select distinct Comment, sk.Name as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId
+		select distinct Comment, SkillName from TechSkillComments tsc where IRFId = @IRFId
 	end
 
 	else
 	begin
-		select distinct Comment, sk.Name as SkillName from TechSkillComments  tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId and (UserId is null or UserId=@UserId)
+		select distinct Comment, SkillName from TechSkillComments tsc where IRFId = @IRFId and (UserId is null or UserId=@UserId)
 	end
 End
 
 else
 begin
-	select distinct Comment, sk.Name as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId
+	select distinct Comment, SkillName from TechSkillComments tsc where IRFId = @IRFId
 end
 
 END
