@@ -5473,7 +5473,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName, string emailid)
+        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName, string emailid, int projectid)
         {
             if (_env.IsDevelopment())
             {
@@ -5492,7 +5492,7 @@ namespace Risebird.Web.Controllers
                     client = new ClientUserVM();
                 }
                 var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
-                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
+                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid, projectid);
                 if (model == null)
                 {
                     model = new List<CandidateExcelData>();
