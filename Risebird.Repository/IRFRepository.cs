@@ -2555,21 +2555,21 @@ namespace Risebird.Repository
                         con.Close();
                     }
                     //isSMEChanged = Convert.ToBoolean(cmdUpdateIRF?.Parameters["@isSMEChanged"]?.Value);
-                    if (removedTechSkills != null)
-                    {
-                        foreach (var removedTechSkill in removedTechSkills)
-                        {
-                            try
-                            {
-                                UpdateTechSkillQuestionsForRemovedSkills(removedTechSkill);
-                            }
-                            catch (Exception ex)
-                            {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                continue;
-                            }
-                        }
-                    }
+                    //if (removedTechSkills != null)
+                    //{
+                    //    foreach (var removedTechSkill in removedTechSkills)
+                    //    {
+                    //        try
+                    //        {
+                    //            UpdateTechSkillQuestionsForRemovedSkills(removedTechSkill);
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    //            continue;
+                    //        }
+                    //    }
+                    //}
 
                     if (interviewerRateChangesList != null)
                     {
@@ -2706,7 +2706,8 @@ namespace Risebird.Repository
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
-                dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
+                //dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
+                dynamicParam.Add("@SkillName", removedTechSkill.SkillName);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,

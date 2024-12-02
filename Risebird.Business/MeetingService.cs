@@ -1279,8 +1279,8 @@ namespace Risebird.Business
             {
                 var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
-                var levelTech = await _meetingRespository.GetLevelTech();
-                var skills = await _meetingRespository.GetSkills();
+                //var levelTech = await _meetingRespository.GetLevelTech();
+                //var skills = await _meetingRespository.GetSkills();
 
                 //assign values to model
                 foreach (var item in techSkillsDetails ?? new List<TransSkill>())
@@ -1288,10 +1288,10 @@ namespace Risebird.Business
                     TechSkillReport obj = new TechSkillReport
                     {
                         InterviewId = model.InterviewId,
-                        RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
-                        RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
-                        SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
-                        SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
+                        RequiredLevel = ((LevelTechEnum)(item.LevelId)).GetDescription(),
+                        RequiredLevelId = item.LevelId,
+                        SkillName = item.SkillName,
+                        //SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
                         WeightageRequired = item.Weightage,
                         Concepts = item.Concepts,
                         Timelimit = item.Timelimit,
@@ -1310,7 +1310,7 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
                 foreach (var item in techReportCollection ?? new List<TechSkillReport>())
                 {
-                    var techdetails = techSkillsDetails.Where(x => x.SkillId == item.SkillId && x.SkillSet == item.SkillSet).FirstOrDefault();
+                    var techdetails = techSkillsDetails.Where(x => x.SkillName == item.SkillName && x.SkillSet == item.SkillSet).FirstOrDefault();
                     if (techdetails != null)
                     {
                         item.Concepts = techdetails.Concepts;

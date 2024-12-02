@@ -1422,10 +1422,11 @@ namespace Risebird.Repository
                         techReportDt.Columns.Add("WeightageActual", typeof(int));
                         techReportDt.Columns.Add("TechComments", typeof(string));
                         techReportDt.Columns.Add("SkillSet", typeof(int));
+                        techReportDt.Columns.Add("SkillName", typeof(string));
 
                         foreach (var item in reportDetails.TechSkillReportCollection)
                         {
-                            techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.TechComments, item.SkillSet);
+                            techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.TechComments, item.SkillSet, item.SkillName);
                         }
 
                         SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con)
@@ -1730,7 +1731,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select a.*, Skill.[Name] as SkillName from (select ts.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var query = "select ts.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

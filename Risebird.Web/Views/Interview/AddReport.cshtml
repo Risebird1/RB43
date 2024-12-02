@@ -2017,7 +2017,11 @@
                     totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
                 }
             }
-            document.getElementById("totTechScore2").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+            var scoreTechTwoElement = document.getElementById("totTechScore2");
+            if(scoreTechTwoElement != null){
+                scoreTechTwoElement.innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+            }
+
         }
     }
     function AddRow() {
@@ -2911,7 +2915,12 @@
 
 
     $(document).ready(function () {
-        document.getElementById("InterviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
+        var commentTwoElement = document.getElementById("InterviewerCommentTwo");
+        if(commentTwoElement != null)
+        {
+                commentTwoElement.innerHTML = $('#InterviewerCommentTwo').text();
+        }
+        
 
     })
 </script>

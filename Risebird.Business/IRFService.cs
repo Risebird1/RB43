@@ -776,21 +776,21 @@ namespace Risebird.Business
                     }
                 }
 
-                if (model.OldSkillCollection != null && model.SkillCollection != null && model.SkillCollection != model.OldSkillCollection)
-                {
-                    foreach (var oldSkill in model.OldSkillCollection)
-                    {
-                        if (!model.SkillCollection.Select(s => s.SkillId).Any(x => x == oldSkill.SkillId && x == oldSkill.SkillSet))
-                        {
-                            removedTechSkills.Add(new RemovedTechSkillsFromIRF
-                            {
-                                IRFId = model.id,
-                                SkillId = oldSkill.SkillId,
-                                SkillSet = oldSkill.SkillSet
-                            });
-                        }
-                    }
-                }
+                //if (model.OldSkillCollection != null && model.SkillCollection != null && model.SkillCollection != model.OldSkillCollection)
+                //{
+                //    foreach (var oldSkill in model.OldSkillCollection)
+                //    {
+                //        if (!model.SkillCollection.Select(s => new { s.SkillName, s.SkillSet }).Any(x => x.SkillName == oldSkill.SkillName && x.SkillSet == oldSkill.SkillSet))
+                //        {
+                //            removedTechSkills.Add(new RemovedTechSkillsFromIRF
+                //            {
+                //                IRFId = model.id,
+                //                SkillName = oldSkill.SkillName,
+                //                SkillSet = oldSkill.SkillSet
+                //            });
+                //        }
+                //    }
+                //}
                 var result = await _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null);
                 if (result.Item1)
                 {

@@ -3,7 +3,8 @@
     public class RemovedTechSkillsFromIRF
     {
         public int IRFId { get; set; }
-        public int SkillId { get; set; }
+        //public int SkillId { get; set; }
         public int SkillSet { get; set; }
+        public string SkillName { get; set; }
     }
 }
