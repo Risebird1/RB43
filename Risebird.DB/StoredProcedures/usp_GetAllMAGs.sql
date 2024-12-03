@@ -25,9 +25,10 @@ BEGIN
 -- Select id,AssessmentGroup,Isinstaavailable,ISNULL(IsRelevant,0) as IsRelevant from AssessmentGroup
 -- End
 
-  Select ag.id, AssessmentGroup, Isinstaavailable,ISNULL(IsRelevant,0) as IsRelevant 
+	Select ag.id, AssessmentGroup, Isinstaavailable,ISNULL(IsRelevant,0) as IsRelevant 
 	from AssessmentGroup ag join MasterAssessmentGroup mag on mag.AssessmentGroupId = ag.id
-	where mag.IsDeleted = 0 or mag.IsDeleted is null  
+	where mag.IsDeleted = 0 or mag.IsDeleted is null order by AssessmentGroup
+  
 END
 Go
 

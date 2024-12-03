@@ -14,7 +14,7 @@ GO
     
 CREATE PROCEDURE [dbo].[usp_TechSkillBulkInsert]    
 (    
-      @TechSkillBulkData AS [dbo].[TransTechSkill2_TableType] READONLY    
+      @TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV4] READONLY    --TransTechSkill2_TableType
 )    
 AS    
 BEGIN    
@@ -22,15 +22,23 @@ BEGIN
 SET NOCOUNT ON;    
   DELETE from TransTechSkill where IRFID in (Select IRFId From @TechSkillBulkData)  
 --This row performs bulk copy of object DataTable to Table in SQL    
-INSERT INTO [dbo].[TransTechSkill](    
- [IRFId] ,    
- [LevelId],    
- [SkillId],    
- [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet])    
+--INSERT INTO [dbo].[TransTechSkill](    
+-- [IRFId] ,    
+-- [LevelId],    
+-- [SkillId],    
+-- [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet])    
     
-SELECT * FROM @TechSkillBulkData    
+--SELECT * FROM @TechSkillBulkData    
     
+ INSERT INTO [dbo].[TransTechSkill](    
+					[IRFId] ,    
+					[LevelId],    
+					[SkillId],    
+					[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet], [SkillName])    
     
+SELECT tsbd.IRFId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, 
+tsbd.Timelimit,tsbd.isEliminationskill,tsbd.SkillSet, tsbd.SkillName FROM @TechSkillBulkData tsbd
+					   
 END 
 
 GO

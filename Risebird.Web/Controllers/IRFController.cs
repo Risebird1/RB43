@@ -2218,11 +2218,11 @@ namespace Risebird.Web.Controllers
             if (model.CreatedOn < absoluteTime)
             {
                 AssessmentsGroups = _interviewerService.FetchAssessmentGroups().ToList();
+
             }
             else
             {
                 AssessmentsGroups = (await _irfService.GetAllMAGs()).ToList();
-
             }
             var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
