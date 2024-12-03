@@ -80,7 +80,7 @@ IF EXISTS(
       AND Object_ID = Object_ID(N'TransTechSkill'))
 BEGIN
     ALTER TABLE TransTechSkill
-    ALTER COLUMN Concepts VARCHAR(200);
+    ALTER COLUMN Concepts VARCHAR(500);
 END
 IF EXISTS(
     SELECT *
@@ -89,7 +89,7 @@ IF EXISTS(
       AND Object_ID = Object_ID(N'TransTechSkill'))
 BEGIN
     ALTER TABLE TransTechSkill
-    ALTER COLUMN Natureofquestion VARCHAR(200);
+    ALTER COLUMN Natureofquestion VARCHAR(500);
 END
 
 IF NOT EXISTS(

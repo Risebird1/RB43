@@ -20,7 +20,7 @@ Begin
 	from AssessmentGroupInterviewers agi
 	join InterviewerProfile ipr on ipr.id = agi.InterviewerProfileId
 	join UserList ul on ul.id = ipr.UserId
-	where agi.AssessmentGroupId = @Assessmentid and agi.IsSME = 1 and agi.InterviewerProfileId != (select InterviewerProfileId from SkillChannelSMEs where IRFId = @irfId and (IsDeleted  is null or IsDeleted = 0))
+	where agi.AssessmentGroupId = @Assessmentid and agi.IsSME = 1 and agi.InterviewerProfileId not in (select InterviewerProfileId from SkillChannelSMEs where IRFId = @irfId and (IsDeleted  is null or IsDeleted = 0))
 	union
 	select distinct irf.AssessmentGroupId, scs.InterviewerProfileId, 1 as IsSME, ul.EmailId, (ul.FirstName+ space(1) +ul.LastName) as InterviewerName, 1 as IsSelectedForIRF
 	from SkillChannelSMEs scs 
