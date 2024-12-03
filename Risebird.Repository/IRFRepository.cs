@@ -2173,7 +2173,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("SkillSet", typeof(int));
                     techSkillDt.Columns.Add("SkillName", typeof(string));
 
-                    foreach (var item in irfDetails.SkillCollection)
+                    foreach (var item in irfDetails.SkillCollection?.Where(x => x.LevelId > 0))
                     {
                         //if (item.SkillId != 0)
                         //{
@@ -7590,6 +7590,7 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
                         techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
                         techSkillDt.Columns.Add("SkillSet", typeof(int));
+                        techSkillDt.Columns.Add("SkillName", typeof(string));
 
                         foreach (var item in techskills)
                         {

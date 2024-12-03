@@ -44,7 +44,25 @@ BEGIN
     Add isEliminationskill bit
 END
 
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Natureofquestion')
+      AND Object_ID = Object_ID(N'TransClonableIRFTechSkill'))
+BEGIN
+    ALTER TABLE TransClonableIRFTechSkill
+    ALTER COLUMN Natureofquestion VARCHAR(500);
+END
 
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Concepts')
+      AND Object_ID = Object_ID(N'TransClonableIRFTechSkill'))
+BEGIN
+    ALTER TABLE TransClonableIRFTechSkill
+    ALTER COLUMN Concepts VARCHAR(500);
+END
 
 
 
