@@ -8,17 +8,31 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE usp_GetIRFCandidateStatsForExcelDownLoadV2    
+Create PROCEDURE usp_GetIRFCandidateStatsForExcelDownLoadV2    
 @irfId int,             
 @timeNow datetime,   
 @emailid varchar(200),
+@projectid int,
 @numbertOfTechStacks int out    
 AS      
-BEGIN      
+BEGIN     
+Declare @IRfidList Table(
+irfid int
+)
+if(@projectid>0)
+begin
+Insert into @IRfidList
+Select IRFId from Project pr join ProjectIRFMapping pim on pim.ProjectId=pr.id where pr.id=@projectid
+end
+else 
+begin
+Insert into @IRfidList (irfid) values(@irfId)
+end
+
 Declare @Roleid int                 
 Select @Roleid=cu.RoleId from ClientUser cu join UserList ul on ul.id=cu.UserId where ul.EmailId= @emailid
 
-set @numbertOfTechStacks = (select SkillSetsevaluate from IRF where id = @irfId)    
+set @numbertOfTechStacks = (select top 1 SkillSetsevaluate from IRF where id in(Select irfid From @IRfidList))    
     
 DECLARE @TemporaryCandidateTableVariable TABLE (                  
  IRFId int,            
@@ -49,7 +63,7 @@ join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.C
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId      
 outer apply dbo.fn_CandidateLatestStatusForIrfStatsForExcel(cm.UserId, ca.IRFId, @timeNow) La    
 outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) Journey    
-where cs.[Status] = 12 and  ca.IRFId = @irfId and ca.ClientHRAttemptContact=@emailid
+where cs.[Status] = 12 and  ca.IRFId in (Select irfid From @IRfidList) and ca.ClientHRAttemptContact=@emailid
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink    
 , Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,   
 La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword        
@@ -65,12 +79,12 @@ join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.C
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId      
 outer apply dbo.fn_CandidateLatestStatusForIrfStatsForExcel(cm.UserId, ca.IRFId, @timeNow) La    
 outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) Journey    
-where cs.[Status] = 12 and  ca.IRFId = @irfId and ca.ProfileSource=@emailid
+where cs.[Status] = 12 and  ca.IRFId in(Select irfid From @IRfidList) and ca.ProfileSource=@emailid
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink    
 , Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,   
 La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword        
 end
-else
+else if(@Roleid=9)
 begin
 INSERT INTO @TemporaryCandidateTableVariable                  
 select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink    
@@ -81,12 +95,30 @@ join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.C
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId      
 outer apply dbo.fn_CandidateLatestStatusForIrfStatsForExcel(cm.UserId, ca.IRFId, @timeNow) La    
 outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) Journey    
-where cs.[Status] = 12 and  ca.IRFId = @irfId-- cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)            
+where cs.[Status] = 12 and  ca.IRFId in(Select irfid From @IRfidList)-- cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)            
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink    
 , Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,   
 La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword        
 end    
-    
+else
+begin
+INSERT INTO @TemporaryCandidateTableVariable                  
+select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink    
+,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,   
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword           
+from  Candidate ca             
+join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)             
+join CandidatesMaster cm on cm.id=ca.CandidateMasterId      
+join TransClientUser tcu on tcu.IRFId=ca.IRFId
+join UserList ulc on ulc.id=tcu.ClientUserId
+outer apply dbo.fn_CandidateLatestStatusForIrfStatsForExcel(cm.UserId, ca.IRFId, @timeNow) La    
+outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) Journey    
+where cs.[Status] = 12 and  ca.IRFId in(Select irfid From @IRfidList) and ulc.EmailId=@emailid
+group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink    
+, Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate,   
+La.completedDate, ca.PreReportLink, ca.PreReportUsername, ca.PreReportPassword        
+end    
+
 ----completed    
     
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
@@ -95,7 +127,7 @@ im.staffingAgency, ice.InterviewStatus as InterviewStatusTwo, ice.MeetingStatus 
 ice.InterviewerComment as InterviewerCommentTwo,    
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,     
 tctv.FirstScheduledOninterviewDate, tctv.completedDate, tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword       
-, 1 as isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing    
+, 1 as isQcDone,Case When @projectid>0 then 0 else irf.IsDrive end as IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing    
 from @TemporaryCandidateTableVariable tctv    
 join InterviewMeetings im on im.id = tctv.InterviewId    
 join IRF on IRF.IRFId=im.IRFId     
@@ -194,6 +226,6 @@ if(@numbertOfTechStacks is null)
 Begin    
  set @numbertOfTechStacks = 1    
 End    
-END    
+END   
 GO
 

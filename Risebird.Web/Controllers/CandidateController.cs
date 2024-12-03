@@ -5473,7 +5473,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName, string emailid)
+        public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName, string emailid, int projectid)
         {
             if (_env.IsDevelopment())
             {
@@ -5492,7 +5492,7 @@ namespace Risebird.Web.Controllers
                     client = new ClientUserVM();
                 }
                 var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
-                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid);
+                var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid, projectid);
                 if (model == null)
                 {
                     model = new List<CandidateExcelData>();
@@ -7062,8 +7062,8 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
             try
             {
-                var strtdate = "01-10-2024";
-                var enddate = "01-11-2024";
+                var strtdate = DateTime.Now.AddDays(-90);//"01-10-2024";
+                var enddate = DateTime.Now;// "01-11-2024";
                 var candidateDatawithoutCold = new List<CandidateExcelData>();
                 candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(Convert.ToDateTime(strtdate), Convert.ToDateTime(enddate), 177)).ToList();
                 var candidateDatawithCold = new List<CandidateExcelData>();
