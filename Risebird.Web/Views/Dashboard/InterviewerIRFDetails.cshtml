@@ -215,7 +215,7 @@
                                                         <td>@item.Clienthr</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
-                                                        <td>@item.TotalCompletedMeetings</td>
+                                                        <td><a href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
                                                         @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                         {
                                                             @if (ViewBag.Type == "Selection")
