@@ -208,6 +208,7 @@ namespace Risebird.MicroService
             }
             catch (Exception ex)
             {
+                log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with error at: {ex}");
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
