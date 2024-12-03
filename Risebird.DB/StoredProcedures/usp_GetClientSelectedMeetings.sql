@@ -370,7 +370,7 @@ else
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
     ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
-    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
+    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview,tin.ClientAction as ShortListstatus        
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
@@ -381,7 +381,8 @@ else
     inner join TransClientUser tcu on IRF.id=tcu.IRFId        
     left join UserList ul on tcu.ClientUserId= ul.id        
     left join UserList uli on uli.EmailId = im.interviewer  
-    left join InterviewerProfile ipr on ipr.UserId = uli.id    
+    left join InterviewerProfile ipr on ipr.UserId = uli.id  
+	left join TransInterviewer tin on tin.IRFId=IRF.id and tin.UserId=uli.id
     where ul.EmailId LIKE @EmailId AND ul.IsActive=1        
     and irf.IsDeleted=0        
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)        
@@ -407,7 +408,7 @@ else
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
     ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
-    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview       
+    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview,tin.ClientAction as ShortListstatus       
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
@@ -418,7 +419,8 @@ else
     inner join TransClientUser tcu on IRF.id=tcu.IRFId        
     left join UserList ul on tcu.ClientUserId= ul.id        
     left join UserList uli on uli.EmailId = im.interviewer  
-    left join InterviewerProfile ipr on ipr.UserId = uli.id     
+    left join InterviewerProfile ipr on ipr.UserId = uli.id    
+	left join TransInterviewer tin on tin.IRFId=IRF.id and tin.UserId=uli.id
     where ul.EmailId LIKE @EmailId AND ul.IsActive=1        
     and irf.IsDeleted=0        
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)        
@@ -443,7 +445,7 @@ else
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
     ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP,   tqr.IsReportBlocked,     
-    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
+    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview,tin.ClientAction as ShortListstatus        
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
@@ -454,7 +456,8 @@ else
     inner join TransClientUser tcu on IRF.id=tcu.IRFId        
     left join UserList ul on tcu.ClientUserId= ul.id        
     left join UserList uli on uli.EmailId = im.interviewer  
-    left join InterviewerProfile ipr on ipr.UserId = uli.id     
+    left join InterviewerProfile ipr on ipr.UserId = uli.id   
+	left join TransInterviewer tin on tin.IRFId=IRF.id and tin.UserId=uli.id
     where ul.EmailId LIKE @EmailId AND ul.IsActive=1        
     and irf.IsDeleted=0        
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)        

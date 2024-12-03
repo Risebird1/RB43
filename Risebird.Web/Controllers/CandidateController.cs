@@ -3969,7 +3969,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var client = await _userRepository.GetClientUserDetails(emailid);
-                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
 
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
@@ -7007,6 +7007,7 @@ namespace Risebird.Web.Controllers
                     //}
                     ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
                     ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
+                    ViewBag.meetingtype = "Select";
                     return View(meetings);
                 }
                 else
