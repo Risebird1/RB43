@@ -254,7 +254,7 @@
                                                                 <td class="text-right action">
                                                                     <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
                                                                             data-toggle="ajax-modal" data-target="#addComment"
-                                                                            data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.imid })" style="width:25px!important;height:25px!important;">
+                                                                            onclick="ClientInterviewRating('@item.imid','2')" style="width:25px!important;height:25px!important;">
                                                                         <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
                                                                     </button>
                                                                     <button id="selectedcandidate_9" class="btn btn-rating shadow btn-xs sharp me-1" aria-label="Client Feedback" title="Client Feedback" style="background: #54a5f6;width:25px!important;height:25px!important;border-color:#72ade8;">
@@ -299,10 +299,11 @@
     </div>
 </div>
 
-<div id="modal_clientComment_placeholder"></div>
-<script src="~/js/ModalFormServerValidation.js"></script>
+@* <div id="modal_clientComment_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script> *@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_L2StatusUpdate.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewRating.cshtml")
 <script src="~/js/twiliocallmaker.js"></script>
 <script src="~/js/executivereport.js"></script>
 <script src="~/js/filtervalidation.js?v=2024"></script>
