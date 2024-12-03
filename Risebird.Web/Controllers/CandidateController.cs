@@ -7007,6 +7007,7 @@ namespace Risebird.Web.Controllers
                     //}
                     ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
                     ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
+                    ViewBag.meetingtype = "Select";
                     return View(meetings);
                 }
                 else

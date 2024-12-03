@@ -65,8 +65,11 @@
                                                             <th id="intselmeet_4">Resume</th>
                                                             @*<th>Candidate Contact</th>*@
                                                             <th>Client HR</th>
-                                                            <th id="intselmeet_5">Confirmation Status</th>
-                                                            <th id="intselmeet_6">Meeting Status</th>
+                                                            @if (ViewBag.meetingtype != "Select" && ViewBag.meetingtype != "Reject")
+                                                            {
+                                                                <th id="intselmeet_5">Confirmation Status</th>
+                                                                <th id="intselmeet_6">Meeting Status</th>
+                                                            }
                                                             <th id="intselmeet_7">Selection Status</th>
                                                             @if (ViewBag.ClientRole == "Reviewer")
                                                             {
@@ -84,8 +87,11 @@
                                                             <th>Resume</th>
                                                             @*<th>Candidate Contact</th>*@
                                                             <th>Client HR</th>
-                                                            <th>Confirmation Status</th>
-                                                            <th>Meeting Status</th>
+                                                            @if (ViewBag.meetingtype != "Select" && ViewBag.meetingtype != "Reject")
+                                                            {
+                                                                <th>Confirmation Status</th>
+                                                                <th>Meeting Status</th>
+                                                            }
                                                             <th>Selection Status</th>
                                                             @if (ViewBag.ClientRole == "Reviewer")
                                                             {
@@ -154,8 +160,8 @@
                                                                 }
                                                                 @*                                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, IsSelected = true })'>Report</a> </td>
                                                             *@
-                                                                @* <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ExecutiveReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, isClient = true })'>Report</a> </td> *@
-                                                                <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td>
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, isClient = true })'>Report</a> </td>
+                                                                @* <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td> *@
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -184,9 +190,11 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-
-                                                                <td> @item.confirmationStatus</td>
-                                                                <td> @item.MeetingStatusStatusDesc </td>
+                                                                @if (ViewBag.meetingtype != "Select" && ViewBag.meetingtype != "Reject")
+                                                                {
+                                                                    <td> @item.confirmationStatus</td>
+                                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                                }
                                                                 <td> @item.intervieweStatusStatDesc </td>
                                                                 @if (ViewBag.ClientRole == "Reviewer")
                                                                 {

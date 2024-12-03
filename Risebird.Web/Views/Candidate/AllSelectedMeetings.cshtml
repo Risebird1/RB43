@@ -126,8 +126,7 @@
                                                             <th>Candidate Name</th>
                                                             <th id="intselmeet_3">Report Link</th>
                                                             <th id="intselmeet_4">Resume</th>
-                                                            <th>Client HR</th>
-                                                            <th id="intselmeet_5">Confirmation Status</th>
+                                                            @* <th>Client HR</th> *@
                                                             <th id="intselmeet_6">Meeting Status</th>
                                                             <th id="intselmeet_7">Selection Status</th>
                                                             @if (ViewBag.ClientRole == "Reviewer")
@@ -145,8 +144,7 @@
                                                             <th>Candidate Name</th>
                                                             <th>Report Link</th>
                                                             <th>Resume</th>
-                                                            <th>Client HR</th>
-                                                            <th>Confirmation Status</th>
+                                                            @* <th>Client HR</th> *@
                                                             <th>Meeting Status</th>
                                                             <th>Selection Status</th>
                                                             @if (ViewBag.ClientRole == "Reviewer")
@@ -215,7 +213,8 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                                <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td>
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
+                                                                @* <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td> *@
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -225,32 +224,31 @@
                                                                     <td>No Resume</td>
                                                                 }
 
-                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                                {
-                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 18)
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>@item.ClientHrContact.Substring(0, 18)... </a>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact</a>
-                                                                        </td>
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
+                                                                @* @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                            {
+                                                            @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 18)
+                                                            {
+                                                            <td>
+                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>@item.ClientHrContact.Substring(0, 18)... </a>
+                                                            </td>
+                                                            }
+                                                            else
+                                                            {
+                                                            <td>
+                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact</a>
+                                                            </td>
+                                                            }
+                                                            }
+                                                            else
+                                                            {
+                                                            <td></td>
+                                                            } *@
 
-                                                                <td> @item.confirmationStatus</td>
                                                                 <td> @item.MeetingStatusDescription </td>
                                                                 <td> @item.InterviewStatusDescription </td>
                                                                 @if (ViewBag.ClientRole == "Reviewer")
                                                                 {
-                                                                    <td>@item.InterviewerName</td>
+                                                                    <td>@item.NickName</td>
                                                                     <td>@item.ShortListstatus</td>
                                                                 }
                                                                 <td class="text-right action">
