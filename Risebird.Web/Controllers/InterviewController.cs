@@ -8391,10 +8391,15 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ClientInterviewReview(int id, int actionType)
+        public async Task<IActionResult> ClientInterviewReview(int id, int actionType, string callbackPage)
         {
             var model = new PaymentSLAVM();
             model.Interviewid = id;
+            model.Pagetype = callbackPage;
+            if (string.IsNullOrWhiteSpace(callbackPage))
+            {
+                model.Pagetype = "";
+            }
             await SetInitialValue(model);
             ViewBag.actionType = actionType;
             return PartialView(model);
