@@ -177,11 +177,27 @@
                                                                     </button>
                                                                 </span>
                                                             }
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
-                                                                <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.interviewer', '@item.id');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                                </span>
-                                                            </button>
+                                                            @if (ViewBag.Profile == "Client")
+                                                            {
+                                                                <a onclick="removeOrShortlistInterviewer(@item.id,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
+                                                                    <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Shortlist Interviewer" style="background:#c3df82fc;border-color:#dbee7699;width:25px!important;height:25px!important;">
+                                                                        <span title="Shortlist Interviewer"><img style="max-width:18px;position:relative;left:-2px;top:-1px;" src="~/Newassets/img/shortlist-icon.png" /></span>
+                                                                    </div>
+                                                                </a>
+                                                                <a onclick="removeOrShortlistInterviewer(@item.id,'Rejected')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
+                                                                    <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Remove Interviewer" style="background: #de4f3eb3;width:25px!important;height:25px!important;">
+                                                                        <span title="Remove Interviewer"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size: 11px;"></span><span class="fa fa-trash" style="color:#fff;font-size: 8px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                    </div>
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
+                                                                    <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.interviewer', '@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                    </span>
+                                                                </button>
+                                                            }
                                                             @if (ViewBag.PageStatus != "Public")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats" style="width:27px!important;height:27px!important">
@@ -215,7 +231,7 @@
                                                         <td>@item.Clienthr</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
-                                                        <td>@item.TotalCompletedMeetings</td>
+                                                        <td><a href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
                                                         @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                         {
                                                             @if (ViewBag.Type == "Selection")
