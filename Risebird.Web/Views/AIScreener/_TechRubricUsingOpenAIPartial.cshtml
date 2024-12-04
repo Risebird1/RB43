@@ -118,11 +118,11 @@
         </table>
         <label class="text-danger" id="SkillCollection_WeightageError"></label>
         <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
-        <div style="display:flex">
+        <div class="regenerate-wrap">
             <input class="form-control text-box single-line" id="id_regenerateRubricText" type="text">
-            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;border-radius: 4px !important;top: -17px;position: relative;font-size: 13px !important; text-transform: none;   background: #9bdf9b !important;height: 39px !important;line-height: 39px;" onclick="RegenerateScoreRubic()">
+            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;border-radius: 4px !important;top:2px;position: relative;font-size: 13px !important; text-transform: none;   background: #9bdf9b !important;height: 39px !important;line-height: 39px;" onclick="getValue()">
 
-                <span> <img src="~/img/regenerate.png" style="max-width: 22px!important;position:relative;left: -3px;top: -3px;" /></span>
+                <span> <img src="~/img/regenerate.png" style="max-width: 22px!important;position:relative;left: -3px;" /></span>
                 ReGenerate TechScoreRubic
             </button>
         </div>
@@ -150,4 +150,19 @@
 
 
 
+<script>
+        function getValue() {
+             debugger;
+         
+            // Get the input element by its ID
+            let inputField = document.getElementById("id_regenerateRubricText");
 
+            // Get the value of the input field
+            let value = inputField.value;
+
+            // Display the value in an alert
+            alert("Input value: " + value);
+             $('#id_rubricsDiv').html('');
+             GenerateTechRubricUsingOpenAI();
+        }
+    </script>

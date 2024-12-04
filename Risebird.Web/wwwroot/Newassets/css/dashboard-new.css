@@ -6766,13 +6766,22 @@ input[type=search]:focus {
     font-size: 16px;
     font-weight: 500;
 }
-/***** Media queries *****/
-.copy-btn {
-    background: none;
-    border: 0;
-    position: relative;
-    margin: -10px 0px 0px 0px !important;
+.regenerate-wrap {
+    width: 700px;
+    margin: 0px auto;
 }
+    .regenerate-wrap .form-control {
+        width: 400px;
+        float: left;
+        margin-right: 10px !important;
+    }
+    /***** Media queries *****/
+    .copy-btn {
+        background: none;
+        border: 0;
+        position: relative;
+        margin: -10px 0px 0px 0px !important;
+    }
 
 .special-text svg {
     fill: rgb(83, 165, 245)
