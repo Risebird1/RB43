@@ -96,11 +96,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
             }
             return null;
         }
@@ -121,11 +121,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
             }
             return null;
         }
