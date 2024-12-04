@@ -65,10 +65,10 @@ namespace Risebird.MicroService
                 string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
                 // var model = new List<CandidateExcelData>();
                 var candidateDatawithoutCold = new List<CandidateExcelData>();
-                candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
+                candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(DateTime.Now.AddDays(-60), DateTime.Now, 177)).ToList();
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database with out Code SP executed at: {DateTime.Now}");
                 var candidateDatawithCold = new List<CandidateExcelData>();
-                candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
+                candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(DateTime.Now.AddDays(-60), DateTime.Now, 177)).ToList();
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database SP executed at: {DateTime.Now}");
                 candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
