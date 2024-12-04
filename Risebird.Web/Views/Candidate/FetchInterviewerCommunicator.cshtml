@@ -93,24 +93,23 @@
                                         </div>
                                     </button>
                                 </a>
-                                <div class="topheader-link-wrap">
+                                @* <div class="topheader-link-wrap">
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;position: relative;right:0px;">
                                         <span style="float:left;margin-right:5px;"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
                                         <div class="d-lg-inline-flex">
                                             Calibration Meetings
                                         </div>
                                     </button>
-                                </div>
+                                </div> *@
                             </div>
 
-                            <div class="mobile-view">
+                            @* <div class="mobile-view">
                                 <div class="topheader-link-wrap calibration-btn">
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space  calibrationbtn-mob" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("CalibrationMeetings", "IRF", new { emailid = ViewBag.emailid, id = ViewBag.id })'" style="margin:5px 4px 0px 3px; top:25px;right: -95px; position: relative;">
                                         <span><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size: 13px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size: 10px;position: relative;top: -4px;"></i></span>
-
                                     </button>
                                 </div>
-                            </div>
+                            </div> *@
 
 
                             @*  @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "pull-right mob-ht mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button", @style = "position:relative;top:30px;right:30px;" }) *@
@@ -287,11 +286,11 @@
                                                                     <td class="text-center">
                                                                         @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                         {
-                                                                            <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
+                                                                            @* <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
                                                                                 <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
                                                                                     <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
                                                                                 </span>
-                                                                            </button>
+                                                                            </button> *@
                                                                             <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
                                                                                 <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
                                                                                     <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
