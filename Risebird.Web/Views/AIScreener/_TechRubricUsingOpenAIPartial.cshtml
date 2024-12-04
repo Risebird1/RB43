@@ -119,6 +119,7 @@
         <label class="text-danger" id="SkillCollection_WeightageError"></label>
         <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
         <div style="display:flex">
+            <input class="form-control text-box single-line" id="id_regenerateRubricText" type="text">
             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;border-radius: 4px !important;top: -17px;position: relative;font-size: 13px !important; text-transform: none;   background: #9bdf9b !important;height: 39px !important;line-height: 39px;" onclick="RegenerateScoreRubic()">
 
                 <span> <img src="~/img/regenerate.png" style="max-width: 22px!important;position:relative;left: -3px;top: -3px;" /></span>
@@ -135,7 +136,10 @@
     function RegenerateScoreRubic() {
         debugger;
          $('#id_rubricsDiv').html('');
-        GenerateTechRubricUsingOpenAI();
+        //var customizedPrompt = $('#id_regenerateRubricText').val();
+        var customizedPrompt = document.getElementById('id_regenerateRubricText').value;
+
+        GenerateTechRubricUsingOpenAI(customizedPrompt);
     }
 
 

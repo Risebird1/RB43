@@ -1386,10 +1386,15 @@
 
 <script>
     var isRubricGenerated = false;
-    function GenerateTechRubricUsingOpenAI(){
+    function GenerateTechRubricUsingOpenAI(customizedPrompt = null){
+        debugger;
         showloader();
         const asgDropdown = document.getElementById("AssessmentGroupId");
         const jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
+        if(customizedPrompt != null && customizedPrompt != '')
+        {
+            jobTitle = jobTitle + customizedPrompt;
+        }
         
         $.ajax({
             type: "GET",
