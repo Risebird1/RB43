@@ -12520,6 +12520,12 @@ section {
         width: 100%;
         float: left;
     }
+    .regenerate-wrap .form-control {
+        width:100%!important;
+    }
+    .regenerate-wrap button{
+        width:100%!important;
+    }
     .resume-note {
         width: 100%;
         font-size: 13px;
