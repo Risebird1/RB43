@@ -56,7 +56,8 @@ namespace Risebird.MicroService
                     "prashanth_k@risebird.io",
                     "harshit_jajoo@risebird.io",
                     "tanishka_gupta@risebird.io",
-                    "bhawana@turing.com"
+                    "bhawana@turing.com",
+                    "richard.m@turing.com"
                 };
                 ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 ExcelPackage Ep = new ExcelPackage();
@@ -65,6 +66,7 @@ namespace Risebird.MicroService
                 // var model = new List<CandidateExcelData>();
                 var candidateDatawithoutCold = new List<CandidateExcelData>();
                 candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
+                log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database with out Code SP executed at: {DateTime.Now}");
                 var candidateDatawithCold = new List<CandidateExcelData>();
                 candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(DateTime.Now.AddDays(-90), DateTime.Now, 177)).ToList();
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database SP executed at: {DateTime.Now}");
