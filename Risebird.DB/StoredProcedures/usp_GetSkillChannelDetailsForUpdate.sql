@@ -19,8 +19,11 @@ set @isGeneralSkillRequired = (select IsGeneralSkillRequired from IRF where id =
 Select IRF.*, cl.[Name] as ClientCompName,  
 IRF.IsMeetingNotificationSend  as EditIRFConfiguration  
 , cl.IsCandidateavailability as IsClientCandidateAvailablily, cl.IsMeetingNotificationSend as IsClientMeetingNotificationSend,  
-cl.IsMeetingAutoCancelled as IsClientMeetingAutoCancelled, cl.InterviewDuration as ClientInterviewDuration  
-from IRF inner join Client cl on IRF.ClientId = cl.id where IRF.id = @irfId  
+cl.IsMeetingAutoCancelled as IsClientMeetingAutoCancelled, cl.InterviewDuration as ClientInterviewDuration,
+asg.AssessmentGroup as AssessmentGroupName
+from IRF inner join Client cl on IRF.ClientId = cl.id 
+join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
+where IRF.id = @irfId  
   
   
 --tech skills details  
