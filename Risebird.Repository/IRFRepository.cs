@@ -584,6 +584,7 @@ namespace Risebird.Repository
                         {
                             _resultVM.IRFId = !string.IsNullOrEmpty(dt.Rows[0]["IRFId"].ToString()) ? dt.Rows[0]["IRFId"].ToString() : null;
                             _resultVM.ClientName = !string.IsNullOrEmpty(dt.Rows[0]["ClientName"].ToString()) ? dt.Rows[0]["ClientName"].ToString() : null;
+                            _resultVM.AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupName"].ToString()) ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
                             _resultVM.JDTiltle = !string.IsNullOrEmpty(dt.Rows[0]["JDTiltle"].ToString()) ? dt.Rows[0]["JDTiltle"].ToString() : null;
                             _resultVM.CompanyType = !string.IsNullOrEmpty(dt.Rows[0]["CompanyType"].ToString()) ? dt.Rows[0]["CompanyType"].ToString() : null;
                             _resultVM.ClientId = !string.IsNullOrEmpty(dt.Rows[0]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["ClientId"]) : 0;
