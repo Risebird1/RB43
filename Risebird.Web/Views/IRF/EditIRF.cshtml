@@ -768,7 +768,7 @@
                                                                                 </td>
                                                                                 
                                                                                 <td width="25%">
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new {@style="font-weight:700", @class = "weight form-control text-box single-line" } })
                                                                                 </td>
                                                                                 <td>
                                                                                     @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1",@style="font-weight:600"  } })
@@ -788,10 +788,10 @@
                                                                                         </div>
                                                                                     }
                                                                                 </td>
-                                                                                <td width="25%" class="tooltip-skill  advancedRubricField" style="float:left;display:@rubricDisplayStatus">
+                                                                                <td width="25%" class="tooltip-skill  advancedRubricField " style="float:left;display:@rubricDisplayStatus">
                                                                                     @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50", @style="font-weight:600"  } })
                                                                                   @if(Model.SkillCollection[i].Natureofquestion !=null){
-                                                                                    <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
+                                                                                    <div class="expectation techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
                                                                                     <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:13px;color:gray;">
                                                                                         <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
                                                                                             <p style="margin-bottom:7px;font-size:13px;">Expectation: @Model.SkillCollection[i].Natureofquestion</p>
@@ -1553,7 +1553,15 @@
                                                                                     <td class="action text-center">
                                                                                         <div>
                                                                                             <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin") {
                                                                                             
+                                                                                            <span class="interviewer_12">
+                                                                    <span class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile" style="position:relative;top:3px;">
+                                                                        <a target="_blank" href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = Model.InterviewerCollection[0].UserId })'  title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>
+                                                                    </span>
+                                                                </span>
+                                                                                        }
+                                                           
                                                                                             <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
                                                                                                 <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
                                                                                             </span>
@@ -2075,10 +2083,11 @@
                                         <input type="hidden" value="@ViewBag.IsClientUser" id="hidClientuser" />
                                         @if (ViewBag.IsClientUser == false)
                                         {
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Save" style="display:none">Save</button>
+                                            <button type="text" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Save" style="display:none">Save</button>
 
                                         }
-                                        @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Save">Save</button>*@
+@*                                          <button  type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" style="display:none" value="Save & Exit">Save & Exit</button>
+ *@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next" style="margin-right:5px;">
                                     </div>
                                 </div>
@@ -2268,6 +2277,7 @@
                 document.getElementById("tab-1").style.display = "block";
                 document.getElementById("tab-2").style.display = "none";
                 document.getElementById("btnPrev").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
 
             }
             else if (activeTab.trim() == "Tech Skill") {
@@ -2275,12 +2285,14 @@
                 $("#rtab-2").addClass("active");
                 document.getElementById("tab-2").style.display = "block";
                 document.getElementById("tab-3").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
             }
             else if (activeTab.trim() == "Joinability") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-3").addClass("active");
                 document.getElementById("tab-3").style.display = "block";
                 document.getElementById("tab-4").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
             }
 
             else if (activeTab.trim() == "Selectability") {
@@ -2288,6 +2300,7 @@
                 $("#rtab-4").addClass("active");
                 document.getElementById("tab-4").style.display = "block";
                 document.getElementById("tab-5").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
             }
 
             else if (activeTab.trim() == "General Skill") {
@@ -2295,12 +2308,15 @@
                 if (isJoinabilitySelectabilityRequired) {
                     $("#rtab-5").addClass("active");
                     document.getElementById("tab-5").style.display = "block";
+
                 }
                 else {
                     $("#rtab-3").addClass("active");
                     document.getElementById("tab-3").style.display = "block";
+
                 }
                 document.getElementById("tab-6").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
             }
             else if (activeTab.trim() == "Client") {
                 $(".tab-menu li a").removeClass("active");
@@ -2320,6 +2336,7 @@
 
                 }
                 document.getElementById("tab-7").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "block";
 
             }
 
@@ -2330,6 +2347,7 @@
                 //document.getElementById("btnNext").style.display = "block";
                 //document.getElementById("btnUpload").style.display = "none";
                 document.getElementById("tab-8").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
             }
 
             //else if (activeTab.trim() == "QC") {
@@ -2391,6 +2409,7 @@
                     document.getElementById("tab-7").style.display = "block";
                 }
                 document.getElementById("tab-11").style.display = "none";
+                document.getElementById("btnSubmit").style.display = "none";
                 if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin" && $("#hidprofile").val() != "SeniorHR") {
                     document.getElementById("btnNext").style.display = "block";
                     if ($("#hidClientuser").val() == false) {
@@ -2404,6 +2423,7 @@
                 document.getElementById("tab-11").style.display = "block";
                 document.getElementById("tab-13").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
+                document.getElementById("btnSubmit").style.display = "none";
                 if ($("#hidClientuser").val() == false) {
                     document.getElementById("btnUpload").style.display = "none";
                 }
@@ -2438,6 +2458,8 @@
                     $("#rtab-2").addClass("active");
                     document.getElementById("tab-2").style.display = "block";
                     document.getElementById("tab-1").style.display = "none";
+                    
+
                 }
             }
             else if (activeTab.trim() == "Job Details") {
@@ -2448,15 +2470,20 @@
                     $("#rtab-3").addClass("active");
                     document.getElementById("tab-3").style.display = "block";
                     document.getElementById("tab-2").style.display = "none";
+                    
                 }
+                 document.getElementById("btnSubmit").style.display = "block";
+
             }
             else if (activeTab.trim() == "Tech Skill") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
+                    
                     if (isJoinabilitySelectabilityRequired) {
                         $("#rtab-4").addClass("active");
                         document.getElementById("tab-4").style.display = "block";
+                        
                     }
                     else {
                         if (isGeneralSkillRequired) {
@@ -2469,10 +2496,12 @@
                             document.getElementById("tab-7").style.display = "block";
 
                         }
-
+                        
                     }
                     document.getElementById("tab-3").style.display = "none";
+                  
                 }
+                document.getElementById("btnSubmit").style.display = "none";
             }
             else if (activeTab.trim() == "Joinability") {
                 flag = checkTabValidation(activeTab);
@@ -2545,6 +2574,7 @@
                         document.getElementById("tab-11").style.display = "block";
                         document.getElementById("tab-7").style.display = "none";
                         document.getElementById("btnNext").style.display = "none";
+                        document.getElementById("btnSubmit").style.display = "none";
                         if ($("#hidClientuser").val() == false) {
                             document.getElementById("btnUpload").style.display = "block";
                         }
@@ -2878,6 +2908,7 @@
                 document.getElementById("tab-2").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+            document.getElementById("btnSubmit").style.display = "block";
         }
         else if (activeTab.trim() == "Tech Skill") {
             flag = checkTabValidation(activeTab);
@@ -2888,6 +2919,7 @@
                 document.getElementById("tab-3").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+            document.getElementById("btnSubmit").style.display = "none";
         }
         else if (activeTab.trim() == "Joinability") {
             flag = checkTabValidation(activeTab);
@@ -2897,6 +2929,7 @@
                 document.getElementById("tab-4").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+            document.getElementById("btnSubmit").style.display = "none";
         }
         else if (activeTab.trim() == "Selectability") {
             flag = checkTabValidation(activeTab);
@@ -2907,6 +2940,7 @@
                 document.getElementById("tab-5").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+            document.getElementById("btnSubmit").style.display = "none";
         }
         else if (activeTab.trim() == "General Skill") {
             flag = checkTabValidation(activeTab);
@@ -2925,6 +2959,7 @@
                 document.getElementById("tab-7").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+            document.getElementById("btnSubmit").style.display = "block";
         }
 
         else if (activeTab.trim() == "Interviewer") {
@@ -2935,6 +2970,7 @@
                 document.getElementById("tab-8").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+            document.getElementById("btnSubmit").style.display = "none";
         }
     @*else if (activeTab.trim() == "QC") {
             flag = checkTabValidation(activeTab);
@@ -2960,6 +2996,7 @@
 
             document.getElementById("tab-11").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
+            document.getElementById("btnSubmit").style.display = "none";
         }
         else if (activeTab.trim() == "Subject Matter Expert") {
             $(".tab-menu li a").removeClass("active");
@@ -2967,6 +3004,7 @@
 
             document.getElementById("tab-13").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
+            document.getElementById("btnSubmit").style.display = "none";
 
         }
         else if (activeTab.trim() == "Manage Channel") {
@@ -2975,6 +3013,7 @@
 
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
+            document.getElementById("btnSubmit").style.display = "none";
         }
         if (newHeader == "tab-13") {
             GetSMEListForAssessmentGroup();
@@ -2986,6 +3025,8 @@
             else {
                 document.getElementById("btnPrev").style.display = "block";
             }
+
+           
             if (newHeader == "tab-12") {
                 document.getElementById("btnNext").style.display = "none";
                 if ($("#hidClientuser").val() == false) {
@@ -3000,6 +3041,7 @@
             }
             else {
                 document.getElementById("btnNext").style.display = "block";
+
                 if ($("#hidClientuser").val() == false) {
                     document.getElementById("btnUpload").style.display = "none";
                 }
@@ -3485,6 +3527,8 @@
     }
 
     function CheckTotalWeightage() {
+        debugger;
+        alert('test');
         //var ckeck = $("#irfForm").validate();
         var inCorrectCount = 0;
         var skillArray = ["SkillCollection", "Joinability", "Selectability", "SkillGeneral"];

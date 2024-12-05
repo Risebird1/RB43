@@ -6775,13 +6775,14 @@ input[type=search]:focus {
         float: left;
         margin-right: 10px !important;
     }
-    /***** Media queries *****/
-    .copy-btn {
-        background: none;
-        border: 0;
-        position: relative;
-        margin: -10px 0px 0px 0px !important;
-    }
+
+/***** Media queries *****/
+.copy-btn {
+    background: none;
+    border: 0;
+    position: relative;
+    margin: -10px 0px 0px 0px !important;
+}
 
 .special-text svg {
     fill: rgb(83, 165, 245)
