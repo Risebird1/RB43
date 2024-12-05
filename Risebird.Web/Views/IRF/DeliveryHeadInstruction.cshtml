@@ -119,7 +119,7 @@
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                                     </td>
                                                                                     <td class="tooltip-skill" width="35%" style="float:left;display:@rubricDisplayStatus">
-                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="150" style="font-weight:600">
+                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="500" style="font-weight:600">
                                                                                         @if (Model.SkillCollection[0].Concepts != null)
                                                                                         {
                                                                                             <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
@@ -133,7 +133,7 @@
                                                                                         }
                                                                                     </td>
                                                                                     <td class="tooltip-skill" width="25%" style="float:left;display:@rubricDisplayStatus">
-                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="150" style="font-weight:600">
+                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="500" style="font-weight:600">
                                                                                         @if (Model.SkillCollection[0].Natureofquestion != null)
                                                                                         {
                                                                                             <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
@@ -178,7 +178,7 @@
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1", @style = "font-weight:600" } })
                                                                                         </td>
                                                                                         <td class="tooltip-skill" width="35%" style="float:left;display:@rubricDisplayStatus">
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50", @style = "font-weight:600" } })
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "500", @style = "font-weight:600" } })
                                                                                             @if (Model.SkillCollection[i].Concepts != null)
                                                                                             {
                                                                                                 <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
@@ -192,7 +192,7 @@
                                                                                             }
                                                                                         </td>
                                                                                         <td class="tooltip-skill" width="25%" style="float:left;display:@rubricDisplayStatus">
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50", @style = "font-weight:600" } })
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "500", @style = "font-weight:600" } })
                                                                                             @if (Model.SkillCollection[i].Natureofquestion != null)
                                                                                             {
                                                                                                 <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
