@@ -1390,10 +1390,10 @@
         debugger;
         showloader();
         const asgDropdown = document.getElementById("AssessmentGroupId");
-        const jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
+        var jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
         if(customizedPrompt != null && customizedPrompt != '')
         {
-            jobTitle = jobTitle + customizedPrompt;
+            jobTitle = jobTitle + ' ' + customizedPrompt;
         }
         
         $.ajax({
