@@ -241,6 +241,7 @@
                                                         </div>
 
                                                         @Html.HiddenFor(model => model.AssessmentGroupId)
+                                                        @Html.HiddenFor(model => model.AssessmentGroupName)
                                                         @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @disabled = "disabled" })
 
 
@@ -682,24 +683,20 @@
                                         <h3 class="tab_drawer_heading" rel="tab-3">Tech Skill</h3>
                                         <div class="tab-box" id="tab-3">
                                             <div class="tab-main-box">
-                                                @* <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="radio-inline">
-                                                            @Html.RadioButtonFor(model => model.TechRubricType, TechRubricTypes.Basic, new { @onchange = "RubricTypeChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"}) @TechRubricTypes.Basic<br />
-                                                        </label>
-                                                        <label class="radio-inline">
-                                                            @Html.RadioButtonFor(model => model.TechRubricType, TechRubricTypes.Advanced, new { @onchange = "RubricTypeChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) @TechRubricTypes.Advanced<br />
-                                                        </label>
-
-                                                    </div>
-                                                </div> *@
+                                                
                                                 @{
                                                     //string rubricDisplayStatus =  Model.TechRubricType == TechRubricTypes.Advanced ? "inline-block" : "none";
                                                     string rubricDisplayStatus =  "inline-block";
                                                 }
-                                                <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="loader text-center" style="padding: 100px 0px;">
+                                                    <h1 style="font-size: 18px;color: #42a5f5; padding: 30px 0px;    font-family: 'Roboto';font-weight:600">Please wait for 15 - 20 secs while data is loading...</h1>
+                                                        <img src="~/Newassets/img/newloader.gif" />
+                                                </div>
+
+                                                <div class="row">
+                                                    <div id="id_rubricsDiv">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                         <div class="table-responsive-sm">
                                                             <table class="table table-bordered mbn" id="SkillTable">
                                                                 <thead>
@@ -824,8 +821,18 @@
                                                             </table>
                                                             <label class="text-danger" id="SkillCollection_WeightageError" style="color:red!important; margin-left:807px;font-size:12px!important;"></label>
                                                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+                                                            <div class="regenerate-wrap">
+                                                                <input class="form-control text-box single-line" id="id_regenerateRubricText" type="text">
+                                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;border-radius: 4px !important;top:2px;position: relative;font-size: 13px !important; text-transform: none;   background: #9bdf9b !important;height: 39px !important;line-height: 39px;" onclick="RegenerateScoreRubic()">@* getValue() *@
+
+                                                                    <span> <img src="~/img/regenerate.png" style="max-width: 22px!important;position:relative;left: -3px;" /></span>
+                                                                    ReGenerate TechScoreRubic
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div><!--end of col-md-12-->
+                                                    </div>
+                                                    
                                                     @if (Model.SkillSetsevaluate > 1)
                                                     {
                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -2165,6 +2172,62 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v=2024" defer></script>
 <script src="~/js/SkillChannelAddEdit.js?v=2024"></script>
 <script src="~/js/AddEditSkillChannelCommonMethods.js?v=2024"></script>
+<script>
+    function RegenerateScoreRubic() {
+
+        // Get the input element by its ID
+        let inputField = document.getElementById("id_regenerateRubricText");
+
+        // Get the value of the input field
+        let value = inputField.value;
+
+         $('#id_rubricsDiv').html('');
+         GenerateTechRubricUsingOpenAI(value);
+    }
+</script>
+<script>
+    var isRubricGenerated = false;
+    function GenerateTechRubricUsingOpenAI(customizedPrompt = null){
+        showloader();
+        var jobTitle = document.getElementById("AssessmentGroupName").value;
+        //var jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
+        if(customizedPrompt != null && customizedPrompt != '')
+        {
+            jobTitle = jobTitle + ' ' + customizedPrompt;
+        }
+        
+        $.ajax({
+            type: "GET",
+            url: "/AIScreener/GenerateTechRubricUsingOpenAI",
+            data: { 'jobTitle': jobTitle },
+            success: function (data) {
+                $('#id_rubricsDiv').html('');
+                if (data!=null && data.length > 0) {
+                    $('#id_rubricsDiv').html(data);
+                    hideloader();
+                    isRubricGenerated = true;
+                }
+                else{
+                    alert('Failed to generate Rubrics! Please try again.');
+                }
+
+            },
+            error: function (error) {
+
+                //reject(error)
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function showloader() {
+        $(".loader").show();
+    }
+
+    function hideloader() {
+        $(".loader").hide();
+    }
+</script>
 <script>
     function ManageInterviewerDropDowns(){
         var dropdowns = document.querySelectorAll('.interviewersDrpDwn');
