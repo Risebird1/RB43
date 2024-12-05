@@ -1387,7 +1387,6 @@
 <script>
     var isRubricGenerated = false;
     function GenerateTechRubricUsingOpenAI(customizedPrompt = null){
-        debugger;
         showloader();
         const asgDropdown = document.getElementById("AssessmentGroupId");
         var jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
@@ -1401,7 +1400,6 @@
             url: "/AIScreener/GenerateTechRubricUsingOpenAI",
             data: { 'jobTitle': jobTitle },
             success: function (data) {
-                debugger;
                 $('#id_rubricsDiv').html('');
                 if (data!=null && data.length > 0) {
                     $('#id_rubricsDiv').html(data);
