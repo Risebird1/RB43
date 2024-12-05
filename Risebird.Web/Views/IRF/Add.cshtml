@@ -1386,17 +1386,20 @@
 
 <script>
     var isRubricGenerated = false;
-    function GenerateTechRubricUsingOpenAI(){
+    function GenerateTechRubricUsingOpenAI(customizedPrompt = null){
         showloader();
         const asgDropdown = document.getElementById("AssessmentGroupId");
-        const jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
+        var jobTitle = asgDropdown.options[asgDropdown.selectedIndex].text;
+        if(customizedPrompt != null && customizedPrompt != '')
+        {
+            jobTitle = jobTitle + ' ' + customizedPrompt;
+        }
         
         $.ajax({
             type: "GET",
             url: "/AIScreener/GenerateTechRubricUsingOpenAI",
             data: { 'jobTitle': jobTitle },
             success: function (data) {
-                debugger;
                 $('#id_rubricsDiv').html('');
                 if (data!=null && data.length > 0) {
                     $('#id_rubricsDiv').html(data);
