@@ -895,9 +895,9 @@ namespace Risebird.Web.Controllers
                         {
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
 
-                            var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
+                            //var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
 
-                            await _irfService.UpdateAffindaIndexFlag(irfDetails.IRFId, isIndexCreated);
+                            //await _irfService.UpdateAffindaIndexFlag(irfDetails.IRFId, isIndexCreated);
 
 
                             //call fire and forget method here to send emails and whatsapp for availability
