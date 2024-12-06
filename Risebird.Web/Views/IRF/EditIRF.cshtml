@@ -2093,8 +2093,7 @@
                                             <button type="text" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Save" style="display:none">Save</button>
 
                                         }
-@*                                          <button  type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" style="display:none" value="Save & Exit">Save & Exit</button>
- *@
+@*<button onclick="SaveExit()" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" style="display:none" value="Save & Exit">Save & Exit</button>*@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next" style="margin-right:5px;">
                                     </div>
                                 </div>
@@ -5068,6 +5067,16 @@
 
     }
 </script>
+<script>
+    function SaveExit(){
+        var submitflag = CheckTotalWeightage();
+        if(submitflag){
+          $('#irfForm').submit();
+        }
+        
+    }
+</script>
+
 <script>
     $("#InterviewerTable select").change(function () {
         if ($(this).val() !== "") {
