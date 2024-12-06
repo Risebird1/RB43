@@ -127,7 +127,7 @@
                                                                     {
                                                                         @if (item.candidateName.Length > 13)
                                                                         {
-                                                                            <td class="cadName">
+                                                                            <td class="cadName" style="font-size:12px;">
 
                                                                                 <span class="call-area">
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -142,7 +142,7 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            <td class="cadName">
+                                                                            <td class="cadName" style="font-size:12px;">
                                                                                 <span class="call-area">
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
@@ -160,7 +160,7 @@
                                                                 }
                                                                 @*                                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, IsSelected = true })'>Report</a> </td>
                                                             *@
-                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, isClient = true })'>Report</a> </td>
+                                                                <td> <a style="padding: 2px 6px 4px 5px;font-size:12px;" id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = ViewBag.IRFintId, isClient = true })'>Client Report</a> </td>
                                                                 @* <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td> *@
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
@@ -216,7 +216,7 @@
                                                                             onclick="ClientInterviewRating('@item.imid','2')" style="width:25px!important;height:25px!important;">
                                                                         <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
                                                                     </button>
-                                                                    <button id="selectedcandidate_9" class="btn btn-rating shadow btn-xs sharp me-1" aria-label="Client Feedback" title="Client Feedback" style="background: #54a5f6;width:25px!important;height:25px!important;border-color:#72ade8;">
+                                                                    <button id="selectedcandidate_9" class="btn btn-rating shadow btn-xs sharp me-1" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;width:25px!important;height:25px!important;border-color:#72ade8;">
                                                                         <span onclick="OpenL2Model(@item.imid)">
                                                                             <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
 
