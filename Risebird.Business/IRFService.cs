@@ -408,7 +408,7 @@ namespace Risebird.Business
             try
             {
                 var skills = await _irfRepository.GetSkillsbyIRFid(irfId);
-                return skills?.Select(x=>x.SkillName);
+                return skills?.Select(x => x.SkillName);
 
             }
 
@@ -4171,11 +4171,11 @@ namespace Risebird.Business
                                     var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
                                     if (irf.BussinessType == "B2B")
                                     {
-                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, requestedBy, irf.id, isStaging: isStaging).Result;
+                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, candidateDetails.ClientHREmail, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, staffingAgency:requestedBy, irf.id, isStaging: isStaging).Result;
                                     }
                                     else
                                     {
-                                        mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, requestedBy, requestedBy, irf.id, isStaging: isStaging).Result;
+                                        mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidateDetails.Name, candidateDetails.ClientHREmail, requestedBy, irf.id, isStaging: isStaging).Result;
                                     }
                                     //var index = data.Rows.IndexOf(row);
                                     if (mailResult.ToLower().Contains("success"))
