@@ -2093,7 +2093,6 @@
                                             <button type="text" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Save" style="display:none">Save</button>
 
                                         }
-@*<button onclick="SaveExit()" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" style="display:none" value="Save & Exit">Save & Exit</button>*@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next" style="margin-right:5px;">
                                     </div>
                                 </div>
@@ -2339,7 +2338,7 @@
                 document.getElementById("tab-1").style.display = "block";
                 document.getElementById("tab-2").style.display = "none";
                 document.getElementById("btnPrev").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
+                
 
             }
             else if (activeTab.trim() == "Tech Skill") {
@@ -2347,14 +2346,13 @@
                 $("#rtab-2").addClass("active");
                 document.getElementById("tab-2").style.display = "block";
                 document.getElementById("tab-3").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
+               
             }
             else if (activeTab.trim() == "Joinability") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-3").addClass("active");
                 document.getElementById("tab-3").style.display = "block";
                 document.getElementById("tab-4").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
             }
 
             else if (activeTab.trim() == "Selectability") {
@@ -2362,7 +2360,7 @@
                 $("#rtab-4").addClass("active");
                 document.getElementById("tab-4").style.display = "block";
                 document.getElementById("tab-5").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
+                
             }
 
             else if (activeTab.trim() == "General Skill") {
@@ -2378,7 +2376,7 @@
 
                 }
                 document.getElementById("tab-6").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
+                
             }
             else if (activeTab.trim() == "Client") {
                 $(".tab-menu li a").removeClass("active");
@@ -2398,7 +2396,7 @@
 
                 }
                 document.getElementById("tab-7").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "block";
+                
 
             }
 
@@ -2409,7 +2407,7 @@
                 //document.getElementById("btnNext").style.display = "block";
                 //document.getElementById("btnUpload").style.display = "none";
                 document.getElementById("tab-8").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
+                
             }
 
             //else if (activeTab.trim() == "QC") {
@@ -2471,7 +2469,7 @@
                     document.getElementById("tab-7").style.display = "block";
                 }
                 document.getElementById("tab-11").style.display = "none";
-                document.getElementById("btnSubmit").style.display = "none";
+                
                 if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin" && $("#hidprofile").val() != "SeniorHR") {
                     document.getElementById("btnNext").style.display = "block";
                     if ($("#hidClientuser").val() == false) {
@@ -2485,7 +2483,7 @@
                 document.getElementById("tab-11").style.display = "block";
                 document.getElementById("tab-13").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
-                document.getElementById("btnSubmit").style.display = "none";
+                
                 if ($("#hidClientuser").val() == false) {
                     document.getElementById("btnUpload").style.display = "none";
                 }
@@ -2534,7 +2532,7 @@
                     document.getElementById("tab-2").style.display = "none";
                     
                 }
-                 document.getElementById("btnSubmit").style.display = "block";
+                 
 
             }
             else if (activeTab.trim() == "Tech Skill") {
@@ -2563,7 +2561,7 @@
                     document.getElementById("tab-3").style.display = "none";
                   
                 }
-                document.getElementById("btnSubmit").style.display = "none";
+                
             }
             else if (activeTab.trim() == "Joinability") {
                 flag = checkTabValidation(activeTab);
@@ -2636,7 +2634,7 @@
                         document.getElementById("tab-11").style.display = "block";
                         document.getElementById("tab-7").style.display = "none";
                         document.getElementById("btnNext").style.display = "none";
-                        document.getElementById("btnSubmit").style.display = "none";
+                        
                         if ($("#hidClientuser").val() == false) {
                             document.getElementById("btnUpload").style.display = "block";
                         }
@@ -2970,7 +2968,7 @@
                 document.getElementById("tab-2").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
-            document.getElementById("btnSubmit").style.display = "block";
+            
         }
         else if (activeTab.trim() == "Tech Skill") {
             flag = checkTabValidation(activeTab);
@@ -2981,7 +2979,7 @@
                 document.getElementById("tab-3").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
-            document.getElementById("btnSubmit").style.display = "none";
+            
         }
         else if (activeTab.trim() == "Joinability") {
             flag = checkTabValidation(activeTab);
@@ -2991,7 +2989,7 @@
                 document.getElementById("tab-4").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
-            document.getElementById("btnSubmit").style.display = "none";
+            
         }
         else if (activeTab.trim() == "Selectability") {
             flag = checkTabValidation(activeTab);
@@ -3002,7 +3000,7 @@
                 document.getElementById("tab-5").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
-            document.getElementById("btnSubmit").style.display = "none";
+           
         }
         else if (activeTab.trim() == "General Skill") {
             flag = checkTabValidation(activeTab);
@@ -3021,7 +3019,6 @@
                 document.getElementById("tab-7").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
-            document.getElementById("btnSubmit").style.display = "block";
         }
 
         else if (activeTab.trim() == "Interviewer") {
@@ -3032,7 +3029,6 @@
                 document.getElementById("tab-8").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
-            document.getElementById("btnSubmit").style.display = "none";
         }
     @*else if (activeTab.trim() == "QC") {
             flag = checkTabValidation(activeTab);
@@ -3058,7 +3054,6 @@
 
             document.getElementById("tab-11").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
-            document.getElementById("btnSubmit").style.display = "none";
         }
         else if (activeTab.trim() == "Subject Matter Expert") {
             $(".tab-menu li a").removeClass("active");
@@ -3066,7 +3061,6 @@
 
             document.getElementById("tab-13").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
-            document.getElementById("btnSubmit").style.display = "none";
 
         }
         else if (activeTab.trim() == "Manage Channel") {
@@ -3075,7 +3069,6 @@
 
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
-            document.getElementById("btnSubmit").style.display = "none";
         }
         if (newHeader == "tab-13") {
             GetSMEListForAssessmentGroup();
@@ -5067,15 +5060,7 @@
 
     }
 </script>
-<script>
-    function SaveExit(){
-        var submitflag = CheckTotalWeightage();
-        if(submitflag){
-          $('#irfForm').submit();
-        }
-        
-    }
-</script>
+
 
 <script>
     $("#InterviewerTable select").change(function () {
