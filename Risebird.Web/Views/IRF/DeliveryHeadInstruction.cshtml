@@ -172,7 +172,7 @@
                                                                                             @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                                                         </td> *@
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new {@style="font-weight:700;", @class = "weight form-control text-box single-line" } })
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1", @style = "font-weight:600" } })
@@ -195,7 +195,7 @@
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "500", @style = "font-weight:600" } })
                                                                                             @if (Model.SkillCollection[i].Natureofquestion != null)
                                                                                             {
-                                                                                                <div class="techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
+                                                                                                <div class="expectation techinfocontainer pull-left" style="position: absolute;top:15px;margin-left:5px;">
                                                                                                     <i class="fa fa-info-circle techinfoicon tooltipquestion" style="font-size:15px;color:gray;">
                                                                                                         <span class="tooltiptext" style=" padding: 6px 15px 0px 15px!important; background-color: #7e7c7c!important; top: -28px !important;">
                                                                                                             <p style="margin-bottom:7px;">Expectation: @Model.SkillCollection[i].Natureofquestion</p>

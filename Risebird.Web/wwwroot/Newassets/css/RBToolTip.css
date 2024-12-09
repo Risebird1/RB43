@@ -23,7 +23,7 @@
     padding: 6px 15px;
     border-radius: 7px;
     visibility: hidden;
-    font-size:12px;
+    font-size:13px;
 }
 
     .tooltiptext::before {
@@ -51,8 +51,27 @@
     opacity: 0.8;
     z-index: 1;
 }
+.expectation.techinfocontainer .tooltiptext {
+    top: -38px !important;
+    width: 500px;
+    white-space: normal;
+    line-height: 18px;
+    font-size: 13px;
+}
+
+    .expectation.techinfocontainer .tooltiptext::before, .expectation .tooltiptext::before {
+        left: 23%;
+    }
+.expectation .tooltipskilltext {
+    top: -38px !important;
+    width: 500px;
+    white-space: normal;
+    line-height: 18px;
+    font-size:13px;
+}
+
 .question-discussed .tooltipskill:hover .tooltipskilltext {
-    top: -45%!important;
+    top: -45% !important;
 }
     .tooltipskill:hover .tooltipskilltext {
     visibility: visible;
