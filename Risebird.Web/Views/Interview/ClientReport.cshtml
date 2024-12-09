@@ -138,6 +138,12 @@
             <div class="card-header bg-w clearfix" style="height:50px;">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
+                           <button id="selectedcandidate_9" class="mdc-button mdc-button--raised mdc-ripple-upgraded" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;border-color:#72ade8;z-index: 100;position:relative;top:3px;left:20px;">
+                            <span onclick="OpenL2Model(@Model.InterviewId)">
+                                <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                L2 Feedback
+                            </span>
+                        </button>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
 
                 </div>
@@ -165,10 +171,13 @@
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
+                            
                         }
+                 
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
                         {
                             <div class="pull-right">
+                                                                           
                                 <div class="reportdropdown">
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" type="button" style="padding:0px 5px;">
                                         <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg> HM Instruction</text></span>
@@ -176,6 +185,7 @@
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
                                         <text>Rate Interviewer</text>
                                     </button>
+                        
                                     @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                     {
                                         <button class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -198,6 +208,7 @@
                                 </button>
                                 }
                                 </div>*@
+                                                                           
                                 </div>
                             </div>
                             @if (Model.IRFInterviewerActive)
@@ -1242,7 +1253,7 @@
 @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 @await Html.PartialAsync("~/Views/Common/_ProxyReportDetails.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewRating.cshtml")
-
+@await Html.PartialAsync("~/Views/Common/_L2StatusUpdate.cshtml")
 <script src="~/js/ModalFormServerValidation.js"></script>
 <script src="~/js/BroadcastMessage.js"></script>
 
