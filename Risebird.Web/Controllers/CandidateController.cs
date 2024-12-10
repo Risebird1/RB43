@@ -6925,7 +6925,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Meeting L2 Status
-        public async Task<IActionResult> AllSelectedMeetings(string emailid, string id)
+        public async Task<IActionResult> AllSelectedMeetings(string emailid, string type, string id)
         {
             try
             {
@@ -6967,9 +6967,22 @@ namespace Risebird.Web.Controllers
                             Enddate = filter.EndDate.Value;
                         }
                     }
-                    meetings = (await _meetingService.GetClientSelectedMeetings(emailid, true, Startdate, Enddate)).ToList();
-
-                    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDescription = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.InterviewStatusDescription = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); return x; }).ToList();
+                    if (string.IsNullOrWhiteSpace(type))
+                    {
+                        type = "Select";
+                    }
+                    if (type == "Reject")
+                    {
+                        meetings = await _meetingService.GetClientMeetingList(emailid);
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDescription = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.InterviewStatusDescription = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); return x; }).ToList();
+                        meetings = meetings.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5).ToList();
+                        meetings = meetings.Where(x => x.interviewDate.Date >= Startdate && x.interviewDate.Date <= Enddate).ToList();
+                    }
+                    else
+                    {
+                        meetings = (await _meetingService.GetClientSelectedMeetings(emailid, true, Startdate, Enddate)).ToList();
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDescription = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.InterviewStatusDescription = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); return x; }).ToList();
+                    }
 
                     //if (HttpContext.Session.GetString("AllSelectedMeetingsfilters") != null)
                     //{
@@ -7005,9 +7018,7 @@ namespace Risebird.Web.Controllers
                     //    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
                     //    TempData.Remove("SuccessErrorMessageQCForm");
                     //}
-                    ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
-                    ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
-                    ViewBag.meetingtype = "Select";
+                    ViewBag.meetingtype = type;
                     return View(meetings);
                 }
                 else
@@ -7022,7 +7033,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AllSelectedMeetings(SelectedPriorityViewFilter filter, string emailid, string id)
+        public async Task<IActionResult> AllSelectedMeetings(SelectedPriorityViewFilter filter, string emailid, string type, string id)
         {
             try
             {
@@ -7030,7 +7041,7 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("AllSelectedMeetingsfilters", JsonConvert.SerializeObject(filter));
                 }
-                return RedirectToAction("AllSelectedMeetings", new { emailid = emailid, id = id });
+                return RedirectToAction("AllSelectedMeetings", new { emailid = emailid, type = type, id = id });
             }
             catch (Exception ex)
             {
@@ -7039,12 +7050,12 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ResetAllSelectedMeetingsFilter(string emailid, string id)
+        public async Task<IActionResult> ResetAllSelectedMeetingsFilter(string emailid, string type, string id)
         {
             try
             {
                 HttpContext.Session.Remove("AllSelectedMeetingsfilters");
-                return RedirectToAction("AllSelectedMeetings", new { emailid = emailid, id = id });
+                return RedirectToAction("AllSelectedMeetings", new { emailid = emailid, type = type, id = id });
             }
             catch (Exception ex)
             {
@@ -7107,6 +7118,7 @@ namespace Risebird.Web.Controllers
 
                 Sheet.Cells[1, 21].Value = "Schedule Count";
                 Sheet.Cells[1, 22].Value = "Meeting Status";
+                Sheet.Cells[1, 23].Value = "Requestor";
 
                 int i = 2;
                 if (candidateDatawithoutCold.Count() > 0)
@@ -7147,6 +7159,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 22].Value = item.MeetingStatus ?? string.Empty;
                         }
+                        Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(item.Requestor) ? item.Requestor.Split("@").LastOrDefault() : string.Empty;
                         i++;
                     }
 
@@ -7175,6 +7188,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 13].Value = cold.interviewDate.HasValue ? cold.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 20].Value = 0;
                         Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
+                        Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(cold.Requestor) ? cold.Requestor.Split("@").LastOrDefault() : string.Empty;
                         i++;
                     }
                 }
