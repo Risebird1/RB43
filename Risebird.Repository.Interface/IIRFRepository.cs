@@ -165,7 +165,7 @@ namespace Risebird.Repository.Interface
         Task<bool> IsQuestionUsedInReport(string question);
         Task<bool> UpdateCancellationSource(int interviewid, string emailId);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
-        Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
+        Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false);
         Task<IRFRecommendations> GetIRFRecommendation(int cloneIRFId);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
         string FetchIRFAudioLink(int irfid);
