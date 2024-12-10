@@ -1,0 +1,20 @@
+﻿@model Risebird.Entities.ViewModel.IRFVm
+@using Risebird.Entities.Enum;
+@using Risebird.Entities.Data;
+@using System.Web;
+
+@{
+    ViewData["Title"] = "Edit Interviewer";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<a href='/IRF/Edit Interviewer </a>&nbsp;/&nbsp;Edit Interviewer";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/select2.css?v=2024" defer rel="stylesheet" />
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />

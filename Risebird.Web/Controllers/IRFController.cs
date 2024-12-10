@@ -10483,5 +10483,11 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        public async Task<IActionResult> EditInterviewer()
+        {
+            var model = new IRFVm();
+            return View(model);
+        }
     }
 }
