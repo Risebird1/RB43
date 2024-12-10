@@ -776,6 +776,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+
         [HttpGet]
         public async Task<IActionResult> Add(string IntrviewerId, int? templateId = null)
         {
@@ -939,15 +940,15 @@ namespace Risebird.Web.Controllers
         {
             //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var AssessmentsGroups = await _irfService.GetAllMAGs();
-            var interviewers = new List<Interviewer>();
+            //var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
-                interviewers = await _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString());
+                //interviewers = await _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString());
                 AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
             }
             else
             {
-                interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+                //interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
                 var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
                 var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
                 AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
@@ -956,9 +957,9 @@ namespace Risebird.Web.Controllers
                     AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
                 }
             }
-            model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
-            model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
-            model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+            //model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+            //model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+            //model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
             var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
                                 select new { ID = (int)s, Name = s.GetDescription() };
             model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
@@ -986,13 +987,13 @@ namespace Risebird.Web.Controllers
             //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
             //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
-            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-            ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
-            ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+            //ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+            //ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
+            //ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-            ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-            ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
             ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
 
@@ -2224,7 +2225,8 @@ namespace Risebird.Web.Controllers
             {
                 AssessmentsGroups = (await _irfService.GetAllMAGs()).ToList();
             }
-            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+            //var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+            var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
@@ -2257,14 +2259,14 @@ namespace Risebird.Web.Controllers
                 model.ClientId = 0;
             }
 
-            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-            ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
+            //ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+            //ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
             ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-            ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-            ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
             ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
-            ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+            //ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
 
 
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");

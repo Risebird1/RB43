@@ -2710,11 +2710,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false)
         {
             try
             {
-                return await _irfRepository.GetAssessmentGroupInterviewerMembers(Assessmentid);
+                return await _irfRepository.GetAssessmentGroupInterviewerMembers(Assessmentid, isMinimalData);
             }
             catch (Exception e)
             {
