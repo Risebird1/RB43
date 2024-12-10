@@ -5869,7 +5869,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false)
         {
             try
             {
@@ -5877,8 +5877,17 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Assessmentid", Assessmentid);
-                    return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembers", parameters,
+                    if(isMinimalData)
+                    {
+                        return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembersForIRFDropDownMinimalData", parameters,
                          commandType: CommandType.StoredProcedure);
+                    }
+                    else
+                    {
+                        return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    }
+                    
                 }
             }
             catch (SqlException ex)
