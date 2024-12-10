@@ -53,6 +53,27 @@
                         }
                     </div>
                 }
+                else
+                {
+                    @if (ViewBag.Type == "ShortList")
+                    {
+                        <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('ShortList','@ViewBag.uniqueid')"><strong>ShortListed Interviewers</strong></div>
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('Removed','@ViewBag.uniqueid')"><strong>Removed Interviewers</strong></div>
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
+                    }
+                    else if (ViewBag.Type == "Removed")
+                    {
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('ShortList','@ViewBag.uniqueid'"><strong>ShortListed Interviewers</strong></div>
+                        <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('Removed','@ViewBag.uniqueid')"><strong>Removed Interviewers</strong></div>
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('ShortList','@ViewBag.uniqueid')"><strong>ShortListed Interviewers</strong></div>
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('Removed','@ViewBag.uniqueid')"><strong>Removed Interviewers</strong></div>
+                        <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
+                    }
+                }
                 <div class="pull-right">
                     <div>
                         <div class="pull-left" style="margin-left:10px">
@@ -402,6 +423,9 @@
         else {
             window.location.href = "/Dashboard/InterviewerRiskIRFDetails?type=" + type + "&uniqueid=" + uniqueid;
         }
+    }
+    function ChangeTotalInterviewersUrl(type, uniqueid) {
+        window.location.href = "/Dashboard/TotalInterviewerRiskIRFDetails?type=" + type + "&uniqueid=" + uniqueid;
     }
 </script>
 @if (ViewBag.PageStatus == "Public")
