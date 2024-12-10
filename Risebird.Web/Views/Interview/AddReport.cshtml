@@ -581,7 +581,7 @@
                                                                             </td>
 
                                                                             <td>
-                                                                                @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, Html.GetEnumSelectList<LevelTechEnum>(), "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                                @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, Html.GetEnumSelectList<LevelTechForReport>(), "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                             </td>
                                                                             <td>
@@ -1172,7 +1172,7 @@
                                                                                     </td>
 
                                                                                     <td>
-                                                                                        @Html.DropDownListFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId, Html.GetEnumSelectList<LevelTechEnum>(), "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateTwoOverAll(this.id, this.value)" })
+                                                                                        @Html.DropDownListFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId, Html.GetEnumSelectList<LevelTechForReport>(), "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateTwoOverAll(this.id, this.value)" })
 
                                                                                     </td>
                                                                                     <td>
