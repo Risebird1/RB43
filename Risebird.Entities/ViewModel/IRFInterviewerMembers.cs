@@ -72,4 +72,14 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public DateTime CreatedOn { get; set; }
     }
+    public class InterviewersBillingRateVM : IRFInterviewerMembers
+    {
+        public int id { get; set; }
+        public string ClientName { get; set; }
+        public string JDTiltle { get; set; }
+        public int SkillSetsevaluate { get; set; }
+        public string Heuristicsscore { get; set; }
+        public string JobCountry { get; set; }
+        public string CompanyType { get; set; }
+    }
 }
