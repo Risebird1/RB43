@@ -18,6 +18,10 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">SkillChannel Interviewer Billing</h4></div>
                 </div>
+                <div class="pull-left">
+                    <div class="feedback-tab" onclick="Changeurldetails('SkillChannel')"><strong>Skill Channels Interviewers</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('WithOutBilling')"><strong>Interviewers WithOut Billing Rate</strong></div>
+                </div>
             </div>
         </div>
     </div>
@@ -287,5 +291,12 @@
 
             }
         });
+    }
+    function Changeurldetails(type) {
+        if (type == "WithOutBilling") {
+            window.location.href = "/IRF/InterviewerWithOutBillingRate";
+        } else {
+            window.location.href = "/Dashboard/SkillChannelInterviewerBilling";
+        }
     }
 </script>
