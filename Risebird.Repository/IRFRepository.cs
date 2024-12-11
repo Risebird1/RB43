@@ -2178,7 +2178,7 @@ namespace Risebird.Repository
                     {
                         //if (item.SkillId != 0)
                         //{
-                            
+
                         //}
                         if (string.IsNullOrEmpty(item.Concepts) || irfDetails.TechRubricType == TechRubricTypes.Basic)
                         {
@@ -5877,7 +5877,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Assessmentid", Assessmentid);
-                    if(isMinimalData)
+                    if (isMinimalData)
                     {
                         return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembersForIRFDropDownMinimalData", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -5887,7 +5887,7 @@ namespace Risebird.Repository
                         return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembers", parameters,
                          commandType: CommandType.StoredProcedure);
                     }
-                    
+
                 }
             }
             catch (SqlException ex)
@@ -9280,6 +9280,29 @@ namespace Risebird.Repository
 
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Clientid", 0);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewersBillingRateVM>(con, "usp_GetInterviewersWithOutBillingRate", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

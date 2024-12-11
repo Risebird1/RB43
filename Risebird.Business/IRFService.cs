@@ -4447,5 +4447,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate()
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewersWithOutBillingRate();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -194,5 +194,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid);
         Task<IEnumerable<AssignmentVM>> GetAllMAGs();
         Task<IEnumerable<string>> GetIRFTechSkills(int irfId);
+        Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate();
     }
 }
