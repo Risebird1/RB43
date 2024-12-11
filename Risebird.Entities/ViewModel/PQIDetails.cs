@@ -24,5 +24,6 @@
         public int TotallessQuestions { get; set; }
         public int TotalLatejoin { get; set; }
         public string NickName { get; set; }
+        public string ShortListstatus { get; set; }
     }
 }

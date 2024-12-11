@@ -93,7 +93,7 @@ group by ir.IRFId,im.interviewer
  if(@Role='SeniorHR')  
  Begin  
 ;With CTE as(  
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,irm.TotalRejected,(ISNULL(irm.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName   
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,irm.TotalRejected,(ISNULL(irm.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName,ti.ClientAction as ShortListstatus   
 from @tbl_RelevantInterviews im  
 join IRF on IRF.IRFId=im.IRFId  
 join UserList ul on IRF.RisebirdHr=ul.id  
@@ -101,6 +101,7 @@ join Client cl on cl.id=IRF.Clientid
 left join UserList ulc on ulc.id=IRF.BillingOwner  
 left join UserList uli on uli.Emailid=im.interviewer  
 left join InterviewerProfile ip on ip.UserId=uli.id  
+left join TransInterviewer ti on ti.UserId=uli.id and ti.IRFId=IRF.id
 left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer  
 left join @tbl_InterviewerSelected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer 
 left join @tbl_InterviewerRejected irm on irm.IRFId=im.IRFId and irm.interviewer=im.interviewer where ul.EmailId=@Email)  
@@ -109,13 +110,14 @@ Select * From CTE where (selectionrate>=40 or rejectionrate>=80)
  Else  
  Begin  
 ;With CTE as(  
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,irm.TotalRejected,(ISNULL(irm.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName   
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,irm.TotalRejected,(ISNULL(irm.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName,ti.ClientAction as ShortListstatus   
 from @tbl_RelevantInterviews im  join IRF on IRF.IRFId=im.IRFId  
 join UserList ul on IRF.RisebirdHr=ul.id  
 join Client cl on cl.id=IRF.Clientid  
 left join UserList ulc on ulc.id=IRF.BillingOwner  
 left join UserList uli on uli.Emailid=im.interviewer  
 left join InterviewerProfile ip on ip.UserId=uli.id  
+left join TransInterviewer ti on ti.UserId=uli.id and ti.IRFId=IRF.id
 left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer  
 left join @tbl_InterviewerSelected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer
 left join @tbl_InterviewerRejected irm on irm.IRFId=im.IRFId and irm.interviewer=im.interviewer)  
