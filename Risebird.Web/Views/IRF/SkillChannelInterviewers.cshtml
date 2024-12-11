@@ -1,0 +1,155 @@
+﻿
+@model Risebird.Entities.ViewModel.IRFVm
+@using Risebird.Entities.Enum;
+@using Risebird.Entities.Data;
+@using System.Web;
+
+<form action="/IRF/SkillChannelInterviewers" enctype="multipart/form-data" id="questionform" method="post" class="ng-pristine ng-valid">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="card-header">
+            <h4 class="card-title">Interviewers (Add Your Interviewers Here)</h4>
+        </div>
+        <div style="width:100%; float:left;height:10px;"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="sample-qs">
+                <table class="table mbn" id="InterviewersNewTable">
+                    <thead>
+                        <tr>
+                            <th width="40%" class="table_heading">User <span class="red">*</span></th>
+                            <th width="20%" class="table_heading">Resume</th>
+                            <th width="20%" class="table_heading">Skills</th>
+                            <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+                            <th width="20%" class="table_heading">Company Name</th>
+                            @if (Model.IsNewSkillChannel)
+                            {
+                                <th width="10%" class="table_heading">Surcharge</th>
+
+                            }
+                            <th width="10%" class="table_heading" title="'Rejected' indicates client is not happy with this interviewer and has removed him/her.">Client Action</th>
+                            <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
+                            <th width="10%" class="table_heading">Availability</th>
+                            <th width="10%" class="table_heading">Campaign</th>
+                            <th width="10%" class="table_heading">AI Verdict</th>
+                            <th width="10%" class="table_heading text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+
+
+                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @style = "width:200px;", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text = Model.InterviewerCollection[i].EmailId })
+                                @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
+                                @Html.HiddenFor(m => m.InterviewerCollection[i].PerSuccessRate)
+                                @Html.HiddenFor(m => m.InterviewerCollection[i].IsSurchargeApprove)
+
+
+                            </td>
+                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink)) //CodedResumeLink
+                            {
+                                <td class="cadName">
+                                    <a href="@Model.InterviewerCollection[i].ResumeLink" id=@("InterviewerCollection_" + i + "__ResumeLink") target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                </td>
+
+                            }
+                            else
+                            {
+                                <td class="cadName">
+                                    <a onclick="" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">No Resume</a>
+                                </td>
+                            }
+                            <td>
+                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @style = "width:200px;", @readonly = "readonly" })
+                            </td>
+                            <td>
+                                
+                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @style = "width:300px;", @readonly = "readonly" })
+                            </td>
+                            @if (Model.IsNewSkillChannel)
+                            {
+                                <td>
+                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                    {
+                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
+                                    }
+                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+                                </td>
+
+                            }
+                           
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end of col-md-12-->
+
+    </div>
+    <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0"></span></div></div>
+    <div class="card-footer mt-10">
+        <div class="row">
+            <div class="col-md-12 mc-button-area">
+                <div class="pull-left">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Question" onclick="AddQuestionRow()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Question</font></span>
+                    </button>
+                </div>
+                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.IRFId)
+
+</form>
+
+<script>
+
+
+
+
+    function DeleteQuestionRow(element, collectionName, tdOne, tdTwo, tdThree) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                }
+            }
+        }
+    }
+</script>
+

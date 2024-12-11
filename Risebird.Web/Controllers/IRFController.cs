@@ -14,6 +14,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10484,10 +10485,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> EditInterviewer()
+        public async Task<IActionResult> EditInterviewer(int id, int clonevalue, int? templateId, bool isClone = false)
         {
-            var model = new IRFVm();
+            IRFVm model = new IRFVm();
+           
+            //model.UseAsCloneTemplate = useAsCloneTemplate;
+            model = await _irfService.GetEditIRF(id, templateId, isClone);
+            var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+
+            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
             return View(model);
+        }
+        public async Task<IActionResult> SkillChannelInterviewers(int id, int clonevalue, int? templateId, bool isClone = false)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                IRFVm model = new IRFVm();
+
+                model = await _irfService.GetEditIRF(id, templateId, isClone);
+                var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                return PartialView(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }
