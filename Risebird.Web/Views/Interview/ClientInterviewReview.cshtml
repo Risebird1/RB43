@@ -1052,7 +1052,7 @@
                     },
                     url: "/Interview/ClientInterviewReview",
                     success: function (result) {
-                        alert(result);
+                        swal.fire("Rating has been updated successfully.");
                         closeClientInterviewRating();
                         location.reload();
                     }

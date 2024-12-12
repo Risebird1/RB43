@@ -6493,16 +6493,18 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> FetchSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-            var level = await _irfRepository.GetLevelTech();
-            var Skillset = await _irfRepository.GetSkills();
-            if (Skillset != null)
-            {
-                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-            }
+            //var level = await _irfRepository.GetLevelTech();
+            //var Skillset = await _irfRepository.GetSkills();
+            //if (Skillset != null)
+            //{
+            //    Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            //}
             foreach (var item in transTechSkills)
             {
-                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
-                item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                //item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
+
+                item.LevelName = ((LevelTechEnum)(item.LevelId)).GetDescription();
+                //  item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             return Json(transTechSkills);
         }
