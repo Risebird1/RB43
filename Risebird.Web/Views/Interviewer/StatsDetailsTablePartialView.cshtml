@@ -88,8 +88,7 @@
                                 <td>@(item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0 ? ((MeetingStatus)item.MeetingStatus).GetDescription() : "NA") </td>
                             }
 
-                            @if (ViewBag.StatType == StatsTypes.Selected || ViewBag.StatType == StatsTypes.Rejected
-                           || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy)
+                            @if (ViewBag.StatType == StatsTypes.Selected || ViewBag.StatType == StatsTypes.Rejected || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy || ViewBag.StatType == StatsTypes.Completed)
                             {
                                 <td>@(item.InterviewStatus.HasValue && item.InterviewStatus.Value > 0 ? ((InterviewStatus)item.InterviewStatus).GetDescription() : "NA") </td>
 
