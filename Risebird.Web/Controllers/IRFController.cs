@@ -10673,5 +10673,95 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadInterviewerResume()//UploadCandidateResumesViewModel model
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                {
+                    if (Request.Form.Files.Count() > 0)
+                    {
+                        int userId = Convert.ToInt32(Request.Form["UserId"].ToString());
+                        string interviewerEmailId = Request.Form["InterviewerEmailId"].ToString();
+                        var addedByUserId = _irfService.GetUserId(emailId);
+                        string sasUrl = string.Empty;
+                        if (addedByUserId > 0)
+                        {
+                            foreach (var file in Request.Form.Files)
+                            {
+                                var fileName = file.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension.ToLower() == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                    if (fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                        
+                                        if (uploadedaudioFileURL == null)
+                                        {
+                                            return Json("Resume upload has failed.");
+                                        }
+                                        else
+                                        {
+                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                            sasUrl = uploadedaudioFileURL + "?" + sas;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return Json("Please select valid file for import(.pdf)!");
+                                    }
+                                }
+                                else
+                                {
+                                    return Json("Please select valid file for import(.pdf)!");
+                                }
+                            }
+                            var result = await _interviewerService.UpdateInterviewerResume(userId, sasUrl, emailId);
+                            if (result)
+                            {
+                                return Json($"Resume uploaded Successfully for {interviewerEmailId}!");
+
+                            }
+                            else
+                            {
+                                return Json($"Failed to upload Resume for {interviewerEmailId}!");
+                            }
+                        }
+                        else
+                        {
+                            return Json($"Failed to upload Resume for {interviewerEmailId}!");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Please select valid file for import(.pdf)!");
+                    }
+                }
+                else
+                {
+                    return Json("Unauthorized!");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to upload Resume!");
+            }
+        }
     }
 }
