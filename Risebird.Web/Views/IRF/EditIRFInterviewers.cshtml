@@ -1,0 +1,398 @@
+﻿@model Risebird.Entities.ViewModel.IRFVm
+@using Risebird.Entities.Enum;
+@using Risebird.Entities.Data;
+@using System.Web;
+
+@{
+    ViewData["Title"] = "Edit Interviewer";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<a href='/IRF/Edit Interviewer </a>&nbsp;/&nbsp;Edit Interviewer";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/select2.css?v=2024" defer rel="stylesheet" />
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
+<div class="main-panel" id="main-panel">
+
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        @* <form action="/IRF/EditIRFInterviewers" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            
+                            
+                        </form> *@
+                        <div class="row">
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="scrollbar int-table" id="style-2">
+                                                            <div class="table-responsive-sm">
+                                                                <table class="table table-bordered mbn" id="InterviewerTable">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="40%" class="table_heading">User <span class="red">*</span></th>
+                                                                            <th width="20%" class="table_heading">Resume</th>
+                                                                            <th width="20%" class="table_heading">Skills</th>
+                                                                            <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+                                                                            <th width="20%" class="table_heading">Company Name</th>
+                                                                            @if (Model.IsNewSkillChannel)
+                                                                            {
+                                                                                <th width="10%" class="table_heading">Surcharge</th>
+
+                                                                            }
+                                                                            <th width="10%" class="table_heading" title="'Rejected' indicates client is not happy with this interviewer and has removed him/her.">Client Action</th>
+                                                                            <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
+                                                                            <th width="10%" class="table_heading">Availability</th>
+                                                                            <th width="10%" class="table_heading">Campaign</th>
+                                                                            <th width="10%" class="table_heading">AI Verdict</th>
+                                                                            <th width="10%" class="table_heading text-center">Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+
+
+                                                                @Html.TextBox("InterviewerCollection[0].EmailId", null, new { @class = "form-control", @style = "width:270px;", data_initial_value = "", data_initial_text = "" })                                                                                   @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
+ @* @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @style = "width:230px;", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text = "" })  *@                                                                                  @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
+                                                                                    @Html.Hidden("InterviewerCollection[0].Source", new { Value = Model.LoggedEmail })
+                                                                                </td>
+                                                                                @Html.Hidden("InterviewerCollection[0].IsCampaignActivity")
+                                                                                @Html.Hidden("InterviewerCollection[0].CampaignId")
+                                                                                @Html.Hidden("InterviewerCollection[0].OpenAIScreeningResponse")
+                                                                                @Html.Hidden("InterviewerCollection[0].AIVerdict")
+                                                                                @Html.Hidden("InterviewerCollection[0].IsSurchargeApprove")
+
+                                                                                <td class="cadName">
+                                                                                    @*<a onclick="" data-tooltip="">No Resume</a>*@
+                                                                                    <a href="" target="_blank" id="InterviewerCollection_0__ResumeLink" data-tooltip="">Resume</a>
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @style = "width:200px;", @readonly = "readonly" })
+                                                                                </td>
+                                                                                <td>
+                                                                                    @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                {
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                }*@
+                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBox("InterviewerCollection[0].CompanyName", null, new { @class = "form-control", @style = "width:300px;", @readonly = "readonly" })
+                                                                                </td>
+                                                                                @if (Model.IsNewSkillChannel)
+                                                                                {
+                                                                                    <td>
+                                                                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                        {
+                                                                                            @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0" })
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0" })
+                                                                                        }
+
+                                                                                        @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
+                                                                                    </td>
+                                                                                }
+                                                                                <td>
+                                                                                    @Html.TextBox("InterviewerCollection[0].ClientAction", null, new { @class = "form-control", @style = "width:100px;", @readonly = "readonly" })
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsActive") @*, new { @checked = "checked" }*@
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsAvailable")  @*, new { @checked = "checked" }*@
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBox("InterviewerCollection[0].CampaignName", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBox("InterviewerCollection[0].AIVerdict", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                </td>
+
+                                                                                <td class="action text-center">
+@*   <span id="btnPlus_0" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@ 
+
+                                                                              
+
+                                                                               
+
+
+
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td>
+                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @style = "width:230px;" , @readonly = "readonly"})
+ 
+
+@*  @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @style = "width:200px;", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text = Model.InterviewerCollection[i].EmailId })
+ *@                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].IsCampaignActivity)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].CampaignId)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].OpenAIScreeningResponse)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].AIVerdict)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].IsSurchargeApprove)
+
+
+                                                                                    </td>
+                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink)) //CodedResumeLink
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a href="@Model.InterviewerCollection[i].ResumeLink" id=@("InterviewerCollection_" + i + "__ResumeLink") target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                                        </td>
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a onclick="" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">No Resume</a>
+                                                                                        </td>
+                                                                                    }
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @style = "width:200px;", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                {
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                }*@
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @style = "width:300px;", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    @if (Model.IsNewSkillChannel)
+                                                                                    {
+                                                                                        <td>
+                                                                                            @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                            {
+                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
+                                                                                            }
+                                                                                            @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+                                                                                        </td>
+
+                                                                                    }
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @style = "width:100px;", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    <td class="text-center">
+                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                    </td>
+                                                                                    <td class="text-center">
+                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CampaignName))
+                                                                                        {
+
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].CampaignName, new { @class = "form-control", @readonly = "readonly", @title = Model.InterviewerCollection[i].CampaignName })
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span>NA</span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].AIVerdict))
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].AIVerdict, new { @class = "form-control", @readonly = "readonly", @title = "AI Verdict" })
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+
+                                                                                    <td class="action text-center">
+                                                                                        <div>
+                                                                                            @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin") 
+                                                                                            {
+                                                                                            
+                                                                                        @* <span class="interviewer_12">
+                                                                <span class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile" style="position:relative;top:3px;">
+                                                                    <a target="_blank" href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = Model.InterviewerCollection[0].UserId })'  title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>
+                                                                </span>
+                                                            </span> *@
+                                                                                            }
+                                                           
+                                                                                            <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
+                                                                                                <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
+                                                                                            </span>
+                                                                                            __
+                                                                                            <span id="regenerateBtn_@i" title="Screen Interviewer(Regenerate)" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId', true)" class="mdc-fab app-fab--absolute">
+                                                                                                <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
+                                                                                            </span>
+                                                                                            <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
+                                                                                                <span onclick="javascript:OpenUploadResumeModal('@Model.InterviewerCollection[i].UserId', '@Model.InterviewerCollection[i].EmailId');" title="Upload Resumes">
+                                                                                                    <span class="fas fa-upload"></span>
+                                                                                                </span>
+                                                                                            </button>
+                                                                                               
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        
+                                                                        
+                                                                        }
+
+
+
+                                                                    </tbody>
+                                                                </table>
+                                                                <label class="text-danger" id="noInterviewer"></label>
+
+                                                            </div>
+                                                        </div>
+                                                    </div><!--end of col-md-12-->
+                        </div>
+                            <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0"></span></div></div>
+                            <div class="card-footer mt-10">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        <div class="pull-left">
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+
+                                                <span onclick="javascript:OpenInterviewerModal('@Model.id');"><i class='fa fa-plus' style='color: white'></i>Add Interviewer</span>
+
+                                            </button>
+
+
+                                        </div>
+                                       
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            @* @Html.HiddenFor(m => m.IRFId)
+                            @Html.HiddenFor(m => m.UserId) *@
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+<div id="PopupDetailsModal" class="modal modal-bg add-interviewer-popup">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="changememberHeading"></h5>
+            </div>
+            <button onclick="closePopupDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divpopupModel">
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/IRF/UploadInterviewerResumePartial.cshtml")
+@if (ViewBag.Message != null )
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+<script src="~/js/addeditskillchannelcommonmethods.js"></script>
+<script>
+    debugger;
+    var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
+    function closePopupDetailsModal() {
+        var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "none";
+    }
+    function openPopupDetailsModal() {
+        var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "block";
+    }
+    function OpenInterviewerModal(irfid) {
+        debugger;
+        $("#changememberHeading").text('Interviewer');
+        $.ajax({
+            url: '/IRF/SkillChannelInterviewers',
+            data: { 'id' : irfid },
+            success: function (data) {
+                openPopupDetailsModal();
+                $('#divpopupModel').html('');
+                $('#divpopupModel').html(data);
+                debugger;
+                UpdateInterviewerRateVariable('@Model.Heuristicsscore', '@Model.JobCountry', '@Model.CompanyType');
+                if(isNewSkillChannel)
+                {
+                    var firstinterviewerRateElement = document.getElementById('InterviewerCollectionPopup_0__PerSuccessRate');
+                    if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value == "" || firstinterviewerRateElement.value == 0))
+                    {
+                        if(firstinterviewerRateElement.readOnly == true)
+                        {
+                            firstinterviewerRateElement.readOnly = false;
+                        }
+                        firstinterviewerRateElement.value = interviewerRate;
+                        firstinterviewerRateElement.readOnly = true;
+                    }
+                }
+            }
+        });
+    }
+
+</script>
