@@ -10485,36 +10485,149 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> EditInterviewer(int id, int clonevalue, int? templateId, bool isClone = false)
+        public async Task<IActionResult> EditIRFInterviewers(int id)
         {
-            IRFVm model = new IRFVm();
-           
-            //model.UseAsCloneTemplate = useAsCloneTemplate;
-            model = await _irfService.GetEditIRF(id, templateId, isClone);
-            var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
-
-            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-            return View(model);
-        }
-        public async Task<IActionResult> SkillChannelInterviewers(int id, int clonevalue, int? templateId, bool isClone = false)
-        {
-            if (HttpContext.Session.GetString("email") != null)
+            try
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                IRFVm model = new IRFVm();
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IRFVm model = new IRFVm();
 
-                model = await _irfService.GetEditIRF(id, templateId, isClone);
-                var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+                        model = await _irfService.GetSkillChannelInterviewersForEdit(id);
+                        var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
 
-                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-                return PartialView(model);
+                        //ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                        if (TempData["SuccessErrorMessageAddInterviewers"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageAddInterviewers"].ToString();
+                            TempData.Remove("SuccessErrorMessageAddInterviewers");
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return RedirectToAction("SignOut", "Session");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelInterviewers(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IRFVm model = new IRFVm();
+                        model.LoggedEmail = emailid;
+                        model.Profile = profileName;
+                        model = await _irfService.GetSkillChannelInterviewersForEdit(id);
+
+                        DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
+                        var AssessmentsGroups = new List<AssignmentVM>();
+                        if (model.CreatedOn < absoluteTime)
+                        {
+                            var interviewerOptions = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                            interviewerOptions.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
+                            ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+
+                        }
+                        else
+                        {
+                            var interviewerOptions = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true)).ToList();
+                            interviewerOptions.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
+                            ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+                        }
+                        //var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                        //var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+                        //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
+
+                        //var interviewerOptions = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+
+                        //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+                        return PartialView(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddIRFInterviewers(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        model.LoggedEmail = emailid;
+                        var result = await _irfService.AddIRFInterviewers(model);
+                        if (result)
+                        {
+                            TempData["SuccessErrorMessageAddInterviewers"] = $"Successfully added interviewer(s) to skill channel : {model.IRFId}";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageAddInterviewers"] = $"Failed to add interviewer(s) to skill channel : {model.IRFId}";
+                        }
+                        return RedirectToAction("EditIRFInterviewers", new { id = model.id });
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Some error occured. Please try again!");
+                return Json("An error has occured. Failed to add!");
             }
         }
     }

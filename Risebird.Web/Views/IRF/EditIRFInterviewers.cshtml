@@ -62,7 +62,8 @@
                                                                             <tr>
                                                                                 <td>
 
- @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @style = "width:230px;", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text = "" })                                                                                   @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
+ @Html.TextBox("InterviewerCollection[0].EmailId", new { @class = "form-control", @style = "width:230px;", data_initial_value = "", data_initial_text = "" })                                                                                   @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
+ @* @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @style = "width:230px;", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text = "" })  *@                                                                                  @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                                     @Html.Hidden("InterviewerCollection[0].Source", new { Value = Model.LoggedEmail })
                                                                                 </td>
                                                                                 @Html.Hidden("InterviewerCollection[0].IsCampaignActivity")
@@ -237,13 +238,13 @@
 
                                                                                     <td class="action text-center">
                                                                                         <div>
-@*  <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span> *@                                                                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin") {
+                                                                                      @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin") {
                                                                                             
-                                                                                            <span class="interviewer_12">
+                                                                                            @* <span class="interviewer_12">
                                                                     <span class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile" style="position:relative;top:3px;">
                                                                         <a target="_blank" href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = Model.InterviewerCollection[0].UserId })'  title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>
                                                                     </span>
-                                                                </span>
+                                                                </span> *@
                                                                                         }
                                                            
                                                                                             <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
@@ -254,9 +255,7 @@
                                                                                                 <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
                                                                                             </span>
                                                                                             
-                                                                                                                                                              
-                                                                                                
-                                                                            
+                                                                                               
                                                                                             </div>
                                                                                     </td>
                                                                                 </tr>
@@ -282,9 +281,6 @@
                                     <div class="col-md-12 mc-button-area">
                                         <div class="pull-left">
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-
-
-@*  <span id="btnPlus_0" onclick="AddRowInterviewer()" title="Click here to add a Interviewer"><i class="fas  fa fa-plus"></i>Add Interviewer</span>*@
 
                                                 <span onclick="javascript:OpenInterviewerModal('@Model.id');"><i class='fa fa-plus' style='color: white'></i>Add Interviewer</span>
 
@@ -335,75 +331,27 @@
     </div>
 </div>
 
+@if (ViewBag.Message != null )
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+<script src="~/js/addeditskillchannelcommonmethods.js"></script>
 <script>
-    function AddRowInterviewer() {
-        //document.getElementById("btnUpload").disabled = false;
-        debugger;
-        var table = document.getElementById("InterviewerTable");
-        var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Interviewers.");
-        //    return;
-        //}
-
-        var $ttc = $("#InterviewerTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#InterviewerTable tr").length - 1;
-        $tr.find("input,select,hidden, a").attr("name", function () { // find name in the cloned row //,a
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[id^='btn']").attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
-            return parts[1] + "_" + (++parts[2]); // build new id
-        });
-        $tr.find("span[id^='regenerateBtn']").attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
-            return parts[1] + "_" + (++parts[2]); // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-        $tr.find("input[type=number]").val("");
-        $tr.find("input[type=checkbox]").prop("checked", false);
-
-        $tr.find("a").attr("href", "");
-        $tr.find("a").attr("data-tooltip", "");
-        $tr.find("a").html("");
-        $tr.find("select").attr("data-initial-value", "");
-        $tr.find("select").attr("data-initial-text", "");
-        // add cloned row as last row
-        $("#InterviewerTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-        $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
-        $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__Source').val('@Model.LoggedEmail');
-
-       // ManageInterviewerDropDowns();
-
-        // Check document for changes
-        //  $.validator.unobtrusive.parse(document);
-
-
-    }
-</script>
-
-<script>
+    debugger;
+    var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
     function closePopupDetailsModal() {
         var modal = document.getElementById("PopupDetailsModal");
         modal.style.display = "none";
@@ -413,63 +361,32 @@
         modal.style.display = "block";
     }
     function OpenInterviewerModal(irfid) {
-        alert('test')
+        debugger;
         $("#changememberHeading").text('Interviewer');
         $.ajax({
-            url: '/IRF/SkillChannelSampleQuestions',
-            data: { id: irfid },
+            url: '/IRF/SkillChannelInterviewers',
+            data: { 'id' : irfid },
             success: function (data) {
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);
+                debugger;
+                UpdateInterviewerRateVariable('@Model.Heuristicsscore', '@Model.JobCountry', '@Model.CompanyType');
+                if(isNewSkillChannel)
+                {
+                    var firstinterviewerRateElement = document.getElementById('InterviewerCollectionPopup_0__PerSuccessRate');
+                    if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value == "" || firstinterviewerRateElement.value == 0))
+                    {
+                        if(firstinterviewerRateElement.readOnly == true)
+                        {
+                            firstinterviewerRateElement.readOnly = false;
+                        }
+                        firstinterviewerRateElement.value = interviewerRate;
+                        firstinterviewerRateElement.readOnly = true;
+                    }
+                }
             }
         });
     }
 
-
-
-
-    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
-        if ($(element).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            //var currentvalue = $(this).attr('value');
-            var closestRow = $(element).closest('tr');
-            var currentIndex = closestRow[0].sectionRowIndex;
-            var totalRows = $(element).parents('tbody').find('tr').length;
-            var maxIndex = totalRows - 1;
-            if (currentIndex == maxIndex) {
-                $(element).closest('tr').remove();
-            }
-            //ClientCollection_1__ClientRoleId
-            else {
-                $(element).closest('tr').remove();
-                var startIndex = currentIndex + 1;
-                var endIndex = maxIndex + 1;
-                for (i = startIndex; i < endIndex; i++) {
-                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                    //name="ClientCollection[3].ClientUserId"
-                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                }
-
-            }
-
-        }
-
-
-    }
 </script>

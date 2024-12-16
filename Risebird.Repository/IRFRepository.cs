@@ -835,6 +835,86 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IRFVm> GetSkillChannelInterviewersForEdit(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    IRFVm _resultVM = new IRFVm();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetSkillChannelInterviewersForEdit", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null)
+                        {
+                            _resultVM.IRFId = !string.IsNullOrEmpty(dt.Rows[0]["IRFId"].ToString()) ? dt.Rows[0]["IRFId"].ToString() : null;
+                            _resultVM.ClientName = !string.IsNullOrEmpty(dt.Rows[0]["ClientName"].ToString()) ? dt.Rows[0]["ClientName"].ToString() : null;
+                            _resultVM.AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupName"].ToString()) ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
+                            _resultVM.JDTiltle = !string.IsNullOrEmpty(dt.Rows[0]["JDTiltle"].ToString()) ? dt.Rows[0]["JDTiltle"].ToString() : null;
+                            _resultVM.CreatedOn = !string.IsNullOrEmpty(dt.Rows[0]["CreatedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["CreatedOn"]) : new DateTime();
+                            _resultVM.AssessmentGroupId = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupId"].ToString()) ? dt.Rows[0]["AssessmentGroupId"].ToString() : null;
+                            _resultVM.Heuristicsscore = !string.IsNullOrEmpty(dt.Rows[0]["Heuristicsscore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["Heuristicsscore"]) : 0;
+                            _resultVM.JobCountry = !string.IsNullOrEmpty(dt.Rows[0]["JobCountry"].ToString()) ? dt.Rows[0]["JobCountry"].ToString() : null;
+                            _resultVM.CompanyType = !string.IsNullOrEmpty(dt.Rows[0]["CompanyType"].ToString()) ? dt.Rows[0]["CompanyType"].ToString() : null;
+                            _resultVM.IsNewSkillChannel = !string.IsNullOrEmpty(dt.Rows[0]["IsNewSkillChannel"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsNewSkillChannel"]) : false;
+
+                        }
+                    }
+                    
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransInterviewer> transInterviewer = new List<TransInterviewer>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transInterviewer.Add(new TransInterviewer
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    InterviewerId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewerId"]) : 0,
+                                    UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0,
+                                    PerSuccessRate = !string.IsNullOrEmpty(dt.Rows[i]["PerSuccessRate"].ToString()) ? Convert.ToInt32(dt.Rows[i]["PerSuccessRate"]) : 0,
+                                    IsActive = !string.IsNullOrEmpty(dt.Rows[i]["IsActive"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsActive"]) : false,
+                                    IsAvailable = !string.IsNullOrEmpty(dt.Rows[i]["IsAvailable"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAvailable"]) : false,
+                                    IsSMEVerified = !string.IsNullOrEmpty(dt.Rows[i]["IsSMEVerified"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsSMEVerified"]) : false,
+                                    Surcharge = !string.IsNullOrEmpty(dt.Rows[i]["Surcharge"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Surcharge"]) : 0,
+                                    PrimarySkill = !string.IsNullOrEmpty(dt.Rows[i]["PrimarySkill"].ToString()) ? dt.Rows[i]["PrimarySkill"].ToString() : null,
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    NickName = !string.IsNullOrEmpty(dt.Rows[i]["NickName"].ToString()) ? dt.Rows[i]["NickName"].ToString() : null,
+                                    ResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["ResumeLink"].ToString()) ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
+                                    Source = !string.IsNullOrEmpty(dt.Rows[i]["Source"].ToString()) ? dt.Rows[i]["Source"].ToString() : null,
+                                    CompanyName = !string.IsNullOrEmpty(dt.Rows[i]["CompanyName"].ToString()) ? dt.Rows[i]["CompanyName"].ToString() : null,
+                                    ClientAction = !string.IsNullOrEmpty(dt.Rows[i]["ClientAction"].ToString()) ? dt.Rows[i]["ClientAction"].ToString() : null,
+                                    IsResumeRedactAttempted = !string.IsNullOrEmpty(dt.Rows[i]["IsResumeRedactAttempted"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsResumeRedactAttempted"]) : false,
+                                    IsCampaignActivity = !string.IsNullOrEmpty(dt.Rows[i]["IsCampaignActivity"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsCampaignActivity"]) : false,
+                                    CampaignName = !string.IsNullOrEmpty(dt.Rows[i]["CampaignName"].ToString()) ? dt.Rows[i]["CampaignName"].ToString() : null,
+                                    AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null
+
+                                });
+                            }
+                            _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                        }
+                    }
+                    
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public IEnumerable<ResumeEvaluator> GetResumeEvaluators()
         {
@@ -2687,6 +2767,108 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> AddIRFInterviewers(IRFVm irfDetails)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+                    DataTable interviewerDt = new DataTable();
+
+                    if (irfDetails.InterviewerCollectionPopup != null && irfDetails.InterviewerCollectionPopup.Count() != 0 && !(irfDetails.InterviewerCollectionPopup.Where(x => x.UserId == 0).Any()))
+                    {
+                        interviewerDt.Columns.Add("IRFId", typeof(int));
+                        interviewerDt.Columns.Add("UserId", typeof(int));
+                        interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        if (irfDetails.IsNewSkillChannel)
+                        {
+                            interviewerDt.Columns.Add("Surcharge", typeof(int));
+
+                        }
+                        interviewerDt.Columns.Add("IsActive", typeof(bool));
+                        interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+                        interviewerDt.Columns.Add("Source", typeof(string));
+                        interviewerDt.Columns.Add("IsCampaignActivity", typeof(bool));
+                        interviewerDt.Columns.Add("CampaignId", typeof(int));
+                        interviewerDt.Columns.Add("OpenAIScreeningResponse", typeof(string));
+                        interviewerDt.Columns.Add("AIVerdict", typeof(string));
+                        interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
+
+                        foreach (var item in irfDetails.InterviewerCollectionPopup)
+                        {
+                            if (irfDetails.IsNewSkillChannel)
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge,
+                                    true, true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
+                                    item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
+                            }
+                            else
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, true,
+                                    true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
+                                    item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
+                            }
+                        }
+                    }
+
+                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_AddIRFInterviewers", con);
+                    cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@id"].Value = irfDetails.id;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@timeNow"].Value = DateTime.Now;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@PerformedBy"].Value = irfDetails.LoggedEmail;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;
+
+                    if (interviewerDt != null && interviewerDt.Rows.Count > 0)
+                    {
+                        if (irfDetails.IsNewSkillChannel)
+                        {
+                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
+                            cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
+
+                        }
+                        else
+                        {
+                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                            cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+
+                        }
+                    }
+                   
+                    con.Open();
+
+                    if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    
+                    return true;
+                    
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         private async void UpdateInterviewerAmountBasedOnRateChanges(InterviewerSuccessRateChangeData interviewerChangeDetails)
         {
             DynamicParameters dynamicParam = new DynamicParameters();

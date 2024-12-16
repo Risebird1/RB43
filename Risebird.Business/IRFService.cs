@@ -671,6 +671,26 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IRFVm> GetSkillChannelInterviewersForEdit(int id)
+        {
+            try
+            {
+                var model = new IRFVm();
+
+                model = await _irfRepository.GetSkillChannelInterviewersForEdit(id);
+                if (model == null)
+                    return null;
+                
+                model.id = id;
+                model.OldInterviewerCollection = model.InterviewerCollection;
+                return model;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<bool> UpdateIRF(IRFVm model, string loggedInUser)
         {
             try
@@ -859,8 +879,19 @@ namespace Risebird.Business
                 return false;
             }
         }
-
-        #endregion
+        public async Task<bool> AddIRFInterviewers(IRFVm model)
+        {
+            try
+            {
+                return await _irfRepository.AddIRFInterviewers(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+            #endregion
         public IList<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
             try

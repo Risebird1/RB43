@@ -496,7 +496,7 @@
                                                                             <div class="dropdown-content-menu" onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');"><span class="fas fa-edit" style="left:2px;top:-1px;position: relative;font-size:13px; margin-right: 8px; color: #6e7fa9;"></span>Edit IRF</div>
                                                                             
 
-                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditInterviewer('@item.id', '@item.IRFId');" title="Edit Interviewer"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
+                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditIRFInterviewers('@item.id');" title="Edit IRF Interviewers"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
                                                                                     
 
                                                                             @if (Model.Profile != "SeniorInterviewerManagement")
@@ -1901,9 +1901,9 @@
         window.open(url, '_blank');
     };
 
-        function EditInterviewer(id, irfName) {
+    function EditIRFInterviewers(id) {
 
-        var url = '/IRF/EditInterviewer?id=' + id + '&irf=' + irfName;
+        var url = '/IRF/EditIRFInterviewers?id=' + id;
         window.open(url, '_blank');
     };
     function SelectedInterviewMeetings(id, IRFid) {

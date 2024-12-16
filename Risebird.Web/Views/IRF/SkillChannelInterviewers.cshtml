@@ -4,7 +4,7 @@
 @using Risebird.Entities.Data;
 @using System.Web;
 
-<form action="/IRF/SkillChannelInterviewers" enctype="multipart/form-data" id="questionform" method="post" class="ng-pristine ng-valid">
+<form action="/IRF/AddIRFInterviewers" enctype="multipart/form-data" id="id_addInterviewers_form" method="post" class="ng-pristine ng-valid">
     @Html.AntiForgeryToken()
     <div class="row">
         <div class="card-header">
@@ -13,7 +13,7 @@
         <div style="width:100%; float:left;height:10px;"></div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="sample-qs">
-                <table class="table mbn" id="InterviewersNewTable">
+                <table class="table mbn" id="InterviewerPopUpTable">
                     <thead>
                         <tr>
                             <th width="40%" class="table_heading">User <span class="red">*</span></th>
@@ -24,71 +24,64 @@
                             @if (Model.IsNewSkillChannel)
                             {
                                 <th width="10%" class="table_heading">Surcharge</th>
-
                             }
-                            <th width="10%" class="table_heading" title="'Rejected' indicates client is not happy with this interviewer and has removed him/her.">Client Action</th>
-                            <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
-                            <th width="10%" class="table_heading">Availability</th>
-                            <th width="10%" class="table_heading">Campaign</th>
-                            <th width="10%" class="table_heading">AI Verdict</th>
+                            
                             <th width="10%" class="table_heading text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-
-
-                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @style = "width:200px;", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text = Model.InterviewerCollection[i].EmailId })
-                                @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
-                                @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
-                                @Html.HiddenFor(m => m.InterviewerCollection[i].PerSuccessRate)
-                                @Html.HiddenFor(m => m.InterviewerCollection[i].IsSurchargeApprove)
-
-
-                            </td>
-                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink)) //CodedResumeLink
-                            {
-                                <td class="cadName">
-                                    <a href="@Model.InterviewerCollection[i].ResumeLink" id=@("InterviewerCollection_" + i + "__ResumeLink") target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                </td>
-
-                            }
-                            else
-                            {
-                                <td class="cadName">
-                                    <a onclick="" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">No Resume</a>
-                                </td>
-                            }
-                            <td>
-                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @style = "width:200px;", @readonly = "readonly" })
-                            </td>
-                            <td>
-                                
-                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @style = "width:300px;", @readonly = "readonly" })
-                            </td>
-                            @if (Model.IsNewSkillChannel)
-                            {
+                        @if (Model.InterviewerCollectionPopup == null || Model.InterviewerCollectionPopup.Count() == 0)
+                        {
+                            <tr>
                                 <td>
-                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
-                                    {
-                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
-                                    }
-                                    else
-                                    {
-                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
-                                    }
-                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+                                    @Html.DropDownList("InterviewerCollectionPopup[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @style = "width:200px;", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text = "" })
+                                    
+                                    @Html.Hidden("InterviewerCollectionPopup[0].Source", new { Value = Model.LoggedEmail })
                                 </td>
+                                @* @Html.Hidden("InterviewerCollection[0].IsCampaignActivity")
+                                @Html.Hidden("InterviewerCollection[0].CampaignId")
+                                @Html.Hidden("InterviewerCollection[0].OpenAIScreeningResponse")
+                                @Html.Hidden("InterviewerCollection[0].AIVerdict") *@
+                                @* @Html.Hidden("InterviewerCollectionPopup[0].IsSurchargeApprove") *@
 
-                            }
-                           
-                        </tr>
+                                <td class="cadName">
+                                    
+                                    <a href="" target="_blank" id="InterviewerCollectionPopup_0__ResumeLink" data-tooltip="">Resume</a>
 
+                                </td>
+                                <td>
+                                    @Html.TextBox("InterviewerCollectionPopup[0].PrimarySkill", null, new { @class = "form-control", @style = "width:200px;", @readonly = "readonly" })
+                                </td>
+                                <td>
+                                    
+                                    @Html.TextBox("InterviewerCollectionPopup[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                </td>
+                                <td>
+                                    @Html.TextBox("InterviewerCollectionPopup[0].CompanyName", null, new { @class = "form-control", @style = "width:300px;", @readonly = "readonly" })
+                                </td>
+                                @if (Model.IsNewSkillChannel)
+                                {
+                                    <td>
+                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                        {
+                                            @Html.TextBox("InterviewerCollectionPopup[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBox("InterviewerCollectionPopup[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0" })
+                                        }
+
+                                        @Html.ValidationMessageFor(m => m.InterviewerCollectionPopup[0].Surcharge, "", new { @class = "text-danger" })
+                                    </td>
+                                }
+                                <td>
+                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollectionPopup', 'UserId', 'ResumeLink' , 'PrimarySkill', 'PerSuccessRate', 'CompanyName', 'Surcharge', 'Source')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                </td>
+                            </tr>
+                        }
+                        
                     </tbody>
                 </table>
             </div>
@@ -101,28 +94,55 @@
             <div class="col-md-12 mc-button-area">
                 <div class="pull-left">
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Question" onclick="AddQuestionRow()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Question</font></span>
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add an Interviewer" onclick="AddRowInterviewer()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Interviewer(s)</font></span>
                     </button>
                 </div>
-                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
+                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUploadInterviewerPopUp" value="Submit" >Submit</button> @* onclick="return errorMessage();" *@
             </div>
         </div>
     </div>
     @Html.HiddenFor(m => m.IRFId)
+    @Html.HiddenFor(m => m.id)
+    @Html.HiddenFor(m => m.IsNewSkillChannel)
+    @Html.HiddenFor(m => m.LoggedEmail)
 
 </form>
-
+<script src="~/js/skillchanneladdedit.js"></script>
 <script>
+    $(document).ready(function () {
+        document.getElementById("btnUploadInterviewerPopUp").addEventListener("click", function () {
 
+        const submitButton = this;
 
+        // Check for any error messages or validations
+        // if (!errorMessage()) {
+        //     return false; // Stop submission if there are validation errors
+        // }
 
+        // Disable the button to prevent multiple clicks
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting..."; // Optional: Show progress indication
 
-    function DeleteQuestionRow(element, collectionName, tdOne, tdTwo, tdThree) {
+        // Submit the form
+            const form = document.getElementById("id_addInterviewers_form");
+        if (form) {
+            form.submit();
+        }
+    });
+    });
+</script>  
+<script>
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
+        debugger;
         if ($(element).parents('tbody').find('tr').length === 1) {
+
             alert('Must have atleast one Row');
             return false;
         }
+
         else {
+            //document.getElementById("btnUpload").disabled = false;
+
             //var currentvalue = $(this).attr('value');
             var closestRow = $(element).closest('tr');
             var currentIndex = closestRow[0].sectionRowIndex;
@@ -131,6 +151,7 @@
             if (currentIndex == maxIndex) {
                 $(element).closest('tr').remove();
             }
+            //ClientCollection_1__ClientRoleId
             else {
                 $(element).closest('tr').remove();
                 var startIndex = currentIndex + 1;
@@ -140,16 +161,253 @@
                     elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
                     //name="ClientCollection[3].ClientUserId"
                     elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    if (tdTwo != null && tdTwo != "") {
+                        elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    }
+                    if (tdThree != null && tdThree != "") {
+                        elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                    }
+                    if (tdFour != null && tdFour != "") {
+                        elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    }
+                    if (tdFive != null && tdFive != "") {
+                        elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+                    }
+                    if (tdSix != null && tdSix != "") {
+                        elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+                    }
+                    if (tdSeven != null && tdSeven != "") {
+                        elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                        elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                        elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+                    }
+                }
 
-                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+            }
+
+        }
+
+
+    }
+
+    function AddRowInterviewer() {
+        debugger;
+        var table = document.getElementById("InterviewerPopUpTable");
+        var rowCount = table.rows.length;
+        
+
+        var $ttc = $("#InterviewerPopUpTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#InterviewerPopUpTable tr").length - 1;
+
+
+        $tr.find("input,select,hidden,a").each(function () {
+            if (this.id) {
+                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // Extract parts from id
+                if (parts) {
+                    this.id = parts[1] + "_" + (parseInt(parts[2]) + 1) + "__" + parts[3]; // Build new id
+                    this.name = parts[1] + "[" + (parseInt(parts[2]) + 1) + "]." + parts[3]; // Build new name
                 }
             }
+        });
+
+        $tr.find("span[id^='btn']").each(function () {
+            if (this.id) {
+                var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
+                if (parts) {
+                    this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
+                }
+            }
+        });
+
+        // $tr.find("span[id^='regenerateBtn']").each(function () {
+        //     if (this.id) {
+        //         var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
+        //         if (parts) {
+        //             this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
+        //         }
+        //     }  
+        // });
+
+        $tr.find("span[data-valmsg-for]").each(function () {
+            var attr = $(this).attr("data-valmsg-for");
+            if (attr) {
+                var parts = attr.match(/(\D+)\[(\d+)]\.(\D+)$/); // Extract parts
+                if (parts) {
+                    $(this).attr("data-valmsg-for", parts[1] + "[" + (parseInt(parts[2]) + 1) + "]." + parts[3]); // Build new value
+                }
+            }
+        });
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=number]").val("");
+        //$tr.find("input[type=checkbox]").prop("checked", false);
+
+        $tr.find("a").attr("href", "");
+        $tr.find("a").attr("data-tooltip", "");
+        $tr.find("a").html("");
+        $tr.find("select").attr("data-initial-value", "");
+        $tr.find("select").attr("data-initial-text", "");
+        // add cloned row as last row
+        $("#InterviewerPopUpTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+        $('#InterviewerCollectionPopup_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
+        $('#InterviewerCollectionPopup_' + (parseInt(rowCount) - 1) + '__Source').val('@Model.LoggedEmail');
+
+        ManageInterviewerDropDowns();
+
+        // Check document for changes
+        //  $.validator.unobtrusive.parse(document);
+
+
+    }
+
+    function ManageInterviewerDropDowns() {
+        var dropdowns = document.querySelectorAll('.interviewersDrpDwn');
+        if (dropdowns != null) {
+            // Remove initial values from other dropdowns
+            dropdowns.forEach(function (dropdown) {
+                var selectedValue = dropdown.value;
+                dropdowns.forEach(function (otherDropdown) {
+                    if (otherDropdown !== dropdown) {
+                        var optionToRemove = otherDropdown.querySelector('option[value="' + selectedValue + '"]');
+                        if (optionToRemove) {
+                            otherDropdown.removeChild(optionToRemove);
+                        }
+                    }
+                });
+            });
+
+            // Attach change event listener to each dropdown
+            dropdowns.forEach(function (dropdown) {
+                dropdown.addEventListener('change', function () {
+                    var selectedValue = this.value;
+                    // Get the selected option index
+                    var selectedIndex = this.selectedIndex;
+
+                    // Get the selected option text
+                    var selectedOptionText = dropdown.options[selectedIndex].text;
+
+                    var initialValue = this.getAttribute('data-initial-value');
+                    var initialText = this.getAttribute('data-initial-text');
+
+                    $(this).attr("data-initial-value", selectedValue);
+                    $(this).attr("data-initial-text", selectedOptionText);
+                    var dropdownListModified = document.querySelectorAll('.interviewersDrpDwn');
+                    // Remove selected value from other dropdowns
+                    dropdownListModified.forEach(function (otherDropdown) {
+                        if (otherDropdown !== dropdown) {
+                            var optionToRemove = otherDropdown.querySelector('option[value="' + selectedValue + '"]');
+                            if (optionToRemove) {
+                                otherDropdown.removeChild(optionToRemove);
+                            }
+                        }
+                    });
+
+                    // Add back the selected value to other dropdowns if not already present
+                    dropdownListModified.forEach(function (otherDropdown) {
+                        if (otherDropdown !== dropdown) {
+                            var optionToAddBack = document.createElement('option');
+                            // Add back initial value to other dropdowns
+                            if (initialValue && initialValue != "" && initialValue !== selectedValue) {
+                                optionToAddBack.value = initialValue;
+
+                                optionToAddBack.textContent = initialText;
+                                if (!otherDropdown.querySelector('option[value="' + selectedValue + '"]')) {
+                                    otherDropdown.appendChild(optionToAddBack);
+                                }
+                            }
+
+                        }
+                    });
+                });
+            });
+
         }
     }
+    var interviewerRate = 0;
+    var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
+    function InterviewerChanged(val, id) {
+        debugger;
+        
+        var index = id.split('_')[1];
+        var searchFor = '[id^="InterviewerCollectionPopup"][id$="UserId"]';
+        if (CheckDuplicate('InterviewerCollectionPopup', searchFor, val, index)) {
+            return;
+        }
+
+        var skillElementid = 'InterviewerCollectionPopup_' + index + '__PrimarySkill';
+        var rateElementid = 'InterviewerCollectionPopup_' + index + '__PerSuccessRate';
+        var resumeElementid = 'InterviewerCollectionPopup_' + index + '__ResumeLink';
+        var companyNameElementid = 'InterviewerCollectionPopup_' + index + '__CompanyName';
+
+
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerSkillsAndResume",
+            data: { 'id': val },
+            success: function (result) {
+                $("#" + skillElementid).val(result.primarySkill);
+                $("#" + companyNameElementid).val(result.companyName);
+                const anchorElement = document.getElementById(resumeElementid);
+                anchorElement.href = result.resumeLink;
+                $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
+                if(result!=null && result.resumeLink !=null && result.resumeLink != '')
+                {
+                    $("#" + resumeElementid).html("Resume");
+
+                }
+                else
+                {
+                    $("#" + resumeElementid).html("No Resume");
+                }
+               
+
+            }
+        });
+
+        
+        if(isNewSkillChannel){
+            $("#" + rateElementid).val(interviewerRate);
+
+        }
+        else
+        {
+            var companyType = '@Model.CompanyType';//$("#CompanyType").val();
+            var countryType = '@Model.JobCountry';//$("#JobCountry").val();
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "/IRF/GetInterviewerRate",
+                data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
+                success: function (result) {
+                    $("#" + rateElementid).val(result);
+                }
+            });
+        }
+
+        $("#" + id).val(val);
+    }
+    
 </script>
 
