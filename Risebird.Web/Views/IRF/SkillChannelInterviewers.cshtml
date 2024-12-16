@@ -12,8 +12,8 @@
         </div>
         <div style="width:100%; float:left;height:10px;"></div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="sample-qs">
-                <table class="table mbn" id="InterviewerPopUpTable">
+            <div class="sample-qs table-responsive">
+                <table class="table table table-bordered mbn mbn" id="InterviewerPopUpTable">
                     <thead>
                         <tr>
                             <th width="40%" class="table_heading">User <span class="red">*</span></th>
@@ -58,7 +58,7 @@
 
                                 </td>
                                 <td>
-                                    @Html.TextBox("InterviewerCollectionPopup[0].CompanyName", null, new { @class = "form-control", @style = "width:300px;", @readonly = "readonly" })
+                                    @Html.TextBox("InterviewerCollectionPopup[0].CompanyName", null, new { @class = "form-control", @style = "width:200px;", @readonly = "readonly" })
                                 </td>
                                 @if (Model.IsNewSkillChannel)
                                 {
