@@ -11042,6 +11042,13 @@ section {
     margin: 0px 0px;
     padding: 9px;
 }
+.add-interviewer-popup .modal-dialog{
+    max-width:1030px!important;
+}
+.add-interviewer-popup .table > thead > tr > th {
+    padding: 5px 5px;
+    font-size:14px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
