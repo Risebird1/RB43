@@ -34,6 +34,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<Tuple<bool, bool>> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
+
+        Task<bool> AddIRFInterviewers(IRFVm irfDetails);
         //Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
         IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
@@ -46,6 +48,7 @@ namespace Risebird.Repository.Interface
         string GetQuestionSkills(string id);
         IRF EditIRF(int irfId);
         Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId);
+        Task<IRFVm> GetSkillChannelInterviewersForEdit(int irfId);
         IEnumerable<Users> GetClientUser(int id);
         string GetClientUserRole(int userId);
         string GetIRFNameBasedOnId(int irfID);

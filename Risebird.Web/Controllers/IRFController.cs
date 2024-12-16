@@ -14,6 +14,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10491,6 +10492,152 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        public async Task<IActionResult> EditIRFInterviewers(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IRFVm model = new IRFVm();
+
+                        model = await _irfService.GetSkillChannelInterviewersForEdit(id);
+                        var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+
+                        //ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                        if (TempData["SuccessErrorMessageAddInterviewers"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageAddInterviewers"].ToString();
+                            TempData.Remove("SuccessErrorMessageAddInterviewers");
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelInterviewers(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IRFVm model = new IRFVm();
+                        model.LoggedEmail = emailid;
+                        model.Profile = profileName;
+                        model = await _irfService.GetSkillChannelInterviewersForEdit(id);
+
+                        DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
+                        var AssessmentsGroups = new List<AssignmentVM>();
+                        if (model.CreatedOn < absoluteTime)
+                        {
+                            var interviewerOptions = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                            interviewerOptions.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
+                            ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+
+                        }
+                        else
+                        {
+                            var interviewerOptions = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true)).ToList();
+                            interviewerOptions.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
+                            ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+                        }
+                        //var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                        //var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+                        //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
+
+                        //var interviewerOptions = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+
+                        //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+                        return PartialView(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddIRFInterviewers(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        model.LoggedEmail = emailid;
+                        var result = await _irfService.AddIRFInterviewers(model);
+                        if (result)
+                        {
+                            TempData["SuccessErrorMessageAddInterviewers"] = $"Successfully added interviewer(s) to skill channel : {model.IRFId}";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageAddInterviewers"] = $"Failed to add interviewer(s) to skill channel : {model.IRFId}";
+                        }
+                        return RedirectToAction("EditIRFInterviewers", new { id = model.id });
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Some error occured. Please try again!");
+                return Json("An error has occured. Failed to add!");
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InterviewerWithOutBillingRate()
@@ -10530,6 +10677,96 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadInterviewerResume()//UploadCandidateResumesViewModel model
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                {
+                    if (Request.Form.Files.Count() > 0)
+                    {
+                        int userId = Convert.ToInt32(Request.Form["UserId"].ToString());
+                        string interviewerEmailId = Request.Form["InterviewerEmailId"].ToString();
+                        var addedByUserId = _irfService.GetUserId(emailId);
+                        string sasUrl = string.Empty;
+                        if (addedByUserId > 0)
+                        {
+                            foreach (var file in Request.Form.Files)
+                            {
+                                var fileName = file.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension.ToLower() == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                    if (fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                        
+                                        if (uploadedaudioFileURL == null)
+                                        {
+                                            return Json("Resume upload has failed.");
+                                        }
+                                        else
+                                        {
+                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                            sasUrl = uploadedaudioFileURL + "?" + sas;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return Json("Please select valid file for import(.pdf)!");
+                                    }
+                                }
+                                else
+                                {
+                                    return Json("Please select valid file for import(.pdf)!");
+                                }
+                            }
+                            var result = await _interviewerService.UpdateInterviewerResume(userId, sasUrl, emailId);
+                            if (result)
+                            {
+                                return Json($"Resume uploaded Successfully for {interviewerEmailId}!");
+
+                            }
+                            else
+                            {
+                                return Json($"Failed to upload Resume for {interviewerEmailId}!");
+                            }
+                        }
+                        else
+                        {
+                            return Json($"Failed to upload Resume for {interviewerEmailId}!");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Please select valid file for import(.pdf)!");
+                    }
+                }
+                else
+                {
+                    return Json("Unauthorized!");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to upload Resume!");
             }
         }
     }
