@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Risebird.Business;
+
 //using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -3162,7 +3164,7 @@ namespace Risebird.Web.Controllers
             var model = await _dashboardService.GetInterviewerIRFDetails(type, uniqueid);
             return View("InterviewerIRFDetails", model);
         }
-        public async Task<IActionResult> TotalInterviewerRiskIRFDetails(string uniqueid)
+        public async Task<IActionResult> TotalInterviewerRiskIRFDetails(string uniqueid, string type)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid?.Replace("\"", "");
@@ -3176,6 +3178,23 @@ namespace Risebird.Web.Controllers
             ViewBag.uniqueid = uniqueid;
             ViewBag.InterviewerStatus = "TotalInterviewer";
             var model = await _dashboardService.GetTotalInterviewerRiskIRFDetails(uniqueid);
+            if (model == null)
+            {
+                model = new List<PQIDetails>();
+            }
+            if (type == "ShortList")
+            {
+                model = model.Where(x => x.ShortListstatus == "Shortlisted").ToList();
+            }
+            else if (type == "Removed")
+            {
+                model = model.Where(x => x.ShortListstatus == "Rejected").ToList();
+            }
+            else
+            {
+                model = model.Where(x => string.IsNullOrWhiteSpace(x.ShortListstatus)).ToList();
+            }
+            ViewBag.Type = type;
             return View("InterviewerIRFDetails", model);
         }
         #endregion

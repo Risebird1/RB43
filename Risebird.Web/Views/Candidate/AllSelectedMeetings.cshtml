@@ -4,7 +4,7 @@
 @using Newtonsoft.Json;
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Selected Candidate";
+    ViewData["Title"] = "Completed Candidate";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
     dynamic filter = null;
     string strtDte = string.Empty;
@@ -24,20 +24,32 @@
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
 }
 <script>
-    var Header = "Interview Selected Meetings";
+    var Header = "Interview Meetings";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
 <input type="hidden" id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="hidden" id="hidtxtid" value="@ViewBag.id" />
+<input type="hidden" id="hidtxttype" value="@ViewBag.meetingtype" />
 <div id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                 </div>
-
+                <div class="pull-left">
+                    @if (ViewBag.meetingtype == "Select")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@ViewBag.emailid','Select','@ViewBag.id')"><strong>Selected Candidate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@ViewBag.emailid','Reject','@ViewBag.id')"><strong>Rejected Candidate</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('@ViewBag.emailid','Select','@ViewBag.id')"><strong>Selected Candidate</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@ViewBag.emailid','Reject','@ViewBag.id')"><strong>Rejected Candidate</strong></div>
+                    }
+                </div>
                 <div class="pull-right client-ms">
                     <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-bs-toggle="modal" data-bs-target="#filterModal">
                         <span class="mdc-button__label"><span class="fa fa-filter" data-bs-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -58,8 +70,6 @@
                             <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-
-
                                         <div class="filheader">
                                             <div class="filavatar">
                                                 <span class="fa fa-filter"></span>
@@ -69,7 +79,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("AllSelectedMeetings", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                        <form action="@Url.Action("AllSelectedMeetings", "Candidate", new { emailid = ViewBag.emailid,type=ViewBag.meetingtype, id = ViewBag.id })" method="post" id="form" onsubmit="return checkfilterDate();">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -126,7 +136,6 @@
                                                             <th>Candidate Name</th>
                                                             <th id="intselmeet_3">Report Link</th>
                                                             <th id="intselmeet_4">Resume</th>
-                                                            @* <th>Client HR</th> *@
                                                             <th id="intselmeet_6">Meeting Status</th>
                                                             <th id="intselmeet_7">Selection Status</th>
                                                             @if (ViewBag.ClientRole == "Reviewer")
@@ -144,7 +153,6 @@
                                                             <th>Candidate Name</th>
                                                             <th>Report Link</th>
                                                             <th>Resume</th>
-                                                            @* <th>Client HR</th> *@
                                                             <th>Meeting Status</th>
                                                             <th>Selection Status</th>
                                                             @if (ViewBag.ClientRole == "Reviewer")
@@ -224,25 +232,6 @@
                                                                     <td>No Resume</td>
                                                                 }
 
-                                                                @* @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                            {
-                                                            @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 18)
-                                                            {
-                                                            <td>
-                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>@item.ClientHrContact.Substring(0, 18)... </a>
-                                                            </td>
-                                                            }
-                                                            else
-                                                            {
-                                                            <td>
-                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact</a>
-                                                            </td>
-                                                            }
-                                                            }
-                                                            else
-                                                            {
-                                                            <td></td>
-                                                            } *@
 
                                                                 <td> @item.MeetingStatusDescription </td>
                                                                 <td> @item.InterviewStatusDescription </td>
@@ -257,25 +246,26 @@
                                                                             onclick="ClientInterviewRating('@item.imid','2')" style="width:25px!important;height:25px!important;">
                                                                         <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
                                                                     </button>
-                                                                    <button id="selectedcandidate_9" class="btn btn-rating shadow btn-xs sharp me-1" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;width:25px!important;height:25px!important;border-color:#72ade8;">
-                                                                        <span onclick="OpenL2Model(@item.imid)">
-                                                                            <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
 
-                                                                        </span>
-                                                                    </button>
                                                                     @if (ViewBag.meetingtype == "Select")
                                                                     {
-                                                                        <a onclick="removeOrShortlistInterviewer(@item.imid,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
-                                                                            <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Shortlist Interviewer" style="background:#c3df82fc;border-color:#dbee7699;width:25px!important;height:25px!important;">
-                                                                                <span title="Shortlist Interviewer"><img style="max-width:18px;position:relative;left:-2px;top:-1px;" src="~/Newassets/img/shortlist-icon.png" /></span>
-                                                                            </div>
-                                                                        </a>
-                                                                        <a onclick="removeOrShortlistInterviewer(@item.imid,'Rejected')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
-                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Remove Interviewer" style="background: #de4f3eb3;width:25px!important;height:25px!important;">
-                                                                                <span title="Remove Interviewer"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size: 11px;"></span><span class="fa fa-trash" style="color:#fff;font-size: 8px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
-                                                                            </div>
-                                                                        </a>
+                                                                        <button id="selectedcandidate_9" class="btn btn-rating shadow btn-xs sharp me-1" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;width:25px!important;height:25px!important;border-color:#72ade8;">
+                                                                            <span onclick="OpenL2Model(@item.imid)">
+                                                                                <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+
+                                                                            </span>
+                                                                        </button>
                                                                     }
+                                                                    <a onclick="removeOrShortlistInterviewer(@item.imid,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
+                                                                        <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Shortlist Interviewer" style="background:#c3df82fc;border-color:#dbee7699;width:25px!important;height:25px!important;">
+                                                                            <span title="Shortlist Interviewer"><img style="max-width:18px;position:relative;left:-2px;top:-1px;" src="~/Newassets/img/shortlist-icon.png" /></span>
+                                                                        </div>
+                                                                    </a>
+                                                                    <a onclick="removeOrShortlistInterviewer(@item.imid,'Rejected')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
+                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Remove Interviewer" style="background: #de4f3eb3;width:25px!important;height:25px!important;">
+                                                                            <span title="Remove Interviewer"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size: 11px;"></span><span class="fa fa-trash" style="color:#fff;font-size: 8px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                        </div>
+                                                                    </a>
                                                                 </td>
                                                             </tr>
                                                         }
@@ -319,7 +309,7 @@
     });
 
     function ResetFilter() {
-        window.location.href = "/Candidate/ResetAllSelectedMeetingsFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+        window.location.href = "/Candidate/ResetAllSelectedMeetingsFilter?emailid=" + $("#hidtxtemailid").val() + "&type=" + $("#hidtxttype").val() + "&id=" + $("#hidtxtid").val();
     }
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
@@ -487,5 +477,8 @@
                 }
             });
         }
+    }
+    function Changeurldetails(emailid, type, uniqueid) {
+        window.location.href = "/Candidate/AllSelectedMeetings?emailid=" + emailid + "&type=" + type + "&id=" + uniqueid;
     }
 </script>

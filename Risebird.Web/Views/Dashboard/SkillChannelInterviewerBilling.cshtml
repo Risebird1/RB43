@@ -19,16 +19,10 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">SkillChannel Interviewer Billing</h4></div>
                 </div>
-
-                @* <div class="pull-right">
-                <div>
-                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                <div class="mdc-button__ripple"></div>
-                </button>
-
+                <div class="pull-left">
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('SkillChannel')"><strong>Skill Channels Interviewers</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('WithOutBilling')"><strong>Interviewers WithOut Billing Rate</strong></div>
                 </div>
-                </div> *@
             </div>
         </div>
     </div>
@@ -198,10 +192,10 @@
         var modal = document.getElementById("interviewerMemberModal");
         modal.style.display = "none";
     }
-    function getIRFMembers(id, Name,type) {
+    function getIRFMembers(id, Name, type) {
         $.ajax({
             url: '/IRF/GetIRFInterviewerBillingMembers',
-            data: { 'irfId': id ,'type':type},
+            data: { 'irfId': id, 'type': type },
             success: function (data) {
                 var modal = document.getElementById("interviewerMemberModal");
                 modal.style.display = "block";
@@ -209,5 +203,12 @@
                 $('#memberTableBody').html(data);
             }
         });
+    }
+    function Changeurldetails(type) {
+        if (type == "WithOutBilling") {
+            window.location.href = "/IRF/InterviewerWithOutBillingRate";
+        } else {
+            window.location.href = "/Dashboard/SkillChannelInterviewerBilling";
+        }
     }
 </script>

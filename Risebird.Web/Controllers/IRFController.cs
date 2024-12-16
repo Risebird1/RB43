@@ -6488,16 +6488,18 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> FetchSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-            var level = await _irfRepository.GetLevelTech();
-            var Skillset = await _irfRepository.GetSkills();
-            if (Skillset != null)
-            {
-                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-            }
+            //var level = await _irfRepository.GetLevelTech();
+            //var Skillset = await _irfRepository.GetSkills();
+            //if (Skillset != null)
+            //{
+            //    Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            //}
             foreach (var item in transTechSkills)
             {
-                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
-                item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                //item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
+
+                item.LevelName = ((LevelTechEnum)(item.LevelId)).GetDescription();
+                //  item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             return Json(transTechSkills);
         }
@@ -10628,6 +10630,47 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 //return Json("Some error occured. Please try again!");
                 return Json("An error has occured. Failed to add!");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerWithOutBillingRate()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance")
+                    {
+                        var model = await _irfService.GetInterviewersWithOutBillingRate();
+                        model = model.Select(x =>
+                        {
+                            x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore) ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription() : string.Empty;
+                            x.CompanyType = !string.IsNullOrWhiteSpace(x.CompanyType) ? ((CompanyType)Convert.ToInt32(x.CompanyType)).GetDescription() : string.Empty;
+                            x.JobCountry = x.JobCountry == "2" ? "Onsite" : "Offshore";
+                            return x;
+                        }).ToList();
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

@@ -216,7 +216,7 @@
             url: "/Interview/SaveClientFeedback",
             data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment },
             success: function (data) {
-                alert(data);
+                swal.fire("L2 status updated successfully.");
             }
         });
     }
