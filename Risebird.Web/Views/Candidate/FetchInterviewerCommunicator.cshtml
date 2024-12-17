@@ -149,52 +149,58 @@
                                                     <thead>
                                                         <tr>
                                                             @if (ViewBag.Type == "SkillChannel")
-                                                            {
-                                                                <th style="border-right: 0px !important;">Skill Channel</th>
-                                                                <th style="border-right: 0px !important;">Project Id</th>
-                                                                <th style="border-right: 0px !important;">Job Country</th>
-                                                                @if (ViewBag.ClientRole != "Reviewer")
+                                                            { @if (ViewBag.ClientRole != "Reviewer")
                                                                 {
                                                                     <th style="border-left: 0px !important;">Candidate Submission Link</th>
                                                                 }
-                                                                <th style="text-align:left">JD-Skills</th>
-                                                                <th>JD</th>
                                                                 <th class="text-center">Candidate Submission</th>
                                                                 <th class="disabled-sorting text-center">Actions</th>
+                                                                <th style="border-right: 0px !important;">Skill Channel</th>
+                                                                <th style="border-right: 0px !important;">Project Id</th>
+                                                                <th style="border-right: 0px !important;">Job Country</th>
+                                                               
+                                                                <th style="text-align:left">JD-Skills</th>
+                                                                <th>JD</th>
+                                                               
+                                                               
                                                             }
                                                             else
                                                             {
+                                                                <th class="text-center">Candidate Submission</th>
                                                                 <th>Project</th>
                                                                 <th>Project ID</th>
                                                                 <th>Project Title</th>
                                                                 <th>Skill Channels</th>
-                                                                <th class="text-center">Candidate Submission</th>
+                                                               
                                                             }
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
                                                             @if (ViewBag.Type == "SkillChannel")
-                                                            {
-                                                                <th style="border-right: 0px !important;">Skill Channel</th>
-                                                                <th style="border-right: 0px !important;">Project Id</th>
-                                                                <th style="border-right: 0px !important;">Job Country</th>
-                                                                @if (ViewBag.ClientRole != "Reviewer")
+                                                            {@if (ViewBag.ClientRole != "Reviewer")
                                                                 {
                                                                     <th style="border-left: 0px !important;">Candidate Submission Link</th>
                                                                 }
-                                                                <th style="text-align:left">JD-Skills</th>
-                                                                <th>JD</th>
                                                                 <th class="text-center">Candidate Submission</th>
                                                                 <th class="disabled-sorting text-center">Actions</th>
+                                                                <th style="border-right: 0px !important;">Skill Channel</th>
+                                                                <th style="border-right: 0px !important;">Project Id</th>
+                                                                <th style="border-right: 0px !important;">Job Country</th>
+                                                                
+                                                                <th style="text-align:left">JD-Skills</th>
+                                                                <th>JD</th>
+                                                                
+                                                                
                                                             }
                                                             else
                                                             {
+                                                                <th class="text-center">Candidate Submission</th>
                                                                 <th>Project</th>
                                                                 <th>Project ID</th>
                                                                 <th>Project Title</th>
                                                                 <th>Skill Channels</th>
-                                                                <th class="text-center">Candidate Submission</th>
+                                                               
                                                             }
                                                         </tr>
 
@@ -212,33 +218,6 @@
                                                             <tr id=@item.id>
                                                                 @if (ViewBag.Type == "SkillChannel")
                                                                 {
-                                                                    <td>@item.IRFId</td>
-                                                                    <td>@item.ProjectUniqueid</td>
-                                                                    <td>@item.JobCountry</td>
-                                                                    @if (ViewBag.ClientRole != "Reviewer")
-                                                                    {
-                                                                        <td>
-                                                                            <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
-                                                                            <div class="btn btn-copy shadow btn-xs sharp me-1" aria-label="Copy Public URL" style="min-width:23px;min-height:24px;height:24px;width:23px;">
-                                                                                <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><i class='fa fa-clone' style="font-size:11px;position:relative;left:0px;top:0px;"></i></span>
-                                                                            </div>
-                                                                        </td>
-                                                                    }
-                                                                    @*<td> @item.BillingOwner </td>*@
-                                                                    <td>
-                                                                        <button type="button" class="clickhere_btn pull-left">
-                                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
-                                                                        </button>
-                                                                        <input id="skill_id_@item.id" type="hidden" value="@item.IRFId" />
-                                                                    </td>
-                                                                    @if (item.JDLink != null && item.JDLink != "")
-                                                                    {
-                                                                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink.Replace(" ", "%20")>@item.JDTiltle</a></td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>No JD</td>
-                                                                    }
                                                                     <td class="text-center">
                                                                         @if (ViewBag.ClientRole != "Reviewer")
                                                                         {
@@ -256,7 +235,7 @@
                                                                             </button>
 
                                                                             <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                                 <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span>
+                                                                                <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span style="color:#fff" class="fas fa-file"></span></span>
                                                                             </button>
                                                                         }
 
@@ -275,7 +254,7 @@
                                                                         }
                                                                         @if (ViewBag.ClientRole != "Reviewer")
                                                                         {
-                                                                            <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
+                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
                                                                                 <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
                                                                                     <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
                                                                                 </div>
@@ -287,10 +266,10 @@
                                                                         @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                                                         {
                                                                             @* <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
-                                                                                <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
-                                                                                    <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
-                                                                                </span>
-                                                                            </button> *@
+                                                                <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
+                                                                <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
+                                                                </span>
+                                                                </button> *@
                                                                             <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
                                                                                 <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
                                                                                     <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
@@ -321,13 +300,37 @@
                                                                             </button>
                                                                         }
                                                                     </td>
+                                                                    <td>@item.IRFId</td>
+                                                                    <td>@item.ProjectUniqueid</td>
+                                                                    <td>@item.JobCountry</td>
+                                                                    @if (ViewBag.ClientRole != "Reviewer")
+                                                                    {
+                                                                        <td>
+                                                                            <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
+                                                                            <div class="btn btn-copy shadow btn-xs sharp me-1" aria-label="Copy Public URL" style="min-width:23px;min-height:24px;height:24px;width:23px;">
+                                                                                <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><i class='fa fa-clone' style="font-size:11px;position:relative;left:0px;top:0px;"></i></span>
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+                                                                    @*<td> @item.BillingOwner </td>*@
+                                                                    <td>
+                                                                        <button type="button" class="clickhere_btn pull-left">
+                                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
+                                                                        </button>
+                                                                        <input id="skill_id_@item.id" type="hidden" value="@item.IRFId" />
+                                                                    </td>
+                                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                                    {
+                                                                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink.Replace(" ", "%20")>@item.JDTiltle</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No JD</td>
+                                                                    }
+                                                                   
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>@item.ProjectName</td>
-                                                                    <td>@item.ProjectUniqueid</td>
-                                                                    <td>@item.JDTiltle</td>
-                                                                    <td>@item.IRFCount</td>
                                                                     <td class="text-center">
                                                                         @if (ViewBag.ClientRole != "Reviewer")
                                                                         {
@@ -350,7 +353,7 @@
                                                                         </a>
                                                                         @if (ViewBag.ClientRole != "Reviewer")
                                                                         {
-                                                                            <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetProjectPublicCandidates", "Candidate" , new { id = item.id, projectName = item.ProjectName, emailid = ViewBag.emailid,uniqueid = ViewBag.id})" title="Candidate List">
+                                                                            <a target="_blank" style="position:relative;top:0px;text-decoration:none" href="@Url.Action("GetProjectPublicCandidates", "Candidate" , new { id = item.id, projectName = item.ProjectName, emailid = ViewBag.emailid,uniqueid = ViewBag.id})" title="Candidate List">
                                                                                 <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
                                                                                     <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
                                                                                 </div>
@@ -360,6 +363,11 @@
                                                                             </button>
                                                                         }
                                                                     </td>
+                                                                    <td>@item.ProjectName</td>
+                                                                    <td>@item.ProjectUniqueid</td>
+                                                                    <td>@item.JDTiltle</td>
+                                                                    <td>@item.IRFCount</td>
+                                                                   
                                                                 }
                                                             </tr>
                                                         }

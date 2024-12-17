@@ -8443,17 +8443,18 @@ ul.ks-cboxtags {
     }
 
     .rate-interview button, .rate-interview button:hover {
-        padding: 7px 6px;
+        padding: 9px 6px;
         position: relative;
         border: none;
         font-weight: bold;
-        border-radius: 3px;
+        border-radius: 0px;
         margin: 0px;
-        top: -35px;
+        top: -45px;
+        right:5px;
         color: #fff;
         font-size: 10px;
         text-transform: uppercase;
-        background: #da1111 !important;
+        background: #d58e239e !important;
         box-shadow: none;
     }
 
