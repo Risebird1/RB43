@@ -258,7 +258,7 @@
                                                                                             <span id="regenerateBtn_@i" title="Screen Interviewer(Regenerate)" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId', true)" class="mdc-fab app-fab--absolute">
                                                                                                 <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
                                                                                             </span>
-                                                                                            <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
+                                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes">
                                                                                                 <span onclick="javascript:OpenUploadResumeModal('@Model.InterviewerCollection[i].UserId', '@Model.InterviewerCollection[i].EmailId');" title="Upload Resumes">
                                                                                                     <span class="fas fa-upload"></span>
                                                                                                 </span>
@@ -355,6 +355,32 @@
     </script>
 }
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
+<script>
+    function ScreenInterviewer(elementId, jdTitle, irfId, irfName, isRedo = false)
+    {
+        var index = -1;
+        const results = elementId.match(/-?\d+(\.\d+)?/g);
+        if (results)
+        {
+            index = results[0];
+        }
+        if(index != -1)
+        {
+            
+            //var emailId = document.getElementById('InterviewerCollection_' + index + '__EmailId').value;
+            var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
+            
+            var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
+            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+            
+            var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink + '&isRedo=' + isRedo;
+            window.open(newTabUrl, '_blank');
+
+        }
+
+    }
+</script>
 <script>
     debugger;
     var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));

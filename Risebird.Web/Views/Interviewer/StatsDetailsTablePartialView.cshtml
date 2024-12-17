@@ -27,15 +27,15 @@
                     <th>Interview Date</th>
                     <th>Candidate</th>
                     <th>Skill Channel</th>
-                    @if (string.IsNullOrEmpty(clientEmailId))
+                    @* @if (string.IsNullOrEmpty(clientEmailId))
                     {
                         <th>Client</th>
 
-                    }
+                    } *@
                     <th>Meeting Status</th>
                     <th>Interview Status</th>
                     <th>Report</th>
-                    <th>Interviewer Joining Time</th>
+                   @*  <th>Interviewer Joining Time</th> *@
                     @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                     {
                         <th>Tech QC</th>
@@ -48,15 +48,15 @@
                     <th>Interview Date</th>
                     <th>Candidate</th>
                     <th>Skill Channel</th>
-                    @if (string.IsNullOrEmpty(clientEmailId))
+                    @* @if (string.IsNullOrEmpty(clientEmailId))
                     {
                         <th>Client</th>
 
-                    }
+                    } *@
                     <th>Meeting Status</th>
                     <th>Interview Status</th>
                     <th>Report</th>
-                    <th>Interviewer Joining Time</th>
+                   @*  <th>Interviewer Joining Time</th> *@
                     @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                     {
                         <th>Tech QC</th>
@@ -74,11 +74,11 @@
                             <td>@item.interviewDate</td>
                             <td>@item.candidateEmail</td>
                             <td>@item.SkillChannel</td>
-                            @if (string.IsNullOrEmpty(clientEmailId))
+                           @*  @if (string.IsNullOrEmpty(clientEmailId))
                             {
                                 <td>@item.Client</td>
 
-                            }
+                            } *@
                             @if (item.MeetingStatus.HasValue && ((MeetingStatus)item.MeetingStatus == MeetingStatus.NoShowInterviewer || (MeetingStatus)item.MeetingStatus == MeetingStatus.NoShow))
                             {
                                 <td>No Show</td>
@@ -112,9 +112,9 @@
                                 }
 
                             </td>
-                            <td>
+                           @*  <td>
                                 @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
-                            </td>
+                            </td> *@
                             @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                             {
                                 <td>

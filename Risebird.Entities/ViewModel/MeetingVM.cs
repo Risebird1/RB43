@@ -31,6 +31,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interview Date")]
         [Required(ErrorMessage = "Please enter Interview Date.")]
         public DateTime interviewDate { get; set; }
+        public string ProjectUniqueid { get; set; }
+
         [Display(Name = "Interview Slot")]
         [Required(ErrorMessage = "Please enter Interview Slot.")]
         public string interviewSlot { get; set; }
