@@ -1038,7 +1038,7 @@ namespace Risebird.Web.Controllers
             model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
             if (string.IsNullOrEmpty(model.TechRubricType))
             {
-                model.TechRubricType = TechRubricTypes.Basic;
+                model.TechRubricType = TechRubricTypes.Advanced;
             }
             return;
         }
