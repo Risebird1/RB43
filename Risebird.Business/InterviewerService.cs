@@ -1748,5 +1748,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateInterviewerResume(int userId, string resumeLink, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateInterviewerResume(userId, resumeLink, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

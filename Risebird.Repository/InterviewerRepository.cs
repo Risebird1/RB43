@@ -3678,6 +3678,28 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<bool> UpdateInterviewerResume(int userId, string resumeLink, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userId", userId);
+                    parameters.Add("@ResumeLink", resumeLink);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerResume", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 
 }
