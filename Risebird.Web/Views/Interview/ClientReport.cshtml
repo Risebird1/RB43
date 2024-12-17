@@ -157,27 +157,32 @@
 
                         @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
                         {
-                            <div class="pull-left"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
-
-                            <div class="pull-left"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
-                            <div class="rate-wrap">
+                            <div class="rate-wrap" style="display:inline-block">
                                 <div class="rate-interview" style="top:-8px;">
                                     <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
+                            <div class="pull-right">
+                            <div class="pull-left"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
+
+                            <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
+                            </div>
+                       
                         }
                         else if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 2)
                         {
-                            <div class="pull-left"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
-
-                            <div class="pull-left"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
-                            <div class="rate-wrap" style="display:flex">
+                            <div class="rate-wrap" style="display:inline-block">
                                 <div class="rate-interview" style="top:-8px">
                                     <h1>Please rate this interview to Generate PDF & Shareable link: </h1>
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
+                            <div class="pull-right">
+                            <div class="pull-left"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
+
+                            <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
+                           </div>
                             
                         }
                  
@@ -264,7 +269,7 @@
                                         }
                                         else if (Model.ClientAction == "Rejected")
                                         {
-                                            <span style="color: #e21c1c;width: 100%;font-size:15px;background: #f4433633;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer shortlisted by you</span>
+                                            <span style="color: #e21c1c;width: 100%;font-size:15px;background: #f4433633;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer removed by you</span>
                                         }
                                     }
                                     else
@@ -1562,7 +1567,7 @@
         }
         else {
             bodyText = 'Do you want to shortlist this interviewer?';
-            confirmationButtonText = 'Yes';
+            confirmationButtonText = 'Yes Shorlist it';
             successHtmlText = '<p>The Interviewer has been shortlisted.</p>';
         }
 

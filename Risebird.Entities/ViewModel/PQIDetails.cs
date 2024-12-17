@@ -25,5 +25,6 @@
         public int TotalLatejoin { get; set; }
         public string NickName { get; set; }
         public string ShortListstatus { get; set; }
+        public string ProjectUniqueid { get; set; }
     }
 }

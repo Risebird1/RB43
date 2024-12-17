@@ -38,10 +38,10 @@ if(@roleId=1)
   end as candidateName,          
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
-  IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
+  IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          
   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview          
+  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview,pr.ProjectUniqueid        
   from InterviewMeetings im           
   inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -51,7 +51,8 @@ if(@roleId=1)
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId          
   inner join TransClientUser tcu on IRF.id=tcu.IRFId          
   left join UserList ul on tcu.ClientUserId= ul.id          
-          
+  left join ProjectIRFMapping pim on pim.IRFId=IRF.id  
+  left join Project pr on pr.id=pim.ProjectId          
   where ul.EmailId = @EmailIdParam AND ul.IsActive=1 and (ca.ClientHRAttemptContact=@EmailIdParam)   --im.ClientHrContact=@EmailIdParam or        
   and irf.IsDeleted=0          
   --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)             
@@ -71,9 +72,9 @@ else if(@roleId=4)
   end as candidateName,          
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
-  IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
+  IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments, ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview        
+  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview,pr.ProjectUniqueid         
   from InterviewMeetings im           
  inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -82,7 +83,9 @@ else if(@roleId=4)
   join CandidatesMaster cm on ulc.id= cm.UserId          
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId          
   inner join TransClientUser tcu on IRF.id=tcu.IRFId          
-  left join UserList ul on tcu.ClientUserId= ul.id          
+  left join UserList ul on tcu.ClientUserId= ul.id  
+  left join ProjectIRFMapping pim on pim.IRFId=IRF.id  
+  left join Project pr on pr.id=pim.ProjectId          
   where ul.EmailId = @EmailIdParam AND ul.IsActive=1 and (im.staffingAgency=@EmailIdParam or ca.ProfileSource=@EmailIdParam)     
   and irf.IsDeleted=0          
   --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)             
@@ -100,9 +103,9 @@ else if(@roleId=9)
   end as candidateName,          
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
-  IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
+  IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments, ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview        
+  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview,pr.ProjectUniqueid       
   from InterviewMeetings im           
  inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -111,7 +114,9 @@ else if(@roleId=9)
   join CandidatesMaster cm on ulc.id= cm.UserId          
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
   inner join ClientUser tcu on IRF.ClientId=tcu.ClientId          
-  left join UserList ul on tcu.UserId= ul.id   
+  left join UserList ul on tcu.UserId= ul.id  
+  left join ProjectIRFMapping pim on pim.IRFId=IRF.id  
+  left join Project pr on pr.id=pim.ProjectId      
   where ul.EmailId = @EmailIdParam AND ul.IsActive=1 and irf.IsDeleted=0          
           
  End                    
@@ -128,10 +133,10 @@ else
   end as candidateName,          
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
-  IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
+  IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          
   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview            
+  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,im.RedoInterview,pr.ProjectUniqueid            
   from InterviewMeetings im           
   inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -140,7 +145,9 @@ else
   join CandidatesMaster cm on ulc.id= cm.UserId          
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId          
   inner join TransClientUser tcu on IRF.id=tcu.IRFId          
-  left join UserList ul on tcu.ClientUserId= ul.id          
+  left join UserList ul on tcu.ClientUserId= ul.id   
+  left join ProjectIRFMapping pim on pim.IRFId=IRF.id  
+  left join Project pr on pr.id=pim.ProjectId      
   where ul.EmailId = @EmailIdParam AND ul.IsActive=1          
   and irf.IsDeleted=0          
   --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)             
