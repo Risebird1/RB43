@@ -134,7 +134,14 @@
                                                             <th>Action</th>
                                                             <th style="border-left: 0px !important;" id='start'>Interview Date</th>
                                                             <th>Skill Channel</th>
+                                                              @if (ViewBag.ClientRole == "Reviewer") {
+                                                                  <th>Project ID</th>
+                                                            }
                                                             <th>Candidate Name</th>
+                                                             @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                 <th>JD Title</th>
+                                                            }
                                                             <th id="intselmeet_3">Report Link</th>
                                                             <th id="intselmeet_4">Resume</th>
                                                             <th id="intselmeet_6">Meeting Status</th>
@@ -152,7 +159,14 @@
                                                             <th>Action</th>
                                                             <th style="border-left: 0px !important;">Interview Date</th>
                                                             <th>Skill Channel</th>
+                                                               @if (ViewBag.ClientRole == "Reviewer") { 
+                                                                   <th>Project ID</th>
+                                                            }
                                                             <th>Candidate Name</th>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                 <th>JD Title</th>
+                                                            }
                                                             <th>Report Link</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Status</th>
@@ -198,6 +212,9 @@
                                                                     </a>
                                                                 </td>
                                                                 <td> @item.interviewDate </td>
+                                                                 @if (ViewBag.ClientRole == "Reviewer"){
+                                                                    <td>@item.ProjectUniqueid</td>
+                                                                }
                                                                 <td> @item.IRFId </td>
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
@@ -250,6 +267,10 @@
                                                                 {
                                                                     <td></td>
                                                                 }
+                                                                @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                 <td>@item.JDTiltle</td>
+                                                            }
                                                                 <td> <a style="padding: 2px 6px 4px 5px;font-size:12px;" id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Client Report</a> </td>
                                                                 @* <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td> *@
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
