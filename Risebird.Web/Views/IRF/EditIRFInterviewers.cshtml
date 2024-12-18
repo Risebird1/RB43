@@ -211,7 +211,12 @@
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @style = "width:100px;", @readonly = "readonly" })
                                                                                     </td>
                                                                                     <td class="text-center">
-                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive, // Model binding for the checkbox
+                                                                                        new
+                                                                                        {
+                                                                                            @onchange = "ChangeInterviewerActiveState(this.id)" // Attach onchange event
+                                                                                        })
+                                                                                        
                                                                                     </td>
                                                                                     <td class="text-center">
                                                                                         @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
@@ -395,4 +400,112 @@
         });
     }
 
+</script>
+<script>
+    function ScreenInterviewer(elementId, jdTitle, irfId, irfName, isRedo = false)
+    {
+        var index = -1;
+        const results = elementId.match(/-?\d+(\.\d+)?/g);
+        if (results)
+        {
+            index = results[0];
+        }
+        if(index != -1)
+        {
+
+            //var emailId = document.getElementById('InterviewerCollection_' + index + '__EmailId').value;
+            var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
+
+            var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
+            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+
+            var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink + '&isRedo=' + isRedo;
+            window.open(newTabUrl, '_blank');
+
+        }
+
+    }
+</script>
+<script type="text/javascript">
+    // Function to submit the checkbox value using AJAX
+    function ChangeInterviewerActiveState(elementId) {
+        
+        var irfId = '@Model.id'
+        var index = elementId.split('_')[1]; 
+        var isCheckedElement = document.getElementById('InterviewerCollection_' + index + '__IsActive');
+        var isChecked = isCheckedElement.checked;
+        var checkboxValue = isChecked ? "activate" : "inactivate";
+        var interviewerUserIdElement = 'InterviewerCollection_' + index + '__UserId';
+        var interviewerUserId = $("#" + interviewerUserIdElement).val();
+        var interviewerEmailIdElement = 'InterviewerCollection_' + index + '__EmailId';
+        var interviewerEmailId = $("#" + interviewerEmailIdElement).val();
+
+
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to " + checkboxValue + " the interviewer " + interviewerEmailId,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, go ahead!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/ChangeInterviewerActiveState?userId=' + interviewerUserId + '&status=' + isChecked + '&irfId=' + '@Model.id',
+                            type: 'POST',
+                            success: function (result) {
+                                if (result == true) {
+                                    //document.getElementById('statusImage_' + irfId).src = '/img/Cards_Png/01_Black-White.png';
+                                    //document.getElementById('btnArchive_' + irfId).style.display = 'none';
+                                    //document.getElementById('btnUnArchive_' + irfId).style.display = 'block';
+                                    if(isChecked == false)
+                                    {
+                                        document.getElementById('InterviewerCollection_' + index + '__IsAvailable').checked = false;
+                                    }
+                                    resolve(result)
+
+                                }
+                                else {
+                                    swal.fire("Error archiving!", "Please try again", "error");
+
+                                }
+
+                            },
+                            error: function () {
+
+                                swal.fire("Error archiving!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: checkboxValue + 'ed!',
+                        type: 'success',
+                        html: '<p>Successfully ' + checkboxValue + 'd' + ' the interviewer '   + interviewerEmailId + '</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        //window.location = "/IRF/Index";
+                        //location.reload(true);
+
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'Operation cancelled! :)',
+                        'error'
+                    )
+                }
+            })
+
+
+        }
 </script>

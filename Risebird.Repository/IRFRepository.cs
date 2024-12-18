@@ -2801,12 +2801,12 @@ namespace Risebird.Repository
                             if (irfDetails.IsNewSkillChannel)
                             {
                                 interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge,
-                                    true, true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
+                                    false, true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
                                     item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
                             }
                             else
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, true,
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, false,
                                     true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
                                     item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
                             }
