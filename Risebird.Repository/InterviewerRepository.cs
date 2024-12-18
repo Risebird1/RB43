@@ -3700,6 +3700,30 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userId", userId);
+                    parameters.Add("@IsActive", status);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateIRFInterviewerActiveStatus", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 
 }
