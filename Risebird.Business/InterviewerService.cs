@@ -1760,5 +1760,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateIRFInterviewerActiveStatus(userId, status, irfId, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ CREATE TABLE [dbo].[TransInterviewer](
             [OpenAIScreeningResponse][varchar](max) null,
             [AIVerdict][varchar](20) null,
             [AddedAt][datetime] null,
+            [ModifiedAt][datetime] null,
 			CONSTRAINT [FK_TIIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
             [IsSurchargeApprove] [bit] NULL,
@@ -183,6 +184,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TransInterviewer
     Add AddedAt datetime null
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedAt')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add ModifiedAt datetime null
 END
 
 END
