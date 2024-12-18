@@ -425,7 +425,7 @@
                             <div class="topheader-link-wrap">
                                 @if (ViewBag.ClientRole == "Reviewer")
                                 {
-                                    <a target="_blank" href="@Url.Action("TotalInterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })" style="margin:5px 8px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("TotalInterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })" style="margin:5px 8px 5px 3px;text-decoration:none">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
@@ -483,7 +483,7 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "Reviewer")
                                 {
-                                    <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" style="margin:5px 8px 5px 3px;">
+                                    <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" style="margin:5px 8px 5px 3px;text-decoration:none">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
