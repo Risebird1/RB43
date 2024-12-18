@@ -27,6 +27,7 @@
                     <th>Interview Date</th>
                     <th>Candidate</th>
                     <th>Skill Channel</th>
+                     <th>Project ID</th>
                     @* @if (string.IsNullOrEmpty(clientEmailId))
                     {
                         <th>Client</th>
@@ -48,6 +49,7 @@
                     <th>Interview Date</th>
                     <th>Candidate</th>
                     <th>Skill Channel</th>
+                    <th>Project ID</th>
                     @* @if (string.IsNullOrEmpty(clientEmailId))
                     {
                         <th>Client</th>
@@ -72,8 +74,10 @@
                         <tr>
 
                             <td>@item.interviewDate</td>
-                            <td>@item.candidateEmail</td>
+                            <td><p style="margin:0px;">@item.candidateEmail</p>
+                             <p style="margin:0px;"><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p></td>
                             <td>@item.SkillChannel</td>
+                             <td>@item.ProjectUniqueid</td>
                            @*  @if (string.IsNullOrEmpty(clientEmailId))
                             {
                                 <td>@item.Client</td>

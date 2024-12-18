@@ -163,11 +163,7 @@
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
-                            <div class="pull-right">
-                            <div class="pull-left"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
-
-                            <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
-                            </div>
+                            
                        
                         }
                         else if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 2)
@@ -178,11 +174,7 @@
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
-                            <div class="pull-right">
-                            <div class="pull-left"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
-
-                            <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
-                           </div>
+                          
                             
                         }
                  
