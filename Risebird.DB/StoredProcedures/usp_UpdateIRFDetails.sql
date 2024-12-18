@@ -55,7 +55,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
-	@TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV4] READONLY,--TransTechSkill2_TableType, TransTechSkill_TableTypeV3
+	@TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV5] READONLY,--TransTechSkill2_TableType, TransTechSkill_TableTypeV3, TransTechSkill_TableTypeV4
 	@InterviewerBulkData AS [dbo].[TransInterviewer_TableTypeV3] READONLY,--[dbo].[TransInterviewer_TableType]
 	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableTypeV3] READONLY, --[dbo].[TransInterviewerSurcharge_TableType]
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
