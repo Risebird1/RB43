@@ -138,10 +138,7 @@
                                                                   <th>Project ID</th>
                                                             }
                                                             <th>Candidate Name</th>
-                                                             @if (ViewBag.ClientRole == "Reviewer")
-                                                            {
-                                                                 <th>JD Title</th>
-                                                            }
+                                                            
                                                             <th id="intselmeet_3">Report Link</th>
                                                             <th id="intselmeet_4">Resume</th>
                                                             <th id="intselmeet_6">Meeting Status</th>
@@ -163,10 +160,7 @@
                                                                    <th>Project ID</th>
                                                             }
                                                             <th>Candidate Name</th>
-                                                            @if (ViewBag.ClientRole == "Reviewer")
-                                                            {
-                                                                 <th>JD Title</th>
-                                                            }
+                                                           
                                                             <th>Report Link</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Status</th>
@@ -212,10 +206,12 @@
                                                                     </a>
                                                                 </td>
                                                                 <td> @item.interviewDate </td>
-                                                                 @if (ViewBag.ClientRole == "Reviewer"){
+                                                                
+                                                                <td> @item.IRFId </td>
+                                                                @if (ViewBag.ClientRole == "Reviewer")
+                                                                {
                                                                     <td>@item.ProjectUniqueid</td>
                                                                 }
-                                                                <td> @item.IRFId </td>
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
                                                                     @if (item.IsOnline == 1 && item.candidateName.Length > 13)
@@ -229,7 +225,7 @@
                                                                             </span>
 
                                                                             <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 13)...  </a>
-
+                                                                            <p><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p>
                                                                         </td>
                                                                     }
                                                                     else
@@ -246,7 +242,7 @@
                                                                                 </span>
 
                                                                                 <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 13)... </a>
-
+                                                                                <p><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p>
                                                                             </td>
                                                                         }
                                                                         else
@@ -259,6 +255,7 @@
                                                                                     }
                                                                                 </span>
                                                                                 <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                            <p><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p>
                                                                             </td>
                                                                         }
                                                                     }
@@ -267,10 +264,7 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                                @if (ViewBag.ClientRole == "Reviewer")
-                                                            {
-                                                                 <td>@item.JDTiltle</td>
-                                                            }
+                                                            
                                                                 <td> <a style="padding: 2px 6px 4px 5px;font-size:12px;" id="reportId" target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Client Report</a> </td>
                                                                 @* <td> <span style="cursor:pointer" onclick="GenerateExecutiveReport('@item.imid','@ViewBag.IRFintId')">Report</span> </td> *@
                                                                 @if (item.resumeLink != null && item.resumeLink != "")

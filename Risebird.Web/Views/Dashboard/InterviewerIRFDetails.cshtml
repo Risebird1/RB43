@@ -227,7 +227,7 @@
                                                             @if (ViewBag.PageStatus != "Public")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats" style="width:27px!important;height:27px!important">
-                                                                    <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" >
                                                                         <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                     </a>
                                                                 </button>
@@ -258,7 +258,7 @@
                                                         <td>@item.Clienthr</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
-                                                        <td><a href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
+                                                        <td><a  target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
                                                         @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                         {
                                                             @if (ViewBag.Type == "Selection")
