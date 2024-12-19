@@ -1158,5 +1158,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers()
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientRemovedInterviewers();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

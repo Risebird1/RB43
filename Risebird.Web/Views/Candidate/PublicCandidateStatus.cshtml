@@ -798,15 +798,27 @@
                                                         }
                                                         else
                                                         {
-                                                            <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" class="active" rel="tab1">Future Scheduled</li>
+                                                            @if (ViewBag.ClientRole == "Reviewer")
+                                                            {
+                                                                 <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" rel="tab1">Future Scheduled</li>
+                                                                <li onclick="ChangeTab('@CandidateTypeForClient.CompletedMeeting.GetDescription()')" class="active" rel="tab1">Completed Meeting</li>
+                                                            
+                                                            }
+                                                            else
+                                                            {
+                                                                 <li onclick="ChangeTab('@CandidateTypeForClient.FutureScheduled.GetDescription()')" class="active" rel="tab1">Future Scheduled</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.CompletedMeeting.GetDescription()')" rel="tab1">Completed Meeting</li>
-                                                            @if (ViewBag.ClientRole != "Reviewer")
+                                                            
+                                                            }
+
+                                                           @if (ViewBag.ClientRole != "Reviewer")
                                                             {
                                                                 <li onclick="ChangeTab('@CandidateTypeForClient.ReportPending.GetDescription()')" rel="tab1">Report Pending</li>
                                                                 <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                                 <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                                 <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             }
+                                                          
                                                             @* <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li> *@
                                                         }
 
