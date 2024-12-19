@@ -5691,7 +5691,7 @@ namespace Risebird.Web.Controllers
                         //}
                         if (ClientRole != "HRs" && ClientRole != "Staffing Agency")
                         {
-                            var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), irfId);
+                            var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), item.Irfintid);
                             try
                             {
                                 ++colDataNumber;
@@ -5968,7 +5968,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 16].Value = "No Video";
                         //}
-                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), irfId);
+                        var executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(item.id), item.Irfintid);
                         ++colPendDataNumber;
                         try
                         {
