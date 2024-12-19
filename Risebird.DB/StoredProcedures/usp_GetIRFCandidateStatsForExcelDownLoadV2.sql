@@ -121,7 +121,7 @@ end
 
 ----completed    
     
-select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
+select IRF.id as Irfintid,im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,    
 im.staffingAgency, ice.InterviewStatus as InterviewStatusTwo, ice.MeetingStatus as MeetingStatusTwo,     
 ice.InterviewerComment as InterviewerCommentTwo,    
@@ -152,7 +152,7 @@ where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%RE
     
 ----pending    
     
-select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
+select IRF.id as Irfintid,im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,    
 im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,    
 tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName,  
@@ -168,7 +168,7 @@ where CandidateLatestStatus in ('PENDING')
     
     
 ----future scheduled    
-select distinct im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, im.confirmationStatus    
+select distinct IRF.id as Irfintid,im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, im.confirmationStatus    
 , im.ClientHrContact, im.staffingAgency    
 , tctv.ResumeLink, CandidateLatestStatus,    
 tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate    
@@ -183,7 +183,7 @@ where CandidateLatestStatus in ('FUTURESCHEDULE')
     
 ----rescheduled    
     
-select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
+select IRF.id as Irfintid,im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,    
 ic.InterviewStatus, im.ClientHrContact, ic.VideoLink, im.confirmationStatus--, ic.CommunicationalProficiency, ic.InterviewerComment    
 ,im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,    
 tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName, tctv.PreReportLink,   
@@ -199,7 +199,7 @@ where CandidateLatestStatus in ('RESCHEDULE')
     
     
 ----not scheduled    
-select ul.id as UserId, ul.MobileNumber, IRF.JDTiltle, ul.EmailId as candidateEmail, concat(ul.FirstName, ' ', ul.LastName) as candidateName, irf.IRFId  --ic.MeetingStatus,--im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName,     
+select IRF.id as Irfintid,ul.id as UserId, ul.MobileNumber, IRF.JDTiltle, ul.EmailId as candidateEmail, concat(ul.FirstName, ' ', ul.LastName) as candidateName, irf.IRFId  --ic.MeetingStatus,--im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName,     
 --ic.InterviewStatus, ic.InterviewerComment,  ic.VideoLink, ic.CommunicationalProficiency,--im.ClientHrContact, im.confirmationStatus, im.staffingAgency,     
 ,tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate,   
 tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate, tctv.PreReportLink, tctv.PreReportUsername,   

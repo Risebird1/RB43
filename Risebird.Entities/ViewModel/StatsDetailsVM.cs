@@ -16,6 +16,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? InterviewerJoinTime { get; set; }
         public int? interviewId { get; set; }
         public bool isTechQC { get; set; }
+        public string ProjectUniqueid { get; set; }
+        public string JDTiltle { get; set; }
     }
     public class ProjectStatsVM
     {
