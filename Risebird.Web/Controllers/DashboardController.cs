@@ -4111,7 +4111,39 @@ namespace Risebird.Web.Controllers
         #region Client Action Data
         public async Task<IActionResult> ClientRemovedInterviewers()
         {
-            return View();
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHr")
+                    {
+                        var model = await _dashboardService.GetClientRemovedInterviewers();
+                        if (model == null)
+                        {
+                            model = new List<PQIDetails>();
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         #endregion
     }
