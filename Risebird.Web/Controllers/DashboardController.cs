@@ -4108,5 +4108,11 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        #region Client Action Data
+        public async Task<IActionResult> ClientRemovedInterviewers()
+        {
+            return View();
+        }
+        #endregion
     }
 }

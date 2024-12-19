@@ -1127,6 +1127,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    Irfintid = !string.IsNullOrEmpty(dt.Rows[i]["Irfintid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Irfintid"]) : 0,
                                     ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
@@ -1208,6 +1209,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    Irfintid = !string.IsNullOrEmpty(dt.Rows[i]["Irfintid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Irfintid"]) : 0,
                                     ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
@@ -1253,6 +1255,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    Irfintid = !string.IsNullOrEmpty(dt.Rows[i]["Irfintid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Irfintid"]) : 0,
                                     ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
@@ -1297,6 +1300,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    Irfintid = !string.IsNullOrEmpty(dt.Rows[i]["Irfintid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Irfintid"]) : 0,
                                     ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
@@ -1343,6 +1347,7 @@ namespace Risebird.Repository
                                 listCandidates.Add(new CandidateExcelData
                                 {
                                     //id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    Irfintid = !string.IsNullOrEmpty(dt.Rows[i]["Irfintid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Irfintid"]) : 0,
                                     ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
                                     candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
