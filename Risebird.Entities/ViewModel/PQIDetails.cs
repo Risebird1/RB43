@@ -26,5 +26,6 @@
         public string NickName { get; set; }
         public string ShortListstatus { get; set; }
         public string ProjectUniqueid { get; set; }
+        public int RedMarker { get; set; }
     }
 }
