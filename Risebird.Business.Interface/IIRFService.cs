@@ -23,8 +23,9 @@ namespace Risebird.Business.Interface
         SelectList GetQualityController();
         Task<IRFVm> GetEditIRF(int id, int? templateId, bool isClone = false);
         Task<IRFVm> GetSkillChannelInterviewersForEdit(int id);
+        Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
-        Task<bool> AddIRFInterviewers(IRFVm model);
+        //Task<bool> AddIRFInterviewers(IRFVm model);
         IList<SkillComment> GetTechSkillComments(int id, string emailId = null);
         bool CheckUniqueness(string value, bool isCloneTemplate = false);
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();

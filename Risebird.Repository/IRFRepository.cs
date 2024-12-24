@@ -316,13 +316,13 @@ namespace Risebird.Repository
                     dp.Add("@assessmentgroupid", assessmentgroupid);
                     if (irfId != null && irfId < 5805)
                     {
-                        var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
+                        var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, (SELECT primarySkill = STRING_AGG(sk.[Name], ',') from TransInterviewerSkill tis join Skill sk on sk.id = tis.SkillId where tis.InterviewerProfileId = ipr.id ) as PrimarySkill from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink, CTE.PrimarySkill  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
                         return result.Distinct().ToList();
 
                     }
                     else
                     {
-                        var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, Isavailable, AvailabilityResponseDate from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and (CTE.Isavailable in (0, 1, 2, 3, 4) or CTE.Isavailable is null) and ul.IsActive=1", dp);
+                        var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, Isavailable, AvailabilityResponseDate, (SELECT primarySkill = STRING_AGG(sk.[Name], ',') from TransInterviewerSkill tis join Skill sk on sk.id = tis.SkillId where tis.InterviewerProfileId = ipr.id ) as PrimarySkill from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink, CTE.PrimarySkill  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and (CTE.Isavailable in (0, 1, 2, 3, 4) or CTE.Isavailable is null) and ul.IsActive=1", dp);
                         return result.Distinct().ToList();
 
                     }
@@ -864,6 +864,7 @@ namespace Risebird.Repository
                             _resultVM.JobCountry = !string.IsNullOrEmpty(dt.Rows[0]["JobCountry"].ToString()) ? dt.Rows[0]["JobCountry"].ToString() : null;
                             _resultVM.CompanyType = !string.IsNullOrEmpty(dt.Rows[0]["CompanyType"].ToString()) ? dt.Rows[0]["CompanyType"].ToString() : null;
                             _resultVM.IsNewSkillChannel = !string.IsNullOrEmpty(dt.Rows[0]["IsNewSkillChannel"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsNewSkillChannel"]) : false;
+                            _resultVM.FlatRate = !string.IsNullOrEmpty(dt.Rows[0]["FlatRate"].ToString()) ? Convert.ToInt32(dt.Rows[0]["FlatRate"]) : 0;
 
                         }
                     }
@@ -2767,26 +2768,125 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> AddIRFInterviewers(IRFVm irfDetails)
+        //public async Task<bool> AddIRFInterviewers(IRFVm irfDetails)
+        //{
+        //    try
+        //    {
+
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+                    
+        //            DataTable interviewerDt = new DataTable();
+
+        //            if (irfDetails.InterviewerCollectionPopup != null && irfDetails.InterviewerCollectionPopup.Count() != 0 && !(irfDetails.InterviewerCollectionPopup.Where(x => x.UserId == 0).Any()))
+        //            {
+        //                interviewerDt.Columns.Add("IRFId", typeof(int));
+        //                interviewerDt.Columns.Add("UserId", typeof(int));
+        //                interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+        //                if (irfDetails.IsNewSkillChannel)
+        //                {
+        //                    interviewerDt.Columns.Add("Surcharge", typeof(int));
+
+        //                }
+        //                interviewerDt.Columns.Add("IsActive", typeof(bool));
+        //                interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+        //                interviewerDt.Columns.Add("Source", typeof(string));
+        //                interviewerDt.Columns.Add("IsCampaignActivity", typeof(bool));
+        //                interviewerDt.Columns.Add("CampaignId", typeof(int));
+        //                interviewerDt.Columns.Add("OpenAIScreeningResponse", typeof(string));
+        //                interviewerDt.Columns.Add("AIVerdict", typeof(string));
+        //                interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
+
+        //                foreach (var item in irfDetails.InterviewerCollectionPopup)
+        //                {
+        //                    if (irfDetails.IsNewSkillChannel)
+        //                    {
+        //                        interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge,
+        //                            false, true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
+        //                            item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
+        //                    }
+        //                    else
+        //                    {
+        //                        interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, false,
+        //                            true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
+        //                            item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
+        //                    }
+        //                }
+        //            }
+
+        //            SqlCommand cmdUpdateIRF = new SqlCommand("usp_AddIRFInterviewers", con);
+        //            cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
+
+        //            cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+        //            cmdUpdateIRF.Parameters["@id"].Value = irfDetails.id;
+
+        //            cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+        //            cmdUpdateIRF.Parameters["@timeNow"].Value = DateTime.Now;
+
+        //            cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+        //            cmdUpdateIRF.Parameters["@PerformedBy"].Value = irfDetails.LoggedEmail;
+
+        //            cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+        //            cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;
+
+        //            if (interviewerDt != null && interviewerDt.Rows.Count > 0)
+        //            {
+        //                if (irfDetails.IsNewSkillChannel)
+        //                {
+        //                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
+        //                    cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
+
+        //                }
+        //                else
+        //                {
+        //                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+        //                    cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+
+        //                }
+        //            }
+                   
+        //            con.Open();
+
+        //            if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
+        //            {
+        //                con.Close();
+        //            }
+                    
+        //            return true;
+                    
+        //        }
+
+        //    }
+
+        //    catch (SqlException e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+        public async Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser)
         {
             try
             {
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     DataTable interviewerDt = new DataTable();
 
-                    if (irfDetails.InterviewerCollectionPopup != null && irfDetails.InterviewerCollectionPopup.Count() != 0 && !(irfDetails.InterviewerCollectionPopup.Where(x => x.UserId == 0).Any()))
+                    if (interviewers != null && interviewers.Count() != 0 && !(interviewers.Where(x => x.UserId == 0).Any()) && (interviewers.Where(x => x.IsSelectedForAdding).Any()))
                     {
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        if (irfDetails.IsNewSkillChannel)
-                        {
-                            interviewerDt.Columns.Add("Surcharge", typeof(int));
+                        interviewerDt.Columns.Add("Surcharge", typeof(int));
 
-                        }
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
                         interviewerDt.Columns.Add("Source", typeof(string));
@@ -2796,63 +2896,56 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("AIVerdict", typeof(string));
                         interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
 
-                        foreach (var item in irfDetails.InterviewerCollectionPopup)
+                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding))
                         {
-                            if (irfDetails.IsNewSkillChannel)
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge,
-                                    false, true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
-                                    item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
-                            }
-                            else
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, false,
-                                    true, irfDetails.LoggedEmail, item.IsCampaignActivity, item.CampaignId,
-                                    item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
-                            }
+                            
+                            interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate, 
+                                item.Surcharge, false, true, item.Source, false, 0,
+                                null, null, false);
+
                         }
                     }
 
-                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_AddIRFInterviewers", con);
+                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_AddIRFInterviewersV2", con);
                     cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@id"].Value = irfDetails.id;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@id"].Value = irfDetails.id;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@timeNow"].Value = DateTime.Now;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@PerformedBy"].Value = irfDetails.LoggedEmail;
+                    cmdUpdateIRF.Parameters["@PerformedBy"].Value = loggedInUser;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;
-
+                    
                     if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     {
-                        if (irfDetails.IsNewSkillChannel)
-                        {
-                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
-                            cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
+                        //if (irfDetails.IsNewSkillChannel)
+                        //{
+                        //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
+                        //    cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
 
-                        }
-                        else
-                        {
-                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                            cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                        //}
+                        //else
+                        //{
+                        //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                        //    cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
 
-                        }
+                        //}
                     }
-                   
+
                     con.Open();
 
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
-                    
+
                     return true;
-                    
+
                 }
 
             }

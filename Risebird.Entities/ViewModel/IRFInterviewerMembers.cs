@@ -5,7 +5,8 @@ namespace Risebird.Entities.ViewModel
     public class IRFInterviewerMembers
     {
         public int IRFId { get; set; }
-
+        public string PrimarySkill { get; set; }
+        public int Surcharge { get; set; }
         public string Type { get; set; }
         public string EmailId { get; set; }
         public string ResumeLink { get; set; }
@@ -16,6 +17,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerName { get; set; }
         public bool IsActive { get; set; }
         public bool IsAvailable { get; set; }
+        public bool IsSelectedForAdding { get; set; }
         public string AvailableStatus { get; set; }
         public int AvailbilityHour { get; set; }
         public bool IsVerified { get; set; }
