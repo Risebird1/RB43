@@ -6,12 +6,12 @@
 <!-- Modal -->
 
 <div class="modal fade" style="height:1000px" id="modal_addInterviewer" tabindex="-1" role="dialog" aria-labelledby="modaladdInterviewerLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-xl" role="document" style="max-width:1000px">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background: #42a5f56e!important">
                 <h5 class="modal-title" id="modalAddInterviewersLabel">Choose Interviewers from the list of active Interviewers below:</h5>
 
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;color:#fff">
                     <span aria-hidden="true">×</span>
                 </button>
 
@@ -72,7 +72,7 @@
                                                 {
                                                     @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
                                                     {
-                                                        <td class="text-center">@Html.TextBoxFor(m => m[i].Surcharge)</td>
+                                                        <td class="text-center surcharge-field">@Html.TextBoxFor(m => m[i].Surcharge)</td>
                                                     }
                                                 }
 
