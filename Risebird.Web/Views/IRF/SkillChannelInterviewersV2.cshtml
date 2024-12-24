@@ -1,0 +1,171 @@
+﻿@model IList<Risebird.Entities.ViewModel.IRFInterviewerMembers>
+@using Newtonsoft.Json
+@using Risebird.Entities.ViewModel
+
+
+<!-- Modal -->
+
+<div class="modal fade" style="height:1000px" id="modal_addInterviewer" tabindex="-1" role="dialog" aria-labelledby="modaladdInterviewerLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddInterviewersLabel">Choose Interviewers from the list of active Interviewers below:</h5>
+
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+
+            </div>
+            <div class="modal-body" id="addinterviewers_modal_body" style="max-height:400px; overflow:auto">
+
+                <form asp-action="AddIRFInterviewers" asp-route-irfId="@ViewBag.IRFId"> @* asp-route-assessmentGroupName="@ViewBag.IRFId" *@
+                    @if (Model != null && Model.Count() > 0)
+                    {
+@*                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />*@
+                       <input name="IsValid" type="hidden" value="@ViewBag.IsValid" />
+                       <input name="Result" type="hidden" value="@ViewBag.Result" />
+
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="scrollers" style="overflow-y:auto">
+                            <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Email Id</th>
+                                        <th>Primary Skills</th>
+                                        <th>Resume</th>
+                                        <th>Rate</th>
+                                        @if(ViewBag.IsNewSkillChannel != null && ViewBag.IsNewSkillChannel == true)
+                                        {
+                                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
+                                            {
+                                                <th>Surcharge</th>
+                                            }
+                                        }
+                                        <th>Add</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+                                        for (int i = 0; i <= Model.Count() - 1; i++)
+                                        {
+                                            <tr>
+                                                <td>@Model[i].EmailId</td>
+                                                <td>@Model[i].PrimarySkill</td>
+                                                <td>@Model[i].PerSuccessRate</td>
+                                                @if (!string.IsNullOrEmpty(Model[i].ResumeLink)) //CodedResumeLink
+                                                {
+                                                    <td class="cadName">
+                                                        <a href="@Model[i].ResumeLink" target="_blank" data-tooltip="@Model[i].ResumeLink">Resume</a>
+                                                    </td>
+
+                                                }
+                                                else
+                                                {
+                                                    <td class="cadName">
+                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                    </td>
+                                                }
+                                                @if(ViewBag.IsNewSkillChannel != null && ViewBag.IsNewSkillChannel == true)
+                                                {
+                                                    @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
+                                                    {
+                                                        <td class="text-center">@Html.TextBoxFor(m => m[i].Surcharge)</td>
+                                                    }
+                                                }
+
+                                                
+                                                <td class="text-center">@Html.CheckBoxFor(m => m[i].IsSelectedForAdding)</td>
+                                                
+                                                @Html.HiddenFor(m =>m[i].UserId)
+                                                @Html.HiddenFor(m =>m[i].Source, new { Value = ViewBag.LoggedEmail })
+                                                @Html.HiddenFor(m =>m[i].IRFId)
+
+                                            </tr>
+                                        }
+                                    }
+
+
+
+
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    }
+
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save">
+                </div>
+               
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var placeholderElement = $('#modal_addinterviewers_placeholder');
+    
+    placeholderElement.on('click', '[data-save="modal"]', function (event) {
+        event.preventDefault();
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        
+        var dataToSend = form.serialize();
+        $.post(actionUrl, dataToSend).done(function (data) {
+            
+            var newBody = $('.modal-body', data);
+            placeholderElement.find('.modal-body').replaceWith(newBody);
+            // find IsValid input field and check it's value
+            // if it's valid then hide modal window
+            var isValidElement = newBody.find('[name="IsValid"]');
+            if (isValidElement != null) {
+                var isValid = newBody.find('[name="IsValid"]').val();
+                if (isValid == "True") {
+                    placeholderElement.find('.modal').modal('hide');
+                    var result = newBody.find('[name="Result"]').val();
+
+                    if(result == "True")
+                    {
+                        Swal.fire({
+                            title: '<strong>Successful</u></strong>',
+                            type: 'success',
+                            html: "Interviewer(s) added successfully!",
+                            confirmButtonText: "Close",
+                            allowOutsideClick: false
+                        });
+                        setTimeout(function () {
+                            location.reload(true);
+                        }, 2000);
+
+                    }
+                    else{
+                        Swal.fire({
+                            title: '<strong>Failed</u></strong>',
+                            type: 'error',
+                            html: "Failed to add Interviewer(s).",
+                            confirmButtonText: "Close",
+                            allowOutsideClick: false
+                        });
+                    }
+                    
+                }
+            }
+
+        });
+
+    });
+</script>
+

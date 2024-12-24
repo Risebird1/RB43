@@ -33,7 +33,7 @@ Begin
 	  
 End
 
-if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
+if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId)
 Begin
 	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy)
 	values (@EmailId, @PrimarySpecialization, @screeningResponseJson, @AIVerdict, @timeNow, @PerformedBy)
