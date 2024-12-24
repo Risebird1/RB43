@@ -1170,5 +1170,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<PQIDetails>> GetTotalRedMarkeredInterviewers()
+        {
+            try
+            {
+                return await _dashboardRespository.GetTotalRedMarkeredInterviewers();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

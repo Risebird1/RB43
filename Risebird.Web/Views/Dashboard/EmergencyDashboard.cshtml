@@ -2495,7 +2495,7 @@
                                                         <div>
                                                             <h3 class="dashboard-cat-title"><span><strong>All Emergency Interview</strong></span></h3>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;font-size:15px;">
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;font-size:15px;line-height:39px;">
                                                             <div class="header-front"></div>
                                                             <strong><span id="ribbonAllEmergencyInterviewCount" onclick="AllEmergencyInterview()" style="font-size:15px;cursor:pointer"></span>Click here</strong>
 
@@ -2555,7 +2555,7 @@
                                                         <div>
                                                             <h3 class="dashboard-cat-title"><span><strong>Surcharge Details</strong></span></h3>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;font-size:15px;">
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;font-size:15px;line-height:39px;">
                                                             <div class="header-front"></div>
                                                             <strong><span id="ribbonSurchargeDetailsCount" onclick="()" style="font-size:15px;cursor:pointer"></span>Click here</strong>
 
@@ -2614,7 +2614,7 @@
                                                         <div>
                                                             <h3 class="dashboard-cat-title"><span><strong>AI Verdict (Interviewer) - Negative </strong></span></h3>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;">
+                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;line-height:21px;">
                                                             <div class="header-front"></div>
                                                             <strong><span onclick="AIVerdict()" style="font-size:15px;">Click here </span> </strong>
                                                         </div>
@@ -2752,7 +2752,7 @@
                                                         <div>
                                                             <h3 class="dashboard-cat-title"><span><strong> Not Confirmed By Candidates </strong></span></h3>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:-5px;">
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:-5px;s line-height: 21px;">
                                                             <div class="header-back"></div>
                                                             <strong><span style="font-size:15px;position:relative;left:10px;" onclick="CandidateNotConfirmedMeetings()" class="card-title">Click here </span> </strong>
                                                         </div>
@@ -2787,7 +2787,7 @@
                                                         <div>
                                                             <h3 class="dashboard-cat-title"><span style="margin-bottom:20px;"><strong> Interviewer's Billing </strong></span></h3>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;">
+                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;line-height: 40px;">
                                                             <div class="header-front"></div>
                                                             <strong><span onclick="InterviewersBilling()" style="font-size:15px;">Click here </span> </strong>
                                                         </div>
@@ -2820,12 +2820,46 @@
                                                         <div>
                                                             <h3 class="dashboard-cat-title"><span style="margin-bottom:20px;"><strong> Removed Interviewers <span class="dashboard-smalltxt">By Client</span> </strong></span></h3>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;">
+                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;line-height: 38px;">
                                                             <div class="header-front"></div>
                                                             <strong><span onclick="RemovedInterviewers()" style="font-size:15px;">Click here </span> </strong>
                                                         </div>
                                                         <div class="pull-right">
                                                             <button onclick="RemovedInterviewers()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper38">
+                                <div id="survey-feedback">
+                                    <div style="cursor:pointer" onclick="RedMarkedInterviewers()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#ea97837d;padding:0px!important;"><img src="/img/red-marked-icon.png" style="position: relative;top: -1px;left: 2px;"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span style="margin-bottom:20px;"><strong> Total Red Marked Interviewers  </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;line-height: 12px;">
+                                                            <div class="header-front"></div>
+                                                            <strong><span onclick="RemovedInterviewers()" style="font-size:15px;">Click here </span> </strong>
+                                                        </div>
+                                                        <div class="pull-right">
+                                                            <button onclick="RedMarkedInterviewers()" class="click-arrow" title="Detail View">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
                                                             </button>
                                                         </div>
@@ -2930,6 +2964,10 @@
     }
      function RemovedInterviewers() {
         window.location.href = "/Dashboard/ClientRemovedInterviewers";
+    }
+
+    function RedMarkedInterviewers(){
+        window.location.href = "/Dashboard/TotalRedMarkeredInterviewers";
     }
     function NotScheduledMeetingsCO() {
         window.location.href = "/Dashboard/NotScheduledMeetingsCO";
