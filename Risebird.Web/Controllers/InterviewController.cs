@@ -3375,7 +3375,16 @@ namespace Risebird.Web.Controllers
                                 }
                                 if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
                                 {
-                                    await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
+                                    if (model.ClientId == 67)
+                                    {
+                                        var portallink = "https://" + Request.Host.ToString();
+                                        var reportlink = await GenerateExecutiveReportURl(portallink, model.InterviewId, model.IRFId);
+                                        await _notificationHelper.SendNotificationToClientForSelectedCandidatewithReport(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId, reportlink);
+                                    }
+                                    else
+                                    {
+                                        await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
+                                    }
                                 }
                                 //var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
@@ -9233,6 +9242,23 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("PublicCandidateStatus", new { id = id });
             }
+        }
+        #endregion
+        #region Executive Report 
+        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        {
+            var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
+            var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
+            var reportlink = string.Empty;
+            if (portalurl.LastOrDefault() == '/')
+            {
+                reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            }
+            else
+            {
+                reportlink = portalurl + "/Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
+            }
+            return reportlink;
         }
         #endregion
     }
