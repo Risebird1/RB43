@@ -90,5 +90,6 @@ namespace Risebird.Business.Interface
         Task<List<PQIDetails>> GetTotalInterviewerRiskIRFDetails(string uniqueid = null, string Email = null);
         Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList();
         Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers();
+        Task<IEnumerable<PQIDetails>> GetTotalRedMarkeredInterviewers();
     }
 }
