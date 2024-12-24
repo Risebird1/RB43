@@ -112,6 +112,7 @@
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.TotalCompletedMeetings</td>
+                                                        <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a></td>
                                                     </tr>
                                                 }
                                             </tbody>
