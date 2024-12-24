@@ -3375,7 +3375,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
                                 {
-                                    if (model.ClientId == 67)
+                                    if (model.ClientId == 67)//UST US
                                     {
                                         var portallink = "https://" + Request.Host.ToString();
                                         var reportlink = await GenerateExecutiveReportURl(portallink, model.InterviewId, model.IRFId);
