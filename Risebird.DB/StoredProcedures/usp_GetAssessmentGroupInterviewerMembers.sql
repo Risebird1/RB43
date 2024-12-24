@@ -41,7 +41,7 @@ outer apply ((select top 1 CreatedOn, IsAvailable, ModifiedAt from AGLevelAvaila
 where ul.IsActive=1 
 group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.MCQCandidateid,ag.AssessmentVerificationType,  
 ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker ,agla.IsAvailable, agla.CreatedOn, agla.ModifiedAt    
-  
+order by ul.EmailId  
 End  
 else  
 begin  
