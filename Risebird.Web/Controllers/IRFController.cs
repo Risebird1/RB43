@@ -10538,7 +10538,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SkillChannelInterviewers(int id)
+        public async Task<IActionResult> SkillChannelInterviewers(int irfId)
         {
             try
             {
@@ -10550,34 +10550,48 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
+                        //var viewModel = new List<Interviewer>() { };
+                        var viewModel = new List<IRFInterviewerMembers>() { };
                         IRFVm model = new IRFVm();
-                        model.LoggedEmail = emailid;
-                        model.Profile = profileName;
-                        model = await _irfService.GetSkillChannelInterviewersForEdit(id);
+                        //model.LoggedEmail = emailid;
+                        //model.Profile = profileName;
+                        model = await _irfService.GetSkillChannelInterviewersForEdit(irfId);
 
                         DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
                         var AssessmentsGroups = new List<AssignmentVM>();
                         if (model.CreatedOn < absoluteTime)
                         {
-                            var interviewerOptions = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
-                            interviewerOptions.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
-                            ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
-
+                            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                            interviewers.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
+                            foreach (var interviewer in interviewers)
+                            {
+                                var obj = new IRFInterviewerMembers();
+                                obj.UserId = interviewer.UserId;
+                                obj.EmailId = interviewer.EmailId;
+                                obj.CompanyName = interviewer.CompanyName;
+                                obj.PrimarySkill = interviewer.PrimarySkill;
+                                obj.ResumeLink = interviewer.ResumeLink;
+                                obj.PerSuccessRate = model.FlatRate;
+                                obj.IRFId = irfId;
+                                viewModel.Add(obj);
+                                //add interviewer into viewModal
+                            }
+                            //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
                         }
                         else
                         {
-                            var interviewerOptions = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true)).ToList();
-                            interviewerOptions.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
-                            ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+                            viewModel = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true)).ToList();
+                            viewModel.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
+                            //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
                         }
-                        //var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
-                        //var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
-                        //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
-                        //var interviewerOptions = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
-
-                        //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
-                        return PartialView(model);
+                        ViewBag.IRFId = irfId;
+                        ViewBag.IsNewSkillChannel = model.IsNewSkillChannel;
+                        ViewBag.LoggedEmail = emailid;
+                        ViewBag.Profile = profileName;
+                        ViewBag.IsValid = "True";
+                        ViewBag.Result = true;
+                        return PartialView("SkillChannelInterviewersV2", (IList<IRFInterviewerMembers>)viewModel);
                     }
                     else
                     {
@@ -10596,7 +10610,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AddIRFInterviewers(IRFVm model)
+        public async Task<IActionResult> AddIRFInterviewers(IList<IRFInterviewerMembers> interviewers, int irfId)//IRFVm model
         {
             try
             {
@@ -10608,17 +10622,24 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        model.LoggedEmail = emailid;
-                        var result = await _irfService.AddIRFInterviewers(model);
+                        //var result = await _irfService.AddIRFInterviewers(model);
+                        interviewers.ToList().ForEach(x => x.IRFId = irfId);
+                        var result = await _irfService.AddIRFInterviewersV2(interviewers, emailid);
                         if (result)
                         {
-                            TempData["SuccessErrorMessageAddInterviewers"] = $"Successfully added interviewer(s) to skill channel : {model.IRFId}";
+                            //TempData["SuccessErrorMessageAddInterviewers"] = $"Successfully added interviewer(s) to skill channel";// : {model.IRFId}
+                            ViewBag.Result = "True";
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageAddInterviewers"] = $"Failed to add interviewer(s) to skill channel : {model.IRFId}";
+                            //TempData["SuccessErrorMessageAddInterviewers"] = $"Failed to add interviewer(s) to skill channel";//: {model.IRFId}
+                            ViewBag.Result = "False";
                         }
-                        return RedirectToAction("EditIRFInterviewers", new { id = model.id });
+
+                        ViewBag.IsValid = "True";
+
+                        return PartialView("SkillChannelInterviewersV2", interviewers);
+
 
                     }
                     else

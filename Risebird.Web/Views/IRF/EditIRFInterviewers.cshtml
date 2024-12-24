@@ -298,6 +298,10 @@
                                                 <span onclick="javascript:OpenInterviewerModal('@Model.id');"><i class='fa fa-plus' style='color: white'></i>Add Interviewer</span>
 
                                             </button>
+                                            @* <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to add Interviewers" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
+                                                <span onclick="javascript:GetInterviewers('@Model.id')" title="Click here to add Interviewers"><i style="font-size: 13px;position: relative;top: 2px;" class="fas fa-user-check"></i>
+                                                </span>
+                                            </button> *@
 
 
                                         </div>
@@ -324,7 +328,7 @@
 
 </div>
 <div id="PopupDetailsModal" class="modal modal-bg add-interviewer-popup">
-    <!-- Modal content -->
+    
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
@@ -341,6 +345,9 @@
         </div>
     </div>
 </div>
+
+<div id="modal_addinterviewers_placeholder"></div>
+
 @await Html.PartialAsync("~/Views/IRF/UploadInterviewerResumePartial.cshtml")
 @if (ViewBag.Message != null )
 {
@@ -397,35 +404,46 @@
         var modal = document.getElementById("PopupDetailsModal");
         modal.style.display = "block";
     }
-    function OpenInterviewerModal(irfid) {
-        debugger;
-        $("#changememberHeading").text('Interviewer');
+    // function OpenInterviewerModal(irfid) {
+    //     debugger;
+    //     $("#changememberHeading").text('Interviewer');
+    //     $.ajax({
+    //         url: '/IRF/SkillChannelInterviewers',
+    //         data: { 'id' : irfid },
+    //         success: function (data) {
+    //             openPopupDetailsModal();
+    //             $('#divpopupModel').html('');
+    //             $('#divpopupModel').html(data);
+    //             debugger;
+    //             UpdateInterviewerRateVariable('@Model.Heuristicsscore', '@Model.JobCountry', '@Model.CompanyType');
+    //             if(isNewSkillChannel)
+    //             {
+    //                 var firstinterviewerRateElement = document.getElementById('InterviewerCollectionPopup_0__PerSuccessRate');
+    //                 if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value == "" || firstinterviewerRateElement.value == 0))
+    //                 {
+    //                     if(firstinterviewerRateElement.readOnly == true)
+    //                     {
+    //                         firstinterviewerRateElement.readOnly = false;
+    //                     }
+    //                     firstinterviewerRateElement.value = interviewerRate;
+    //                     firstinterviewerRateElement.readOnly = true;
+    //                 }
+    //             }
+    //         }
+    //     });
+    // }
+    function OpenInterviewerModal(irfId) {
         $.ajax({
             url: '/IRF/SkillChannelInterviewers',
-            data: { 'id' : irfid },
+            data: { 'irfId': irfId},
             success: function (data) {
-                openPopupDetailsModal();
-                $('#divpopupModel').html('');
-                $('#divpopupModel').html(data);
-                debugger;
-                UpdateInterviewerRateVariable('@Model.Heuristicsscore', '@Model.JobCountry', '@Model.CompanyType');
-                if(isNewSkillChannel)
-                {
-                    var firstinterviewerRateElement = document.getElementById('InterviewerCollectionPopup_0__PerSuccessRate');
-                    if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value == "" || firstinterviewerRateElement.value == 0))
-                    {
-                        if(firstinterviewerRateElement.readOnly == true)
-                        {
-                            firstinterviewerRateElement.readOnly = false;
-                        }
-                        firstinterviewerRateElement.value = interviewerRate;
-                        firstinterviewerRateElement.readOnly = true;
-                    }
-                }
+                $('#modal_addinterviewers_placeholder').html('');
+                $('#modal_addinterviewers_placeholder').html(data);
+               
+                $('#modal_addinterviewers_placeholder').find('.modal').modal('show');
             }
         });
     }
-
 </script>
 <script>
     function ScreenInterviewer(elementId, jdTitle, irfId, irfName, isRedo = false)
