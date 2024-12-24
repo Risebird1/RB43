@@ -879,11 +879,24 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> AddIRFInterviewers(IRFVm model)
+        //public async Task<bool> AddIRFInterviewers(IRFVm model)
+        //{
+        //    try
+        //    {
+        //        return await _irfRepository.AddIRFInterviewers(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return false;
+        //    }
+        //}
+
+        public async Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser)
         {
             try
             {
-                return await _irfRepository.AddIRFInterviewers(model);
+                return await _irfRepository.AddIRFInterviewersV2(interviewers, loggedInUser);
             }
             catch (Exception ex)
             {
@@ -891,7 +904,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-            #endregion
+        #endregion
         public IList<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
             try

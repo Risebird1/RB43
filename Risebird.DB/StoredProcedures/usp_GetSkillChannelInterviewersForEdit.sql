@@ -12,11 +12,11 @@ Create PROCEDURE [dbo].[usp_GetSkillChannelInterviewersForEdit]
 @irfId int      
 AS                  
 BEGIN   
-
-          
+         
 Select IRF.IRFID, IRF.JDTiltle, irf.ClientName, irf.CreatedOn, cl.[Name] as ClientCompName, irf.AssessmentGroupId,
 irf.CompanyType, irf.JobCountry, irf.Heuristicsscore, irf.IsNewSkillChannel,
-asg.AssessmentGroup as AssessmentGroupName
+asg.AssessmentGroup as AssessmentGroupName,
+(select rate from PlanTypeChargesMaster where CountryType = irf.JobCountry and PlanTypeEnumValue =irf.Heuristicsscore and CompanyType = irf.CompanyType) as FlatRate
 from IRF inner join Client cl on IRF.ClientId = cl.id 
 join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
 where IRF.id = @irfId  
@@ -39,7 +39,7 @@ join  TransInterviewer ti on ti.UserId=c.UserId
 join UserList ul on ul.id = ti.UserId  
 join @temptable tt on tt.userid=ti.Userid  
 left join AGCampaigns agc on agc.id = ti.CampaignId  
-where IRFId=@irfId and ul.IsActive=1  
+where IRFId=@irfId and ul.IsActive=1  order by ul.EmailId
   
 
   
