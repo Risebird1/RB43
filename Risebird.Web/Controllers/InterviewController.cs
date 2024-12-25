@@ -3373,19 +3373,18 @@ namespace Risebird.Web.Controllers
                                 {
                                     model.JDTiltle = model.JDTiltle + " and " + model.JDTitleTwo;
                                 }
-                                if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
+                                //UST US
+                                if ((model.InterviewStatus == 3 || model.InterviewStatus == 5 || model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId == 67)
                                 {
-                                    if (model.ClientId == 67)//UST US
-                                    {
-                                        var portallink = "https://" + Request.Host.ToString();
-                                        var reportlink = await GenerateExecutiveReportURl(portallink, model.InterviewId, model.IRFId);
-                                        await _notificationHelper.SendNotificationToClientForSelectedCandidatewithReport(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId, reportlink);
-                                    }
-                                    else
-                                    {
-                                        await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
-                                    }
+                                    var portallink = "https://" + Request.Host.ToString();
+                                    var reportlink = await GenerateExecutiveReportURl(portallink, model.InterviewId, model.IRFId);
+                                    await _notificationHelper.SendNotificationToClientForSelectedCandidatewithReport(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId, reportlink);
                                 }
+                                else if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
+                                {
+                                    await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
+                                }
+
                                 //var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
                                 string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
