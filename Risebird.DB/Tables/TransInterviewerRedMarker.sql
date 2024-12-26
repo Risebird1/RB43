@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[TransInterviewerRedMarker](
 			[InterviewerId] [int] NOT NULL,	
             [RedMarker] [int] NULL,
 			CONSTRAINT [FK_TIRIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
-			CONSTRAINT [FK_TIR_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
+			CONSTRAINT [FK_TIR_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES InterviewerProfile(id),
  CONSTRAINT [PK_TransInterviewerRedMarker] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
