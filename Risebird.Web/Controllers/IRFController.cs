@@ -10580,7 +10580,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            viewModel = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true)).ToList();
+                            viewModel = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId))).ToList();
                             viewModel.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
                             //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
                         }
