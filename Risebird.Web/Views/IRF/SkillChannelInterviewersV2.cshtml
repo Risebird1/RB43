@@ -54,7 +54,6 @@
                                             <tr>
                                                 <td>@Model[i].EmailId</td>
                                                 <td>@Model[i].PrimarySkill</td>
-                                                <td>@Model[i].PerSuccessRate</td>
                                                 @if (!string.IsNullOrEmpty(Model[i].ResumeLink)) //CodedResumeLink
                                                 {
                                                     <td class="cadName">
@@ -68,6 +67,8 @@
                                                         <a onclick="" data-tooltip="">No Resume</a>
                                                     </td>
                                                 }
+                                                <td>@Model[i].PerSuccessRate</td>
+
                                                 @if(ViewBag.IsNewSkillChannel != null && ViewBag.IsNewSkillChannel == true)
                                                 {
                                                     @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
