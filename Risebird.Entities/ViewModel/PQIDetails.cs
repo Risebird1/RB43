@@ -27,5 +27,6 @@
         public string ShortListstatus { get; set; }
         public string ProjectUniqueid { get; set; }
         public int RedMarker { get; set; }
+        public string AIVerdict { get; set; }
     }
 }

@@ -61,6 +61,7 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Completed Interviews</th>
+                                                    <th>AI Verdict</th>
                                             </thead>
                                             <tfoot>
                                                 <tr>
@@ -73,6 +74,7 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Completed Interviews</th>
+                                                    <th>AI Verdict</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -112,6 +114,14 @@
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a></td>
+                                                        @if (!string.IsNullOrWhiteSpace(item.AIVerdict))
+                                                        {
+                                                            <td>@item.AIVerdict</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                     </tr>
                                                 }
                                             </tbody>
