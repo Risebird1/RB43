@@ -3365,7 +3365,7 @@ namespace Risebird.CommonHelper
 
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = $"New Candidate named {candidateName} has been selected.";
+                msg.Subject = $"New Candidate named {candidateName} has been completed.";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
 
                 foreach (var mail in clientUsers)
