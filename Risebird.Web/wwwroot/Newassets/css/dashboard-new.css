@@ -6781,6 +6781,7 @@ input[type=search]:focus {
 }
 .surcharge-field input[type="text"] {
     height:35px;
+    width:100px;
 }
 /***** Media queries *****/
 .copy-btn {

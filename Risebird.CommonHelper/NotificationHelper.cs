@@ -3358,5 +3358,33 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail.";
             }
         }
+        public async Task<string> SendNotificationToClientForSelectedCandidatewithReport(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string reportlink, string clientlogo = null)
+        {
+            try
+            {
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = $"New Candidate named {candidateName} has been completed.";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+
+                foreach (var mail in clientUsers)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+
+                object[] parameters = new object[] { candidateEmail, interviewDate, primarySkill, irfId, status, reportlink };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientNotificationForSelectedCandidatewithReport.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return await SendMail(msg, null, interviewId);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }
