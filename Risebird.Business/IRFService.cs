@@ -678,11 +678,11 @@ namespace Risebird.Business
                 var model = new IRFVm();
 
                 model = await _irfRepository.GetSkillChannelInterviewersForEdit(id);
-                if (model == null)
-                    return null;
+                //if (model == null)
+                //    return null;
                 
                 model.id = id;
-                model.OldInterviewerCollection = model.InterviewerCollection;
+                //model.OldInterviewerCollection = model.InterviewerCollection;
                 return model;
             }
             catch (Exception e)

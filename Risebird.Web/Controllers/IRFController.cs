@@ -10509,7 +10509,7 @@ namespace Risebird.Web.Controllers
                         IRFVm model = new IRFVm();
 
                         model = await _irfService.GetSkillChannelInterviewersForEdit(id);
-                        var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+                        //var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
 
                         //ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                         if (TempData["SuccessErrorMessageAddInterviewers"] != null)
@@ -10582,7 +10582,7 @@ namespace Risebird.Web.Controllers
                         {
                             viewModel = (await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId))).ToList();
                             viewModel.RemoveAll(item => model.InterviewerCollection.Any(other => other.UserId == item.UserId));
-                            //ViewBag.Interviewers = new SelectList(interviewerOptions, "UserId", "EmailId");
+                            viewModel.ToList().ForEach(x => x.PerSuccessRate = model.FlatRate);
                         }
 
                         ViewBag.IRFId = irfId;
