@@ -65,7 +65,7 @@
                                                                                 <td>
 
 
-                                                                @Html.TextBox("InterviewerCollection[0].EmailId", null, new { @class = "form-control", @style = "width:270px;", data_initial_value = "", data_initial_text = "" })                                                                                   @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
+                                                                @Html.TextBox("InterviewerCollection[0].EmailId", null, new { @class = "form-control", @style = "width:270px;", @readonly = "readonly", data_initial_value = "", data_initial_text = "" })                                                                                   @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
  @* @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @style = "width:230px;", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text = "" })  *@                                                                                  @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                                     @Html.Hidden("InterviewerCollection[0].Source", new { Value = Model.LoggedEmail })
                                                                                 </td>
