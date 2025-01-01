@@ -52,6 +52,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public SkillDetails()
         {
             questions = new List<QuestionCommentsDetails>();
+            skillset = new List<SkillsSetsDetails>();
         }
         public string skillName { get; set; }
         public bool isPrimary { get; set; }
@@ -59,6 +60,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public int techscore { get; set; }
         public string interviewerComment { get; set; }
         public List<QuestionCommentsDetails> questions { get; set; }
+        public List<SkillsSetsDetails> skillset { get; set; }
     }
     public class QuestionCommentsDetails
     {
@@ -78,6 +80,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public InterviewChannelDetails()
         {
             questions = new List<QuestionDetailsSet>();
+            skillset = new List<SkillsSets>();
         }
         public int id { get; set; }
         public int irfintid { get; set; }
@@ -109,5 +112,18 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public DateTime? createdOn { get; set; }
         public DateTime? currentStatusUpdatedAt { get; set; }
         public string jobId { get; set; }
+        public List<SkillsSets> skillset { get; set; }
+    }
+    public class SkillsSetsDetails
+    {
+        public string skillName { get; set; }
+        public string score { get; set; }
+    }
+    public class SkillsSets
+    {
+        public string skillName { get; set; }
+        public int WeightageActual { get; set; }
+        public int WeightageRequired { get; set; }
+        public int skillSet { get; set; }
     }
 }

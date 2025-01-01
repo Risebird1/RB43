@@ -1084,7 +1084,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid,int projectid)
+        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId, string emailid, int projectid)
         {
             try
             {
@@ -1578,6 +1578,28 @@ namespace Risebird.Repository
                             }
                         }
                     }
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var interviewid = 0;
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewid = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0;
+                                if (_resultVM.Where(x => x.id == interviewid).Count() > 0)
+                                {
+                                    _resultVM.Where(x => x.id == interviewid).FirstOrDefault().skillset.Add(new SkillsSets
+                                    {
+                                        WeightageActual = !string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageActual"]) : 0,
+                                        WeightageRequired = !string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageRequired"]) : 0,
+                                        skillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : "",
+                                        skillSet = !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSet"]) : 1
+                                    });
+                                }
+                            }
+                        }
+                    }
                     return _resultVM;//?.FirstOrDefault();
                 }
             }
@@ -1684,6 +1706,28 @@ namespace Risebird.Repository
                                     {
                                         rating = !string.IsNullOrEmpty(dt.Rows[i]["RatingId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["RatingId"]) : 0,
                                         question = !string.IsNullOrEmpty(dt.Rows[i]["Comment"].ToString()) ? dt.Rows[i]["Comment"].ToString() : "",
+                                        skillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : "",
+                                        skillSet = !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSet"]) : 1
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var interviewid = 0;
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewid = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0;
+                                if (_resultVM.Where(x => x.id == interviewid).Count() > 0)
+                                {
+                                    _resultVM.Where(x => x.id == interviewid).FirstOrDefault().skillset.Add(new SkillsSets
+                                    {
+                                        WeightageActual = !string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageActual"]) : 0,
+                                        WeightageRequired = !string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageRequired"]) : 0,
                                         skillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : "",
                                         skillSet = !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSet"]) : 1
                                     });
