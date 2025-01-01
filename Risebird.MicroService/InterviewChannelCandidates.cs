@@ -9,6 +9,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -202,7 +203,8 @@ namespace Risebird.MicroService
                                     _skillset.Add(new SkillsSetsDetails
                                     {
                                         skillName = _skilldetail.skillName,
-                                        score = (_skilldetail.WeightageActual*100/_skilldetail.WeightageRequired).ToString()
+                                        EvaluatedAt = _skilldetail.EvaluatedAt,
+                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
                                     });
                                 }
                                 _skills.Add(new SkillDetails
@@ -213,7 +215,7 @@ namespace Risebird.MicroService
                                     techscore = item.TechScoreone,
                                     interviewerComment = item.InterviewerComment,
                                     questions = _questions,
-                                    skillset= _skillset
+                                    skillset = _skillset
                                 });
                                 //In case of multiStack
                                 if (item.numberOfTechStacks == 2)
@@ -234,6 +236,7 @@ namespace Risebird.MicroService
                                         _skillset.Add(new SkillsSetsDetails
                                         {
                                             skillName = _skilldetail.skillName,
+                                            EvaluatedAt = _skilldetail.EvaluatedAt,
                                             score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
                                         });
                                     }

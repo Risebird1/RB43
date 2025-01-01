@@ -1593,6 +1593,7 @@ namespace Risebird.Repository
                                     {
                                         WeightageActual = !string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageActual"]) : 0,
                                         WeightageRequired = !string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageRequired"]) : 0,
+                                        EvaluatedAt = dt.Rows[i]["EvaluatedAt"] != null ? dt.Rows[i]["EvaluatedAt"].ToString() : "",
                                         skillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : "",
                                         skillSet = !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSet"]) : 1
                                     });
@@ -1728,6 +1729,7 @@ namespace Risebird.Repository
                                     {
                                         WeightageActual = !string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageActual"]) : 0,
                                         WeightageRequired = !string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToInt32(dt.Rows[i]["WeightageRequired"]) : 0,
+                                        EvaluatedAt = dt.Rows[i]["EvaluatedAt"] != null ? dt.Rows[i]["EvaluatedAt"].ToString() : "",
                                         skillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : "",
                                         skillSet = !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSet"]) : 1
                                     });

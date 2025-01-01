@@ -145,6 +145,7 @@ namespace Risebird.MicroService
                                     _skillset.Add(new SkillsSetsDetails
                                     {
                                         skillName = _skilldetail.skillName,
+                                        EvaluatedAt = _skilldetail.EvaluatedAt,
                                         score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
                                     });
                                 }
@@ -177,6 +178,7 @@ namespace Risebird.MicroService
                                         _skillset.Add(new SkillsSetsDetails
                                         {
                                             skillName = _skilldetail.skillName,
+                                            EvaluatedAt = _skilldetail.EvaluatedAt,
                                             score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
                                         });
                                     }
