@@ -139,6 +139,16 @@ namespace Risebird.MicroService
                                         rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
                                     });
                                 }
+                                var _skillset = new List<SkillsSetsDetails>();
+                                foreach (var _skilldetail in result.skillset.Where(x => x.skillSet == 1).ToList())
+                                {
+                                    _skillset.Add(new SkillsSetsDetails
+                                    {
+                                        skillName = _skilldetail.skillName,
+                                        EvaluatedAt = _skilldetail.EvaluatedAt,
+                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
+                                    });
+                                }
                                 _skills.Add(new SkillDetails
                                 {
                                     isPrimary = true,
@@ -146,7 +156,8 @@ namespace Risebird.MicroService
                                     status = result.CandidateLatestStatus,
                                     techscore = result.TechScoreone,
                                     interviewerComment = result.InterviewerComment,
-                                    questions = _questions
+                                    questions = _questions,
+                                    skillset = _skillset
                                 });
                                 //In case of multiStack
                                 if (result.numberOfTechStacks == 2)
@@ -161,6 +172,16 @@ namespace Risebird.MicroService
                                             rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
                                         });
                                     }
+                                    _skillset = new List<SkillsSetsDetails>();
+                                    foreach (var _skilldetail in result.skillset.Where(x => x.skillSet == 2).ToList())
+                                    {
+                                        _skillset.Add(new SkillsSetsDetails
+                                        {
+                                            skillName = _skilldetail.skillName,
+                                            EvaluatedAt = _skilldetail.EvaluatedAt,
+                                            score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
+                                        });
+                                    }
                                     _skills.Add(new SkillDetails
                                     {
                                         isPrimary = false,
@@ -168,7 +189,8 @@ namespace Risebird.MicroService
                                         status = result.InterviewStatusTwoDesc,
                                         techscore = result.TechScoretwo,
                                         interviewerComment = result.InterviewerCommentTwo,
-                                        questions = _questions
+                                        questions = _questions,
+                                        skillset = _skillset
                                     });
                                 }
                                 model.result.Add(new CandidateStatusResponse
