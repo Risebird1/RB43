@@ -7,8 +7,12 @@
             <thead>
                 <tr>
                     <th width="20%" class="table_heading">Level</th>
-                    <th width="70%" class="table_heading">Skill Name</th>
+                    <th width="10%" class="table_heading">Skill Name</th>
                     <th width="10%" class="table_heading">Weightage</th>
+                    <th width="20%" class="table_heading">Concepts</th>
+                    <th width="20%" class="table_heading">Expectations</th>
+                    <th width="10%" class="table_heading">Time Limit</th>
+                    <th width="10%" class="table_heading">Is Elimination Skill</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +37,18 @@
                             <td></td>
                         }
                         <td>@item.Weightage</td>
+                        <td>@item.Concepts</td>
+                        <td>@item.Natureofquestion</td>
+                        <td>@item.Timelimit</td>
+                        @if(@item.isEliminationskill)
+                        {
+                            <td>Yes</td>
+                        }
+                        else
+                        {
+                            <td>No</td>
+                        }
+                        
                     </tr>
                 }
             </tbody>
