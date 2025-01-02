@@ -6289,7 +6289,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tcits.*, Skill.[Name] as SkillName, lt.[Name] as LevelName from TransClonableIRFTechSkill tcits join Skill on tcits.SkillId=Skill.id join LevelTech lt on lt.id = tcits.LevelId where tcits.ClonableIRFId = @id";
+                var query = "Select tcits.*, lt.[Name] as LevelName from TransClonableIRFTechSkill tcits join LevelTech lt on lt.id = tcits.LevelId where tcits.ClonableIRFId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6926,6 +6926,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@TechRubricType"].Value = TechRubricTypes.Advanced;
+
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
                     flatRateParam.DbType = DbType.Int16;
@@ -6934,28 +6937,28 @@ namespace Risebird.Repository
 
                     int flatRate = 0;
 
-                    DataTable techSkillDt = new DataTable();
-                    techSkillDt.Columns.Add("IRFId", typeof(int));
-                    techSkillDt.Columns.Add("LevelId", typeof(int));
-                    techSkillDt.Columns.Add("SkillId", typeof(int));
-                    techSkillDt.Columns.Add("Weightage", typeof(int));
-                    techSkillDt.Columns.Add("Concepts", typeof(string));
-                    techSkillDt.Columns.Add("Natureofquestion", typeof(string));
-                    techSkillDt.Columns.Add("Timelimit", typeof(int));
-                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                    //DataTable techSkillDt = new DataTable();
+                    //techSkillDt.Columns.Add("IRFId", typeof(int));
+                    //techSkillDt.Columns.Add("LevelId", typeof(int));
+                    //techSkillDt.Columns.Add("SkillName", typeof(string));
+                    //techSkillDt.Columns.Add("Weightage", typeof(int));
+                    //techSkillDt.Columns.Add("Concepts", typeof(string));
+                    //techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                    //techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    //techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
-                    foreach (var item in irfDetails.SkillCollection)
-                    {
-                        if (string.IsNullOrEmpty(item.Concepts))
-                        {
-                            item.Concepts = "";
-                        }
-                        if (string.IsNullOrEmpty(item.Natureofquestion))
-                        {
-                            item.Natureofquestion = "";
-                        }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0, item.isEliminationskill);
-                    }
+                    //foreach (var item in irfDetails.SkillCollection)
+                    //{
+                    //    if (string.IsNullOrEmpty(item.Concepts))
+                    //    {
+                    //        item.Concepts = "";
+                    //    }
+                    //    if (string.IsNullOrEmpty(item.Natureofquestion))
+                    //    {
+                    //        item.Natureofquestion = "";
+                    //    }
+                    //    techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillName, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
+                    //}
 
                     DataTable clientUserDt = new DataTable();
                     if (irfDetails.ClientCollection != null && irfDetails.ClientCollection.Count() > 0)
@@ -6996,11 +6999,11 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
-                    }
+                    //if (techSkillDt != null && techSkillDt.Rows.Count > 0)
+                    //{
+                    //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                    //    cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    //}
                     //if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     //{
                     //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
