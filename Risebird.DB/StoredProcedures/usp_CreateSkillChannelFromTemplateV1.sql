@@ -47,8 +47,8 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplateV1]
 @IsMeetingNotificationSend bit,
 @IsNewSkillChannel bit = null,
 @IsVideoRequired bit = null,
-@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
---@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
+@TechRubricType varchar(20),
+--@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,   
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  ,
 @flatRate int output
            
@@ -123,7 +123,8 @@ begin try
   ,[IsMeetingNotificationSend]
   ,[IsNewSkillChannel]
   ,[FlatRate]
-  ,[IsVideoRequired])
+  ,[IsVideoRequired]
+  ,[TechRubricType])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -164,7 +165,8 @@ begin try
   @IsMeetingNotificationSend,
   @IsNewSkillChannel,
   @flatRate,
-  @IsVideoRequired)                                                                           
+  @IsVideoRequired,
+  @TechRubricType)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      
@@ -174,15 +176,17 @@ begin try
   Begin  
    
  --tech skills  
- DELETE from TransTechSkill where IRFID in (Select IRFId From @TechSkillBulkData)    
+ DELETE from TransTechSkill where IRFID in (@irfIntId) --(Select IRFId From @TechSkillBulkData)    
  --This row performs bulk copy of object DataTable to Table in SQL      
  INSERT INTO [dbo].[TransTechSkill](      
   [IRFId] ,      
   [LevelId],      
-  [SkillId],      
-  [Weightage],[Concepts],[Natureofquestion],[Timelimit])      
+  [SkillName],      
+  [Weightage],[Concepts],[Natureofquestion],[Timelimit], isEliminationskill)      
       
- SELECT @irfIntId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
+ --SELECT @irfIntId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
+ SELECT @irfIntId, LevelId, SkillName, Weightage, Concepts, Natureofquestion, Timelimit, isEliminationskill FROM TransClonableIRFTechSkill where ClonableIRFId = @CreatedFromTemplateId   
+
  --interviewers  
  --Start :Delete interviewers
 -- Declare @Assessmentid int  
