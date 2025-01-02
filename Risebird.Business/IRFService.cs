@@ -3118,7 +3118,7 @@ namespace Risebird.Business
                 irfDetails.Type = "B2B";
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
 
-                var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(irfDetails.CreatedFromTemplateId);
+                //var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(irfDetails.CreatedFromTemplateId);
                 var irfRecommendations = await _irfRepository.GetIRFRecommendation(irfDetails.CreatedFromTemplateId);
 
                 if (irfRecommendations != null)
@@ -3135,7 +3135,7 @@ namespace Risebird.Business
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 //irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);
-                irfDetails.SkillCollection = (IList<TransSkill>)(transTechSkills);
+                //irfDetails.SkillCollection = (IList<TransSkill>)(transTechSkills);
 
                 int clientUserId = _irfRepository.GetUserId(loggedInUser);
                 irfDetails.ClientCollection = new List<TransClientUser>();
