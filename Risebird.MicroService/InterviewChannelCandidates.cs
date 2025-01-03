@@ -235,6 +235,7 @@ namespace Risebird.MicroService
                                             rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
                                         });
                                     }
+                                    //Skill set added
                                     _skillset = new List<SkillsSetsDetails>();
                                     foreach (var _skilldetail in item.skillset.Where(x => x.skillSet == 2).ToList())
                                     {
