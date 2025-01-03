@@ -200,11 +200,16 @@ namespace Risebird.MicroService
                                 var _skillset = new List<SkillsSetsDetails>();
                                 foreach (var _skilldetail in item.skillset.Where(x => x.skillSet == 1).ToList())
                                 {
+                                    var score = string.Empty;
+                                    if (_skilldetail.WeightageRequired > 0)
+                                    {
+                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString();
+                                    }
                                     _skillset.Add(new SkillsSetsDetails
                                     {
                                         skillName = _skilldetail.skillName,
                                         EvaluatedAt = _skilldetail.EvaluatedAt,
-                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
+                                        score = score
                                     });
                                 }
                                 _skills.Add(new SkillDetails
@@ -233,11 +238,16 @@ namespace Risebird.MicroService
                                     _skillset = new List<SkillsSetsDetails>();
                                     foreach (var _skilldetail in item.skillset.Where(x => x.skillSet == 2).ToList())
                                     {
+                                        var score = string.Empty;
+                                        if (_skilldetail.WeightageRequired > 0)
+                                        {
+                                            score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString();
+                                        }
                                         _skillset.Add(new SkillsSetsDetails
                                         {
                                             skillName = _skilldetail.skillName,
                                             EvaluatedAt = _skilldetail.EvaluatedAt,
-                                            score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
+                                            score = score
                                         });
                                     }
                                     _skills.Add(new SkillDetails
