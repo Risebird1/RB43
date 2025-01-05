@@ -48,6 +48,7 @@ namespace Risebird.MicroService
             try
             {
                 log.LogInformation($"InterviewChannelCandidates : C# HTTP trigger function invoked at {DateTime.Now}");
+                log.LogInformation($"InterviewChannelCandidates :{req.Headers}");
                 var tenantId = req.Headers["tenant-id"].ToString();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
@@ -63,6 +64,7 @@ namespace Risebird.MicroService
                     }
                     if (isAuthorizedTenant)
                     {
+                        log.LogInformation($"InterviewChannelCandidates : TenantId is verified at {DateTime.Now}");
                         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                         log.LogInformation(requestBody);
                         var reqData = JsonConvert.DeserializeObject<CandidateLatestStatusRequest>(requestBody);
