@@ -7145,7 +7145,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 19].Value = await GenerateExecutiveReportURl("https://portal.risebird.io/", item.id, item.Irfintid);
                             Sheet.Cells[i, 20].Value = item.BillingRate;
                         }
-                        if (item.CandidateLatestStatus.ToUpper().Contains("RESCHEDULE") && (item.MeetingStatus.ToUpper().Contains("NO SHOW(CANDIDATE)") || item.MeetingStatus.ToUpper() == "NO SHOW"))
+                        if (item.CandidateLatestStatus.ToUpper().Contains("RESCHEDULE") && (item.MeetingStatus.ToUpper().Contains("NO SHOW(CANDIDATE)") || item.MeetingStatus.ToUpper() == "NO SHOW" || item.MeetingStatus.ToUpper() == "DROPPED"))
                         {
                             Sheet.Cells[i, 20].Value = Convert.ToDouble(item.BillingRate) * 30 / 100;
                         }
