@@ -7237,7 +7237,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
-                        foreach (var item in irfDetails.InterviewerCollection)
+                        foreach (var item in irfDetails.InterviewerCollection?.Distinct())
                         {
                             interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, true);
                         }
