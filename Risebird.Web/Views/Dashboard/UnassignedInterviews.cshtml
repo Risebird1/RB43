@@ -458,9 +458,9 @@
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
-                                                        <th>Action</th>
-                                                        <th>Interviewer Name</th>
-                                                        <th>Interviewer Email</th>
+                                                       
+                                                        <th>Interviewer Details</th>
+                                                        <th>Interviewer Contact</th>
                                                         <th>Resume</th>
                                                         <th>Is Employed</th>
                                                         <th>Company Name</th>
@@ -702,10 +702,10 @@
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
-                                                        <th>Action</th>
+                                                       
 
-                                                        <th>Interviewer Name</th>
-                                                        <th>Interviewer Email</th>
+                                                        <th>Interviewer Details</th>
+                                                        <th>Interviewer Contact</th>
                                                         <th>Resume</th>
                                                         <th>Is Employed</th>
                                                         <th>Company Name</th>
@@ -1717,21 +1717,31 @@
                                                         @*@if ((ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))*@
 
 
-                                                        @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
-                                                        { @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
+                                                       
+                                                           
+                                                            @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
+                                                        {
+                                                            <td>
+                                                                <span class="name-field" style="display:block">@item.InterviewerName</span>
+                                                                <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:1px; padding-right:6px;"></i>@item.InterviewerEmailId</span>
+                                                            </td>
+                                                            
+                                                            
+                                                            @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
                                                             {
                                                                 <td>
-                                                                    <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
-                                                                        <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
+      
+                                                      <span class="call-area">
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" data-bs-original-title="Click here to call the interviewer." aria-label="Click here to call the interviewer."><img src="/img/calling.png" width="18"></span>
+                                                            </span>@item.InterviewerMobileNumber
+
+                                                                    
                                                                 </td>
                                                             }
                                                             else
                                                             {
                                                                 <td></td>
                                                             }
-                                                            <td>@item.InterviewerName</td>
-                                                            <td>@item.InterviewerEmailId</td>
                                                             @if (item.InterviewerResume != null && item.InterviewerResume != "")
                                                             {
                                                                 <td>
