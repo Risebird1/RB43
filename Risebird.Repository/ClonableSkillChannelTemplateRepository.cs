@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -551,6 +552,105 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannelsToBeRenewed()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannelsToBeRenewed", commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> RenewTemplateRubrics(List<TransSkill> techRubrics, int templateId)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+                    DataTable techSkillDt = new DataTable();
+
+                    if (techRubrics != null && techRubrics.Count() > 0)
+                    {
+                        techSkillDt.Columns.Add("IRFId", typeof(int));
+                        techSkillDt.Columns.Add("LevelId", typeof(int));
+                        techSkillDt.Columns.Add("SkillId", typeof(int));
+                        techSkillDt.Columns.Add("Weightage", typeof(int));
+                        techSkillDt.Columns.Add("Concepts", typeof(string));
+                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                        techSkillDt.Columns.Add("Timelimit", typeof(int));
+                        techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                        techSkillDt.Columns.Add("SkillSet", typeof(int));
+                        techSkillDt.Columns.Add("SkillName", typeof(string));
+
+                        foreach (var item in techRubrics)
+                        {
+                            if (string.IsNullOrEmpty(item.Concepts))//|| irfDetails.TechRubricType == TechRubricTypes.Basic
+                            {
+                                item.Concepts = "";
+                            }
+                            if (string.IsNullOrEmpty(item.Natureofquestion))// || irfDetails.TechRubricType == TechRubricTypes.Basic
+                            {
+                                item.Natureofquestion = "";
+                            }
+                            
+                            techSkillDt.Rows.Add(0, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
+                        }
+                    }
+
+                    SqlCommand cmdCreateIRF = new SqlCommand("usp_RenewTemplateRubrics", con);
+                    cmdCreateIRF.CommandType = CommandType.StoredProcedure;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@templateId", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@templateId"].Value = templateId;
+
+
+                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
+                    {
+                        cmdCreateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdCreateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    }
+                    
+                    
+                    con.Open();
+
+                    if (await cmdCreateIRF.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

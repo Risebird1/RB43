@@ -22,10 +22,10 @@ join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
 where IRF.id = @irfId  
   
 --interviewer details  
-Declare @Assessmentid int  
-set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)  
-Declare @temptable Table(Userid int)  
-Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
+--Declare @Assessmentid int  
+--set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)  
+--Declare @temptable Table(Userid int)  
+--Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
   
 select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted  
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill =   
@@ -37,7 +37,7 @@ FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr left join
 GROUP BY Id, UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted) c   
 join  TransInterviewer ti on ti.UserId=c.UserId  
 join UserList ul on ul.id = ti.UserId  
-join @temptable tt on tt.userid=ti.Userid  
+--join @temptable tt on tt.userid=ti.Userid  
 left join AGCampaigns agc on agc.id = ti.CampaignId  
 where IRFId=@irfId and ul.IsActive=1  order by ul.EmailId
   

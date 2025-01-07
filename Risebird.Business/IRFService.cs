@@ -3136,10 +3136,18 @@ namespace Risebird.Business
 
                 //irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);
                 //irfDetails.SkillCollection = (IList<TransSkill>)(transTechSkills);
-
-                int clientUserId = _irfRepository.GetUserId(loggedInUser);
                 irfDetails.ClientCollection = new List<TransClientUser>();
-                irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
+                if (profile == ProfileEnum.Client.GetDescription())
+                {
+                    int clientUserId = _irfRepository.GetUserId(loggedInUser);
+                    irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
+
+
+                }
+                else
+                {
+                    irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = irfDetails.ClientUserIdPopUp,  Role = _irfRepository.GetClientUserRole(irfDetails.ClientUserIdPopUp) });
+                }
 
                 var result = await _irfRepository.CreateSkillChannelFromTemplateV1(irfDetails, loggedInUser);
                 if (result.Item1)
