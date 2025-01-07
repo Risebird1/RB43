@@ -389,18 +389,17 @@
                                                                     }
                                                                 }
 
-                                                                @if (Model.Profile != "Client")
+                                                                @* @if (Model.Profile != "Client")
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
                                                                         <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId, templateName = item.NameWithoutHtml })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
-                                                                            @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
                                                                                 <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
                                                                             </svg>
                                                                         </span>
                                                                     </button>
-                                                                }
-                                                                @if (Model.Profile == "Client")
+                                                                } *@
+                                                                @if (Model.Profile == "Client" || Model.Profile == "Admin" || Model.Profile == "SuperAdmin" || Model.Profile == "SeniorHR")
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
                                                                         <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.NameWithoutHtml', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
@@ -487,6 +486,21 @@
                             <label id="error_BillingOwner" class="text-danger"></label>
                         </div>
 
+                        @if (Model.Profile != "Client")
+                        {
+                            <div class="mb-3">
+                                <label for="ClientId" class="form-label">Select Client:</label>
+                                @Html.DropDownList("ClientId", new List<SelectListItem>(), "Select", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
+                                <label id="error_ClientId" class="text-danger"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="ClientId" class="form-label">Select Client User:</label>
+                                @Html.DropDownList("ClientUserIdPopUp", new List<SelectListItem>(), "Select", new { @class = "select-css form-control"})
+                                <label id="error_ClientUserIdPopUp" class="text-danger"></label>
+                            </div>
+                        }
+
                         @* <div class="mb-3 mt-3">
                             <label for="ClientName" class="form-label">Project Name:</label>
                             <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
@@ -496,9 +510,12 @@
                         <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
                         <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
                         <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
-                        <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
                         <input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
                         <input type="hidden" for="JDTiltle" name="JDTiltle" id="JDTiltle" />
+                        @if (Model.Profile == "Client")
+                        {
+                            <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
+                        }
 
                         <button type="submit" class="btn btn-primary">Generate Interview Link</button>
                     </form>
@@ -762,6 +779,7 @@ else if (Model.Message != null)
 <script>
     let clientCompanyName = '@Model.ClientCompanyName';
     let clientId = '@Model.ClientId';
+    let assessmentGroupName = '';
     let isBillingOwnerPopulated = false;
     let isModalOpened = false;
     //var closeMember = document.getElementById("interviewLinkModalClose");
@@ -769,7 +787,9 @@ else if (Model.Message != null)
     //    var modal = document.getElementById("interviewLinkModal");
     //    modal.style.display = "none";
     //}
-    function OpenModalForCreatingInterviewLink(templateId, templateName, assessmentGroupName, assessmentGroupId, meetingPlatform) {
+    function OpenModalForCreatingInterviewLink(templateId, templateName, assessmentGroupNameValue, assessmentGroupId, meetingPlatform) {
+        debugger;
+        assessmentGroupName  = assessmentGroupNameValue;
         var modal = document.getElementById("interviewLinkModal");
         modal.style.display = "block";
         var modalHeading = '';
@@ -786,6 +806,14 @@ else if (Model.Message != null)
             $('#error_JDTiltle').text('');
             $('#error_JDFile').text('');
             $('#error_BillingOwner').text('');
+            if($('#error_ClientUserIdPopUp') != null)
+            {
+                $('#error_ClientUserIdPopUp').text('');
+            }
+            if($('#error_ClientId') != null)
+            {
+                $('#error_ClientId').text('');
+            }
         }
 
         $('#interviewLinkModalHeading').text(modalHeading);
@@ -795,20 +823,29 @@ else if (Model.Message != null)
         $('#JDTiltle').val(templateName);
 
         if (!isBillingOwnerPopulated) {
-            PopulateBillingOwner();
+            if(clientId != null && clientId != 0)
+            {
+                PopulateBillingOwner();
+            }
         }
-        GenerateSkillChannelName(assessmentGroupName);
-        if (!isModalOpened && clientId !== undefined) {
+        GenerateSkillChannelName();
+        if('@Model.Profile' == 'Admin' || '@Model.Profile' == 'SuperAdmin' || '@Model.Profile' == 'SeniorHR')
+        {
+            PopulateClientList();
+        }
+        if (!isModalOpened && clientId !== undefined && '@Model.Profile' == 'Client') {
             isModalOpened = true;
             $('#ClientId').val(clientId);
         }
     }
 
     function ValidateCreateInterviewLinkForm() {
-
+        debugger;
         //var jobProfile = $('#JDTiltle').val();
         var jdFile = $('#JDFile').val();
         var billingOwner = $('#BillingOwner').val();
+
+        var profile = '@Model.Profile';
 
         var flag = true;
 
@@ -838,13 +875,39 @@ else if (Model.Message != null)
         else {
             document.getElementById('error_BillingOwner').innerHTML = "";
         }
+        if (billingOwner == null || billingOwner == '') {
+            document.getElementById('error_BillingOwner').innerHTML = "Billing owner is required.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_BillingOwner').innerHTML = "";
+        }
+        if (profile != "Client") {
+            var clientId = $('#ClientId').val();
+            if (clientId == null || clientId == '' || clientId == '0') {
+                document.getElementById('error_ClientId').innerHTML = "Client is required.";
+                flag = false;
+            }
+            else {
+                document.getElementById('error_ClientId').innerHTML = "";
+            }
 
+            var clientUser = $('#ClientUserIdPopUp').val();
+            if (clientUser == null || clientUser == '' || clientUser == '0') {
+                document.getElementById('error_ClientUserIdPopUp').innerHTML = "Client User is required.";
+                flag = false;
+            }
+            else {
+                document.getElementById('error_ClientUserIdPopUp').innerHTML = "";
+            }
+        }
+        
         return flag;
 
     }
 
     function PopulateBillingOwner() {
-
+        debugger;
         $.ajax({
             type: "GET",
             url: "/IRF/GetClientUser",
@@ -854,6 +917,13 @@ else if (Model.Message != null)
                 var drpbilling = $("#BillingOwner");
                 $("#BillingOwner option").remove();
                 if (data.length > 0) {
+                    var option = $("<option />");
+                    //Set Text part.
+                    option.html('Select');
+                    //Set Value part.
+                    option.val(null);
+                    //Add the Option element to DropDownList.
+                    drpbilling.append(option);
                     $(data).each(function () {
                         var option = $("<option />");
                         //Set Text part.
@@ -869,17 +939,95 @@ else if (Model.Message != null)
         });
     }
 
-    function GenerateSkillChannelName(assessmentGroupName) {
+    function PopulateClientList() {
+        debugger;
         $.ajax({
             type: "GET",
-            url: "/IRF/GenerateSkillChannelName",
-            data: { 'assessmentGroupName': assessmentGroupName, 'clientCompanyName': clientCompanyName },
+            url: "/IRF/GetAllClients",
             success: function (data) {
-                if (data != null && data != '') {
-                    document.getElementById('IRFId').value = data;
+
+                var drpClients = $("#ClientId");
+                $("#ClientId option").remove();
+                if (data.length > 0) {
+                    var option = $("<option />");
+                    //Set Text part.
+                    option.html('Select');
+                    //Set Value part.
+                    option.val(null);
+                    //Add the Option element to DropDownList.
+                    drpClients.append(option);
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpClients.append(option);
+                    });
                 }
+                //isBillingOwnerPopulated = true;
             }
         });
+    }
+
+    function ClientChanged(clientIdValue) {
+        debugger;
+        clientId = clientIdValue;
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetClientUser",
+            data: { 'clientId': clientIdValue },
+            success: function (data) {
+
+                var drpClientUsers = $("#ClientUserIdPopUp");
+                $("#ClientUserIdPopUp option").remove();
+                if (data.length > 0) {
+                    var option = $("<option />");
+                    //Set Text part.
+                    option.html('Select');
+                    //Set Value part.
+                    option.val(null);
+                    //Add the Option element to DropDownList.
+                    drpClientUsers.append(option);
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpClientUsers.append(option);
+                    });
+                }
+                PopulateBillingOwner();
+                GenerateSkillChannelName();
+            }
+        });
+    }
+
+    function GenerateSkillChannelName() {
+        debugger;
+        if(clientCompanyName == null || clientCompanyName == '' || clientCompanyName == 'Select')
+        {
+            clientCompanyName = $("#ClientId option:selected").text();
+        }
+        if(clientCompanyName != null && clientCompanyName != '' && clientCompanyName != 'Select' && assessmentGroupName != null && assessmentGroupName != '')
+        {
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GenerateSkillChannelName",
+                data: { 'assessmentGroupName': assessmentGroupName, 'clientCompanyName': clientCompanyName },
+                success: function (data) {
+                    debugger;
+                    if (data != null && data != '') {
+                        document.getElementById('IRFId').value = data;
+                    }
+                }
+            });
+
+        }
+        
     }
 </script>
 <script>
