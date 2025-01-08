@@ -2698,6 +2698,37 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
 
+        [HttpGet]
+        public async Task<SelectList> GetAllClients()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if(profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR")
+                {
+                    var list = new List<SelectListItem>();
+                    var clients = await _clientService.GetClients(emailid, profileName);
+                    if (clients != null && clients.Count() > 0)
+                    {
+                        return new SelectList(clients, "id", "Name");
+                    }
+                    else
+                        list.Add(new SelectListItem { Text = "No Clients Found", Value = "0" });
+                    return new SelectList(list, "Value", "Text");
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         //NewChartClientsData
         [Authorize]
@@ -7701,7 +7732,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Client" /*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
+                    if (profileName == "Admin" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin"/*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
                     {
 
                         string uploadedFileURL = string.Empty;

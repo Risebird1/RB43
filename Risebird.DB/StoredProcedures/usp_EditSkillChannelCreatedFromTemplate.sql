@@ -138,8 +138,8 @@ Insert into @temptable Select Userid from InterviewerProfile cross apply string_
  [IsAvailable],  
  [InterviewerId])    
       
- SELECT @id, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
- as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
+ SELECT distinct @id, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
+ as InterviewerId FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
   
  DELETE from TransClientUser where IRFID = @id  
  --This row performs bulk copy of object DataTable to Table in SQL    

@@ -28,6 +28,7 @@
         public string ProjectUniqueid { get; set; }
         public int RedMarker { get; set; }
         public string AIVerdict { get; set; }
+        public string ResumeLink { get; set; }
         public int TotalFuture { get; set; }
         public int TotalInterviewers { get; set; }
     }

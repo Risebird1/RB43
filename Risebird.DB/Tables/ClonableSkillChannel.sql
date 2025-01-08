@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[ClonableSkillChannel](
 			[MeetingPlatform][varchar](25) NULL,
 			[IsAadhaarVerificationRequired][bit] NULL,
             [IsDeleted] [bit] NULL,
+            [IsTechRubricRenewed] [bit] NULL,
  CONSTRAINT UC_ClonableSkillChannel_Name UNIQUE ([Name]),
  CONSTRAINT [PK_ClonableSkillChannel] PRIMARY KEY CLUSTERED 					
 (					
@@ -84,6 +85,16 @@ IF NOT EXISTS(
 BEGIN
     alter table ClonableSkillChannel
     add IsDeleted bit
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsTechRubricRenewed')
+      AND Object_ID = Object_ID(N'ClonableSkillChannel'))
+BEGIN
+    ALTER TABLE ClonableSkillChannel
+    Add IsTechRubricRenewed BIT NULL
 END
 
 GO
