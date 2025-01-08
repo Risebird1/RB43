@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -43,13 +44,15 @@ namespace Risebird.MicroService
         }
         [Function("InterviewChannelCandidates")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "InterviewChannel/Candidates")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "InterviewChannel/Candidates")] HttpRequestData req)
         {
             try
             {
                 log.LogInformation($"InterviewChannelCandidates : C# HTTP trigger function invoked at {DateTime.Now}");
+                log.LogInformation($"InterviewChannelCandidates :{req}");
                 log.LogInformation($"InterviewChannelCandidates :{req.Headers}");
-                var tenantId = req.Headers["tenant-id"].ToString();
+                log.LogInformation($"InterviewChannelCandidates :{req.Body}");
+                var tenantId = req.Headers.GetValues("tenant-id").ToString();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
                     //check if the tenant Id belongs to the client
