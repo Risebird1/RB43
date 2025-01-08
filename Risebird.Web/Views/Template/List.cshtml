@@ -399,7 +399,7 @@
                                                                         </span>
                                                                     </button>
                                                                 } *@
-                                                                @if (Model.Profile == "Client" || Model.Profile == "Admin" || Model.Profile == "SuperAdmin" || Model.Profile == "SeniorHR")
+                                                                @if (Model.Profile == "Client" || Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
                                                                         <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.NameWithoutHtml', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
@@ -829,7 +829,7 @@ else if (Model.Message != null)
             }
         }
         GenerateSkillChannelName();
-        if('@Model.Profile' == 'Admin' || '@Model.Profile' == 'SuperAdmin' || '@Model.Profile' == 'SeniorHR')
+        if('@Model.Profile' == 'Admin' || '@Model.Profile' == 'SupportAdmin' || '@Model.Profile' == 'SeniorHR')
         {
             PopulateClientList();
         }
