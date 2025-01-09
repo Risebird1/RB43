@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -26,7 +27,7 @@ namespace Risebird.MicroService
         }
         [Function("GetVMList")]
         public string Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetVMList")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetVMList")] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
