@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 //using Microsoft.Azure.Documents.SystemFunctions;
 
@@ -43,9 +44,10 @@ namespace Risebird.MicroService
         }
 
         [Function("CandidateLatestStatus")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
+            HttpResponseData response = req.CreateResponse();
             try
             {
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function invoked at {DateTime.Now}");
@@ -97,7 +99,9 @@ namespace Risebird.MicroService
 
                             log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
 
-                            return new BadRequestObjectResult(errorResponse);
+                            response.StatusCode = HttpStatusCode.BadRequest;
+                            await response.WriteAsJsonAsync(errorResponse);
+                            return response;
                         }
 
                         var results = await _candidateRepository.GetCandidateLatestStatusForApi(reqData.skillChannelId, reqData.candidateEmailId, reqData.requestedBy, reqData.jobId);
@@ -143,11 +147,16 @@ namespace Risebird.MicroService
                                 var _skillset = new List<SkillsSetsDetails>();
                                 foreach (var _skilldetail in result.skillset.Where(x => x.skillSet == 1).ToList())
                                 {
+                                    var score = string.Empty;
+                                    if (_skilldetail.WeightageRequired > 0)
+                                    {
+                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString();
+                                    }
                                     _skillset.Add(new SkillsSetsDetails
                                     {
                                         skillName = _skilldetail.skillName,
                                         EvaluatedAt = _skilldetail.EvaluatedAt,
-                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
+                                        score = score
                                     });
                                 }
                                 _skills.Add(new SkillDetails
@@ -176,11 +185,16 @@ namespace Risebird.MicroService
                                     _skillset = new List<SkillsSetsDetails>();
                                     foreach (var _skilldetail in result.skillset.Where(x => x.skillSet == 2).ToList())
                                     {
+                                        var score = string.Empty;
+                                        if (_skilldetail.WeightageRequired > 0)
+                                        {
+                                            score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString();
+                                        }
                                         _skillset.Add(new SkillsSetsDetails
                                         {
                                             skillName = _skilldetail.skillName,
                                             EvaluatedAt = _skilldetail.EvaluatedAt,
-                                            score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString()
+                                            score = score
                                         });
                                     }
                                     _skills.Add(new SkillDetails
@@ -321,7 +335,9 @@ namespace Risebird.MicroService
                             //        skills = _skills
                             //    });
                             //}
-                            return new OkObjectResult(model);
+                            response.StatusCode = HttpStatusCode.OK;
+                            await response.WriteAsJsonAsync(model);
+                            return response;
                         }
                         else
                         {
@@ -338,7 +354,9 @@ namespace Risebird.MicroService
 
                             log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
 
-                            return new BadRequestObjectResult(errorResponse);
+                            response.StatusCode = HttpStatusCode.BadRequest;
+                            await response.WriteAsJsonAsync(errorResponse);
+                            return response;
 
                         }
 
@@ -400,14 +418,17 @@ namespace Risebird.MicroService
 
                         log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
 
-                        return new BadRequestObjectResult(errorResponse);
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        await response.WriteAsJsonAsync(errorResponse);
+                        return response;
                     }
 
 
                 }
 
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
-                return new UnauthorizedResult();
+                response.StatusCode = HttpStatusCode.Unauthorized;
+                return response;
             }
             catch (Exception ex)
             {
@@ -419,7 +440,8 @@ namespace Risebird.MicroService
                 //    Details = "An unexpected error occurred. Please try again later."
                 //};
                 //return new InternalServerErrorResult(errorResponse);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                return response;
             }
 
         }
