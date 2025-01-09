@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -43,14 +44,15 @@ namespace Risebird.MicroService
             log = loggerFactory.CreateLogger<InterviewChannelCandidates>();
         }
         [Function("InterviewChannelCandidates")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "InterviewChannel/Candidates")] HttpRequestData req)
         {
+            HttpResponseData response = req.CreateResponse();
             try
             {
                 log.LogInformation($"InterviewChannelCandidates : C# HTTP trigger function invoked at {DateTime.Now}");
                 log.LogInformation($"InterviewChannelCandidates :{req}");
-                
+
                 var tenantId = req.Headers.GetValues("tenant-id").FirstOrDefault();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
@@ -111,7 +113,10 @@ namespace Risebird.MicroService
                                     Details = details
                                 };
                                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
-                                return new BadRequestObjectResult(errorResponse);
+                                response.StatusCode = HttpStatusCode.BadRequest;
+                                await response.WriteAsJsonAsync(errorResponse);
+                                return response;
+                                //return new BadRequestObjectResult(errorResponse);
                             }
                             if (!string.IsNullOrEmpty(reqData.type))
                             {
@@ -141,7 +146,9 @@ namespace Risebird.MicroService
                                         Details = details
                                     };
                                     log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
-                                    return new BadRequestObjectResult(errorResponse);
+                                    response.StatusCode = HttpStatusCode.BadRequest;
+                                    await response.WriteAsJsonAsync(errorResponse);
+                                    return response;
                                 }
                             }
                             var model = new CandidateInfoResponse();
@@ -157,7 +164,9 @@ namespace Risebird.MicroService
                                         Error = "Invalid request parameters",
                                         Details = details
                                     };
-                                    return new BadRequestObjectResult(errorResponse);
+                                    response.StatusCode = HttpStatusCode.BadRequest;
+                                    await response.WriteAsJsonAsync(errorResponse);
+                                    return response;
                                 }
                             }
                             //Update according to client user role based
@@ -302,7 +311,10 @@ namespace Risebird.MicroService
                             if (reqData.type.ToLower() == "alldata" || reqData.type.ToLower() == "daterange")
                             {
                                 //Get skill channel all Candidate Info and return
-                                return new OkObjectResult(model);
+                                response.StatusCode = HttpStatusCode.OK;
+                                await response.WriteAsJsonAsync(model);
+                                return response;
+                                //return new OkObjectResult(model);
                             }
                             else
                             {
@@ -318,17 +330,28 @@ namespace Risebird.MicroService
                             Error = "Invalid request parameters",
                             Details = details
                         };
-                        return new BadRequestObjectResult(errorResponserequest);
+                        //HttpResponseData response = req.CreateResponse();
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        await response.WriteAsJsonAsync(errorResponserequest);
+                        return response;
+                        //return new BadRequestObjectResult(errorResponserequest);
                     }
-                    return new UnauthorizedResult();
+                    response.StatusCode = HttpStatusCode.Unauthorized;
+                    return response;
+                    //return new UnauthorizedResult();
                 }
-                return new BadRequestResult();
+                //return new BadRequestResult();
+                response = req.CreateResponse();
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function threw exception with message {ex.Message} at {DateTime.Now}");
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                response = req.CreateResponse();
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                return response;
             }
         }
         public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)

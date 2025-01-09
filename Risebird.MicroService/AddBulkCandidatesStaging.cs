@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -43,9 +44,10 @@ namespace Risebird.MicroService
             log = loggerFactory.CreateLogger<AddBulkCandidatesStaging>();
         }
         [Function("AddBulkCandidatesStaging")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Staging/Candidates/Add")] HttpRequestData req)
         {
+            HttpResponseData response = req.CreateResponse();
             try
             {
                 log.LogInformation($"AddBulkCandidates : C# HTTP trigger function invoked at {DateTime.Now}");
@@ -91,7 +93,9 @@ namespace Risebird.MicroService
 
                                 log.LogInformation($"AddBulkCandidates : C# HTTP trigger function executed at {DateTime.Now}");
 
-                                return new BadRequestObjectResult(errorResponse);
+                                response.StatusCode = HttpStatusCode.BadRequest;
+                                await response.WriteAsJsonAsync(errorResponse);
+                                return response;
                             }
                             //find the name of the skill channel based on the request parameters;
                             //var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
@@ -99,11 +103,14 @@ namespace Risebird.MicroService
                             if (result != null)
                             {
                                 result.performedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                                return new OkObjectResult(result);
+                                response.StatusCode = HttpStatusCode.OK;
+                                await response.WriteAsJsonAsync(result);
+                                return response;
                             }
                             else
                             {
-                                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                                response.StatusCode = HttpStatusCode.InternalServerError;
+                                return response;
                             }
                         }
                         else
@@ -115,17 +122,22 @@ namespace Risebird.MicroService
                             Error = "Invalid request.",
                             Details = details
                         };
-                        return new BadRequestObjectResult(errorResponserequest);
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        await response.WriteAsJsonAsync(errorResponserequest);
+                        return response;
                     }
-                    return new UnauthorizedResult();
+                    response.StatusCode = HttpStatusCode.Unauthorized;
+                    return response;
                 }
-                return new BadRequestResult();
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 log.LogInformation($"AddBulkCandidates : C# HTTP trigger function threw exception with message {ex.Message} at {DateTime.Now}");
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                return response;
             }
         }
     }
