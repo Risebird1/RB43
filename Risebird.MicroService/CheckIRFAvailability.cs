@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -45,7 +46,7 @@ namespace Risebird.MicroService
 
         [Function("CheckIRFAvailability")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace Risebird.MicroService
                 log.LogInformation($"CheckIRFAvailability : Event data recieved with request body :  {requestBody}");
                 var obj = JsonConvert.DeserializeObject<AvailabilityCheckDTO>(requestBody);
 
-                var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(obj.AssessmentGroupId), obj.id);
+                var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(obj?.AssessmentGroupId), obj?.id);
                 var skills = await _irfService.GetTechSkillswithWeightage(obj.id);
                 string techRubricType = TechRubricTypes.Basic;
                 if (skills != null && skills.Count() > 0)

@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Risebird.MicroService
 {
@@ -26,10 +29,15 @@ namespace Risebird.MicroService
         }
         [Function("ShareMCQSets")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            string name = req.Query["name"];
+            NameValueCollection queryParameters = HttpUtility.ParseQueryString(req.Url.Query);
+
+            // Get the "name" query parameter value
+            string name = queryParameters["name"];
+
+            //string name = req.Query["name"];
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             MCQApiVM data = JsonConvert.DeserializeObject<MCQApiVM>(requestBody);
             if (!string.IsNullOrEmpty(data.CandidateEmailid) && !string.IsNullOrEmpty(data.PrimarySkill))
