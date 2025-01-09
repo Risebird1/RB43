@@ -9263,12 +9263,16 @@ namespace Risebird.Web.Controllers
                         //var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
                         var allAGs = (await _irfService.GetSimilarAssessmentGroups(model.AssessmentGroupName.Trim(), model.IsAlreadyMasterAG, true));//call db and search for assessmentGroups that carry a similar name.         /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
 
-                        model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted).ToList());
+                        model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted)?.ToList());
 
-                        model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).FirstOrDefault().IsSelectedForCampaign = true;
+                        if(model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()) != null && model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).Count()>0)
+                        {
+                            model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).FirstOrDefault().IsSelectedForCampaign = true;
 
-                        model.RemainingAssessmentGroups = allAGs.Where(x => !x.isDirectlyTargeted);
-                        model.RemainingAssessmentGroupsList = model.RemainingAssessmentGroups.ToList();
+                        }
+
+                        model.RemainingAssessmentGroups = allAGs?.Where(x => !x.isDirectlyTargeted);
+                        model.RemainingAssessmentGroupsList = model.RemainingAssessmentGroups?.ToList();
 
                         model.SerializedRemainingAGList = JsonConvert.SerializeObject(model.RemainingAssessmentGroups);
 
@@ -9302,7 +9306,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        model.RemainingAssessmentGroupsList = model.RemainingAssessmentGroupsList.Except(listOfAgsToBeRemoved).ToList();
+                        model.RemainingAssessmentGroupsList = model.RemainingAssessmentGroupsList.Except(listOfAgsToBeRemoved)?.ToList();
                         //var intersectingAGS = model.AssessmentGroups.Where(c => )
                         model.RemainingAssessmentGroups = model.RemainingAssessmentGroupsList;
                         return View(model);
