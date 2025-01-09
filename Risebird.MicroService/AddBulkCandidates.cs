@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,6 +14,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -42,12 +44,12 @@ namespace Risebird.MicroService
         }
         [Function("AddBulkCandidates")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Candidates/Add")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Candidates/Add")] HttpRequestData req)
         {
             try
             {
                 log.LogInformation($"AddBulkCandidates : C# HTTP trigger function invoked at {DateTime.Now}");
-                var tenantId = req.Headers["tenant-id"].ToString();
+                var tenantId = req.Headers.GetValues("tenant-id").FirstOrDefault();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
                     //check if the tenant Id belongs to the client

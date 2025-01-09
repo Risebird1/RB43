@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace Risebird.MicroService
         }
         [Function("RunPowerShellScript")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "RunPowerShellScript")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "RunPowerShellScript")] HttpRequestData req)
         {
             log.LogInformation("RunPowerShellScript HTTP trigger function processed a request.");
 

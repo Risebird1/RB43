@@ -50,9 +50,8 @@ namespace Risebird.MicroService
             {
                 log.LogInformation($"InterviewChannelCandidates : C# HTTP trigger function invoked at {DateTime.Now}");
                 log.LogInformation($"InterviewChannelCandidates :{req}");
-                log.LogInformation($"InterviewChannelCandidates :{req.Headers}");
-                log.LogInformation($"InterviewChannelCandidates :{req.Body}");
-                var tenantId = req.Headers.GetValues("tenant-id").ToString();
+                
+                var tenantId = req.Headers.GetValues("tenant-id").FirstOrDefault();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
                     //check if the tenant Id belongs to the client
