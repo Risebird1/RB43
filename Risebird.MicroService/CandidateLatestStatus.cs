@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -43,12 +44,12 @@ namespace Risebird.MicroService
 
         [Function("CandidateLatestStatus")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
             try
             {
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function invoked at {DateTime.Now}");
-                var tenantId = req.Headers["tenant-id"].ToString();
+                var tenantId = req.Headers.GetValues("tenant-id").FirstOrDefault();
 
                 bool isAuthorizedTenant = false;
                 var clientDetails = await _clientService.GetClientByTalentId(tenantId);

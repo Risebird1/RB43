@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -34,7 +35,7 @@ namespace Risebird.MicroService
 
         [Function("ZoomQualityOfServiceEventCapture")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ZoomQualityOfServiceEventCapture")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ZoomQualityOfServiceEventCapture")] HttpRequestData req)
         {
             try
             {
