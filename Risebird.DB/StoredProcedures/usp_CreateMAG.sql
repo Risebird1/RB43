@@ -42,7 +42,7 @@ BEGIN
 		AND SecondaryAssessmentGroups.MAGId = @resultMagId
 		--and cbd.AssessmentGroupId != @AssessmentGroupId
 	) and cbd.AssessmentGroupId != @AssessmentGroupId
-	
+	and ((select id from MasterAssessmentGroup where AssessmentGroupId = cbd.AssessmentGroupId) is null)
 
   commit tran  
  end try  
