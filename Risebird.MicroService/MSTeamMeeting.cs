@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Entities.ViewModel;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +25,10 @@ namespace Risebird.MicroService
 
         [Function("MSTeamMeeting")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "MSTeamMeeting")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "MSTeamMeeting")] HttpRequestData req)
         {
-            var accountEmail = req.Headers["accountEmail"].ToString();
+            var accountEmail = req.Headers.GetValues("accountEmail").FirstOrDefault();
+            //var accountEmail = req.Headers["accountEmail"].ToString();
             if (!string.IsNullOrEmpty(accountEmail))
             {
                 //string requestBody = File.ReadAllText(@"c:\prem\meeting.txt", Encoding.UTF8);

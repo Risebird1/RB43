@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Risebird.Repository.Interface;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Risebird.MicroService
 {
@@ -19,9 +22,14 @@ namespace Risebird.MicroService
 
         [Function("CheckIfAlreadyScheduled")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequestData req)
         {
-            string email = req.Query["email"];
+
+            NameValueCollection queryParameters = HttpUtility.ParseQueryString(req.Url.Query);
+            // Get the "email" query parameter value
+            string email = queryParameters["email"];
+
+            //string email = req.Query["email"];
 
             var result = await _meetingRespository.CheckCompletedInterviews(email);
 
