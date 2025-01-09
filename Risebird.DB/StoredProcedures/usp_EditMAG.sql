@@ -42,6 +42,7 @@ BEGIN
 		WHERE SecondaryAssessmentGroups.AssessmentGroupId = cbd.AssessmentGroupId
 			AND SecondaryAssessmentGroups.MAGId = @MagId
 		) and cbd.AssessmentGroupId != @AssessmentGroupId
+		and ((select id from MasterAssessmentGroup where AssessmentGroupId = cbd.AssessmentGroupId) is null)
 	End
 	
 	

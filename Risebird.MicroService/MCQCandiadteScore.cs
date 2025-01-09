@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Risebird.MicroService
 {
@@ -24,13 +27,19 @@ namespace Risebird.MicroService
             log = loggerFactory.CreateLogger<MCQCandiadteScore>();
         }
         [Function("MCQCandiadteScore")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger MCQCandiadteScore function processed a request.");
-            string emailid = req.Query["Emailid"];
+            NameValueCollection queryParameters = HttpUtility.ParseQueryString(req.Url.Query);
+
+            // Get the "emailid" query parameter value
+            string emailid = queryParameters["Emailid"];
+
+            //string emailid = req.Query["Emailid"];
             //string mcqid = req.Query["Mcqid"];
             string mcqid = string.Empty;
-            string mcqtitle = req.Query["McqTitle"];
+            string mcqtitle = queryParameters["McqTitle"];
+            //string mcqtitle = req.Query["McqTitle"];
             if (!string.IsNullOrEmpty(mcqtitle))
             {
                 mcqtitle = mcqtitle.Trim().ToUpper();

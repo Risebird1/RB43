@@ -71,7 +71,7 @@ BEGIN
 			  AND SecondaryAssessmentGroups.MAGId = @resultMagId
 			  --and cbd.AssessmentGroupId != @AssessmentGroupId
 			) and cbd.AssessmentGroupId != @AssessmentGroupId
-			
+			and ((select id from MasterAssessmentGroup where AssessmentGroupId = cbd.AssessmentGroupId) is null)
 
 			End
 
@@ -117,6 +117,7 @@ BEGIN
 		AND SecondaryAssessmentGroups.MAGId = @magId
 		--and cbd.AssessmentGroupId != @primaryAGId
 	) and cbd.AssessmentGroupId != @primaryAGId
+	and ((select id from MasterAssessmentGroup where AssessmentGroupId = cbd.AssessmentGroupId) is null)
 
 	END
 
