@@ -265,7 +265,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Interviewer Video Required")]
         public bool IsVideoRequired { get; set; }
         public string TechRubricType { get; set; }
-        public int ClientUserIdPopUp { get; set; }
+        //public int ClientUserIdPopUp { get; set; }
+        public List<int> ClientUserIdPopUp { get; set; }
     }
     public class InterviewerIds
     {

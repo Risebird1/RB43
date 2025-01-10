@@ -3146,7 +3146,10 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = irfDetails.ClientUserIdPopUp,  Role = _irfRepository.GetClientUserRole(irfDetails.ClientUserIdPopUp) });
+                    foreach (var clientUserId in irfDetails.ClientUserIdPopUp)
+                    {
+                        irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, Role = _irfRepository.GetClientUserRole(clientUserId) });
+                    }
                 }
 
                 var result = await _irfRepository.CreateSkillChannelFromTemplateV1(irfDetails, loggedInUser);
