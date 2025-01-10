@@ -12,6 +12,7 @@ using System;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,8 +33,9 @@ namespace Risebird.MicroService
         }
 
         [Function("RisebirdFromZoomMeeting")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
         {
+            var response = req.CreateResponse();
             log.LogInformation("C# HTTP trigger function processed a request.");
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             log.LogInformation(requestBody);
@@ -148,9 +150,25 @@ namespace Risebird.MicroService
                 ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
                 _zoom.plainToken = plainToken;
                 _zoom.encryptedToken = hashForValidate;
-                return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+                
+                //return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+
+
+                // Serialize the object using Newtonsoft.Json
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(_zoom);
+
+                // Write the JSON string to the response
+                await response.WriteStringAsync(json);
+                response.StatusCode = HttpStatusCode.OK;
+                // Set Content-Type header
+                response.Headers.Add("Content-Type", "application/json");
+
+                return response;
             }
-            return new OkObjectResult("Success");
+            response.StatusCode = HttpStatusCode.OK;
+            await response.WriteAsJsonAsync("Success");
+            return response;
+            //return new OkObjectResult("Success");
         }
     }
 }

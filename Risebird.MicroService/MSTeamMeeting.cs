@@ -4,9 +4,11 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +26,7 @@ namespace Risebird.MicroService
         }
 
         [Function("MSTeamMeeting")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "MSTeamMeeting")] HttpRequestData req)
         {
             var accountEmail = req.Headers.GetValues("accountEmail").FirstOrDefault();
@@ -44,9 +46,13 @@ namespace Risebird.MicroService
                 httpRequest.Content = content;
                 var response = await httpClient.SendAsync(httpRequest);
                 var result = await response.Content.ReadAsStringAsync();
-                return new OkObjectResult(result);
+                var returnData = req.CreateResponse(HttpStatusCode.OK);
+                await returnData.WriteAsJsonAsync(result);
+                return returnData;
+                //return new OkObjectResult(result);
             }
-            return new BadRequestResult();
+            return req.CreateResponse(HttpStatusCode.BadRequest);
+            //return new BadRequestResult();
         }
     }
 }

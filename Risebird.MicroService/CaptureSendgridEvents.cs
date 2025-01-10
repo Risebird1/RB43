@@ -12,6 +12,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -31,7 +32,7 @@ namespace Risebird.MicroService
         }
 
         [Function("CaptureSendgridEvents")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CaptureSendgridEvents")] HttpRequestData req)
         {
             try
@@ -63,13 +64,16 @@ namespace Risebird.MicroService
                         }
                     });
                 }
-
-                return new OkObjectResult(true);
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(true);
+                return response;
+                //return new OkObjectResult(true);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

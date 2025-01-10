@@ -13,6 +13,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,9 +35,11 @@ namespace Risebird.MicroService
         }
 
         [Function("ZoomQualityOfServiceEventCapture")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ZoomQualityOfServiceEventCapture")] HttpRequestData req)
         {
+            var response = req.CreateResponse();
+
             try
             {
                 log.LogInformation($"ZoomQualityOfServiceEventCapture : C# HTTP trigger function invoked at {DateTime.Now}");
@@ -97,7 +100,16 @@ namespace Risebird.MicroService
                     ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
                     _zoom.plainToken = plainToken;
                     _zoom.encryptedToken = hashForValidate;
-                    return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+                    //return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+                    string json = Newtonsoft.Json.JsonConvert.SerializeObject(_zoom);
+
+                    // Write the JSON string to the response
+                    await response.WriteStringAsync(json);
+                    response.StatusCode = HttpStatusCode.OK;
+                    // Set Content-Type header
+                    response.Headers.Add("Content-Type", "application/json");
+
+                    return response;
                 }
                 else
                 {
@@ -189,16 +201,18 @@ namespace Risebird.MicroService
                     }
                 }
 
-
-
-                return new OkObjectResult(true);
+                response.StatusCode = HttpStatusCode.OK;
+                await response.WriteAsJsonAsync(true);
+                return response;
+                //return new OkObjectResult(true);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 log.LogInformation($"ZoomQualityOfServiceEventCapture : Exception encountered :  {ex.Message}");
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
 
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }
