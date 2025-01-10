@@ -12,6 +12,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -39,7 +40,7 @@ namespace Risebird.MicroService
         }
 
         [Function("SpeechToTextService")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "SpeechToTextService")] HttpRequestData req)
         {
             try
@@ -75,7 +76,10 @@ namespace Risebird.MicroService
 
                 log.LogInformation($"SpeechToTextService HTTP trigger function completed at: {DateTime.Now}");
 
-                return new OkObjectResult("Successful");
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync("Successful");
+                return response;
+                //return new OkObjectResult("Successful");
 
             }
             catch (Exception ex)

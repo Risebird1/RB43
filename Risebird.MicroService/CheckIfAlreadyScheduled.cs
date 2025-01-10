@@ -5,6 +5,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Risebird.Repository.Interface;
 using System.Collections.Specialized;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -21,7 +22,7 @@ namespace Risebird.MicroService
         }
 
         [Function("CheckIfAlreadyScheduled")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequestData req)
         {
 
@@ -32,8 +33,10 @@ namespace Risebird.MicroService
             //string email = req.Query["email"];
 
             var result = await _meetingRespository.CheckCompletedInterviews(email);
-
-            return new OkObjectResult(result);
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(result);
+            return response;
+            //return new OkObjectResult(result);
         }
     }
 }

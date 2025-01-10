@@ -12,7 +12,9 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.MicroService
 {
@@ -33,7 +35,7 @@ namespace Risebird.MicroService
         }
 
         [Function("SendCampaignMails")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "SendCampaignMails")] HttpRequestData req)
         {
             try
@@ -47,12 +49,17 @@ namespace Risebird.MicroService
 
                 await SendCampaignLevelMailsToInterviewers(data.interviewers, data.assessentGroupName, data.campagignId);//fire and forget method, keeps sending emails to the interviewers in the background
 
-                return new OkObjectResult(true);
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(true);
+                return response;
+                //return new OkObjectResult(true);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
