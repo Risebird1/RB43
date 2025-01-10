@@ -7820,8 +7820,8 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorCloneTemplateMessage2"] = model.CalendlyLink;
                             //TempData["SuccessErrorCloneTemplateMessage3"] = "https://portal.risebird.io/IRF/Index";
-                            return RedirectToAction("List", "Template");
-
+                            //return RedirectToAction("List", "Template");
+                            return RedirectToAction("GetCandidates", "Candidate", new { id = irfDetails.id, irfName = model.IRFId });
                             //return RedirectToAction("Index");
                         }
                         else
