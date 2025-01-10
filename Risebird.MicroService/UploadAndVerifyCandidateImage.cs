@@ -16,6 +16,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace ScreenBackgroundJobs
         }
 
         [Function("UploadAndVerifyCandidateImage")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UploadAndVerifyCandidateImage")] HttpRequestData req)
         {
             try
@@ -69,15 +70,18 @@ namespace ScreenBackgroundJobs
 
                 log.LogInformation($"UploadAndVerifyCandidateImage : C# Http Trigger finished executing at {DateTime.Now}");
 
-                return new OkObjectResult(true);
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(true);
+                return response;
+                //return new OkObjectResult(true);
 
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 log.LogError($"UploadAndVerifyCandidateImage :Error executing at: {DateTime.Now}, Message : {ex.Message}");
-
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 

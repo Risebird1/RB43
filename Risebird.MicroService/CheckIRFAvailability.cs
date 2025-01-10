@@ -14,8 +14,10 @@ using Risebird.Repository.Interface;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.MicroService
 {
@@ -45,7 +47,7 @@ namespace Risebird.MicroService
         }
 
         [Function("CheckIRFAvailability")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
             try
@@ -155,15 +157,18 @@ namespace Risebird.MicroService
 
                 log.LogInformation($"CheckIRFAvailability : C# Http Trigger finished executing at {DateTime.Now}");
 
-                return new OkObjectResult(true);
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(true);
+                return response;
+                //return new OkObjectResult(true);
 
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 log.LogError($"CheckIRFAvailability :Error executing at: {DateTime.Now}, Message : {ex.Message}");
-
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

@@ -38,7 +38,7 @@ namespace Risebird.MicroService
         }
 
         [Function("GetRDPFile")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetRDPFile")] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -47,7 +47,10 @@ namespace Risebird.MicroService
             int vmId = JsonConvert.DeserializeObject<int>(requestBody);
             var rdpFile = GetRdpResponse(vmId, "Microsoft.Network/networkInterfaces");
             var result = JsonConvert.SerializeObject(rdpFile);
-            return new OkObjectResult(result);
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(result);
+            return response;
+            //return new OkObjectResult(result);
         }
 
         private RdpFileModel GetRdpResponse(int vmId, string resourceType)

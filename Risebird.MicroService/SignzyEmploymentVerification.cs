@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -42,7 +43,7 @@ namespace Risebird.MicroService
         }
 
         [Function("SignzyEmploymentVerification")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -160,7 +161,10 @@ namespace Risebird.MicroService
                 _interviewer.EmploymentComment = convertedResponse.message;
                 await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
             }
-            return new OkObjectResult(true);
+            var returnObj = req.CreateResponse(HttpStatusCode.OK);
+            await returnObj.WriteAsJsonAsync(true);
+            return returnObj;
+            //return new OkObjectResult(true);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Risebird.MicroService
 
         }
         [Function("RunPowerShellScript")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "RunPowerShellScript")] HttpRequestData req)
         {
             log.LogInformation("RunPowerShellScript HTTP trigger function processed a request.");
@@ -40,7 +40,10 @@ namespace Risebird.MicroService
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var data = JsonConvert.DeserializeObject<RunPowershellDTO>(requestBody);
             var result = RunScript(_azureHelper.GetAzureCredential(), data.Url, data.Script);
-            return new OkObjectResult(result);
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(result);
+            return response;
+            //return new OkObjectResult(result);
         }
 
         public string RunScript(AzureCredentials credentials, string url, string[] script)
