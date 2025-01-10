@@ -8,8 +8,10 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Repository.Interface;
 using System.Collections.Specialized;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.MicroService
 {
@@ -29,7 +31,7 @@ namespace Risebird.MicroService
         }
 
         [Function("GetUserProfile")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -44,8 +46,10 @@ namespace Risebird.MicroService
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var profileName = await _userRepository.GetUserProfileBasedOnEmailId(requestBody);
 
-
-            return new OkObjectResult(profileName);
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(profileName);
+            return response;
+            //return new OkObjectResult(profileName);
         }
     }
 }

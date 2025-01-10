@@ -30,7 +30,7 @@ namespace Risebird.MicroService
             log = loggerFactory.CreateLogger<StartStopVM>();
         }
         [Function("StartStopVM")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "StartStopVM")] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -60,8 +60,10 @@ namespace Risebird.MicroService
             {
                 responseMessage = "Failed";
             }
-
-            return new OkObjectResult(responseMessage);
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(responseMessage);
+            return response;
+            //return new OkObjectResult(responseMessage);
         }
 
         public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand)

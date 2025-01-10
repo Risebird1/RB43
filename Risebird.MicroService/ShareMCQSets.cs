@@ -6,10 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Specialized;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -28,7 +30,7 @@ namespace Risebird.MicroService
             log = loggerFactory.CreateLogger<ShareMCQSets>();
         }
         [Function("ShareMCQSets")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -59,10 +61,15 @@ namespace Risebird.MicroService
                     _list.Expiretime = 24;
                     await _mCQService.AddMCQSetShareList(_list);
                     string currenturl = "https://portal.risebird.io/MCQ/SkillTest?Id=" + mcqset.PartitionKey;
-                    return new OkObjectResult(currenturl);
+
+                    var response = req.CreateResponse(HttpStatusCode.OK);
+                    await response.WriteAsJsonAsync(currenturl);
+                    return response;
+                    //return new OkObjectResult(currenturl);
                 }
             }
-            return new BadRequestResult();
+            return req.CreateResponse(HttpStatusCode.BadRequest);
+            //return new BadRequestResult();
         }
     }
 }
