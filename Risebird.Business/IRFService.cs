@@ -4223,7 +4223,7 @@ namespace Risebird.Business
                                         oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail, isStaging);
                                     }
                                     oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + candidateEmail;
-                                    canOnboardingStatus.SchedulingLink = oneTimeSchedulingLink1;
+                                    canOnboardingStatus.schedulingLink = oneTimeSchedulingLink1;
                                     var candidateDetails = candidateList.Where(x => x.EmailId == candidateEmail).FirstOrDefault();
                                     if (irf.BussinessType == "B2B")
                                     {
@@ -4266,7 +4266,7 @@ namespace Risebird.Business
                             {
                                 canOnboardingStatus.onboardingStatus = value;//"failed";
                                 canOnboardingStatus.invitationMailDeliveryStatus = "NA";
-                                canOnboardingStatus.SchedulingLink = "NA";
+                                canOnboardingStatus.schedulingLink = "NA";
 
                             }
                             canReponseList.Add(canOnboardingStatus);
