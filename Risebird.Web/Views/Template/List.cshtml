@@ -480,12 +480,6 @@
                             <label id="error_JDFile" class="text-danger"></label>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="BillingOwner" class="form-label">Billing Owner:</label>
-                            @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
-                            <label id="error_BillingOwner" class="text-danger"></label>
-                        </div>
-
                         @if (Model.Profile != "Client")
                         {
                             <div class="mb-3">
@@ -494,12 +488,28 @@
                                 <label id="error_ClientId" class="text-danger"></label>
                             </div>
 
-                            <div class="mb-3">
+                            @* <div class="mb-3">
                                 <label for="ClientId" class="form-label">Select Client User:</label>
-                                @Html.DropDownList("ClientUserIdPopUp", new List<SelectListItem>(), "Select", new { @class = "select-css form-control"})
+                                @Html.DropDownList("ClientUserIdPopUp", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
                                 <label id="error_ClientUserIdPopUp" class="text-danger"></label>
-                            </div>
+                            </div> *@
+
+                            <span id="make_checkbox_select">
+                                <select id="ClientUserIdPopUp" data-placeholder="None Selected" style="width:300px" name="ClientUserIdPopUp" multiple class="chosen-select" tabindex="8">
+
+                                </select>
+                            </span>
+                            <label id="error_ClientUserIdPopUp" class="text-danger"></label>
+
                         }
+
+                        <div class="mb-3">
+                            <label for="BillingOwner" class="form-label">Billing Owner:</label>
+                            @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
+                            <label id="error_BillingOwner" class="text-danger"></label>
+                        </div>
+
+                        
 
                         @* <div class="mb-3 mt-3">
                             <label for="ClientName" class="form-label">Project Name:</label>

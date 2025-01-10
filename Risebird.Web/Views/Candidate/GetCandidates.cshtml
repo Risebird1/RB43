@@ -1319,7 +1319,87 @@
         });
     }
 </script>
-@if (ViewBag.Message != null)
+
+@if (ViewBag.Message != null && ViewBag.Message2 != null)//&& Model.Message3 != null
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+        
+                    Swal.fire({
+
+                        title: '<strong>Successful</u></strong>',
+                        icon: 'info',
+                        html:
+                            '@ViewBag.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@ViewBag.Message2">Scheduling Link</a>',
+                        confirmButtonText: "Close",
+                        allowOutsideClick: false
+
+                    }).then((result) => {
+        
+                    });
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+else if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function () {
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+}
+
+
+@* @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
 
@@ -1370,7 +1450,7 @@
         window.onload = my_code();
     </script>
 
-}
+} *@
 <script>
     function CopyPublicUrl(EmailId, IRFId, type) {
         $.ajax({

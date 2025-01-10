@@ -804,6 +804,16 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
+                        else if (TempData["SuccessErrorCloneTemplateMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
+                            TempData.Remove("SuccessErrorCloneTemplateMessage");
+                        }
+                        if (TempData["SuccessErrorCloneTemplateMessage2"] != null)
+                        {
+                            ViewBag.Message2 = TempData["SuccessErrorCloneTemplateMessage2"].ToString();
+                            TempData.Remove("SuccessErrorCloneTemplateMessage2");
+                        }
                         if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
