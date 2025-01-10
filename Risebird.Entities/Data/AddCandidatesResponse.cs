@@ -17,7 +17,7 @@ namespace Risebird.Entities.Data
         public string emailId { get; set; }
         public string onboardingStatus { get; set; }//successful/ duplicate/ User exists with different profile/failed
         public string invitationMailDeliveryStatus { get; set; }//delivered ; not delivered; NA
-        public string SchedulingLink { get; set; }//; NA
+        public string schedulingLink { get; set; }//; NA
     }
     public class CandidateExportStatus
     {
