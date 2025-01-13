@@ -86,8 +86,8 @@
 
                                                   <div class="action-btn" style="display:none;">
 
-                                                <button  class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
-                                                   <span  onclick="EditAssessment(@item.id)" title="Edit"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
+                                                <button  class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit Assessment" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
+                                                            <span onclick="EditAssessment(@item.id)" title="Edit Assessment"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
                                                   </button>
 
                                                         <a href="javascript:void(0);" id="mpopupLink">
@@ -143,11 +143,9 @@
 
                                                 @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
                                                 {
-                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#76adcd73!important;border: 1px #76adcd73!important;width:25px!important;height:25px!important;position:relative;">
+                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#497d9c73!important;border: 1px #497d9c73!important;width:25px!important;height:25px!important;position:relative;">
                                                                 <span onclick="location.href='@Url.Action("EditMAG", "IRF", new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})'" title="Edit MAG" style="text-decoration:none" >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
-                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
-                                                            </svg>
+                                                                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L36.7,152a15.4,15.4,0,0,0-3.6,5.5l-.2.5a16,16,0,0,0-.9,5.3V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.3L224,99.3A16.1,16.1,0,0,0,224,76.7Zm-80-9.4L160.7,84,68,176.7,51.3,160ZM48,208V179.3L76.7,208Zm48-3.3L79.3,188,172,95.3,188.7,112Z" fill="white"></path></svg>
                                                         </span>
                                                     </button>
                                                 }
