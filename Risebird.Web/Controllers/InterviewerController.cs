@@ -3936,6 +3936,11 @@ namespace Risebird.Web.Controllers
             {
                 IEnumerable<StatsDetailsVM> statsDetailsList;
                 statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, clientEmailId);
+                statsDetailsList = statsDetailsList.Select(x =>
+                {
+                    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
                 ViewBag.StatType = statType;
                 ViewBag.EmailId = interviewerEmailId + "(Interviewer)";
                 ViewBag.ClientEmailId = clientEmailId;

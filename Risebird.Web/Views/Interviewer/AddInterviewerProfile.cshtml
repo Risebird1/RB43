@@ -30,6 +30,14 @@
                         <div id="divEVverification">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="dashboard-view" style="position:relative;top:-10px;">
+                                        <span class="dashboard-iconcolor" style="background-image:none!;width:30px!important;height:30px!important"><i class="fa fa-home" aria-hidden="true" style="font-size: 17px;color: #fff;position: relative;top: -14px;left: -6px;"></i></span>
+                                        <span style="float:left;font-size: 16px;position: relative;top: -6px;"> <a onclick="location.href='@Url.Action("", "Dashboard")'"><span class="pull-left">Dashboard</span></a></span>
+                                   </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">(Please enter 10 digit mobile number without space, country code or special characters)</span>
