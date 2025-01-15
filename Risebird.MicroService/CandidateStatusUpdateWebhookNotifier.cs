@@ -91,7 +91,7 @@ namespace Risebird.MicroService
                         }
 
                     }
-                    foreach (var data in webHookData.Where(x => x.Status.ToLower() == "completed"))
+                    foreach (var data in webHookData.Where(x => x.Status.ToLower() == "completed" || x.Status.ToLower() == "noshow" || x.Status.ToLower() == "dropped"))
                     {
 
                         try

@@ -47,7 +47,30 @@ BEGIN
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'completed' 
  End
+
+  if(@meetingStatus in (1, 5, 9))
+ Begin
+	Select @interviewId = InterviewId from InterviewComments where id = @id
+
+	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
+
+	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
+
+	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'noshow' 
+ End
+  
+  if(@meetingStatus in (3))
+ Begin
+	Select @interviewId = InterviewId from InterviewComments where id = @id
+
+	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
+
+	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
+
+	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'dropped' 
+ End
  
 
 END
+GO
 
