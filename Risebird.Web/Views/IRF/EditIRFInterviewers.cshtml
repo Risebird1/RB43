@@ -219,7 +219,11 @@
                                                                                         
                                                                                     </td>
                                                                                     <td class="text-center">
-                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
+                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable, // Model binding for the checkbox
+                                                                                         new
+                                                                                         {
+                                                                                             @onchange = "ChangeInterviewerAvailabilityStatus(this.id)" // Attach onchange event
+                                                                                         })
                                                                                     </td>
                                                                                     <td>
                                                                                         @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CampaignName))
@@ -310,6 +314,7 @@
 
 
                                     </div>
+                                </div>
                                 </div>
                             </div>
 
@@ -433,7 +438,7 @@
     //     });
     // }
     function OpenInterviewerModal(irfId) {
-        $.ajax({
+$.ajax({
             url: '/IRF/SkillChannelInterviewers',
             data: { 'irfId': irfId},
             success: function (data) {
@@ -508,18 +513,21 @@
                                     {
                                         document.getElementById('InterviewerCollection_' + index + '__IsAvailable').checked = false;
                                     }
-                                    resolve(result)
+                                    resolve(result);
 
                                 }
                                 else {
-                                    swal.fire("Error archiving!", "Please try again", "error");
-
+                                isCheckedElement.checked = !isCheckedElement.checked;
+                                    swal.fire("Error!", "Please try again", "error");
+                                
+                                
                                 }
 
                             },
                             error: function () {
-
-                                swal.fire("Error archiving!", "Please try again", "error");
+                            isCheckedElement.checked = !isCheckedElement.checked;
+                                swal.fire("Error!", "Please try again", "error");
+                            
                             }
                         })
                     })
@@ -542,6 +550,7 @@
                     })
                 }
                 else if (result.dismiss === 'cancel') {
+                isCheckedElement.checked = !isCheckedElement.checked;
                     swal.fire(
                         'Cancelled',
                         'Operation cancelled! :)',
@@ -552,4 +561,88 @@
 
 
         }
+</script>
+
+<script type="text/javascript">
+    // Function to submit the checkbox value using AJAX
+    function ChangeInterviewerAvailabilityStatus(elementId) {
+
+        var irfId = '@Model.id'
+        var index = elementId.split('_')[1];
+        var isCheckedElement = document.getElementById('InterviewerCollection_' + index + '__IsAvailable');
+        var isChecked = isCheckedElement.checked;
+        var checkboxValue = isChecked ? "available" : "unavailable";
+        var interviewerUserIdElement = 'InterviewerCollection_' + index + '__UserId';
+        var interviewerUserId = $("#" + interviewerUserIdElement).val();
+        var interviewerEmailIdElement = 'InterviewerCollection_' + index + '__EmailId';
+        var interviewerEmailId = $("#" + interviewerEmailIdElement).val();
+
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to mark the interviewer " + interviewerEmailId  + " as "  + checkboxValue + " ?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, go ahead!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/ChangeInterviewerAvailabilityStatus?userId=' + interviewerUserId + '&availabilityStatus=' + isChecked + '&irfId=' + '@Model.id',
+                        type: 'POST',
+                        success: function (result) {
+                            if (result == true) {
+                                
+                                // if (isChecked == false) {
+                                //     document.getElementById('InterviewerCollection_' + index + '__IsAvailable').checked = false;
+                                // }
+                                resolve(result);
+
+                            }
+                            else {
+                                isCheckedElement.checked = !isCheckedElement.checked;
+                                swal.fire("Error!", "Please try again", "error");
+
+
+                            }
+
+                        },
+                        error: function () {
+                            isCheckedElement.checked = !isCheckedElement.checked;
+                            swal.fire("Error!", "Please try again", "error");
+
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: checkboxValue + 'ed!',
+                    type: 'success',
+                    html: '<p>Successfully marked the interviewer ' + interviewerEmailId + ' as ' +  checkboxValue  + '</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    //window.location = "/IRF/Index";
+                    //location.reload(true);
+
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                isCheckedElement.checked = !isCheckedElement.checked;
+                swal.fire(
+                    'Cancelled',
+                    'Operation cancelled! :)',
+                    'error'
+                )
+            }
+        })
+
+
+    }
 </script>
