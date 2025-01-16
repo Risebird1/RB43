@@ -4514,5 +4514,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateUSTJobTitle(agId, ustJobTitle, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

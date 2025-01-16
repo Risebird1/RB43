@@ -63,6 +63,7 @@
                                         <th>Insta Available</th>
                                         <th>Is Master AG</th>
                                         <th>Parent AG</th>
+                                        <th>UST Job Title</th>
                                        
                                     </tr>
                                 </thead>
@@ -86,8 +87,8 @@
 
                                                   <div class="action-btn" style="display:none;">
 
-                                                <button  class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
-                                                   <span  onclick="EditAssessment(@item.id)" title="Edit"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
+                                                <button  class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit Assessment" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
+                                                            <span onclick="EditAssessment(@item.id)" title="Edit Assessment"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
                                                   </button>
 
                                                         <a href="javascript:void(0);" id="mpopupLink">
@@ -143,14 +144,23 @@
 
                                                 @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
                                                 {
-                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#76adcd73!important;border: 1px #76adcd73!important;width:25px!important;height:25px!important;position:relative;">
+                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#497d9c73!important;border: 1px #497d9c73!important;width:25px!important;height:25px!important;position:relative;">
                                                                 <span onclick="location.href='@Url.Action("EditMAG", "IRF", new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})'" title="Edit MAG" style="text-decoration:none" >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
-                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
-                                                            </svg>
+                                                                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L36.7,152a15.4,15.4,0,0,0-3.6,5.5l-.2.5a16,16,0,0,0-.9,5.3V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.3L224,99.3A16.1,16.1,0,0,0,224,76.7Zm-80-9.4L160.7,84,68,176.7,51.3,160ZM48,208V179.3L76.7,208Zm48-3.3L79.3,188,172,95.3,188.7,112Z" fill="white"></path></svg>
                                                         </span>
                                                     </button>
                                                 }
+
+                                                        @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add UST Job Title">
+                                                                <span onclick="OpenModalForUSTJobTitle('@item.id', '@item.AssessmentGroup', '@item.USTJobTitle')" title="Add UST Job Title" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                        }
                                                         @* @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
                                                 {
                                                     <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Client Interview Report">
@@ -227,6 +237,7 @@
                                             {
                                                 <td></td>
                                             }
+                                            <td>@item.USTJobTitle</td>
                                            
 
                                         </tr>
@@ -406,6 +417,43 @@
 </div>
 <div id="modal_SME_placeholder"></div>
 
+<div id="jobTitleModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <h5 class="modal-title pull-left" id="jobTitleModalHeading" style="width:600px">Add UST Job Title<span class="popup-text"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeJobTitleModalPopup()">
+                    <span aria-hidden="true" id="jobTitleModalClose" style="cursor:pointer;">&times;</span>
+                </button>
+            </div>
+
+
+
+            <div class="modal-body" id="jobTitleModalBody">
+
+                <form action="@Url.Action("AddUpdateUSTJobTitle","IRF")" method="post" enctype="multipart/form-data" onsubmit="return ValidateUSTJobTitleForm()">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="mb-3">
+                        <label for="modal_USTJobTiltle" class="form-label">Job Title(UST):</label>
+                        <input type="text" for="modal_USTJobTitle" class="form-control" id="modal_USTJobTitle" name="modal_USTJobTitle">
+                        <label id="error_USTJobTitle" class="text-danger"></label>
+                    </div>
+
+                    <input type="hidden" for="modal_agId" name="modal_agId" id="modal_agId" />
+                    
+                    <button type="button" class="btn btn-primary" onclick="AddUpdateUSTJobTitle()">Save</button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
 <script src="~/js/ModalFormServerValidation.js"></script>
 
 
@@ -431,6 +479,123 @@
         }
     </script>
 }
+<script>
+    //let assessmentGroupId = '';
+    let assessmentGroupName = '';
+    function OpenModalForUSTJobTitle(agId, agName, ustJobTitle) {
+        debugger;
+        assessmentGroupName = agName;
+        //assessmentGroupId = agId;
+        var modal = document.getElementById("jobTitleModal");
+        modal.style.display = "block";
+        var modalHeading = '';
+
+        if (agName != null && agName != '') {
+            modalHeading = 'Add UST Job Title For : "' + agName + '"';
+        }
+        else {
+            modalHeading = 'Add UST Job Title';
+        }
+
+        $('#modal_USTJobTitle').val('');
+        $('#modal_USTJobTitle').val(ustJobTitle);
+        $('#error_USTJobTitle').val('');
+        $('#modal_agId').val('');
+        $('#modal_agId').val(agId);
+        
+    }
+    function ValidateUSTJobTitleForm() {
+        var ustJobTitle = $('#modal_USTJobTitle').val();
+        
+        var flag = true;
+
+        if (ustJobTitle == null || ustJobTitle == '') {
+            document.getElementById('error_USTJobTitle').innerHTML = "This field is required.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_USTJobTitle').innerHTML = "";
+        }
+        
+        return flag;
+
+    }
+
+    function closeJobTitleModalPopup() {
+        var modal = document.getElementById("jobTitleModal");
+        modal.style.display = "none";
+    }
+
+    function AddUpdateUSTJobTitle() {
+        if (ValidateUSTJobTitleForm()) { 
+            debugger;
+            var ustJobTitle = $('#modal_USTJobTitle').val();
+            var agId = $('#modal_agId').val();
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to save this jobtitle for " + assessmentGroupName + " ?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, go ahead!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/AddUpdateUSTJobTitle?agId=' + agId + '&ustJobTitle=' + ustJobTitle,
+                            type: 'POST',
+                            success: function (result) {
+                                if (result == true) {
+
+                                    resolve(result);
+                                    closeJobTitleModalPopup();
+                                }
+                                else {
+                                    swal.fire("Error!", "Please try again", "error");
+                                    closeJobTitleModalPopup();
+                                }
+
+                            },
+                            error: function () {
+                                swal.fire("Error!", "Please try again", "error");
+                                closeJobTitleModalPopup();
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                debugger;
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Saved!',
+                        type: 'success',
+                        html: '<p>Successfully saved the Job Title for ' + assessmentGroupName + '</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+
+
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    closeJobTitleModalPopup();
+                    swal.fire(
+                        'Cancelled',
+                        'Operation cancelled! :)',
+                        'error'
+                    )
+                }
+            })
+        }
+        
+    }
+
+</script>
+
+
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -454,7 +619,7 @@
             alert("Please Select atleast one Interviewer.");
         }
     }
-    function CreateAssignmetGroup() {
+    function OpenAssessmentGroupModal() {
         var modal = document.getElementById("AssessmentgroupModel");
         modal.style.display = "block";
     }
@@ -487,11 +652,11 @@
     function EditAssessment(assessmentid) {
         $.ajax({
             url: '/IRF/EditAssessment',
-            data: { 'assessmentid': assessmentid },
+            data: { 'assessmentid': assessmentid},
             success: function (data) {
                 $('#assessmentgrouplist').html('');
                 $('#assessmentgrouplist').html(data);
-                CreateAssignmetGroup();
+                OpenAssessmentGroupModal();
             }
         });
     }

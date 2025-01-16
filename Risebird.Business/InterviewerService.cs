@@ -1772,5 +1772,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewerAvailabilityStatus(int userId, bool availabilityStatus, int irfId, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateInterviewerAvailabilityStatus(userId, availabilityStatus, irfId, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

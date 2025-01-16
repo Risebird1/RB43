@@ -108,5 +108,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> UpdateInterviewerResume(int userId, string resumeLink, string loggedInUser);
         Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser);
+        Task<bool> UpdateInterviewerAvailabilityStatus(int userId, bool availabilityStatus, int irfId, string loggedInUser);
     }
 }
