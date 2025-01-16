@@ -119,12 +119,17 @@
                                                 <tr>
                                                     <th>Action</th>
                                                     <th>Interviewer</th>
+                                                    @if (ViewBag.InterviewerStatus == "TotalInterviewer")
+                                                    {
+                                                        <th>Resume</th>
+                                                        <th>Cost</th>
+                                                    }
                                                     @if (ViewBag.PageStatus != "Public")
                                                     {
                                                         <th>Red Markers</th>
                                                     }
-                                                   
-                                                     <th>Project ID</th>
+
+                                                    <th>Project ID</th>
                                                     <th>Skill Channel</th>
                                                     <th>JD Title</th>
                                                     <th>Client HR</th>
@@ -156,13 +161,18 @@
                                                 <tr>
                                                     <th>Action</th>
                                                     <th>Interviewer</th>
+                                                    @if (ViewBag.InterviewerStatus == "TotalInterviewer")
+                                                    {
+                                                        <th>Resume</th>
+                                                        <th>Cost</th>
+                                                    }
                                                     @if (ViewBag.PageStatus != "Public")
                                                     {
                                                         <th>Red Markers</th>
                                                     }
-                                                    
-                                                       <th>Project ID</th>
-                                                        
+
+                                                    <th>Project ID</th>
+
                                                     <th>Skill Channel</th>
                                                     <th>JD Title</th>
                                                     <th>Client HR</th>
@@ -227,7 +237,7 @@
                                                             @if (ViewBag.PageStatus != "Public")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats" style="width:27px!important;height:27px!important">
-                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" >
+                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})">
                                                                         <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                     </a>
                                                                 </button>
@@ -251,14 +261,18 @@
                                                             </td>
                                                             <td><c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer','@item.IRFId')">Yes</c></td>
                                                         }
-                                                        
-                                                       <td>@item.ProjectUniqueid</td>
+                                                        @if (ViewBag.InterviewerStatus == "TotalInterviewer")
+                                                        {
+                                                            <td><a href="@item.ResumeLink">Resume</a></td>
+                                                            <td>@item.BillingRate</td>
+                                                        }
+                                                        <td>@item.ProjectUniqueid</td>
                                                         <td>@item.IRFId</td>
                                                         <td>@item.JDTiltle</td>
                                                         <td>@item.Clienthr</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
-                                                        <td><a  target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
+                                                        <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
                                                         @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                         {
                                                             @if (ViewBag.Type == "Selection")
