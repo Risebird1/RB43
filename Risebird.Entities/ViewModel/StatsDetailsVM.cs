@@ -18,6 +18,8 @@ namespace Risebird.Entities.ViewModel
         public bool isTechQC { get; set; }
         public string ProjectUniqueid { get; set; }
         public string JDTiltle { get; set; }
+        public string intervieweStatusStatDesc { get; set; }
+
     }
     public class ProjectStatsVM
     {

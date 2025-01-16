@@ -107,12 +107,15 @@
                                                         }
 
                                                     </td>
-                                                    <td> @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                    <td>
+                                                        @item.RequestedBy<br/>
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
                                                            
-                                                                <span onclick="CommonCallButtonClick('@item.Name','@item.MobileNumber', '@item.RequestedBy',null, null, '@item.Requester')" data-original-title="Tooltip on top" title="Click here to call."><img src="/img/calling.png" width="18"></span>
-                                                           
-                                                        }@item.RequestedBy</td>
+                                                                <span onclick="CommonCallButtonClick('@item.Name','@item.MobileNumber', '@item.RequestedBy',null, null, '@item.Requester')" data-original-title="Tooltip on top" title="Click here to call."><img src="/img/calling.png" width="16"></span>
+
+                                                        }<span style="font-size:14px;font-weight:500;color: #2c5b2c;">@item.MobileNumber</span>
+                                                       </td>
                                                     <td>@item.Requester</td>
                                                     <td>@item.RequestedOn</td>
                                                     <td>@item.RequestType</td>

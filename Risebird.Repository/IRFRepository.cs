@@ -9586,6 +9586,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@agId", agId);
+                    parameters.Add("@ustJobTitle", ustJobTitle);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateUSTJobTitle", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
