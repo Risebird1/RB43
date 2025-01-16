@@ -77,6 +77,7 @@ namespace Risebird.Entities.ViewModel
         public bool isDirectlyTargeted { get; set; }
         public bool? IsMasterAG { get; set; }
         public string ParentAG { get; set; }
+        public string USTJobTitle { get; set; }
 
     }
     public class Assessment
