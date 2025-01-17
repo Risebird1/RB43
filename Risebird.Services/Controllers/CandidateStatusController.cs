@@ -324,12 +324,7 @@ namespace Risebird.Services.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                var errorResponse = new ErrorResponseBasic
-                {
-                    Error = "Invalid request parameters",
-                    Details = "An unexpected error occurred. Please try again later."
-                };
-                return new BadRequestObjectResult(errorResponse);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         /// <summary>
@@ -545,12 +540,7 @@ namespace Risebird.Services.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                var errorResponse = new ErrorResponseBasic
-                {
-                    Error = "Invalid request parameters",
-                    Details = "An unexpected error occurred. Please try again later."
-                };
-                return new BadRequestObjectResult(errorResponse);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
