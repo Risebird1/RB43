@@ -36,11 +36,28 @@ Select * from TransSkillGeneral where IRFId = @irfId and @isGeneralSkillRequired
 Select * from TransJoinability where IRFId = @irfId and @isJoinabilitySelectabilityRequired = 1  
   
 --interviewer details  
+--Declare @Assessmentid int  
+--set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)  
+--Declare @temptable Table(Userid int)  
+--Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
+
 Declare @Assessmentid int  
 set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)  
+Declare @temp as Table(
+AssessmentGroupId int
+)
+if exists(select top 1 id from MasterAssessmentGroup where AssessmentGroupId = @Assessmentid)
+begin
+Insert into @temp select AssessmentGroupId from SecondaryAssessmentGroups where MAGId = (select id from MasterAssessmentGroup where AssessmentGroupId = @Assessmentid)
+Insert into @temp values(@Assessmentid)
+end
+else
+Begin
+Insert into @temp values(@Assessmentid)
+End
 Declare @temptable Table(Userid int)  
-Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
-  
+Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value in (select distinct AssessmentGroupId from @temp)  
+
 select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted  
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill =   
 STUFF((SELECT ', ' + SkillName  
