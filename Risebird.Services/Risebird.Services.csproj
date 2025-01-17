@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Risebird.Business\Risebird.Business.csproj" />
+    <ProjectReference Include="..\Risebird.CommonHelper\Risebird.CommonHelper.csproj" />
+    <ProjectReference Include="..\Risebird.Entities\Risebird.Entities.csproj" />
+    <ProjectReference Include="..\Risebird.Repository\Risebird.Repository.csproj" />
   </ItemGroup>
 
 </Project>

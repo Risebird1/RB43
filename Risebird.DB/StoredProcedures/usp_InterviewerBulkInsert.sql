@@ -31,7 +31,13 @@ INSERT INTO [dbo].[TransInterviewer](
  [InterviewerId])    
     
     
-SELECT distinct ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
+SELECT distinct ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+WHERE 
+NOT EXISTS (
+	SELECT 1
+	FROM [dbo].[TransInterviewer] ti
+	WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+);
     
 END   
 GO
