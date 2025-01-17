@@ -154,7 +154,7 @@ ic.InterviewStatus, ic.InterviewerComment, ic.VideoLink, im.confirmationStatus, 
 ice.MeetingStatus as MeetingStatusTwo,ice.InterviewStatus as InterviewStatusTwo,          
 ice.InterviewerComment as InterviewerCommentTwo,      
 ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,tctv.addedOn,tctv.statusUpdatedAt,      
-Case When CandidateLatestStatus like '%FUTURESCHEDULE%' then 'SCHEDULED' else CandidateLatestStatus end as CandidateLatestStatus,Project.ProjectUniqueid as jobId     
+Case When CandidateLatestStatus like '%FUTURESCHEDULE%' then 'SCHEDULED' else CandidateLatestStatus end as CandidateLatestStatus,Project.ProjectUniqueid as jobId,ic.AudioTranscriptFileLink     
 from @TemporaryCandidateTableVariable tctv                
 join InterviewMeetings im on im.id = tctv.InterviewId                
 join IRF on IRF.IRFId=im.IRFId                 
