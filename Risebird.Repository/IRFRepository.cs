@@ -2896,7 +2896,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("AIVerdict", typeof(string));
                         interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
 
-                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding))
+                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding)?.Distinct())
                         {
                             
                             interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate, 
