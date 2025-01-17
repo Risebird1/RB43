@@ -140,7 +140,13 @@ Insert into @temptable Select Userid from InterviewerProfile cross apply string_
       
  SELECT distinct @id, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
  as InterviewerId FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
-  
+ WHERE 
+NOT EXISTS (
+	SELECT 1
+	FROM [dbo].[TransInterviewer] ti
+	WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+);
+ 
  DELETE from TransClientUser where IRFID = @id  
  --This row performs bulk copy of object DataTable to Table in SQL    
  INSERT INTO [dbo].[TransClientUser](    

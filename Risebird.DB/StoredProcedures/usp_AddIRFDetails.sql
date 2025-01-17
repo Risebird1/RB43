@@ -216,7 +216,13 @@ Begin
     
 					SELECT distinct @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, 
 					InterviewerProfile.id as InterviewerId, NULL as IsSurchargeApprove FROM @InterviewerBulkData ibd 
-					join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+					join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId 
+					WHERE 
+					NOT EXISTS (
+						SELECT 1
+						FROM [dbo].[TransInterviewer] ti
+						WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+					);
 
 					Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
 	SELECT 
