@@ -42,6 +42,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
         public string videoUrl { get; set; }
+        public string transcriptUrl { get; set; }
         public int communicationScore { get; set; }
         public string createdOn { get; set; }
         public string currentStatusUpdatedAt { get; set; }
@@ -113,6 +114,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public DateTime? currentStatusUpdatedAt { get; set; }
         public string jobId { get; set; }
         public List<SkillsSets> skillset { get; set; }
+        public string TranscriptLink { get; set; }
     }
     public class SkillsSetsDetails
     {

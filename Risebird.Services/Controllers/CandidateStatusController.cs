@@ -20,14 +20,16 @@ namespace Risebird.Services.Controllers
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
+        private readonly ICandidateRepository _candidateRepository;
 
-        public CandidateStatusController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IEncryptionHelper encryptionHelper, ICandidateService candidateService, IIRFRepository irfRepository)
+        public CandidateStatusController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IEncryptionHelper encryptionHelper, ICandidateService candidateService, IIRFRepository irfRepository, ICandidateRepository candidateRepository)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
             _encryptionHelper = encryptionHelper;
             _candidateService = candidateService;
             _irfRepository = irfRepository;
+            _candidateRepository = candidateRepository;
         }
 
         [HttpGet]
@@ -49,6 +51,10 @@ namespace Risebird.Services.Controllers
             try
             {
                 var functionkey = Request.Headers["x-functions-key"].ToString();
+                if (functionkey != "b8AiZsRKltzzEvBBip2Bm1gAOWyuK0rjxSehN3aDE0PzAzFuqRFi1A==")
+                {
+                    return new UnauthorizedResult();
+                }
                 var tenantId = Request.Headers["tenant-id"].ToString();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
@@ -266,6 +272,7 @@ namespace Risebird.Services.Controllers
                                     reportUrl = executiveurl,
                                     communicationScore = item.CommunicationalProficiency,
                                     videoUrl = item.VideoLink,
+                                    transcriptUrl=item.TranscriptLink,
                                     skills = _skills,
                                     createdOn = item.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     currentStatusUpdatedAt = item.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -325,16 +332,215 @@ namespace Risebird.Services.Controllers
                 return new BadRequestObjectResult(errorResponse);
             }
         }
-
+        /// <summary>
+        /// Get Candidate Latest Status
+        /// </summary>
+        /// <param name="reqData"></param>
+        /// <returns></returns>
         [HttpPost(Name = "CandidateLatestStatus")]
         [Route("CandidateLatestStatus")]
-        public async Task<IActionResult> CandidateStatus()
+        public async Task<IActionResult> CandidateStatus(CandidateLatestStatusRequest reqData)
         {
             try
             {
                 var functionkey = Request.Headers["x-functions-key"].ToString();
                 var tenantId = Request.Headers["tenant-id"].ToString();
-                return new OkObjectResult("");
+                if (functionkey != "ypiAr3NN3plzXtdPhwBxUPdzmK-QQmXjWFUWWAYS0bjAAzFubl6qrw==")
+                {
+                    return new UnauthorizedResult();
+                }
+                bool isAuthorizedTenant = false;
+                var clientDetails = await _clientService.GetClientByTalentId(tenantId);
+                if (clientDetails != null)
+                {
+                    if (clientDetails.id > 0)
+                    {
+                        isAuthorizedTenant = true;
+                    }
+                }
+                if (isAuthorizedTenant)
+                {
+                    if (reqData != null)
+                    {
+                        if (reqData == null || (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId)) || string.IsNullOrEmpty(reqData.candidateEmailId) || string.IsNullOrEmpty(reqData.requestedBy))
+                        {
+                            var details = new Dictionary<string, string>();
+                            if (reqData == null)
+                            {
+                                details.Add("body", "Request Body is null.");
+                            }
+                            if (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId))
+                            {
+                                details.Add("skillChannelId/jobId", "Either of 'skillChannelId' or 'jobId' fields is required.");
+                            }
+                            if (string.IsNullOrEmpty(reqData.candidateEmailId))
+                            {
+                                details.Add("candidateEmailId", "This field is required.");
+                            }
+                            if (string.IsNullOrEmpty(reqData.requestedBy))
+                            {
+                                details.Add("requestedBy", "This field is required.");
+                            }
+                            var errorResponse = new ErrorResponse
+                            {
+                                Error = "Invalid request parameters.",
+                                Details = details
+                            };
+                            return new BadRequestObjectResult(errorResponse);
+                        }
+
+                        var results = await _candidateRepository.GetCandidateLatestStatusForApi(reqData.skillChannelId, reqData.candidateEmailId, reqData.requestedBy, reqData.jobId);
+
+                        var model = new CandidateInfoResponse();
+                        model.requestedBy = reqData.requestedBy;
+                        model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                        if (results != null)
+                        {
+                            foreach (var result in results)
+                            {
+                                if (result.InterviewStatusTwo != null && result.InterviewStatusTwo > 0)
+                                {
+                                    result.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(result.InterviewStatusTwo)).GetDescription();
+                                }
+                                if (result.MeetingStatusTwo > 0)
+                                {
+                                    result.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(result.MeetingStatusTwo)).GetDescription();
+                                    if (string.IsNullOrEmpty(result.InterviewStatusTwoDesc))
+                                    {
+                                        result.InterviewStatusTwoDesc = result.MeetingStatusTwoDesc;
+                                    }
+                                }
+                                //Check for meeting status complete
+                                var executiveurl = string.Empty;
+                                var meetingstatus = !string.IsNullOrWhiteSpace(result.MeetingStatus.ToString()) ? Convert.ToInt32(result.MeetingStatus) : 0;
+                                if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
+                                {
+                                    executiveurl = await GenerateExecutiveReportURl("https://portal.risebird.io/", Convert.ToInt32(result.id), result.irfintid);
+                                }
+                                //Create JD Based Info
+                                List<SkillDetails> _skills = new List<SkillDetails>();
+                                var _questions = new List<QuestionCommentsDetails>();
+                                foreach (var _question in result.questions.Where(x => x.skillSet == 1).ToList())
+                                {
+                                    _questions.Add(new QuestionCommentsDetails
+                                    {
+                                        question = _question.question,
+                                        skillName = _question.skillName,
+                                        rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
+                                    });
+                                }
+                                var _skillset = new List<SkillsSetsDetails>();
+                                foreach (var _skilldetail in result.skillset.Where(x => x.skillSet == 1).ToList())
+                                {
+                                    var score = string.Empty;
+                                    if (_skilldetail.WeightageRequired > 0)
+                                    {
+                                        score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString();
+                                    }
+                                    _skillset.Add(new SkillsSetsDetails
+                                    {
+                                        skillName = _skilldetail.skillName,
+                                        EvaluatedAt = _skilldetail.EvaluatedAt,
+                                        score = score
+                                    });
+                                }
+                                _skills.Add(new SkillDetails
+                                {
+                                    isPrimary = true,
+                                    skillName = result.JDTiltle,
+                                    status = result.CandidateLatestStatus,
+                                    techscore = result.TechScoreone,
+                                    interviewerComment = result.InterviewerComment,
+                                    questions = _questions,
+                                    skillset = _skillset
+                                });
+                                //In case of multiStack
+                                if (result.numberOfTechStacks == 2)
+                                {
+                                    _questions = new List<QuestionCommentsDetails>();
+                                    foreach (var _question in result.questions.Where(x => x.skillSet == 2).ToList())
+                                    {
+                                        _questions.Add(new QuestionCommentsDetails
+                                        {
+                                            question = _question.question,
+                                            skillName = _question.skillName,
+                                            rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
+                                        });
+                                    }
+                                    _skillset = new List<SkillsSetsDetails>();
+                                    foreach (var _skilldetail in result.skillset.Where(x => x.skillSet == 2).ToList())
+                                    {
+                                        var score = string.Empty;
+                                        if (_skilldetail.WeightageRequired > 0)
+                                        {
+                                            score = (_skilldetail.WeightageActual * 100 / _skilldetail.WeightageRequired).ToString();
+                                        }
+                                        _skillset.Add(new SkillsSetsDetails
+                                        {
+                                            skillName = _skilldetail.skillName,
+                                            EvaluatedAt = _skilldetail.EvaluatedAt,
+                                            score = score
+                                        });
+                                    }
+                                    _skills.Add(new SkillDetails
+                                    {
+                                        isPrimary = false,
+                                        skillName = result.JDTitleTwo,
+                                        status = result.InterviewStatusTwoDesc,
+                                        techscore = result.TechScoretwo,
+                                        interviewerComment = result.InterviewerCommentTwo,
+                                        questions = _questions,
+                                        skillset = _skillset
+                                    });
+                                }
+                                model.result.Add(new CandidateStatusResponse
+                                {
+                                    jobId = result.jobId,
+                                    skillChannelId = result.IRFId,
+                                    interviewDate = result.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    candidateEmailId = result.candidateEmail,
+                                    interviewer = result.InterviewerCodedName,
+                                    reportUrl = executiveurl,
+                                    communicationScore = result.CommunicationalProficiency,
+                                    videoUrl = result.VideoLink,
+                                    transcriptUrl = result.TranscriptLink,
+                                    skills = _skills,
+                                    createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                                });
+                            }
+                            return new OkObjectResult(model);
+                        }
+                        else
+                        {
+
+                            var details = new Dictionary<string, string>
+                            {
+                                { "Invalid request", "Invalid request" }
+                            };
+                            var errorResponse = new ErrorResponse
+                            {
+                                Error = "Invalid request.",
+                                Details = details
+                            };
+                            return new BadRequestObjectResult(errorResponse);
+                        }
+                    }
+                    else
+                    {
+                        var details = new Dictionary<string, string>
+                        {
+                            { "body", "Request Body is null." }
+                        };
+                        var errorResponse = new ErrorResponse
+                        {
+                            Error = "Invalid request.",
+                            Details = details
+                        };
+                        return new BadRequestObjectResult(errorResponse);
+                    }
+                }
+                return new UnauthorizedResult();
             }
             catch (Exception ex)
             {
@@ -355,6 +561,5 @@ namespace Risebird.Services.Controllers
             var reportlink = portalurl + "Interview/ExecutiveReport?meetingid=" + meetingid + "&irf=" + irf;
             return reportlink;
         }
-
     }
 }
