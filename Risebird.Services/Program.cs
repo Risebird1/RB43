@@ -1,4 +1,3 @@
-using Microsoft.ApplicationInsights.Extensibility;
 using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;

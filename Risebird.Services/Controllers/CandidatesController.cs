@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
-using Risebird.Repository.Interface;
 
 namespace Risebird.Services.Controllers
 {
