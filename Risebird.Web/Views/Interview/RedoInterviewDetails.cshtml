@@ -19,9 +19,9 @@
                     @Html.LabelFor(model => model.CandidateFace, htmlAttributes: new { @class = "control-label desp-label" })<span class="red"> * </span>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12">
-                    @Html.RadioButtonFor(m=>m.CandidateFace,"Visible") Visible
-                    @Html.RadioButtonFor(m=>m.CandidateFace,"Partial Visible") Partial Visible
-                    @Html.RadioButtonFor(m=>m.CandidateFace,"Not Visible") Not Visible
+                    <span style="position:relative;top:4px;">@Html.RadioButtonFor(m => m.CandidateFace, "Visible")</span> Visible
+                    <span style="position:relative;top:4px;"> @Html.RadioButtonFor(m => m.CandidateFace, "Partial Visible")</span> Partial Visible
+                    <span style="position:relative;top:4px;">@Html.RadioButtonFor(m => m.CandidateFace, "Not Visible")</span> Not Visible
                 </div>
                 @Html.ValidationMessageFor(model => model.CandidateFace, "", new { @class = "text-danger" })
             </div>
@@ -30,8 +30,8 @@
                     @Html.LabelFor(model => model.Inappropriate, htmlAttributes: new { @class = "control-label desp-label" })<span class="red"> * </span>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12">
-                    @Html.RadioButtonFor(m=>m.Inappropriate,"Selection") Inappropriate Selection
-                    @Html.RadioButtonFor(m=>m.Inappropriate,"Rejection") Inappropriate Rejection
+                    <span style="position:relative;top:4px;"> @Html.RadioButtonFor(m => m.Inappropriate, "Selection")</span> Inappropriate Selection
+                    <span style="position:relative;top:4px;">@Html.RadioButtonFor(m => m.Inappropriate, "Rejection")</span> Inappropriate Rejection
                     @Html.ValidationMessageFor(model => model.Inappropriate, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -58,9 +58,9 @@
                     @Html.LabelFor(model => model.HandsOfCoding, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12">
-                    @Html.RadioButtonFor(m=>m.HandsOfCoding,"Requirementmatched") Requirement Matched
-                    @Html.RadioButtonFor(m=>m.HandsOfCoding,"Missing") Missing
-                    @Html.RadioButtonFor(m=>m.HandsOfCoding,"Notasperrequirement") Not as per the Requirement
+                    <span style="position:relative;top:4px;"> @Html.RadioButtonFor(m => m.HandsOfCoding, "Requirementmatched")</span> Requirement Matched
+                    <span style="position:relative;top:4px;"> @Html.RadioButtonFor(m => m.HandsOfCoding, "Missing")</span> Missing
+                    <span style="position:relative;top:4px;"> @Html.RadioButtonFor(m => m.HandsOfCoding, "Notasperrequirement")</span> Not as per the Requirement
                 </div>
                 @Html.ValidationMessageFor(model => model.HandsOfCoding, "", new { @class = "text-danger" })
             </div>

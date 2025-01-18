@@ -221,6 +221,13 @@ BEGIN
 	SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],
 	@ModifiedBy, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict
 	FROM @InterviewerSurchargeBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	WHERE 
+	NOT EXISTS (
+		SELECT 1
+		FROM [dbo].[TransInterviewer] ti
+		WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+	);
+
 	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
 	SELECT 
     0 AS InterviewId,
@@ -256,7 +263,12 @@ FROM
 	SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,
 	ibd.[Source], @ModifiedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, ibd.IsSurchargeApprove
 	FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
-  
+	WHERE 
+	NOT EXISTS (
+		SELECT 1
+		FROM [dbo].[TransInterviewer] ti
+		WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+	);
  End
 	
     --emergency interviewers

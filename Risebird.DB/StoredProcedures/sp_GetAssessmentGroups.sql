@@ -55,7 +55,7 @@ END as IsMasterAG,
 CASE
     WHEN mag2.id is not null THEN ag2.AssessmentGroup
     ELSE null
-END as ParentAG
+END as ParentAG, ag.USTJobTitle
 from AssessmentGroup ag 
 join #temp_AssessmentIRFCount as agrf on ag.id=agrf.AssessmentGroupId
 left join #temp_AssessmentInterviewerCount as afip on ag.id= afip.AssessmentGroupId
@@ -66,7 +66,7 @@ left join MasterAssessmentGroup mag2 on mag2.id = sag.MAGId
 left join AssessmentGroup ag2 on mag2.AssessmentGroupId = ag2.id
 group by ag.id,ag.AssessmentGroup,ag.PrimarySkills,
 ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,
-ag.PerHourRate,afip.InterviewerCount,agrf.IRFCount, mag.id, sag.id, mag2.id, mag2.MAGName, ag2.AssessmentGroup
+ag.PerHourRate,afip.InterviewerCount,agrf.IRFCount, mag.id, sag.id, mag2.id, mag2.MAGName, ag2.AssessmentGroup, ag.USTJobTitle
 
  DROP TABLE #temp_AssessmentIRFCount
 

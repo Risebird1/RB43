@@ -2896,7 +2896,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("AIVerdict", typeof(string));
                         interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
 
-                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding))
+                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding)?.Distinct())
                         {
                             
                             interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate, 
@@ -9585,6 +9585,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@agId", agId);
+                    parameters.Add("@ustJobTitle", ustJobTitle);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateUSTJobTitle", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

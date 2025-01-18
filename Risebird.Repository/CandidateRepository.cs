@@ -1550,6 +1550,7 @@ namespace Risebird.Repository
                                     createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : new DateTime(),
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : new DateTime(),
                                     jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
+                                    TranscriptLink = dt.Rows[i]["AudioTranscriptFileLink"] != null ? dt.Rows[i]["AudioTranscriptFileLink"].ToString() : null,
 
                                 });
                             }
@@ -1687,6 +1688,7 @@ namespace Risebird.Repository
                                     createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : null,
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : null,
                                     jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
+                                    TranscriptLink = dt.Rows[i]["AudioTranscriptFileLink"] != null ? dt.Rows[i]["AudioTranscriptFileLink"].ToString() : null,
                                 });
                             }
                             _resultVM = listCandidates;
