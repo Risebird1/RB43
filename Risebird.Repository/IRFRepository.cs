@@ -3366,7 +3366,7 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("UserId", typeof(int));
                     techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
 
-                    foreach (var item in obj.SkillCollection)
+                    foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.UserId, item.SkillName);
                     }
@@ -8071,7 +8071,7 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("Comment", typeof(string));
                     techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
                     techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
-                    foreach (var item in obj.SkillCollection)
+                    foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName);
                     }
