@@ -265,7 +265,7 @@ namespace Risebird.Services.Controllers
                                     reportUrl = executiveurl,
                                     communicationScore = item.CommunicationalProficiency,
                                     videoUrl = item.VideoLink,
-                                   // transcriptUrl=item.TranscriptLink,
+                                    transcriptUrl=item.TranscriptLink,
                                     skills = _skills,
                                     createdOn = item.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     currentStatusUpdatedAt = item.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -494,7 +494,7 @@ namespace Risebird.Services.Controllers
                                     reportUrl = executiveurl,
                                     communicationScore = result.CommunicationalProficiency,
                                     videoUrl = result.VideoLink,
-                                    // transcriptUrl = result.TranscriptLink,
+                                    transcriptUrl = result.TranscriptLink,
                                     skills = _skills,
                                     createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
