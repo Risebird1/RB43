@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risebird.Business;
+﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
-using System.Net;
 
 namespace Risebird.Services.Controllers
 {
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CandidateStatusController : ControllerBase
     {
@@ -32,11 +29,7 @@ namespace Risebird.Services.Controllers
             _candidateRepository = candidateRepository;
         }
 
-        [HttpGet]
-        public string Get()
-        {
-            return "";
-        }
+       
         /// <summary>
         /// ProjectId or Skill Channel Id Candidate List
         /// Date Range or Complete Data
@@ -44,9 +37,9 @@ namespace Risebird.Services.Controllers
         /// </summary>
         /// <param name="reqData"></param>
         /// <returns></returns>
-        [HttpPost(Name = "InterviewChannelCandidateList")]
-        [Route("InterviewChannel/Candidates")]
-        public async Task<IActionResult> Candidates(CandidateLatestStatusRequest reqData)
+        [HttpPost]
+        [Route("CandidateList")]
+        public async Task<IActionResult> CandidateList(CandidateLatestStatusRequest reqData)
         {
             try
             {
@@ -327,14 +320,17 @@ namespace Risebird.Services.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+
+
         /// <summary>
         /// Get Candidate Latest Status
         /// </summary>
         /// <param name="reqData"></param>
         /// <returns></returns>
-        [HttpPost(Name = "CandidateLatestStatus")]
+        [HttpPost]
         [Route("CandidateLatestStatus")]
-        public async Task<IActionResult> CandidateStatus(CandidateLatestStatusRequest reqData)
+        public async Task<IActionResult> CandidateLatestStatus(CandidateLatestStatusRequest reqData)
         {
             try
             {
@@ -544,7 +540,8 @@ namespace Risebird.Services.Controllers
             }
         }
 
-        public async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
+        [ApiExplorerSettings(IgnoreApi = true)]
+        private async Task<string> GenerateExecutiveReportURl(string portalurl, int interviewid, int irfid)
         {
             var meetingid = await _encryptionHelper.EncryptIntegerValue(interviewid, "ExecutiveReport");
             var irf = await _encryptionHelper.EncryptIntegerValue(irfid, "ExecutiveReport");
