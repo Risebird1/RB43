@@ -49,7 +49,7 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private IInterviewerSkillsService _iInterviewerSkillsService;
         private readonly ICandidateService _candidateService;
-        private IInterviewerService _interviewerService;
+        private readonly IInterviewerService _interviewerService;
         private readonly INotificationHelper _notificationHelper;
         private readonly ITemplateService _templateService;
         private readonly IClientService _clientService;
@@ -10546,6 +10546,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageAddInterviewers"].ToString();
                             TempData.Remove("SuccessErrorMessageAddInterviewers");
                         }
+                        model.Profile = profileName;
                         return View(model);
                     }
                     else
@@ -10908,6 +10909,42 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         var result = await _irfService.UpdateUSTJobTitle(agId, ustJobTitle, emailid);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSurcharge(int userId, int surcharge, int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+
+                        var result = await _irfService.UpdateInterviewerSurcharge(userId, surcharge, irfId, emailid);
                         return Json(result);
                     }
                     else
