@@ -276,5 +276,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AssignmentVM>> GetAllMAGs();
         Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate();
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
+        Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser);
     }
 }
