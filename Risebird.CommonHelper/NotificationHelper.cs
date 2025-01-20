@@ -30,9 +30,8 @@ namespace Risebird.CommonHelper
         private readonly string _sendGridClientKey = string.Empty;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidationHelper _validationHelper;
-        private readonly IInterviewHelper _interviewHelper;
 
-        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper, IInterviewHelper interviewHelper)
+        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -44,7 +43,6 @@ namespace Risebird.CommonHelper
             _sendGridRepository = sendGridRepository;
             _httpContextAccessor = httpContextAccessor;
             _validationHelper = validationHelper;
-            _interviewHelper = interviewHelper;
         }
 
         public async Task<string> SendHelpsupportMail(Mail model)
@@ -1938,7 +1936,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null)
+        public async Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null, string CancellationSource = null)
         {
             try
             {
@@ -1953,12 +1951,6 @@ namespace Risebird.CommonHelper
                     {
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
-                }
-                //Fetch Cancellation Source
-                var cancellationsource = string.Empty;
-                if (interviewId.HasValue)
-                {
-                    cancellationsource = await _interviewHelper.GetInterviewCancellationSource(interviewId.Value);
                 }
                 object[] parameters = new object[] { CandidateName, interviewDate, "" };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
