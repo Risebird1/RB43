@@ -4514,5 +4514,30 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateUSTJobTitle(agId, ustJobTitle, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateInterviewerSurcharge(userId, surcharge, irfId, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
