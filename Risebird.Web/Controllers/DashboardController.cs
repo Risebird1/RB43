@@ -2988,9 +2988,11 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(item.interviewer);
                             }
+                            var cancellationsource = string.Empty;
+                            cancellationsource = await _meetingService.GetInterviewCancellationSource(InterviewId);
 
                             var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, item.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
-                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
+                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId, cancellationsource);
                             await _notificationHelper.SendInterviewCancelledMailCandidate(item.candidateEmail, item.interviewDate.ToString(), item.CandidateName, irfIntId, InterviewId);
                         }
                     }
