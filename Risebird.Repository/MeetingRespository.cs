@@ -7496,7 +7496,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewid);
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_DeleteQuestionsDiscussedFromReport", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetInterviewCancellationSource", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
