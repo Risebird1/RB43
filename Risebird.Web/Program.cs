@@ -196,6 +196,7 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
 builder.Services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
+builder.Services.AddScoped<IInterviewHelper, InterviewHelper>();
 
 
 var app = builder.Build();
