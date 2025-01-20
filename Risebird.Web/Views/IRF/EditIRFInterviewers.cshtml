@@ -198,10 +198,17 @@
                                                                                             @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                             {
                                                                                                 @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
+                                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Save Surcharge">
+                                                                                                        <span onclick="SaveSurcharge('@i')" title="Save Surcharge" class="mdc-fab__icon material-icons">
+                                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                                                            </svg>
+                                                                                                        </span>
+                                                                                                    </button>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
+                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0", @readonly  = "readonly" })
                                                                                             }
                                                                                             @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
                                                                                         </td>
@@ -635,6 +642,87 @@ $.ajax({
             }
             else if (result.dismiss === 'cancel') {
                 isCheckedElement.checked = !isCheckedElement.checked;
+                swal.fire(
+                    'Cancelled',
+                    'Operation cancelled! :)',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+</script>
+
+<script type="text/javascript">
+    // Function to submit the checkbox value using AJAX
+    function SaveSurcharge(index) {
+        debugger;
+        var irfId = '@Model.id'
+        //var index = elementId.split('_')[1];
+        
+        var interviewerUserIdElement = 'InterviewerCollection_' + index + '__UserId';
+        var interviewerUserId = $("#" + interviewerUserIdElement).val();
+        var interviewerEmailIdElement = 'InterviewerCollection_' + index + '__EmailId';
+        var interviewerEmailId = $("#" + interviewerEmailIdElement).val();
+        var interviewerSurchargeElement = 'InterviewerCollection_' + index + '__Surcharge';
+        var interviewerSurcharge = $("#" + interviewerSurchargeElement).val();
+
+        
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to add a surcharge of Rs." + interviewerSurcharge +  " against the interviewer " + interviewerEmailId  + "?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, go ahead!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/SaveSurcharge?userId=' + interviewerUserId + '&surcharge=' + interviewerSurcharge + '&irfId=' + '@Model.id',
+                        type: 'POST',
+                        success: function (result) {
+                            debugger;
+                            if (result == true) {
+                                
+                                resolve(result);
+
+                            }
+                            else {
+                                $("#" + interviewerSurchargeElement).val("");
+                                swal.fire("Error!", "Please try again", "error");
+
+                            }
+
+                        },
+                        error: function () {
+                            $("#" + interviewerSurchargeElement).val("");
+                            swal.fire("Error!", "Please try again", "error");
+
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Saved!',
+                    type: 'success',
+                    html: '<p>Successfully added a surcharge of Rs.' + interviewerSurcharge +  ' against the interviewer: ' + interviewerEmailId + '</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    //window.location = "/IRF/Index";
+                    //location.reload(true);
+
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                $("#" + interviewerSurchargeElement).val("");
                 swal.fire(
                     'Cancelled',
                     'Operation cancelled! :)',

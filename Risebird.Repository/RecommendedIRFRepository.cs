@@ -171,10 +171,11 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
                         techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                        techSkillDt.Columns.Add("SkillName", typeof(string));
 
-                        foreach (var item in irfDetails.SkillCollection)
+                        foreach (var item in irfDetails.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                         {
-                            techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
+                            techSkillDt.Rows.Add(irfID, item.LevelId, 0, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillName);
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -400,10 +401,11 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("Skill", typeof(int));
                     techSkillCommentsDt.Columns.Add("Comment", typeof(string));
                     techSkillCommentsDt.Columns.Add("UserId", typeof(int));
+                    techSkillCommentsDt.Columns.Add("SkillName", typeof(int));
 
-                    foreach (var item in irfDetails.QuesionList)
+                    foreach (var item in irfDetails.QuesionList?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
-                        techSkillCommentsDt.Rows.Add(irfID, Convert.ToInt32(item.Skill), item.Comment, item.UserId);
+                        techSkillCommentsDt.Rows.Add(irfID, 0, item.Comment, item.UserId, item.SkillName);
                     }
 
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);
