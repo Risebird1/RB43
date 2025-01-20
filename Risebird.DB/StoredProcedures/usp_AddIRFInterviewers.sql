@@ -47,6 +47,13 @@ BEGIN
 		SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],
 		null, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, @timeNow
 		FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+		WHERE 
+		NOT EXISTS (
+			SELECT 1
+			FROM [dbo].[TransInterviewer] ti
+			WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+		);
+		
 		Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
 		SELECT 
 		0 AS InterviewId,
@@ -83,6 +90,12 @@ BEGIN
 		ibd.[Source], @PerformedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, 
 		ibd.IsSurchargeApprove, @timeNow
 		FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+		WHERE 
+		NOT EXISTS (
+			SELECT 1
+			FROM [dbo].[TransInterviewer] ti
+			WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+		);
   
 	 End
 	

@@ -2896,7 +2896,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("AIVerdict", typeof(string));
                         interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
 
-                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding))
+                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding)?.Distinct())
                         {
                             
                             interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate, 
@@ -3366,7 +3366,7 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("UserId", typeof(int));
                     techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
 
-                    foreach (var item in obj.SkillCollection)
+                    foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.UserId, item.SkillName);
                     }
@@ -8071,7 +8071,7 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("Comment", typeof(string));
                     techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
                     techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
-                    foreach (var item in obj.SkillCollection)
+                    foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName);
                     }
@@ -9585,6 +9585,52 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@agId", agId);
+                    parameters.Add("@ustJobTitle", ustJobTitle);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateUSTJobTitle", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userId", userId);
+                    parameters.Add("@surcharge", surcharge);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerSurcharge", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

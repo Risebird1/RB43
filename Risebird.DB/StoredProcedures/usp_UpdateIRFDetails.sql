@@ -197,67 +197,79 @@ BEGIN
 		Declare @temptable Table(Userid int)  
 		Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
 		 --delete from TransInterviewer where IRFId=@id 
-	Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@id 
+	--Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@id 
  --END: Delete interviewers
 
- if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)
- Begin
-	INSERT INTO [dbo].[TransInterviewer](  
-	[IRFId] ,  
-	[UserId],  
-	[PerSuccessRate], 
-	[Surcharge],
-	[IsActive],
-	[IsAvailable],
-	[InterviewerId],
-	[Source],
-	[ModifiedBy],
-	[IsSurchargeApprove],
-	[IsCampaignActivity],
-	[CampaignId],
-	[OpenAIScreeningResponse],
-	[AIVerdict])  
+-- if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)
+-- Begin
+--	INSERT INTO [dbo].[TransInterviewer](  
+--	[IRFId] ,  
+--	[UserId],  
+--	[PerSuccessRate], 
+--	[Surcharge],
+--	[IsActive],
+--	[IsAvailable],
+--	[InterviewerId],
+--	[Source],
+--	[ModifiedBy],
+--	[IsSurchargeApprove],
+--	[IsCampaignActivity],
+--	[CampaignId],
+--	[OpenAIScreeningResponse],
+--	[AIVerdict])  
     
-	SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],
-	@ModifiedBy, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict
-	FROM @InterviewerSurchargeBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
-	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
-	SELECT 
-    0 AS InterviewId,
-    ibd.Surcharge,
-    NULL AS SurchargeComment,
-    @ModifiedBy,
-    @timeNow,
-    'Raised' AS RequestType,
-    ibd.IRFId AS IRFId,
-	ibd.UserId
-FROM 
-    @InterviewerSurchargeBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;
+--	SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],
+--	@ModifiedBy, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict
+--	FROM @InterviewerSurchargeBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+--	WHERE 
+--	NOT EXISTS (
+--		SELECT 1
+--		FROM [dbo].[TransInterviewer] ti
+--		WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+--	);
 
-					--emergency interviewers
- End
- else
- Begin
-	INSERT INTO [dbo].[TransInterviewer](  
-	[IRFId] ,  
-	[UserId],  
-	[PerSuccessRate], 
-	[IsActive],
-	[IsAvailable],
-	[InterviewerId],
-	[Source],
-	[ModifiedBy],
-	[IsCampaignActivity],
-	[CampaignId],
-	[OpenAIScreeningResponse],
-	[AIVerdict],
-	[IsSurchargeApprove])  
+--	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
+--	SELECT 
+--    0 AS InterviewId,
+--    ibd.Surcharge,
+--    NULL AS SurchargeComment,
+--    @ModifiedBy,
+--    @timeNow,
+--    'Raised' AS RequestType,
+--    ibd.IRFId AS IRFId,
+--	ibd.UserId
+--FROM 
+--    @InterviewerSurchargeBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;
+
+--					--emergency interviewers
+-- End
+-- else
+-- Begin
+--	INSERT INTO [dbo].[TransInterviewer](  
+--	[IRFId] ,  
+--	[UserId],  
+--	[PerSuccessRate], 
+--	[IsActive],
+--	[IsAvailable],
+--	[InterviewerId],
+--	[Source],
+--	[ModifiedBy],
+--	[IsCampaignActivity],
+--	[CampaignId],
+--	[OpenAIScreeningResponse],
+--	[AIVerdict],
+--	[IsSurchargeApprove])  
     
-	SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,
-	ibd.[Source], @ModifiedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, ibd.IsSurchargeApprove
-	FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
-  
- End
+--	SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,
+--	ibd.[Source], @ModifiedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, ibd.IsSurchargeApprove
+--	FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+--	WHERE 
+--	NOT EXISTS (
+--		SELECT 1
+--		FROM [dbo].[TransInterviewer] ti
+--		WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
+--	);
+-- End
 	
     --emergency interviewers
     delete from TransEmergencyInterviewer where IRFId=@id 

@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.Web", "Risebird.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.MicroService", "Risebird.MicroService\Risebird.MicroService.csproj", "{F076B307-7DDB-477F-AB2F-1F7DDABDDE9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.Services", "Risebird.Services\Risebird.Services.csproj", "{F35A480B-51C2-44F4-B801-4754DFE816F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{F076B307-7DDB-477F-AB2F-1F7DDABDDE9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F076B307-7DDB-477F-AB2F-1F7DDABDDE9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F076B307-7DDB-477F-AB2F-1F7DDABDDE9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F35A480B-51C2-44F4-B801-4754DFE816F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F35A480B-51C2-44F4-B801-4754DFE816F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F35A480B-51C2-44F4-B801-4754DFE816F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F35A480B-51C2-44F4-B801-4754DFE816F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +102,7 @@ Global
 		{BD856040-E3D4-4990-A5F5-06FB23444074} = {2E930A06-3B57-499C-BE0D-FF8841F09B39}
 		{AFD4F211-4BF0-44F9-BFA6-4D25BFCBE784} = {B9ACA841-8923-4FDC-B87B-194493613C7B}
 		{F076B307-7DDB-477F-AB2F-1F7DDABDDE9C} = {89BB4F04-108C-4DA4-B9B8-BA5F70064EE3}
+		{F35A480B-51C2-44F4-B801-4754DFE816F3} = {B9ACA841-8923-4FDC-B87B-194493613C7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62765146-A49B-4F26-BCEC-BB65111A4789}

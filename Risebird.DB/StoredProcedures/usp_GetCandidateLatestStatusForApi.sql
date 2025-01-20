@@ -105,7 +105,7 @@ CASE
     ELSE CandidateLatestStatus
 END AS CandidateLatestStatus,
 ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,
-addedOn, statusUpdatedAt
+addedOn, statusUpdatedAt,ic.AudioTranscriptFileLink
 --from @TemporaryCandidateTableVariable tctv   
 from @TemporaryCandidateTableFinal tctv
 join InterviewMeetings im on im.id = tctv.InterviewId      

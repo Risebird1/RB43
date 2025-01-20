@@ -48,10 +48,10 @@ BEGIN
 
 		if not exists(select id from TechSkillComments where userId = @currentInterviewerUserId 
 		and Comment = (select Comment from TechSkillComments where id=@idEnumerator) 
-		and Skill = (select Skill from TechSkillComments where id=@idEnumerator) and irfId = @irfId)
+		and SkillName = (select SkillName from TechSkillComments where id=@idEnumerator) and irfId = @irfId)
 		Begin
-			insert into TechSkillComments (Comment, Skill, IRFId, UserId)
-			(select Comment, Skill, @irfId, @currentInterviewerUserId from TechSkillComments where id = @idEnumerator)
+			insert into TechSkillComments (Comment, Skill, IRFId, UserId, SkillName)
+			(select Comment, Skill, @irfId, @currentInterviewerUserId, SkillName from TechSkillComments where id = @idEnumerator and TechSkillComments.SkillName is not null)
 		End
 
 		delete from @Enumerator where id = @idEnumerator  

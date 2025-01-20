@@ -20,7 +20,8 @@ CREATE TABLE [dbo].[AssessmentGroup](
     [CodeLanguage][varchar](100) NULL,
     [MCQSetsValue][int] NULL,
     [AvailabilityMailSentOn][datetime] NULL,
-    [IsMasterAG][bit] NULL
+    [IsMasterAG][bit] NULL,
+    [USTJobTitle][varchar](200) NULL
  CONSTRAINT [PK_AssessmentGroup] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -171,6 +172,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE AssessmentGroup
     Add IsMasterAG bit NULL 
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'USTJobTitle')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add USTJobTitle varchar(200) NULL 
 END
 
 GO
