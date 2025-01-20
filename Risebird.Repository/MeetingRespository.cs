@@ -7506,7 +7506,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return null;
+            return string.Empty;
         }
     }
 }

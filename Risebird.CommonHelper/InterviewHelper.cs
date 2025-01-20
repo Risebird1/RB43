@@ -33,7 +33,7 @@ namespace Risebird.CommonHelper
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return "";
+            return string.Empty;
         }
     }
 }
