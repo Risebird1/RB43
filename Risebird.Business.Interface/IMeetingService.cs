@@ -247,6 +247,6 @@ namespace Risebird.Business.Interface
         Task<string> GetOpenAIReportQC(int interviewId);
         Task<int> checkInterviewEditable(int meetingid);
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
-
+        Task<string> GetInterviewCancellationSource(int interviewid);
     }
 }
