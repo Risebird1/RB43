@@ -7498,7 +7498,12 @@ namespace Risebird.Repository
                     parameters.Add("@interviewId", interviewid);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_GetInterviewCancellationSource", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
+                    if (result?.FirstOrDefault() != null)
+                    {
+                        return result.FirstOrDefault();
+                    }
+                    
+
                 }
 
             }

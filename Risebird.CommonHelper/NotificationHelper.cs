@@ -1952,7 +1952,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateName, interviewDate, "", CancellationSource };
+                object[] parameters = new object[] { CandidateName, interviewDate, "", (CancellationSource != null ? CancellationSource : string.Empty) };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
