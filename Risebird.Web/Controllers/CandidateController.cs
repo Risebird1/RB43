@@ -4464,8 +4464,11 @@ namespace Risebird.Web.Controllers
                     {
                         interviewers.Add(result.EmailId);
                     }
+                    var cancellationsource = string.Empty;
+                    cancellationsource = await _meetingService.GetInterviewCancellationSource(id);
+
                     var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, id);
-                    var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, id);
+                    var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, id, cancellationsource);
                     var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, IRFId, id);
 
                     if (!string.IsNullOrEmpty(zoomMeetingId))
@@ -4523,8 +4526,11 @@ namespace Risebird.Web.Controllers
                         {
                             interviewers.Add(result.EmailId);
                         }
+                        var cancellationsource = string.Empty;
+                        cancellationsource = await _meetingService.GetInterviewCancellationSource(interviewId);
+
                         var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, interviewId);
-                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, interviewId);
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, interviewId, cancellationsource);
                         var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, IRFId, interviewId);
 
                         if (!string.IsNullOrEmpty(zoomMeetingId))
