@@ -30,6 +30,7 @@ namespace Risebird.CommonHelper
         private readonly string _sendGridClientKey = string.Empty;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidationHelper _validationHelper;
+
         public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper)
         {
             _configuration = configuration;
@@ -1935,7 +1936,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null)
+        public async Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null, string CancellationSource = null)
         {
             try
             {
@@ -1951,7 +1952,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateName, interviewDate, "" };
+                object[] parameters = new object[] { CandidateName, interviewDate, "", (CancellationSource != null ? CancellationSource : string.Empty) };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
