@@ -288,8 +288,12 @@ Declare @v_User_Id int;
 				and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @TargetIrfId)
 				and CompanyType = (select CompanyType from IRF where id = @TargetIrfId))
 
-	 insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate)
-	 values (@TargetIrfId, @InterviewerProfileId, @v_User_Id, 1, 0, @rate)
+        if not exists(select 1 from TransInterviewer where UserId = @v_User_Id and IRFId = @TargetIrfId)
+        Begin
+            insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate)
+            values (@TargetIrfId, @InterviewerProfileId, @v_User_Id, 1, 0, @rate)
+        End
+	 
  End
 
 

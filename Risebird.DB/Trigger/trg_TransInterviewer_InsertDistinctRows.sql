@@ -18,18 +18,70 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+
+	INSERT INTO [dbo].[TransInterviewer_Copy]
+           ([IRFId]
+           ,[InterviewerId]
+           ,[UserId]
+           ,[PerSuccessRate]
+           ,[IsActive]
+           ,[ClientAction]
+           ,[IsAvailable]
+           ,[IsSMEVerified]
+           ,[Surcharge]
+           ,[Source]
+           ,[ModifiedBy]
+           ,[ActivatedAt]
+           ,[CampaignId]
+           ,[IsCampaignActivity]
+           ,[IsSurchargeApprove]
+           ,[OpenAIScreeningResponse]
+           ,[AIVerdict]
+           ,[IsAIScreeningAtempted]
+           ,[AddedAt]
+           ,[ModifiedAt]) 
+    SELECT IRFId, InterviewerId, UserId, PerSuccessRate, IsActive, ClientAction, IsAvailable,
+	IsSMEVerified, Surcharge, [Source], ModifiedBy, ActivatedAt, CampaignId, IsCampaignActivity, IsSurchargeApprove,
+	OpenAIScreeningResponse, AIVerdict, IsAIScreeningAtempted, AddedAt, ModifiedAt
+	IsSurchargeApprove
+    FROM INSERTED WHERE 
+	NOT EXISTS (
+					SELECT 1
+					FROM [dbo].[TransInterviewer] ti
+					WHERE ti.UserId = inserted.UserId AND ti.IRFId = inserted.IRFId
+	);
     -- Insert only distinct rows into the target table
-    INSERT INTO [dbo].[TransInterviewer](  
-	[IRFId] ,  
-	[UserId],  
-	[PerSuccessRate], 
-	[Surcharge],
-	[IsActive],
-	[IsAvailable],
-	[InterviewerId],
-	[IsSurchargeApprove]) 
-    SELECT DISTINCT IRFId, UserId, PerSuccessRate, Surcharge, IsActive, IsAvailable, InterviewerId, IsSurchargeApprove
-    FROM INSERTED;
+    INSERT INTO [dbo].[TransInterviewer]
+           ([IRFId]
+           ,[InterviewerId]
+           ,[UserId]
+           ,[PerSuccessRate]
+           ,[IsActive]
+           ,[ClientAction]
+           ,[IsAvailable]
+           ,[IsSMEVerified]
+           ,[Surcharge]
+           ,[Source]
+           ,[ModifiedBy]
+           ,[ActivatedAt]
+           ,[CampaignId]
+           ,[IsCampaignActivity]
+           ,[IsSurchargeApprove]
+           ,[OpenAIScreeningResponse]
+           ,[AIVerdict]
+           ,[IsAIScreeningAtempted]
+           ,[AddedAt]
+           ,[ModifiedAt]) 
+    SELECT DISTINCT IRFId, InterviewerId, UserId, PerSuccessRate, IsActive, ClientAction, IsAvailable,
+	IsSMEVerified, Surcharge, [Source], ModifiedBy, ActivatedAt, CampaignId, IsCampaignActivity, IsSurchargeApprove,
+	OpenAIScreeningResponse, AIVerdict, IsAIScreeningAtempted, AddedAt, ModifiedAt
+	IsSurchargeApprove
+    FROM INSERTED WHERE 
+	NOT EXISTS (
+					SELECT 1
+					FROM [dbo].[TransInterviewer] ti
+					WHERE ti.UserId = inserted.UserId AND ti.IRFId = inserted.IRFId
+	);
 
 
 END;
