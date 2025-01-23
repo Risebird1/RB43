@@ -1631,7 +1631,7 @@ namespace Risebird.Web.Controllers
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         if (zoomLink == null)
                         {
-                            ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
+                            ModelState.AddModelError(string.Empty, "Apologies, The selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.");
                             return View(model);
                         }
                     }
@@ -1741,7 +1741,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
+                    ModelState.AddModelError(string.Empty, "Apologies, The selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.rrently unavailable. Kindly choose another slot.");
                     return View(model);
                 }
             }
