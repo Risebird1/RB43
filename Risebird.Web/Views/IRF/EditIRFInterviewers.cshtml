@@ -203,7 +203,7 @@
                                                                                                                 <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
                                                                                                             </svg>
                                                                                                         </span> *@
-                                                                            <i class="fas fa-save" style="font-size:15px;position:relative;left:-1px;"></i>
+                                                                            <i class="fas fa-save" style="font-size:16px;position:relative;left:-2px;"></i>
                                                                                                     </button>
                                                                                             }
                                                                                             else
@@ -304,9 +304,9 @@
 
                                     <div class="col-md-12 mc-button-area">
                                         <div class="pull-left">
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="id_btn_addInterviewer">
+                                        <button onclick="javascript:OpenInterviewerModal('@Model.id');" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
 
-                                                <span onclick="javascript:OpenInterviewerModal('@Model.id');"><i class='fa fa-plus' style='color: white'></i>Add Interviewer</span>
+                                                <span><i class='fa fa-plus' style='color: white'></i>Add Interviewer</span>
 
                                             </button>
                                             @* <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to add Interviewers" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
