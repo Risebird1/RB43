@@ -24,8 +24,12 @@ if(@Status=1)
 begin
 Select @UserId=id from UserList where uniqueid=@uniqueid
 Select @InterviewerId=id From InterviewerProfile where UserId=@UserId
-Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable) 
-values(@IRFId,@InterviewerId,@UserId,1,1)
+if not exists(select 1 from TransInterviewer where UserId = @UserId and IRFId = @IRFId)
+Begin
+Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, AddedAt) 
+values(@IRFId,@InterviewerId,@UserId,1,1, getdate())
+End
+
 end
 END
 ELSE

@@ -121,6 +121,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string skillName { get; set; }
         public string EvaluatedAt { get; set; }
         public string score { get; set; }
+        public string Evaluatedscore { get; set; }
     }
     public class SkillsSets
     {
