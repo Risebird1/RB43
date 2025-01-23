@@ -107,7 +107,7 @@
             <div class="modal-footer">
 
                 <div class="col-md-12 text-right clearfix">
-                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save">
+                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save" id="saveButton">
                 </div>
                
             </div>
@@ -122,7 +122,22 @@
     var placeholderElement = $('#modal_addinterviewers_placeholder');
     
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
+        debugger;
         event.preventDefault();
+        const button = document.getElementById("saveButton");
+
+        // Disable the button
+        button.disabled = true;
+
+        // Change button text (optional)
+        //button.textContent = "Saving...";
+
+        // Re-enable the button after 15 seconds
+        setTimeout(() => {
+            button.disabled = false;
+            button.textContent = "Save"; // Reset the text
+        }, 15000);
+
         var form = $(this).parents('.modal').find('form');
         var actionUrl = form.attr('action');
         
@@ -171,4 +186,6 @@
 
     });
 </script>
+
+
 
