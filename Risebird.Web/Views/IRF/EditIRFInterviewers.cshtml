@@ -445,14 +445,24 @@
     //     });
     // }
     function OpenInterviewerModal(irfId) {
-$.ajax({
+        debugger;
+        const button = document.getElementById("id_btn_addInterviewer");
+        button.disabled = true;
+        $.ajax({
             url: '/IRF/SkillChannelInterviewers',
             data: { 'irfId': irfId},
+            async: true,
             success: function (data) {
                 $('#modal_addinterviewers_placeholder').html('');
                 $('#modal_addinterviewers_placeholder').html(data);
                
                 $('#modal_addinterviewers_placeholder').find('.modal').modal('show');
+                button.disabled = false;
+            },
+            error: function () {
+
+                button.disabled = false;
+
             }
         });
     }
