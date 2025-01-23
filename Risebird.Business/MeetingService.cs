@@ -1317,6 +1317,7 @@ namespace Risebird.Business
                         item.Timelimit = techdetails.Timelimit;
                         item.Natureofquestion = techdetails.Natureofquestion;
                         item.isEliminationskill = techdetails.isEliminationskill;
+                        item.SkillName = techdetails.SkillName;
                     }
                 }
                 model.TechSkillReportCollection = techReportCollection;

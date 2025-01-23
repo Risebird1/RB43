@@ -29,7 +29,7 @@ namespace Risebird.Services.Controllers
             _candidateRepository = candidateRepository;
         }
 
-       
+
         /// <summary>
         /// ProjectId or Skill Channel Id Candidate List
         /// Date Range or Complete Data
@@ -203,6 +203,7 @@ namespace Risebird.Services.Controllers
                                     {
                                         skillName = _skilldetail.skillName,
                                         EvaluatedAt = _skilldetail.EvaluatedAt,
+                                        Evaluatedscore = _skilldetail.WeightageActual.ToString() + "/" + _skilldetail.WeightageRequired.ToString(),
                                         score = score
                                     });
                                 }
@@ -241,6 +242,7 @@ namespace Risebird.Services.Controllers
                                         {
                                             skillName = _skilldetail.skillName,
                                             EvaluatedAt = _skilldetail.EvaluatedAt,
+                                            Evaluatedscore = _skilldetail.WeightageActual.ToString() + "/" + _skilldetail.WeightageRequired.ToString(),
                                             score = score
                                         });
                                     }
@@ -265,7 +267,7 @@ namespace Risebird.Services.Controllers
                                     reportUrl = executiveurl,
                                     communicationScore = item.CommunicationalProficiency,
                                     videoUrl = item.VideoLink,
-                                    transcriptUrl=item.TranscriptLink,
+                                    transcriptUrl = item.TranscriptLink,
                                     skills = _skills,
                                     createdOn = item.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     currentStatusUpdatedAt = item.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -432,6 +434,7 @@ namespace Risebird.Services.Controllers
                                     {
                                         skillName = _skilldetail.skillName,
                                         EvaluatedAt = _skilldetail.EvaluatedAt,
+                                        Evaluatedscore = _skilldetail.WeightageActual.ToString() + "/" + _skilldetail.WeightageRequired.ToString(),
                                         score = score
                                     });
                                 }
@@ -470,6 +473,7 @@ namespace Risebird.Services.Controllers
                                         {
                                             skillName = _skilldetail.skillName,
                                             EvaluatedAt = _skilldetail.EvaluatedAt,
+                                            Evaluatedscore = _skilldetail.WeightageActual.ToString() + "/" + _skilldetail.WeightageRequired.ToString(),
                                             score = score
                                         });
                                     }
