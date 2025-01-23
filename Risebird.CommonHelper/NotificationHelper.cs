@@ -1058,7 +1058,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
-                if (!string.IsNullOrEmpty(staffingAgency) && _validationHelper.ValidateEmailAddress(staffingAgency))
+                if (!string.IsNullOrEmpty(staffingAgency) && (staffingAgency.ToLower().Trim() != clientHREmail?.ToLower().Trim()) && _validationHelper.ValidateEmailAddress(staffingAgency))//!string.Equals(staffingAgency, clientHREmail, StringComparison.OrdinalIgnoreCase) &&
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                 }
