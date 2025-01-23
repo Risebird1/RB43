@@ -10639,7 +10639,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> AddIRFInterviewers(IList<IRFInterviewerMembers> interviewers, int irfId)//IRFVm model
         {
             try
