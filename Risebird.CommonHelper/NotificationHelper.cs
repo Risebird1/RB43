@@ -1072,7 +1072,7 @@ namespace Risebird.CommonHelper
                 string risebirdURL = _configuration["RisebirdDetails:RisebirdURL"];
                 //companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
                 //object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
-                object[] parameters = new object[] { clientURL, risebirdLogoLink ?? string.Empty, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL ?? string.Empty, clientLogoLink, risebirdURL ?? string.Empty };
+                object[] parameters = new object[] { clientURL, risebirdLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL, clientLogoLink, risebirdURL };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
