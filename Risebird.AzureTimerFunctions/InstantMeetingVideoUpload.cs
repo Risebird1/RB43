@@ -1,0 +1,173 @@
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RestSharp;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System.Net;
+
+namespace Risebird.AzureTimerFunctions
+{
+    public class InstantMeetingVideoUpload
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IMeetingRespository _meetingRespository;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IZoomHelper _zoomHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly ILogger log;
+        private readonly string ContainerName;
+        //private readonly string SASConnectionString;
+
+        public InstantMeetingVideoUpload(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
+        {
+            _configuration = configuration;
+            _applicationErrorLogger = applicationErrorLogger;
+            _azureStorageHelper = azureStorageHelper;
+            _meetingRespository = meetingRespository;
+            _zoomHelper = zoomHelper;
+            _sasUrlHelper = sasUrlHelper;
+            ContainerName = _configuration["SASURLSettings:ContainerName"];
+            //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
+            log = loggerFactory.CreateLogger<InstantMeetingVideoUpload>();
+
+        }
+        [Function("InstantMeetingVideoUpload")]
+        public async Task Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer) //after every 6 hours
+        {
+            try
+            {
+                //get all the completed meetings where video upload is pending
+
+                var pendingVideoMeetings = await _meetingRespository.GetPendingVideoInstantMeetings();
+
+                //get jwt authentication token 
+                //string token = _zoomHelper.ZoomToken();
+
+                //get oauth token
+                string token = await _zoomHelper.GenerateAccessToken();
+
+                Parallel.ForEach(pendingVideoMeetings, async meeting =>
+                {
+
+                    try
+                    {
+                        //long zoommeetingId = 0;
+                        string zoommeetingId;//= string.Empty;
+                        try
+                        {
+                            //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                            zoommeetingId = meeting.zoomLink.Split('/').Last();
+                        }
+                        catch (Exception)
+                        {
+                            try
+                            {
+                                var link = meeting.zoomLink.Split('?').First();
+                                //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                zoommeetingId = link.Split('/').Last();
+                            }
+                            catch (Exception)
+                            {
+                                //zoommeetingId = 0;
+                                zoommeetingId = null;
+                            }
+                        }
+                        meeting.ZoomMeetingId = zoommeetingId;
+
+
+
+                        //create HTTP Rest Client
+                        var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
+
+                        //create HTTP Request 
+                        var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"), Method.Get);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddHeader("authorization", "Bearer " + token);
+                        RestResponse response = client.Execute(request);
+                        var content = response.Content;
+
+                        var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);
+
+                        //get the download url from the response
+                        if (convertedResponse.recording_files != null && convertedResponse.recording_files.Count() > 0)
+                        {
+                            var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
+
+                            if (videoRecordingFiles != null || videoRecordingFiles.Count() == 1)
+                            {
+                                var recordingFile = videoRecordingFiles.FirstOrDefault();
+                                var downloadUrl = recordingFile.download_url;
+
+                                //upload the video to azure blob using the download_Url
+
+                                WebClient myWebClient = new WebClient();
+                                string uploadedVideoUrl = string.Empty;
+                                string sasUrl = string.Empty;
+                                using (Stream myStream = myWebClient.OpenRead(downloadUrl))
+                                {
+                                    var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+                                    var fileName = string.IsNullOrEmpty(topic) ? meeting.RequestedDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
+
+                                    try
+                                    {
+                                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream);
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        log.LogError($"Zoom : Error while inserting blob for Insta meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                        return;
+                                    }
+
+                                    log.LogInformation($"Zoom : Video uploaded in blob for Insta meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+
+                                    //generate SAS URL from the uploaded video url
+                                    //var sas = CreateSasUrl();
+                                    var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+
+                                    if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                    {
+                                        sasUrl = uploadedVideoUrl + "?" + sas;
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(sasUrl))
+                                {
+
+                                    //insert the SAS URL of the video in the database table
+                                    var result = _meetingRespository.UpdateUploadedVideoLinkForInstaInterview(meeting.imid, sasUrl).Result;
+
+                                    log.LogInformation($"Zoom : Video link updated in database for Insta meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+
+
+                                }
+                            }
+
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                        return;
+                    }
+                });
+
+                log.LogInformation($"C# Zoom Service function(Video Upload) executed at: {DateTime.Now}");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+
+    }
+}

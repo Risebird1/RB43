@@ -1,0 +1,57 @@
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+
+namespace Risebird.AzureTimerFunctions
+{
+    public class PasswordResetNotification
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly INotificationHelper _notificationHelper;
+        private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly string PasswordTimePeriod;
+        private readonly IInterviewerService _interviewerService;
+        private readonly ILogger log;
+
+        public PasswordResetNotification(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, IInterviewerService interviewerService)
+        {
+            _configuration = configuration;
+            _applicationErrorLogger = applicationErrorLogger;
+            _notificationHelper = notificationHelper;
+            _whatsAppHelper = whatsAppHelper;
+            PasswordTimePeriod = _configuration["PasswordAging:TimePeriod"];
+            _interviewerService = interviewerService;
+            log = loggerFactory.CreateLogger<PasswordResetNotification>();
+        }
+        [Function("PasswordResetNotification")]
+        public async Task Run([TimerTrigger("0 0 8 * * *")] TimerInfo myTimer)
+        {
+            log.LogInformation($"C# Timer trigger(PasswordResetNotification) function executed at: {DateTime.Now}");
+            try
+            {
+                //Fetch All 90 days data for expire records and Customize from appsetting
+                var _list = await _interviewerService.FetchAllPasswordResetDetails(Convert.ToInt32(PasswordTimePeriod));
+                if (_list != null)
+                {
+                    var clientlist = string.Join(";", _list);
+                    //Send Email Notification For reset Password
+                    Mail _mail1 = new Mail
+                    {
+                        TO = clientlist,
+                        Subject = "Risebird: Password has expired!"
+                    };
+                    var emailsend1 = await _notificationHelper.SendPasswordresetNotification(_mail1);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+    }
+}

@@ -1,0 +1,70 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Risebird.Business.Interface;
+using Risebird.Entities.ViewModel;
+using System.Collections.Specialized;
+using System.Net;
+using System.Web;
+
+namespace Risebird.AzureTimerFunctions
+{
+    public class ShareMCQSets
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IMCQService _mCQService;
+        private readonly ILogger log;
+
+        public ShareMCQSets(ILoggerFactory loggerFactory, IConfiguration configuration, IMCQService mCQService)
+        {
+            _configuration = configuration;
+            _mCQService = mCQService;
+            log = loggerFactory.CreateLogger<ShareMCQSets>();
+        }
+        [Function("ShareMCQSets")]
+        public async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+            NameValueCollection queryParameters = HttpUtility.ParseQueryString(req.Url.Query);
+
+            // Get the "name" query parameter value
+            string name = queryParameters["name"];
+
+            //string name = req.Query["name"];
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            MCQApiVM data = JsonConvert.DeserializeObject<MCQApiVM>(requestBody);
+            if (!string.IsNullOrEmpty(data.CandidateEmailid) && !string.IsNullOrEmpty(data.PrimarySkill))
+            {
+                var mcqset = await _mCQService.FetchMCQSetsForApi(data);
+                if (mcqset != null)
+                {
+                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    MCQVMShare _list = new MCQVMShare();
+                    _list.status = 0;
+                    _list.MCQSet = mcqset.Title;
+                    _list.ClientHR = string.IsNullOrEmpty(data.ClientHrEmailid) ? "" : data.ClientHrEmailid; ;
+                    _list.ApplyingCompany = string.IsNullOrEmpty(data.Client) ? "" : data.Client;
+                    _list.WhoShared = "MCQ Bot";
+                    _list.PartitionKey = date1;
+                    _list.MCQId = mcqset.PartitionKey;
+                    _list.EmailAddress = data.CandidateEmailid.Trim();
+                    _list.roomId = "";
+                    _list.Expiretime = 24;
+                    await _mCQService.AddMCQSetShareList(_list);
+                    string currenturl = "https://portal.risebird.io/MCQ/SkillTest?Id=" + mcqset.PartitionKey;
+
+                    var response = req.CreateResponse(HttpStatusCode.OK);
+                    await response.WriteAsJsonAsync(currenturl);
+                    return response;
+                    //return new OkObjectResult(currenturl);
+                }
+            }
+            return req.CreateResponse(HttpStatusCode.BadRequest);
+            //return new BadRequestResult();
+        }
+    }
+}
