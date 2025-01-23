@@ -1058,7 +1058,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
-                if (!string.IsNullOrEmpty(staffingAgency) && (staffingAgency.ToLower().Trim() != clientHREmail.ToLower().Trim()) && _validationHelper.ValidateEmailAddress(staffingAgency))//!string.Equals(staffingAgency, clientHREmail, StringComparison.OrdinalIgnoreCase) &&
+                if (!string.IsNullOrEmpty(staffingAgency) && (staffingAgency.ToLower().Trim() != clientHREmail?.ToLower().Trim()) && _validationHelper.ValidateEmailAddress(staffingAgency))//!string.Equals(staffingAgency, clientHREmail, StringComparison.OrdinalIgnoreCase) &&
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                 }
@@ -1072,7 +1072,7 @@ namespace Risebird.CommonHelper
                 string risebirdURL = _configuration["RisebirdDetails:RisebirdURL"];
                 //companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
                 //object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
-                object[] parameters = new object[] { clientURL, risebirdLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL, clientLogoLink, risebirdURL };
+                object[] parameters = new object[] { clientURL, risebirdLogoLink ?? string.Empty, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL ?? string.Empty, clientLogoLink, risebirdURL ?? string.Empty };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
