@@ -1,87 +1,87 @@
---Instead of Insert
-IF EXISTS (SELECT 1 FROM sys.triggers 
-           WHERE Name = 'trg_TransInterviewer_InsertDistinctRows')
-BEGIN
-    Drop trigger trg_TransInterviewer_InsertDistinctRows
-END
+----Instead of Insert
+--IF EXISTS (SELECT 1 FROM sys.triggers 
+--           WHERE Name = 'trg_TransInterviewer_InsertDistinctRows')
+--BEGIN
+--    Drop trigger trg_TransInterviewer_InsertDistinctRows
+--END
 
-SET ANSI_NULLS ON
-GO
+--SET ANSI_NULLS ON
+--GO
 
-SET QUOTED_IDENTIFIER ON
-GO
+--SET QUOTED_IDENTIFIER ON
+--GO
 
-CREATE TRIGGER trg_TransInterviewer_InsertDistinctRows
-ON TransInterviewer
-INSTEAD OF INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-
-	INSERT INTO [dbo].[TransInterviewer_Copy]
-           ([IRFId]
-           ,[InterviewerId]
-           ,[UserId]
-           ,[PerSuccessRate]
-           ,[IsActive]
-           ,[ClientAction]
-           ,[IsAvailable]
-           ,[IsSMEVerified]
-           ,[Surcharge]
-           ,[Source]
-           ,[ModifiedBy]
-           ,[ActivatedAt]
-           ,[CampaignId]
-           ,[IsCampaignActivity]
-           ,[IsSurchargeApprove]
-           ,[OpenAIScreeningResponse]
-           ,[AIVerdict]
-           ,[IsAIScreeningAtempted]
-           ,[AddedAt]
-           ,[ModifiedAt]) 
-    SELECT IRFId, InterviewerId, UserId, PerSuccessRate, IsActive, ClientAction, IsAvailable,
-	IsSMEVerified, Surcharge, [Source], ModifiedBy, ActivatedAt, CampaignId, IsCampaignActivity, IsSurchargeApprove,
-	OpenAIScreeningResponse, AIVerdict, IsAIScreeningAtempted, AddedAt, ModifiedAt
-	IsSurchargeApprove
-    FROM INSERTED WHERE 
-	NOT EXISTS (
-					SELECT 1
-					FROM [dbo].[TransInterviewer] ti
-					WHERE ti.UserId = inserted.UserId AND ti.IRFId = inserted.IRFId
-	);
-    -- Insert only distinct rows into the target table
-    INSERT INTO [dbo].[TransInterviewer]
-           ([IRFId]
-           ,[InterviewerId]
-           ,[UserId]
-           ,[PerSuccessRate]
-           ,[IsActive]
-           ,[ClientAction]
-           ,[IsAvailable]
-           ,[IsSMEVerified]
-           ,[Surcharge]
-           ,[Source]
-           ,[ModifiedBy]
-           ,[ActivatedAt]
-           ,[CampaignId]
-           ,[IsCampaignActivity]
-           ,[IsSurchargeApprove]
-           ,[OpenAIScreeningResponse]
-           ,[AIVerdict]
-           ,[IsAIScreeningAtempted]
-           ,[AddedAt]
-           ,[ModifiedAt]) 
-    SELECT DISTINCT IRFId, InterviewerId, UserId, PerSuccessRate, IsActive, ClientAction, IsAvailable,
-	IsSMEVerified, Surcharge, [Source], ModifiedBy, ActivatedAt, CampaignId, IsCampaignActivity, IsSurchargeApprove,
-	OpenAIScreeningResponse, AIVerdict, IsAIScreeningAtempted, AddedAt, ModifiedAt
-	IsSurchargeApprove
-    FROM INSERTED WHERE 
-	NOT EXISTS (
-					SELECT 1
-					FROM [dbo].[TransInterviewer] ti
-					WHERE ti.UserId = inserted.UserId AND ti.IRFId = inserted.IRFId
-	);
+--CREATE TRIGGER trg_TransInterviewer_InsertDistinctRows
+--ON TransInterviewer
+--INSTEAD OF INSERT
+--AS
+--BEGIN
+--    SET NOCOUNT ON;
 
 
-END;
+--	INSERT INTO [dbo].[TransInterviewer_Copy]
+--           ([IRFId]
+--           ,[InterviewerId]
+--           ,[UserId]
+--           ,[PerSuccessRate]
+--           ,[IsActive]
+--           ,[ClientAction]
+--           ,[IsAvailable]
+--           ,[IsSMEVerified]
+--           ,[Surcharge]
+--           ,[Source]
+--           ,[ModifiedBy]
+--           ,[ActivatedAt]
+--           ,[CampaignId]
+--           ,[IsCampaignActivity]
+--           ,[IsSurchargeApprove]
+--           ,[OpenAIScreeningResponse]
+--           ,[AIVerdict]
+--           ,[IsAIScreeningAtempted]
+--           ,[AddedAt]
+--           ,[ModifiedAt]) 
+--    SELECT IRFId, InterviewerId, UserId, PerSuccessRate, IsActive, ClientAction, IsAvailable,
+--	IsSMEVerified, Surcharge, [Source], ModifiedBy, ActivatedAt, CampaignId, IsCampaignActivity, IsSurchargeApprove,
+--	OpenAIScreeningResponse, AIVerdict, IsAIScreeningAtempted, AddedAt, ModifiedAt
+--	IsSurchargeApprove
+--    FROM INSERTED WHERE 
+--	NOT EXISTS (
+--					SELECT 1
+--					FROM [dbo].[TransInterviewer] ti
+--					WHERE ti.UserId = inserted.UserId AND ti.IRFId = inserted.IRFId
+--	);
+--    -- Insert only distinct rows into the target table
+--    INSERT INTO [dbo].[TransInterviewer]
+--           ([IRFId]
+--           ,[InterviewerId]
+--           ,[UserId]
+--           ,[PerSuccessRate]
+--           ,[IsActive]
+--           ,[ClientAction]
+--           ,[IsAvailable]
+--           ,[IsSMEVerified]
+--           ,[Surcharge]
+--           ,[Source]
+--           ,[ModifiedBy]
+--           ,[ActivatedAt]
+--           ,[CampaignId]
+--           ,[IsCampaignActivity]
+--           ,[IsSurchargeApprove]
+--           ,[OpenAIScreeningResponse]
+--           ,[AIVerdict]
+--           ,[IsAIScreeningAtempted]
+--           ,[AddedAt]
+--           ,[ModifiedAt]) 
+--    SELECT DISTINCT IRFId, InterviewerId, UserId, PerSuccessRate, IsActive, ClientAction, IsAvailable,
+--	IsSMEVerified, Surcharge, [Source], ModifiedBy, ActivatedAt, CampaignId, IsCampaignActivity, IsSurchargeApprove,
+--	OpenAIScreeningResponse, AIVerdict, IsAIScreeningAtempted, AddedAt, ModifiedAt
+--	IsSurchargeApprove
+--    FROM INSERTED WHERE 
+--	NOT EXISTS (
+--					SELECT 1
+--					FROM [dbo].[TransInterviewer] ti
+--					WHERE ti.UserId = inserted.UserId AND ti.IRFId = inserted.IRFId
+--	);
+
+
+--END;
