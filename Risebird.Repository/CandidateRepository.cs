@@ -1527,7 +1527,7 @@ namespace Risebird.Repository
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
                                     irfintid = !string.IsNullOrEmpty(dt.Rows[i]["irfintid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["irfintid"]) : 0,
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
-                                    interviewDate = !string.IsNullOrEmpty(dt.Rows[i]["interviewDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    interviewDate = !string.IsNullOrEmpty(dt.Rows[i]["interviewDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : null,
                                     IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
                                     JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
 
@@ -1547,7 +1547,7 @@ namespace Risebird.Repository
                                     InterviewStatusTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewStatusTwo"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatusTwo"]) : null,
                                     numberOfTechStacks = !string.IsNullOrEmpty(dt.Rows[i]["SkillSetsevaluate"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSetsevaluate"]) : 1,
                                     InterviewerCommentTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerCommentTwo"].ToString()) ? dt.Rows[i]["InterviewerCommentTwo"].ToString() : null,
-                                    createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : new DateTime(),
+                                    createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : null,
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : new DateTime(),
                                     jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
                                     TranscriptLink = dt.Rows[i]["AudioTranscriptFileLink"] != null ? dt.Rows[i]["AudioTranscriptFileLink"].ToString() : string.Empty,

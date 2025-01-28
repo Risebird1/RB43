@@ -4187,8 +4187,26 @@
         $tr.find("span[id^='btn']").attr("id", function () { // change id also
             var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
             return parts[1] + "_" + (++parts[2]); // build new id
+        }); *@
+        $tr.find("input,select,hidden,a").each(function () {
+            if (this.id) {
+                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // Extract parts from id
+                if (parts) {
+                    this.id = parts[1] + "_" + (parseInt(parts[2]) + 1) + "__" + parts[3]; // Build new id
+                    this.name = parts[1] + "[" + (parseInt(parts[2]) + 1) + "]." + parts[3]; // Build new name
+                }
+            }
         });
-        $tr.find("span[id^='regenerateBtn']").attr("id", function () { // change id also
+
+        $tr.find("span[id^='btn']").each(function () {
+            if (this.id) {
+                var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
+                if (parts) {
+                    this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
+                }
+            }
+        });
+        @* $tr.find("span[id^='regenerateBtn']").attr("id", function () { // change id also
             var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
             return parts[1] + "_" + (++parts[2]); // build new id
         });

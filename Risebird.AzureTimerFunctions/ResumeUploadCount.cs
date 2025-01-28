@@ -1,0 +1,69 @@
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using System.Data;
+
+namespace Risebird.AzureTimerFunctions
+{
+    public class ResumeUploadCount
+    {
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IMeetingRespository _meetingRespository;
+        private readonly INotificationHelper _notificationHelper;
+        private readonly ILogger log;
+        public ResumeUploadCount(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+        {
+            _applicationErrorLogger = applicationErrorLogger;
+            _meetingRespository = meetingRespository;
+            _notificationHelper = notificationHelper;
+            log = loggerFactory.CreateLogger<ResumeUploadCount>();
+        }
+        [Function("ResumeUploadCount")]
+        public async Task Run([TimerTrigger("0 0 */8 * * *")] TimerInfo myTimer)
+        {
+            try
+            {
+                log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+                DateTime _enddate = DateTime.Now;
+                DateTime _startdate = DateTime.Now.AddHours(-8);
+                var _list = await _meetingRespository.NotifiyUploadResumeDetails(_startdate, _enddate);
+                if (_list == null)
+                {
+                    _list = new List<ResumeDetailsVM>();
+                }
+                var _listChannelowner = _list.Select(x => x.EmailId).Distinct().ToList();
+                foreach (var item in _listChannelowner)
+                {
+                    try
+                    {
+                        var _countdetails = _list.Where(x => x.EmailId == item).ToList();
+                        Mail _mail = new Mail
+                        {
+                            TO = item,
+                            CC = "ashutosh@risebird.io",
+                            Subject = "Risebird: New Uploaded Resumes"
+                        };
+                        DataTable dt = new DataTable();
+                        dt.Columns.AddRange(new DataColumn[2] { new DataColumn("Skill Channel", typeof(string)), new DataColumn("Uploaded Resumes", typeof(string)) });
+                        foreach (var _irf in _countdetails)
+                        {
+                            dt.Rows.Add(_irf.IRFId, _irf.TotalResumes);
+                        }
+                        var emailresult = await _notificationHelper.SendResumeUploadCounts(_mail, dt, _countdetails.FirstOrDefault().FirstName);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+    }
+}
