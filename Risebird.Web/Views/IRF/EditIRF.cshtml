@@ -4147,6 +4147,7 @@
             var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
             return parts[1] + "_" + (++parts[2]); // build new id
         }); *@
+        debugger;
         $tr.find("input,select,hidden,a").each(function () {
             if (this.id) {
                 var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // Extract parts from id
