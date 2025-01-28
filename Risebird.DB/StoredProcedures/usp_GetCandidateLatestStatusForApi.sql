@@ -96,7 +96,7 @@ Insert into @TemporaryCandidateTableFinal
 Select td.* from @TemporaryCandidateTableVariable td  
 end 
 
-select im.id, im.IRFId,IRF.id as irfintid,im.interviewDate, im.candidateEmail,IRF.JDTiltle,IRF.JDTitleTwo,ic.MeetingStatus,      
+select im.id, IRF.IRFId,IRF.id as irfintid,im.interviewDate, ulc.EmailId as candidateEmail,IRF.JDTiltle,IRF.JDTitleTwo,ic.MeetingStatus,      
 ic.InterviewStatus, ic.InterviewerComment, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency, 
 ice.MeetingStatus as MeetingStatusTwo,ice.InterviewStatus as InterviewStatusTwo,
 ice.InterviewerComment as InterviewerCommentTwo, Project.ProjectUniqueid as jobId, 
@@ -108,11 +108,11 @@ ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.Tech
 addedOn, statusUpdatedAt,ic.AudioTranscriptFileLink
 --from @TemporaryCandidateTableVariable tctv   
 from @TemporaryCandidateTableFinal tctv
-join InterviewMeetings im on im.id = tctv.InterviewId      
-join IRF on IRF.IRFId=im.IRFId       
-join InterviewComments ic on ic.InterviewId=im.id      
+left join InterviewMeetings im on im.id = tctv.InterviewId      
+left join IRF on IRF.id=tctv.IRFId
+left join InterviewComments ic on ic.InterviewId=im.id      
 left join InterviewCommentsExtension ice on ice.Interviewid = im.id      
-join UserList ul on ul.EmailId = im.candidateEmail      
+left join UserList ulc on ulc.id = tctv.UserId
 left join UserList uli on uli.EmailId = im.interviewer      
 left join InterviewerProfile ipr on ipr.UserId = uli.id      
 outer apply(select Sum(WeightageActual) as TechScore From TechSkillReport ts where ts.InterviewId=im.id and (ts.SkillSet = 1 or ts.SkillSet is null)) PrimarySkill  
