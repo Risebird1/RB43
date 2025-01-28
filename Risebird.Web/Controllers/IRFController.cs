@@ -2218,17 +2218,23 @@ namespace Risebird.Web.Controllers
             }
             DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
             var AssessmentsGroups = new List<AssignmentVM>();
+            //var interviewers = new List<Interviewer>();
             if (model.CreatedOn < absoluteTime)
             {
                 AssessmentsGroups = _interviewerService.FetchAssessmentGroups().ToList();
+                var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
 
             }
             else
             {
                 AssessmentsGroups = (await _irfService.GetAllMAGs()).ToList();
+                var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+
             }
             //var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
-            var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
+            //var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
@@ -2263,7 +2269,7 @@ namespace Risebird.Web.Controllers
 
             //ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
             //ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
-            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
             //ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
             //ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
