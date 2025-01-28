@@ -1562,8 +1562,8 @@
                                                                                             <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin") {
                                                                                             
-                                                                                            <span class="interviewer_12" >
-                                                                    <span class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile" id="btnEditInterviewer_@i" style="position:relative;top:3px;">
+                                                                                            @* <span class="interviewer_12">
+                                                                    <span class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile" style="position:relative;top:3px;">
                                                                         <a target="_blank" href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = Model.InterviewerCollection[0].UserId })'  title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>
                                                                     </span>
                                                                 </span> *@
@@ -4136,7 +4136,48 @@
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
-        @* $tr.find("input,select,hidden, a").attr("name", function () { // find name in the cloned row //,a
+
+
+        $tr.find("input,select,hidden,a").each(function () {
+        if (this.id) {
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // Extract parts from id
+            if (parts) {
+                this.id = parts[1] + "_" + (parseInt(parts[2]) + 1) + "__" + parts[3]; // Build new id
+                this.name = parts[1] + "[" + (parseInt(parts[2]) + 1) + "]." + parts[3]; // Build new name
+            }
+        }
+    });
+
+    $tr.find("span[id^='btn']").each(function () {
+        if (this.id) {
+            var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
+            if (parts) {
+                this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
+            }
+        }
+    });
+
+    $tr.find("span[id^='regenerateBtn']").each(function () {
+        if (this.id) {
+            var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
+            if (parts) {
+                this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
+            }
+        }  
+    });
+
+    $tr.find("span[data-valmsg-for]").each(function () {
+        var attr = $(this).attr("data-valmsg-for");
+        if (attr) {
+            var parts = attr.match(/(\D+)\[(\d+)]\.(\D+)$/); // Extract parts
+            if (parts) {
+                $(this).attr("data-valmsg-for", parts[1] + "[" + (parseInt(parts[2]) + 1) + "]." + parts[3]); // Build new value
+            }
+        }
+    });
+
+
+       @*  $tr.find("input,select,hidden, a").attr("name", function () { // find name in the cloned row //,a
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -4173,34 +4214,6 @@
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         }) *@
-
-         $tr.find("span[id^='regenerateBtn']").each(function () {
-             if (this.id) {
-                 var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
-                 if (parts) {
-                     this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
-                 }
-            }  
-         });
-
-         $tr.find("span[id^='btnEditInterviewer']").each(function () {
-             if (this.id) {
-                 var parts = this.id.match(/(\D+)_(\d+)$/); // Extract parts
-                 if (parts) {
-                     this.id = parts[1] + "_" + (parseInt(parts[2]) + 1); // Build new id
-                 }
-            }  
-         });
-
-        $tr.find("span[data-valmsg-for]").each(function () {
-            var attr = $(this).attr("data-valmsg-for");
-            if (attr) {
-                var parts = attr.match(/(\D+)\[(\d+)]\.(\D+)$/); // Extract parts
-                if (parts) {
-                    $(this).attr("data-valmsg-for", parts[1] + "[" + (parseInt(parts[2]) + 1) + "]." + parts[3]); // Build new value
-                }
-            }
-        });
 
 
         // reset fields in the new row
