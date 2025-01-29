@@ -5507,7 +5507,7 @@ namespace Risebird.Web.Controllers
                 {
                     client = new ClientUserVM();
                 }
-                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
                 var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid, projectid);
                 if (model == null)
                 {
