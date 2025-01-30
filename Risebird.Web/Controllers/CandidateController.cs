@@ -3722,7 +3722,7 @@ namespace Risebird.Web.Controllers
                         candidate.IsClientCancelInterview = client.IsClientCancelInterview;
                         candidate.IsRedoInterview = client.IsRedoInterview;
                         candidate.IsQCRequired = client.IsQCRequired;
-                        if (candidate.CurrentMeetingStatus == 4)
+                        if (candidate.CurrentMeetingStatus == 4 || candidate.CurrentMeetingStatus == 6 || candidate.CurrentMeetingStatus == 7 || candidate.CurrentMeetingStatus == 8)
                         {
                             if (candidate.CurrentInterviewStatus.HasValue)
                             {
@@ -3761,7 +3761,7 @@ namespace Risebird.Web.Controllers
                     }
                     else if (candidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
                     {
-                        model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
+                        model = model.Where(x => x.CurrentMeetingStatus == 4 || x.CurrentMeetingStatus == 6 || x.CurrentMeetingStatus == 7 || x.CurrentMeetingStatus == 8).ToList();
                     }
                     else if (candidateType == CandidateTypeForClient.ReportPending.GetDescription())
                     {
@@ -3926,7 +3926,7 @@ namespace Risebird.Web.Controllers
 
                 foreach (var candidate in model)
                 {
-                    if (candidate.CurrentMeetingStatus == 4)
+                    if (candidate.CurrentMeetingStatus == 4 || candidate.CurrentMeetingStatus == 6 || candidate.CurrentMeetingStatus == 7 || candidate.CurrentMeetingStatus == 8)
                     {
                         if (candidate.CurrentInterviewStatus.HasValue)
                         {
@@ -6361,7 +6361,7 @@ namespace Risebird.Web.Controllers
                         candidate.IsClientCancelInterview = client.IsClientCancelInterview;
                         candidate.IsRedoInterview = client.IsRedoInterview;
                         candidate.IsQCRequired = client.IsQCRequired;
-                        if (candidate.CurrentMeetingStatus == 4)
+                        if (candidate.CurrentMeetingStatus == 4 || candidate.CurrentMeetingStatus == 6 || candidate.CurrentMeetingStatus == 7 || candidate.CurrentMeetingStatus == 8)
                         {
                             if (candidate.CurrentInterviewStatus.HasValue)
                             {
