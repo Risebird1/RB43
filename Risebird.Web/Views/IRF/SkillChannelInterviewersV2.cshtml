@@ -18,7 +18,8 @@
             </div>
             <div class="modal-body" id="addinterviewers_modal_body" style="max-height:400px;overflow-y:auto;overflow-x: hidden;">
 
-                <form asp-action="AddIRFInterviewers" asp-route-irfId="@ViewBag.IRFId"> @* asp-route-assessmentGroupName="@ViewBag.IRFId" *@
+                <form> @* asp-route-assessmentGroupName="@ViewBag.IRFId"; asp-action="AddIRFInterviewers" asp-route-irfId="@ViewBag.IRFId" *@
+                    @Html.AntiForgeryToken()
                     @if (Model != null && Model.Count() > 0)
                     {
 @*                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />*@
@@ -79,12 +80,21 @@
                                                 }
 
                                                 
-                                                <td class="text-center">@Html.CheckBoxFor(m => m[i].IsSelectedForAdding)</td>
+                                                @* <td class="text-center select-checkbox-addInterviewerPopup">@Html.CheckBoxFor(m => m[i].IsSelectedForAdding)</td> *@
+                                                <td class="text-center">
+                
+                                                    <input type="checkbox" 
+                                                           class="select-checkbox-addInterviewerPopup" 
+                                                           value="@Model[i].UserId" 
+                                                           data-persuccessrate="@Model[i].PerSuccessRate" 
+                                                           data-irfid="@ViewBag.IRFId" 
+                                                           data-source="@ViewBag.LoggedEmail" />
+                                                </td>
                                                 
-                                                @Html.HiddenFor(m =>m[i].UserId)
+                                                @* @Html.HiddenFor(m =>m[i].UserId)
                                                 @Html.HiddenFor(m =>m[i].Source, new { Value = ViewBag.LoggedEmail })
                                                 @Html.HiddenFor(m =>m[i].IRFId)
-                                                @Html.HiddenFor(m =>m[i].PerSuccessRate)
+                                                @Html.HiddenFor(m =>m[i].PerSuccessRate) *@
 
                                             </tr>
                                         }
@@ -107,10 +117,14 @@
             <div class="modal-footer">
 
                 <div class="col-md-12 text-right clearfix">
-                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save" id="saveButton">
+                    @* <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save" id="saveButton"> *@
+
+                    <input type="button" id="saveButton" class="mdc-button mdc-button--raised" value="Save" />
+
                 </div>
                
             </div>
+            
 
 
 
@@ -119,6 +133,65 @@
 </div>
 
 <script>
+    document.getElementById('saveButton').addEventListener('click', function () {
+        // Gather selected email data
+        debugger;
+        const selectedData = Array.from(document.querySelectorAll('.select-checkbox-addInterviewerPopup:checked')).map(checkbox => ({
+            userId: checkbox.value,
+            iRFId: checkbox.dataset.irfid,
+            perSuccessRate: checkbox.dataset.persuccessrate,
+            source: checkbox.dataset.source
+        }));
+
+        console.log(selectedData);
+
+        // Check if any emails are selected
+        if (selectedData.length === 0) {
+            alert('Please select at least one email.');
+            return;
+        }
+
+        // Prepare data to send to the server
+        const formData = {
+            interviewers: selectedData
+        };
+
+        // Send data to the server via AJAX
+        fetch('/IRF/AddIRFInterviewers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Handle HTTP errors
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'Something went wrong.');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Data saved successfully!');
+                setTimeout(function () {
+                    location.reload(true);
+                }, 100);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred: ' + error.message);
+        });
+    });
+</script>
+
+
+@* <script>
     var placeholderElement = $('#modal_addinterviewers_placeholder');
     
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
@@ -185,7 +258,7 @@
         });
 
     });
-</script>
+</script> *@
 
 
 

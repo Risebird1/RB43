@@ -10640,12 +10640,71 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        //[HttpPost]
+        //[DisableRequestSizeLimit]
+        //public async Task<IActionResult> AddIRFInterviewers(IList<IRFInterviewerMembers> interviewers, int irfId)//IRFVm model
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            emailid = emailid.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
+        //            {
+        //                //var result = await _irfService.AddIRFInterviewers(model);
+        //                interviewers.ToList().ForEach(x => x.IRFId = irfId);
+        //                var result = await _irfService.AddIRFInterviewersV2(interviewers, emailid);
+        //                if (result)
+        //                {
+        //                    //TempData["SuccessErrorMessageAddInterviewers"] = $"Successfully added interviewer(s) to skill channel";// : {model.IRFId}
+        //                    ViewBag.Result = "True";
+        //                }
+        //                else
+        //                {
+        //                    //TempData["SuccessErrorMessageAddInterviewers"] = $"Failed to add interviewer(s) to skill channel";//: {model.IRFId}
+        //                    ViewBag.Result = "False";
+        //                }
+
+        //                ViewBag.IsValid = "True";
+
+        //                return PartialView("SkillChannelInterviewersV2", interviewers);
+
+
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        //return Json("Some error occured. Please try again!");
+        //        return Json("An error has occured. Failed to add!");
+        //    }
+        //}
+
+
         [HttpPost]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> AddIRFInterviewers(IList<IRFInterviewerMembers> interviewers, int irfId)//IRFVm model
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddIRFInterviewers([FromBody] InterviewerListToAddDTO dtoObject)//IRFVm model ; , int irfId
         {
             try
             {
+                if (dtoObject == null || dtoObject.Interviewers == null || !dtoObject.Interviewers.Any())
+                {
+                    return BadRequest("No data provided.");
+                }
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -10654,25 +10713,15 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
-                        //var result = await _irfService.AddIRFInterviewers(model);
-                        interviewers.ToList().ForEach(x => x.IRFId = irfId);
-                        var result = await _irfService.AddIRFInterviewersV2(interviewers, emailid);
+                        var result = await _irfService.AddIRFInterviewersV2(dtoObject.Interviewers, emailid);
                         if (result)
                         {
-                            //TempData["SuccessErrorMessageAddInterviewers"] = $"Successfully added interviewer(s) to skill channel";// : {model.IRFId}
-                            ViewBag.Result = "True";
+                            return Ok(new { success = true, message = "Data saved successfully." });
                         }
                         else
                         {
-                            //TempData["SuccessErrorMessageAddInterviewers"] = $"Failed to add interviewer(s) to skill channel";//: {model.IRFId}
-                            ViewBag.Result = "False";
+                            return StatusCode(500, new { success = false, message = "An unexpected error occurred."});
                         }
-
-                        ViewBag.IsValid = "True";
-
-                        return PartialView("SkillChannelInterviewersV2", interviewers);
-
-
                     }
                     else
                     {
@@ -10688,10 +10737,14 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                //return Json("Some error occured. Please try again!");
-                return Json("An error has occured. Failed to add!");
+                //return Json("An error has occured. Failed to add!");
+                return StatusCode(500, new { success = false, message = "An unexpected error occurred.", error = ex.Message });
+
             }
         }
+
+
+        //InterviewerListToAddDTO
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InterviewerWithOutBillingRate()

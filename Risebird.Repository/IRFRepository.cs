@@ -2870,7 +2870,7 @@ namespace Risebird.Repository
         //        return false;
         //    }
         //}
-        public async Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser)
+        public async Task<bool> AddIRFInterviewersV2(List<TransInterviewer> interviewers, string loggedInUser)//IList<IRFInterviewerMembers>
         {
             try
             {
@@ -2880,7 +2880,7 @@ namespace Risebird.Repository
 
                     DataTable interviewerDt = new DataTable();
 
-                    if (interviewers != null && interviewers.Count() != 0 && !(interviewers.Where(x => x.UserId == 0).Any()) && (interviewers.Where(x => x.IsSelectedForAdding).Any()))
+                    if (interviewers != null && interviewers.Count() != 0 && !(interviewers.Where(x => x.UserId == 0).Any()))
                     {
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
@@ -2896,7 +2896,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("AIVerdict", typeof(string));
                         interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
 
-                        foreach (var item in interviewers.Where(x=>x.IsSelectedForAdding)?.Distinct())
+                        foreach (var item in interviewers?.Distinct())
                         {
                             
                             interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate, 

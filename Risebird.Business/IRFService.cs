@@ -892,7 +892,20 @@ namespace Risebird.Business
         //    }
         //}
 
-        public async Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser)
+        //public async Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser)
+        //{
+        //    try
+        //    {
+        //        return await _irfRepository.AddIRFInterviewersV2(interviewers, loggedInUser);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return false;
+        //    }
+        //}
+
+        public async Task<bool> AddIRFInterviewersV2(List<TransInterviewer> interviewers, string loggedInUser)
         {
             try
             {

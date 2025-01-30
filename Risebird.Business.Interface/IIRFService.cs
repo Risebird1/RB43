@@ -23,7 +23,7 @@ namespace Risebird.Business.Interface
         SelectList GetQualityController();
         Task<IRFVm> GetEditIRF(int id, int? templateId, bool isClone = false);
         Task<IRFVm> GetSkillChannelInterviewersForEdit(int id);
-        Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser);
+        //Task<bool> AddIRFInterviewersV2(IList<IRFInterviewerMembers> interviewers, string loggedInUser);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
         //Task<bool> AddIRFInterviewers(IRFVm model);
         IList<SkillComment> GetTechSkillComments(int id, string emailId = null);
@@ -199,5 +199,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate();
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
         Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser);
+        Task<bool> AddIRFInterviewersV2(List<TransInterviewer> interviewers, string loggedInUser);
     }
 }
