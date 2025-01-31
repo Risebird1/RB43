@@ -1364,7 +1364,7 @@ namespace Risebird.Repository
                                     //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
-                                    //ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
                                     //staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
                                     ResumeLink = dt.Rows[i]["ResumeLink"] != null ? dt.Rows[i]["ResumeLink"].ToString() : null,
                                     //VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,

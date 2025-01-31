@@ -6141,11 +6141,11 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
-                        int colNoSchDataNumber = 12;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+                        Sheet.Cells[i, 14].Value = string.Empty;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        int colNoSchDataNumber = 16;
+                      
                         if (clientId.HasValue && clientId.Value == 177)
                         {
                             ++colNoSchDataNumber;
@@ -6186,11 +6186,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
-                        int colDataNumberCold = 12;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+                        Sheet.Cells[i, 14].Value = string.Empty;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        int colDataNumberCold = 16;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
                             ++colDataNumberCold;

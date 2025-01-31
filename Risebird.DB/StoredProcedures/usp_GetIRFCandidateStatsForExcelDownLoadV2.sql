@@ -203,10 +203,12 @@ select IRF.id as Irfintid,ul.id as UserId, ul.MobileNumber, IRF.JDTiltle, ul.Ema
 --ic.InterviewStatus, ic.InterviewerComment,  ic.VideoLink, ic.CommunicationalProficiency,--im.ClientHrContact, im.confirmationStatus, im.staffingAgency,     
 ,tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate,   
 tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate, tctv.PreReportLink, tctv.PreReportUsername,   
-tctv.PreReportPassword, irf.ClientId      
+tctv.PreReportPassword, irf.ClientId,ca.ClientHRAttemptContact as ClientHrContact      
 from @TemporaryCandidateTableVariable tctv    
 join IRF on IRF.id =tctv.IRFId     
-join UserList ul on ul.id = tctv.UserId    
+join UserList ul on ul.id = tctv.UserId 
+join CandidatesMaster cm on cm.UserId=ul.id      
+join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id
 where CandidateLatestStatus in ('NOTSCHEDULED','COLDCANDIDATE')  
   
     
