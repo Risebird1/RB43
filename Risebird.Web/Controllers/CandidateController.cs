@@ -6262,7 +6262,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientEmail = emailid;
                 var client = await _userRepository.GetClientUserDetails(emailid);
                 ClientId = client.ClientId;
-                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
                 DateTime StartDate = DateTime.Now.AddMonths(-2);
                 DateTime EndDate = DateTime.Now;
                 var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid, StartDate, EndDate);
