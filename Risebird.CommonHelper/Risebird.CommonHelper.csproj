@@ -14,6 +14,7 @@
     <PackageReference Include="FileTypeInterrogator" Version="1.1.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3557" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3574" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
     <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech.Remoteconversation" Version="1.41.1" />

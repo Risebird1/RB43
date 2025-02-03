@@ -4516,7 +4516,7 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<bool> UpdateUploadedVideoLinkAndTranscriptLink(int interviewId, int? videoDuration = null, string videoLink = null, string transcriptLink = null)
+        public async Task<bool> UpdateUploadedVideoLinkAndTranscriptLink(int interviewId, int? videoDuration = null, string videoLink = null, string transcriptLink = null, string clientExternalVideoUploadedUrl = null, string clientExternalTranscriptUploadedUrl = null)
         {
             try
             {
@@ -4527,6 +4527,8 @@ namespace Risebird.Repository
                     parameters.Add("@videoLink", videoLink);
                     parameters.Add("@videoDuration", videoDuration);
                     parameters.Add("@transcriptLink", transcriptLink);
+                    parameters.Add("@clientExternalVideoUploadedUrl", clientExternalVideoUploadedUrl);
+                    parameters.Add("@clientExternalTranscriptUploadedUrl", clientExternalTranscriptUploadedUrl);
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateUploadedVideoLinkAndTranscriptLink", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;

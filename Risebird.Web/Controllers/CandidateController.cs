@@ -3722,7 +3722,7 @@ namespace Risebird.Web.Controllers
                         candidate.IsClientCancelInterview = client.IsClientCancelInterview;
                         candidate.IsRedoInterview = client.IsRedoInterview;
                         candidate.IsQCRequired = client.IsQCRequired;
-                        if (candidate.CurrentMeetingStatus == 4)
+                        if (candidate.CurrentMeetingStatus == 4 || candidate.CurrentMeetingStatus == 6 || candidate.CurrentMeetingStatus == 7 || candidate.CurrentMeetingStatus == 8)
                         {
                             if (candidate.CurrentInterviewStatus.HasValue)
                             {
@@ -3761,7 +3761,7 @@ namespace Risebird.Web.Controllers
                     }
                     else if (candidateType == CandidateTypeForClient.CompletedMeeting.GetDescription())
                     {
-                        model = model.Where(x => x.CurrentMeetingStatus == 4).ToList();
+                        model = model.Where(x => x.CurrentMeetingStatus == 4 || x.CurrentMeetingStatus == 6 || x.CurrentMeetingStatus == 7 || x.CurrentMeetingStatus == 8).ToList();
                     }
                     else if (candidateType == CandidateTypeForClient.ReportPending.GetDescription())
                     {
@@ -3926,7 +3926,7 @@ namespace Risebird.Web.Controllers
 
                 foreach (var candidate in model)
                 {
-                    if (candidate.CurrentMeetingStatus == 4)
+                    if (candidate.CurrentMeetingStatus == 4 || candidate.CurrentMeetingStatus == 6 || candidate.CurrentMeetingStatus == 7 || candidate.CurrentMeetingStatus == 8)
                     {
                         if (candidate.CurrentInterviewStatus.HasValue)
                         {
@@ -5507,7 +5507,7 @@ namespace Risebird.Web.Controllers
                 {
                     client = new ClientUserVM();
                 }
-                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+                var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
                 var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfId, emailid, projectid);
                 if (model == null)
                 {
@@ -6141,11 +6141,11 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
-                        int colNoSchDataNumber = 12;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
-                        Sheet.Cells[i, ++colNoSchDataNumber].Value = string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+                        Sheet.Cells[i, 14].Value = string.Empty;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        int colNoSchDataNumber = 16;
+                      
                         if (clientId.HasValue && clientId.Value == 177)
                         {
                             ++colNoSchDataNumber;
@@ -6186,11 +6186,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = string.Empty;
                         Sheet.Cells[i, 11].Value = string.Empty;
                         Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
-                        int colDataNumberCold = 12;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
-                        Sheet.Cells[i, ++colDataNumberCold].Value = string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+                        Sheet.Cells[i, 14].Value = string.Empty;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        int colDataNumberCold = 16;
                         if (clientId.HasValue && clientId.Value == 177)
                         {
                             ++colDataNumberCold;
@@ -6263,7 +6262,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientEmail = emailid;
                 var client = await _userRepository.GetClientUserDetails(emailid);
                 ClientId = client.ClientId;
-                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
                 DateTime StartDate = DateTime.Now.AddMonths(-2);
                 DateTime EndDate = DateTime.Now;
                 var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid, StartDate, EndDate);
@@ -6361,7 +6360,7 @@ namespace Risebird.Web.Controllers
                         candidate.IsClientCancelInterview = client.IsClientCancelInterview;
                         candidate.IsRedoInterview = client.IsRedoInterview;
                         candidate.IsQCRequired = client.IsQCRequired;
-                        if (candidate.CurrentMeetingStatus == 4)
+                        if (candidate.CurrentMeetingStatus == 4 || candidate.CurrentMeetingStatus == 6 || candidate.CurrentMeetingStatus == 7 || candidate.CurrentMeetingStatus == 8)
                         {
                             if (candidate.CurrentInterviewStatus.HasValue)
                             {

@@ -161,7 +161,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoMeetings();
         Task<IEnumerable<PendingVideoMeetingsData>> GetZoomMeetingsToBeDeletedOnceUploadedOnBlob();
         Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink, int videoDuration);
-        Task<bool> UpdateUploadedVideoLinkAndTranscriptLink(int interviewId, int? videoDuration = null, string videoLink = null, string transcriptLink = null);
+        Task<bool> UpdateUploadedVideoLinkAndTranscriptLink(int interviewId, int? videoDuration = null, string videoLink = null, string transcriptLink = null, string clientExternalVideoUploadedUrl = null, string clientExternalTranscriptUploadedUrl = null);
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);

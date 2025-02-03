@@ -15,5 +15,7 @@ namespace Risebird.Entities.Data
         public string AudioTranscriptFileLink { get; set; }
         public int VideoDuration { get; set; }
         public string meetingtype { get; set; }
+        public int ClientId { get; set; }
+        public string ClientCompanyName { get; set; }
     }
 }

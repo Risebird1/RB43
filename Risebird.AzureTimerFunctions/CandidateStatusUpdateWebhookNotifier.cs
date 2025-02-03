@@ -86,7 +86,7 @@ namespace Risebird.AzureTimerFunctions
                         }
 
                     }
-                    foreach (var data in webHookData.Where(x => x.Status.ToLower() == "completed" || x.Status.ToLower() == "noshow" || x.Status.ToLower() == "dropped"))
+                    foreach (var data in webHookData.Where(x => x.Status.ToLower() == "completed" || x.Status.ToLower() == "noshow" || x.Status.ToLower() == "dropped" || x.Status.ToLower() == "cancelled" || x.Status.ToLower() == "coldcandidate"))
                     {
 
                         try

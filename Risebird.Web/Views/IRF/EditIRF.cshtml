@@ -1562,11 +1562,11 @@
                                                                                             <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin") {
                                                                                             
-                                                                                            @* <span class="interviewer_12" >
+                                                                                            <span class="interviewer_12" >
                                                                     <span class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile" id="btnEditInterviewer_@i" style="position:relative;top:3px;">
                                                                         <a target="_blank" href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = Model.InterviewerCollection[0].UserId })'  title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>
                                                                     </span>
-                                                                </span> *@
+                                                                </span>
                                                                                         }
                                                            
                                                                                             <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">

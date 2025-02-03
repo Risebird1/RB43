@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Calendar.v3.Data;
 using Risebird.Entities.Data;
 using System.Data;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper.Interface
@@ -11,5 +12,6 @@ namespace Risebird.CommonHelper.Interface
         Task DeleteCalendarEvent(string eventid);
         Task<DataTable> CalendarEventVideo(string eventid);
         Task DeleteCalendarEventVideo(string fileid);
+        Task<string> UploadToGoogleCloudStorage(string fileName, Stream fileStream, int meetingId);
     }
 }

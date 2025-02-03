@@ -20,12 +20,17 @@ namespace Risebird.AzureTimerFunctions
         private readonly IZoomHelper _zoomHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly ITeamsMeetingHelper _iteamsMeetingHelper;
+        private readonly IGoogleEventHelper _googleEventHelper;
         private readonly ILogger log;
         private readonly string ContainerName;
         private readonly string TranscriptsContainer;
         //private readonly string SASConnectionString;
 
-        public ZoomService(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper, ITeamsMeetingHelper iteamsMeetingHelper)
+        public ZoomService(ILoggerFactory loggerFactory, IConfiguration configuration,
+            IApplicationErrorLogger applicationErrorLogger,
+            IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository,
+            IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper,
+            ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -37,6 +42,7 @@ namespace Risebird.AzureTimerFunctions
             TranscriptsContainer = _configuration["SASURLSettings:TranscriptsContainer"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
             _iteamsMeetingHelper = iteamsMeetingHelper;
+            _googleEventHelper = googleEventHelper;
             log = loggerFactory.CreateLogger<ZoomService>();
 
         }
@@ -111,6 +117,7 @@ namespace Risebird.AzureTimerFunctions
                         {
                             var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
                             string videoSasUrl = string.Empty;
+                            string uploadedVideoClientExternalLink = string.Empty;
                             int? videoDuration = null;
                             if ((string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 15)) && (videoRecordingFiles != null || videoRecordingFiles.Count() == 1))
                             {
@@ -124,6 +131,7 @@ namespace Risebird.AzureTimerFunctions
                                 {
                                     HttpClient myWebClient = new HttpClient();
                                     string uploadedVideoUrl = string.Empty;
+                                    //url of the video uploaded to the client's storage exclusively in cases where the client has requested for such a service. 
                                     using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                     {
                                         var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
@@ -143,6 +151,26 @@ namespace Risebird.AzureTimerFunctions
                                         }
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                            try
+                                            {
+                                                string fileNameExternal = "recording.mp4"; //meeting.imid.ToString() + 
+                                                // Replace Azure logic with Google Cloud Storage upload
+                                                myStream.Position = 0;
+                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                return;
+                                            }
+
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                        }
 
 
                                         //generate SAS URL from the uploaded video url
@@ -169,6 +197,7 @@ namespace Risebird.AzureTimerFunctions
 
                             var audioTranscriptFiles = convertedResponse.recording_files.Where(x => x.file_type == "TRANSCRIPT" && x.status.ToLower() == "completed");
                             string transcriptSasUrl = string.Empty;
+                            string uploadedTranscriptClientExternalLink = string.Empty;
                             if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink) && (audioTranscriptFiles != null || audioTranscriptFiles.Count() == 1))
                             {
                                 var transcriptFile = audioTranscriptFiles?.FirstOrDefault();
@@ -199,7 +228,25 @@ namespace Risebird.AzureTimerFunctions
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                            try
+                                            {
+                                                string fileNameExternal ="transcript.json"; // meeting.imid.ToString() + 
+                                                myStream.Position = 0;
+                                                // Replace Azure logic with Google Cloud Storage upload
+                                                uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                return;
+                                            }
 
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                        }
                                         //generate SAS URL from the uploaded video url
                                         var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
 
@@ -216,7 +263,7 @@ namespace Risebird.AzureTimerFunctions
                             {
 
                                 //insert the SAS URL of the video, transcript and video duration in the database table
-                                _ = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl).Result;
+                                _ = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink).Result;
 
                                 log.LogInformation($"Zoom : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
 
