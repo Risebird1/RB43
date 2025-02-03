@@ -251,7 +251,7 @@ namespace Risebird.CommonHelper
         }
         #endregion
 
-        public async Task<string> UploadToGoogleCloudStorage(string objectName, Stream fileStream)
+        public async Task<string> UploadToGoogleCloudStorage(string fileName, Stream fileStream, int meetingId)
         {
             try
             {
@@ -280,9 +280,21 @@ namespace Risebird.CommonHelper
 
                 StorageClient storageClient = StorageClient.Create(credential);
 
+                //string bucketName = "your-bucket-name";
+                string folderName = meetingId.ToString(); // Folder name
+                //string filePath = "path/to/local/video.mp4";
+                string objectName = $"{folderName}/{fileName}"; // Store file in the "videos" folder
+
+                // 1. Create a "folder" by uploading an empty object
+                if(await CreateFolderInBucket(storageClient, bucketName, folderName))
+                {
+                    var response = await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
+                }
+                
+
                 // Upload the file to Google Cloud Storage
                 //Console.WriteLine($"Uploading {objectName} to bucket {bucketName}...");
-                await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
+                //await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
 
                 // Construct the uploaded file URL (replace with your storage URL if different)
                 string uploadedUrl = $"https://storage.googleapis.com/{bucketName}/{objectName}";
@@ -294,6 +306,24 @@ namespace Risebird.CommonHelper
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        private async Task<bool> CreateFolderInBucket(StorageClient storageClient, string bucketName, string folderName)
+        {
+            try
+            {
+                string folderObjectName = $"{folderName}/"; // Folder simulation
+                using (var emptyStream = new MemoryStream())
+                {
+                    _ = await storageClient.UploadObjectAsync(bucketName, folderObjectName, null, emptyStream);
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

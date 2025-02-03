@@ -47,7 +47,7 @@ namespace Risebird.AzureTimerFunctions
 
         }
         [Function("ZoomService")]
-        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer) //after every 30 min //0 */15 * * * *
+        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer) //after every 30 min //0 */15 * * * *
         {
             try
             {
@@ -156,9 +156,10 @@ namespace Risebird.AzureTimerFunctions
                                         {
                                             try
                                             {
-                                                string fileNameExternal = meeting.imid.ToString() + "_video_" + fileName;
+                                                string fileNameExternal = "recording.mp4"; //meeting.imid.ToString() + 
                                                 // Replace Azure logic with Google Cloud Storage upload
-                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream).Result;
+                                                myStream.Position = 0;
+                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
                                             }
                                             catch (Exception ex)
                                             {
@@ -231,9 +232,10 @@ namespace Risebird.AzureTimerFunctions
                                         {
                                             try
                                             {
-                                                string fileNameExternal = meeting.imid.ToString() + "_transcript_" + fileName;
+                                                string fileNameExternal ="transcript.json"; // meeting.imid.ToString() + 
+                                                myStream.Position = 0;
                                                 // Replace Azure logic with Google Cloud Storage upload
-                                                uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream).Result;
+                                                uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
                                             }
                                             catch (Exception ex)
                                             {

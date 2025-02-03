@@ -163,7 +163,7 @@ namespace Risebird.MicroService
                                             {
                                                 string fileNameExternal = meeting.imid.ToString() + "_video_" + fileName;
                                                 // Replace Azure logic with Google Cloud Storage upload
-                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream).Result;
+                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
                                             }
                                             catch (Exception ex)
                                             {
@@ -238,7 +238,7 @@ namespace Risebird.MicroService
                                             {
                                                 string fileNameExternal = meeting.imid.ToString() + "_transcript_" + fileName;
                                                 // Replace Azure logic with Google Cloud Storage upload
-                                                uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream).Result;
+                                                uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
                                             }
                                             catch (Exception ex)
                                             {

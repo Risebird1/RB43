@@ -12,6 +12,6 @@ namespace Risebird.CommonHelper.Interface
         Task DeleteCalendarEvent(string eventid);
         Task<DataTable> CalendarEventVideo(string eventid);
         Task DeleteCalendarEventVideo(string fileid);
-        Task<string> UploadToGoogleCloudStorage(string objectName, Stream fileStream);
+        Task<string> UploadToGoogleCloudStorage(string fileName, Stream fileStream, int meetingId);
     }
 }
