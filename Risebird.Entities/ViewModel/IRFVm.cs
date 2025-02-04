@@ -267,6 +267,8 @@ namespace Risebird.Entities.ViewModel
         public string TechRubricType { get; set; }
         //public int ClientUserIdPopUp { get; set; }
         public List<int> ClientUserIdPopUp { get; set; }
+        [DisplayName("White Labling")]
+        public bool IsWhiteLabling { get; set; }
     }
     public class InterviewerIds
     {

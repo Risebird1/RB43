@@ -57,21 +57,21 @@
                 {
                     @if (ViewBag.Type == "ShortList")
                     {
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
                         <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('ShortList','@ViewBag.uniqueid')"><strong>ShortListed Interviewers</strong></div>
                         <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('Removed','@ViewBag.uniqueid')"><strong>Removed Interviewers</strong></div>
-                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
                     }
                     else if (ViewBag.Type == "Removed")
                     {
+                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
                         <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('ShortList','@ViewBag.uniqueid')"><strong>ShortListed Interviewers</strong></div>
                         <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('Removed','@ViewBag.uniqueid')"><strong>Removed Interviewers</strong></div>
-                        <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
                     }
                     else
                     {
+                        <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
                         <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('ShortList','@ViewBag.uniqueid')"><strong>ShortListed Interviewers</strong></div>
                         <div class="feedback-tab" onclick="ChangeTotalInterviewersUrl('Removed','@ViewBag.uniqueid')"><strong>Removed Interviewers</strong></div>
-                        <div class="feedback-tab-ac" onclick="ChangeTotalInterviewersUrl('NoAction','@ViewBag.uniqueid')"><strong>Action Awaited</strong></div>
                     }
                 }
                 <div class="pull-right">
@@ -133,8 +133,11 @@
                                                     <th>Skill Channel</th>
                                                     <th>JD Title</th>
                                                     <th>Client HR</th>
-                                                    <th>Client</th>
-                                                    <th>Channel Owner</th>
+                                                    @if (ViewBag.InterviewerStatus != "TotalInterviewer")
+                                                    {
+                                                        <th>Client</th>
+                                                        <th>Channel Owner</th>
+                                                    }
                                                     <th>Completed Interview</th>
                                                     @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                     {
@@ -176,8 +179,11 @@
                                                     <th>Skill Channel</th>
                                                     <th>JD Title</th>
                                                     <th>Client HR</th>
-                                                    <th>Client</th>
-                                                    <th>Channel Owner</th>
+                                                    @if (ViewBag.InterviewerStatus != "TotalInterviewer")
+                                                    {
+                                                        <th>Client</th>
+                                                        <th>Channel Owner</th>
+                                                    }
                                                     <th>Completed Interview</th>
                                                     @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                     {
@@ -277,11 +283,14 @@
                                                         <td>@item.IRFId</td>
                                                         <td>@item.JDTiltle</td>
                                                         <td>@item.Clienthr</td>
-                                                        <td>@item.Client</td>
-                                                        <td>@item.ChannelOwner</td>
-                                                        <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
                                                         @if (ViewBag.InterviewerStatus != "TotalInterviewer")
                                                         {
+                                                            <td>@item.Client</td>
+                                                            <td>@item.ChannelOwner</td>
+                                                        }
+                                                        @if (ViewBag.InterviewerStatus != "TotalInterviewer")
+                                                        {
+                                                            <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">@item.TotalCompletedMeetings</a></td>
                                                             @if (ViewBag.Type == "Selection")
                                                             {
                                                                 <td>@item.TotalSelected</td>
@@ -323,6 +332,10 @@
                                                                 </td>
                                                             }
                                                         }
+                                                        else
+                                                        {
+                                                            <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">Completed</a></td>
+                                                        }
                                                         @*       <td>
 
                                                     @if (item.CompanyName != null && item.CompanyName != "")
@@ -347,11 +360,6 @@
                                                     {
                                                     <span></span>
                                                     }
-
-
-
-
-
                                                     </td> *@
 
                                                     </tr>

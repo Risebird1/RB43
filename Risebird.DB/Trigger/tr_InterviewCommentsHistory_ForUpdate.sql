@@ -20,6 +20,11 @@ BEGIN
  Select @id = Id from inserted
  Select @meetingStatus = MeetingStatus from InterviewComments where id = @id
 
+ Select @interviewId = InterviewId from InterviewComments where id = @id
+
+ Declare @oldmeetingStatus int
+ set @oldmeetingStatus=(Select top (1) MeetingStatus From InterviewCommentsHistory where InterviewId=@interviewId order by PerformedAt desc)
+
  insert into InterviewCommentsHistory
  (id,	InterviewId,	InterviewStatus	,InterviewerComment	,FraudCheckStatus,	HRComment,	QCStatus,	QCComment,
  TrainingStatus,	TrainerComment,	AudioLink,	VideoLink,	L2InterviewStatus,	ClientInterviewStatus,	MeetingStatus,
@@ -37,34 +42,25 @@ BEGIN
  from InterviewComments where id = @id )
 
 
- if(@meetingStatus in (4, 6, 7, 8))
+ if(@meetingStatus in (4, 6, 7, 8) and @oldmeetingStatus not in(4,6,7,8))
  Begin
-	Select @interviewId = InterviewId from InterviewComments where id = @id
-
 	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
-
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'completed' 
  End
 
-  if(@meetingStatus in (1, 5, 9))
+  if(@meetingStatus in (1, 5, 9) and @oldmeetingStatus not in (1, 5, 9))
  Begin
-	Select @interviewId = InterviewId from InterviewComments where id = @id
-
 	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
-
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'noshow' 
  End
   
-  if(@meetingStatus in (3))
+  if(@meetingStatus in (3) and @oldmeetingStatus not in (3))
  Begin
-	Select @interviewId = InterviewId from InterviewComments where id = @id
-
 	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
-
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'dropped' 

@@ -3754,6 +3754,13 @@ namespace Risebird.Web.Controllers
                             candidate.CurrentStatus = "Cancelled";
                         }
                     }
+                    var role = await _clientService.GetClientRoleByEmailId(emailid);
+                    var Rolename = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                    ViewBag.ClientRole = Rolename;
+                    if (Rolename == "Reviewer")
+                    {
+                        candidateType = CandidateTypeForClient.CompletedMeeting.GetDescription();
+                    }
                     model = model.Where(x => x.RedoInterview == false).ToList();
                     if (candidateType == CandidateTypeForClient.FutureScheduled.GetDescription())
                     {
@@ -3787,8 +3794,7 @@ namespace Risebird.Web.Controllers
                             model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                         }
                     }
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+
                     ViewBag.profile = "Client";
                     ViewBag.ClientId = client.ClientId;
                     ViewBag.PageStatus = "Public";
@@ -6145,7 +6151,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 14].Value = string.Empty;
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         int colNoSchDataNumber = 16;
-                      
+
                         if (clientId.HasValue && clientId.Value == 177)
                         {
                             ++colNoSchDataNumber;
