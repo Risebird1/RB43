@@ -3954,6 +3954,10 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(usePl))
                 {
                     ViewBag.UsePl = usePl;
+                    if (usePl == "Public")
+                    {
+                        statsDetailsList = statsDetailsList.OrderByDescending(x => x.interviewDate).Take(5);
+                    }
                 }
                 return View("StatsDetails", statsDetailsList);
             }

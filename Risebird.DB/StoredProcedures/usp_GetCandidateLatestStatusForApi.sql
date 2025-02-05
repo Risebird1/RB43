@@ -130,7 +130,7 @@ join @TemporaryCandidateTableVariable td on qd.InterviewId=td.InterviewId
 Select tsr.Interviewid,[LevelTech].Name as EvaluatedAt,tsr.SkillName,tsr.WeightageRequired,tsr.WeightageActual,tsr.SkillSet From TechSkillReport tsr 
 join @TemporaryCandidateTableVariable td on tsr.InterviewId=td.InterviewId  
 left join [LevelTech] on tsr.RequiredLevelId=[LevelTech].id
-End  
+End   
 GO
 
 

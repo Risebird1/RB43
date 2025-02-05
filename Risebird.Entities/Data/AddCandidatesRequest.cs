@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -42,5 +43,17 @@ namespace Risebird.Entities.Data
 
 
     }
-
+    public class ScheduleCandidatesRequest
+    {
+        public string skillChannelId { get; set; }
+        public string requestedBy { get; set; }
+        public List<ScheculeInterview> CandidateList { get; set; }
+    }
+    public class ScheduleCandidateList
+    {
+        public DateTime Interviewdate { get; set; }
+        public string CandidateEmail { get; set; }
+        public string MobileNumber { get; set; }
+        public string Resume { get; set; }
+    }
 }

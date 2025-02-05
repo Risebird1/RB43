@@ -18,10 +18,10 @@ AS
 BEGIN
 
  Declare @id int, @candidateEmailId varchar(200), @initialInterviewer varchar(200), @currentInterviewer varchar(200)
-
+ Declare @OldConfirmationstatus int,@Confirmationstatus int,@irfName varchar(20)
  Select @id = Id from inserted
 
- select @candidateEmailId = Trim(candidateEmail) from InterviewMeetings where id = @id
+ select @candidateEmailId = Trim(candidateEmail),@Confirmationstatus=confirmationStatus,@irfName=IRFId from InterviewMeetings where id = @id
  
  select @initialInterviewer = Trim(interviewer) from deleted
  select @currentInterviewer = Trim(interviewer) from inserted
@@ -60,7 +60,8 @@ BEGIN
 
  End
 
-
+set @OldConfirmationstatus=(Select top (1) confirmationStatus From InterviewMeetingsHistory where id=id order by PerformedAt desc)
+ 
  if(@candidateEmailId != (select candidateEmail from InterviewMeetings where id = @id))
  Begin
 	 update InterviewMeetings set candidateEmail  = @candidateEmailId where id = @id
@@ -86,5 +87,10 @@ BEGIN
  IsCandidateResponsed,	CandidateResponse, ProctorReport, Cancellationsource, 'Updated', DATEADD(MINUTE, 330, getdate()), sModifiedBy, TimeZoneoffset, TimeZonesValue,IsDeleted
  from InterviewMeetings where id = @id) 
  
+ if(@Confirmationstatus=2 and @Confirmationstatus!=@OldConfirmationstatus)
+ begin
+  Exec usp_AddCandidateStatusWebHookData @candidateEmailId, @irfName, 'cancelled' 
+  end
 
 END
+GO

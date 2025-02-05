@@ -11,20 +11,23 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_GetIRFActiveInterviewers]
-@IRFId varchar(200) 
-
-AS
-Begin
-
-declare @irfIntId int
-	set @irfIntId = (select id from IRF where IRFId =@IRFId)
-		
-	Begin
-		select distinct ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @irfIntId and ti.IsActive=1
-	End
-
-End
+  
+CREATE PROCEDURE [dbo].[usp_GetIRFActiveInterviewers]  
+@IRFId varchar(200)   
+  
+AS  
+Begin  
+  
+declare @irfIntId int  
+ set @irfIntId = (select id from IRF where IRFId =@IRFId)  
+    
+ Begin  
+  select distinct ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId 
+  where IRFId = @irfIntId and ti.IsActive=1  and ul.IsActive=1
+ End  
+  
+End  
+  
 
 GO
 

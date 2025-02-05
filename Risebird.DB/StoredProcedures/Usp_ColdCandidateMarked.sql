@@ -23,6 +23,8 @@ AS
 Begin
 if(@type=1)
 begin
+Declare @oldIscandidateCold bit
+select @oldIscandidateCold=IsColdCandidate From ColdCandidateInfos where FKCandidateId=@FKCandidateId
 IF EXISTS(select * from ColdCandidateInfos where FKCandidateId=@FKCandidateId)
 Begin
 update ColdCandidateInfos set IsColdCandidate=1,ColdMarkedBY=@ColdMarkedBY,ColdMarkedDate=@ColdMarkedDate where FKCandidateId=@FKCandidateId
@@ -40,6 +42,11 @@ select @IRFId=IRFId,@CandidateEmail= candidateEmail from InterviewMeetings where
 update InterviewMeetings set confirmationStatus=2,Cancellationsource='Cold Candidate' where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
 select interviewer,interviewDate,candidateName from InterviewMeetings where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
 End
+--Add Cold Marked for webhook
+ if(ISNULL(@oldIscandidateCold,0)!=1)
+ begin
+  Exec usp_AddCandidateStatusWebHookData @CandidateEmail, @IRFId, 'coldcandidate' 
+  end
 END
 else
 Begin
