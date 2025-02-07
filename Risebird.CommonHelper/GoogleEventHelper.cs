@@ -285,19 +285,22 @@ namespace Risebird.CommonHelper
                 //string filePath = "path/to/local/video.mp4";
                 string objectName = $"{folderName}/{fileName}"; // Store file in the "videos" folder
 
+                var response = await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
+
+
                 // 1. Create a "folder" by uploading an empty object
-                if(await CreateFolderInBucket(storageClient, bucketName, folderName))
-                {
-                    var response = await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
-                }
-                
+                //if (await CreateFolderInBucket(storageClient, bucketName, folderName))
+                //{
+                //    var response = await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
+                //}
+
 
                 // Upload the file to Google Cloud Storage
                 //Console.WriteLine($"Uploading {objectName} to bucket {bucketName}...");
                 //await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
 
                 // Construct the uploaded file URL (replace with your storage URL if different)
-                string uploadedUrl = $"https://storage.googleapis.com/{bucketName}/{objectName}";
+                string uploadedUrl = response.SelfLink;//$"https://storage.googleapis.com/{bucketName}/{objectName}";
                 //Console.WriteLine($"Uploaded to: {uploadedUrl}");
 
                 return uploadedUrl;

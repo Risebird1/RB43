@@ -78,9 +78,23 @@ namespace Risebird.Services.Controllers
                                 };
                                 return new BadRequestObjectResult(errorResponse);
                             }
+                            var candidateListToBeProcessed = new List<CandidateQuickAddModel>();
+
+                            foreach (var item in reqData.CandidateList)
+                            {
+                                var obj = new CandidateQuickAddModel
+                                {
+                                    Name = item.Name,
+                                    ResumeLink = item.ResumeLink,
+                                    EmailId = item.EmailId,
+                                    Phone = item.Phone,
+                                    countryCode = item.countryCode
+                                };
+                                candidateListToBeProcessed.Add(obj);
+                            }
                             //find the name of the skill channel based on the request parameters;
                             //var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
-                            var result = await _irfService.AddMultipleCandidatesViaApi(reqData.CandidateList, reqData.requestedBy, true, reqData.jobId);
+                            var result = await _irfService.AddMultipleCandidatesViaApi(candidateListToBeProcessed, reqData.requestedBy, true, reqData.jobId);
                             if (result != null)
                             {
                                 result.performedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");

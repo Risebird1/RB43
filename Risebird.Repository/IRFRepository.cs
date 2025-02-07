@@ -12,6 +12,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -868,7 +869,7 @@ namespace Risebird.Repository
 
                         }
                     }
-                    
+
                     if (dataset.Tables.Count > 1)
                     {
                         dt = dataset.Tables[1];
@@ -906,7 +907,7 @@ namespace Risebird.Repository
                             _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                         }
                     }
-                    
+
                     return _resultVM;
                 }
             }
@@ -2775,7 +2776,7 @@ namespace Risebird.Repository
 
         //        using (SqlConnection con = new SqlConnection(connectionString))
         //        {
-                    
+
         //            DataTable interviewerDt = new DataTable();
 
         //            if (irfDetails.InterviewerCollectionPopup != null && irfDetails.InterviewerCollectionPopup.Count() != 0 && !(irfDetails.InterviewerCollectionPopup.Where(x => x.UserId == 0).Any()))
@@ -2844,16 +2845,16 @@ namespace Risebird.Repository
 
         //                }
         //            }
-                   
+
         //            con.Open();
 
         //            if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
         //            {
         //                con.Close();
         //            }
-                    
+
         //            return true;
-                    
+
         //        }
 
         //    }
@@ -2898,8 +2899,8 @@ namespace Risebird.Repository
 
                         foreach (var item in interviewers?.Distinct())
                         {
-                            
-                            interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate, 
+
+                            interviewerDt.Rows.Add(item.IRFId, item.UserId, item.PerSuccessRate,
                                 item.Surcharge, false, true, item.Source, false, 0,
                                 null, null, false);
 
@@ -2918,7 +2919,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@PerformedBy"].Value = loggedInUser;
 
-                    
+
                     if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
@@ -5770,8 +5771,9 @@ namespace Risebird.Repository
                             else
                             {
                                 parameters.Add("@jobId", jobId);
-                                parameters.Add("@countryCode", obj.countryCode);
                             }
+
+                            parameters.Add("@countryCode", obj.countryCode);
 
                             parameters.Add("@Name", obj.Name);
                             parameters.Add("@EmailId", obj.EmailId);
@@ -6843,7 +6845,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@EndDate"].Value = irfDetails.EndDate;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDLink", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink;
+                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink ?? string.Empty;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfPosition", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@NoOfPosition"].Value = irfDetails.NoOfPosition;
@@ -9630,6 +9632,51 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<SkillChannelnAGDetails> CheckExistenceofSkillChannelAgainstRequestId(string requestId, string jobTitle)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var returnObj = new SkillChannelnAGDetails();
+                    
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_CheckExistenceofSkillChannelAgainstRequestId", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@requestId", requestId);
+                    adapter.SelectCommand.Parameters.AddWithValue("@jobTitle", jobTitle);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        returnObj.irfId = dt.Rows[0]["IRFId"] != null ? Convert.ToInt16(dt.Rows[0]["IRFId"].ToString()) : 0;
+                        returnObj.assessmentGroupId = dt.Rows[0]["AssessmentGroupId"] != null ? Convert.ToInt16(dt.Rows[0]["AssessmentGroupId"].ToString()) : 0;
+                        returnObj.AssessmentGroupName = dt.Rows[0]["AssessmentGroupName"] != null ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
+                        returnObj.TemplateId = dt.Rows[0]["TemplateId"] != null ? Convert.ToInt16(dt.Rows[0]["TemplateId"].ToString()) : 0;
+                        returnObj.TemplateName = dt.Rows[0]["TemplateName"] != null ? dt.Rows[0]["TemplateName"].ToString() : null;
+
+                    }
+                    //return new Tuple<int, int>(irfId, assessmentGroupId);
+                    return returnObj;
+                }
+            }
+
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}");
+                return null;
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}");
+                return null;
+
             }
         }
     }

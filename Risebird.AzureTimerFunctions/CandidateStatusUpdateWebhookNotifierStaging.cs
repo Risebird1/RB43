@@ -23,10 +23,10 @@ namespace Risebird.AzureTimerFunctions
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _candidateRepository = candidateRepository;
-            log = loggerFactory.CreateLogger<CandidateStatusUpdateWebhookNotifier>();
+            log = loggerFactory.CreateLogger<CandidateStatusUpdateWebhookNotifierStaging>();
         }
 
-        [Function("CandidateStatusUpdateWebhookNotifier")]
+        [Function("CandidateStatusUpdateWebhookNotifierStaging")]
         public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");

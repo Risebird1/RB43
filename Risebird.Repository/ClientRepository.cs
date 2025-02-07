@@ -1317,6 +1317,12 @@ namespace Risebird.Repository
             }
             return null;
         }
+        
+        /// <summary>
+        /// Get Client By 'Tenant' ID (ignore the spelling error)
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
         public async Task<Client> GetClientByTalentId(string tenantId)
         {
             try

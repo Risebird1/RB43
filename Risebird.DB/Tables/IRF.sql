@@ -62,6 +62,7 @@ CREATE TABLE [dbo].[IRF](
             [JDTitleTwo] [VARCHAR](150) null,
             [IsVideoRequired] [bit] null,
             [TechRubricType] [VARCHAR](20) null,
+            [RequestId] [NVARCHAR](50) null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -555,6 +556,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add TechRubricType VARCHAR(20)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RequestId')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add RequestId NVARCHAR(50)
 END
 
 END
