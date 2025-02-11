@@ -128,6 +128,7 @@ namespace Risebird.Services.Controllers
                                         irfModel.ClientName = clientDetails?.Name;
                                         irfModel.CreatedFromTemplateId = isExistsObj.TemplateId;
                                         irfModel.TemplateName = isExistsObj.TemplateName;
+                                        irfModel.JDLink = reqData.jdLink ?? string.Empty;
                                         //var clientDetails = await _clientService.GetClient(irfModel.ClientId);
                                         string _schedulinglink = await AutoGenerateSchedulingLink(irfModel.StartDate, irfModel.IRFId, irfModel.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", irfModel.MeetingPlatform);
 

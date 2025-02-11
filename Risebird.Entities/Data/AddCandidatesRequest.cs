@@ -12,6 +12,7 @@ namespace Risebird.Entities.Data
         public string requestedBy { get; set; }
         public string jobId { get; set; } // this is primarily being used for Turing
         public string jobTitle { get; set; } // these jobtitles will be mapped against MAGs in our system as a preceding step/prerequisite
+        public string jdLink { get; set; } 
         public string requestId { get; set; }
         //public List<CandidateQuickAddModel> CandidateList { get; set; }
         public List<CandidateQuickAddModelAPIVersion> CandidateList { get; set; }
