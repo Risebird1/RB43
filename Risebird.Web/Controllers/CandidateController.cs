@@ -5578,7 +5578,10 @@ namespace Risebird.Web.Controllers
 
                 //Sheet.Cells[1, 17].Value = "Interviewer Comment";
                 //Sheet.Cells[1, 16].Value = "Video Link";
-                Sheet.Cells[1, ++colNumber].Value = "Report Link";
+                if (ClientRole != "HRs" && ClientRole != "Staffing Agency")
+                {
+                    Sheet.Cells[1, ++colNumber].Value = "Report Link";
+                }
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
                 Sheet.Cells[1, ++colNumber].Value = "Communication Score";
