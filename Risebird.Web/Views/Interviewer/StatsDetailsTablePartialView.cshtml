@@ -27,7 +27,7 @@
                     <th>Interview Date</th>
                     <th>Candidate</th>
                     <th>Skill Channel</th>
-                     <th>Project ID</th>
+                    <th>Project ID</th>
                     @* @if (string.IsNullOrEmpty(clientEmailId))
                     {
                         <th>Client</th>
@@ -36,7 +36,7 @@
                     <th>Meeting Status</th>
                     <th>Interview Status</th>
                     <th>Report</th>
-                   @*  <th>Interviewer Joining Time</th> *@
+                    @*  <th>Interviewer Joining Time</th> *@
                     @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                     {
                         <th>Tech QC</th>
@@ -58,7 +58,7 @@
                     <th>Meeting Status</th>
                     <th>Interview Status</th>
                     <th>Report</th>
-                   @*  <th>Interviewer Joining Time</th> *@
+                    @*  <th>Interviewer Joining Time</th> *@
                     @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                     {
                         <th>Tech QC</th>
@@ -75,11 +75,13 @@
                         <tr>
 
                             <td>@item.interviewDate</td>
-                            <td><p style="margin:0px;">@item.candidateEmail</p>
-                             <p style="margin:0px;"><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p></td>
+                            <td>
+                                <p style="margin:0px;">@item.candidateEmail</p>
+                                <p style="margin:0px;"><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p>
+                            </td>
                             <td>@item.SkillChannel</td>
-                             <td>@item.ProjectUniqueid</td>
-                           @*  @if (string.IsNullOrEmpty(clientEmailId))
+                            <td>@item.ProjectUniqueid</td>
+                            @*  @if (string.IsNullOrEmpty(clientEmailId))
                             {
                                 <td>@item.Client</td>
 
@@ -117,7 +119,7 @@
                                 }
 
                             </td>
-                           @*  <td>
+                            @*  <td>
                                 @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
                             </td> *@
                             @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
@@ -152,14 +154,16 @@
                                         </svg>
                                     </span>
                                 </button>
-
-                                @* <span>
-                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
-                                        <div onclick="PaymentSLADetails('@item.interviewId','@item.candidateEmail','@item.interviewer',false,'CompletedInterview',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
-                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
-                                        </div>
-                                    </button>
-                                </span> *@
+                                @if (ViewBag.UsePl != "Public")
+                                {
+                                    <span>
+                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
+                                            <div onclick="PaymentSLADetails('@item.interviewId','@item.candidateEmail','@item.interviewer',false,'CompletedInterview',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
+                                                <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                                            </div>
+                                        </button>
+                                    </span>
+                                }
                             </td>
                         </tr>
 

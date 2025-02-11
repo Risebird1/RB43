@@ -13,5 +13,6 @@ namespace Risebird.Entities.Data
         public string AssessmentGroupName { get; set; }
         public int TemplateId { get; set; }
         public string TemplateName { get; set; }
+        public string IRFName { get; set; }
     }
 }

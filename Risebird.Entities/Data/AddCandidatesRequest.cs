@@ -41,23 +41,47 @@ namespace Risebird.Entities.Data
         public int AddedByUserEmail { get; set; }
         public string AffindaResumeIdentifier { get; set; }
         public string countryCode { get; set; }
-
+        public DateTime InterviewDate { get; set; }
 
     }
     public class ScheduleCandidatesRequest
     {
         public string skillChannelId { get; set; }
         public string requestedBy { get; set; }
-        public List<ScheculeInterview> CandidateList { get; set; }
+        public string RequestId { get; set; }
+        public List<ScheduleCandidateList> CandidateList { get; set; }
     }
     public class ScheduleCandidateList
     {
         public DateTime Interviewdate { get; set; }
         public string CandidateEmail { get; set; }
+        public string Name { get; set; }
         public string MobileNumber { get; set; }
+        public string Uniqueid { get; set; }
         public string Resume { get; set; }
+        public string ClientName { get; set; }
+        public bool isCandidateportal { get; set; }
+        public ScheculeInterviewIRFVM _IRFDetails { get; set; }
+    }
+    public class ScheduleCandidateResponse
+    {
+        public ScheduleCandidateResponse()
+        {
+            list = new List<ScheduleCandidateStatus>();
+        }
+        public string performedAt { get; set; }
+        public string SkillChannelId { get; set; }
+        public List<ScheduleCandidateStatus> list { get; set; }
+    }
+
+    public class ScheduleCandidateStatus
+    {
+        public string CandidateEmail { get; set; }
+        public string onboardingStatus { get; set; }//successful/ duplicate/ User exists with different profile/failed
+        public DateTime Interviewdate { get; set; }
+        public string meetingLink { get; set; }//; NA
     }
 }
 
-   
+
 

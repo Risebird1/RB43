@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Azure;
+using Newtonsoft.Json;
+using RestSharp;
 using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -26,8 +29,8 @@ namespace Risebird.Services.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public SkillChannelController(IApplicationErrorLogger applicationErrorLogger, 
-            IClientService clientService, IIRFService irfService, 
+        public SkillChannelController(IApplicationErrorLogger applicationErrorLogger,
+            IClientService clientService, IIRFService irfService,
             IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice,
             INotificationHelper notificationHelper,
             HttpClientHelper factory)
@@ -97,6 +100,7 @@ namespace Risebird.Services.Controllers
 
                             var isExistsObj = await _irfRepository.CheckExistenceofSkillChannelAgainstRequestId(reqData.requestId ?? reqData.jobId, reqData.jobTitle);
                             int irfId = isExistsObj.irfId;
+                            var SkillChannelid = isExistsObj.IRFName;
                             int assessmentGroupId = isExistsObj.assessmentGroupId;
                             string assessmentGroupName = isExistsObj.AssessmentGroupName;
                             //if skill channel doesnt exist, check if there is a mag mapped to the jdtitle sent in the request
@@ -111,7 +115,7 @@ namespace Risebird.Services.Controllers
                                 else
                                 {
                                     //if mag exists, check for template
-                                    if(isExistsObj.TemplateId > 0)
+                                    if (isExistsObj.TemplateId > 0)
                                     {
                                         //if template exists...go ahead and create the skill channel...
                                         var irfModel = new IRFVm();
@@ -134,14 +138,12 @@ namespace Risebird.Services.Controllers
                                         irfModel.Heuristicsscore = (clientDetails != null && clientDetails.PlanType > 0) ? clientDetails.PlanType : (int)Heuristicsscorelevel.Standard;
                                         irfModel.JobCountry = clientDetails?.CountryType > 0 ? clientDetails.CountryType.ToString() : ((int)CountryTypeEnum.Offshore).ToString();
                                         var irfCreationResult = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(irfModel, "api", null);
-
+                                        SkillChannelid = irfModel?.IRFId;
                                         if (irfCreationResult.Item1)
                                         {
                                             irfDetails = await _irfService.GetSkillChannelDetailsByName(irfModel?.IRFId);
 
                                             FireAndForgetRequestToSendAvailabilityMails(irfModel?.AssessmentGroupId, irfDetails.id, irfCreationResult.Item2, irfDetails.PrimarySkillInvite, irfModel?.IRFId, reqData.jobTitle);
-                                            return RedirectToAction("Schedule", "Candidates", new { candidateList = reqData.CandidateList, irfId = irfDetails.id });
-
                                         }
                                         else
                                         {
@@ -154,38 +156,41 @@ namespace Risebird.Services.Controllers
                                         return RedirectToAction("Schedule", "Candidates", new { candidateList = reqData.CandidateList, irfId = irfDetails.id });
 
                                     }
-
-
-
                                 }
                             }
-                            //var candidateListToBeProcessed = new List<CandidateQuickAddModel>();
+                            //schedule the candidate meetings
+                            //return RedirectToAction("Schedule", "Candidates", new { candidateList = reqData.CandidateList, irfId = irfDetails.id });
+                            //Api Call
+                            var _ScheduleCandidatesRequest = new ScheduleCandidatesRequest();
+                            _ScheduleCandidatesRequest.skillChannelId = SkillChannelid;
+                            _ScheduleCandidatesRequest.requestedBy = reqData.requestedBy;
+                            _ScheduleCandidatesRequest.RequestId = reqData.requestId ?? reqData.jobId;
+                            foreach (var item in reqData.CandidateList)
+                            {
+                                _ScheduleCandidatesRequest.CandidateList.Add(new ScheduleCandidateList
+                                {
+                                    CandidateEmail = item.EmailId,
+                                    Name = item.Name,
+                                    Resume = item.ResumeLink,
+                                    MobileNumber = item.Phone,
+                                    Interviewdate = item.InterviewDate
+                                });
+                            }
 
-                            //foreach (var item in reqData.CandidateList)
-                            //{
-                            //    var obj = new CandidateQuickAddModel
-                            //    {
-                            //        Name = item.Name,
-                            //        ResumeLink = item.ResumeLink,
-                            //        EmailId = item.EmailId,
-                            //        Phone = item.Phone,
-                            //        countryCode = item.countryCode,
-                            //        IRFId = irfDetails.id,
-                            //    };
-                            //    candidateListToBeProcessed.Add(obj);
-                            //}
-                            ////find the name of the skill channel based on the request parameters;
-                            ////var irf = await _irfRepository.GetIRFBasedOnTuringsJobId((reqData.jobCountry.ToLower().Contains("onsite")? 2 :1), reqData.jobId, reqData.planType);
-                            //var result = await _irfService.AddMultipleCandidatesViaApi(candidateListToBeProcessed, reqData.requestedBy, true, irfDetails.IRFId);
-                            //if (result != null)
-                            //{
-                            //    result.performedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                            //    return new OkObjectResult(result);
-                            //}
-                            //else
-                            //{
-                            //    return StatusCode(StatusCodes.Status500InternalServerError);
-                            //}
+                            var apiurl = "https://" + Request.Host.ToString() + "/api/Candidates/Schedule";
+                            var client = new RestClient(apiurl);
+                            var request = new RestRequest(apiurl, Method.Post);
+
+                            request.AddHeader("content-type", "application/json");
+                            request.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
+                            request.AddHeader("tenant-id", tenantId);
+
+                            var body = JsonConvert.SerializeObject(_ScheduleCandidatesRequest);
+                            request.AddParameter("application/json", body, ParameterType.RequestBody);
+                            RestResponse response = client.Execute(request);
+                            var content = response.Content;
+                            var convertedResponse = JsonConvert.DeserializeObject<ScheduleCandidateResponse>(content);
+                            return new OkObjectResult(response.Content);
                         }
                         else
                         {
@@ -374,7 +379,7 @@ namespace Risebird.Services.Controllers
                             ////Schedule Interview with details and checked the details
                             foreach (var item in reqData.CandidateList)
                             {
-                                var _interviewdetails = await _interviewSchedulerservice.CheckInterviewScheduleavailability(item.Email, reqData.skillChannelId.Trim());
+                                var _interviewdetails = await _interviewSchedulerservice.CheckInterviewScheduleavailability(item.CandidateEmail, reqData.skillChannelId.Trim());
                                 if (_interviewdetails != null)
                                 {
                                     if (_interviewdetails.Any(x => x.interviewtype.Contains("OtherProfile")))
@@ -398,7 +403,7 @@ namespace Risebird.Services.Controllers
                                 {
                                     ModelState.AddModelError(string.Empty, "Resume Link is required.");
                                 }
-                                var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(item.scheduleDate, reqData.skillChannelId, item.Uniqueid);
+                                var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(item.Interviewdate, reqData.skillChannelId, item.Uniqueid);
                                 if (_checkdetails)
                                 {
                                     //var zoomLink = new InstaZoomMeetingResponse();

@@ -9659,6 +9659,7 @@ namespace Risebird.Repository
                         returnObj.AssessmentGroupName = dt.Rows[0]["AssessmentGroupName"] != null ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
                         returnObj.TemplateId = dt.Rows[0]["TemplateId"] != null ? Convert.ToInt16(dt.Rows[0]["TemplateId"].ToString()) : 0;
                         returnObj.TemplateName = dt.Rows[0]["TemplateName"] != null ? dt.Rows[0]["TemplateName"].ToString() : null;
+                        returnObj.IRFName = dt.Rows[0]["IRFName"] != null ? dt.Rows[0]["IRFName"].ToString() : null;
 
                     }
                     //return new Tuple<int, int>(irfId, assessmentGroupId);
