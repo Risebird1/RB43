@@ -29,15 +29,7 @@
             font-weight: 400;
         }
 
-    .mandate-btn {
-        background: #fcf1e6;
-        border: 1px #b776272b solid;
-        color: #de8e48 !important;
-        font-size: 12px;
-        border-radius: 4px;
-        padding: 5px 7px !important;
-        font-weight: 700;
-    }
+    
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -379,13 +371,16 @@
             </button>
             <input type="hidden" id="popupreload"/>
             <div class="col-md-12 pull-left text-center">
-                <span style="color: rgb(49, 131, 27);width: 22px;position: absolute;margin-top: 7px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" fill="#31831b"></path></svg></span><h2 class="interviewerAlert" style="margin: 0px 10px 10px 10px;padding:17px 7px 0px 7px!important;background: #dbf6db;font-weight: 700;color: green;font-size: 18px;border-radius: 12px;line-height: 44px;" id="txtconfirmmessage"></h2>
+                <span style="color: rgb(49, 131, 27);width: 22px;position: absolute;margin-top: 7px;"><svg id="txt-confirm-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" fill="#31831b"></path></svg></span><h2 class="interviewerAlert" style="margin: 0px 10px 10px 10px;padding:17px 7px 0px 7px!important;background: #dbf6db;font-weight: 700;color: green;font-size: 18px;border-radius: 12px;line-height: 44px;" id="txtconfirmmessage"></h2>
             </div>
             <div class="modal-body" style="padding:10px 20px;">
                 <div style="overflow-y:auto;max-height:440px;">
                 
                 <div class="col-md-12 pull-left text-center">
-                    <h2 class="interviewerAlert"> If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong></h2>
+                    <h2 class="interviewerAlert">
+                            <b> "Important Reminder for Interviewers:"</b>
+                            <p> You are required to provide <b style="color: #e42c2c;font-weight:600">detailed, accurate, and technically sound observations</b> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <b style="color: #e42c2c;font-weight:600">Do Not copy-paste</b> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
+                        </h2>
                 </div>
                 <div id="divvideoinstruction" style="display:none">
                     <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
@@ -402,10 +397,13 @@
                         <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=""> Click to view instruction</a>
                     </div>
                 </div>
-
+                    <h2 class="interviewerAlert">
+                        If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong>
+                    </h2>
                 <div id="mandate-popup-btn" class="col-md-12 text-center" style="display:none">
                     <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
                 </div>
+                   
                 @* <div class="col-md-12  text-center" style="margin:0px auto;display: block;width: 335px;clear: both;">
                 <div id="assign-btn"><button type="button" style="background:#28982399;float: left;" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK, Continue with assigning!</button></div>
                 <div id="unassign-btn" class="mdc-button button-warning" style="float: left;margin-left: 3px;">
@@ -671,6 +669,7 @@
         $("#popupreload").val("false");
         // $('#assign-btn').hide();
         // $('#unassign-btn').hide();
+        $('#txt-confirm-icon').hide();
         $('#txtconfirmmessage').hide();
         $('#mandate-popup-btn').show();
         bindinstructiondetails(videolink,textinstruction);
