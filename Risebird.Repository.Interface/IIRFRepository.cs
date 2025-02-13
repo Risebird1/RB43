@@ -279,5 +279,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
         Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser);
         Task<SkillChannelnAGDetails> CheckExistenceofSkillChannelAgainstRequestId(string requestId, string jobTitle);
+        int GetIRFIdByIRFName(string IRFId,string tenantId);
     }
 }

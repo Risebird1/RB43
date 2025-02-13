@@ -55,11 +55,11 @@ namespace Risebird.Entities.Data
     public class ScheduleCandidateList
     {
         public DateTime Interviewdate { get; set; }
-        public string CandidateEmail { get; set; }
+        public string EmailId { get; set; }
         public string Name { get; set; }
-        public string MobileNumber { get; set; }
+        public string Phone { get; set; }
         public string Uniqueid { get; set; }
-        public string Resume { get; set; }
+        public string ResumeLink { get; set; }
         public string ClientName { get; set; }
         public bool isCandidateportal { get; set; }
         public ScheculeInterviewIRFVM _IRFDetails { get; set; }

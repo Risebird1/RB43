@@ -13,6 +13,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System.Reflection;
 using static SkiaSharp.HarfBuzz.SKShaper;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Risebird.Services.Controllers
 {
@@ -141,6 +142,7 @@ namespace Risebird.Services.Controllers
             }
         }
 
+        #region Schedule Interview Meeting
         [HttpPost]
         [Route("Schedule")]
         public async Task<IActionResult> Schedule(ScheduleCandidatesRequest reqData)
@@ -192,7 +194,7 @@ namespace Risebird.Services.Controllers
                             var irfid = 0;
                             if (!string.IsNullOrEmpty(reqData.skillChannelId))
                             {
-                                irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
+                                irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim(), tenantId);
                                 if (irfid == 0)
                                 {
                                     details.Add("skillChannelId", "skillChannelId is invalid");
@@ -204,9 +206,7 @@ namespace Risebird.Services.Controllers
                                     return new BadRequestObjectResult(errorResponse);
                                 }
                             }
-                            ////Check Requester have skillchannel access
-                            ////Check SkillChannel is active or not
-                            ////Schedule Interview with details and checked the details
+                            //Check Skill Channel is Active or not
                             var jdDetails = await _interviewSchedulerservice.FetchJDTitle(reqData.skillChannelId);
                             var offset = -330;
                             var TimeZoneoffset = -330;
@@ -221,11 +221,11 @@ namespace Risebird.Services.Controllers
                             foreach (var item in reqData.CandidateList)
                             {
                                 var _ScheduleCandidateStatus = new ScheduleCandidateStatus();
-                                _ScheduleCandidateStatus.CandidateEmail = item.CandidateEmail;
+                                _ScheduleCandidateStatus.CandidateEmail = item.EmailId;
                                 _ScheduleCandidateStatus.Interviewdate = item.Interviewdate;
                                 try
                                 {
-                                    var _interviewdetails = await _interviewSchedulerservice.CheckInterviewScheduleavailability(item.CandidateEmail, reqData.skillChannelId.Trim());
+                                    var _interviewdetails = await _interviewSchedulerservice.CheckInterviewScheduleavailability(item.EmailId, reqData.skillChannelId.Trim());
                                     if (_interviewdetails != null)
                                     {
                                         if (_interviewdetails.Any(x => x.interviewtype.Contains("OtherProfile")))
@@ -245,91 +245,99 @@ namespace Risebird.Services.Controllers
                                             _ScheduleCandidateStatus.onboardingStatus = "Your Emailid is marked cold. Please contact the admin for further information.";
                                         }
                                     }
-                                    var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(item.Interviewdate, reqData.skillChannelId, Uniqueid);
-                                    if (_checkdetails)
+                                    var interviewdatecheck = await CheckInterviewDateMeetingSchedule(item.Interviewdate.Day, item.Interviewdate.Month, item.Interviewdate.Year, Uniqueid, item.Interviewdate);
+                                    if (interviewdatecheck)
                                     {
-                                        var indianTime = item.Interviewdate;
-                                        var interviewdatetime = item.Interviewdate;
-                                        var zoomLink = new InstaZoomMeetingResponse();
-                                        zoomLink = await CreateZoomMeeting(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
-                                        if (zoomLink == null)
+                                        var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(item.Interviewdate, reqData.skillChannelId, Uniqueid);
+                                        if (_checkdetails)
                                         {
-                                            _ScheduleCandidateStatus.onboardingStatus = "Apologies, the selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.";
-                                        }
-                                        string textreminder = string.Empty;
-                                        textreminder = item.MobileNumber;
-                                        int interviewId = 0;
-                                        var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.CandidateEmail, item.Resume, zoomLink.join_url, reqData.skillChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, out interviewId, zoomLink.accountemail);
-                                        if (result)
-                                        {
-                                            _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);
-                                            await _interviewSchedulerservice.CheckFutureCancelInterview(reqData.skillChannelId, indianTime, item.CandidateEmail);
-                                            string timezonevalue = string.Empty;
-                                            string hh = string.Empty;
-                                            var valuecheck = (-offset / 60);
-                                            if (valuecheck < 10 && valuecheck > 0)
+                                            var indianTime = item.Interviewdate;
+                                            var interviewdatetime = item.Interviewdate;
+                                            var zoomLink = new InstaZoomMeetingResponse();
+                                            zoomLink = await CreateZoomMeeting(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
+                                            if (zoomLink == null)
                                             {
-                                                hh = "0" + valuecheck;
+                                                _ScheduleCandidateStatus.onboardingStatus = "Apologies, the selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.";
                                             }
-                                            if (valuecheck > -10 && valuecheck < 0)
+                                            string textreminder = string.Empty;
+                                            textreminder = item.Phone;
+                                            int interviewId = 0;
+                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, out interviewId, zoomLink.accountemail);
+                                            if (result)
                                             {
-                                                hh = "-0" + valuecheck.ToString().Replace("-", "");
-                                            }
-                                            var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
-                                            var timeZones = TimeZoneInfo.GetSystemTimeZones();
-                                            foreach (TimeZoneInfo timeZone in timeZones)
-                                            {
-                                                if (timeZone.DisplayName.Contains(TimeZonesValue))
+                                                _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);
+                                                await _interviewSchedulerservice.CheckFutureCancelInterview(reqData.skillChannelId, indianTime, item.EmailId);
+                                                string timezonevalue = string.Empty;
+                                                string hh = string.Empty;
+                                                var valuecheck = (-offset / 60);
+                                                if (valuecheck < 10 && valuecheck > 0)
                                                 {
-                                                    if (timeZone.DisplayName.Contains(offsetvalue))
+                                                    hh = "0" + valuecheck;
+                                                }
+                                                if (valuecheck > -10 && valuecheck < 0)
+                                                {
+                                                    hh = "-0" + valuecheck.ToString().Replace("-", "");
+                                                }
+                                                var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
+                                                var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                                                foreach (TimeZoneInfo timeZone in timeZones)
+                                                {
+                                                    if (timeZone.DisplayName.Contains(TimeZonesValue))
                                                     {
-                                                        if (timeZone.IsDaylightSavingTime(interviewdatetime))
+                                                        if (timeZone.DisplayName.Contains(offsetvalue))
                                                         {
-                                                            timezonevalue = timeZone.DaylightName;
-                                                        }
-                                                        else
-                                                        {
-                                                            timezonevalue = timeZone.StandardName;
+                                                            if (timeZone.IsDaylightSavingTime(interviewdatetime))
+                                                            {
+                                                                timezonevalue = timeZone.DaylightName;
+                                                            }
+                                                            else
+                                                            {
+                                                                timezonevalue = timeZone.StandardName;
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
-                                            string accountEmail = "hire@risebird.io";
-                                            _ScheduleCandidateStatus.meetingLink = zoomLink.join_url;
-                                            _ScheduleCandidateStatus.onboardingStatus = "successful";
-                                            //Send Mail Notification
-                                            if (item.isCandidateportal)
-                                            {
-                                                var candidateUniqueId = await _candidateService.GetCandidateUniqueId(item.CandidateEmail);
-                                                item._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(reqData.skillChannelId);
-                                                var portallink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + item._IRFDetails.inIRFid;
-                                                Mail _mail = new Mail
+                                                string accountEmail = "hire@risebird.io";
+                                                _ScheduleCandidateStatus.meetingLink = zoomLink.join_url;
+                                                _ScheduleCandidateStatus.onboardingStatus = "successful";
+                                                //Send Mail Notification
+                                                if (item.isCandidateportal)
                                                 {
-                                                    TO = item.CandidateEmail,
-                                                    Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                };
-                                                _ = await _notificationHelper.SendInterviewInvite(_mail, item.CandidateEmail, portallink, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
-                                                Mail _mail1 = new Mail
+                                                    var candidateUniqueId = await _candidateService.GetCandidateUniqueId(item.EmailId);
+                                                    item._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(reqData.skillChannelId);
+                                                    var portallink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + item._IRFDetails.inIRFid;
+                                                    Mail _mail = new Mail
+                                                    {
+                                                        TO = item.EmailId,
+                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                                                    };
+                                                    _ = await _notificationHelper.SendInterviewInvite(_mail, item.EmailId, portallink, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
+                                                    Mail _mail1 = new Mail
+                                                    {
+                                                        TO = reqData.requestedBy,
+                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                                                    };
+                                                    var resultmail = await _notificationHelper.SendInterviewInvite(_mail1, item.EmailId, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
+                                                }
+                                                else
                                                 {
-                                                    TO = reqData.requestedBy,
-                                                    Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                };
-                                                var resultmail = await _notificationHelper.SendInterviewInvite(_mail1, item.CandidateEmail, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
+                                                    Mail _mail = new Mail
+                                                    {
+                                                        TO = item.EmailId,
+                                                        CC = reqData.requestedBy,//zoomLink.accountemail,
+                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                                                    };
+                                                    _ = await _notificationHelper.SendInterviewInvite(_mail, item.EmailId, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
+                                                }
                                             }
                                             else
                                             {
-                                                Mail _mail = new Mail
-                                                {
-                                                    TO = item.CandidateEmail,
-                                                    CC = reqData.requestedBy,//zoomLink.accountemail,
-                                                    Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                };
-                                                _ = await _notificationHelper.SendInterviewInvite(_mail, item.CandidateEmail, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
+                                                _ScheduleCandidateStatus.onboardingStatus = "Please try again to schedule the event.";
                                             }
                                         }
                                         else
                                         {
-                                            _ScheduleCandidateStatus.onboardingStatus = "Please try again to schedule the event.";
+                                            _ScheduleCandidateStatus.onboardingStatus = "Apologies, The selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.rrently unavailable. Kindly choose another slot.";
                                         }
                                     }
                                     else
@@ -367,7 +375,6 @@ namespace Risebird.Services.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
         #region Create Zoom Meeting
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, int interviewduration)
@@ -388,7 +395,6 @@ namespace Risebird.Services.Controllers
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
-
         [ApiExplorerSettings(IgnoreApi = true)]
         private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime, int interviewduration)
         {
@@ -420,6 +426,105 @@ namespace Risebird.Services.Controllers
             convertedResponse.InterviewDate = indianTime;
             convertedResponse.accountemail = accountEmail;
             return convertedResponse;
+        }
+        #endregion
+        [ApiExplorerSettings(IgnoreApi = true)]
+        private async Task<bool> CheckInterviewDateMeetingSchedule(int day, int month, int year, string id, DateTime interviewdate)
+        {
+            DateTime value = new DateTime(year, month, day);
+            var result = await _interviewSchedulerservice.FetchSlots(value, id);
+            string dayofweek = value.DayOfWeek.ToString().ToLower();
+            var result0 = result.Where(x => x.Daytype == dayofweek).ToList();
+            string dayofweek1 = value.AddDays(1).DayOfWeek.ToString().ToLower();
+            var result1 = result.Where(x => x.Daytype == dayofweek1).ToList();
+            string dayofweek2 = value.AddDays(-1).DayOfWeek.ToString().ToLower();
+            var result2 = result.Where(x => x.Daytype == dayofweek2).ToList();
+            var model = new List<string>();
+
+            if (result != null)
+            {
+                int duration = result.FirstOrDefault().duration;
+                foreach (var item in result0)
+                {
+                    var slotcount = Convert.ToDouble(item.End) - Convert.ToDouble(item.Start);
+                    int valueset = (int)(slotcount * 60 / duration);
+                    int valueincrement = (int)(slotcount * 60 % duration);
+                    if (valueincrement > 0)
+                    {
+                        valueset++;
+                    }
+                    if (dayofweek != DateTime.Now.DayOfWeek.ToString().ToLower())
+                    {
+                        for (int i = 0; i < valueset; i++)
+                        {
+                            //var slots = Convert.ToInt32(item.Start) + i;
+                            var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
+                            var newslot = (int)(slots / 60);
+                            var newmin = Convert.ToInt32(slots % 60);
+                            DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                            if (result.FirstOrDefault().StartDate <= value1)
+                                model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                        }
+                    }
+                    else
+                    {
+                        if (result.FirstOrDefault().BufferTime > 0)
+                        {
+                            int buffertimevalue = result.FirstOrDefault().BufferTime;
+                            var comdate = DateTime.Now.AddHours(buffertimevalue);
+                            if (comdate.Date == DateTime.Now.Date)
+                            {
+                                int offsetbuffer = (int)DateTime.Now.AddHours(buffertimevalue).TimeOfDay.TotalMinutes;
+                                for (int i = 0; i < valueset; i++)
+                                {
+                                    var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
+                                    var newslot = (int)(slots / 60);
+                                    var newmin = Convert.ToInt32(slots % 60);
+                                    DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                    if (result.FirstOrDefault().StartDate <= value1)
+                                    {
+                                        if (slots > offsetbuffer)
+                                        {
+                                            model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var comdate = DateTime.Now;
+                            if (comdate.Date == DateTime.Now.Date)
+                            {
+                                int offsetbuffer = (int)DateTime.Now.TimeOfDay.TotalMinutes;
+                                for (int i = 0; i < valueset; i++)
+                                {
+                                    var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
+                                    var newslot = (int)(slots / 60);
+                                    var newmin = Convert.ToInt32(slots % 60);
+                                    DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                    if (result.FirstOrDefault().StartDate <= value1)
+                                    {
+                                        if (slots > offsetbuffer)
+                                        {
+                                            model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            List<DateTime> slotswithtime = new List<DateTime>();
+            foreach (var item in model)
+            {
+                var _time = item.Split(":");
+                DateTime datevalue = new DateTime(Convert.ToInt32(year), Convert.ToInt32(month), Convert.ToInt32(day), Convert.ToInt32(_time[0]), Convert.ToInt32(_time[1]), 0);
+                slotswithtime.Add(datevalue);
+            }
+            var interviewdatevalidate = slotswithtime.Contains(interviewdate);
+            return interviewdatevalidate;
         }
         #endregion
     }

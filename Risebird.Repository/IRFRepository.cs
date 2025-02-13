@@ -9680,6 +9680,26 @@ namespace Risebird.Repository
 
             }
         }
+        public int GetIRFIdByIRFName(string IRFId, string tenantId)
+        {
+            try
+            {
+                var query = "Select IRF.id from IRF join Client cl on cl.id=IRF.ClientId where IRFId=@IRFId and cl.tenantId=@tenantId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", IRFId);
+                dynamicParameters.Add("@tenantId", tenantId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }
 
