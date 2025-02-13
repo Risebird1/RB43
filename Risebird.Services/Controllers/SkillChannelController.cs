@@ -111,6 +111,19 @@ namespace Risebird.Services.Controllers
                                 {
                                     //shoot a mail that we do not have an assessment group mapped to the job title and therefore skill channel cant be created
                                     await _notificationHelper.SendAsssessmentGroupNotMappedToJobTitleMail(reqData.requestedBy, string.Empty, reqData.jobTitle);
+                                    
+                                    var detailsError = new Dictionary<string, string>();
+
+                                    if (string.IsNullOrEmpty(reqData.requestId) && string.IsNullOrEmpty(reqData.jobId))
+                                    {
+                                        detailsError.Add("Unavailable", "A mapping for the requested Job title is unavailable.");
+                                    }
+                                    var errorResponse = new ErrorResponse
+                                    {
+                                        Error = "Unavailable",
+                                        Details = detailsError
+                                    };
+                                    return new BadRequestObjectResult(errorResponse);
                                 }
                                 else
                                 {
@@ -154,7 +167,21 @@ namespace Risebird.Services.Controllers
                                     else
                                     {
                                         //if template doesnt exist, call the openAI method to create a tech rubric and create the skill channel
-                                        return RedirectToAction("Schedule", "Candidates", new { candidateList = reqData.CandidateList, irfId = irfDetails.id });
+
+
+                                        //temporary
+                                        var detailsError = new Dictionary<string, string>();
+
+                                        if (string.IsNullOrEmpty(reqData.requestId) && string.IsNullOrEmpty(reqData.jobId))
+                                        {
+                                            detailsError.Add("Template", "Template for the Assessment Group mapped to the Job Title not found!");
+                                        }
+                                        var errorResponse = new ErrorResponse
+                                        {
+                                            Error = "Missing template",
+                                            Details = detailsError
+                                        };
+                                        return new BadRequestObjectResult(errorResponse);
 
                                     }
                                 }
