@@ -247,5 +247,49 @@ namespace Risebird.CommonHelper
             }
         }
 
+        /// <summary>
+        /// Make IVR call common method, the ivrType will determine what menu will be read to the recipient, for eg. ivrType = interviewerAvailability or candidateConfirmation etc.
+        /// </summary>
+        /// <param name="userPhoneNumber"></param>
+        /// <param name="ivrType"></param>
+        /// <returns></returns>
+        public async Task<bool> MakeIVRCall(string userPhoneNumber, string recipientName, string interviewDate, string ivrType = null)
+        {
+            try
+            {
+                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+
+                //var link = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", FirstName, interviewdate);
+                //var link = string.Format("https://df82-45-116-151-233.ngrok-free.app/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", "FirstName", "interviewdate");
+                var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}", recipientName, "");
+                var url = new Uri(link);
+
+                var call = await CallResource.CreateAsync(
+                    to: new PhoneNumber(userPhoneNumber),
+                    from: new PhoneNumber(_twilioCallerNumber),
+                    url: url // Replace with your public endpoint
+                );
+
+                if (call.Status != null)
+                {
+                    var result = call.Status.ToString();
+                    if (result != CallResource.StatusEnum.Failed.ToString())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

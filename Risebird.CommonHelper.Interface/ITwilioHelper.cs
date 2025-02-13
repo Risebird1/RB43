@@ -12,6 +12,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> callrecording(string callSid, string callbackUrl);
         Task<bool> CandidateReminderCall(string phoneNumber, string FirstName, string interviewdate);
         Task<RecordingResource> FetchCallRecordingDetails(string recordingSid);
+        Task<bool> MakeIVRCall(string userPhoneNumber, string recipientName, string interviewDate, string ivrType = null);
 
     }
 }
