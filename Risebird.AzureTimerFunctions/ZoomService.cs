@@ -276,8 +276,8 @@ namespace Risebird.AzureTimerFunctions
                                         }
 
                                     }
-                                    if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
-                                    {
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
                                         using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                         {
                                             try
@@ -294,8 +294,16 @@ namespace Risebird.AzureTimerFunctions
                                         }
 
 
-                                        log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
+                                        }
+                                        //generate SAS URL from the uploaded video url
+                                        var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+
+                                        if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                        {
+                                            transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                        }
                                     }
                                 }
 

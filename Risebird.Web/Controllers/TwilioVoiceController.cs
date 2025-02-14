@@ -44,7 +44,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("IvrInterviewerAvailability")]
-        public async Task<IActionResult> IVRResponse(string recipientName, string interviewDate)
+        public async Task<IActionResult> IVRResponse(string recipientName, string interviewDate, [FromQuery] int retryCount)
         {
             try
             {
@@ -52,9 +52,28 @@ namespace Risebird.Web.Controllers
                 var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 var actionUri = new Uri(link);
                 var response = new VoiceResponse();
-                var gather = new Gather(numDigits: 1, action: actionUri, method: "POST");
-                gather.Say("Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
+                //var gather = new Gather(numDigits: 1, action: actionUri, method: "POST");
+                var gather = new Gather(
+                    numDigits: 1,
+                    timeout: 5,
+                    action: actionUri,
+                    method: "POST"
+                );
+
+                gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
                 response.Append(gather);
+
+                // If the user did not press a key and retryCount is less than 2, retry
+                if (retryCount < 2)
+                {
+                    response.Say("You did not press any key. Let me repeat the options.");
+                    response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
+                }
+                else
+                {
+                    response.Say("No input received. Goodbye.");
+                    response.Hangup();
+                }
 
                 return Content(response.ToString(), "application/xml");
             }
@@ -66,12 +85,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("handlekeyInterviewerAvailability")]
-        public async Task<IActionResult> HandlekeyInterviewerAvailability([FromForm] string Digits, string recipientName = null, string interviewDate = null)
+        public async Task<IActionResult> HandlekeyInterviewerAvailability([FromForm] string Digits, [FromQuery] string recipientName = null, [FromQuery] string interviewDate = null)
         {
             try
             {
                 var response = new VoiceResponse();
-                var redirectLink = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", recipientName, interviewDate);
+                //var redirectLink = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", recipientName, interviewDate);
+                var redirectLink = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", recipientName, interviewDate);
                 var redirectUrl = new Uri(redirectLink);
                 switch (Digits)
                 {
