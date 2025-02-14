@@ -123,5 +123,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendAcknowledgementEmailToInterviewer(string interviewerEmailId, string interviewerName, string yesButton, string dropButton, string asessmentGroups, string primarySpecialization);
         Task<string> SendWelcomeEmailToInterviewer(string interviewerEmailId, string password, string HMVideoForTargetIRFUrl);
         Task<string> SendNotificationToClientForSelectedCandidatewithReport(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string reportlink, string clientlogo = null);
+        Task<string> SendAsssessmentGroupNotMappedToJobTitleMail(string requestedBy, string ccEmail, string jobTitle);
     }
 }

@@ -3387,5 +3387,45 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public async Task<string> SendAsssessmentGroupNotMappedToJobTitleMail(string requestedBy, string ccEmail, string jobTitle)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird");
+                msg.Subject = $"Request not processed : Mappings not available for {jobTitle}";
+
+                if (!string.IsNullOrEmpty(requestedBy) && _validationHelper.ValidateEmailAddress(requestedBy))
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(requestedBy, requestedBy.Split("@").First()));
+                }
+
+                if (!string.IsNullOrEmpty(ccEmail) && _validationHelper.ValidateEmailAddress(ccEmail))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, ccEmail.Split("@").First()));
+                }
+                
+                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
+                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
+
+                //string companyLogoLink = string.Empty;
+                //string companyURL = string.Empty;
+                //companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
+                string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
+                string risebirdURL = _configuration["RisebirdDetails:RisebirdURL"];
+                //companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
+                
+                object[] parameters = new object[] { jobTitle, risebirdLogoLink, risebirdURL };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AGNotMappedToJobTitleMailTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }

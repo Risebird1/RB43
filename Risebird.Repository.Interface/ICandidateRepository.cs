@@ -45,8 +45,8 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson);
         Task<IEnumerable<InterviewChannelDetails>> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser, string jobId);
         Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate, string jobId);
-        Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook();
-        Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data);
+        Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook(bool isStaging = false);
+        Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data, bool isStaging = false);
         Task<IEnumerable<CandidateTimelineVM>> GetAllCandidateSearchbyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
         Task<IEnumerable<CountryCodeDetails>> GetAllCountryCodeDetails();
         Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithColdDate(DateTime startDate, DateTime endDate, int clientId);

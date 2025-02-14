@@ -10,11 +10,13 @@ namespace Risebird.Entities.Data
         //public string skillChannelName { get; set; }
         //public string planType{ get; set; }
         public string requestedBy { get; set; }
-        public string jobId { get; set; }
-        //public List<CandidateQuickAddModel> CandidateListToBeProcessed { get; set; }
+        public string jobId { get; set; } // this is primarily being used for Turing
+        public string jobTitle { get; set; } // these jobtitles will be mapped against MAGs in our system as a preceding step/prerequisite
+        public string jdLink { get; set; } 
+        public string requestId { get; set; }
+        //public List<CandidateQuickAddModel> CandidateList { get; set; }
         public List<CandidateQuickAddModelAPIVersion> CandidateList { get; set; }
     }
-   
     public class CandidateQuickAddModelAPIVersion
     {
         public int IRFId { get; set; }
@@ -40,20 +42,47 @@ namespace Risebird.Entities.Data
         public int AddedByUserEmail { get; set; }
         public string AffindaResumeIdentifier { get; set; }
         public string countryCode { get; set; }
-
+        public DateTime InterviewDate { get; set; }
 
     }
     public class ScheduleCandidatesRequest
     {
         public string skillChannelId { get; set; }
         public string requestedBy { get; set; }
-        public List<ScheculeInterview> CandidateList { get; set; }
+        public string RequestId { get; set; }
+        public List<ScheduleCandidateList> CandidateList { get; set; }
     }
     public class ScheduleCandidateList
     {
         public DateTime Interviewdate { get; set; }
+        public string EmailId { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string Uniqueid { get; set; }
+        public string ResumeLink { get; set; }
+        public string ClientName { get; set; }
+        public bool isCandidateportal { get; set; }
+        public ScheculeInterviewIRFVM _IRFDetails { get; set; }
+    }
+    public class ScheduleCandidateResponse
+    {
+        public ScheduleCandidateResponse()
+        {
+            list = new List<ScheduleCandidateStatus>();
+        }
+        public string performedAt { get; set; }
+        public string SkillChannelId { get; set; }
+        public List<ScheduleCandidateStatus> list { get; set; }
+    }
+
+    public class ScheduleCandidateStatus
+    {
         public string CandidateEmail { get; set; }
-        public string MobileNumber { get; set; }
-        public string Resume { get; set; }
+        public string onboardingStatus { get; set; }//successful/ duplicate/ User exists with different profile/failed
+        public DateTime Interviewdate { get; set; }
+        public string meetingLink { get; set; }//; NA
     }
 }
+
+
+

@@ -412,7 +412,10 @@
                                                             @* <th style="text-align:left">JD-Skills</th>*@
                                                                
                                                                     <th class="disabled-sorting text-center">Actions</th>
-                                                               
+                                                                    @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
+                                                                    {
+                                                                <th>Instruction</th>
+                                                                    }
                                                             <th id="myinterview_4">Interview Details</th>
                                                             <th style="border-left: 0px !important;">Interview Date </th>
                                                             @*<th id="myinterview_5">JD Link</th>*@
@@ -445,7 +448,10 @@
                                                             <th style="border-right: 0px !important;"></th>
                                                            
                                                                     <th class="disabled-sorting text-center">Actions</th>
-                                                               
+                                                                    @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
+                                                                  {
+                                                                <th>Instruction</th>
+                                                                  }
                                                                 <th>Interview Details</th>
                                                             <th style="border-left: 0px !important;width:12%">Interview Date</th>
                                                             @* <th>JD-Skills</th>*@
@@ -490,7 +496,7 @@
                                                             <tr id=@item.id>
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
-                                                                    <td class="text-center">
+                                                                    <td width="10%" class="text-center">
                                                                         @{
                                                                             var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
                                                                         }
@@ -517,18 +523,24 @@
 
 
                                                                         }
+                                                                        @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
+                                                                     {
+                                                                    <td width="15%">
+                                                                        <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
+                                                                    </td>
+                                                                     }
                                                                         @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
                                                                         {
                                                                             @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                                             {
-                                                                                <div class="btn btn-unassign shadow btn-xs sharp me-1">
+                                                                                <div class="btn btn-unassign shadow btn-xs sharp me-1" style="position:relative;top:100px;left:50px;z-index:1000">
                                                                                     <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="Unassign Yourself" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                                                 </div>
 
 
                                                                             }
                                                                         }
-                                                                        <div class="btn btn-comment shadow btn-xs sharp me-1">
+                                                                    <div class="btn btn-comment shadow btn-xs sharp me-1" style="position:relative;top:100px;left:55px;z-index:1000">
                                                                             <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId, irf= item.IRFID })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
                                                                         </div>
 
@@ -1172,6 +1184,62 @@
         </div>
     </div>
 </div>
+<div id="InterviewerAlert" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 750px !important;top:10px;">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar" style="background:#d61818!important;">
+                    <span class="mdc-fab__icon material-icons">
+                        <i class='fa fa-warning' style='color: white'></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left" style="padding-top:0px;font-weight:600">Mandatory Interview Instruction</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
+                <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <input type="hidden" id="popupreload" />
+            
+            <div class="modal-body" style="padding:10px 20px;">
+                <div style="overflow-y:auto;max-height:440px;">
+
+                    <div class="col-md-12 pull-left text-center">
+                        <h2 class="interviewerAlert">
+                            <strong style="font-weight:700;"> "Important Reminder for Interviewers:"</strong>
+                            <p> You are required to provide <strong style="color: #e42c2c;font-weight:700">detailed, accurate, and technically sound observations</strong> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <strong style="color: #e42c2c;font-weight:700">Do Not copy-paste</strong> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
+                        </h2>
+                    </div>
+                    <div id="divvideoinstruction" style="display:none">
+                        <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
+                            <i class="fa fa-video-camera" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Video Instruction:
+                        </div>
+
+                        <video id="vidvideoinstruction" style="width:100%;height:260px;" controls="controls" preload="metadata">
+                            <source id="srcvideoinstruction" src='' type="video/mp4">
+                        </video>
+
+                    </div>
+                    <div id="divcompanytextinstruction" style="display:none;padding-top:10px;clear:both">
+                        <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
+                            <i class="fa fa-align-left" aria-hidden="true" style="color: #b7b1b1;font-size: 19px;margin-right: 5px;"></i> Text Instruction:<a style="color:#0d6efd;text-decoration: none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=""> Click to view instruction</a>
+                        </div>
+                    </div>
+                    <h2 class="interviewerAlert">
+                        If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;font-weight:700;">100% of the amount payable to you</strong>
+                    </h2>
+                    <div id="mandate-popup-btn" class="col-md-12 text-center" style="display:none;margin-top:10px;">
+                        <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
+                    </div>
+
+               
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
 <script src="~/js/ModalFormServerValidation.js"></script>
 
 
@@ -1598,6 +1666,60 @@
         })
     }
 
+</script>
+
+
+<script>
+    function InstructionModel(videolink, textinstruction) {
+        openInterviewerAlert();
+        $("#popupreload").val("false");
+    ;
+        $('#mandate-popup-btn').show();
+        bindinstructiondetails(videolink, textinstruction);
+    }
+    function openInterviewerAlert() {
+        var modal = document.getElementById("InterviewerAlert");
+        modal.style.display = "block";
+    }
+    function closeInterviewerAlert() {
+        var modal = document.getElementById("InterviewerAlert");
+        modal.style.display = "none";
+        if ($("#popupreload").val() == "true") {
+            location.reload();
+        } else {
+            var video = document.getElementById('vidvideoinstruction');
+            video.pause();
+        }
+    }
+    
+    function bindinterviewalertdetails(data, videolink, textinstruction) {
+        if (data.includes('Successfully')) {
+            bindinstructiondetails(videolink, textinstruction);
+        }
+        else {
+            document.getElementById("divvideoinstruction").style.display = "none";
+            document.getElementById("divcompanytextinstruction").style.display = "none";
+        }
+    }
+    function bindinstructiondetails(videolink, textinstruction) {
+        if (videolink != '' && videolink != null) {
+            document.getElementById("divvideoinstruction").style.display = "block";
+            var video = document.getElementById('vidvideoinstruction');
+            var sources = document.getElementById('srcvideoinstruction');
+            sources.src = videolink;
+            video.load();
+        }
+        else {
+            document.getElementById("divvideoinstruction").style.display = "none";
+        }
+        if (textinstruction != '' && textinstruction != null) {
+            document.getElementById("divcompanytextinstruction").style.display = "block";
+            document.getElementById('companylinkId').href = textinstruction;
+        }
+        else {
+            document.getElementById("divcompanytextinstruction").style.display = "none";
+        }
+    }
 </script>
 
 <script>

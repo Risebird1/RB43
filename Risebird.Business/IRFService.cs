@@ -3099,7 +3099,7 @@ namespace Risebird.Business
             try
             {
                 string channelOwner;
-                if (profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
+                if ( (string.IsNullOrEmpty(profile) && loggedInUser == "api") || profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
                 {
                     var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
                     //eligibleHrs.RemoveAt(0);
@@ -3112,6 +3112,21 @@ namespace Risebird.Business
                 {
                     irfDetails.RisebirdHr = GetUserId(loggedInUser);
                     channelOwner = loggedInUser;
+                }
+
+                irfDetails.ClientCollection = new List<TransClientUser>();
+
+                if (irfDetails.BillingOwner == 0)
+                {
+                    var eligibleBillingOwners = _irfRepository.GetClientUser(irfDetails.ClientId)?.ToList();
+                    var random = new Random();
+                    int index = random.Next(eligibleBillingOwners.Count);
+                    irfDetails.BillingOwner = eligibleBillingOwners[index].id;
+                    eligibleBillingOwners.RemoveAt(index);
+                    int indexClientUser = random.Next(eligibleBillingOwners.Count);
+                    int clientUser = eligibleBillingOwners[indexClientUser].id;
+                    irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUser, Role = _irfRepository.GetClientUserRole(clientUser) });
+
                 }
 
                 //get meeting platform from template by Id
@@ -3149,7 +3164,6 @@ namespace Risebird.Business
 
                 //irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);
                 //irfDetails.SkillCollection = (IList<TransSkill>)(transTechSkills);
-                irfDetails.ClientCollection = new List<TransClientUser>();
                 if (profile == ProfileEnum.Client.GetDescription())
                 {
                     int clientUserId = _irfRepository.GetUserId(loggedInUser);
@@ -3157,7 +3171,7 @@ namespace Risebird.Business
 
 
                 }
-                else
+                else if(irfDetails.ClientUserIdPopUp != null)
                 {
                     foreach (var clientUserId in irfDetails.ClientUserIdPopUp)
                     {
@@ -3190,7 +3204,7 @@ namespace Risebird.Business
 
                     try
                     {
-                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName ?? string.Empty,  irfDetails.JDTiltle, clientName);
 
                     }
                     catch (Exception ex)
@@ -4173,7 +4187,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId, bool isStaging = false)
+        public async Task<AddCandidatesResponse> AddMultipleCandidatesViaApi(List<CandidateQuickAddModel> candidateList, string requestedBy, bool isSendInvite, string jobId, bool isStaging = false, bool useIRFIdinsteadOfJobId = false)
         {
             //StringBuilder sb = new StringBuilder();
 
@@ -4184,8 +4198,8 @@ namespace Risebird.Business
                 var userId = _irfRepository.GetUserId(requestedBy, isStaging: isStaging);
 
                 //var irf = _irfRepository.GetIRFbyIRFName(irfName);
-
-                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi: true, ApiRequestedBy: requestedBy, jobId: jobId, isStaging: isStaging);
+                 
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi: !useIRFIdinsteadOfJobId, ApiRequestedBy: requestedBy, jobId: jobId, isStaging: isStaging);
 
                 //var calendlyLink = irf.CalendlyLink;
                 //var jdLink = irf.JDLink;

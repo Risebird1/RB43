@@ -3186,6 +3186,7 @@ namespace Risebird.Web.Controllers
             }
             if (type == "ShortList")
             {
+                model = model.Where(x => x.IsActive == true).ToList();
                 model = model.Where(x => x.ShortListstatus == "Shortlisted").ToList();
             }
             else if (type == "Removed")
@@ -3194,6 +3195,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
+                model = model.Where(x => x.IsActive == true).ToList();
                 model = model.Where(x => string.IsNullOrWhiteSpace(x.ShortListstatus)).ToList();
             }
             ViewBag.Type = type;

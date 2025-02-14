@@ -696,7 +696,7 @@
             @if (Model.IsCandidateVerification)
             {
                 <div class="col-md-12 pull-left text-left" style="background: #edf4f9b5;margin: 10px 10px 0px 10px;padding: 10px 15px 0px 15px;width: auto;">
-                    <h2 style="font-size: 16px; line-height: 23px;color: green;"><b> Candidate ID verification :</b>  is mandatory for this interview authenticity and payment. <br /> &nbsp;&nbsp;&nbsp;Ask candidate to show any <b>ID card</b> at the start of the interview.</h2>
+                    <h2 style="font-size: 16px; line-height: 23px;color: #847878;"><b style="color:green"> Candidate ID verification :</b>  is mandatory for this interview authenticity and payment. <br /> &nbsp;&nbsp;&nbsp;Ask candidate to show any <b style="color:green">ID card</b> at the start of the interview.</h2>
                 </div>
             }
             <div class="modal-body" style="padding:0px 15px 0px 15px;">
@@ -705,14 +705,14 @@
                     @if (Model.IsVideoRequired == true)
                     {
                         <div class="col-md-12 pull-left text-left">
-                            <h2 class="interviewerAlert" style="margin:0px;padding:0px;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
+                            <h2 class="interviewerAlert" style="margin:0px;padding:0px;color: #847878;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
                         </div>
                     }
-                    <h2 style="font-size: 16px; line-height: 23px;color: green;">
-                        <strong>Bring Your Own Questions :</strong>
-                        <ul style="0px 10px 0px 20px">
-                            <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: green;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
-                            <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: green;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;">Using suggested questions as it is would result in 100% payment deduction</li>
+                    <div style="font-size: 16px; line-height: 23px;color:#847878;">
+                        <strong style="color:green" >Bring Your Own Questions :</strong>
+                        <ul style="padding:0px 10px 0px 20px">
+                            <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: #847878;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
+                            <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: #847878;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;">Using suggested questions as it is would result in 100% payment deduction</li>
                         </ul>
                         @if (!string.IsNullOrEmpty(Model.AudioComment))
                         {
@@ -726,12 +726,19 @@
                         @if (!string.IsNullOrEmpty(Model.CompanyDetails))
                         {
                             <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
-                                SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> <a style="color:#0d6efd;text-decoration: margin-bottom:8px; line-height: 21px; none;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+                                SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> <a style="color:#0d6efd;text-decoration:none; margin-bottom:8px; line-height: 21px;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
 
 
                             </div>
                         }
-                        <div class="col-md-12 pull-left text-center">
+                        </div>
+                    <div class="col-md-12 pull-left text-center">
+                        <h2 class="interviewerAlert">
+                            <strong style="font-weight:700;color:green"> "Important Reminder for Interviewers:"</strong>
+                            <p style="text-align:left;"> You are required to provide <strong style="color: #e42c2c;font-weight:700">detailed, accurate, and technically sound observations</strong> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <strong style="color: #e42c2c;font-weight:700">Do Not copy-paste</strong> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
+                        </h2>
+                    </div>
+                        <div class="col-md-12 pull-left text-center" style="margin:10px 0px;">
                             <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
                         </div>
 

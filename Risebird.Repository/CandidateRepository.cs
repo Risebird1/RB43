@@ -21,13 +21,15 @@ namespace Risebird.Repository
     {
 
         private readonly IConfiguration _configuration;
-        private readonly string connectionString;
+        private string connectionString;
+        private readonly string connectionStringForTesting;
         private IApplicationErrorLogger _applicationErrorLogger;
         public CandidateRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            connectionStringForTesting = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         }
 
         public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
@@ -1748,10 +1750,14 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook()
+        public async Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook(bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
@@ -1768,10 +1774,14 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data)
+        public async Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data, bool isStaging = false)
         {
             try
             {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DataTable dataDt = new DataTable();

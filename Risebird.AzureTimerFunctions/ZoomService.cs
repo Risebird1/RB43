@@ -152,25 +152,25 @@ namespace Risebird.AzureTimerFunctions
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
-                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
-                                        {
-                                            try
-                                            {
-                                                string fileNameExternal = "recording.mp4"; //meeting.imid.ToString() + 
-                                                // Replace Azure logic with Google Cloud Storage upload
-                                                myStream.Position = 0;
-                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                                log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                                return;
-                                            }
+                                        //if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        //{
+                                        //    try
+                                        //    {
+                                        //        string fileNameExternal = "recording.mp4"; //meeting.imid.ToString() + 
+                                        //        // Replace Azure logic with Google Cloud Storage upload
+                                        //        myStream.Position = 0;
+                                        //        uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                        //    }
+                                        //    catch (Exception ex)
+                                        //    {
+                                        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        //        log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                        //        return;
+                                        //    }
 
-                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        //    log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
-                                        }
+                                        //}
 
 
                                         //generate SAS URL from the uploaded video url
@@ -189,6 +189,26 @@ namespace Risebird.AzureTimerFunctions
 
                                         TimeSpan ts = endTime - startTime;
                                         videoDuration = Convert.ToInt32(Math.Round(ts.TotalMinutes));
+
+                                    }
+                                    if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                    {
+                                        using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                        {
+                                            try
+                                            {
+                                                string fileNameExternal = "recording.mp4"; //meeting.imid.ToString() + 
+                                                uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                return;
+                                            }
+                                        }
+
+                                        log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
                                     }
                                 }
@@ -228,13 +248,41 @@ namespace Risebird.AzureTimerFunctions
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
+                                        //if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        //{
+                                        //    try
+                                        //    {
+                                        //        string fileNameExternal ="transcript.json"; // meeting.imid.ToString() + 
+                                        //        myStream.Position = 0;
+                                        //        // Replace Azure logic with Google Cloud Storage upload
+                                        //        uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                        //    }
+                                        //    catch (Exception ex)
+                                        //    {
+                                        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        //        log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                        //        return;
+                                        //    }
+
+                                        //    log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                        //}
+                                        //generate SAS URL from the uploaded video url
+                                        var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+
+                                        if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                        {
+                                            transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                        }
+
+                                    }
                                         if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                        using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                         {
                                             try
                                             {
-                                                string fileNameExternal ="transcript.json"; // meeting.imid.ToString() + 
-                                                myStream.Position = 0;
-                                                // Replace Azure logic with Google Cloud Storage upload
+                                                string fileNameExternal = "transcript.json"; // meeting.imid.ToString() + 
                                                 uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
                                             }
                                             catch (Exception ex)
@@ -243,6 +291,8 @@ namespace Risebird.AzureTimerFunctions
                                                 log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
                                                 return;
                                             }
+                                        }
+
 
                                             log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
