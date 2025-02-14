@@ -292,6 +292,6 @@ namespace Risebird.Services.Controllers
             var interviewdatevalidate = slotswithtime.Contains(interviewdate);
             return interviewdatevalidate;
         }
-        #endregion
+        
     }
 }

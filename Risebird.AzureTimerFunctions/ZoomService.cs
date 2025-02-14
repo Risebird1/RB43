@@ -297,14 +297,6 @@ namespace Risebird.AzureTimerFunctions
                                         log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
                                     }
-                                        //generate SAS URL from the uploaded video url
-                                        var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
-
-                                        if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
-                                        {
-                                            transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
-                                        }
-                                    }
                                 }
 
                             }
