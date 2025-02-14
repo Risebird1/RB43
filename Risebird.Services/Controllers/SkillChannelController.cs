@@ -193,6 +193,7 @@ namespace Risebird.Services.Controllers
                             _ScheduleCandidatesRequest.skillChannelId = SkillChannelid;
                             _ScheduleCandidatesRequest.requestedBy = reqData.requestedBy;
                             _ScheduleCandidatesRequest.RequestId = reqData.requestId ?? reqData.jobId;
+                            _ScheduleCandidatesRequest.CandidateList = new List<ScheduleCandidateList>();
                             foreach (var item in reqData.CandidateList)
                             {
                                 _ScheduleCandidatesRequest.CandidateList.Add(new ScheduleCandidateList
