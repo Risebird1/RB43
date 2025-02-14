@@ -416,7 +416,7 @@ namespace Risebird.Services.Controllers
                             var irfid = 0;
                             if (!string.IsNullOrEmpty(reqData.skillChannelId))
                             {
-                                irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim(), tenantId);
+                                irfid = _irfRepository.GetIRFIdByIRFNametenantId(reqData.skillChannelId.Trim(), tenantId);
                                 if (irfid == 0)
                                 {
                                     details.Add("skillChannelId", "skillChannelId is invalid");

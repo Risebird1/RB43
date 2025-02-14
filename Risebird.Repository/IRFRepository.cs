@@ -9680,7 +9680,7 @@ namespace Risebird.Repository
 
             }
         }
-        public int GetIRFIdByIRFName(string IRFId, string tenantId)
+        public int GetIRFIdByIRFNametenantId(string IRFId, string tenantId)
         {
             try
             {
