@@ -269,6 +269,7 @@ namespace Risebird.Entities.ViewModel
         public List<int> ClientUserIdPopUp { get; set; }
         [DisplayName("White Labling")]
         public bool IsWhiteLabling { get; set; }
+        public string RequestId { get; set; }
     }
     public class InterviewerIds
     {

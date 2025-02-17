@@ -48,6 +48,7 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplateV1]
 @IsNewSkillChannel bit = null,
 @IsVideoRequired bit = null,
 @TechRubricType varchar(20),
+@RequestId nvarchar(50)=null,
 --@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,   
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  ,
 @flatRate int output
@@ -124,7 +125,8 @@ begin try
   ,[IsNewSkillChannel]
   ,[FlatRate]
   ,[IsVideoRequired]
-  ,[TechRubricType])
+  ,[TechRubricType]
+  ,[RequestId])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -166,7 +168,8 @@ begin try
   @IsNewSkillChannel,
   @flatRate,
   @IsVideoRequired,
-  @TechRubricType)                                                                           
+  @TechRubricType,
+  @RequestId)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      
