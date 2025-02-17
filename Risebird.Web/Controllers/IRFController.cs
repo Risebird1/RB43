@@ -65,12 +65,14 @@ namespace Risebird.Web.Controllers
         private readonly CancellationToken _cancellationToken;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly ITwilioHelper _twilioHelper;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
-            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper, ISASUrlHelper sasUrlHelper)
+            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper, 
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -98,6 +100,7 @@ namespace Risebird.Web.Controllers
             _httpClient = factory.GetHttpClient();
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _sasUrlHelper = sasUrlHelper;
+            _twilioHelper = twilioHelper;
         }
 
 
@@ -115,6 +118,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
+                        //await _twilioHelper.MakeIVRCall("+918888571923", "Harshit", string.Empty, string.Empty);
                         var model = new IRFViewModel();
                         IRFFilter filter = null;
                         if (HttpContext.Session.GetString("IRFfilters") != null)
