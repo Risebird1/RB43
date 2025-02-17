@@ -7104,8 +7104,8 @@ namespace Risebird.Web.Controllers
                 candidateDatawithoutCold = (await _candidateService.GetCandidateStatusDataWithoutColdDate(Convert.ToDateTime(strtdate), Convert.ToDateTime(enddate), 177)).ToList();
                 var candidateDatawithCold = new List<CandidateExcelData>();
                 candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(Convert.ToDateTime(strtdate), Convert.ToDateTime(enddate), 177)).ToList();
-                candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
-                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore) ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription() : string.Empty; return x; }).ToList();
+                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore) ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription() : string.Empty; return x; }).ToList();
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
@@ -7143,6 +7143,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 21].Value = "Schedule Count";
                 Sheet.Cells[1, 22].Value = "Meeting Status";
                 Sheet.Cells[1, 23].Value = "Requestor";
+                Sheet.Cells[1, 24].Value = "Plan Type";
 
                 int i = 2;
                 if (candidateDatawithoutCold.Count() > 0)
@@ -7184,6 +7185,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 22].Value = item.MeetingStatus ?? string.Empty;
                         }
                         Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(item.Requestor) ? item.Requestor.Split("@").LastOrDefault() : string.Empty;
+                        Sheet.Cells[i, 24].Value = item.Heuristicsscore;
                         i++;
                     }
 
@@ -7213,6 +7215,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 20].Value = 0;
                         Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
                         Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(cold.Requestor) ? cold.Requestor.Split("@").LastOrDefault() : string.Empty;
+                        Sheet.Cells[i, 24].Value = cold.Heuristicsscore;
                         i++;
                     }
                 }

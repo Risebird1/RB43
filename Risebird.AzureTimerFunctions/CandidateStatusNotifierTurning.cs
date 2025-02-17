@@ -49,8 +49,7 @@ namespace Risebird.AzureTimerFunctions
                     "neha.khaitan@turing.com",
                     "parth.gohel@turing.com",
                     "priyanka.k@turing.com",
-                    "soumya.m@turing.com",
-                    "anabella.morales@turing.com"};
+                    "soumya.m@turing.com"};
                 ExcelPackage Ep = new ExcelPackage();
                 ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Status");
                 string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
