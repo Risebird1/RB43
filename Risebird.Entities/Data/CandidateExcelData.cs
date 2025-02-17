@@ -71,5 +71,6 @@ namespace Risebird.Entities.Data
         public string CancelledBy { get; set; }
         public int BillingRate { get; set; }
         public string Requestor { get; set; }
+        public string Heuristicsscore { get; set; }
     }
 }

@@ -67,8 +67,8 @@ namespace Risebird.AzureTimerFunctions
                 var candidateDatawithCold = new List<CandidateExcelData>();
                 candidateDatawithCold = (await _candidateService.GetCandidateStatusDataWithColdDate(DateTime.Now.AddDays(-60), DateTime.Now, 177)).ToList();
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database SP executed at: {DateTime.Now}");
-                candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
-                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                candidateDatawithoutCold = candidateDatawithoutCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore) ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription() : string.Empty; return x; }).ToList();
+                candidateDatawithCold = candidateDatawithCold.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore) ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription() : string.Empty; return x; }).ToList();
 
                 log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning Database Data Count Without COld count: {candidateDatawithoutCold.Count} and with cold count: {candidateDatawithCold.Count} executed at: {DateTime.Now}");
 
@@ -109,6 +109,7 @@ namespace Risebird.AzureTimerFunctions
                 Sheet.Cells[1, 21].Value = "Schedule Count";
                 Sheet.Cells[1, 22].Value = "Meeting Status";
                 Sheet.Cells[1, 23].Value = "Requestor";
+                Sheet.Cells[1, 24].Value = "Plan Type";
                 //Sheet.Cells[1, 4].Value = "Resume";
                 //Sheet.Cells[1, 8].Value = "Invite Sent On";
                 //Sheet.Cells[1, 11].Value = "Confirmation Status";
@@ -156,6 +157,7 @@ namespace Risebird.AzureTimerFunctions
                             Sheet.Cells[i, 22].Value = item.MeetingStatus ?? string.Empty;
                         }
                         Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(item.Requestor) ? item.Requestor.Split("@").LastOrDefault() : string.Empty;
+                        Sheet.Cells[i, 24].Value = item.Heuristicsscore;
                         //Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 13].Value = item.InterviewStatus ?? string.Empty;
                         //Sheet.Cells[i, 14].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
@@ -194,6 +196,7 @@ namespace Risebird.AzureTimerFunctions
                         Sheet.Cells[i, 13].Value = cold.interviewDate.HasValue ? cold.interviewDate.Value.ToString("MM/dd/yyyy HH:mm:ss") : string.Empty;
                         Sheet.Cells[i, 22].Value = cold.CandidateLatestStatus;
                         Sheet.Cells[i, 23].Value = !string.IsNullOrWhiteSpace(cold.Requestor) ? cold.Requestor.Split("@").LastOrDefault() : string.Empty;
+                        Sheet.Cells[i, 24].Value = cold.Heuristicsscore;
                         i++;
                     }
                     log.LogInformation($"C# Timer trigger CandidateStatusNotifierTurning with cold data parsed in excel sheet at: {DateTime.Now}");
