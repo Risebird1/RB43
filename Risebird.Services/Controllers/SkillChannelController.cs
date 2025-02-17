@@ -142,11 +142,14 @@ namespace Risebird.Services.Controllers
                                         irfModel.CreatedFromTemplateId = isExistsObj.TemplateId;
                                         irfModel.TemplateName = isExistsObj.TemplateName;
                                         irfModel.JDLink = reqData.jdLink ?? string.Empty;
+                                        irfModel.RequestId = reqData.requestId;
                                         //var clientDetails = await _clientService.GetClient(irfModel.ClientId);
-                                        string _schedulinglink = await AutoGenerateSchedulingLink(irfModel.StartDate, irfModel.IRFId, irfModel.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", irfModel.MeetingPlatform);
 
-                                        irfModel.CalendlyLink = _schedulinglink;
                                         irfModel.IRFId = GenerateSkillChannelName(assessmentGroupName, clientDetails?.Name);
+
+                                        string _schedulinglink = await AutoGenerateSchedulingLink(irfModel.StartDate, irfModel.IRFId, irfModel.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", irfModel.MeetingPlatform);
+                                        irfModel.CalendlyLink = _schedulinglink;
+
                                         irfModel.BillingOwner = 0;
                                         irfModel.CompanyType = clientDetails?.ClientType > 0 ? clientDetails.ClientType.ToString() : ((int)CompanyType.Service).ToString();
                                         irfModel.Heuristicsscore = (clientDetails != null && clientDetails.PlanType > 0) ? clientDetails.PlanType : (int)Heuristicsscorelevel.Standard;

@@ -6931,6 +6931,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@TechRubricType"].Value = TechRubricTypes.Advanced;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RequestId", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RequestId"].Value = irfDetails.RequestId;
+
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
                     flatRateParam.DbType = DbType.Int16;
