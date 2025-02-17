@@ -85,7 +85,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("handlekeyInterviewerAvailability")]
-        public async Task<IActionResult> HandlekeyInterviewerAvailability([FromForm] string Digits, [FromQuery] string recipientName = null, [FromQuery]  string interviewDate = null)
+        public async Task<IActionResult> HandlekeyInterviewerAvailability([FromForm] string Digits, [FromQuery] string recipientName = null, [FromQuery] string interviewDate = null)
         {
             try
             {
