@@ -523,24 +523,19 @@
 
 
                                                                         }
-                                                                        @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
-                                                                     {
-                                                                    <td width="15%">
-                                                                        <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
-                                                                    </td>
-                                                                     }
+                                                                    
                                                                         @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Completed)
                                                                         {
                                                                             @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                                             {
-                                                                                <div class="btn btn-unassign shadow btn-xs sharp me-1" style="position:relative;top:100px;left:50px;z-index:1000">
+                                                                                <div class="btn btn-unassign shadow btn-xs sharp me-1">
                                                                                     <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="Unassign Yourself" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                                                 </div>
 
 
                                                                             }
                                                                         }
-                                                                    <div class="btn btn-comment shadow btn-xs sharp me-1" style="position:relative;top:100px;left:55px;z-index:1000">
+                                                                    <div class="btn btn-comment shadow btn-xs sharp me-1">
                                                                             <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId, irf= item.IRFID })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
                                                                         </div>
 
@@ -596,6 +591,12 @@
                                                                             </button>
                                                                         }
                                                                     </td>
+                                                                        @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
+                                                                     {
+                                                                    <td width="15%">
+                                                                        <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
+                                                                    </td>
+                                                                     }
                                                                 <td style="padding-left:30px;padding-right:30px;width: 300px;">
                                                                      @if (item.IsVideoRequired == true) {
                                                                        <div style="position:relative;width: fit-content">
