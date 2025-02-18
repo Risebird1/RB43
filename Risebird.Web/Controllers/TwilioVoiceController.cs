@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Google.Apis.Calendar.v3.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -49,9 +50,10 @@ namespace Risebird.Web.Controllers
         [HttpPost("IvrInterviewerAvailability")]
         public async Task<TwiMLResult> IVRResponse(string recipientName, string interviewDate, [FromQuery] int retryCount)
         {
+            var response = new VoiceResponse();
             try
             {
-                HttpContext.Session.SetString("recipientName" , recipientName);
+                HttpContext.Session.SetString("recipientName", recipientName);
                 HttpContext.Session.SetString("interviewDate", interviewDate);
                 ////var link = $"https://localhost:44329/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 //var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
@@ -83,11 +85,11 @@ namespace Risebird.Web.Controllers
                 //return Content(response.ToString(), "application/xml");
 
 
-                var response = new VoiceResponse();
+
                 var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 var actionUri = new Uri(link);
-                //var gather = new Gather(action: actionUri, numDigits: 1);//new Uri(Url.Action("Show", "Menu"))
-                var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
+                var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
+                //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
                 gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
                 response.Append(gather);
 
@@ -107,26 +109,37 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
             }
         }
 
         [HttpPost]
         public IActionResult handlekeyInterviewerAvailability(string digits)
         {
-            
-            var recName = HttpContext.Session.GetString("recipientName");
-            var intervDate = HttpContext.Session.GetString("interviewDate");
-            var selectedOption = digits;
-            var optionActions = new Dictionary<string, Func<TwiMLResult>>()
+
+            try
+            {
+                var recName = HttpContext.Session.GetString("recipientName");
+                var intervDate = HttpContext.Session.GetString("interviewDate");
+                var selectedOption = digits;
+                var optionActions = new Dictionary<string, Func<TwiMLResult>>()
             {
                 {"1", ReturnInstructions},
                 {"2", Planets}
             };
 
-            return optionActions.ContainsKey(selectedOption) ?
-                optionActions[selectedOption]() :
-                RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, interviewDate = intervDate });
+                return optionActions.ContainsKey(selectedOption) ?
+                    optionActions[selectedOption]() :
+                    RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, interviewDate = intervDate });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var response = new VoiceResponse();
+                response.Say($"Error in handle key Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
         }
 
         private TwiMLResult ReturnInstructions()
