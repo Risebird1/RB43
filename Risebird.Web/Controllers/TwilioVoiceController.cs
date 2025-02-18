@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -50,6 +51,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                HttpContext.Session.SetString("recipientName" , recipientName);
+                HttpContext.Session.SetString("interviewDate", interviewDate);
                 ////var link = $"https://localhost:44329/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 //var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 //var actionUri = new Uri(link);
@@ -84,7 +87,7 @@ namespace Risebird.Web.Controllers
                 var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 var actionUri = new Uri(link);
                 //var gather = new Gather(action: actionUri, numDigits: 1);//new Uri(Url.Action("Show", "Menu"))
-                var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice", new { recipientName, interviewDate })), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
+                var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
                 gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
                 response.Append(gather);
 
@@ -109,8 +112,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult handlekeyInterviewerAvailability(string digits, [FromQuery] string recipientName = null, [FromQuery] string interviewDate = null)
+        public IActionResult handlekeyInterviewerAvailability(string digits)
         {
+            
+            var recName = HttpContext.Session.GetString("recipientName");
+            var intervDate = HttpContext.Session.GetString("interviewDate");
             var selectedOption = digits;
             var optionActions = new Dictionary<string, Func<TwiMLResult>>()
             {
@@ -120,7 +126,7 @@ namespace Risebird.Web.Controllers
 
             return optionActions.ContainsKey(selectedOption) ?
                 optionActions[selectedOption]() :
-                RedirectToAction("IvrInterviewerAvailability", new { recipientName, interviewDate});
+                RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, interviewDate = intervDate });
         }
 
         private TwiMLResult ReturnInstructions()
