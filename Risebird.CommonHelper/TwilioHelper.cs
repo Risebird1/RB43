@@ -261,7 +261,7 @@ namespace Risebird.CommonHelper
 
                 //var link = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", FirstName, interviewdate);
                 //var link = string.Format("https://df82-45-116-151-233.ngrok-free.app/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", "FirstName", "interviewdate");
-                var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}", recipientName, "");
+                var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}&retryCount=0", recipientName, "");
                 var url = new Uri(link);
 
                 var call = await CallResource.CreateAsync(

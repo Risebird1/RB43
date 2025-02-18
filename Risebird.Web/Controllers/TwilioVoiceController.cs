@@ -48,13 +48,31 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("IvrInterviewerAvailability")]
-        public async Task<TwiMLResult> IVRResponse(string recipientName, string interviewDate, [FromQuery] int retryCount)
+        public async Task<TwiMLResult> IVRResponse(string recipientName, string interviewDate, int retryCount)
         {
             var response = new VoiceResponse();
             try
             {
-                HttpContext.Session.SetString("recipientName", recipientName);
-                HttpContext.Session.SetString("interviewDate", interviewDate);
+                if (!string.IsNullOrEmpty(recipientName))
+                {
+                    HttpContext.Session.SetString("recipientName", recipientName);
+
+                }
+                else
+                {
+                    HttpContext.Session.SetString("recipientName", "abc");
+
+                }
+                if (!string.IsNullOrEmpty(interviewDate))
+                {
+                    HttpContext.Session.SetString("interviewDate", interviewDate);
+
+                }
+                else
+                {
+                    HttpContext.Session.SetString("interviewDate", "fasd");
+
+                }
                 ////var link = $"https://localhost:44329/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 //var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
                 //var actionUri = new Uri(link);
@@ -86,7 +104,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
+                var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability";
                 var actionUri = new Uri(link);
                 var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
                 //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
@@ -120,8 +138,18 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                var recName = HttpContext.Session.GetString("recipientName");
-                var intervDate = HttpContext.Session.GetString("interviewDate");
+                string recName = "aefe";
+                string intervDate = "sdfawe";
+                if (HttpContext.Session.GetString("recipientName") != null)
+                {
+                    recName = HttpContext.Session.GetString("recipientName");
+
+                }
+                if (HttpContext.Session.GetString("interviewDate") != null)
+                {
+                    intervDate = HttpContext.Session.GetString("interviewDate");
+
+                }
                 var selectedOption = digits;
                 var optionActions = new Dictionary<string, Func<TwiMLResult>>()
             {
