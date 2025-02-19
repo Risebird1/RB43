@@ -261,7 +261,7 @@ namespace Risebird.CommonHelper
 
                 //var link = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", FirstName, interviewdate);
                 //var link = string.Format("https://df82-45-116-151-233.ngrok-free.app/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", "FirstName", "interviewdate");
-                var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}", recipientName, "");
+                var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}&retryCount=0", recipientName, "");
                 var url = new Uri(link);
 
                 var call = await CallResource.CreateAsync(
@@ -290,6 +290,49 @@ namespace Risebird.CommonHelper
                 return false;
             }
         }
+
+        public async Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string recipientName,  string uniqueId, int irfId, string jdTitle)
+        {
+            try
+            {
+                if(!string.IsNullOrEmpty(userPhoneNumber) && !string.IsNullOrEmpty(uniqueId))
+                {
+                    TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+
+                    var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&uniqueId={1}&irfId={2}&jdTitle={3}&retryCount=0", recipientName ?? "interviewer", uniqueId, irfId, jdTitle);
+                    var url = new Uri(link);
+
+                    var call = await CallResource.CreateAsync(
+                        to: new PhoneNumber(userPhoneNumber),
+                        from: new PhoneNumber(_twilioCallerNumber),
+                        url: url // Replace with your public endpoint
+                    );
+
+                    if (call.Status != null)
+                    {
+                        var result = call.Status.ToString();
+                        if (result != CallResource.StatusEnum.Failed.ToString())
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+                return false;
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 }

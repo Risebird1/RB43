@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Google.Apis.Calendar.v3.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
+using Task = System.Threading.Tasks.Task;
 
 namespace Risebird.Web.Controllers
 {
@@ -17,11 +20,14 @@ namespace Risebird.Web.Controllers
     {
         private readonly IIRFService _irfService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IMeetingService _meetingService;
 
-        public TwilioVoiceController(IIRFService irfService, IApplicationErrorLogger applicationErrorLogger)
+        public TwilioVoiceController(IIRFService irfService, IApplicationErrorLogger applicationErrorLogger,
+            IMeetingService meetingService)
         {
             _irfService = irfService;
             _applicationErrorLogger = applicationErrorLogger;
+            _meetingService = meetingService;
         }
 
         [HttpPost]
@@ -47,54 +53,46 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("IvrInterviewerAvailability")]
-        public async Task<TwiMLResult> IVRResponse(string recipientName, string interviewDate, [FromQuery] int retryCount)
+        public async Task<TwiMLResult> IVRResponse(string recipientName, string uniqueId, int irfId, string jdTitle, int retryCount)
         {
+            var response = new VoiceResponse();
             try
             {
-                HttpContext.Session.SetString("recipientName" , recipientName);
-                HttpContext.Session.SetString("interviewDate", interviewDate);
-                ////var link = $"https://localhost:44329/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
-                //var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
-                //var actionUri = new Uri(link);
-                //var response = new VoiceResponse();
-                ////var gather = new Gather(numDigits: 1, action: actionUri, method: "POST");
-                //var gather = new Gather(
-                //    numDigits: 1,
-                //    timeout: 5,
-                //    action: actionUri,
-                //    method: "POST"
-                //);
-
-                //gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
-                //response.Append(gather);
-
-                //// If the user did not press a key and retryCount is less than 2, retry
-                //if (retryCount < 2)
-                //{
-                //    response.Say("You did not press any key. Let me repeat the options.");
-                //    response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
-                //}
-                //else
-                //{
-                //    response.Say("No input received. Goodbye.");
-                //    response.Hangup();
-                //}
-
-                //return Content(response.ToString(), "application/xml");
-
-
-                var response = new VoiceResponse();
-                var link = $"https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}";
+                if (!string.IsNullOrEmpty(recipientName))
+                {
+                    HttpContext.Session.SetString("recipientName", recipientName);
+                }
+                else
+                {
+                    HttpContext.Session.SetString("recipientName", "interviewer");
+                }
+                if (!string.IsNullOrEmpty(jdTitle))
+                {
+                    HttpContext.Session.SetString("jdTitle", jdTitle);
+                }
+                else
+                {
+                    HttpContext.Session.SetString("jdTitle", "system");
+                }
+                if (!string.IsNullOrEmpty(uniqueId))
+                {
+                    HttpContext.Session.SetString("uniqueId", uniqueId);
+                }
+                if (irfId > 0)
+                {
+                    HttpContext.Session.SetString("irfId", irfId.ToString());
+                }
+                var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailability";
                 var actionUri = new Uri(link);
-                //var gather = new Gather(action: actionUri, numDigits: 1);//new Uri(Url.Action("Show", "Menu"))
-                var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
-                gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
+                var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
+                //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
+                gather.Say($"Dear {recipientName}, greetings from Risebird. This call is to confirm your availability for taking an interview based on {jdTitle} over the next two days. Press 1 if Available. Press 2 if Not Available. Press 3 to Drop your profile.");
                 response.Append(gather);
 
                 if (retryCount < 2)
                 {
                     response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
+                    response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&retryCount={retryCount + 1}"));
                 }
                 else
                 {
@@ -107,26 +105,73 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
             }
         }
 
         [HttpPost]
         public IActionResult handlekeyInterviewerAvailability(string digits)
         {
-            
-            var recName = HttpContext.Session.GetString("recipientName");
-            var intervDate = HttpContext.Session.GetString("interviewDate");
-            var selectedOption = digits;
-            var optionActions = new Dictionary<string, Func<TwiMLResult>>()
-            {
-                {"1", ReturnInstructions},
-                {"2", Planets}
-            };
 
-            return optionActions.ContainsKey(selectedOption) ?
-                optionActions[selectedOption]() :
-                RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, interviewDate = intervDate });
+            try
+            {
+                string recName = "interviewer";
+                string unqId = string.Empty;
+                int irfintId = 0;
+                string jdTitleVar = string.Empty;
+                if (HttpContext.Session.GetString("recipientName") != null)
+                {
+                    recName = HttpContext.Session.GetString("recipientName");
+
+                }
+                if (HttpContext.Session.GetString("uniqueId") != null)
+                {
+                    unqId = HttpContext.Session.GetString("uniqueId");
+
+                }
+                if (HttpContext.Session.GetString("irfId") != null)
+                {
+                    irfintId = Convert.ToInt16(HttpContext.Session.GetString("irfId"));
+
+                }
+                if (HttpContext.Session.GetString("jdTitle") != null)
+                {
+                    jdTitleVar = HttpContext.Session.GetString("jdTitle");
+
+                }
+                var selectedOption = digits;
+                if(selectedOption == "1")
+                {
+                    return UpdateInterviewerAvailbilityStatusForIRF(1).Result;
+                }
+                else if (selectedOption == "2")
+                {
+                    return UpdateInterviewerAvailbilityStatusForIRF(2).Result;
+                }
+                else if (selectedOption == "3")
+                {
+                    return UpdateInterviewerAvailbilityStatusForIRF(4).Result;
+                }
+                return RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, uniqueId = unqId, irfId = irfintId, jdTitle = jdTitleVar });
+            //    var optionActions = new Dictionary<string, Func<TwiMLResult>>()
+            //{
+            //    {"1", UpdateInterviewerAvailbilityStatusForIRF},
+            //    {"2", UpdateInterviewerAvailbilityStatusForIRF},
+            //    {"3", UpdateInterviewerAvailbilityStatusForIRF}
+            //};
+
+                //return optionActions.ContainsKey(selectedOption) ?
+                //    optionActions[selectedOption]() :
+                //    RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, uniqueId = unqId, irfId = irfintId, jdTitle = jdTitleVar });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var response = new VoiceResponse();
+                response.Say($"Error in handle key Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
         }
 
         private TwiMLResult ReturnInstructions()
@@ -157,48 +202,74 @@ namespace Risebird.Web.Controllers
 
             return TwiML(response);
         }
+        private async Task<TwiMLResult> UpdateInterviewerAvailbilityStatusForIRF(int status)
+        {
+            //check link expiry befire hitting db
+            try
+            {
+                var response = new VoiceResponse();
+                if(status == 1)
+                {
+                    response.Say("You chose Available",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                }
+                else if (status == 2)
+                {
+                    response.Say("You chose Not Available",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                }
+                else if (status == 4)
+                {
+                    response.Say("You chose Drop My Profile",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                }
 
-        //[HttpPost("handlekeyInterviewerAvailability")]
-        //public async Task<IActionResult> HandlekeyInterviewerAvailability([FromForm] string Digits, [FromQuery] string recipientName = null, [FromQuery]  string interviewDate = null)
-        //{
-        //    try
-        //    {
-        //        var response = new VoiceResponse();
-        //        //var redirectLink = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", recipientName, interviewDate);
-        //        var redirectLink = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", recipientName, interviewDate);
-        //        var redirectUrl = new Uri(redirectLink);
-        //        switch (Digits)
-        //        {
-        //            case "1":
-        //                response.Say("You have selected sales. We will process your request.");
-        //                //ProcessSales(); // Call the method that handles sales
-        //                break;
-        //            case "2":
-        //                response.Say("You have selected support. We will process your request.");
-        //                //ProcessSupport(); // Call the method that handles support
-        //                break;
-        //            case "3":
-        //                response.Say("You have selected to speak with an agent. We will process your request.");
-        //                //ProcessAgent(); // Call the method that handles connecting to an agent
-        //                break;
-        //            default:
-        //                response.Say("Invalid input. Please try again.");
-        //                response.Redirect(redirectUrl); // Redirect back to the IVR menu
-        //                return Content(response.ToString(), "application/xml");
-        //        }
+                string recName = "interviewer";
+                string unqId = string.Empty;
+                int irfintId = 0;
+                if (HttpContext.Session.GetString("recipientName") != null)
+                {
+                    recName = HttpContext.Session.GetString("recipientName");
 
-        //        // End the call after the message is played
-        //        response.Pause(length: 2); // Optional pause for better experience
-        //        response.Hangup();
+                }
+                if (HttpContext.Session.GetString("uniqueId") != null)
+                {
+                    unqId = HttpContext.Session.GetString("uniqueId");
 
-        //        return Content(response.ToString(), "application/xml");
-        //    }
-        //    catch (Exception ex)
-        //    {
+                }
+                if (HttpContext.Session.GetString("irfId") != null)
+                {
+                    irfintId = Convert.ToInt16(HttpContext.Session.GetString("irfId"));
 
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
+                }
+                
+                var result = await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, unqId, irfintId, "ivr");
+                //if (result.Item1)
+                //{
+
+
+                    
+                //}
+                //else
+                //{
+                //    return Json("Failed to update status, Please try again");
+                //}
+
+                response.Say("Thank you for submitting your response. Good bye.");
+
+                response.Hangup();
+
+                return TwiML(response);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var response = new VoiceResponse();
+                response.Say($"Error in Update Interviewer Availbility Status For IRF with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
+
+        }
+
     }
 }

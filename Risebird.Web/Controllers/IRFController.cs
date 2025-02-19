@@ -1062,6 +1062,30 @@ namespace Risebird.Web.Controllers
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
             //functionKey = string.Empty;
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
+
+            await MakeIVRCallForAvailability(dto);
+
+
+        }
+        private async Task MakeIVRCallForAvailability(AvailabilityCheckDTO dto)
+        {
+            try
+            {
+                var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                var client = new RestClient(apiurl);
+                var request = new RestRequest(apiurl, Method.Post);
+
+                request.AddHeader("content-type", "application/json");
+
+                var body = JsonConvert.SerializeObject(dto);
+                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                RestResponse response = await client.ExecuteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            
         }
 
 
