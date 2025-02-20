@@ -67,12 +67,9 @@ namespace Risebird.Services.Controllers
                         {
                             if (!string.IsNullOrEmpty(interviewer.EmailId))
                             {
-
-                                await _twilioHelper.MakeIVRCallToInterviewerForAvailability(interviewer.Phone, interviewer.InterviewerName, interviewer.uniqueid, obj.id, obj.JDTitle);
-                                //string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
-                                //string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
-                                //string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=4&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
-
+                                //await _twilioHelper.MakeIVRCallToInterviewerForAvailability("+918888571923", interviewer.InterviewerName, "5DF6F746-A820-4129-BE42-34970C6679E7", obj.id, !string.IsNullOrEmpty(obj.JDTitle) ? obj.JDTitle : "your expertise");
+                                await _twilioHelper.MakeIVRCallToInterviewerForAvailability(interviewer.Phone, interviewer.InterviewerName, interviewer.uniqueid, obj.id, !string.IsNullOrEmpty(obj.JDTitle) ? obj.JDTitle : "your expertise");
+                                
                             }
                         }
                         catch (Exception ex1)

@@ -1063,7 +1063,7 @@ namespace Risebird.Web.Controllers
             //functionKey = string.Empty;
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
 
-            await MakeIVRCallForAvailability(dto);
+            //await MakeIVRCallForAvailability(dto);
 
 
         }
@@ -6928,6 +6928,10 @@ namespace Risebird.Web.Controllers
                                 _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
                             }
                         }
+
+                        //fire and forget method to make an ivr call to interviewers?
+                        //MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString()});
+                        
                         return Json("Emails sent successfully.");
                     }
                     else
