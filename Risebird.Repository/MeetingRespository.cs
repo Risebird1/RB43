@@ -1532,7 +1532,7 @@ namespace Risebird.Repository
                     }
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
-                            commandType: CommandType.StoredProcedure);
+                            commandType: CommandType.StoredProcedure, commandTimeout:100);
 
                     if (reportDetails.MeetingStatus != 2)
                     {

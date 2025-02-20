@@ -105,7 +105,8 @@ Begin
   Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable in (1,2,3) or ipr.Isavailable is null)--where ipr.Isavailable = 1, global availability check removed for a while     
   Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, IsNull(DATEDIFF(SECOND, @lastSentOn, @timeNow), 0) as AvailbilityHour, @basicSkill as BasicSkill,  
   @flatRate  as FlatRate, @countryTypeDesc as CountryTypeDesc, @companyTypeDesc as CompanyTypeDesc,  
-  @planTypeDesc as PlanTypeDesc, @selectedDuration as SelectedDurationMin, @rejectedDuration as RejectedDurationMin,@IsVideoRequired as IsVideoRequired  
+  @planTypeDesc as PlanTypeDesc, @selectedDuration as SelectedDurationMin, @rejectedDuration as RejectedDurationMin,
+  @IsVideoRequired as IsVideoRequired, ul.MobileNumber as Phone  
   From CTE join Userlist ul on CTE.Userid=ul.id         
   where CTE.value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive=1 --= @assessmentGroupId  
  End  
@@ -118,17 +119,18 @@ Begin
   ;With CTE AS(        
   Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',')   
   where ipr.Isavailable in (1,2,3) or ipr.Isavailable is null)--where ipr.Isavailable = 1, global availability check removed for a while     
-  select a.EmailId, a.uniqueid, a.InterviewerName, a.AvailbilityHour, a.BasicSkill, min(FlatRate) as  FlatRate from   
-  (Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, IsNull(DATEDIFF(SECOND, @lastSentOn, @timeNow), 0) as AvailbilityHour, @basicSkill as BasicSkill,  
+  select a.EmailId, a.uniqueid, a.InterviewerName, a.AvailbilityHour, a.BasicSkill, min(FlatRate) as  FlatRate, a.Phone from   
+  (Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, 
+  IsNull(DATEDIFF(SECOND, @lastSentOn, @timeNow), 0) as AvailbilityHour, @basicSkill as BasicSkill,  
   CASE  
    WHEN PerSuccessRate > 0 THEN PerSuccessRate  
    ELSE @calculatedFlatRate  
-  END AS FlatRate,@IsVideoRequired as IsVideoRequired  
+  END AS FlatRate,@IsVideoRequired as IsVideoRequired, ul.MobileNumber as Phone    
   From CTE   
   join Userlist ul on CTE.Userid=ul.id   
   left join TransInterviewer ti on ti.UserId = ul.id  
   where CTE.value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive=1 and (ti.IRFId = @irfId or ti.IRFId is null)) a--@assessmentGroupId  
-  group by a.EmailId, a.uniqueid, a.InterviewerName, a.AvailbilityHour, a.BasicSkill  
+  group by a.EmailId, a.uniqueid, a.InterviewerName, a.AvailbilityHour, a.BasicSkill, a.Phone  
  End  
   
  End  
@@ -143,7 +145,9 @@ Begin
   
  ;With CTE AS(        
  Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable in (1,2,3) or ipr.Isavailable is null)--where ipr.Isavailable = 1, global availability check removed for a while       
- Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, IsNull(DATEDIFF(SECOND, @lastSentOnAgLevel, @timeNow), 0) as AGAvailabilityCommunicationTimeElapsed, agp.AssessmentGroup as AGName,@IsVideoRequired as IsVideoRequired          
+ Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, 
+ IsNull(DATEDIFF(SECOND, @lastSentOnAgLevel, @timeNow), 0) as AGAvailabilityCommunicationTimeElapsed,
+ agp.AssessmentGroup as AGName,@IsVideoRequired as IsVideoRequired, ul.MobileNumber as Phone          
  From CTE join Userlist ul on CTE.Userid=ul.id    
  join AssessmentGroup agp on agp.id = cte.value  
  where CTE.value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive=1  --= @assessmentGroupId   
