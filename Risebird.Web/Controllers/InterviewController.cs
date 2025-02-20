@@ -8451,6 +8451,12 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
+        public async Task<JsonResult> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null)
+        {
+            var result = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfid, interviewer, action);
+            return Json("success");
+        }
+        [HttpPost]
         public async Task<JsonResult> UpdateInterviewReport(int interviewid, string comment)
         {
             var email = HttpContext.Session.GetString("email");

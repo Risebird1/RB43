@@ -221,12 +221,12 @@
                                                             }
                                                             @if (ViewBag.Profile == "Client")
                                                             {
-                                                                <a onclick="removeOrShortlistInterviewer(@item.id,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
+                                                                <a onclick="removeOrShortlistInterviewerFromIRF(@item.id,'@item.interviewer','Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
                                                                     <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Shortlist Interviewer" style="background:#c3df82fc;border-color:#dbee7699;width:25px!important;height:25px!important;">
                                                                         <span title="Shortlist Interviewer"><img style="max-width:18px;position:relative;left:-2px;top:-1px;" src="~/Newassets/img/shortlist-icon.png" /></span>
                                                                     </div>
                                                                 </a>
-                                                                <a onclick="removeOrShortlistInterviewer(@item.id,'Rejected')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
+                                                                <a onclick="removeOrShortlistInterviewerFromIRF(@item.id,'@item.interviewer','Rejected')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
                                                                     <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Remove Interviewer" style="background: #de4f3eb3;width:25px!important;height:25px!important;">
                                                                         <span title="Remove Interviewer"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size: 11px;"></span><span class="fa fa-trash" style="color:#fff;font-size: 8px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
                                                                     </div>
@@ -336,7 +336,7 @@
                                                         {
                                                             <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">Completed</a></td>
                                                         }
-                                                        
+
                                                         @*       <td>
 
                                                     @if (item.CompanyName != null && item.CompanyName != "")
@@ -452,7 +452,7 @@
     };
 </script>
 <script>
-    function removeOrShortlistInterviewer(interviewid, action) {
+    function removeOrShortlistInterviewerFromIRF(irfid,interviewer, action) {
         var bodyText;
         var confirmationButtonText;
         var successHtmlText;
@@ -477,11 +477,11 @@
             confirmButtonText: confirmationButtonText,
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
-                    captureclick('Interviewer Status', action, interviewid);
+                    //captureclick('Interviewer Status', action, irfid);
                     $.ajax({
                         type: "POST",
-                        url: "/Interview/RemoveOrShortlistInterviewer",
-                        data: { 'interviewid': interviewid, 'action': action },
+                        url: "/Interview/RemoveOrShortlistInterviewerFromIRF",
+                        data: { 'irfid': irfid,'interviewer':interviewer, 'action': action },
                         success: function (result) {
                             resolve(result);
                         }
