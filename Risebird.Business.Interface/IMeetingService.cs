@@ -231,6 +231,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddTransReliabilityScoresSelectAndRejectService(int InterviewMeetingId);
         Task<Meeting> GetAudioCommentDetailsService(int interviewId);
         Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null);
+        Task<bool> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null);
         Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
         Task<ProctoringReport> GetProctoringReport(int interviewid);

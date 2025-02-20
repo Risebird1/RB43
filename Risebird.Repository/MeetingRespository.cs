@@ -7062,6 +7062,28 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", irfid);
+                dynamicParameters.Add("@Interviewer", interviewer);
+                dynamicParameters.Add("@action", action);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_updateInterviewerIRFStatusByIRFid", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
         public async Task<bool> SavePoorQOSDetails(PoorQOSZoomData data)
         {

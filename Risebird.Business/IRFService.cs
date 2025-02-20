@@ -680,7 +680,7 @@ namespace Risebird.Business
                 model = await _irfRepository.GetSkillChannelInterviewersForEdit(id);
                 //if (model == null)
                 //    return null;
-                
+
                 model.id = id;
                 //model.OldInterviewerCollection = model.InterviewerCollection;
                 return model;
@@ -3099,7 +3099,7 @@ namespace Risebird.Business
             try
             {
                 string channelOwner;
-                if ( (string.IsNullOrEmpty(profile) && loggedInUser == "api") || profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
+                if ((string.IsNullOrEmpty(profile) && loggedInUser == "api") || profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
                 {
                     var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
                     //eligibleHrs.RemoveAt(0);
@@ -3171,7 +3171,7 @@ namespace Risebird.Business
 
 
                 }
-                else if(irfDetails.ClientUserIdPopUp != null)
+                else if (irfDetails.ClientUserIdPopUp != null)
                 {
                     foreach (var clientUserId in irfDetails.ClientUserIdPopUp)
                     {
@@ -3204,7 +3204,7 @@ namespace Risebird.Business
 
                     try
                     {
-                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName ?? string.Empty,  irfDetails.JDTiltle, clientName);
+                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName ?? string.Empty, irfDetails.JDTiltle, clientName);
 
                     }
                     catch (Exception ex)
@@ -4194,11 +4194,15 @@ namespace Risebird.Business
             try
             {
                 var linkurl = "https://portal.risebird.io";// + Request.Host.ToString();
+                if (isStaging)
+                {
+                    linkurl = "https://qa.portal.risebird.io";
+                }
                 //var linkurl = "https://localhost:44329";// + Request.Host.ToString();
                 var userId = _irfRepository.GetUserId(requestedBy, isStaging: isStaging);
 
                 //var irf = _irfRepository.GetIRFbyIRFName(irfName);
-                 
+
                 var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId, isApi: !useIRFIdinsteadOfJobId, ApiRequestedBy: requestedBy, jobId: jobId, isStaging: isStaging);
 
                 //var calendlyLink = irf.CalendlyLink;
