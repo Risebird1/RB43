@@ -1072,6 +1072,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                //var apiurl = "https://" + "localhost:50233" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 var client = new RestClient(apiurl);
                 var request = new RestRequest(apiurl, Method.Post);
 

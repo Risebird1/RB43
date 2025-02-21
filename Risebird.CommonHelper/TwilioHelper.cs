@@ -261,7 +261,7 @@ namespace Risebird.CommonHelper
 
                 //var link = string.Format("https://localhost:44329/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", FirstName, interviewdate);
                 //var link = string.Format("https://df82-45-116-151-233.ngrok-free.app/TwilioVoice/IvrInterviewerAvailability?name={0}&interviewdate={1}", "FirstName", "interviewdate");
-                var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}&retryCount=0", recipientName, "");
+                var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&interviewDate={1}&retryCount=0", recipientName, "");
                 var url = new Uri(link);
 
                 var call = await CallResource.CreateAsync(
@@ -291,7 +291,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string recipientName,  string uniqueId, int irfId, string jdTitle)
+        public async Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string recipientName,  string uniqueId, int irfId, string jdTitle, int assessmentGroupId, string interviewerEmailId)
         {
             try
             {
@@ -299,7 +299,9 @@ namespace Risebird.CommonHelper
                 {
                     TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
 
-                    var link = string.Format("https://portal.risebird.io/IvrInterviewerAvailability?recipientName={0}&uniqueId={1}&irfId={2}&jdTitle={3}&retryCount=0", recipientName ?? "interviewer", uniqueId, irfId, jdTitle);
+                    //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&uniqueId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", recipientName ?? "interviewer", uniqueId, irfId, jdTitle, assessmentGroupId);
+                    var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&interviewerEmailId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", recipientName ?? "interviewer", interviewerEmailId, irfId, jdTitle, assessmentGroupId);
+                    link = link.Replace(" ", string.Empty);
                     var url = new Uri(link);
 
                     var call = await CallResource.CreateAsync(

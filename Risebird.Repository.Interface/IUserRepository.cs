@@ -88,5 +88,6 @@ namespace Risebird.Repository.Interface
         Task<ClientUserVM> GetClientDetailsByIRFId(string IRFId);
         Task<List<ClientUserVM>> GetClientUsersForReviewNotification();
         Task<List<InterviewerProfileVM>> GetInterviewerInterestNotification();
+        Task<string> GetUniqueIdByEmailId(string emailId);
     }
 }
