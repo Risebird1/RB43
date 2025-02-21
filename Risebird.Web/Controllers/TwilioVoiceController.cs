@@ -108,7 +108,7 @@ namespace Risebird.Web.Controllers
                 if (retryCount < 2)
                 {
                     response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&interviewerEmailId={interviewerEmailId}&irfId={irfId}&jdTitle={jdTitle}&retryCount={retryCount + 1}"));
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={recipientName}&interviewerEmailId={interviewerEmailId}&irfId={irfId}&jdTitle={jdTitle}&assessmentGroupId={assessmentGroupId}&retryCount={retryCount + 1}"));
                     //response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&retryCount={retryCount + 1}"));
                 }
                 else
