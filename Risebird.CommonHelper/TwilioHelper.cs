@@ -300,8 +300,9 @@ namespace Risebird.CommonHelper
                     TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
 
                     //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&uniqueId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", recipientName ?? "interviewer", uniqueId, irfId, jdTitle, assessmentGroupId);
-                    var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&interviewerEmailId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", recipientName ?? "interviewer", interviewerEmailId, irfId, jdTitle, assessmentGroupId);
-                    link = link.Replace(" ", string.Empty);
+                    //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&interviewerEmailId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", (recipientName ?? "interviewer"), interviewerEmailId, irfId, jdTitle, assessmentGroupId);
+                    var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?interviewerEmailId={0}&irfId={1}&jdTitle={2}&assessmentGroupId={3}&retryCount=0", interviewerEmailId, irfId, jdTitle, assessmentGroupId);
+                    //link = link.Replace(" ", string.Empty);
                     var url = new Uri(link);
 
                     var call = await CallResource.CreateAsync(

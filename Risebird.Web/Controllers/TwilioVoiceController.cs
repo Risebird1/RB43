@@ -57,19 +57,21 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("IvrInterviewerAvailability")]
-        public async Task<TwiMLResult> IVRResponse(string recipientName, string interviewerEmailId, int irfId, string jdTitle, int assessmentGroupId, int retryCount)// string uniqueId, 
+        public async Task<TwiMLResult> IVRResponse(string interviewerEmailId, int irfId, string jdTitle, int assessmentGroupId, int retryCount)// string uniqueId, //string recipientName, 
         {
             var response = new VoiceResponse();
+            string recipientName = "interviewer";
             try
             {
-                if (!string.IsNullOrEmpty(recipientName))
-                {
-                    HttpContext.Session.SetString("recipientName", recipientName);
-                }
-                else
-                {
-                    HttpContext.Session.SetString("recipientName", "interviewer");
-                }
+                HttpContext.Session.SetString("recipientName", recipientName);
+                //if (!string.IsNullOrEmpty(recipientName))
+                //{
+                //    HttpContext.Session.SetString("recipientName", recipientName);
+                //}
+                //else
+                //{
+                //    HttpContext.Session.SetString("recipientName", "interviewer");
+                //}
                 if (!string.IsNullOrEmpty(jdTitle))
                 {
                     HttpContext.Session.SetString("jdTitle", jdTitle);
@@ -108,7 +110,8 @@ namespace Risebird.Web.Controllers
                 if (retryCount < 2)
                 {
                     response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={recipientName}&interviewerEmailId={interviewerEmailId}&irfId={irfId}&jdTitle={jdTitle}&assessmentGroupId={assessmentGroupId}&retryCount={retryCount + 1}"));
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?interviewerEmailId={interviewerEmailId}&irfId={irfId}&jdTitle={jdTitle}&assessmentGroupId={assessmentGroupId}&retryCount={retryCount + 1}"));
+                    //response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={recipientName}&interviewerEmailId={interviewerEmailId}&irfId={irfId}&jdTitle={jdTitle}&assessmentGroupId={assessmentGroupId}&retryCount={retryCount + 1}"));
                     //response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailability?recipientName={recipientName}&uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&retryCount={retryCount + 1}"));
                 }
                 else
@@ -201,7 +204,7 @@ namespace Risebird.Web.Controllers
                     
                 }
                 //return RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, uniqueId = unqId, irfId = irfintId, jdTitle = jdTitleVar, assessmentGroupId = agId });
-                return RedirectToAction("IvrInterviewerAvailability", new { recipientName = recName, irfId = irfintId, jdTitle = jdTitleVar, assessmentGroupId = agId, interviewerEmailId = emailId });//uniqueId = unqId, 
+                return RedirectToAction("IvrInterviewerAvailability", new { irfId = irfintId, jdTitle = jdTitleVar, assessmentGroupId = agId, interviewerEmailId = emailId });//uniqueId = unqId, 
                                                                                                                                                                                                        //    var optionActions = new Dictionary<string, Func<TwiMLResult>>()
                       
                 //return optionActions.ContainsKey(selectedOption) ?
@@ -267,15 +270,15 @@ namespace Risebird.Web.Controllers
                              voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 }
 
-                string recName = "interviewer";
+                //string recName = "interviewer";
                 string unqId = string.Empty;
                 string emailId = string.Empty;
                 int irfintId = 0;
-                if (HttpContext.Session.GetString("recipientName") != null)
-                {
-                    recName = HttpContext.Session.GetString("recipientName");
+                //if (HttpContext.Session.GetString("recipientName") != null)
+                //{
+                //    recName = HttpContext.Session.GetString("recipientName");
 
-                }
+                //}
                 if (HttpContext.Session.GetString("interviewerEmailId") != null)
                 {
                     emailId = HttpContext.Session.GetString("interviewerEmailId");
@@ -338,15 +341,15 @@ namespace Risebird.Web.Controllers
                 //             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 //}
 
-                string recName = "interviewer";
+                //string recName = "interviewer";
                 string unqId = string.Empty;
                 string emailId = string.Empty;
                 int assessmentGroupId = 0;
-                if (HttpContext.Session.GetString("recipientName") != null)
-                {
-                    recName = HttpContext.Session.GetString("recipientName");
+                //if (HttpContext.Session.GetString("recipientName") != null)
+                //{
+                //    recName = HttpContext.Session.GetString("recipientName");
 
-                }
+                //}
                 if (HttpContext.Session.GetString("interviewerEmailId") != null)
                 {
                     emailId = HttpContext.Session.GetString("interviewerEmailId");
