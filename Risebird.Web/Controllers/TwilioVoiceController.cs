@@ -57,13 +57,71 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public TwiMLResult IvrInterviewerAvailabilityTesting(string recipientName, string interviewdate)
+        public TwiMLResult IvrInterviewerAvailabilityTesting(string recipientName, string irfId, int retryCount)
         {
+            //var response = new VoiceResponse();
+            //var message = string.Format("Dear {0}! Empty function worked. Greetings from RiseBird. This is to remind you that your interview is scheduled at {1}. Please confirm your availability by responding to the mail.",
+            //    recipientName, interviewdate);
+            //response.Say(message);
+            //return TwiML(response);
+
             var response = new VoiceResponse();
             var message = string.Format("Dear {0}! Empty function worked. Greetings from RiseBird. This is to remind you that your interview is scheduled at {1}. Please confirm your availability by responding to the mail.",
                 recipientName, interviewdate);
             response.Say(message);
             return TwiML(response);
+        }
+
+        //[HttpPost("IvrInterviewerAvailabilityTesting")]
+        //public async Task<TwiMLResult> IvrInterviewerAvailabilityTesting(string recipientName, string interviewDate, int retryCount = 0)
+        //{
+        //    var response = new VoiceResponse();
+        //    try
+        //    {
+        //        //if (!string.IsNullOrEmpty(recipientName))
+        //        //{
+        //        //    HttpContext.Session.SetString("recipientName", recipientName);
+
+        //        //}
+        //        //else
+        //        //{
+        //        //    HttpContext.Session.SetString("recipientName", "abc");
+
+        //        //}
+        //        //if (!string.IsNullOrEmpty(interviewDate))
+        //        //{
+        //        //    HttpContext.Session.SetString("interviewDate", interviewDate);
+
+                //}
+
+                //var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailabilityTesting";
+                var link = "https://portal.risebird.io/TwilioVoice/Show";
+                var actionUri = new Uri(link);
+                var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
+                                                                                     //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
+                gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
+                response.Append(gather);
+
+                if (retryCount < 2)
+                {
+                    response.Say("You did not press any key. Let me repeat the options.");
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={recipientName}&irfId={irfId}&retryCount={retryCount + 1}"));
+                }
+                else
+                {
+                    response.Say("No input received. Goodbye.");
+                    response.Hangup();
+                }
+
+                return TwiML(response);
+            }
+            catch (Exception ex)
+            {
+                response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
+
+
         }
 
         //[HttpPost("IvrInterviewerAvailabilityTesting")]
@@ -92,7 +150,7 @@ namespace Risebird.Web.Controllers
         //        //    HttpContext.Session.SetString("interviewDate", "fasd");
 
         //        //}
-                
+
         //        var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailabilityTesting";
         //        var actionUri = new Uri(link);
         //        var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
@@ -218,7 +276,7 @@ namespace Risebird.Web.Controllers
         //            HttpContext.Session.SetString("interviewDate", "fasd");
 
         //        }
-                
+
         //        var link = "https://portal.risebird.io/TwilioVoice/Show";
         //        var actionUri = new Uri(link);
         //        var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
@@ -247,43 +305,43 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        //[HttpPost]
-        //public IActionResult Show(string digits)
-        //{
-        //    try
-        //    {
-        //        string recName = "aefe";
-        //        string intervDate = "sdfawe";
-        //        if (HttpContext.Session.GetString("recipientName") != null)
-        //        {
-        //            recName = HttpContext.Session.GetString("recipientName");
+        [HttpPost]
+        public IActionResult Show(string digits)
+        {
+            try
+            {
+                string recName = "aefe";
+                string intervDate = "sdfawe";
+                if (HttpContext.Session.GetString("recipientName") != null)
+                {
+                    recName = HttpContext.Session.GetString("recipientName");
 
-        //        }
-        //        if (HttpContext.Session.GetString("interviewDate") != null)
-        //        {
-        //            intervDate = HttpContext.Session.GetString("interviewDate");
+                }
+                if (HttpContext.Session.GetString("interviewDate") != null)
+                {
+                    intervDate = HttpContext.Session.GetString("interviewDate");
 
-        //        }
-        //        var selectedOption = digits;
-        //        var optionActions = new Dictionary<string, Func<TwiMLResult>>()
-        //    {
-        //        {"1", ReturnInstructions},
-        //        {"2", Planets}
-        //    };
+                }
+                var selectedOption = digits;
+                var optionActions = new Dictionary<string, Func<TwiMLResult>>()
+            {
+                {"1", ReturnInstructions},
+                {"2", Planets}
+            };
 
-        //        return optionActions.ContainsKey(selectedOption) ?
-        //            optionActions[selectedOption]() :
-        //            RedirectToAction("IvrInterviewerAvailabilityTesting", new { recipientName = recName, interviewDate = intervDate });
-        //    }
-        //    catch (Exception ex)
-        //    {
+                return optionActions.ContainsKey(selectedOption) ?
+                    optionActions[selectedOption]() :
+                    RedirectToAction("IvrInterviewerAvailabilityTesting", new { recipientName = recName, interviewDate = intervDate });
+            }
+            catch (Exception ex)
+            {
 
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        var response = new VoiceResponse();
-        //        response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
-        //        return TwiML(response);
-        //    }
-        //}
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var response = new VoiceResponse();
+                response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
+        }
 
         [HttpPost("IvrInterviewerAvailability")]
         public async Task<TwiMLResult> IVRResponse(string interviewerEmailId, int irfId, string jdTitle, int assessmentGroupId, int retryCount)// string uniqueId, 
