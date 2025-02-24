@@ -118,7 +118,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
-                        await _twilioHelper.MakeIVRCall("+918888571923", "Harshit", "Dated", string.Empty);
+                        //await _twilioHelper.MakeIVRCall("+918888571923", "Harshit", "Dated", string.Empty);
                         var model = new IRFViewModel();
                         IRFFilter filter = null;
                         if (HttpContext.Session.GetString("IRFfilters") != null)
