@@ -62,26 +62,26 @@ namespace Risebird.Web.Controllers
             var response = new VoiceResponse();
             try
             {
-                if (!string.IsNullOrEmpty(recipientName))
-                {
-                    HttpContext.Session.SetString("recipientName", recipientName);
+                //if (!string.IsNullOrEmpty(recipientName))
+                //{
+                //    HttpContext.Session.SetString("recipientName", recipientName);
 
-                }
-                else
-                {
-                    HttpContext.Session.SetString("recipientName", "abc");
+                //}
+                //else
+                //{
+                //    HttpContext.Session.SetString("recipientName", "abc");
 
-                }
-                if (!string.IsNullOrEmpty(interviewDate))
-                {
-                    HttpContext.Session.SetString("interviewDate", interviewDate);
+                //}
+                //if (!string.IsNullOrEmpty(interviewDate))
+                //{
+                //    HttpContext.Session.SetString("interviewDate", interviewDate);
 
-                }
-                else
-                {
-                    HttpContext.Session.SetString("interviewDate", "fasd");
+                //}
+                //else
+                //{
+                //    HttpContext.Session.SetString("interviewDate", "fasd");
 
-                }
+                //}
                 
                 var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailabilityTesting";
                 var actionUri = new Uri(link);
