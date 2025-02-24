@@ -141,7 +141,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
 
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
                 response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
                 return TwiML(response);
@@ -155,7 +155,6 @@ namespace Risebird.Web.Controllers
             string recipientName = "interviewer";
             try
             {
-                string recipientName = "interviewer";
                 HttpContext.Session.SetString("recipientName", recipientName);
 
                 //if (!string.IsNullOrEmpty(recipientName))
@@ -347,7 +346,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
 
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
                 response.Say($"Error in ReturnInstructions with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
                 return TwiML(response);
@@ -385,7 +384,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
 
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
                 response.Say($"Error in Planets with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
                 return TwiML(response);
