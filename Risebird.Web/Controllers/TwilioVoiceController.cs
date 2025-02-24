@@ -55,8 +55,9 @@ namespace Risebird.Web.Controllers
             response.Say(message);
             return TwiML(response);
         }
+
         [HttpPost("IvrInterviewerAvailabilityTesting")]
-        public async Task<TwiMLResult> IVRResponseTesting(string recipientName, string interviewDate, int retryCount)
+        public async Task<TwiMLResult> IvrInterviewerAvailabilityTesting(string recipientName, string interviewDate, int retryCount)
         {
             var response = new VoiceResponse();
             try
@@ -82,7 +83,7 @@ namespace Risebird.Web.Controllers
 
                 }
                 
-                var link = "https://portal.risebird.io/TwilioVoice/Show";
+                var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailabilityTesting";
                 var actionUri = new Uri(link);
                 var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
                 //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
@@ -111,8 +112,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Show(string digits)
+        public IActionResult handlekeyInterviewerAvailabilityTesting(string digits)
         {
+
             try
             {
                 string recName = "aefe";
@@ -140,13 +142,138 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
-                response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                response.Say($"Error in handle key Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
                 return TwiML(response);
             }
         }
+
+        private TwiMLResult ReturnInstructions()
+        {
+            var response = new VoiceResponse();
+            response.Say("You chose instructions",
+                         voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+
+            response.Say("Thank you for calling the E.T. Phone Home Service - the " +
+                         "adventurous alien's first choice in intergalactic travel. Good bye.");
+
+            response.Hangup();
+
+            return TwiML(response);
+        }
+
+        private TwiMLResult Planets()
+        {
+            var response = new VoiceResponse();
+            //var gather = new Gather(action: Url.ActionUri("Interconnect", "PhoneExchange"), numDigits: 1);
+            //gather.Say("To call the planet Broh doe As O G, press 2. To call the planet " +
+            //         "DuhGo bah, press 3. To call an oober asteroid to your location, press 4. To " +
+            //         "go back to the main menu, press the star key ",
+            //         voice: Say.VoiceEnum.PollyAmy, language: "en-GB", loop: 3);
+            //response.Append(gather);
+            response.Say("You chose Planets",
+                         voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+
+            return TwiML(response);
+        }
+
+
+
+
+
+        //[HttpPost("IvrInterviewerAvailabilityTesting")]
+        //public async Task<TwiMLResult> IVRResponseTesting(string recipientName, string interviewDate, int retryCount)
+        //{
+        //    var response = new VoiceResponse();
+        //    try
+        //    {
+        //        if (!string.IsNullOrEmpty(recipientName))
+        //        {
+        //            HttpContext.Session.SetString("recipientName", recipientName);
+
+        //        }
+        //        else
+        //        {
+        //            HttpContext.Session.SetString("recipientName", "abc");
+
+        //        }
+        //        if (!string.IsNullOrEmpty(interviewDate))
+        //        {
+        //            HttpContext.Session.SetString("interviewDate", interviewDate);
+
+        //        }
+        //        else
+        //        {
+        //            HttpContext.Session.SetString("interviewDate", "fasd");
+
+        //        }
+                
+        //        var link = "https://portal.risebird.io/TwilioVoice/Show";
+        //        var actionUri = new Uri(link);
+        //        var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
+        //        //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
+        //        gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
+        //        response.Append(gather);
+
+        //        if (retryCount < 2)
+        //        {
+        //            response.Say("You did not press any key. Let me repeat the options.");
+        //            response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailabilityTesting?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
+        //        }
+        //        else
+        //        {
+        //            response.Say("No input received. Goodbye.");
+        //            response.Hangup();
+        //        }
+
+        //        return TwiML(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+        //        return TwiML(response);
+        //    }
+        //}
+
+        //[HttpPost]
+        //public IActionResult Show(string digits)
+        //{
+        //    try
+        //    {
+        //        string recName = "aefe";
+        //        string intervDate = "sdfawe";
+        //        if (HttpContext.Session.GetString("recipientName") != null)
+        //        {
+        //            recName = HttpContext.Session.GetString("recipientName");
+
+        //        }
+        //        if (HttpContext.Session.GetString("interviewDate") != null)
+        //        {
+        //            intervDate = HttpContext.Session.GetString("interviewDate");
+
+        //        }
+        //        var selectedOption = digits;
+        //        var optionActions = new Dictionary<string, Func<TwiMLResult>>()
+        //    {
+        //        {"1", ReturnInstructions},
+        //        {"2", Planets}
+        //    };
+
+        //        return optionActions.ContainsKey(selectedOption) ?
+        //            optionActions[selectedOption]() :
+        //            RedirectToAction("IvrInterviewerAvailabilityTesting", new { recipientName = recName, interviewDate = intervDate });
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        var response = new VoiceResponse();
+        //        response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+        //        return TwiML(response);
+        //    }
+        //}
 
         [HttpPost("IvrInterviewerAvailability")]
         public async Task<TwiMLResult> IVRResponse(string interviewerEmailId, int irfId, string jdTitle, int assessmentGroupId, int retryCount)// string uniqueId, 
@@ -315,81 +442,81 @@ namespace Risebird.Web.Controllers
         }
 
         
-        private TwiMLResult ReturnInstructions()
-        {
+        //private TwiMLResult ReturnInstructions()
+        //{
 
-            try
-            {
-                string recName = "lala";
-                string intervDate = "sdfawe";
-                if (HttpContext.Session.GetString("recipientName") != null)
-                {
-                    recName = HttpContext.Session.GetString("recipientName");
+        //    try
+        //    {
+        //        string recName = "lala";
+        //        string intervDate = "sdfawe";
+        //        if (HttpContext.Session.GetString("recipientName") != null)
+        //        {
+        //            recName = HttpContext.Session.GetString("recipientName");
 
-                }
-                if (HttpContext.Session.GetString("interviewDate") != null)
-                {
-                    intervDate = HttpContext.Session.GetString("interviewDate");
+        //        }
+        //        if (HttpContext.Session.GetString("interviewDate") != null)
+        //        {
+        //            intervDate = HttpContext.Session.GetString("interviewDate");
 
-                }
-                var response = new VoiceResponse();
-                response.Say($"You chose instructions and {recName}",
-                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+        //        }
+        //        var response = new VoiceResponse();
+        //        response.Say($"You chose instructions and {recName}",
+        //                     voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
 
-                response.Say("Thank you for calling the E.T. Phone Home Service - the " +
-                             "adventurous alien's first choice in intergalactic travel. Good bye.");
+        //        response.Say("Thank you for calling the E.T. Phone Home Service - the " +
+        //                     "adventurous alien's first choice in intergalactic travel. Good bye.");
 
-                response.Hangup();
+        //        response.Hangup();
 
-                return TwiML(response);
-            }
-            catch (Exception ex)
-            {
+        //        return TwiML(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                var response = new VoiceResponse();
-                response.Say($"Error in ReturnInstructions with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
-                return TwiML(response);
-            }
-        }
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        var response = new VoiceResponse();
+        //        response.Say($"Error in ReturnInstructions with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+        //        return TwiML(response);
+        //    }
+        //}
 
-        private TwiMLResult Planets()
-        {
-            try
-            {
-                string recName = "lala";
-                string intervDate = "sdfawe";
-                if (HttpContext.Session.GetString("recipientName") != null)
-                {
-                    recName = HttpContext.Session.GetString("recipientName");
+        //private TwiMLResult Planets()
+        //{
+        //    try
+        //    {
+        //        string recName = "lala";
+        //        string intervDate = "sdfawe";
+        //        if (HttpContext.Session.GetString("recipientName") != null)
+        //        {
+        //            recName = HttpContext.Session.GetString("recipientName");
 
-                }
-                if (HttpContext.Session.GetString("interviewDate") != null)
-                {
-                    intervDate = HttpContext.Session.GetString("interviewDate");
+        //        }
+        //        if (HttpContext.Session.GetString("interviewDate") != null)
+        //        {
+        //            intervDate = HttpContext.Session.GetString("interviewDate");
 
-                }
-                var response = new VoiceResponse();
-                //var gather = new Gather(action: Url.ActionUri("Interconnect", "PhoneExchange"), numDigits: 1);
-                //gather.Say("To call the planet Broh doe As O G, press 2. To call the planet " +
-                //         "DuhGo bah, press 3. To call an oober asteroid to your location, press 4. To " +
-                //         "go back to the main menu, press the star key ",
-                //         voice: Say.VoiceEnum.PollyAmy, language: "en-GB", loop: 3);
-                //response.Append(gather);
-                response.Say($"You chose Planets and {recName}",
-                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+        //        }
+        //        var response = new VoiceResponse();
+        //        //var gather = new Gather(action: Url.ActionUri("Interconnect", "PhoneExchange"), numDigits: 1);
+        //        //gather.Say("To call the planet Broh doe As O G, press 2. To call the planet " +
+        //        //         "DuhGo bah, press 3. To call an oober asteroid to your location, press 4. To " +
+        //        //         "go back to the main menu, press the star key ",
+        //        //         voice: Say.VoiceEnum.PollyAmy, language: "en-GB", loop: 3);
+        //        //response.Append(gather);
+        //        response.Say($"You chose Planets and {recName}",
+        //                     voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
 
-                return TwiML(response);
-            }
-            catch (Exception ex)
-            {
+        //        return TwiML(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                var response = new VoiceResponse();
-                response.Say($"Error in Planets with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
-                return TwiML(response);
-            }
-        }
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        var response = new VoiceResponse();
+        //        response.Say($"Error in Planets with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+        //        return TwiML(response);
+        //    }
+        //}
         private async Task<TwiMLResult> UpdateInterviewerAvailbilityStatusForIRF(int status)
         {
             //check link expiry befire hitting db
