@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost("IvrInterviewerAvailabilityTesting")]
-        public async Task<TwiMLResult> IvrInterviewerAvailabilityTesting(string recipientName, string interviewDate, int retryCount)
+        public async Task<TwiMLResult> IvrInterviewerAvailabilityTesting(string recipientName, string interviewDate, int retryCount = 0)
         {
             var response = new VoiceResponse();
             try
@@ -93,7 +93,7 @@ namespace Risebird.Web.Controllers
                 if (retryCount < 2)
                 {
                     response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/IvrInterviewerAvailabilityTesting?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
                 }
                 else
                 {
@@ -111,8 +111,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult handlekeyInterviewerAvailabilityTesting(string digits)
+        [HttpPost("handlekeyInterviewerAvailabilityTesting")]
+        public IActionResult HandleKeyInterviewerAvailabilityTesting([FromForm] string digits)
         {
 
             try
