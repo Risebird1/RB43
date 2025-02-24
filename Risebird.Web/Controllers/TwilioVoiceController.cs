@@ -56,60 +56,70 @@ namespace Risebird.Web.Controllers
             return TwiML(response);
         }
 
-        [HttpPost("IvrInterviewerAvailabilityTesting")]
-        public async Task<TwiMLResult> IvrInterviewerAvailabilityTesting(string recipientName, string interviewDate, int retryCount = 0)
+        [HttpPost]
+        public TwiMLResult IvrInterviewerAvailabilityTesting(string recipientName, string interviewdate)
         {
             var response = new VoiceResponse();
-            try
-            {
-                //if (!string.IsNullOrEmpty(recipientName))
-                //{
-                //    HttpContext.Session.SetString("recipientName", recipientName);
-
-                //}
-                //else
-                //{
-                //    HttpContext.Session.SetString("recipientName", "abc");
-
-                //}
-                //if (!string.IsNullOrEmpty(interviewDate))
-                //{
-                //    HttpContext.Session.SetString("interviewDate", interviewDate);
-
-                //}
-                //else
-                //{
-                //    HttpContext.Session.SetString("interviewDate", "fasd");
-
-                //}
-                
-                var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailabilityTesting";
-                var actionUri = new Uri(link);
-                var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
-                //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
-                gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
-                response.Append(gather);
-
-                if (retryCount < 2)
-                {
-                    response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
-                }
-                else
-                {
-                    response.Say("No input received. Goodbye.");
-                    response.Hangup();
-                }
-
-                return TwiML(response);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
-                return TwiML(response);
-            }
+            var message = string.Format("Dear {0}! Empty function worked. Greetings from RiseBird. This is to remind you that your interview is scheduled at {1}. Please confirm your availability by responding to the mail.",
+                recipientName, interviewdate);
+            response.Say(message);
+            return TwiML(response);
         }
+
+        //[HttpPost("IvrInterviewerAvailabilityTesting")]
+        //public async Task<TwiMLResult> IvrInterviewerAvailabilityTesting(string recipientName, string interviewDate, int retryCount = 0)
+        //{
+        //    var response = new VoiceResponse();
+        //    try
+        //    {
+        //        //if (!string.IsNullOrEmpty(recipientName))
+        //        //{
+        //        //    HttpContext.Session.SetString("recipientName", recipientName);
+
+        //        //}
+        //        //else
+        //        //{
+        //        //    HttpContext.Session.SetString("recipientName", "abc");
+
+        //        //}
+        //        //if (!string.IsNullOrEmpty(interviewDate))
+        //        //{
+        //        //    HttpContext.Session.SetString("interviewDate", interviewDate);
+
+        //        //}
+        //        //else
+        //        //{
+        //        //    HttpContext.Session.SetString("interviewDate", "fasd");
+
+        //        //}
+                
+        //        var link = "https://portal.risebird.io/TwilioVoice/handlekeyInterviewerAvailabilityTesting";
+        //        var actionUri = new Uri(link);
+        //        var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);//new Uri(Url.Action("Show", "Menu"))
+        //        //var gather = new Gather(action: new Uri(Url.Action("handlekeyInterviewerAvailability", "TwilioVoice")), numDigits: 1, timeout : 5);//new Uri(Url.Action("Show", "Menu"))
+        //        gather.Say("Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview over the next two days. Press 1 if Yes. Press 2 if Not Available. Press 3 to Drop your profile.");
+        //        response.Append(gather);
+
+        //        if (retryCount < 2)
+        //        {
+        //            response.Say("You did not press any key. Let me repeat the options.");
+        //            response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={recipientName}&interviewDate={interviewDate}&retryCount={retryCount + 1}"));
+        //        }
+        //        else
+        //        {
+        //            response.Say("No input received. Goodbye.");
+        //            response.Hangup();
+        //        }
+
+        //        return TwiML(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+        //        return TwiML(response);
+        //    }
+        //}
 
         [HttpPost("handlekeyInterviewerAvailabilityTesting")]
         public IActionResult HandleKeyInterviewerAvailabilityTesting([FromForm] string digits)
