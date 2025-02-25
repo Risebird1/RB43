@@ -299,44 +299,36 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string recipientName,  string uniqueId, int irfId, string jdTitle, int assessmentGroupId, string interviewerEmailId)
+        public async Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string uniqueId, int irfId, string jdTitle, int assessmentGroupId)
         {
             try
             {
-                if(!string.IsNullOrEmpty(userPhoneNumber) && !string.IsNullOrEmpty(uniqueId))
+                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
+
+                var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
+
+                var url = new Uri(link);
+
+                var call = await CallResource.CreateAsync(
+                    to: new PhoneNumber(userPhoneNumber),
+                    from: new PhoneNumber(_twilioCallerNumber),
+                    url: url // Replace with your public endpoint
+                );
+
+                if (call.Status != null)
                 {
-                    jdTitle = jdTitle.Replace(" ", string.Empty);
-                    TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-
-                    //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&uniqueId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", recipientName ?? "interviewer", uniqueId, irfId, jdTitle, assessmentGroupId);
-                    //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?recipientName={0}&interviewerEmailId={1}&irfId={2}&jdTitle={3}&assessmentGroupId={4}&retryCount=0", recipientName ?? "interviewer", interviewerEmailId, irfId, jdTitle, assessmentGroupId);
-                    var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?interviewerEmailId={0}&irfId={1}&jdTitle={2}&assessmentGroupId={3}&retryCount=0", interviewerEmailId, irfId, jdTitle, assessmentGroupId);
-                    //link = link.Replace(" ", string.Empty);
-                    var url = new Uri(link);
-
-                    var call = await CallResource.CreateAsync(
-                        to: new PhoneNumber(userPhoneNumber),
-                        from: new PhoneNumber(_twilioCallerNumber),
-                        url: url // Replace with your public endpoint
-                    );
-
-                    if (call.Status != null)
+                    var result = call.Status.ToString();
+                    if (result != CallResource.StatusEnum.Failed.ToString())
                     {
-                        var result = call.Status.ToString();
-                        if (result != CallResource.StatusEnum.Failed.ToString())
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                    return true;
+                    else
+                    {
+                        return false;
+                    }
                 }
-
-                return false;
-                
+                return true;
             }
             catch (Exception ex)
             {
