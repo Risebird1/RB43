@@ -494,6 +494,8 @@ namespace Risebird.Web.Controllers
                 //    return Json("Failed to update status, Please try again");
                 //}
 
+                response.Say($"result is {result.Item1} and mailId is {result.Item2}");
+
                 response.Say("Thank you for submitting your response. Good bye.");
 
                 response.Hangup();
@@ -556,6 +558,7 @@ namespace Risebird.Web.Controllers
 
                 var result = _meetingService.UpdateInterviewerAvailbilityStatusForAssessmentGroup(status == 1 ? true : false, unqId, assessmentGroupId, "ivr").Result;
 
+                response.Say($"result is {result}");
                 response.Say("Thank you for submitting your response. Good bye.");
 
                 response.Hangup();
