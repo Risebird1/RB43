@@ -459,7 +459,8 @@ namespace Risebird.Web.Controllers
                     response.Say("You chose Drop My Profile",
                              voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 }
-
+                response.Say($"the irfId is {irfintId} and {unqId}",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 //string recName = "interviewer";
                 //string unqId = string.Empty;
                 //string emailId = string.Empty;
@@ -524,6 +525,8 @@ namespace Risebird.Web.Controllers
                     response.Say("You chose Not Available",
                              voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 }
+                response.Say($"the assessmentgroupid is {assessmentGroupId} and {unqId}",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 //else if (status == 4)
                 //{
                 //    response.Say("You chose Drop My Profile",
