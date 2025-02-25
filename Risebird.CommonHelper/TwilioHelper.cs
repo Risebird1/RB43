@@ -258,8 +258,15 @@ namespace Risebird.CommonHelper
             try
             {
                 TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                var uniqueId = "5DF6F746-A820-4129-BE42-34970C6679E7";
+                var irfId = 10681;
+                int assessmentGroupId = 0;
+                string jdTitle = "Python Developer";
+                jdTitle = jdTitle?.Trim()?.Replace(" ", "_")?.Replace("/", "_");
 
-                var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&irfId={1}", recipientName, interviewDate);
+                var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
+
+                //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&irfId={1}", recipientName, interviewDate);
                 //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&interviewDate={1}", recipientName, interviewDate);
 
                 //var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", "FirstName", "interviewdate");
