@@ -16,7 +16,17 @@
             <label for="Q1_1" class="star"></label>
             <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
         </div>
-        <p style="color: lightslategrey;font-size: 14.5px;line-height: 25px;">Please rate this interview to Generate PDF and Shareable link.</p>
+        <p style="color: lightslategrey;font-size: 15px;line-height: 25px;">Please rate this interview to Generate PDF and Shareable link.</p>
+
+        @if (ViewBag.ClientRole == "Reviewer")
+        {
+            <h2 style="font-size: 14px; padding: 10px 0px 10px 0px;margin: 0px;position: relative;left: -124px;color: #a19696;">Enter Your Comments:</h2>
+            <input style="margin-bottom:7px;height:60px;" class="input-comment" type="text" name="FeedBackComment" id="FeedBackComment" value="@Model.FeedBackComment" />
+        }
+        else
+        {
+            @Html.HiddenFor(m => m.FeedBackComment)
+        }
     </div>
     <div id="ClientInterviewFeedbackHide" class="ClientInterviewFeedbackHide" style="display:none;">
         <hr class="divider" style="background-color: #b5afaf;" />
@@ -961,12 +971,14 @@
                         @Html.HiddenFor(m => m.PoorFeedbackComments)
                         @Html.HiddenFor(m => m.WrongStatusUpdates)
                         @Html.HiddenFor(m => m.ProctoringIgnorance)
+                        @Html.HiddenFor(m => m.FeedBackComment)
                     }
 
                 </div>
             </div>
         </div>
     </div>
+
     <div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none;position:relative;top:4px;margin-bottom:20px;">
         <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
     </div>
@@ -1029,6 +1041,7 @@
             var PoorFeedbackComments = $("#PoorFeedbackComments").val();
             var WrongStatusUpdates = $("#WrongStatusUpdates").val();
             var ProctoringIgnorance = $("#ProctoringIgnorance").val();
+            var FeedBackComment = $("#FeedBackComment").val();
             if ((parseInt($("#PaymentComplianceCount").val()) > 0 && parseInt($("#Rating").val()) < 5) || parseInt($("#Rating").val()) == 5) {
                 $.ajax({
                     type: "POST",
@@ -1048,7 +1061,8 @@
                         ScoreRubricIgnorance: ScoreRubricIgnorance,
                         PoorFeedbackComments: PoorFeedbackComments,
                         WrongStatusUpdates: WrongStatusUpdates,
-                        ProctoringIgnorance: ProctoringIgnorance
+                        ProctoringIgnorance: ProctoringIgnorance,
+                        FeedBackComment:FeedBackComment
                     },
                     url: "/Interview/ClientInterviewReview",
                     success: function (result) {

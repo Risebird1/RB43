@@ -36,7 +36,8 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @Recommendation varchar(15),  
 @RecommendationComments varchar(500),  
 @InterviewerVideo varchar(250) , 
-@CorrectInterview varchar(15)  
+@CorrectInterview varchar(15),
+@FeedBackComment varchar(max)
 AS    
 BEGIN    
 Declare @Userid int         
@@ -92,7 +93,7 @@ end
 if(@Rating>0)    
 begin    
 Update InterviewComments set ReportAccepted=1,ReportAcceptedBy=@Emailid where Interviewid=@Interviewid    
-Insert into ClientCommentsForReport(Comment, InterviewId, CreatedBy, CreatedAt, Rating) values ('', @Interviewid, @Emailid, @CreatedOn, @Rating)      
+Insert into ClientCommentsForReport(Comment, InterviewId, CreatedBy, CreatedAt, Rating) values (@FeedBackComment, @Interviewid, @Emailid, @CreatedOn, @Rating)      
 end 
 if(@InterviewerVideo like '%Video Off When Mandatory%')
 begin

@@ -80,6 +80,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerVideo { get; set; }
         [Display(Name = "Correct Interview flow followed")]
         public string CorrectInterview{ get; set; }
+        public string FeedBackComment{ get; set; }
     }
     public class PaymentSlabsVM
     {
