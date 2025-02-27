@@ -318,7 +318,8 @@
                                                     }
 
                                                     @if (ViewBag.actionstatus == "QCPendingReport")
-                                                    {  <th>Interview Duration</th>
+                                                    {
+                                                        <th>Interview Duration</th>
                                                         <th>Interviewer Joinedon</th>
 
                                                     }
@@ -458,7 +459,7 @@
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
-                                                       
+
                                                         <th>Interviewer Details</th>
                                                         <th>Interviewer Contact</th>
                                                         <th>Resume</th>
@@ -483,6 +484,7 @@
                                                     {
                                                         <th>Payment Compliance</th>
                                                         <th>Rating</th>
+                                                        <th>Comment</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
                                                         <th>Payment SLA Status</th>
@@ -550,7 +552,8 @@
                                                     }
 
                                                     @if (ViewBag.actionstatus == "QCPendingReport")
-                                                    {     <th>Interview Duration</th>
+                                                    {
+                                                        <th>Interview Duration</th>
                                                         <th>Interviewer Joinedon</th>
 
                                                     }
@@ -702,7 +705,7 @@
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
-                                                       
+
 
                                                         <th>Interviewer Details</th>
                                                         <th>Interviewer Contact</th>
@@ -727,6 +730,7 @@
                                                     {
                                                         <th>Payment Compliance</th>
                                                         <th>Rating</th>
+                                                        <th>Comment</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
                                                         <th>Payment SLA Status</th>
@@ -1717,25 +1721,25 @@
                                                         @*@if ((ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))*@
 
 
-                                                       
-                                                           
-                                                            @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
+
+
+                                                        @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                         {
                                                             <td>
                                                                 <span class="name-field" style="display:block">@item.InterviewerName</span>
                                                                 <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:1px; padding-right:6px;"></i>@item.InterviewerEmailId</span>
                                                             </td>
-                                                            
-                                                            
+
+
                                                             @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
                                                             {
                                                                 <td>
-      
-                                                      <span class="call-area">
-                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" data-bs-original-title="Click here to call the interviewer." aria-label="Click here to call the interviewer."><img src="/img/calling.png" width="18"></span>
-                                                            </span>@item.InterviewerMobileNumber
 
-                                                                    
+                                                                    <span class="call-area">
+                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" data-bs-original-title="Click here to call the interviewer." aria-label="Click here to call the interviewer."><img src="/img/calling.png" width="18"></span>
+                                                                    </span>@item.InterviewerMobileNumber
+
+
                                                                 </td>
                                                             }
                                                             else
@@ -1861,6 +1865,33 @@
                                                                         }
                                                                     }
                                                                 </div>
+                                                            </td>
+                                                            <td>
+                                                                @if (item.Comment != null && item.Comment != "")
+                                                                {
+                                                                    @if (item.Comment.Length > 30)
+                                                                    {
+                                                                        <div class="article">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.Comment.Substring(0, 30)
+                                                                            </p>
+                                                                            <p class="moretext_comment_@item.Interviewid moretext">
+                                                                                @item.Comment.Substring(30, @item.Comment.Length - 30)
+                                                                            </p>
+                                                                            <a onclick="morelesscomment(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_comment_@item.Interviewid" href="#">Read more</a>
+
+                                                                        </div>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article">
+                                                                            <p>
+                                                                                @item.Comment.Substring(0, @item.WhoJoined.Length)
+                                                                            </p>
+                                                                        </div>
+                                                                    }
+                                                                }
                                                             </td>
                                                             <td>@item.RateAddedBy</td>
                                                             <td>@item.RateAddedOn</td>
@@ -2376,6 +2407,16 @@
         } else {
             $('#read_' + id).empty().html('Read less');
             $('#read_' + id).val('Readmore');
+        }
+    }
+    function morelesscomment(id) {
+        $('.moretext_comment_' + id).slideToggle();
+        if ($('#read_comment_' + id).val() == 'Readmore') {
+            $('#read_comment_' + id).empty().html('Read more');
+            $('#read_comment_' + id).val('Readless');
+        } else {
+            $('#read_comment_' + id).empty().html('Read less');
+            $('#read_comment_' + id).val('Readmore');
         }
     }
 

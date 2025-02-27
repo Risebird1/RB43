@@ -310,25 +310,29 @@ namespace Risebird.CommonHelper
 
                 var url = new Uri(link);
 
-                var call = await CallResource.CreateAsync(
-                    to: new PhoneNumber(userPhoneNumber),
-                    from: new PhoneNumber(_twilioCallerNumber),
-                    url: url // Replace with your public endpoint
-                );
+                    var call = await CallResource.CreateAsync(
+                        to: new PhoneNumber(userPhoneNumber),
+                        from: new PhoneNumber(_twilioCallerNumber),
+                        url: url // Replace with your public endpoint
+                    );
 
-                if (call.Status != null)
-                {
-                    var result = call.Status.ToString();
-                    if (result != CallResource.StatusEnum.Failed.ToString())
+                    if (call.Status != null)
                     {
-                        return true;
+                        var result = call.Status.ToString();
+                        if (result != CallResource.StatusEnum.Failed.ToString())
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
                 }
-                return true;
+
+                return false;
+                
             }
             catch (Exception ex)
             {

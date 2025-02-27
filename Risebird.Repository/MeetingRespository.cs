@@ -6891,6 +6891,7 @@ namespace Risebird.Repository
                     parameters.Add("@RecommendationComments", model.RecommendationComments);
                     parameters.Add("@InterviewerVideo", model.InterviewerVideo);
                     parameters.Add("@CorrectInterview", model.CorrectInterview);
+                    parameters.Add("@FeedBackComment", model.FeedBackComment);
 
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);

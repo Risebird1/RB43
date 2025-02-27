@@ -8404,6 +8404,14 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ClientInterviewReview(int id, int actionType)
         {
+            var emailId = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var client = await _userRepository.GetClientUserDetails(emailId);
+                ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
+            }
             var model = new PaymentSLAVM();
             model.Interviewid = id;
             await SetInitialValue(model);
