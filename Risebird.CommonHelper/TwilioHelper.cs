@@ -328,10 +328,9 @@ namespace Risebird.CommonHelper
                             return false;
                         }
                     }
-                    return true;
-                }
 
-                return false;
+                return true;
+                
                 
             }
             catch (Exception ex)
