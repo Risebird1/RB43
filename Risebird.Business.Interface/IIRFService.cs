@@ -200,5 +200,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
         Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser);
         Task<bool> AddIRFInterviewersV2(List<TransInterviewer> interviewers, string loggedInUser);
+        Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL);
+        Task<string> GetVideoConsentForm(int irfid);
     }
 }

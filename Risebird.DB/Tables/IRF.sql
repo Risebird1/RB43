@@ -63,6 +63,9 @@ CREATE TABLE [dbo].[IRF](
             [IsVideoRequired] [bit] null,
             [TechRubricType] [VARCHAR](20) null,
             [RequestId] [NVARCHAR](50) null,
+            [CandidateIdverification] [bit] null,
+            [CodeSnippetRequired] [bit] null,
+            [CandidateVideo] [VARCHAR](1000) null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -566,6 +569,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add RequestId NVARCHAR(50)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateIdverification')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CandidateIdverification bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodeSnippetRequired')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CodeSnippetRequired bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateVideo')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CandidateVideo varchar(1000)
 END
 
 END

@@ -810,7 +810,7 @@ namespace Risebird.Web.Controllers
                             employementdetails.CompanyName = companyname;
                             if (model.summary != null)
                             {
-                                employementdetails.Isemployed = model.summary.isEmployed;
+                                employementdetails.Isemployed = !model.summary.dateOfExitMarked;
                             }
                             // employementdetails.message = "For this employment Company is in black list in our system.";
                         }
@@ -1155,7 +1155,7 @@ namespace Risebird.Web.Controllers
                 _interviewer.isVerified = true;
                 if (convertedResponse.summary != null)
                 {
-                    _interviewer.IsEmployed = convertedResponse.summary.isEmployed;
+                    _interviewer.IsEmployed = !convertedResponse.summary.dateOfExitMarked;
                     _interviewer.CompanyName = convertedResponse.summary.recentEmployerData.establishmentName;
                 }
                 else
@@ -1272,7 +1272,7 @@ namespace Risebird.Web.Controllers
                     _interviewer.isVerified = true;
                     if (convertedResponse.summary != null)
                     {
-                        _interviewer.IsEmployed = convertedResponse.summary.isEmployed;
+                        _interviewer.IsEmployed = !convertedResponse.summary.dateOfExitMarked;
                         _interviewer.CompanyName = convertedResponse.summary.recentEmployerData.establishmentName;
                     }
                     else

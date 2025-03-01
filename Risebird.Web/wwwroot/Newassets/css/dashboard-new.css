@@ -6615,8 +6615,8 @@ input[type=search]:focus {
 }
 
 .consent .form {
-    width: 470px;
-    margin: 0px 20px 10px 20px;
+    width: 437px;
+    margin: 9px 20px 0px 20px;
     float: left;
 }
 
@@ -8772,7 +8772,7 @@ ul.ks-cboxtags {
         }
 
         .interviewWrapper .question label {
-            font-size: 14px;
+            font-size: 15.3px;
             margin: 8px 5px 0px 5px;
             color: #817c7c;
             padding: 0px 10px;
@@ -8787,13 +8787,14 @@ ul.ks-cboxtags {
 .answer-label {
     width: 100%;
     font-size: 13px;
-    margin-bottom: 5px;
-    padding: 10px 0px 0px 10px;
+    margin-bottom:8px;
+    padding: 7px 0px 0px 10px;
 }
 
     .answer-label .heading {
         color: #949191;
         font-weight: 600;
+        font-size:14px;
     }
 
 .answer {
@@ -8882,7 +8883,7 @@ ul.ks-cboxtags {
         font-size: 15px !important;
         position: relative;
         left: -4px;
-        top: 2px;
+        top: 4px;
     }
 
 .tech-skill-button {
@@ -8904,8 +8905,8 @@ ul.ks-cboxtags {
     margin: 2px 5px;
     font: inherit;
     color: currentColor;
-    width: 1.15em;
-    height: 1.15em;
+    width: 1em;
+    height: 1em;
     border: 0.15em solid currentColor;
     border-radius: 0.15em;
     transform: translateY(-0.075em);
@@ -8914,8 +8915,8 @@ ul.ks-cboxtags {
 
     .format input[type="checkbox"]::before {
         content: "";
-        width: 0.65em;
-        height: 0.65em;
+        width: 0.45em;
+        height: 0.45em;
         transform: scale(0);
         transition: 120ms transform ease-in-out;
         box-shadow: inset 1em 1em var(--form-control-color);
@@ -8928,7 +8929,7 @@ ul.ks-cboxtags {
 .custom-select-dropdown {
     position: relative;
     left: 10px;
-    top: -18px;
+    top: -11px;
 }
 
 
@@ -9028,7 +9029,7 @@ option {
         font-size: 16px;
         position: relative;
         top: 12px;
-        right: -18px;
+        right: -6px;
     }
 
 .discretion {
@@ -11066,13 +11067,44 @@ section {
     padding: 5px 7px !important;
     font-weight: 700;
 }
-.input-comment {
-    width: 400px;
-    height: 60px;
+.num {
+    display: inline-block;
+    margin: 5px auto 10px;
+    background-color: #ededed;
+    border-color: #53a5f5 !important;
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    text-align: center;
+    font-weight: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: tomato;
+    border-radius: 50%;
+    top: 5px;
+    left: 3px;
+    float: left;
+    position: relative;
 }
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+.subheading-txt {
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 100%;
+    float: left;
+    border-bottom: 1px #c5b9b96e solid;
+    margin: 0px 10px 5px 10px;
+}
+.subheading-txt h2 {
+    float: left;
+    font-size: 15px;
+    padding: 10px 0px;
+    position: relative;
+    left:10px;
+    top:5px;
+    }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }

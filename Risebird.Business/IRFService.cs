@@ -4573,5 +4573,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL)
+        {
+            try
+            {
+                return await _irfRepository.UpdateVideoConsentFile(irfid, uploadedFileURL);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<string> GetVideoConsentForm(int irfid)
+        {
+            try
+            {
+                return await _irfRepository.GetVideoConsentForm(irfid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
