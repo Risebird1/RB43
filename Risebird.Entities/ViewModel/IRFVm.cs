@@ -270,6 +270,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("White Labling")]
         public bool IsWhiteLabling { get; set; }
         public string RequestId { get; set; }
+        public string CandidateVideo { get; set; }
     }
     public class InterviewerIds
     {

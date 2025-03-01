@@ -51,25 +51,31 @@
                                         }
 
                                     </div>
-                                    <div class="card">
-                                        <label class="question" for="checkbox_two">
-                                            <label for="checkbox_two">
-                                                <i class="fa fa-cogs" aria-hidden="true"></i>
-                                                Tech Skills
+                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                        <div class="card">
+                                            <label class="question" for="checkbox_two">
+                                                <label for="checkbox_two">
+                                                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                                                    Score Rubric Details
+                                                </label>
+                                                <span class="round">
+                                                    <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
+                                                    <span id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                                    <span id="hidden_fields_two_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                    @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                                </span>
                                             </label>
-                                            <span class="round">
-                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
-                                                <span id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                                                <span id="hidden_fields_two_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                                                @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
-                                            </span>
-                                        </label>
 
-                                        <fieldset class="answer hidden" id="hidden_fields_two">
-                                            @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
-                                            {
-                                                @Html.HiddenFor(m => m.SkillSetsevaluate)
-                                                <div>
+                                            <div class="answer hidden" id="hidden_fields_two">
+
+                                                @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
+                                                {
+                                                    @Html.HiddenFor(m => m.SkillSetsevaluate)
+                                                    <div class="subheading-txt">
+                                                        <span class="num">1</span>
+                                                        <h2>Tech Score Rubric with elimination skills </h2>
+                                                    </div>
+
                                                     <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
                                                         <div class="row">
                                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -96,7 +102,7 @@
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <th  class="table_heading" style="float:left">Is Elimination Skill</th>
+                                                                                    <th class="table_heading" style="float:left">Is Elimination Skill</th>
                                                                                 }
 
                                                                                 <th width="10%" class="table_heading text-center">Action</th>
@@ -172,7 +178,7 @@
                                                                                             @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                                                         </td> *@
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new {@style="font-weight:700;", @class = "weight form-control text-box single-line" } })
+                                                                                            @Html.EditorFor(m => m.SkillCollection[i].SkillName, new { htmlAttributes = new { @style = "font-weight:700;", @class = "weight form-control text-box single-line" } })
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1", @style = "font-weight:600" } })
@@ -310,236 +316,427 @@
 
                                                         </div>
                                                     </div>
-                                                </div>
-                                            }
-                                        </fieldset>
 
-                                    </div>
+                                                }
 
-                                </div>
+                                                <div class="col-md-6 pull-left" style="padding:10px 5px 0px 0px">
+                                                    <div class="subheading-txt">
+                                                        <span class="num">2</span>
+                                                        <h2>Level</h2>
+                                                    </div>
+                                                    <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="answer-label">
 
-                                @* Start:Candidate consent acknowledgement *@
-                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
-                                    <div class="card">
-                                        <label class="question" for="checkbox_eleven">
-                                            <label for="checkbox_eleven">
-                                                <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement<label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px;padding: 0px 10px 0px 4px;font-weight: 400;">This is to be shared with the candidate and their video consent to be recorded at the end of interview</label>
-                                            </label>
-                                            <span class="round">
-                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_eleven" name="question1" data-trigger="hidden_fields_eleven" />
-                                                <label class="edit-wrap" onclick="javascript:openPopupConsentModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label>
-                                                <span id="hidden_fields_eleven_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
-                                                <span id="hidden_fields_eleven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                                            </span>
-                                        </label>
-                                        <fieldset class="answer hidden" id="hidden_fields_eleven">
-                                            <div>
-                                                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                <div class="consent clearfix" id="divconcentform">
+                                                                    <div class="col-md-7 pull-left">
+                                                                        <span class="heading pull-left" style="padding-top: 10px;">Seniority</span>
+                                                                        <span class="custom-select-dropdown">
+                                                                            @Html.DropDownListFor(m => m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @onChange = "ChangeJobLevel()", @style = "width:150px;" })
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="col-md-5 pull-left">
+                                                                        <span class="heading pull-left" style="padding-top: 10px;"> Difficulty:</span> <span class="custom-select-dropdown">
+                                                                            <select id="Difficulty" onChange="ChangeDefautlevel()" style="width:105px;">
+                                                                                <option>Select</option>
+                                                                                <option value="60">60%</option>
+                                                                                <option value="70">70%</option>
+                                                                                <option value="80">80%</option>
+                                                                                <option value="90">90%</option>
+                                                                                <option value="99">99%</option>
+                                                                            </select>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                                @* End:Candidate consent acknowledgement *@
-                                @* Start:Interviewer *@
-                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
-                                    <div class="card">
-                                        <label class="question" for="checkbox_eight">
-                                            <label for="checkbox_eight">
-                                                <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
-                                                Interviewers
-                                            </label>
-                                            <span class="round">
-                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
-                                                <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                                                <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                                            </span>
-                                        </label>
 
-                                        <fieldset class="answer hidden" id="hidden_fields_eight">
-                                            <div>
-                                                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                @Html.HiddenFor(m => m.id)
-                                                                <table class="table table-bordered mbn" id="InterviewerTable">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
-                                                                            {
-                                                                                <th width="20%" class="table_heading">Email</th>
-                                                                            }
-                                                                            <th width="10%" class="table_heading">Resume</th>
-                                                                            <th width="20%" class="table_heading">Skills</th>
-                                                                            <th width="25%" class="table_heading">Company Name</th>
-                                                                            <th width="15%" class="table_heading">Client Action</th>
-                                                                            @* <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
-                                                                        <th width="10%" class="table_heading">Availability</th> *@
-                                                                            <th width="10%" class="table_heading text-center">Action</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
-                                                                        {
+
+                                                <div class="col-md-6 pull-left" style="padding:10px 0px 0px 5px">
+                                                    <div class="subheading-txt">
+                                                        <span class="num">3</span>
+                                                        <h2>Format</h2>
+                                                    </div>
+                                                    <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading pull-left">
+                                                                        <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;"> Coding</span>
+                                                                </div>
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading pull-left">
+                                                                        <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;"> Current project</span>
+                                                                </div>
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading  pull-left">
+                                                                        <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;"> Conceptual</span>
+                                                                </div>
+
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading pull-left">
+                                                                        <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:14px; padding-left:4px; line-height:17px;">  Scenario</span>
+                                                                </div>
+
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading pull-left">
+                                                                        <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:14px; padding-left:4px; line-height:17px;">System Design</span>
+                                                                </div>
+
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading pull-left">
+                                                                        <input style="position:relative;top:-3px;" type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:14px; padding-left:4px; line-height:12px;">People management</span>
+                                                                </div>
+                                                                <div class="format answer-label" style="float: left;width: auto;">
+                                                                    <span class="heading pull-left">
+                                                                        <input style="position:relative;top:-3px;" type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
+                                                                    </span><span class="pull-left" style="font-size:14px; padding-left:4px; line-height:12px;"> Client management</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+
+                                            </div>
+
+
+
+
+                                        </div>
+                                    </div>
+                                    @* Start:Candidate consent acknowledgement *@
+                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                        <div class="card">
+                                            <label class="question" for="checkbox_eleven">
+                                                <label for="checkbox_eleven">
+                                                    <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Checks @* <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px;padding: 0px 10px 0px 4px;font-weight: 400;">This is to be shared with the candidate and their video consent to be recorded at the end of interview</label> *@
+                                                </label>
+                                                <span class="round">
+                                                    <input type="checkbox" class="coupon_question trigger" id="checkbox_eleven" name="question1" data-trigger="hidden_fields_eleven" />
+                                                    @* <label class="edit-wrap" onclick="javascript:openPopupConsentModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label> *@
+                                                    <span id="hidden_fields_eleven_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+                                                    <span id="hidden_fields_eleven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                </span>
+                                            </label>
+                                            <fieldset class="answer hidden" id="hidden_fields_eleven">
+                                                <div class="col-md-6 pull-left" style="padding:10px 0px 0px 5px">
+                                                    <div class="subheading-txt">
+                                                        <span class="num">1</span>
+                                                        <h2>Candidate Job Consent Acknowledgement</h2>
+                                                        <span class="round">
+                                                            <label class="edit-wrap" onclick="javascript:openPopupConsentModal('@Model.id');" style="position:relative;top:8px;left:0px;"><i class='fa fa-edit' style='color: white'></i></label>
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="table-responsive-sm">
+                                                                        <div class="consent clearfix" id="divconcentform">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pull-left" style="padding:10px 0px 0px 5px">
+                                                    <div class="subheading-txt">
+                                                        <span class="num">2</span>
+                                                        <h2>Requirements </h2>
+
+                                                    </div>
+                                                    <div>
+                                                        <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="table-responsive-sm">
+
+                                                                        <div class="format answer-label" style="float: left;width: auto;padding: 8px;">
+                                                                            <span class="heading pull-left">
+                                                                                <input type="checkbox" name="format" value="Candidate ID verification" onchange="ChangeCheckBox('format')" />
+                                                                            </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;">Candidate ID verification </span>
+                                                                        </div>
+                                                                        <div class="format answer-label" style="float: left;width: auto;padding: 8px;">
+                                                                            <span class="heading pull-left">
+                                                                                <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
+                                                                            </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;">Candidate code snippet</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 pull-left" style="padding:10px 0px 0px 5px">
+                                                    <div class="card" style="margin-bottom:10px;">
+                                                        <label class="question" for="checkbox_ten">
+                                                            <label for="checkbox_ten" style="margin:0px;">
+                                                                <span class="num" style="    margin: 0px 10px 0px 0px;top: -1px; padding: 0px;position: relative;">3</span>
+                                                                Candidate Video: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Add candidate video of interview here</label>
+                                                            </label>
+                                                            <span class="round">
+                                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
+                                                                <label class="edit-wrap" onclick="javascript:OpenCandidateVideoModal('@ViewBag.InterviewId','@ViewBag.id');"><i class='fa fa-edit' style='color: white'></i></label>
+                                                                <span id="hidden_fields_ten_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                                                <span id="hidden_fields_ten_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                            </span>
+                                                        </label>
+
+                                                        <fieldset class="answer hidden" id="hidden_fields_ten">
+                                                            <div class="answer-label"></div>
+                                                            <div id="divcodesnippets">
+                                                                @* <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe> *@
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    @* End:Candidate consent acknowledgement *@
+
+                                    @* Start:Interview flow and Sample Questions: *@
+                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                        <div class="card">
+                                            <label class="question" for="checkbox_nine">
+                                                <label for="checkbox_nine">
+                                                    <i class="fas fa-comments" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
+                                                    Interview flow and Sample Questions:
+
+                                                </label>
+                                                <span class="round">
+                                                    <input type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
+                                                    @*                                                  <label class="edit-wrap" onclick="javascript:OpenQuestionModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label>
+ *@                                                <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                                    <span id="hidden_fields_nine_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                </span>
+                                            </label>
+
+
+
+                                            <fieldset class="answer hidden" id="hidden_fields_nine">
+                                                @* Start:Video Instruction *@
+
+                                                <div class="col-md-5 pull-left" style="padding-bottom:0px;">
+                                                    <div class="subheading-txt">
+                                                        <span class="num">1</span>
+                                                        <h2>Video Instruction</h2>
+                                                        <span class="round">
+
+                                                            <label class="edit-wrap" onclick="javascript:OpenVideoInstructionModal('@Model.id');" style="position:relative;top:8px;left:0px;"><i class='fa fa-edit' style='color: white'></i></label>
+
+                                                        </span>
+                                                    </div>
+                                                    <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <video id="vidvideoinstruction" width="100%" controls="controls" preload="metadata" class="vjs-tech">
+                                                                    <source id="srcvideoinstruction" src='@Model.AudioComment' type="video/mp4">
+                                                                </video>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                @* End:Video Instruction *@
+                                                @* Start:Questions *@
+                                                <div class="col-md-7 pull-left" style="padding:0px 5px 0px 10px">
+                                                    <div class="subheading-txt">
+                                                        <span class="num">2</span>
+                                                        <h2>Sample Questions </h2>
+                                                        <span class="round">
+
+                                                            <label class="edit-wrap" onclick="javascript:OpenQuestionModal('@Model.id');" style="position:relative;top:8px;left:0px;"><i class='fa fa-edit' style='color: white'></i></label>
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="table-responsive-sm">
+                                                                        <div id="divquestionslist"></div>
+
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @* End:Questions *@
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    @* Start:Interviewer *@
+                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                        <div class="card">
+                                            <label class="question" for="checkbox_eight">
+                                                <label for="checkbox_eight">
+                                                    <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
+                                                    Interviewers
+                                                </label>
+                                                <span class="round">
+                                                    <input type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                                                    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                                    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                </span>
+                                            </label>
+
+                                            <fieldset class="answer hidden" id="hidden_fields_eight">
+                                                <div>
+                                                    <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="table-responsive-sm">
+                                                                    @Html.HiddenFor(m => m.id)
+                                                                    <table class="table table-bordered mbn" id="InterviewerTable">
+                                                                        <thead>
                                                                             <tr>
+                                                                                <th width="20%" class="table_heading">User <span class="red">*</span></th>
                                                                                 @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                                 {
-                                                                                    <td colspan="6">No Interviewer</td>
+                                                                                    <th width="20%" class="table_heading">Email</th>
                                                                                 }
-                                                                                else
-                                                                                {
-                                                                                    <td colspan="5">No Interviewer</td>
-                                                                                }
+                                                                                <th width="10%" class="table_heading">Resume</th>
+                                                                                <th width="20%" class="table_heading">Skills</th>
+                                                                                <th width="25%" class="table_heading">Company Name</th>
+                                                                                <th width="15%" class="table_heading">Client Action</th>
+                                                                                @* <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
+                                                                            <th width="10%" class="table_heading">Availability</th> *@
+                                                                                <th width="10%" class="table_heading text-center">Action</th>
                                                                             </tr>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                             {
                                                                                 <tr>
-                                                                                    <td>
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].NickName, new { @class = "form-control", @readonly = "readonly" })
-                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
-                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
-                                                                                    </td>
                                                                                     @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                                     {
-                                                                                        <td>
-                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                        </td>
-                                                                                    }
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink)) //CodedResumeLink
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a href="@Model.InterviewerCollection[i].CodedResumeLink" id=@("InterviewerCollection_" + i + "__ResumeLink") target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
-                                                                                        </td>
+                                                                                        <td colspan="6">No Interviewer</td>
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
+                                                                                        <td colspan="5">No Interviewer</td>
+                                                                                    }
+                                                                                </tr>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].NickName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                            @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                                                                            @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
+                                                                                        </td>
+                                                                                        @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                                         {
-                                                                                            if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
-                                                                                            {
-                                                                                                <td>
-                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
-                                                                                                </td>
-                                                                                            }
-                                                                                            else if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && !string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
-                                                                                            {
-                                                                                                <td>
-                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Convert Resume(Into Coded)</a>
-                                                                                                </td>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <td></td>
-                                                                                            }
+                                                                                            <td>
+                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                            </td>
+                                                                                        }
+                                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink)) //CodedResumeLink
+                                                                                        {
+                                                                                            <td class="cadName">
+                                                                                                <a href="@Model.InterviewerCollection[i].CodedResumeLink" id=@("InterviewerCollection_" + i + "__ResumeLink") target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
+                                                                                            </td>
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <td class="cadName">
-                                                                                                <a id=@("InterviewerCollection_" + i + "__ResumeLink")>No Resume</a>
+                                                                                            if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
+                                                                                            {
+                                                                                                if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                                {
+                                                                                                    <td>
+                                                                                                        <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
+                                                                                                    </td>
+                                                                                                }
+                                                                                                else if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && !string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                                {
+                                                                                                    <td>
+                                                                                                        <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Convert Resume(Into Coded)</a>
+                                                                                                    </td>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <td></td>
+                                                                                                }
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <td class="cadName">
+                                                                                                    <a id=@("InterviewerCollection_" + i + "__ResumeLink")>No Resume</a>
+                                                                                                </td>
+                                                                                            }
+
+
+                                                                                        }
+                                                                                        <td>
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                        </td>
+                                                                                        @if (Model.InterviewerCollection[i].CompanyName != null)
+                                                                                        {
+                                                                                            <td>
+                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @readonly = "readonly" })
                                                                                             </td>
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
                                                                                         }
 
-
-                                                                                    }
-                                                                                    <td>
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
-                                                                                    </td>
-                                                                                    @if (Model.InterviewerCollection[i].CompanyName != null)
-                                                                                    {
                                                                                         <td>
-                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @readonly = "readonly" })
                                                                                         </td>
-
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <td></td>
-                                                                                    }
-
-                                                                                    <td>
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @readonly = "readonly" })
-                                                                                    </td>
-                                                                                    @* <td class="text-center">
-                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable, new { @disabled = "disabled" })
-                                                                        </td> *@
-                                                                                    <td class="action text-center">
-                                                                                        <div>
-                                                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                                                <span onclick="javascript:RemoveInterviewerFromSkillChannel('@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].IRFId');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                                                                </span>
-                                                                                            </button>
-                                                                                            @* <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span> *@
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
+                                                                                        @* <td class="text-center">
+                                                                            @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                            @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable, new { @disabled = "disabled" })
+                                                                            </td> *@
+                                                                                        <td class="action text-center">
+                                                                                            <div>
+                                                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                                                    <span onclick="javascript:RemoveInterviewerFromSkillChannel('@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].IRFId');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                                @* <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span> *@
+                                                                                            </div>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    </tbody>
-                                                                </table>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
                                                             </div>
-                                                        </div>
 
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </fieldset>
+                                            </fieldset>
+                                        </div>
                                     </div>
-                                </div>
-                                @* End:Interviewer *@
-                                @* Start:Questions *@
-                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
-                                    <div class="card">
-                                        <label class="question" for="checkbox_nine">
-                                            <label for="checkbox_nine">
-                                                <i class="fas fa-comments" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
-                                                Questions:
-
-                                            </label>
-                                            <span class="round">
-                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
-                                                <label class="edit-wrap" onclick="javascript:OpenQuestionModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label>
-                                                <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                                                <span id="hidden_fields_nine_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                                            </span>
-                                        </label>
-
-                                        <fieldset class="answer hidden" id="hidden_fields_nine">
-                                            <div>
-                                                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                <div id="divquestionslist"></div>
-
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                                @* End:Questions *@
-                                <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
-                                    <div class="card">
+                                    @* End:Interviewer *@
+                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;">
+                                        @*  <div class="card">
                                         <label class="question" for="checkbox_three">
                                             <label for="checkbox_three">
                                                 <i class="fa fa-file-audio-o" aria-hidden="true"></i>
@@ -558,18 +755,18 @@
                                                 <source id="srcvideoinstruction" src='@Model.AudioComment' type="video/mp4">
                                             </video>
                                         </fieldset>
-                                    </div>
+                                    </div> *@
 
-                                    <div class="card">
-                                        <label class="question" for="checkbox_four">
-                                            <label for="checkbox_four">
-                                                <i class="fa fa-link" aria-hidden="true"></i>
+                                        <div class="card">
+                                            <label class="question" for="checkbox_four">
+                                                <label for="checkbox_four">
+                                                    <i class="fa fa-link" aria-hidden="true"></i>
 
-                                                Job description Link
-                                            </label>
-                                            <span class="round">
-                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                                                @*<label class="edit-wrap">
+                                                    Job description Link
+                                                </label>
+                                                <span class="round">
+                                                    <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                                                    @*<label class="edit-wrap">
                                             <i class='fa fa-edit' style='color: white'></i>
                                             <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
                                             data-interviewdate="@Model.irf" data-candidatename="@Model.candidateName"
@@ -578,23 +775,23 @@
                                             </a>
 
                                             </label>*@
-                                                <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+                                                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
 
-                                                <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                    <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
 
-                                            </span>
-                                        </label>
+                                                </span>
+                                            </label>
 
-                                        <fieldset class="answer hidden" id="hidden_fields_four">
+                                            <fieldset class="answer hidden" id="hidden_fields_four">
 
-                                            <div id="CandidateDetails">
-                                                <a href="@Model.JDLink"> JDLink</a>
-                                            </div>
-                                        </fieldset>
+                                                <div id="CandidateDetails">
+                                                    <a href="@Model.JDLink"> JDLink</a>
+                                                </div>
+                                            </fieldset>
 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
+                                    @* <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
                                     <div class="card">
                                         <label class="question" for="checkbox_five">
                                             <label for="checkbox_five">
@@ -603,7 +800,7 @@
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
-                                                @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                                 <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
                                                 <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
                                                 <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                                             </span>
@@ -641,7 +838,7 @@
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
-                                                @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                                <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
                                                 <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
                                                 <span id="hidden_fields_six_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                                             </span>
@@ -688,8 +885,8 @@
 
                                         </fieldset>
                                     </div>
-                                </div>
-                                @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;padding-left:11px;padding-right:11px">
+                                </div> *@
+                                    @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;padding-left:11px;padding-right:11px">
                             <div class="card">
                             <label class="question" for="checkbox_seven">
                             <label for="checkbox_seven">
@@ -713,39 +910,40 @@
                             </fieldset>
                             </div>
                             </div>*@
-                                @* Start:Calibration Meeting details *@
-                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
-                                    <div class="card">
-                                        <label class="question" for="checkbox_ten">
-                                            <label for="checkbox_ten">
-                                                <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;position: relative;top: 3px;"></i><i class="fas fa-comments" aria-hidden="true" style="font-size: 12px;margin-right: 10px;position: relative;left: -16px;top: -10px;"></i>
-                                                <span style="position: relative;left: -20px;"> Calibration Meeting:</span>
+                                    @* Start:Calibration Meeting details *@
+                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                        <div class="card">
+                                            <label class="question" for="checkbox_ten">
+                                                <label for="checkbox_ten">
+                                                    <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;position: relative;top: 3px;"></i><i class="fas fa-comments" aria-hidden="true" style="font-size: 12px;margin-right: 10px;position: relative;left: -16px;top: -10px;"></i>
+                                                    <span style="position: relative;left: -20px;"> Calibration Meeting:</span>
+                                                </label>
+                                                <span class="round">
+                                                    <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
+                                                    <span id="hidden_fields_ten_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                                    <span id="hidden_fields_ten_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                                </span>
                                             </label>
-                                            <span class="round">
-                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
-                                                <span id="hidden_fields_ten_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                                                <span id="hidden_fields_ten_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                                            </span>
-                                        </label>
 
-                                        <fieldset class="answer hidden" id="hidden_fields_ten">
-                                            <div>
-                                                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                <div id="divcalibrationdetails"></div>
+                                            <fieldset class="answer hidden" id="hidden_fields_ten">
+                                                <div>
+                                                    <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="table-responsive-sm">
+                                                                    <div id="divcalibrationdetails"></div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </fieldset>
+                                            </fieldset>
+                                        </div>
                                     </div>
+                                    @* End:Calibration Meeting details *@
+
+
                                 </div>
-                                @* End:Calibration Meeting details *@
-
-
                             </div>
                         </div>
                     </div>
@@ -928,6 +1126,58 @@
                 <span aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" id="divpopupModel">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="CandidateVideoModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-file-text-o" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="changevideoHeading"></h5>
+            </div>
+            <button onclick="closeCandidateVideoModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divpopupModel">
+                <div style="display:block" id="uploadDiv">
+                    <div class="upload_resume" style="padding-top:0px;">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="drop-box">
+                                <header>
+                                    <h4>Select File here</h4>
+                                </header>
+                                <p>Files Supported: text file</p>
+                                <label for="VideoFiles">
+                                    <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span></a>
+                                </label>
+                                <input type="file" name="VideoFiles" accept=".mp4" id="VideoFiles" style="visibility: hidden; position: absolute;" multiple />
+                                <div id="files-area">
+                                    <span id="filesList">
+                                        <span id="files-names"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnvideofileUpload" value="Submit" onclick="CandidateVideoUpload(@Model.id)" style="margin:0px 15px;">Submit</button>
+                            <div style="position:absolute;top:76px;left:0px;width: 100%;margin:10px auto;"> <label id="txtvideofileuploading" class="txtuploading" style="display:none;margin:-4px auto;"></label></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="width:100%; float:left;height:10px;">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <video id="vidcandidatevideoconsent" width="100%" controls="controls" preload="metadata" class="vjs-tech">
+                                <source id="srccandidatevideoconsent" src='@Model.CandidateVideo' type="video/mp4">
+                            </video>
+
+                        </div>
+                    </div>
+                </div>
+                <!--end of col-md-12-->
             </div>
         </div>
     </div>
@@ -1344,6 +1594,22 @@
         }
     }
 </script>
+<script>
+    function closeCandidateVideoModal() {
+           var modal = document.getElementById("CandidateVideoModal");
+           modal.style.display = "none";
+       }
+       function openCandidateVideoModal() {
+           var modal = document.getElementById("CandidateVideoModal");
+           modal.style.display = "block";
+       }
+       function OpenCandidateVideoModal(interviewid, irfid) {
+           $("#changevideoHeading").text('Candidate Video');
+           openCandidateVideoModal();
+       }
+
+
+</script>
 
 @if (!openSubmitEmailPopup)
 {
@@ -1426,7 +1692,7 @@
                         html += '</div>';
                     }
                     else {
-                        html += '<div class="article"><p>' + data[i].comment.substring(0, data[i].comment.length) + '</p></div>';
+                        html += '<div class="article" style="white-space:break-spaces;"><p>' + data[i].comment.substring(0, data[i].comment.length) + '</p></div>';
                     }
                 }
                 else {
@@ -1731,7 +1997,7 @@ else
     function BindConsentForm(data) {
         var html = '';
         if (data != null && data != '') {
-            html += '<div id="CandidateDetails" style="padding: 10px 10px 12px 0px;"><a target="_blank" href="' + data + '"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>';
+            html += '<div id="CandidateDetails" style="padding: 10px 10px 12px 0px;"><a style="text-decoration:none" target="_blank" href="' + data + '"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>';
         }
         $("#divconcentform").empty().html(html);
     }
@@ -1751,6 +2017,90 @@ else
             $('#read_' + id).empty().html('Read less');
             $('#read_' + id).val('Readmore');
         }
+    }
+</script>
+
+<script>
+
+    const dt = new DataTransfer();
+
+    $("#ResumeFiles").on('change', function (e) {
+        for (var i = 0; i < this.files.length; i++) {
+            let fileBloc = $('<span/>', { class: 'file-block' }),
+                fileName = $('<span/>', { class: 'name', text: this.files.item(i).name });
+            fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                .append(fileName);
+            $("#filesList > #files-names").append(fileBloc);
+        };
+        // Ajout des fichiers dans l'objet DataTransfer
+        for (let file of this.files) {
+            dt.items.add(file);
+        }
+        // Mise à jour des fichiers de l'input file après ajout
+        this.files = dt.files;
+
+        // EventListener pour le bouton de suppression créé
+        $('span.file-delete').click(function () {
+            let name = $(this).next('span.name').text();
+            // Supprimer l'affichage du nom de fichier
+            $(this).parent().remove();
+            for (let i = 0; i < dt.items.length; i++) {
+                // Correspondance du fichier et du nom
+                if (name === dt.items[i].getAsFile().name) {
+                    // Suppression du fichier dans l'objet DataTransfer
+                    dt.items.remove(i);
+                    continue;
+                }
+            }
+            // Mise à jour des fichiers de l'input file après suppression
+            document.getElementById('ResumeFiles').files = dt.files;
+        });
+    });
+
+</script>
+<script>
+    function CandidateVideoUpload(irfid) {
+        var fileControl = document.getElementById("VideoFiles");
+        var fileChunk = new FormData();
+        fileChunk.append('irfid', irfid);
+        if (fileControl.files.length > 0) {
+            for (var i = 0; i < fileControl.files.length; i++) {
+                fileChunk.append('file', fileControl.files[i]);
+            }
+        }
+        $("#btnvideofileUpload").hide();
+        document.getElementById("txtvideofileuploading").style.display = "block";
+        $("#txtvideofileuploading").text("Uploading...");
+        $.ajax({
+            type: "POST",
+            url: "/IRF/UploadVideoConsentFile",
+            data: fileChunk,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $("#txtvideofileuploading").text(data);
+                $("#btnvideofileUpload").show();
+                GetVideoConsentForm();
+            }
+        });
+    }
+    function GetVideoConsentForm() {
+        var irfid = document.getElementById("id").value;
+        $.ajax({
+            type: 'POST',
+            url: '/IRF/GetVideoConsentForm',
+            data: { irfid: irfid },
+            success: function (data) {
+                loadAnotherVideoConsentVideo(data);
+            }
+        });
+    }
+     function loadAnotherVideoConsentVideo(data) {
+        var video = document.getElementById('vidcandidatevideoconsent');
+        var sources = document.getElementById('srccandidatevideoconsent');
+        sources.src = data;
+        video.load();
     }
 </script>
 

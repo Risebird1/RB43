@@ -71,7 +71,7 @@ namespace Risebird.Web.Controllers
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
-            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper, 
+            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
             ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper)
         {
             _userService = userService;
@@ -2737,7 +2737,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if(profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR")
                 {
                     var list = new List<SelectListItem>();
                     var clients = await _clientService.GetClients(emailid, profileName);
@@ -8633,6 +8633,7 @@ namespace Risebird.Web.Controllers
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
                 model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
                 await checkSkillSetandSeperate(model);
                 return View(model);
@@ -9293,7 +9294,7 @@ namespace Risebird.Web.Controllers
 
                         model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted)?.ToList());
 
-                        if(model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()) != null && model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).Count()>0)
+                        if (model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()) != null && model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).Count() > 0)
                         {
                             model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).FirstOrDefault().IsSelectedForCampaign = true;
 
@@ -9583,6 +9584,51 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> GetConsentForm(int irfid)
         {
             var result = await _irfService.GetConsentFile(irfid);
+            return Json(result);
+        }
+        #endregion
+        #region Candidate Video Consent Form
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadVideoConsentFile()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
+                string uploadedFileURL = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "").Replace("+", "").Replace("_", "");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime")
+                {
+                    await _azureStorageHelper.InsertImageBlob(outputFileName, "candidatevideos", model, fileMimeType);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("candidatevideos");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                    var sas = _sasUrlHelper.CreateSasUrl("candidatevideos");
+                    if (!string.IsNullOrEmpty(uploadedFileURL) && !string.IsNullOrEmpty(sas))
+                    {
+                        uploadedFileURL = uploadedFileURL + "?" + sas;
+                    }
+                    var result = await _irfService.UpdateVideoConsentFile(irfid, uploadedFileURL);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only MP4 file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetVideoConsentForm(int irfid)
+        {
+            var result = await _irfService.GetVideoConsentForm(irfid);
             return Json(result);
         }
         #endregion
@@ -10754,7 +10800,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            return StatusCode(500, new { success = false, message = "An unexpected error occurred."});
+                            return StatusCode(500, new { success = false, message = "An unexpected error occurred." });
                         }
                     }
                     else
@@ -10832,7 +10878,7 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                
+
                 if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
                     if (Request.Form.Files.Count() > 0)
@@ -10856,7 +10902,7 @@ namespace Risebird.Web.Controllers
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
                                         var blob = containerRef.GetBlockBlobReference(fileName);
                                         string uploadedaudioFileURL = blob.Uri.ToString();
-                                        
+
                                         if (uploadedaudioFileURL == null)
                                         {
                                             return Json("Resume upload has failed.");
@@ -10902,7 +10948,7 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Unauthorized!");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -10924,7 +10970,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
-                        
+
                         var result = await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, status, irfId, emailid);
 
                         return Json(result);

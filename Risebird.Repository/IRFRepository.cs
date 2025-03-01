@@ -9665,7 +9665,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var returnObj = new SkillChannelnAGDetails();
-                    
+
                     DataSet dataset = new DataSet();
                     SqlDataAdapter adapter = new SqlDataAdapter();
                     adapter.SelectCommand = new SqlCommand("usp_CheckExistenceofSkillChannelAgainstRequestId", con);
@@ -9722,6 +9722,54 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
+        }
+        public async Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@uploadedFileURL", uploadedFileURL);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateVideoConsentForm", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<string> GetVideoConsentForm(int irfid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetVideoConsentForm", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
