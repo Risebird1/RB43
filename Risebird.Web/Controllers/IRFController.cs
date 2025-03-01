@@ -118,7 +118,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
-                        //await _twilioHelper.MakeIVRCall("+918888571923", "Harshit", string.Empty, string.Empty);
+                        //await _twilioHelper.MakeIVRCall("+918888571923", "Harshit", "Dated", string.Empty);
                         var model = new IRFViewModel();
                         IRFFilter filter = null;
                         if (HttpContext.Session.GetString("IRFfilters") != null)
@@ -1063,8 +1063,7 @@ namespace Risebird.Web.Controllers
             //functionKey = string.Empty;
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
 
-            //await MakeIVRCallForAvailability(dto);
-
+            await MakeIVRCallForAvailability(dto);
 
         }
         private async Task MakeIVRCallForAvailability(AvailabilityCheckDTO dto)
@@ -1072,12 +1071,10 @@ namespace Risebird.Web.Controllers
             try
             {
                 var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
-                //var apiurl = "https://" + "localhost:50233" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                //var apiurl = "https://" + "localhost:50323" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 var client = new RestClient(apiurl);
                 var request = new RestRequest(apiurl, Method.Post);
-
                 request.AddHeader("content-type", "application/json");
-
                 var body = JsonConvert.SerializeObject(dto);
                 request.AddParameter("application/json", body, ParameterType.RequestBody);
                 RestResponse response = await client.ExecuteAsync(request);
@@ -1086,9 +1083,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            
         }
-
 
         [HttpGet]
         public string GetInterviewerSkills(int id)
@@ -6931,7 +6926,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         //fire and forget method to make an ivr call to interviewers?
-                        //MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString()});
+                        MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString()});
                         
                         return Json("Emails sent successfully.");
                     }
