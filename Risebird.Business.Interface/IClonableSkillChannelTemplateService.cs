@@ -18,5 +18,6 @@ namespace Risebird.Business.Interface
         IEnumerable<TransInterviewer> GetClonableIRFTransInterviewer(int id);
         Task<ClonableSkillChannelVM> GetClonableSkillChannelMeetingPlatformById(int id);
         IEnumerable<ClonableSkillChannelVM> GetClonableTempStatsbyId(int id);
+        Task<bool> CreateClonableSkillChannelFromMAG(int assessmentGroupId, string assessmentGroupName, string loggedInUser);
     }
 }

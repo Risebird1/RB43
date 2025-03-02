@@ -97,4 +97,22 @@ BEGIN
     Add IsTechRubricRenewed BIT NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssessmentGroupId')
+      AND Object_ID = Object_ID(N'ClonableSkillChannel'))
+BEGIN
+    ALTER TABLE ClonableSkillChannel
+    Add AssessmentGroupId int NULL
+END
+
 GO
+
+
+
+--UPDATE ClonableSkillChannel
+--SET ClonableSkillChannel.AssessmentGroupId = IRF.AssessmentGroupId
+--FROM ClonableSkillChannel
+--INNER JOIN IRF
+--ON ClonableSkillChannel.CreatedFromIRFId = IRF.id

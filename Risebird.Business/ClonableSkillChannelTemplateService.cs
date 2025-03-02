@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -23,9 +25,12 @@ namespace Risebird.Business
         private readonly IConfiguration _configuration;
         private readonly ISkillService _skillService;
         private readonly IClientRepository _clientRepository;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
 
         public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, ISkillService skillService,
-            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IActivityTrackerRepository activityTrackerRepository, IClientRepository clientRepository)
+            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository,
+            IActivityTrackerRepository activityTrackerRepository,
+            IClientRepository clientRepository, IAssistantServiceHelper assistantServiceHelper)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -34,6 +39,7 @@ namespace Risebird.Business
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
             _activityTrackerRepository = activityTrackerRepository;
             _clientRepository = clientRepository;
+            _assistantServiceHelper = assistantServiceHelper;
         }
         public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
         {
@@ -686,5 +692,70 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> CreateClonableSkillChannelFromMAG(int assessmentGroupId, string assessmentGroupName, string loggedInUser)
+        {
+            try
+            {
+                var aiResult = await _assistantServiceHelper.GenerateTechRubric(assessmentGroupName);
+
+                bool result = false;
+                if (aiResult != null)
+                {
+                    var model = JsonConvert.DeserializeObject<RubricSchema>(aiResult.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    var techSkills = new List<TransSkill>();
+                    if (model != null && model.Rubric != null)
+                    {
+                        foreach (var skill in model.Rubric)
+                        {
+                            var techSkill = new TransSkill();
+
+                            string levelDesc = skill.ProficiencyLevel; // The string to match
+
+                            // Parse the string into an enum value
+                            if (Enum.TryParse(typeof(LevelTechEnum), levelDesc, true, out var parsedLevel))
+                            {
+                                // Cast the result to its integer value
+                                techSkill.LevelId = (int)parsedLevel;
+                            }
+                            techSkill.SkillName = skill.Skill;
+                            techSkill.Weightage = skill.Weight;
+                            if (skill.CoreConcepts != null)
+                            {
+                                techSkill.Concepts = string.Join(",", skill.CoreConcepts);
+                            }
+                            techSkill.Natureofquestion = skill.KeyExpectations;
+                            techSkill.Timelimit = Convert.ToInt16(skill.EvaluationTime);
+                            techSkill.isEliminationskill = (skill.Mandatory != null && skill.Mandatory.ToLower() == "yes") ? true : false;
+
+                            techSkills.Add(techSkill);
+
+                        }
+                        //create a template using the generataed rubrics
+                        result  = await _clonableSkillChannelTemplateRepository.CreateTemplateFromMAG(techSkills, assessmentGroupId, loggedInUser);
+                    }
+
+                }
+                
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.CreateClonableSkillChannel;
+                    activityTrackerModel.Particulars = assessmentGroupName + " Template";
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = ActivityTypes.CreateClonableSkillChannel.GetDescription();
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

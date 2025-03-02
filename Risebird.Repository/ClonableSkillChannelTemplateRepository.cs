@@ -653,5 +653,88 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> CreateTemplateFromMAG(List<TransSkill> techRubrics, int assessmentGroupId, string loggedInUser)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    DataTable techSkillDt = new DataTable();
+
+                    if (techRubrics != null && techRubrics.Count() > 0)
+                    {
+                        techSkillDt.Columns.Add("IRFId", typeof(int));
+                        techSkillDt.Columns.Add("LevelId", typeof(int));
+                        techSkillDt.Columns.Add("SkillId", typeof(int));
+                        techSkillDt.Columns.Add("Weightage", typeof(int));
+                        techSkillDt.Columns.Add("Concepts", typeof(string));
+                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                        techSkillDt.Columns.Add("Timelimit", typeof(int));
+                        techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                        techSkillDt.Columns.Add("SkillSet", typeof(int));
+                        techSkillDt.Columns.Add("SkillName", typeof(string));
+
+                        foreach (var item in techRubrics)
+                        {
+                            if (string.IsNullOrEmpty(item.Concepts))//|| irfDetails.TechRubricType == TechRubricTypes.Basic
+                            {
+                                item.Concepts = "";
+                            }
+                            if (string.IsNullOrEmpty(item.Natureofquestion))// || irfDetails.TechRubricType == TechRubricTypes.Basic
+                            {
+                                item.Natureofquestion = "";
+                            }
+
+                            techSkillDt.Rows.Add(0, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
+                        }
+                    }
+
+                    SqlCommand cmdCreateTemplate= new SqlCommand("usp_CreateTemplateFromMAG", con);
+                    cmdCreateTemplate.CommandType = CommandType.StoredProcedure;
+
+                    cmdCreateTemplate.Parameters.Add(new SqlParameter("@assessmentGroupId", SqlDbType.Int));
+                    cmdCreateTemplate.Parameters["@assessmentGroupId"].Value = assessmentGroupId;
+
+                    cmdCreateTemplate.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar));
+                    cmdCreateTemplate.Parameters["@CreatedBy"].Value = loggedInUser;
+
+                    cmdCreateTemplate.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
+                    cmdCreateTemplate.Parameters["@CreatedOn"].Value = DateTime.Now;
+
+                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
+                    {
+                        cmdCreateTemplate.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdCreateTemplate.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    }
+
+
+                    con.Open();
+
+                    if (await cmdCreateTemplate.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

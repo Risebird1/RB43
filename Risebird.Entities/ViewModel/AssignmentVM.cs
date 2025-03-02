@@ -78,6 +78,7 @@ namespace Risebird.Entities.ViewModel
         public bool? IsMasterAG { get; set; }
         public string ParentAG { get; set; }
         public string USTJobTitle { get; set; }
+        public int TemplateCount { get; set; }
 
     }
     public class Assessment
