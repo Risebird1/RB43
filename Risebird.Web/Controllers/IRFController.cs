@@ -11100,6 +11100,47 @@ namespace Risebird.Web.Controllers
 
             }
         }
+        public async Task<IActionResult> CreateTemplateFromMAG(int assessmentGroupId, string assessmentGroupName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+
+                        var result = await _clonableSkillChannelTemplateService.CreateClonableSkillChannelFromMAG(assessmentGroupId, assessmentGroupName, emailid);
+                        if(result)
+                        {
+                            return Json($"Successfully created a template named : {assessmentGroupName} Template");
+                        }
+                        else
+                        {
+                            return Json($"Failed to create a template for the assessment group : {assessmentGroupName}");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+
+            }
+        }
 
     }
 }

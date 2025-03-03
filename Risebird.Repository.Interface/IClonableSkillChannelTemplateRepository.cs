@@ -14,5 +14,6 @@ namespace Risebird.Repository.Interface
         Task<ClonableSkillChannelVM> GetClonableSkillChannelDetails(int id);
         Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannelsToBeRenewed();
         Task<bool> RenewTemplateRubrics(List<TransSkill> techRubrics, int templateId);
+        Task<bool> CreateTemplateFromMAG(List<TransSkill> techRubrics, int assessmentGroupId, string loggedInUser);
     }
 }
