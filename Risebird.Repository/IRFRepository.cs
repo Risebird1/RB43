@@ -642,7 +642,8 @@ namespace Risebird.Repository
                             _resultVM.JDTitleTwo = !string.IsNullOrEmpty(dt.Rows[0]["JDTitleTwo"].ToString()) ? dt.Rows[0]["JDTitleTwo"].ToString() : null;
                             _resultVM.IsVideoRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsVideoRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsVideoRequired"]) : false;
                             _resultVM.TechRubricType = !string.IsNullOrEmpty(dt.Rows[0]["TechRubricType"].ToString()) ? dt.Rows[0]["TechRubricType"].ToString() : null;
-
+                            _resultVM.CandidateIdverification = !string.IsNullOrEmpty(dt.Rows[0]["CandidateIdverification"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CandidateIdverification"]) : false;
+                            _resultVM.CodeSnippetRequired = !string.IsNullOrEmpty(dt.Rows[0]["CodeSnippetRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CodeSnippetRequired"]) : false;
                         }
                     }
                     if (dataset.Tables.Count > 1)
@@ -9770,6 +9771,38 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irfid);
+                        parameters.Add("@CandidateCheckvalue", CandidateCheckvalue);
+                        parameters.Add("@CandidateCheckName", CandidateCheckName);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_UpdateCandidateChecks", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

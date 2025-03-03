@@ -271,6 +271,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsWhiteLabling { get; set; }
         public string RequestId { get; set; }
         public string CandidateVideo { get; set; }
+        public bool CandidateIdverification { get; set; }
+        public bool CodeSnippetRequired { get; set; }
     }
     public class InterviewerIds
     {

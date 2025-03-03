@@ -202,5 +202,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddIRFInterviewersV2(List<TransInterviewer> interviewers, string loggedInUser);
         Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL);
         Task<string> GetVideoConsentForm(int irfid);
+        Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName);
     }
 }

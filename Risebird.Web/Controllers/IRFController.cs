@@ -11141,6 +11141,11 @@ namespace Risebird.Web.Controllers
 
             }
         }
-
+        [HttpPost]
+        public async Task<JsonResult> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue,string CandidateCheckName)
+        {
+            var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
+            return Json("Successfully");
+        }
     }
 }

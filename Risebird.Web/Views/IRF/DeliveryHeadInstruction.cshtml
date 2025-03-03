@@ -465,12 +465,13 @@
 
                                                                         <div class="format answer-label" style="float: left;width: auto;padding: 8px;">
                                                                             <span class="heading pull-left">
-                                                                                <input type="checkbox" name="format" value="Candidate ID verification" onchange="ChangeCheckBox('format')" />
+                                                                                @Html.CheckBoxFor(m => m.CandidateIdverification, new { onchange = "ChangeCandidateCheck('CandidateIdverification')" })
+                                                                                @* <input type="checkbox" name="CandidateVerification" id="CandidateVerification" onchange="ChangeCandidateCheck('CandidateVerification')" /> *@
                                                                             </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;">Candidate ID verification </span>
                                                                         </div>
                                                                         <div class="format answer-label" style="float: left;width: auto;padding: 8px;">
                                                                             <span class="heading pull-left">
-                                                                                <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
+                                                                                @Html.CheckBoxFor(m => m.CodeSnippetRequired, new { onchange = "ChangeCandidateCheck('CodeSnippetRequired')" })
                                                                             </span><span class="pull-left" style="font-size:15px; padding-left:4px; line-height:17px;">Candidate code snippet</span>
                                                                         </div>
                                                                     </div>
@@ -497,7 +498,14 @@
                                                         <fieldset class="answer hidden" id="hidden_fields_ten">
                                                             <div class="answer-label"></div>
                                                             <div id="divcodesnippets">
-                                                                @* <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe> *@
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <video id="vidcandidatevideoconsent" width="100%" controls="controls" preload="metadata" class="vjs-tech">
+                                                                            <source id="srccandidatevideoconsent" src='@Model.CandidateVideo' type="video/mp4">
+                                                                        </video>
+
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </fieldset>
                                                     </div>
@@ -1164,16 +1172,6 @@
                             </div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnvideofileUpload" value="Submit" onclick="CandidateVideoUpload(@Model.id)" style="margin:0px 15px;">Submit</button>
                             <div style="position:absolute;top:76px;left:0px;width: 100%;margin:10px auto;"> <label id="txtvideofileuploading" class="txtuploading" style="display:none;margin:-4px auto;"></label></div>
-                        </div>
-                    </div>
-                </div>
-                <div style="width:100%; float:left;height:10px;">
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <video id="vidcandidatevideoconsent" width="100%" controls="controls" preload="metadata" class="vjs-tech">
-                                <source id="srccandidatevideoconsent" src='@Model.CandidateVideo' type="video/mp4">
-                            </video>
-
                         </div>
                     </div>
                 </div>
@@ -2101,6 +2099,17 @@ else
         var sources = document.getElementById('srccandidatevideoconsent');
         sources.src = data;
         video.load();
+    }
+     function ChangeCandidateCheck(groupName) {
+        var irfid = document.getElementById("id").value;
+        var isChecked = document.getElementById(groupName).checked;
+        $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateCandidateChecks",
+            data: { 'irfid': irfid, 'CandidateCheckvalue': isChecked,'CandidateCheckName': groupName},
+            success: function (data) {
+            }
+        });
     }
 </script>
 

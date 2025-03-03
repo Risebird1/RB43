@@ -4597,5 +4597,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
