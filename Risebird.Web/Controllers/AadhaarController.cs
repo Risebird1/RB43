@@ -821,7 +821,7 @@ namespace Risebird.Web.Controllers
                         {
                             employementdetails.message = "Failed to verify , API didn't work, try after sometime";
                         }
-                        else if(model.CandidateEmail.ToLower() != candidateemail.ToLower())
+                        else if (model.CandidateEmail.ToLower() != candidateemail.ToLower())
                         {
                             employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
                         }
@@ -1147,7 +1147,8 @@ namespace Risebird.Web.Controllers
                 }
             }
             //Save response data
-            if (!string.IsNullOrEmpty(convertedResponse.summary?.recentEmployerData.matchingUan) || convertedResponse.message == "No record(s found")
+            //if (!string.IsNullOrEmpty(convertedResponse.summary?.recentEmployerData.matchingUan) || convertedResponse.message == "No record(s found")
+            if (convertedResponse.uan.Count() > 0 || convertedResponse.message == "No record(s found")
             {
                 await _aadhaarService.SaveEmploymentDetails(convertedResponse);
                 var _interviewer = new InterviewerProfileVM();
@@ -1264,7 +1265,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 //Save response data
-                if (!string.IsNullOrEmpty(convertedResponse.summary?.recentEmployerData.matchingUan) || convertedResponse.message == "No record(s found")
+                if (convertedResponse.uan.Count() > 0 || convertedResponse.message == "No record(s found")
                 {
                     await _aadhaarService.SaveEmploymentDetails(convertedResponse);
                     var _interviewer = new InterviewerProfileVM();
