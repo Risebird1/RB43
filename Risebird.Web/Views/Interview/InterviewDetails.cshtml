@@ -47,12 +47,12 @@
         }
         <div class="card" style="margin-bottom:10px;">
 
-            <label class="question note-card" for="checkbox_two">
+            <label class="question note-card" for="checkbox_two" style="padding:5px;">
                 <label for="checkbox_two" class="consent-label" style="position:relative;">
                     <i class="fa fa-cogs" aria-hidden="true"></i>
 
 
-                    Tech Skills
+                    Score Rubric Details
                     @if (Model.Heuristicsscore == 6)
                     {
                         <span id="techskills-note-txt"><label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">50-60 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">30-40 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>
@@ -82,8 +82,123 @@
             </label>
 
             <fieldset class="answer hidden show-default" id="hidden_fields_two">
-                <div class="answer-label"></div>
-                <div id="techskills"></div>
+                <div class="card" style="margin-bottom:10px;padding: 0px 10px;">
+                    <div class="subheading-txt" style="border:0px;margin:0px;">
+                        <span class="num">1</span>
+                        <h2>Tech Score Rubric with elimination skills </h2>
+                    </div>
+                    <div class="answer-label" style="padding:0px; margin: 0px 10px;"></div>
+
+                    <div id="techskills"></div>
+                </div>
+                <div class="col-md-6 pull-left" style="padding:10px 5px 0px 0px">
+                    <div class="card" style="margin-bottom:10px;height:146px;">
+                        <label class="question default-open" for="checkbox_five" style="padding:0px;border-bottom:1px #c5b9b96e solid;margin: 0px 10px 10px 10px;">
+                            <label for="checkbox_five" style="padding:0px;margin:0px;">
+
+                                <div class="subheading-txt" style="margin:0px;border:0px;">
+                                    <span class="num">2</span>
+                                    <h2>Level</h2>
+                                </div>
+                            </label>
+                            <span class="round">
+                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
+                                <label style="visibility:hidden" for="checkbox_five"></label>
+
+                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" checked />
+                                <label for="hidden_fields_five_1" style="margin: 12px 0px 0px 0px;"></label>
+                                @*      <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>*@
+                                <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                                <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+
+                            </span>
+                        </label>
+
+                        <fieldset class="hidden  show-default" id="hidden_fields_five">
+                            <div class="answer-label">
+                                <div class="col-md-7 pull-left">
+                                    <span class="heading pull-left" style="font-size:15px;">Seniority</span>
+                                    <span class="custom-select-dropdown">
+                                        @Html.DropDownListFor(m => m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @disabled = "disabled", @style = "width:150px;" })
+                                    </span>
+                                </div>
+                                <div class="col-md-5 pull-left">
+                                    <span class="heading pull-left" style="font-size:15px;"> Difficulty:</span> <span class="custom-select-dropdown">
+                                        <select id="Difficulty" disabled style="width:105px;">
+                                            <option>Select</option>
+                                            <option value="60">60%</option>
+                                            <option value="70">70%</option>
+                                            <option value="80">80%</option>
+                                            <option value="90">90%</option>
+                                            <option value="99">99%</option>
+                                        </select>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="col-md-6 pull-left" style="padding:10px 0px 0px 5px">
+                    <div class="card" style="margin-bottom:10px;height:146px;">
+                        <label class="question default-open" for="checkbox_six" style="padding: 0px;border-bottom: 1px #c5b9b96e solid;margin:0px 10px;">
+                            <label for="checkbox_six" style="padding:0px;margin:0px;">
+                                <div class="subheading-txt" style="margin:0px;border:0px;">
+                                    <span class="num">3</span>
+                                    <h2>Format</h2>
+                                </div>
+                            </label>
+                            <span class="round">
+                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
+                                <label style="visibility:hidden" for="checkbox_six"></label>
+                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow" checked />
+                                <label for="hidden_fields_six_1" style="margin: 12px 0px 0px 0px;"></label>
+                                <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                                <span id="hidden_fields_six_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                            </span>
+                        </label>
+                        <fieldset class="format hidden show-default" id="hidden_fields_six">
+                            <div class="answer-label" style="float:left;width: auto;">
+                                <span class="heading pull-left">
+                                    <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;"> Coding</span>
+                            </div>
+                            <div class="answer-label" style="float:left;width: auto;">
+                                <span class="heading pull-left">
+                                    <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;"> Current project</span>
+                            </div>
+                            <div class="answer-label" style="float:left;width: auto;">
+                                <span class="heading  pull-left">
+                                    <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;"> Conceptual</span>
+                            </div>
+
+                            <div class="answer-label" style="float:left;width: auto;">
+                                <span class="heading pull-left">
+                                    <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;">  Scenario</span>
+                            </div>
+
+                            <div class="answer-label" style="float:left;width:auto;">
+                                <span class="heading pull-left">
+                                    <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;">System Design</span>
+                            </div>
+
+                            <div class="answer-label" style="float:left;width:auto;">
+                                <span class="heading pull-left">
+                                    <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;">People management</span>
+                            </div>
+                            <div class="answer-label" style="float:left;width: auto;">
+                                <span class="heading pull-left">
+                                    <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" disabled />
+                                </span><span class="pull-left" style="font-size:15px;"> Client management</span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
             </fieldset>
 
         </div>
@@ -151,10 +266,10 @@
     @*End: Pre Interview Screening Report *@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_nine">
+            <label class="question" for="checkbox_nine" style="padding:5px;">
                 <label for="checkbox_nine" class="consent-label">
                     <i class="fa fa-question-circle-o" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
-                    Sample Questions: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label>
+                    Interview flow and Sample Questions:@* <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label> *@
                 </label>
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
@@ -167,11 +282,327 @@
             </label>
 
             <fieldset class="answer hidden show-default" id="hidden_fields_nine">
-                <div class="answer-label"></div>
-                <div id="divquestionslist"></div>
+                <div class="card" style="margin-bottom:10px;padding: 0px 10px;">
+                    <div class="subheading-txt" style="border:0px;margin:0px;">
+                        <span class="num">1</span>
+                        <h2>Sample Questions<label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px 5px;font-weight: 400;"> Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label> </label> </h2>
+                    </div>
+                    <div class="answer-label" style="padding:0px"></div>
+                    <div id="divquestionslist"></div>
+                </div>
             </fieldset>
         </div>
     </div>
+
+    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question" for="checkbox_nine" style="padding:5px;">
+                <label for="checkbox_nine" class="consent-label">
+                    <i class="fa fa-question-circle-o" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
+                    Candidate checks:
+                </label>
+                <span class="round">
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
+                    <label style="visibility:hidden" for="checkbox_nine"></label>
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_nine_1" name="Checkshow" checked />
+                    <label for="hidden_fields_nine_1"></label>
+                    <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    <span id="hidden_fields_nine_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                </span>
+            </label>
+
+            <fieldset class="answer hidden show-default" id="hidden_fields_nine">
+                @{
+                    int candidatecheckcount = 0;
+                }
+                @if (Model.CandidateIdverification)
+                {
+                    candidatecheckcount = @candidatecheckcount + 1;
+
+                    <div class="col-md-12 pull-left pad10" style="padding:10px 5px 0px 0px">
+                        <div class="card" style="margin-bottom:10px;">
+                            <label class="question default-open" for="checkbox_eleven" style="padding: 5px;">
+                                <label for="checkbox_eleven" style="padding: 0px 5px;margin:0px;">
+                                    <div class="subheading-txt" style="border:0px;margin:0px;">
+                                        <span class="num" style="margin-bottom:0px;">@candidatecheckcount</span>
+                                        <h2 style="padding-bottom:0px;"> Candidate ID Verification </h2>
+                                    </div>
+                                </label>
+                                <span class="round">
+                                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eleven" name="question1" data-trigger="hidden_fields_eleven" />
+                                    <label style="visibility:hidden" for="checkbox_eleven"></label>
+                                </span>
+                            </label>
+                            <fieldset class="format answer hidden show-default" id="hidden_fields_eleven">
+                                <div class="col-md-12">
+                                    <h2 style="font-size: 16px; line-height: 23px;color: #847878;padding:0px 15px;"><b style="color:green"> Candidate ID verification :</b>  is mandatory for this interview authenticity and payment. Ask candidate to show any <b style="color:green">ID card</b> at the start of the interview.</h2>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                }
+                @{
+                    candidatecheckcount = @candidatecheckcount + 1;
+                }
+                <div class="col-md-6 pull-left pad10" style="padding:10px 5px 0px 0px">
+                    <div class="card" style="margin-bottom:10px;">
+                        <label class="question default-open" for="checkbox_seven" style="padding: 5px;">
+                            <label for="checkbox_seven" style="padding: 0px 5px;margin:0px;">
+                                <div class="subheading-txt" style="border:0px;margin:0px;">
+                                    <span class="num" style="margin-bottom:0px;">@candidatecheckcount</span>
+                                    <h2 style="padding-bottom:0px;">Candidate Proxy Alert <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;"></span> </h2>
+                                </div>
+
+                            </label>
+                            <span class="round">
+                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
+                                <label style="visibility:hidden" for="checkbox_seven"></label>
+                                @*  <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" checked />
+                                <label for="hidden_fields_seven_1"></label>
+                                <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                                <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span> *@
+                            </span>
+                        </label>
+                        <fieldset class="format answer hidden show-default" id="hidden_fields_seven">
+                            @*  <div style="width:100%;float:left;"> <label style="font-size:14px;"> Eyes Movement</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Candidate looking somewhere else continuously at the time of coding or answering theoretical questions" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Candidate looking somewhere else continuously at the time of coding or answering theoretical questions
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto;">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;"> Head Movement</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Suspicious head movement at the time of code writing or answering theoretical questions" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Suspicious head movement at the time of code writing or answering theoretical questions
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;"> Lip Movement</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Mismatch of the lips and the voice of candidate while speaking" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Mismatch of the lips and the voice of candidate while speaking
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Heavy beard that covers most of the lip movement" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Heavy beard that covers most of the lip movement
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Latency check</label> </div>
+                            <div class="answer-label" style="float: left;width:auto;">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Latency check or Jitter report to see for the packet loss" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Latency check or Jitter report to see for the packet loss
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Using Suspicious applications</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop
+                            </span>
+                            </div>
+
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Other suspicious devices connected. [Check in toolbar]" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Other suspicious devices connected. [Check in toolbar]
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Using Susipicous devices or techniques</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Using Overhead light" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Using Overhead light
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Dark light in the room or on the face" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Dark light in the room or on the face
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Using Headphone in front of the lips" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Using Headphone in front of the lips
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Suspicious behavior</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Voice tone and expressions are not in sync - Flat voice" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Voice tone and expressions are not in sync - Flat voice
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Non-satisfactory answers for personal questions from the Resume or their experience" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Non-satisfactory answers for personal questions from the Resume or their experience
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Suspicious voice</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="any notifications, pings, other voices" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            any notifications, pings, other voices
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto;">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Not sharing the complete screen in desktop but one screen or tab" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Not sharing the complete screen in desktop but one screen or tab
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto;">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Non expressive body language" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Non expressive body language
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto;">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Either too much movement or lacking any movement" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Either too much movement or lacking any movement
+                            </span>
+                            </div>
+                            <div class="answer-label" style="float: left;width:auto;">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="Showing face without lips or showing till upper lip" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            Showing face without lips or showing till upper lip
+                            </span>
+                            </div>
+                            <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Photo Verification</label> </div>
+                            <div class="answer-label" style="float: left;width:auto; ">
+                            <span class="heading pull-left">
+                            <input type="checkbox" name="format" value="LinkedIn photo verification [Check in case of suspicion]" checked="checked" disabled="disabled" />
+                            </span><span class="pull-left">
+                            LinkedIn photo verification [Check in case of suspicion]
+                            </span>
+                            </div>*@
+                            <a style="text-decoration:none;" target="_blank" href="https://risebirdportal.blob.core.windows.net/doc/PROXY DETECTION FORM.docx"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Proxy Alert Details</span></a>
+                        </fieldset>
+                    </div>
+
+                </div>
+
+                @{
+                    candidatecheckcount = @candidatecheckcount + 1;
+                }
+                <div class="col-md-6 pull-left pad10" style="padding:10px 5px 0px 0px">
+                    <div class="card" style="margin-bottom:10px;">
+                        <label class="question default-open" for="checkbox_eight" style="padding: 5px;">
+                            <label class="consent-label" for="checkbox_eight" style="padding: 0px 5px;margin:0px;">
+                                <div class="subheading-txt" style="border:0px;margin:0px;">
+                                    <span class="num" style="margin-bottom:0px;">@candidatecheckcount</span>
+                                    <h2 style="padding-bottom:0px;"> Candidate consent acknowledgement </h2>
+                                </div>
+                            </label>
+                            <span class="round">
+                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                                <label style="visibility:hidden" for="checkbox_eight"></label>
+
+                                @* 
+                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" />
+                                <label for="hidden_fields_four_1"></label>
+
+                                <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span> *@
+                            </span>
+                        </label>
+
+                        <fieldset class="answer" id="hidden_fields_eight">
+                            @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+                            {
+                                <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+                            }
+                            else
+                            {
+                                <p style="margin:0px;line-height:25px;">No Consent acknowledgement available</p>
+                            }
+                        </fieldset>
+
+                    </div>
+                </div>
+
+                @{
+                    candidatecheckcount = @candidatecheckcount + 1;
+                }
+                <div class="col-md-12 pull-left pad10" style="padding:10px 5px 0px 0px">
+                    <div class="card" style="margin-bottom:10px;">
+                        <label class="question" for="checkbox_ten" style="padding: 5px;">
+                            <label for="checkbox_ten" style="padding: 0px 5px;margin:0px;">
+                                <div class="subheading-txt" style="border:0px;margin:0px;">
+                                    <span class="num" style="margin-bottom:0px;">@candidatecheckcount</span>
+                                    <h2 style="padding-bottom:0px;"> Candidate Code: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Add code snippet of interview here</label> </h2>
+                                </div>
+
+                            </label>
+                            <span class="round">
+                                <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
+                                <label class="edit-wrap" onclick="javascript:OpenCodeModal('@ViewBag.InterviewId','@ViewBag.id');"><i class='fa fa-edit' style='color: white'></i></label>
+                                <span id="hidden_fields_ten_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                <span id="hidden_fields_ten_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                            </span>
+                        </label>
+
+                        <fieldset class="answer hidden" id="hidden_fields_ten">
+                            <div class="answer-label"></div>
+                            <div id="divcodesnippets">
+                                @* <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe> *@
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+
+
+
+
 
     @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
     <div class="card" style="margin-bottom:10px;">
@@ -296,112 +727,8 @@
     </div>
     </div>*@
 
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="card" style="margin-bottom:10px;height:146px;">
-            <label class="question default-open" for="checkbox_five">
-                <label for="checkbox_five">
-                    <i class="fa fa-signal" aria-hidden="true"></i>
 
-
-                    Level
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
-                    <label style="visibility:hidden" for="checkbox_five"></label>
-
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" checked />
-                    <label for="hidden_fields_five_1"></label>
-                    @*      <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>*@
-                    <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-
-                </span>
-            </label>
-
-            <fieldset class="answer hidden  show-default" id="hidden_fields_five">
-                <div class="answer-label">
-                    <div class="col-md-7 pull-left">
-                        <span class="heading pull-left">Seniority</span>
-                        <span class="custom-select-dropdown">
-                            @Html.DropDownListFor(m => m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @disabled = "disabled", @style = "width:150px;" })
-                        </span>
-                    </div>
-                    <div class="col-md-5 pull-left">
-                        <span class="heading pull-left"> Difficulty:</span> <span class="custom-select-dropdown">
-                            <select id="Difficulty" disabled style="width:105px;">
-                                <option>Select</option>
-                                <option value="60">60%</option>
-                                <option value="70">70%</option>
-                                <option value="80">80%</option>
-                                <option value="90">90%</option>
-                                <option value="99">99%</option>
-                            </select>
-                        </span>
-                    </div>
-
-                </div>
-            </fieldset>
-        </div>
-    </div>
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="card" style="margin-bottom:10px;height:146px;">
-            <label class="question default-open" for="checkbox_six">
-                <label for="checkbox_six">
-                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                    Format
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
-                    <label style="visibility:hidden" for="checkbox_six"></label>
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow" checked />
-                    <label for="hidden_fields_six_1"></label>
-                    <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_six_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-            <fieldset class="format answer hidden show-default" id="hidden_fields_six">
-                <div class="answer-label" style="float: left;    width: auto;">
-                    <span class="heading pull-left">
-                        <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left"> Coding</span>
-                </div>
-                <div class="answer-label" style="float: left;    width: auto;">
-                    <span class="heading pull-left">
-                        <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left"> Current project</span>
-                </div>
-                <div class="answer-label" style="float: left;   width: auto;">
-                    <span class="heading  pull-left">
-                        <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left"> Conceptual</span>
-                </div>
-
-                <div class="answer-label" style="float: left;    width: auto;">
-                    <span class="heading pull-left">
-                        <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left">  Scenario</span>
-                </div>
-
-                <div class="answer-label" style="float: left;    width: auto;">
-                    <span class="heading pull-left">
-                        <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left">System Design</span>
-                </div>
-
-                <div class="answer-label" style="float: left;    width: auto;">
-                    <span class="heading pull-left">
-                        <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left">People management</span>
-                </div>
-                <div class="answer-label" style="float: left;    width: auto;">
-                    <span class="heading pull-left">
-                        <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" disabled />
-                    </span><span class="pull-left"> Client management</span>
-                </div>
-            </fieldset>
-        </div>
-    </div>
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question default-open" for="checkbox_four">
                 <label for="checkbox_four">
@@ -459,211 +786,7 @@
     </div>
     </div>*@
 
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
-        <div class="card" style="margin-bottom:10px;">
-            <label class="question default-open" for="checkbox_seven">
-                <label for="checkbox_seven" style="color:#de3535">
-                    <svg style="color: #898484;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 512 512"><title>ionicons-v5-a</title><path d="M448,256c0-106-86-192-192-192S64,150,64,256s86,192,192,192S448,362,448,256Z" style="fill:none;stroke: #de3535;stroke-miterlimit:10;stroke-width:32px" fill="grey"></path><path d="M250.26,166.05,256,288l5.73-121.95a5.74,5.74,0,0,0-5.79-6h0A5.74,5.74,0,0,0,250.26,166.05Z" style="fill:none;stroke: #de3535;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" fill="red"></path><path d="M256,367.91a20,20,0,1,1,20-20A20,20,0,0,1,256,367.91Z" fill="#de3535"></path></svg>
-                    Candidate Proxy Alert <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;"></span>
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
-                    <label style="visibility:hidden" for="checkbox_seven"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" checked />
-                    <label for="hidden_fields_seven_1"></label>
-
-                    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-            <fieldset class="format answer hidden show-default" id="hidden_fields_seven">
-                @*  <div style="width:100%;float:left;"> <label style="font-size:14px;"> Eyes Movement</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Candidate looking somewhere else continuously at the time of coding or answering theoretical questions" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Candidate looking somewhere else continuously at the time of coding or answering theoretical questions
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto;">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;"> Head Movement</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Suspicious head movement at the time of code writing or answering theoretical questions" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Suspicious head movement at the time of code writing or answering theoretical questions
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;"> Lip Movement</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Mismatch of the lips and the voice of candidate while speaking" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Mismatch of the lips and the voice of candidate while speaking
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Heavy beard that covers most of the lip movement" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Heavy beard that covers most of the lip movement
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Latency check</label> </div>
-                <div class="answer-label" style="float: left;width:auto;">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Latency check or Jitter report to see for the packet loss" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Latency check or Jitter report to see for the packet loss
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Using Suspicious applications</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop
-                </span>
-                </div>
-
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Other suspicious devices connected. [Check in toolbar]" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Other suspicious devices connected. [Check in toolbar]
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Using Susipicous devices or techniques</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Using Overhead light" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Using Overhead light
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Dark light in the room or on the face" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Dark light in the room or on the face
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Using Headphone in front of the lips" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Using Headphone in front of the lips
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Suspicious behavior</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Voice tone and expressions are not in sync - Flat voice" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Voice tone and expressions are not in sync - Flat voice
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Non-satisfactory answers for personal questions from the Resume or their experience" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Non-satisfactory answers for personal questions from the Resume or their experience
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Suspicious voice</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="any notifications, pings, other voices" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                any notifications, pings, other voices
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto;">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Not sharing the complete screen in desktop but one screen or tab" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Not sharing the complete screen in desktop but one screen or tab
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto;">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Non expressive body language" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Non expressive body language
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto;">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Either too much movement or lacking any movement" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Either too much movement or lacking any movement
-                </span>
-                </div>
-                <div class="answer-label" style="float: left;width:auto;">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="Showing face without lips or showing till upper lip" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                Showing face without lips or showing till upper lip
-                </span>
-                </div>
-                <div style="width:100%;float:left;margin-top:20px;"> <label style="font-size:14px;">Photo Verification</label> </div>
-                <div class="answer-label" style="float: left;width:auto; ">
-                <span class="heading pull-left">
-                <input type="checkbox" name="format" value="LinkedIn photo verification [Check in case of suspicion]" checked="checked" disabled="disabled" />
-                </span><span class="pull-left">
-                LinkedIn photo verification [Check in case of suspicion]
-                </span>
-                </div>*@
-                <a style="text-decoration:none;" target="_blank" href="https://risebirdportal.blob.core.windows.net/doc/PROXY DETECTION FORM.docx"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Proxy Alert Details</span></a>
-            </fieldset>
-        </div>
-
-    </div>
-
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;margin-bottom:20px;">
-        <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_ten">
-                <label for="checkbox_ten">
-                    <i class="fa fa-code" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
-                    Candidate Code: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Add code snippet of interview here</label>
-                </label>
-                <span class="round">
-                    <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
-                    <label class="edit-wrap" onclick="javascript:OpenCodeModal('@ViewBag.InterviewId','@ViewBag.id');"><i class='fa fa-edit' style='color: white'></i></label>
-                    <span id="hidden_fields_ten_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                    <span id="hidden_fields_ten_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-
-            <fieldset class="answer hidden" id="hidden_fields_ten">
-                <div class="answer-label"></div>
-                <div id="divcodesnippets">
-                    @* <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe> *@
-                </div>
-            </fieldset>
-        </div>
-    </div>
 
     @* <div class="footer-nav">
     <div class="button-wrapper">
@@ -709,7 +832,7 @@
                         </div>
                     }
                     <div style="font-size: 16px; line-height: 23px;color:#847878;">
-                        <strong style="color:green" >Bring Your Own Questions :</strong>
+                        <strong style="color:green">Bring Your Own Questions :</strong>
                         <ul style="padding:0px 10px 0px 20px">
                             <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: #847878;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
                             <li style="line-height: 22px;margin-bottom: 10px;font-size: 15px;color: #847878;list-style:square;padding: 0px 10px 0px 0px;font-weight: 500;">Using suggested questions as it is would result in 100% payment deduction</li>
@@ -731,16 +854,16 @@
 
                             </div>
                         }
-                        </div>
+                    </div>
                     <div class="col-md-12 pull-left text-center">
                         <h2 class="interviewerAlert">
                             <strong style="font-weight:700;color:green"> "Important Reminder for Interviewers:"</strong>
                             <p style="text-align:left;"> You are required to provide <strong style="color: #e42c2c;font-weight:700">detailed, accurate, and technically sound observations</strong> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <strong style="color: #e42c2c;font-weight:700">Do Not copy-paste</strong> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
                         </h2>
                     </div>
-                        <div class="col-md-12 pull-left text-center" style="margin:10px 0px;">
-                            <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
-                        </div>
+                    <div class="col-md-12 pull-left text-center" style="margin:10px 0px;">
+                        <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
+                    </div>
 
                 </div>
 
@@ -1029,7 +1152,7 @@
         if(video != null){
             video.pause();
         }
-        
+
     }
 
 </script>

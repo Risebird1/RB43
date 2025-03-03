@@ -132,5 +132,8 @@ namespace Risebird.Entities.Data
         public bool IsVideoRequired { get; set; }
         public string TechRubricType { get; set; }
         public bool IsCandidateVerification { get; set; }
+        public bool CandidateIdverification { get; set; }
+        public bool CodeSnippetRequired { get; set; }
+        public string CandidateVideo { get; set; }
     }
 }
