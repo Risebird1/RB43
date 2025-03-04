@@ -150,19 +150,26 @@
                                                                     <svg style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L36.7,152a15.4,15.4,0,0,0-3.6,5.5l-.2.5a16,16,0,0,0-.9,5.3V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.3L224,99.3A16.1,16.1,0,0,0,224,76.7Zm-80-9.4L160.7,84,68,176.7,51.3,160ZM48,208V179.3L76.7,208Zm48-3.3L79.3,188,172,95.3,188.7,112Z" fill="white"></path></svg>
                                                         </span>
                                                     </button>
-                                                    @if(item.TemplateCount == 0)
-                                                    {
-                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Create Template from MAG" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
-                                                            <span onclick="javascript:CreateTemplateFromMAG('@item.id', '@item.AssessmentGroup');" title="Create Template from MAG" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                                                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                                                                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                                </svg>
-                                                            </span>
-                                                        </button>
-                                                    }
+                                                   
                                                     
                                                 }
+                                                        @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
+                                                        {
+
+                                                            
+                                                            @if (item.TemplateCount == 0)
+                                                            {
+                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Create Template from MAG" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
+                                                                    <span onclick="javascript:CreateTemplateFromMAG('@item.id', '@item.AssessmentGroup');" title="Create Template from MAG" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            }
+
+                                                        }
 
                                                         @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
                                                         {
