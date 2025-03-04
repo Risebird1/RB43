@@ -11076,6 +11076,11 @@ section {
     font-weight: 700;
 }
 
+.input-comment {
+    width: 400px;
+    height: 60px;
+}
+
 .num {
     display: inline-block;
     margin: 5px auto 10px;
@@ -11112,6 +11117,7 @@ section {
         position: relative;
         left: 10px;
         top: 5px;
+        color: #776363;
     }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
