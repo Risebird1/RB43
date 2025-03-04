@@ -122,7 +122,7 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" ? emailid : null)).ToList();
                         }
                         else
                         {
@@ -412,7 +412,7 @@ namespace Risebird.Web.Controllers
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), profileName == "Client" ? emailid : null)).ToList();
                     }
                     else
                     {
@@ -3705,7 +3705,7 @@ namespace Risebird.Web.Controllers
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             Startdate = filter.StartDate.Value;
-                            Enddate = filter.EndDate.Value;
+                            Enddate = filter.EndDate.Value.AddDays(1);
                         }
                     }
                     if (client.ClientName == "FoundIt (Monster.com)")
@@ -3925,7 +3925,7 @@ namespace Risebird.Web.Controllers
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         Startdate = filter.StartDate.Value;
-                        Enddate = filter.EndDate.Value;
+                        Enddate = filter.EndDate.Value.AddDays(1);
                     }
                 }
                 model = (await _candidateService.GetCandidateTimelinebyDateStatus(Startdate, Enddate, 2, emailid)).ToList();
@@ -4908,7 +4908,7 @@ namespace Risebird.Web.Controllers
                         {
                             var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
                             startDate = filter.StartDate.Value;
-                            endDate = filter.EndDate.Value;
+                            endDate = filter.EndDate.Value.AddDays(1);
                         }
                         var meetings = new List<InterviewDetailsVM>();
                         if (type == 27538 || type == 73532)
@@ -6354,7 +6354,7 @@ namespace Risebird.Web.Controllers
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             Startdate = filter.StartDate.Value;
-                            Enddate = filter.EndDate.Value;
+                            Enddate = filter.EndDate.Value.AddDays(1);
                         }
                     }
                     model = (await _candidateService.GetAllCandidateSearchbyDateStatus(Startdate, Enddate, dataType, emailid)).ToList();
@@ -6988,7 +6988,7 @@ namespace Risebird.Web.Controllers
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             Startdate = filter.StartDate.Value;
-                            Enddate = filter.EndDate.Value;
+                            Enddate = filter.EndDate.Value.AddDays(1);
                         }
                     }
                     if (string.IsNullOrWhiteSpace(type))
