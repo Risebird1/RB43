@@ -42,8 +42,13 @@ Begin
 begin try    
   begin tran    
     
-  declare @idClonableIrf int  
+  declare @idClonableIrf int, @agId int  
   set @idClonableIrf = 0  
+
+  if(@CreatedFromIRFId > 0)
+  Begin
+	  set @agId = (select AssessmentGroupId from IRF where id = @CreatedFromIRFId) 
+  End
   
   if not exists (select 1 from ClonableSkillChannel where [Name] = @Name)       
   Begin     
@@ -54,14 +59,16 @@ begin try
      ,[CreatedFromIRFId]  
      ,[CreatedBy]   
      ,[MeetingPlatform]
-	 ,[IsAadhaarVerificationRequired])  
+	 ,[IsAadhaarVerificationRequired]
+	 ,[AssessmentGroupId])  
   VALUES              
     (@Name,              
      @CreatedOn,              
      @CreatedFromIRFId,   
      @CreatedBy,  
      @MeetingPlatform,
-	 @IsAadhaarVerificationRequired)        
+	 @IsAadhaarVerificationRequired,
+	 @agId)        
          
   select @idClonableIrf = SCOPE_IDENTITY()      
   End  
