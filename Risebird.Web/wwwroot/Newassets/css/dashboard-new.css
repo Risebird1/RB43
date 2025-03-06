@@ -11119,6 +11119,18 @@ section {
         top: 5px;
         color: #776363;
     }
+#kiwi-big-iframe-wrapper {
+    position: absolute;
+   // transform: rotate(-90deg);
+    height: 550px;
+    width: auto;
+    left: 50%;
+    bottom: -12px;
+    right: 10px;
+    z-index: 999999999;
+    position: fixed;
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
