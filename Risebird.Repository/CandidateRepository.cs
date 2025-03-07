@@ -854,6 +854,9 @@ namespace Risebird.Repository
                         _resultVM.CandidateDetails.ClientHRAttemptContactMobile = dt.Rows[0]["ClientHRAttemptContactMobile"] != null ? dt.Rows[0]["ClientHRAttemptContactMobile"].ToString() : null;
                         _resultVM.CandidateDetails.LogoUrl = dt.Rows[0]["LogoLink"] != null ? dt.Rows[0]["LogoLink"].ToString() : null;
                         _resultVM.CandidateDetails.CandidateMasterId = dt.Rows[0]["CandidateMasterId"] != DBNull.Value ? (int)dt.Rows[0]["CandidateMasterId"] : 0;
+                        _resultVM.CandidateDetails.CandidateIdverification = !string.IsNullOrEmpty(dt.Rows[0]["CandidateIdverification"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CandidateIdverification"]) : false;
+                        _resultVM.CandidateDetails.CandidateVideo = !string.IsNullOrEmpty(dt.Rows[0]["CandidateVideo"].ToString()) ? dt.Rows[0]["CandidateVideo"].ToString() : null;
+                        _resultVM.CandidateDetails.ConsentForm = !string.IsNullOrEmpty(dt.Rows[0]["ConsentForm"].ToString()) ? dt.Rows[0]["ConsentForm"].ToString() : null;
                         //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)
@@ -1855,6 +1858,37 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> UpdateCandidateAcknowledge(int interviewid, string interviewchecks)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@interviewid", interviewid);
+                        parameters.Add("@interviewchecks", interviewchecks);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_UpdateCandidateAcknowledge", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

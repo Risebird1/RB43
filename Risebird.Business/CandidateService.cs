@@ -646,6 +646,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<bool> UpdateCandidateAcknowledge(int interviewid, string interviewchecks)
+        {
+            try
+            {
+                var result = await _candidateRepository.UpdateCandidateAcknowledge(interviewid, interviewchecks);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

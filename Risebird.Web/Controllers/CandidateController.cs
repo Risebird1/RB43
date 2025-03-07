@@ -5189,6 +5189,7 @@ namespace Risebird.Web.Controllers
                 }
                 //End: Candidate Scheduled Time in same TimeZone 
             }
+            int interviewid = 0;
             foreach (var item in CandidateDetails.Meetings)
             {
                 if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -5199,6 +5200,14 @@ namespace Risebird.Web.Controllers
                     }
                 }
             }
+            foreach (var item in CandidateDetails.Meetings)
+            {
+                if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
+                {
+                    interviewid = item.Interviewid;
+                }
+            }
+            ViewBag.Interviewid = interviewid;
             if (TempData["CreateInterviewMessage"] != null)
             {
                 ViewBag.Message = TempData["CreateInterviewMessage"].ToString();
@@ -5217,6 +5226,13 @@ namespace Risebird.Web.Controllers
                 return Json("Information shared to contact person, HR will Connect you soon.");
             }
             return Json("Fail");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CandidateAcknowledge(int interviewid, string interviewchecks)
+        {
+            var CandidateDetails = await _candidateService.UpdateCandidateAcknowledge(interviewid, interviewchecks);
+            return Json("success");
         }
         #endregion
         #region Candidate Reports
