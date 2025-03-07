@@ -10649,14 +10649,14 @@ option {
     border-radius: 10px;
 }
 
-    .student-profile .card .card-header .profile_img {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        margin: 10px auto;
-        border: 10px solid #ccc;
-        border-radius: 50%;
-    }
+.student-profile .card .card-header .profile_img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 10px auto;
+    border: 10px solid #ccc;
+    border-radius: 50%;
+}
 
     .student-profile .card h3 {
         padding-top: 20px;
@@ -10668,7 +10668,7 @@ option {
     .student-profile .card p {
         color: #858181;
         line-height: 25px;
-        font-size: 14px;
+        font-size: 15px;
     }
 
 .content-div h5 {
@@ -11124,9 +11124,9 @@ section {
     height: 550px;
     width: auto;
     left: 50%;
-    bottom: -12px;
+    bottom: -8px !important;
     right: 10px;
-    z-index: 999999999;
+    z-index:0!important;
     position: fixed;
 }
 .mi-check .round label:after {
@@ -14129,7 +14129,7 @@ input[type='radio'] {
 
 .content.client {
     margin-top: 0px;
-    padding: 0px 10px 0px;
+    padding: 0px 10px 30px 0px;
     clear: both;
 }
 /* .content.client .client-tab #candidateTable_filter {
