@@ -4349,6 +4349,19 @@ namespace Risebird.Business
                 return string.Empty;
             }
         }
+
+        public async Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model)
+        {
+            try
+            {
+                return await _meetingRespository.SaveAITranscriptAnalysis(interviewId, model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

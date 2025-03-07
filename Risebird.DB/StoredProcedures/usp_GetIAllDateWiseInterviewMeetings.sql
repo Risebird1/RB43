@@ -42,7 +42,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,IRF.IsVideoRequired,         
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
-,iman.interviewDate RescheduleDate,ti.PerSuccessRate 
+,iman.interviewDate RescheduleDate,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted 
   from  InterviewMeetings im                                    
   inner join IRF on im.IRFId = IRF.IRFId                                    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                                  
@@ -89,7 +89,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,IRF.IsVideoRequired,         
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
-  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate 
+  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted  
   from InterviewMeetings im                                    
   inner join IRF on im.IRFId = IRF.IRFId                                    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                                  
@@ -136,7 +136,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,IRF.IsVideoRequired,         
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker               
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
-  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate   
+  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted    
   from InterviewMeetings im                                    
   inner join IRF on im.IRFId = IRF.IRFId                  
   join SeniorHR sh on sh.Clientid=IRF.ClientId                
@@ -183,7 +183,7 @@ else
   im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner, IRF.IsVideoRequired,        
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
  --,si.Uniqueid as SchedulerUniqueid    
- ,iman.interviewDate RescheduleDate ,ti.PerSuccessRate   
+ ,iman.interviewDate RescheduleDate ,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted   
   from InterviewMeetings im                                    
   inner join IRF on im.IRFId = IRF.IRFId                                    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                                  

@@ -91,5 +91,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList();
         Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers();
         Task<IEnumerable<PQIDetails>> GetTotalRedMarkeredInterviewers();
+        Task<IEnumerable<Meeting>> GetPendingAITranscriptAnalysis();
     }
 }

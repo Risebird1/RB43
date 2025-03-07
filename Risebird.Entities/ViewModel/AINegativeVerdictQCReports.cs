@@ -22,6 +22,10 @@ namespace Risebird.Entities.ViewModel
         public string interviewer { get; set; }
         public string InterviewerMobileNumber { get; set; }
         public string ChannelOwner { get; set; }
+        public string AudioTranscriptFileLink { get; set; }
+        public bool IsAITranscriptAnalysisAttempted { get; set; }
+        public bool IsAITranscriptAnalysisFailed { get; set; }
+        //public intg AudioTranscriptFileLink { get; set; }
         //public int QCPresent { get; set; }
     }
 }
