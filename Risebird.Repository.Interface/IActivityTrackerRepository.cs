@@ -12,5 +12,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddActivity(ActivityTrackerVM model);
         Task<bool> SaveCaptureClickDetails(CapturePageDM model);
         Task<bool> SaveCaptureInterviewerRelatedPageClick(CapturePageDM model);
+        Task<bool> DebugLogger(string message, string type, string performedBy);
     }
 }

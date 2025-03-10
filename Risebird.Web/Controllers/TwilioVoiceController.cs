@@ -24,15 +24,18 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingService _meetingService;
         private readonly IUserRepository _userRepository;
+        private readonly IActivityTrackerService _activityTrackerService;
+
 
         public TwilioVoiceController(IIRFService irfService,
             IApplicationErrorLogger applicationErrorLogger,
-            IMeetingService meetingService, IUserRepository userRepository)
+            IMeetingService meetingService, IUserRepository userRepository, IActivityTrackerService activityTrackerService)
         {
             _irfService = irfService;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingService = meetingService;
             _userRepository = userRepository;
+            _activityTrackerService = activityTrackerService;
         }
 
         [HttpPost]
@@ -65,6 +68,7 @@ namespace Risebird.Web.Controllers
             //    recipientName, interviewdate);
             //response.Say(message);
             //return TwiML(response);
+            var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerAvailability function invked succesfully", "ivr", string.Empty).Result;
 
             var response = new VoiceResponse();
             try
@@ -100,6 +104,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                var resultDe = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+
                 //response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
                 return TwiML(response);
             }
@@ -142,7 +148,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/Show function invked succesfully", "ivr", string.Empty).Result;
+
                 var irfintId = Convert.ToInt16(irfId);
                 var agIdInt = Convert.ToInt16(assessmentGroupId);
                 var selectedOption = digits;
@@ -192,6 +199,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/Show function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
 
                 //_applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
@@ -205,6 +213,8 @@ namespace Risebird.Web.Controllers
             //check link expiry befire hitting db
             try
             {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForIRF function invked succesfully", "ivr", string.Empty).Result;
+
                 var response = new VoiceResponse();
                 if (status == 1)
                 {
@@ -239,6 +249,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForIRF function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
                 //response.Say($"Error in Update Interviewer Availbility Status For IRF with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
@@ -251,6 +263,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function invked succesfully", "ivr", string.Empty).Result;
+
                 var response = new VoiceResponse();
                 if (status == 1)
                 {
@@ -281,6 +295,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
                 //response.Say($"Error in Update Interviewer Availbility Status For AssessmentGroup with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");

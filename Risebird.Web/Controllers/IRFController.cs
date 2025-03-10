@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -66,13 +67,14 @@ namespace Risebird.Web.Controllers
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly ITwilioHelper _twilioHelper;
+        private readonly IActivityTrackerService _activityTrackerService;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper)
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper,IActivityTrackerService activityTrackerService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -101,6 +103,7 @@ namespace Risebird.Web.Controllers
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _sasUrlHelper = sasUrlHelper;
             _twilioHelper = twilioHelper;
+            _activityTrackerService = activityTrackerService;
         }
 
 
@@ -1070,6 +1073,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                await _activityTrackerService.DebugLogger("MakeIVRCallForAvailability function successfully invoked", "ivr", string.Empty);
                 var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 //var apiurl = "https://" + "localhost:50323" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 var client = new RestClient(apiurl);
@@ -1081,7 +1085,10 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _activityTrackerService.DebugLogger($"MakeIVRCallForAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
+
             }
         }
 
@@ -6944,6 +6951,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _activityTrackerService.DebugLogger($"CheckAGLevelInterviewerAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
                 return Json("Fail");
             }
         }
