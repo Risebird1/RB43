@@ -11215,6 +11215,51 @@ section {
         opacity: 0.3;
         background: grey !important;
     }
+.addcode {
+    width: 800px;
+    margin: 0px auto;
+}
+
+.or::before,
+.or::after {
+    content: "";
+}
+
+/*
+        Vertical
+        Requires a height to be set on this element or its parent.
+    */
+.addcode .or--x::before {
+    right: 0.5em;
+    margin-left: 6%;
+}
+
+.addcode .or--x::before, .addcode .or--x::after {
+    position: relative;
+    border-top: 1px solid #ccc;
+    display: inline-block;
+    vertical-align: middle;
+    width: 40%;
+    margin-bottom: 0.15em;
+    overflow: hidden;
+}
+
+.addcode .or {
+    margin: 70px 0px;
+}
+
+.addcode .or span {
+    background: #42a5f5;
+    color: #fff;
+    border-radius: 100px;
+    padding: 10px;
+}
+
+.addcode textarea {
+    width: 100%;
+    height: 200px;
+    background: #eeeeee8a;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

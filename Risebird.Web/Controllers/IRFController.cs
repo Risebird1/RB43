@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using iTextSharp.text.pdf.qrcode;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -30,6 +32,7 @@ using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList.Extensions;
 using static SkiaSharp.HarfBuzz.SKShaper;
+using Method = RestSharp.Method;
 
 namespace Risebird.Web.Controllers
 {
@@ -74,7 +77,7 @@ namespace Risebird.Web.Controllers
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper,IActivityTrackerService activityTrackerService)
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -6933,8 +6936,8 @@ namespace Risebird.Web.Controllers
                         }
 
                         //fire and forget method to make an ivr call to interviewers?
-                        MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString()});
-                        
+                        MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString() });
+
                         return Json("Emails sent successfully.");
                     }
                     else
@@ -9772,7 +9775,7 @@ namespace Risebird.Web.Controllers
                 var interviewid = Convert.ToInt32(Request.Form["interviewid"].ToString());
                 string uploadedFileURL = string.Empty;
                 var model = Request.Form.Files[0];
-                string outputFileName = model.FileName.Replace(" ", "_");
+                string outputFileName = interviewid.ToString() + "_" + model.FileName.Replace(" ", "_");
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
                 FileInfo fi = new FileInfo(outputFileName);
                 if (fi.Extension.ToLower() == ".txt")
@@ -9793,6 +9796,18 @@ namespace Risebird.Web.Controllers
             {
                 return Json("");
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> UploadInterviewTextCodeSnippet(int interviewid, string codesnippettext)
+        {
+            var fileName = interviewid.ToString() + ".txt";
+            var uploadedFileURL = string.Empty;
+            using (Stream myStream = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(codesnippettext)))
+            {
+                uploadedFileURL = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "codesnippet", null, null, myStream);
+            }
+            var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
+            return Json("Code snippet saved successfully.");
         }
         [HttpPost]
         public async Task<JsonResult> GetCodeSnippet(int interviewid)
@@ -11122,7 +11137,7 @@ namespace Risebird.Web.Controllers
                     {
 
                         var result = await _clonableSkillChannelTemplateService.CreateClonableSkillChannelFromMAG(assessmentGroupId, assessmentGroupName, emailid);
-                        if(result)
+                        if (result)
                         {
                             return Json($"Successfully created a template named : {assessmentGroupName} Template");
                         }
@@ -11150,7 +11165,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue,string CandidateCheckName)
+        public async Task<JsonResult> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName)
         {
             var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
             return Json("Successfully");

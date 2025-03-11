@@ -9277,7 +9277,6 @@ namespace Risebird.Web.Controllers
             return reportlink;
         }
         #endregion
-
         [HttpGet]
         public async Task<IActionResult> InterviewRateRedo(int id, int actionType)
         {
@@ -9286,6 +9285,12 @@ namespace Risebird.Web.Controllers
             await SetInitialValue(model);
             ViewBag.actionType = actionType;
             return PartialView(model);
+        }
+        public async Task<IActionResult> AddCodeDetails(int id, int interviewId)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            ViewBag.InterviewId = interviewId;
+            return View();
         }
     }
 }

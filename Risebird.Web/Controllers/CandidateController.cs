@@ -5215,7 +5215,6 @@ namespace Risebird.Web.Controllers
             }
             return View("InterviewDetails", CandidateDetails);
         }
-
         [HttpPost]
         public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail, string uniqueid, int Irfid)
         {
@@ -5227,7 +5226,6 @@ namespace Risebird.Web.Controllers
             }
             return Json("Fail");
         }
-
         [HttpPost]
         public async Task<JsonResult> CandidateAcknowledge(int interviewid, string interviewchecks)
         {
@@ -5346,7 +5344,6 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
         public async Task<IActionResult> CandidateResumeUpdate(int id, string resumeLink = null)
         {
             try
