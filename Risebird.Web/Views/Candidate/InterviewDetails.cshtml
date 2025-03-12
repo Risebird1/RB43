@@ -104,8 +104,8 @@
 
 
     /*
-                *  STYLE 1
-                */
+                        *  STYLE 1
+                        */
 
 
     #style-4::-webkit-scrollbar {
@@ -702,7 +702,7 @@
                     </div>
 
 
-                   @*  <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
+                    @*  <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
                         <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" id="agree" name="agree" /> <span style="font-weight:600;color: grey" ;> I hereby accept and acknowledge to the terms and conditions as stated above:</span>
                     </div> *@
                     <div class="col-md-3 pull-right">
@@ -997,7 +997,7 @@
         function RedoRating(){
             $.ajax({
                 url: '/Interview/InterviewRateRedo',
-                data: { },
+                data: { 'id':@ViewBag.Interviewid},
                 type: "GET",
                 success: function (data) {
                     if (document.getElementById("InterviewRatingRedoModel").style.display != "block") {
