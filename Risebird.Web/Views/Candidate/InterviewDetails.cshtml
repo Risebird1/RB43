@@ -645,8 +645,8 @@
                 <div class="modal-body mi-check" style="padding:0px;text-align: center;">
 
                     <h1 style="font-size:17px;line-height: 24px;color:#858080;padding:0px 0px;">Confirm you've read and agreed to the following by checking the box on each item below : </h1>
-                    @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm) || !string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
-                    {
+                     @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm) || !string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
+                    { 
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_1" style="float: left;width:100%">
                                 <span class="round" style="float:left;left:0px;">
@@ -656,23 +656,33 @@
 
                                 <label class="consent-label" style="margin-left: 15px;">
                                     <h2 style="font-size:14.5px;line-height: 20px;color: #979494;font-weight:400;margin:0px;">
-                                        <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video - "I am interested in this job role and I am acknowledging to continue this hiring process for turing.com
+                                        <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>"I understand the job role and confirm my willingness to proceed with the hiring process for the 'company' I am interviewing for".
                                         <br />
-                                        <ul style="padding:10px 10px 0px 20px">
-                                            @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
-                                            {
-                                                <li style="line-height: 22px;margin-bottom:5px;font-size: 15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 10px 0px 0px;"> <b>Video Instruction :</b> <a target="_blank" href="@Model.CandidateDetails.CandidateVideo"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Click here </span></a></li>
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm))
-                                            {
-                                                <li style="line-height: 22px;margin-bottom:5px;font-size:15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 10px 0px 0px;"><b>Text Instruction :</b> <a target="_blank" href="@Model.CandidateDetails.ConsentForm"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Click here </span></a></li>
-                                            }
-                                        </ul>
+                                    
+                                     @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
+                                    {
+                                    <p style="font-size:16px;padding: 5px 0px 0px 0px;float:left">
+                                        <b style="font-weight:600;color:grey"> Learn more:</b>
+                                        <span style="line-height: 22px;margin-bottom:5px;font-size: 15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 0px 0px 0px;">  <a target="_blank" href="@Model.CandidateDetails.CandidateVideo"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Job Role Video Explaination</a> </span>&
+                                        
+                                        </p>
+                                    
+                                      } 
+                                    
+
+                                      @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm))
+                                    { 
+                                    <p style="font-size:16px;padding: 5px 0px 0px 5px;float: left;">
+                                    <span style="line-height: 22px;margin-bottom:5px;font-size:15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 10px 0px 0px;"><a target="_blank" href="@Model.CandidateDetails.ConsentForm"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Consent Text </span></a></span>
+                                    </p>
+                                    } 
+                                   
+                                    
                                     </h2>
                                 </label>
                             </label>
                         </div>
-                    }
+                   } 
                     @if (Model.CandidateDetails.CandidateIdverification)
                     {
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
@@ -682,11 +692,11 @@
                                     <label for="checklist_2" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                 </span>
                                 <label class="consent-label" style="margin-left: 15px;">
-                                    <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Candidate ID verification :</b>is mandatory for this interview authenticity and payment. Ask candidate to show any <b style="color:green">ID card</b> at the start of the interview. </h2>
+                                    <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Candidate ID verification :</b> ID verification is mandatory to authenticate the interview and proceed with the hiring process. Please present a valid government-issued ID card at the beginning of the interview, ensuring it is clearly visible on camera for verification by the interviewer. </h2>
                                 </label>
                             </label>
                         </div>
-                    }
+                    } 
 
 
                     <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
@@ -702,9 +712,9 @@
                     </div>
 
 
-                    @*  <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
-                        <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" id="agree" name="agree" /> <span style="font-weight:600;color: grey" ;> I hereby accept and acknowledge to the terms and conditions as stated above:</span>
-                    </div> *@
+                    <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
+                        <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" checked id="agree" name="agree" /> <span style="font-weight:600;color: grey" ;> I hereby accept & acknowlege Risebird <a href="https://drive.google.com/file/d/1t9h7CLcwrbI7HzkJT5vs8pEWA5ySeiTY/view?usp=sharing" target="_blank" style="text-decoration:underline">Terms & Services</a></span>
+                    </div> 
                     <div class="col-md-3 pull-right">
                         <button type="button" class="mdc-button button-warning" data-bs-dismiss="modal" aria-label="Skip" style="z-index:100;margin-bottom: 10px;background: #a9a6a6;">
                             <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">Skip</span>

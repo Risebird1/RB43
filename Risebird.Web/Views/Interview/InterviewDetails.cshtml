@@ -813,12 +813,29 @@
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button> *@
 
-
+            <span class="mandate-inst">Accept the below mandatory instruction to get zoom link to start interview </span>
             <div class="modal-body mi-check" style="padding:10px 15px 0px 15px;">
 
                 <div style="overflow-y:auto;max-height:470px;">
                     <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Confirm you've read and agreed to the following by checking the box on each item below:</h1>
-                    @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+                  
+                    <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                        <label class="question" for="checklist_6" style="float: left;width:100%">
+                            <span class="round" style="float:left;left:0px;">
+                                <input type="checkbox" id="checklist_6" name="InterviewCheckshow" />
+                                <label for="checklist_6" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                            </span>
+
+                            <label class="consent-label" style="margin-left: 15px;">
+                                <h2 style="font-size:14.5px;line-height: 24px;color: #979494;font-weight:400;">
+                                    <b style="color:green;padding-right: 7px;"> Interviewer Quality SLA :</b>
+                                    <a target="_blank" href="https://drive.google.com/file/d/1sWUn7iG9DMISTG600F8LY8hjP9aUG3qn/view?usp=sharing"><span style="color: #4c87b6;font-weight:500;font-weight:bold;text-decoration:underline;">Click here for Interviewer Complaince Link</span></a>
+                                </h2>
+                            </label>
+                        </label>
+                    </div>
+
+                   @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
                     {
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_1" style="float: left;width:100%">
@@ -828,7 +845,7 @@
                                 </span>
 
                                 <label class="consent-label" style="margin-left: 15px;">
-                                    <h2 style="font-size:14.5px;line-height: 20px;color: #979494;font-weight:400;">
+                                    <h2 style="font-size:14.5px;line-height: 24px;color: #979494;font-weight:400;">
                                         <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video - "I am interested in this job role and I am acknowledging to continue this hiring process for turing.com
                                         <a target="_blank" href="@Model.ConsentFormUrl"><span style="color: #4c87b6;font-weight:500;font-weight:bold;text-decoration:underline;">Click here for Consent Form Link</span></a>
                                     </h2>
@@ -836,7 +853,7 @@
                             </label>
                         </div>
                     }
-                    @if (Model.CandidateIdverification)
+                   @if (Model.CandidateIdverification)
                     {
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_2" style="float: left;width:100%">
@@ -845,13 +862,13 @@
                                     <label for="checklist_2" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                 </span>
                                 <label class="consent-label" style="margin-left: 15px;">
-                                    <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate ID verification :</b>is mandatory for this interview authenticity and payment. Ask candidate to show any <b style="color:green">ID card</b> at the start of the interview. </h2>
+                                    <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate ID verification :</b>is mandatory for this interview authenticity and payment. Ask candidate to show any <b style="color:green">ID card</b> at the start of the interview. </h2>
                                 </label>
                             </label>
                         </div>
-                    }
-                    @if (Model.CodeSnippetRequired)
-                    {
+                  } 
+                     @if (Model.CodeSnippetRequired)
+                    { 
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_3" style="float: left;width:100%">
                                 <span class="round" style="float:left;left:0px;">
@@ -859,7 +876,7 @@
                                     <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                 </span>
                                 <label class="consent-label" style="margin-left: 15px;">
-                                    <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate Code :</b>is mandatory for this interview.<span style="background: #4d98d3;color:#fff;border-radius:3px;font-size: 13px;padding: 3px 2px;line-height: 5px;margin-left: 10px;"><a style="padding: 0px 10px;color: #fff;text-decoration: none;" target="_blank" href="@Url.Action("AddCodeDetails", "Interview",new{id= ViewBag.id,interviewId=ViewBag.InterviewId})">Add Code</a></span></h2>
+                                    <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate Code :</b>is mandatory for this interview.<span style="background: #4d98d3;color:#fff;border-radius:3px;font-size: 13px;padding: 3px 2px;line-height: 5px;margin-left: 10px;"><a style="padding: 0px 10px;color: #fff;text-decoration: none;" target="_blank" href="@Url.Action("AddCodeDetails", "Interview",new{id= ViewBag.id,interviewId=ViewBag.InterviewId})">Add Candidate Code here</a></span></h2>
                                 </label>
                             </label>
                         </div>
@@ -880,20 +897,15 @@
                         </label>
                     </div>
 
-                    @if (Model.IsVideoRequired == true)
-                    {
-                        <div class="col-md-12 pull-left text-left">
-                            <h2 class="interviewerAlert" style="margin:0px;padding:0px;color: #847878;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
-                        </div>
-                    }
-                    <div class="col-md-12" style="font-size: 16px; line-height: 20px;color:#847878;clear:both">
+                
+                    <div class="col-md-12" style="font-size: 16px; line-height: 24px;color:#847878;clear:both">
                         <label class="question" for="checklist_5" style="float: left;width:100%">
                             <span class="round" style="float:left;left:0px;">
                                 <input type="checkbox" id="checklist_5" name="InterviewCheckshow" />
                                 <label for="checklist_5" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                             </span>
                             <label class="consent-label" style="margin-left: 15px;">
-                                <h2 style="font-size:14.8px;line-height: 23px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;">Bring Your Own Questions :</b>.</h2>
+                                <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;">Bring Your Own Questions :</b>.</h2>
                                 <ul style="padding:0px 10px 0px 20px">
                                     <li style="line-height: 22px;margin-bottom:5px;font-size: 14.8px;color: #979494;font-weight: 400;list-style:square;padding: 0px 10px 0px 0px;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
                                     <li style="line-height: 22px;margin-bottom:5px;font-size:14.8px;color: #979494;font-weight: 400;list-style:square;padding: 0px 10px 0px 0px;">Using suggested questions as it is would result in 100% payment deduction</li>
@@ -901,30 +913,59 @@
                             </label>
                         </label>
 
-                        @if (!string.IsNullOrEmpty(Model.AudioComment))
-                        {
-                            <div style=" padding: 5px 20px 5px 20px;font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
-                                SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;">( Video explanation )</span>
-                            </div>
-                            <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
-                        }
+                      @if (!string.IsNullOrEmpty(Model.AudioComment))
+                        {  
+                            <div style="font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
 
-                        @if (!string.IsNullOrEmpty(Model.CompanyDetails))
-                        {
+                            <label class="question" for="checklist_7" style="float: left;width:100%">
+                                <span class="round" style="float:left;left:0px;">
+                                    <input type="checkbox" id="checklist_7" name="InterviewCheckshow" />
+                                    <label for="checklist_7" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                </span>
+                                <label class="consent-label" style="margin-left: 15px;text-align: left;">
+                                    <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Video:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;">( Video explanation )</span> :</b>.</h2>
+                                    
+                                </label>
+                            </label>
+                               
+                            </div>
+                           <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
+                    } 
+
+                       @if (!string.IsNullOrEmpty(Model.CompanyDetails))
+                        { 
                             <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
-                                SUGGESTED INTERVIEW FORMAT:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> <a style="color:#0d6efd;text-decoration:none; margin-bottom:8px; line-height: 21px;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+
+                            <label class="question" for="checklist_8" style="float: left;width:100%">
+                                <span class="round" style="float:left;left:0px;">
+                                    <input type="checkbox" id="checklist_8" name="InterviewCheckshow" />
+                                    <label for="checklist_8" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                </span>
+                                <label class="consent-label" style="margin-left: 15px;text-align: left;">
+                                    <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Flow - Document:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> :</b>.</h2>
+
+                                </label>
+                            </label>
+
+
+                            </div>
+                      }
+                        @if (Model.IsVideoRequired == true)
+                        {
+                            <div class="col-md-12 pull-left text-left">
+                                <h2 class="interviewerAlert" style="margin:0px;padding:0px;color: #847878;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
                             </div>
                         }
                     </div>
-                    <div class="col-md-12 pull-left text-center">
+                    @* <div class="col-md-12 pull-left text-center">
                         <h2 class="interviewerAlert" style="font-size:16px;line-height:23px;">
                             <strong style="font-weight:700;color:green"> "Important Reminder for Interviewers:"</strong>
                             <p style="text-align:left;"> You are required to provide <strong style="color: #e42c2c;font-weight:700">detailed, accurate, and technically sound observations</strong> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <strong style="color: #e42c2c;font-weight:700">Do Not copy-paste</strong> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
                         </h2>
-                    </div>
-                    <div class="col-md-2 accept-btn" style="margin:0px 0px 10px 0px;">
+                    </div> *@
+                    <div class="col-md-4 accept-btn" style="margin:0px 0px 10px 0px;">
                        
-                        <button id="btnacceptackinterview" type="button" disabled class="mdc-button button-warning" style="position:relative;left:5px;border-radius: 20px;padding: 10px 20px;" onclick="closeInterviewerAlert()">Accept</button>
+                        <button id="btnacceptackinterview" type="button" disabled class="mdc-button button-warning" style="position:relative;left:5px;border-radius: 20px;padding: 10px 20px; font-size:14px;" onclick="closeInterviewerAlert()">Accept & Continue</button>
                     </div>
                 </div>
             </div>
