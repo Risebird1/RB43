@@ -7316,7 +7316,7 @@ input[type=search]:focus {
     border-radius: 5px;
 }
 
-.file-block {
+.file-block, .addcode #files-names{
     border-radius: 3px;
     background-color: rgb(144 147 153 / 20%);
     margin: 5px;
@@ -7325,8 +7325,10 @@ input[type=search]:focus {
     display: inline-flex;
     line-height: 28px;
 }
-
-.file-delete {
+.addcode #files-names {
+    padding: 0px 5px;
+}
+    .file-delete {
     display: flex;
     width: 24px;
     color: initial;
@@ -11262,12 +11264,14 @@ section {
 }
 .mandate-inst {
     color: #d61818;
-    font-size: 17px;
+    font-size: 15px;
     position: relative;
-    left: 51px;
+    left: 53px;
     font-weight: 700;
     margin: 0px;
     top: -8px;
+    padding: 0px 0px;
+    width: 92%;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {

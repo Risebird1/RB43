@@ -201,33 +201,6 @@
                 </div>
             </fieldset>
 
-                            <div class="answer-label" style="float:left;width: auto;">
-                                <span class="heading pull-left">
-                                    <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" disabled />
-                                </span><span class="pull-left" style="font-size:15px;">  Scenario</span>
-                            </div>
-
-                            <div class="answer-label" style="float:left;width:auto;">
-                                <span class="heading pull-left">
-                                    <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" disabled />
-                                </span><span class="pull-left" style="font-size:15px;">System Design</span>
-                            </div>
-
-                            <div class="answer-label" style="float:left;width:auto;">
-                                <span class="heading pull-left">
-                                    <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" disabled />
-                                </span><span class="pull-left" style="font-size:15px;">People management</span>
-                            </div>
-                            <div class="answer-label" style="float:left;width: auto;">
-                                <span class="heading pull-left">
-                                    <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" disabled />
-                                </span><span class="pull-left" style="font-size:15px;"> Client management</span>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </fieldset>
-
         </div>
     </div>
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
@@ -570,7 +543,7 @@
                                 <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
                                 <label style="visibility:hidden" for="checkbox_eight"></label>
 
-                                @* 
+                                @*
                                 <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" />
                                 <label for="hidden_fields_four_1"></label>
 
@@ -625,12 +598,6 @@
             </fieldset>
         </div>
     </div>
-    }
-    else
-    {
-    <div>No Instructions</div>
-    }
-    }
 
 
 
@@ -678,7 +645,7 @@
     @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
     {
     <span>
-    <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")>Instructions</a>
+    <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", " %20")>Instructions</a>
     </span>
     }
     else
@@ -706,7 +673,7 @@
     {
     @if (item.CompanyDetails != null && item.CompanyDetails != "")
     {
-    <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", "%20")>Instructions</a></div>
+    <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", " %20")>Instructions</a></div>
     }
     else
     {
@@ -729,7 +696,8 @@
     audiofileName = audiofileName.Substring(0, 50) + "...";
     }
     <div>
-    <div> <audio controls style="height:40px;margin-top:10px;">
+    <div>
+    <audio controls style="height:40px;margin-top:10px;">
     <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
     </audio>
     </div>
@@ -793,223 +761,6 @@
 
 
 
-
-    @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
-    <div class="card" style="margin-bottom:10px;">
-    <label class="question" for="checkbox_seven">
-    <label for="checkbox_seven">
-    <i class="fa fa-file-text-o" aria-hidden="true"></i>
-    L2 Feedback - <span style="font-size:12.2px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question &amp; Concepts, Candidate Feedback</span>
-    </label>
-    <span class="round">
-    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
-    <label style="visibility:hidden" for="checkbox_seven"></label>
-
-    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" />
-    <label for="hidden_fields_seven_1"></label>
-
-    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-    <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-    </span>
-    </label>
-
-    <fieldset class="answer hidden" id="hidden_fields_seven">
-    <label id="lblComments"></label>
-    </fieldset>
-    </div>
-    </div>*@
-
-
-
-    @* <div class="footer-nav">
-    <div class="button-wrapper">
-    <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
-
-
-
-
-
-    @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-    <div class="card" style="margin-bottom:10px;">
-
-    <label class="question default-open" for="checkbox_three">
-    <label for="checkbox_three">
-    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
-    Audio Instruction
-    </label>
-    <span class="round">
-    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
-    <label style="visibility:hidden" for="checkbox_three"></label>
-
-
-    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
-    <label for="hidden_fields_three_1"></label>
-    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-
-    <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-    </span>
-    </label>
-
-    <fieldset class="answer hidden show-default" id="hidden_fields_three">
-    <audio controls><source src="@Model.AudioComment">Recording</audio>
-
-
-
-    @* @if (!string.IsNullOrEmpty(Model.AudioComment))
-    {
-    string audiofileName = string.Empty;
-    audiofileName = Model.AudioComment.Split('/').Last();
-    if (audiofileName?.Length >= 25)
-    {
-    audiofileName = audiofileName.Substring(0, 24) + "...";
-    }
-    <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
-    }
-    else
-    {
-    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
-    {
-    <span>
-    <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")>Instructions</a>
-    </span>
-    }
-    else
-    {
-    <span>
-    No Instructions
-    </span>
-    }
-    }*
-    @*   @foreach(var item in Model)
-    {
-    <div id="AudioInstruction">
-
-    @if (!string.IsNullOrEmpty(item.AudioComment))
-    {
-    string audiofileName = string.Empty;
-    audiofileName = item.AudioComment.Split('/').Last();
-    if (audiofileName?.Length >= 25)
-    {
-    audiofileName = audiofileName.Substring(0, 24) + "...";
-    }
-    <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
-    }
-    else
-    {
-    @if (item.CompanyDetails != null && item.CompanyDetails != "")
-    {
-    <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", "%20")>Instructions</a></div>
-    }
-    else
-    {
-    <div> No Instructions</div>
-    }
-    }
-
-
-
-    </div>
-    }
-
-
-    @if (!string.IsNullOrEmpty(Model.AudioComment))
-    {
-    string audiofileName = string.Empty;
-    audiofileName = @Model.AudioComment.Split('/').Last();
-    if (audiofileName?.Length >= 50)
-    {
-    audiofileName = audiofileName.Substring(0, 50) + "...";
-    }
-    <div>
-    <div> <audio controls style="height:40px;margin-top:10px;">
-    <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
-    </audio>
-    </div>
-    <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
-    </div>
-    }
-    else
-    {
-    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
-    {
-    <div>
-    <audio controls>
-    <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
-
-    </audio>
-    Instructions
-    </div>
-    }
-    else
-    {
-    <div>No Instructions</div>
-    }
-    }
-
-
-    </fieldset>
-
-    </div>
-    </div>*@
-
-
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="card" style="margin-bottom:10px;">
-            <label class="question default-open" for="checkbox_four">
-                <label for="checkbox_four">
-                    <i class="fa fa-link" aria-hidden="true"></i>
-                    JOB DESCRIPTION LINK
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                    <label style="visibility:hidden" for="checkbox_four"></label>
-
-
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" checked />
-                    <label for="hidden_fields_four_1"></label>
-
-                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-
-            <fieldset class="answer hidden show-default" id="hidden_fields_four">
-
-                <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
-
-            </fieldset>
-
-        </div>
-    </div>
-
-
-
-
-
-    @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
-    <div class="card" style="margin-bottom:10px;">
-    <label class="question" for="checkbox_seven">
-    <label for="checkbox_seven">
-    <i class="fa fa-file-text-o" aria-hidden="true"></i>
-    L2 Feedback - <span style="font-size:12.2px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question &amp; Concepts, Candidate Feedback</span>
-    </label>
-    <span class="round">
-    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
-    <label style="visibility:hidden" for="checkbox_seven"></label>
-
-    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" />
-    <label for="hidden_fields_seven_1"></label>
-
-    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-    <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-    </span>
-    </label>
-
-    <fieldset class="answer hidden" id="hidden_fields_seven">
-    <label id="lblComments"></label>
-    </fieldset>
-    </div>
-    </div>*@
 
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
     <div class="card" style="margin-bottom:10px;">
@@ -1049,7 +800,7 @@
 
 <div id="InterviewerAlert" class="modal modal-bg">
     <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important;top:10px;">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:825px !important;top:10px;">
         <div class="modal-content">
             <div class="filheader" style="padding-bottom:0px;">
                 <div class="filavatar" style="background:#d61818!important;">
@@ -1060,15 +811,15 @@
                 <h5 class="modal-title pull-left" style="padding-top:0px;">Mandatory Interview Instruction</h5>
             </div>
             @* <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100;margin-top: -40px;">
-                <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button> *@
 
-            <span class="mandate-inst">Accept the below mandatory instruction to get zoom link to start interview </span>
+            <span class="mandate-inst">Accept the below mandatory instruction by checking the items given below to get zoom meeting link to start interview. Failure to comply may result in a 100% payment deduction.</span>
             <div class="modal-body mi-check" style="padding:10px 15px 0px 15px;">
 
                 <div style="overflow-y:auto;max-height:470px;">
                     <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Confirm you've read and agreed to the following by checking the box on each item below:</h1>
-                  
+
                     <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                         <label class="question" for="checklist_6" style="float: left;width:100%">
                             <span class="round" style="float:left;left:0px;">
@@ -1085,7 +836,7 @@
                         </label>
                     </div>
 
-                   @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+                    @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
                     {
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_1" style="float: left;width:100%">
@@ -1103,7 +854,7 @@
                             </label>
                         </div>
                     }
-                   @if (Model.CandidateIdverification)
+                    @if (Model.CandidateIdverification)
                     {
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_2" style="float: left;width:100%">
@@ -1116,9 +867,9 @@
                                 </label>
                             </label>
                         </div>
-                  } 
-                     @if (Model.CodeSnippetRequired)
-                    { 
+                    }
+                    @if (Model.CodeSnippetRequired)
+                    {
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_3" style="float: left;width:100%">
                                 <span class="round" style="float:left;left:0px;">
@@ -1126,7 +877,7 @@
                                     <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                 </span>
                                 <label class="consent-label" style="margin-left: 15px;">
-                                    <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate Code :</b>is mandatory for this interview.<span style="background: #4d98d3;color:#fff;border-radius:3px;font-size: 13px;padding: 3px 2px;line-height: 5px;margin-left: 10px;"><a style="padding: 0px 10px;color: #fff;text-decoration: none;" target="_blank" href="@Url.Action("AddCodeDetails", "Interview",new{id= ViewBag.id,interviewId=ViewBag.InterviewId})">Add Candidate Code here</a></span></h2>
+                                    <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate Code :</b>is mandatory for this interview.<span style="background: #4d98d3;color:#fff;border-radius:3px;font-size: 13px;padding: 3px 2px;line-height: 5px;margin-left: 10px;"><a style="padding: 0px 10px;color: #fff;text-decoration: none;" target="_blank" href="@Url.Action(" AddCodeDetails", "Interview" ,new{id=ViewBag.id,interviewId =ViewBag.InterviewId})">Add Candidate Code here</a></span></h2>
                                 </label>
                             </label>
                         </div>
@@ -1147,7 +898,7 @@
                         </label>
                     </div>
 
-                
+
                     <div class="col-md-12" style="font-size: 16px; line-height: 24px;color:#847878;clear:both">
                         <label class="question" for="checklist_5" style="float: left;width:100%">
                             <span class="round" style="float:left;left:0px;">
@@ -1163,43 +914,43 @@
                             </label>
                         </label>
 
-                      @if (!string.IsNullOrEmpty(Model.AudioComment))
-                        {  
+                        @if (!string.IsNullOrEmpty(Model.AudioComment))
+                        {
                             <div style="font-size: 16px;clear:both;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;border-top: 1px #dcd2d252 solid;">
 
-                            <label class="question" for="checklist_7" style="float: left;width:100%">
-                                <span class="round" style="float:left;left:0px;">
-                                    <input type="checkbox" id="checklist_7" name="InterviewCheckshow" />
-                                    <label for="checklist_7" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
-                                </span>
-                                <label class="consent-label" style="margin-left: 15px;text-align: left;">
-                                    <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Video:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;">( Video explanation )</span> :</b>.</h2>
-                                    
-                                </label>
-                            </label>
-                               
-                            </div>
-                           <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
-                    } 
+                                <label class="question" for="checklist_7" style="float: left;width:100%">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_7" name="InterviewCheckshow" />
+                                        <label for="checklist_7" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;text-align: left;">
+                                        <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Video:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;">( Video explanation )</span> :</b>.</h2>
 
-                       @if (!string.IsNullOrEmpty(Model.CompanyDetails))
-                        { 
+                                    </label>
+                                </label>
+
+                            </div>
+                            <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.CompanyDetails))
+                        {
                             <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
 
-                            <label class="question" for="checklist_8" style="float: left;width:100%">
-                                <span class="round" style="float:left;left:0px;">
-                                    <input type="checkbox" id="checklist_8" name="InterviewCheckshow" />
-                                    <label for="checklist_8" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
-                                </span>
-                                <label class="consent-label" style="margin-left: 15px;text-align: left;">
-                                    <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Flow - Document:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> :</b>.</h2>
+                                <label class="question" for="checklist_8" style="float: left;width:100%">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_8" name="InterviewCheckshow" />
+                                        <label for="checklist_8" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;text-align: left;">
+                                        <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Flow - Document:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> :</b>.</h2>
 
+                                    </label>
                                 </label>
-                            </label>
 
 
                             </div>
-                      }
+                        }
                         @if (Model.IsVideoRequired == true)
                         {
                             <div class="col-md-12 pull-left text-left">
@@ -1208,13 +959,13 @@
                         }
                     </div>
                     @* <div class="col-md-12 pull-left text-center">
-                        <h2 class="interviewerAlert" style="font-size:16px;line-height:23px;">
-                            <strong style="font-weight:700;color:green"> "Important Reminder for Interviewers:"</strong>
-                            <p style="text-align:left;"> You are required to provide <strong style="color: #e42c2c;font-weight:700">detailed, accurate, and technically sound observations</strong> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <strong style="color: #e42c2c;font-weight:700">Do Not copy-paste</strong> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
-                        </h2>
+                    <h2 class="interviewerAlert" style="font-size:16px;line-height:23px;">
+                    <strong style="font-weight:700;color:green"> "Important Reminder for Interviewers:"</strong>
+                    <p style="text-align:left;"> You are required to provide <strong style="color: #e42c2c;font-weight:700">detailed, accurate, and technically sound observations</strong> in your feedback. The comments must reflect a genuine human judgment and offer a clear, meaningful evaluation of the candidate’s proficiency. <strong style="color: #e42c2c;font-weight:700">Do Not copy-paste</strong> from other reports. Failure to follow these guidelines may result 100% payment deduction.</p>
+                    </h2>
                     </div> *@
                     <div class="col-md-4 accept-btn" style="margin:0px 0px 10px 0px;">
-                       
+
                         <button id="btnacceptackinterview" type="button" disabled class="mdc-button button-warning" style="position:relative;left:5px;border-radius: 20px;padding: 10px 20px; font-size:14px;" onclick="closeInterviewerAlert()">Accept & Continue</button>
                     </div>
                 </div>
@@ -1498,7 +1249,7 @@
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "none";
         var video = document.getElementById('vidvideoinstruction');
-        if(video != null){
+        if (video != null) {
             video.pause();
         }
     }
@@ -1614,17 +1365,17 @@
 
 </script>
 <script>
-    $("input[name='InterviewCheckshow']").change(function(){
-       CheckAcceptPopupAck();
+    $("input[name='InterviewCheckshow']").change(function () {
+        CheckAcceptPopupAck();
     });
-    function CheckAcceptPopupAck(){
-        var checkboxcheckedcount=$('input[name="InterviewCheckshow"]:checked').length;
-        var checkboxcount=$('input[name="InterviewCheckshow"]').length;
-        if(checkboxcheckedcount==checkboxcount){
-            document.getElementById('btnacceptackinterview').disabled=false ;
+    function CheckAcceptPopupAck() {
+        var checkboxcheckedcount = $('input[name="InterviewCheckshow"]:checked').length;
+        var checkboxcount = $('input[name="InterviewCheckshow"]').length;
+        if (checkboxcheckedcount == checkboxcount) {
+            document.getElementById('btnacceptackinterview').disabled = false;
         }
-        else{
-            document.getElementById('btnacceptackinterview').disabled=true ;
+        else {
+            document.getElementById('btnacceptackinterview').disabled = true;
         }
     }
 </script>
