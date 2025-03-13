@@ -787,28 +787,6 @@
     </div>
     </div>*@
 
-    @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
-    <div class="card" style="margin-bottom:10px;">
-    <label class="question" for="checkbox_seven">
-    <label for="checkbox_seven">
-    <i class="fa fa-file-text-o" aria-hidden="true"></i>
-    L2 Feedback - <span style="font-size:12.2px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question &amp; Concepts, Candidate Feedback</span>
-    </label>
-    <span class="round">
-    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
-    <label style="visibility:hidden" for="checkbox_seven"></label>
-
-    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" />
-    <label for="hidden_fields_seven_1"></label>
-
-    @* <div class="footer-nav">
-    <div class="button-wrapper">
-    <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
-
-    </div>
-    </div>*@
-</div>
-
 
 
     @* <div class="footer-nav">
@@ -830,17 +808,17 @@
                         <i class='fa fa-warning' style='color: white'></i>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left" style="padding-top:0px;">Mandatory Interview Instruction</h5>
+                <h5 class="modal-title pull-left" style="padding-top:0px;">Mandatory Interview Instructions</h5>
             </div>
             @* <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100;margin-top: -40px;">
             <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button> *@
 
-            <span class="mandate-inst">Accept the below mandatory instruction by checking the items given below to get zoom meeting link to start interview. Failure to comply may result in a 100% payment deduction.</span>
+            <span class="mandate-inst">Please accept the below mandatory instructions to get zoom meeting link to start the interview. Failure to comply the below instructions may result upto 100% payment deduction.</span>
             <div class="modal-body mi-check" style="padding:10px 15px 0px 15px;">
 
                 <div style="overflow-y:auto;max-height:470px;">
-                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Confirm you've read and agreed to the following by checking the box on each item below:</h1>
+                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Please confirm you've read and agreed to the following by checking the box on each item below:</h1>
 
                     <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                         <label class="question" for="checklist_6" style="float: left;width:100%">
@@ -869,7 +847,7 @@
 
                                 <label class="consent-label" style="margin-left: 15px;">
                                     <h2 style="font-size:14.5px;line-height: 24px;color: #979494;font-weight:400;">
-                                        <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video - "I am interested in this job role and I am acknowledging to continue this hiring process for turing.com
+                                        <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video. 
                                         <a target="_blank" href="@Model.ConsentFormUrl"><span style="color: #4c87b6;font-weight:500;font-weight:bold;text-decoration:underline;">Click here for Consent Form Link</span></a>
                                     </h2>
                                 </label>
@@ -913,7 +891,7 @@
                             </span>
                             <label class="consent-label" style="margin-left: 15px;">
                                 <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;">
-                                    <b style="color:green;padding-right: 7px;"> Candidate Proxy Alert :</b>Mark the candidate as proxy.
+                                    <b style="color:green;padding-right: 7px;"> Candidate Proxy Alert :</b>Mark the suspicious candidate as proxy.
                                     <a style="text-decoration:none;" target="_blank" href="https://risebirdportal.blob.core.windows.net/doc/PROXY DETECTION FORM.docx"><span style="color:#4c87b6;border-radius:3px;font-weight:bold;text-decoration:underline;">Click here for Proxy Alert Details</span></a>
                                 </h2>
                             </label>
@@ -931,7 +909,7 @@
                                 <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;">Bring Your Own Questions :</b>.</h2>
                                 <ul style="padding:0px 10px 0px 20px">
                                     <li style="line-height: 22px;margin-bottom:5px;font-size: 14.8px;color: #979494;font-weight: 400;list-style:square;padding: 0px 10px 0px 0px;"> Interviewers are expected to have their own personal questions inventory as per suggested format. Suggested interview format and questions are for your reference only</li>
-                                    <li style="line-height: 22px;margin-bottom:5px;font-size:14.8px;color: #979494;font-weight: 400;list-style:square;padding: 0px 10px 0px 0px;">Using suggested questions as it is would result in 100% payment deduction</li>
+                                    <li style="line-height: 22px;margin-bottom:5px;font-size:14.8px;color: #979494;font-weight: 400;list-style:square;padding: 0px 10px 0px 0px;">Using suggested questions as it is would result upto 100% payment deduction</li>
                                 </ul>
                             </label>
                         </label>
@@ -952,11 +930,11 @@
                                 </label>
 
                             </div>
-                           <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
-                    } 
+                            <video id="vidvideoinstruction" style="width:100%;height:240px;" controls><source src="@Model.AudioComment"></video>
+                        }
 
-                       @if (!string.IsNullOrEmpty(Model.CompanyDetails))
-                        { 
+                        @if (!string.IsNullOrEmpty(Model.CompanyDetails))
+                        {
                             <div style=" padding:5px 0px 5px 0px;font-size: 16px;text-align:center;color: #d61818;font-weight: 500;text-transform: uppercase;    border-bottom: 1px #dcd2d252 solid;border-top: 1px #dcd2d252 solid;">
 
                                 <label class="question" for="checklist_8" style="float: left;width:100%">
@@ -965,7 +943,9 @@
                                         <label for="checklist_8" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;text-align: left;">
-                                        <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;text-transform:capitalize"> Mandatory Interview Flow - Document:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> :</b>.</h2>
+                                        <h2 style="font-size:14.8px;line-height: 24px;color: #979494;font-weight:400;">
+                                            <b style="color:green;padding-right: 7px;text-transform:capitalize"> Suggested Interview Flow - Document:<span style="font-size: 17px;text-transform: capitalize;color: gray;padding-left:10px;padding-right:10px;">( Text explanation  )</span> :</b><a style="color:#0d6efd;text-decoration:none; margin-bottom:8px; line-height: 21px;text-transform: none;" id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")> Click to view instruction</a>
+                                        </h2>
 
                                     </label>
                                 </label>
@@ -973,12 +953,12 @@
 
                             </div>
                         }
-                        @if (Model.IsVideoRequired == true)
+                        @* @if (Model.IsVideoRequired == true)
                         {
                             <div class="col-md-12 pull-left text-left">
                                 <h2 class="interviewerAlert" style="margin:0px;padding:0px;color: #847878;"><strong style="display:block"> <b style="color: #e42c2c;margin-bottom: 10px;text-transform: none;display:block;line-height: 30px;">Important Notice:</b> Interview Requires Mandatory Video On of Interviewer</strong></h2>
                             </div>
-                        }
+                        } *@
                     </div>
                     @* <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert" style="font-size:16px;line-height:23px;">
