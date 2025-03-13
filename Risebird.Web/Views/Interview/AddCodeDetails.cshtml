@@ -22,7 +22,7 @@
                 <div class="col-md-12 clearfix" style="text-align: center;color: #42a5f5;">
                     <h5 class="modal-title" style="color: #42a5f5;">Upload Candidate Code Snippet</h5>
                     <span style="line-height: 31px;margin: 0px;padding: 0px;font-size: 15px; color: #c4b8b8;">Please upload candidate code snippet here. Only allowed to upload single file at a time</span>
-                    </div>
+                </div>
                 <div class="upload_resume" style="padding-top:0px;">
                     <div class="addcode">
                         <div class="drop-box">
@@ -32,15 +32,15 @@
                             <p>Files Supported: text file</p>
 
 
-                             <label for="CodeSnippetFile">
+                            <label for="CodeSnippetFile">
                                 <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your file or <span class="filepond--label-action" tabindex="0">Browse</span></a>
                             </label>
-                            <input type="file" name="CodeSnippetFile" accept=".txt" id="CodeSnippetFile" style="visibility: hidden; position:absolute;"/>
+                            <input type="file" name="CodeSnippetFile" accept=".txt" id="CodeSnippetFile" style="visibility: hidden; position:absolute;" />
                             <div id="files-area">
                                 <span id="filesList">
                                     <span id="files-names"></span>
                                 </span>
-                            </div> 
+                            </div>
                         </div>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnfileUpload" value="Submit" onclick="CodeSnippetFileUpload()" style="margin:0px 15px;">Submit</button>
                         <div style="position:absolute;top:76px;left:0px;width: 100%;margin:10px auto;"> <label id="txtfileuploading" class="txtuploading" style="display:none;margin:-4px auto;"></label></div>
@@ -49,7 +49,7 @@
                             <h5 class="modal-title" style="color: #42a5f5;">Copy paste the Candidate Code  </h5>
                             <span style="line-height: 31px;margin: 0px;padding: 0px;font-size: 15px; color: #c4b8b8;">Please copy paste & save candidate code snippet here.</span>
 
-                            </div>
+                        </div>
                         <textarea id="addcoding" name="addcoding" rows="4" cols="50"></textarea>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSaveText" value="Save" onclick="CodeSnippetTextSave()" style="margin:20px 5px;width:80px;">Save</button>
                     </div>
@@ -104,7 +104,7 @@
     document.querySelector("#files-names").textContent = this.files[0].name;
     }
 
- </script>
+</script>
 <script>
     function CodeSnippetFileUpload() {
         var fileControl = document.getElementById("CodeSnippetFile");
