@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using iTextSharp.text.pdf.qrcode;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -29,6 +32,7 @@ using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList.Extensions;
 using static SkiaSharp.HarfBuzz.SKShaper;
+using Method = RestSharp.Method;
 
 namespace Risebird.Web.Controllers
 {
@@ -66,13 +70,14 @@ namespace Risebird.Web.Controllers
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly ITwilioHelper _twilioHelper;
+        private readonly IActivityTrackerService _activityTrackerService;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper)
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -101,6 +106,7 @@ namespace Risebird.Web.Controllers
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _sasUrlHelper = sasUrlHelper;
             _twilioHelper = twilioHelper;
+            _activityTrackerService = activityTrackerService;
         }
 
 
@@ -1070,6 +1076,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                await _activityTrackerService.DebugLogger("MakeIVRCallForAvailability function successfully invoked", "ivr", string.Empty);
                 var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 //var apiurl = "https://" + "localhost:50323" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 var client = new RestClient(apiurl);
@@ -1081,7 +1088,10 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _activityTrackerService.DebugLogger($"MakeIVRCallForAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
+
             }
         }
 
@@ -6926,8 +6936,8 @@ namespace Risebird.Web.Controllers
                         }
 
                         //fire and forget method to make an ivr call to interviewers?
-                        MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString()});
-                        
+                        MakeIVRCallForAvailability(new AvailabilityCheckDTO { AssessmentGroupId = assessmentGroupId.ToString() });
+
                         return Json("Emails sent successfully.");
                     }
                     else
@@ -6944,6 +6954,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _activityTrackerService.DebugLogger($"CheckAGLevelInterviewerAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
                 return Json("Fail");
             }
         }
@@ -9764,7 +9775,7 @@ namespace Risebird.Web.Controllers
                 var interviewid = Convert.ToInt32(Request.Form["interviewid"].ToString());
                 string uploadedFileURL = string.Empty;
                 var model = Request.Form.Files[0];
-                string outputFileName = model.FileName.Replace(" ", "_");
+                string outputFileName = interviewid.ToString() + "_" + model.FileName.Replace(" ", "_");
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
                 FileInfo fi = new FileInfo(outputFileName);
                 if (fi.Extension.ToLower() == ".txt")
@@ -9785,6 +9796,18 @@ namespace Risebird.Web.Controllers
             {
                 return Json("");
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> UploadInterviewTextCodeSnippet(int interviewid, string codesnippettext)
+        {
+            var fileName = interviewid.ToString() + ".txt";
+            var uploadedFileURL = string.Empty;
+            using (Stream myStream = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(codesnippettext)))
+            {
+                uploadedFileURL = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "codesnippet", null, null, myStream);
+            }
+            var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
+            return Json("Code snippet saved successfully.");
         }
         [HttpPost]
         public async Task<JsonResult> GetCodeSnippet(int interviewid)
@@ -11110,11 +11133,11 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
 
                         var result = await _clonableSkillChannelTemplateService.CreateClonableSkillChannelFromMAG(assessmentGroupId, assessmentGroupName, emailid);
-                        if(result)
+                        if (result)
                         {
                             return Json($"Successfully created a template named : {assessmentGroupName} Template");
                         }
@@ -11141,6 +11164,11 @@ namespace Risebird.Web.Controllers
 
             }
         }
-
+        [HttpPost]
+        public async Task<JsonResult> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName)
+        {
+            var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
+            return Json("Successfully");
+        }
     }
 }

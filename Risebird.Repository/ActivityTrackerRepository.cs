@@ -141,5 +141,29 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> DebugLogger(string message, string type, string performedBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+
+                    parameters.Add("@message", message);
+                    parameters.Add("@type", type);
+                    parameters.Add("@performedBy", performedBy);
+                    parameters.Add("@performedAt", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_DebugLogger", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

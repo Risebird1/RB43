@@ -10,6 +10,6 @@ Create PROCEDURE usp_GetVideoConsentForm
 @irfid int
 AS
 BEGIN
-Select CandidateVideo From IRF where IRFId=irfid
+Select CandidateVideo From IRF where id=@irfid    
 END
 GO

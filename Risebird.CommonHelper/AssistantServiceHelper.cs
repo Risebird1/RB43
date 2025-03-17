@@ -29,6 +29,7 @@ namespace Risebird.CommonHelper
         private readonly string reportQCVectorStoreId;
         private readonly string resumeParserAssistantId;
         private readonly string rubricGeneratorAssistantId;
+        private readonly string aiTranscriptAnalysisAssistantId;
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -45,6 +46,7 @@ namespace Risebird.CommonHelper
             reportQCVectorStoreId = _configuration["OpenAI:ReportQCVectorStoreId"];
             resumeParserAssistantId = _configuration["OpenAI:ResumeParserAssistantId"];
             rubricGeneratorAssistantId = _configuration["OpenAI:RubricGeneratorAssistantId"];
+            aiTranscriptAnalysisAssistantId = _configuration["OpenAI:TranscriptAnalysisAssistantId"];
 
         }
 
@@ -193,6 +195,10 @@ namespace Risebird.CommonHelper
                     else if (profileType == ProfileNames.ResumeParserAIAssistant)
                     {
                         assistantId = resumeParserAssistantId;
+                    }
+                    else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
+                    {
+                        assistantId = aiTranscriptAnalysisAssistantId;
                     }
                     else
                     {
@@ -397,7 +403,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null)
         {
             try
             {
@@ -430,11 +436,16 @@ namespace Risebird.CommonHelper
                     }
 
                 }
-                else //case for generating tech skill rubric
+                else if(!string.IsNullOrEmpty(jobTitleForRubrics))//case for generating tech skill rubric
                 {
                     queryContent = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitleForRubrics}.";
                 }
-                
+                else if(!string.IsNullOrEmpty(transcriptData))
+                {
+                    queryContent = $"Generate an output as per the instructions fed to the assistant. The transcript date you need to generate an analysis against is {transcriptData}.";
+
+                }
+
                 var threadRequest = new Thread();
                 if (requestModel != null && !string.IsNullOrEmpty(fileId))
                 {
@@ -721,6 +732,62 @@ namespace Risebird.CommonHelper
                     //{
                     //    return await RecreateThread(requestModel, fileId);
                     //}
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateTranscriptAnalysis(string transcriptData)
+        {
+            try
+            {
+
+                string threadId = string.Empty;
+                threadId = await CreateThreadAsync(transcriptData: transcriptData);
+                //if (!string.IsNullOrEmpty(fileId))
+                //{
+                //    await Task.Delay(15000);//60000
+
+                //}
+                //else
+                //{
+                //    return null;
+                //}
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, ProfileNames.TranscriptAnalysisAIAssistant);
+                }
+                else
+                {
+                    return null;
+                }
+                await Task.Delay(10000);
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+                    
                     return messages;
                 }
                 else

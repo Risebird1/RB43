@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <div style="display:block" id="uploadDiv">
+        <div class="addcode" style="display:block" id="uploadDiv">
             <div class="upload_resume" style="padding-top:0px;">
                 <div class="col-md-12 col-sm-12">
                     <div class="drop-box">
@@ -93,7 +93,7 @@
                         </header>
                         <p>Files Supported: text file</p>
                         <label for="ResumeFiles">
-                            <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span></a>
+                            <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your file or <span class="filepond--label-action" tabindex="0">Browse</span></a>
                         </label>
                         <input type="file" name="ResumeFiles" accept=".txt" id="ResumeFiles" style="visibility: hidden; position: absolute;" multiple />
                         <div id="files-area">
@@ -305,7 +305,7 @@
     }
 </script>
 
-        <script>
+@*  <script>
 
     const dt = new DataTransfer();
 
@@ -341,5 +341,11 @@
             document.getElementById('ResumeFiles').files = dt.files;
         });
     });
+
+</script> *@
+<script>
+    document.querySelector("#ResumeFiles").onchange = function () {
+        document.querySelector("#files-names").textContent = this.files[0].name;
+    }
 
 </script>

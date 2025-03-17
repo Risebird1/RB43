@@ -249,5 +249,6 @@ namespace Risebird.Business.Interface
         Task<int> checkInterviewEditable(int meetingid);
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
         Task<string> GetInterviewCancellationSource(int interviewid);
+        Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
     }
 }

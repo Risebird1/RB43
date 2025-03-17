@@ -59,5 +59,18 @@ namespace Risebird.Business
             }
             return false;
         }
+        public async Task<bool> DebugLogger(string message, string type, string performedBy)
+        {
+            try
+            {
+                return await _activityTrackerRepository.DebugLogger(message, type, performedBy);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
     }
 }

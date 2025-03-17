@@ -12,7 +12,6 @@
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
     int inthistCount = 0;
     int scheduleCount = 0;
-
 }
 
 <style>
@@ -105,8 +104,8 @@
 
 
     /*
-             *  STYLE 1
-             */
+                *  STYLE 1
+                */
 
 
     #style-4::-webkit-scrollbar {
@@ -230,17 +229,19 @@
 
             <div class="row">
                 <div class="candidate-tab">
-                    @if (string.IsNullOrEmpty(Model.CandidateDetails.LogoUrl))
-                    {
-                        <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative;top: -25px;" class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" /></div>
-                    }
-                    else
-                    {
-                        <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative; top: -25px;" class="img-responsive" src="@Model.CandidateDetails.LogoUrl" /></div>
-                    }
-
-
-
+                    <div class="clearfix">
+                        <div style="float:left">
+                            @if (string.IsNullOrEmpty(Model.CandidateDetails.LogoUrl))
+                            {
+                                <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative;top: -25px;" class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" /></div>
+                            }
+                            else
+                            {
+                                <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative; top: -25px;" class="img-responsive" src="@Model.CandidateDetails.LogoUrl" /></div>
+                            }
+                        </div>
+                        <div style="float:right"><button class="click_herebtn" onclick="RedoRating()" style="width: auto;margin: 0px;position: absolute;right: 123px;top: 100px;line-height:11px;border-radius:0px;"><img width="20" src="../../img/request-icon.png" style="margin-right:10px;">Rate Your Interviewer</button></div>
+                    </div>
 
                     <div class="mdl-tabs vertical-mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
                         <div class="mdl-grid mdl-grid--no-spacing">
@@ -267,10 +268,7 @@
                                                         {
                                                             scheduleCount = +1;
                                                             <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:10px;">Scheduled Interview Details</h1></div>
-
-
-
-                                                           @* @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                            @* @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
                                                                 <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
                                                                     <div class="calling" style="top:130px;right:55px;text-transform:uppercase">
@@ -291,6 +289,7 @@
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
+
                                                                 <div style="margin: 18px 0px 8px 0px;;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
                                                                      onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
                                                                     Click here to join the meeting
@@ -609,8 +608,130 @@
             </div>
         </div>
     </div>
+    <div id="InterviewRatingRedoModel" class="modal modal-bg" style="z-index:100;overflow:auto;">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+                            <img class="rating-star" src="~/img/rating-star-icon.png" />
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left" style="padding-top:3px;">Rate Your Interviewer</h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span onclick="closeInterviewRatingRedo()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+                </button>
+                <div class="modal-body" style="padding: 2px 16px;" id="divInterviewRatingRedo">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="InterviewerAlert" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important;top:10px;">
+            <div class="modal-content">
+                <div class="filheader" style="padding-bottom:10px;">
+                    <div class="filavatar" style="background:#d61818!important;">
+                        <span class="mdc-fab__icon material-icons">
+                            <i class='fa fa-warning' style='color: white'></i>
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left" style="padding-top:0px;">Mandatory Instructions</h5>
+                </div>
 
 
+                <div class="modal-body mi-check" style="padding:0px;text-align: center;">
+
+                <div class="modal-body mi-check" style="padding:0px;text-align: center;">
+
+                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Please confirm you've read and agreed to the following by checking the box on each item below : </h1>
+                     @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm) || !string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
+                    { 
+                        <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                            <label class="question" for="checklist_1" style="float: left;width:100%">
+                                <span class="round" style="float:left;left:0px;">
+                                    <input type="checkbox" id="checklist_1" value="CandidateConsent" name="InterviewCheckshow" />
+                                    <label for="checklist_1" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                </span>
+
+                                <label class="consent-label" style="margin-left: 15px;">
+                                    <h2 style="font-size:14.5px;line-height: 20px;color: #979494;font-weight:400;margin:0px;">
+                                        <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>"I understand the job role and confirm my willingness to proceed with the hiring process for the 'company' I am interviewing for".
+                                        <br />
+                                    
+                                     @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
+                                    {
+                                    <p style="font-size:16px;padding: 5px 0px 0px 0px;float:left">
+                                        <b style="font-weight:600;color:grey"> Learn more:</b>
+                                        <span style="line-height: 22px;margin-bottom:5px;font-size: 15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 0px 0px 0px;">  <a target="_blank" href="@Model.CandidateDetails.CandidateVideo"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Job Role Video Explaination</a> </span>&
+                                        
+                                        </p>
+                                    
+                                      } 
+                                    
+
+                                      @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm))
+                                    { 
+                                    <p style="font-size:16px;padding: 5px 0px 0px 5px;float: left;">
+                                    <span style="line-height: 22px;margin-bottom:5px;font-size:15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 10px 0px 0px;"><a target="_blank" href="@Model.CandidateDetails.ConsentForm"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Consent Text </span></a></span>
+                                    </p>
+                                    } 
+                                   
+                                    
+                                    </h2>
+                                </label>
+                            </label>
+                        </div>
+                   } 
+                    @if (Model.CandidateDetails.CandidateIdverification)
+                    {
+                        <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                            <label class="question" for="checklist_2" style="float: left;width:100%">
+                                <span class="round" style="float:left;left:0px;">
+                                    <input type="checkbox" id="checklist_2" value="CandidateIdVerification" name="InterviewCheckshow" />
+                                    <label for="checklist_2" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                </span>
+                                <label class="consent-label" style="margin-left: 15px;">
+                                    <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Candidate ID verification :</b> Please present a valid government-issued ID card at the beginning of the interview to authenticate your identity </h2>
+                                </label>
+                            </label>
+                        </div>
+                    } 
+
+
+                    <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                        <label class="question" for="checklist_3" style="float: left;width:100%">
+                            <span class="round" style="float:left;left:0px;">
+                                <input type="checkbox" id="checklist_3" value="ShareExprience" name="InterviewCheckshow" />
+                                <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                            </span>
+                            <label class="consent-label" style="margin-left: 15px;">
+                                    <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Rate Your Interviewer :</b>Incase your interviewer is not upto the mark , you may request 'redo' or 'inform' about your experience by clicking on  Rate your interviewer button on the dashboard either during the interview or after the interview.</h2>
+                            </label>
+                        </label>
+                    </div>
+
+
+                    <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
+                        <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" checked id="agree" name="agree" /> <span style="font-weight:600;color: grey" ;> I hereby accept & acknowlege Risebird <a href="https://drive.google.com/file/d/1t9h7CLcwrbI7HzkJT5vs8pEWA5ySeiTY/view?usp=sharing" target="_blank" style="text-decoration:underline">Terms & Services</a></span>
+                    </div> 
+                    <div class="col-md-3 pull-right">
+                        <button type="button" class="mdc-button button-warning" data-bs-dismiss="modal" aria-label="Skip" style="z-index:100;margin-bottom: 10px;background: #a9a6a6;">
+                            <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">Skip</span>
+                        </button>
+                        <button style="margin-bottom: 10px;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()">Accept</button>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
@@ -881,6 +1002,72 @@
         $('.panel-collapse').on('hide.bs.collapse', function () {
             $(this).siblings('.panel-heading').removeClass('active');
         });
+    </script>
+
+
+    <script>
+        function RedoRating(){
+            $.ajax({
+                url: '/Interview/InterviewRateRedo',
+                data: { 'id':@ViewBag.Interviewid},
+                type: "GET",
+                success: function (data) {
+                    if (document.getElementById("InterviewRatingRedoModel").style.display != "block") {
+                        openInterviewRatingRedo();
+                        $('#divInterviewRatingRedo').html('');
+                        $('#divInterviewRatingRedo').html(data);
+                    }
+                }
+            });
+        }
+
+
+        function closeInterviewRatingRedo() {
+            var modal = document.getElementById("InterviewRatingRedoModel");
+            modal.style.display = "none";
+        }
+        function openInterviewRatingRedo() {
+            var modal = document.getElementById("InterviewRatingRedoModel");
+            modal.style.display = "block";
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            openInterviewerAlert()
+        })
+    </script>
+
+    <script>
+        function openInterviewerAlert() {
+            var model = document.getElementById("InterviewerAlert");
+            model.style.display = "block";
+        }
+        function closeInterviewerAlert() {
+            var model = document.getElementById("InterviewerAlert");
+            model.style.display = "none";
+        }
+        function AcceptInterviewerAlert(){
+            var result = $('input[name="InterviewCheckshow"]:checked');
+            var resultString = '';
+            if (result.length > 0) {
+                result.each(function () {
+                    if (resultString == '') {
+                        resultString += $(this).val();
+                    } else {
+                        resultString += "," + $(this).val();
+                    }
+                });
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/CandidateAcknowledge",
+                data: { 'interviewid': @ViewBag.Interviewid, interviewchecks: resultString },
+                success: function (data) {
+                    closeInterviewerAlert();
+                }
+            });
+        }
+
     </script>
     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
     <script src="~/js/TwilioCallMaker.js?v=2024"></script>

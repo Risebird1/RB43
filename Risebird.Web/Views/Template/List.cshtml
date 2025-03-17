@@ -493,13 +493,15 @@
                                 @Html.DropDownList("ClientUserIdPopUp", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
                                 <label id="error_ClientUserIdPopUp" class="text-danger"></label>
                             </div> *@
-
+                            <div>
+                            <label for="ClientId" class="form-label">Select Client User:</label><br/>
                             <span id="make_checkbox_select">
                                 <select id="ClientUserIdPopUp" data-placeholder="None Selected" style="width:300px" name="ClientUserIdPopUp" multiple class="chosen-select" tabindex="8">
 
                                 </select>
                             </span>
                             <label id="error_ClientUserIdPopUp" class="text-danger"></label>
+                            </div>
 
                         }
 

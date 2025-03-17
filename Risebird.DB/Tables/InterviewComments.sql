@@ -55,6 +55,11 @@ CREATE TABLE [dbo].[InterviewComments](
     [CandidateIDVerificationStatus][int]NULL,
     [ClientExternalVideoUploadedUrl][varchar](max) NULL,
     [ClientExternalTranscriptUploadedUrl][varchar](max) NULL,
+    [AITranscriptAnalysis][varchar](max) NULL,
+    [IsAITranscriptAnalysisAttempted][bit] NULL,
+    [IsAITranscriptAnalysisFailed][bit] NULL,
+    [AITranscriptVerdict][varchar](20) NULL,
+    [AITranscriptAnalysisScore][int] NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -332,6 +337,54 @@ IF NOT EXISTS(
 BEGIN
 	ALTER TABLE InterviewComments
 	Add ClientExternalTranscriptUploadedUrl varchar(max)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AITranscriptAnalysis')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add AITranscriptAnalysis varchar(max)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsAITranscriptAnalysisAttempted')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add IsAITranscriptAnalysisAttempted bit null
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsAITranscriptAnalysisFailed')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add IsAITranscriptAnalysisFailed bit null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AITranscriptVerdict')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add AITranscriptVerdict varchar(20) null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AITranscriptAnalysisScore')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add AITranscriptAnalysisScore int null
 END
 
 End

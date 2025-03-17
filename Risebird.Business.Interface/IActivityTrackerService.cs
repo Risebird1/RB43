@@ -11,5 +11,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ActivityTrackerVM>> GetAllActivities(DateTime startDate, DateTime endDate);
         Task<bool> SaveCaptureClickDetails(CapturePageDM model);
         Task<bool> SaveCaptureInterviewerRelatedPageClick(CapturePageDM model);
+        Task<bool> DebugLogger(string message, string type, string performedBy);
     }
 }

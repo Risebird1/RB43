@@ -1,0 +1,177 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Transcript Analysis";
+    ViewBag.PageHeader = "Transcript Analysis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+@* <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head> *@
+
+
+    
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<div class="main-panel" id="main-panel">
+
+  @*  <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Candidate Resume Screener</h4></div>
+                </div>
+
+            </div>
+        </div>
+    </div>*@
+   <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="student-profile py-4">
+                                        <div class="container">
+                                       
+                                        <div class="card shadow-sm">
+                                                       <div class="card-body pt-0">
+                                                           <div class="col-md-6 pull-left text-left">
+                                                           <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">Interviewer Email : </span>@ViewBag.InterviewerEmail</h3>
+                                                           <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">Candidate Email : </span>@ViewBag.CandidateEmail</h3>
+                                                           <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">Interview Date : </span>@ViewBag.InterviewDate</h3>                                                     
+                                                           </div>
+                                                           <div class="col-md-6 pull-left text-right">
+                                                               <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">IRF Name : </span>@ViewBag.IRFName</h3>
+                                                                <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">AI Transcrpt Analysis Score : </span>@ViewBag.AITranscriptAnalysisScore</h3>
+                                                         <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">AI Transcript Verdict : </span>
+                                                             @if(@ViewBag.AITranscriptVerdict =="yes"){
+                                                                <span style="background: #65c765;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;"> @ViewBag.AITranscriptVerdict</span>
+                                                         }else{
+                                                              <span style="background: #d14717c4;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;"> @ViewBag.AITranscriptVerdict</span>
+                                                         }</h3>
+                                                           </div>
+                                                        
+                                                         @* <div class="light-grey-text" style="font-size:17px;">Job Title: @ViewBag.JobTitle</div> *@
+                                                        </div>
+                                                        @* <div class="card-body">
+                                                <div class="mb-10 summary resume-view-btn"><a  href="@ViewBag.ResumeLink" target="_blank" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space resume-view" style="font-size:12px;padding: 2px 25px !important;height:35px!important;border-radius:5px!important">View Resume</a> </div>
+
+                                                        </div> *@
+                                                    </div>
+                                                </div>
+                                              
+                                                
+
+
+                                                
+                                                    <div class="card shadow-sm">
+
+                                                        <div class="card-body pt-0">
+                                                            <div class="response-div style-2">
+                                                                <section class="transcript-analysis clearfix">
+                                                                    <p>
+                                                                    <br/>    <br/>   
+                                                                    @if (Model != null)
+                                                                    {
+                                                            
+                                                                            @Html.Raw(Model.Replace("\n", "<br>").Replace("**", "").Replace("**", ""))
+
+
+                                                                    }
+                                                            
+                                                                    </p>
+                                                                </section>
+                                                            
+                                                                <!--End Scoring Section-->
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                        
+                        
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+                      </div>
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>
+ <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const paragraphs = document.querySelectorAll("p");
+            paragraphs.forEach(paragraph => {
+                let html = paragraph.innerHTML;
+                // Adjusted regex to match two <br> tags followed by any text
+                html = html.replace(/(<br>\s*<br>\s*)(.*?)(?=<br>|$)/g, '<span class="highlight-text">$2</span>');
+               
+
+                 html = html.replace(/<br>\s*(\S)/g, '<br><span class="black-text">$1</span>')
+
+                     html = html.replace(/\b\d+\b/g, '<span class="black-text">$&</span>');
+                   
+                paragraph.innerHTML = html;
+                
+            });
+        });
+    </script>
+   <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const spans = document.querySelectorAll("span.highlight-text");
+
+            spans.forEach(span => {
+                // Get the text content of the span
+                let textContent = span.innerHTML;
+
+                // Check if the span starts with '###'
+                if (textContent.startsWith('###')) {
+                   
+                    // Replace the class of the span
+                    span.classList.remove('highlight-text');
+                    span.classList.add('heading-text');
+                    
+                }
+                
+            });
+            document.querySelectorAll('.heading-text').forEach(element => {
+    element.textContent = element.textContent.replace(/###/g, '');
+});
+        });
+
+    </script>
+    <style>
+      .highlight-text{
+          font-size:16px;font-weight: 600;color: #20B2AA !important;
+      }
+
+      .transcript-analysis{color:grey;font-size:15px!important;}
+    </style>
+
+@* </html> *@

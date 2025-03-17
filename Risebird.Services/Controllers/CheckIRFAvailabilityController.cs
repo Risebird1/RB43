@@ -33,12 +33,13 @@ namespace Risebird.Services.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
+        private readonly IActivityTrackerService _activityTrackerService;
         public CheckIRFAvailabilityController(IApplicationErrorLogger applicationErrorLogger,
             IClientService clientService, IIRFService irfService,
             IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice,
             INotificationHelper notificationHelper, IEncryptionHelper encryptionHelper,
             ITwilioHelper twilioHelper,
-            HttpClientHelper factory)
+            HttpClientHelper factory, IActivityTrackerService activityTrackerService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _clientService = clientService;
@@ -49,6 +50,7 @@ namespace Risebird.Services.Controllers
             _encryptionHelper = encryptionHelper;
             _twilioHelper = twilioHelper;
             _httpClient = factory.GetHttpClient();
+            _activityTrackerService = activityTrackerService;
         }
 
         [HttpPost]
@@ -57,6 +59,8 @@ namespace Risebird.Services.Controllers
         {
             try
             {
+                await _activityTrackerService.DebugLogger($"api/CheckIRFAvailabilityController/InterviewerAvailabilityCheck function invked succesfully", "ivr", string.Empty);
+
                 if (obj != null)
                 {
                     var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(obj?.AssessmentGroupId), obj?.id);
@@ -74,6 +78,8 @@ namespace Risebird.Services.Controllers
                         }
                         catch (Exception ex1)
                         {
+                            await _activityTrackerService.DebugLogger($"api/CheckIRFAvailabilityController/InterviewerAvailabilityCheck function error : {ex1.Message}, {ex1.StackTrace}", "ivr", string.Empty);
+
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex1);
                         }
                     }
@@ -101,6 +107,8 @@ namespace Risebird.Services.Controllers
             }
             catch (Exception ex)
             {
+                await _activityTrackerService.DebugLogger($"api/CheckIRFAvailabilityController/InterviewerAvailabilityCheck function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
+
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }

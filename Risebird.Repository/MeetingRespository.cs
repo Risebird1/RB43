@@ -7538,5 +7538,29 @@ namespace Risebird.Repository
             }
             return string.Empty;
         }
+
+        public async Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@aiAnalysisResponseJson", model.completeAnalysis);
+                    parameters.Add("@verdict", model.verdict);
+                    parameters.Add("@score", model.score);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveAITranscriptAnalysis", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

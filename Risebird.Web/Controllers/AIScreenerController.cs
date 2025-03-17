@@ -15,8 +15,10 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using static iTextSharp.text.pdf.AcroFields;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -31,13 +33,14 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IInterviewerService _interviewerService;
+        private readonly IMeetingService _meetingService;
         private readonly IIRFRepository _irfRepository;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
             IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper,
             IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
-            IIRFRepository irfRepository)
+            IIRFRepository irfRepository, IMeetingService meetingService)
         {
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -47,6 +50,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _interviewerService = interviewerService;
             _irfRepository = irfRepository;
+            _meetingService = meetingService;
 
         }
 
@@ -684,6 +688,111 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task<IActionResult> TransciptAnalysis(int interviewId, int irfId, bool isRedo = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == ProfileNames.Admin || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR)
+                    {
+                        var report = await _meetingService.GetInteviewReport(interviewId, irfId);
+                        
+                        ViewBag.InterviewerEmail = report?.Interviewer;
+                        ViewBag.CandidateEmail = report?.CandidateEmail;
+                        ViewBag.IRFName = report?.IRFName;
+                        ViewBag.InterviewDate = report?.interviewDate;
+                        ViewBag.AITranscriptVerdict = report?.AITranscriptVerdict;
+                        ViewBag.AITranscriptAnalysisScore = report?.AITranscriptAnalysisScore;
+                        //ViewBag.JobTitle = jdTitle;
+
+                        if (report != null && !string.IsNullOrEmpty(report.AITranscriptAnalysis) && !isRedo)
+                        {
+                            //return View(JsonConvert.DeserializeObject<RunResult>(report.AITranscriptAnalysis));
+                            return View("SavedTransciptAnalysis", report.AITranscriptAnalysis);
+                        }
+
+
+                        string transcriptText;
+                        using (HttpClient client = new HttpClient())
+                        {
+                            transcriptText = await client.GetStringAsync(report.AudioTranscriptFileLink);
+                        }
+                        var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
+                        
+                        bool saveOperationResult = true;
+                        if (aiAnalysis != null)
+                        {
+                            var aiAnalysisModel = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            if (aiAnalysisModel != null)
+                            {
+                                saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
+
+                                ViewBag.AITranscriptVerdict = aiAnalysisModel.verdict;
+                                ViewBag.AITranscriptAnalysisScore = aiAnalysisModel.score;
+                            }
+                        }
+                        if (saveOperationResult)
+                        {
+                            ViewBag.SaveOperationResult = "Transcript analysis saved successfully.";
+                        }
+                        else
+                        {
+                            ViewBag.SaveOperationResult = "Failed to save Transcript analysis";
+                        }
+
+                        return View(aiAnalysis);
+
+                        //var request = new ScreeningRequest
+                        //{
+                        //    //Skills = skills,
+                        //    JDTitle = jdTitle,
+                        //    ResumeLink = interviewer?.ResumeLink ?? resumeLink,
+                        //    Type = ProfileNames.Interviewer
+                        //};
+                        //var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                        //var responseInJson = JsonConvert.SerializeObject(response);
+                        ////save the response in db
+                        //bool saveOperationResult = true;
+                        //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        //{
+                        //    saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson.Replace("'", ""));
+                        //}
+
+                        //if (saveOperationResult)
+                        //{
+                        //    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                        //}
+
+                        //return View(response);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(null);
             }
         }
     }

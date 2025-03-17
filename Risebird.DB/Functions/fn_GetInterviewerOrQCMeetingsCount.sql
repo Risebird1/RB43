@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create Function fn_GetInterviewerOrQCMeetingsCount(@IRFId varchar(50), @EmailId varchar(30), @Type varchar(5))
+Create Function fn_GetInterviewerOrQCMeetingsCount(@IRFId varchar(50), @EmailId varchar(100), @Type varchar(5))
 Returns int
 as
 Begin

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
@@ -22,9 +23,12 @@ namespace Risebird.CommonHelper
         private readonly string _twilioAuthToken = string.Empty;
         private readonly string _twilioAccountSID = string.Empty;
         private readonly TwilioRestClient _twilioClient;
+        private readonly IActivityTrackerService _activityTrackerService;
 
 
-        public TwilioHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        public TwilioHelper(IApplicationErrorLogger applicationErrorLogger, 
+            IConfiguration configuration,
+            IActivityTrackerService activityTrackerService)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -34,6 +38,7 @@ namespace Risebird.CommonHelper
             _twilioAuthToken = _configuration["TwilioSettings:AUTH_TOKEN"];
             _twilioAccountSID = _configuration["TwilioSettings:ACCOUNT_SID"];
             _twilioClient = new TwilioRestClient(_twilioAccountSID, _twilioAuthToken);
+            _activityTrackerService = activityTrackerService;
         }
 
 
@@ -303,6 +308,8 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                await _activityTrackerService.DebugLogger($"MakeIVRCallToInterviewerForAvailability twilio function invked succesfully", "ivr", string.Empty);
+
                 TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
                 jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
 
@@ -335,6 +342,8 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
+                await _activityTrackerService.DebugLogger($"MakeIVRCallToInterviewerForAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
+
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }

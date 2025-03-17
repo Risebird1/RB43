@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Interviews Code Snippet";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+}
+
+<meta name="viewport" content="width=device-width" />
+<title>InterviewDetails</title>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
+<script>
+    var Header = "<div id='myinterview_1'> Code Snippet</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<!---new page-->
+<input type="hidden" id="interviewid" value="@ViewBag.InterviewId" />
+<div class="interviewWrapper">
+    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="card">
+            <div style="display:block" id="uploadDiv">
+                <div class="col-md-12 clearfix" style="text-align: center;color: #42a5f5;">
+                    <h5 class="modal-title" style="color: #42a5f5;">Upload Candidate Code Snippet</h5>
+                    <span style="line-height: 31px;margin: 0px;padding: 0px;font-size: 15px; color: #c4b8b8;">Please upload candidate code snippet here. Only allowed to upload single file at a time</span>
+                    </div>
+                <div class="upload_resume" style="padding-top:0px;">
+                    <div class="addcode">
+                        <div class="drop-box">
+                            <header>
+                                <h4>Select File here</h4>
+                            </header>
+                            <p>Files Supported: text file</p>
+
+
+                            <label for="CodeSnippetFile">
+                                <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your file or <span class="filepond--label-action" tabindex="0">Browse</span></a>
+                            </label>
+                            <input type="file" name="CodeSnippetFile" accept=".txt" id="CodeSnippetFile" style="visibility: hidden; position:absolute;" />
+                            <div id="files-area">
+                                <span id="filesList">
+                                    <span id="files-names"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnfileUpload" value="Submit" onclick="CodeSnippetFileUpload()" style="margin:0px 15px;">Submit</button>
+                        <div style="position:absolute;top:76px;left:0px;width: 100%;margin:10px auto;"> <label id="txtfileuploading" class="txtuploading" style="display:none;margin:-4px auto;"></label></div>
+                        <div class="or or--x" aria-role="presentation"><span>OR</span></div>
+                        <div class="col-md-12 clearfix" style="text-align: center;color: #42a5f5;">
+                            <h5 class="modal-title" style="color: #42a5f5;">Copy paste the Candidate Code  </h5>
+                            <span style="line-height: 31px;margin: 0px;padding: 0px;font-size: 15px; color: #c4b8b8;">Please copy paste & save candidate code snippet here.</span>
+
+                            </div>
+                        <textarea id="addcoding" name="addcoding" rows="4" cols="50"></textarea>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSaveText" value="Save" onclick="CodeSnippetTextSave()" style="margin:20px 5px;width:80px;">Save</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <script>
+
+    const dt = new DataTransfer();
+
+    $("#CodeSnippetFile").on('change', function (e) {
+        for (var i = 0; i < this.files.length; i++) {
+            let fileBloc = $('<span/>', { class: 'file-block' }),
+                fileName = $('<span/>', { class: 'name', text: this.files.item(i).name });
+            fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                .append(fileName);
+            $("#filesList > #files-names").append(fileBloc);
+        };
+        // Ajout des fichiers dans l'objet DataTransfer
+        for (let file of this.files) {
+            dt.items.add(file);
+        }
+        // Mise à jour des fichiers de l'input file après ajout
+        this.files = dt.files;
+
+        // EventListener pour le bouton de suppression créé
+        $('span.file-delete').click(function () {
+            let name = $(this).next('span.name').text();
+            // Supprimer l'affichage du nom de fichier
+            $(this).parent().remove();
+            for (let i = 0; i < dt.items.length; i++) {
+                // Correspondance du fichier et du nom
+                if (name === dt.items[i].getAsFile().name) {
+                    // Suppression du fichier dans l'objet DataTransfer
+                    dt.items.remove(i);
+                    continue;
+                }
+            }
+            // Mise à jour des fichiers de l'input file après suppression
+            document.getElementById('CodeSnippetFile').files = dt.files;
+        });
+    });
+
+</script> *@
+<script>
+    document.querySelector("#CodeSnippetFile").onchange = function () {
+    document.querySelector("#files-names").textContent = this.files[0].name;
+    }
+
+</script>
+<script>
+    function CodeSnippetFileUpload() {
+        var fileControl = document.getElementById("CodeSnippetFile");
+        var interviewid = $("#interviewid").val();
+        var fileChunk = new FormData();
+        fileChunk.append('interviewid', interviewid);
+        if (fileControl.files.length > 0) {
+            for (var i = 0; i < fileControl.files.length; i++) {
+                fileChunk.append('file', fileControl.files[i]);
+            }
+        }
+        $("#btnfileUpload").hide();
+        document.getElementById("txtfileuploading").style.display = "block";
+        $("#txtfileuploading").text("Uploading...");
+        $.ajax({
+            type: "POST",
+            url: "/IRF/UploadInterviewCodeSnippet",
+            data: fileChunk,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $("#txtfileuploading").text(data);
+                $("#btnfileUpload").show();
+                //FetchCodesnippet();
+            }
+        });
+    }
+    function CodeSnippetTextSave() {
+        var interviewid = $("#interviewid").val();
+        var codesnippettext = $("#addcoding").val();
+        $("#btnSaveText").hide();
+        $.ajax({
+            type: "POST",
+            url: '/IRF/UploadInterviewTextCodeSnippet',
+            data: {'interviewid':interviewid,'codesnippettext':codesnippettext},
+            success: function (data) {
+                 alert(data);
+                $("#btnSaveText").show();
+            }
+        });
+    }
+</script>
+<!---new page-->

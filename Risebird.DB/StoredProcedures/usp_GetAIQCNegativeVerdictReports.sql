@@ -17,7 +17,7 @@ Begin
 	Select im.id as InterviewId, IRF.id as irfIntId, im.interviewDate,IRF.IRFId,
 	im.candidateName, im.candidateEmail, im.interviewer, ul.MobileNumber as InterviewerMobileNumber,
 	uli.EmailId as ChannelOwner, ic.InterviewStatus,
-	im.confirmationStatus, ic.MeetingStatus
+	im.confirmationStatus, ic.MeetingStatus, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted, ic.IsAITranscriptAnalysisFailed
 	from InterviewMeetings im 
 	join IRF on IRF.IRFId=im.IRFId
 	join [dbo].[InterviewComments] ic on im.id = ic.InterviewId

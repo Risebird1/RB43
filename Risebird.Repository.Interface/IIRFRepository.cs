@@ -282,5 +282,6 @@ namespace Risebird.Repository.Interface
         int GetIRFIdByIRFNametenantId(string IRFId, string tenantId);
         Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL);
         Task<string> GetVideoConsentForm(int irfid);
+        Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName);
     }
 }
