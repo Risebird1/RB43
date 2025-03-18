@@ -261,6 +261,7 @@ namespace Risebird.Web.Controllers
 
         private TwiMLResult UpdateInterviewerAvailbilityStatusForAssessmentGroup(int status, string unqId, int assessmentGroupId)
         {
+            //check link expiry befire hitting db
             try
             {
                 var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function invked succesfully", "ivr", string.Empty).Result;
