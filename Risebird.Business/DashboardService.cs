@@ -1182,5 +1182,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdict(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                return await _dashboardRespository.GetAITranscriptReportsWithVerdict(startDate, endDate);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

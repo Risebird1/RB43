@@ -2162,5 +2162,34 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        /// <summary>
+        /// Note : verdict = yes in database for ai transcript analysis indicates a poor interviewer
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdict(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    var result = await SqlMapper.QueryAsync<AINegativeVerdictQCReports>(con, "usp_GetAITranscriptReportsWithVerdict", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

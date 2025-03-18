@@ -726,9 +726,10 @@ namespace Risebird.Web.Controllers
                         var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
                         
                         bool saveOperationResult = true;
+                        var aiAnalysisModel = new TranscriptAnalysisSchema();
                         if (aiAnalysis != null)
                         {
-                            var aiAnalysisModel = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            aiAnalysisModel = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
                             if (aiAnalysisModel != null)
                             {
                                 saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
@@ -746,8 +747,8 @@ namespace Risebird.Web.Controllers
                             ViewBag.SaveOperationResult = "Failed to save Transcript analysis";
                         }
 
-                        return View(aiAnalysis);
-
+                        //return View(aiAnalysis);
+                        return View("SavedTransciptAnalysis", aiAnalysisModel.completeAnalysis);
                         //var request = new ScreeningRequest
                         //{
                         //    //Skills = skills,

@@ -51,105 +51,110 @@
 
                             <div style="clear:both;padding:10px"></div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                            <table id="entitleTable" class="table table-striped table-bordered dt-responsive dataTable" cellspacing="0" width="100%">
-                                <thead>
-                                    <tr>
-                                         <th>Action</th>
-                                        <th>Assessment Group</th>
-                                        <th width="30%">Category</th>
-                                        <th>Primary Skills</th>
-                                        <th width="4%">Number Of Interviewers(Active)</th>
-                                        <th width="4%">Number Of IRF</th>
-                                        <th>Insta Available</th>
-                                        <th>Is Master AG</th>
-                                        <th>Parent AG</th>
-                                        <th>UST Job Title</th>
-                                       
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                    @foreach (var item in Model._assessment)
-                                    {
+                                <table id="entitleTable" class="table table-striped table-bordered dt-responsive dataTable" cellspacing="0" width="100%">
+                                    <thead>
                                         <tr>
+                                            <th>Action</th>
+                                            <th>Assessment Group</th>
+                                            <th width="30%">Category</th>
+                                            <th>Primary Skills</th>
+                                            <th width="4%">Number Of Interviewers(Active)</th>
+                                            <th width="4%">Number Of IRF</th>
+                                            <th>Insta Available</th>
+                                            <th>Is Master AG</th>
+                                            <th>Parent AG</th>
+                                            <th>UST Job Title</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                        @foreach (var item in Model._assessment)
+                                        {
+                                            <tr>
                                                 <td id="actionwrap" class="flex-w text-center" style="padding:10px 0px;">
-                                                   <a class="animated-arrow" href="#" onclick="shrink();">
+                                                    <a class="animated-arrow" href="#" onclick="shrink();">
 
-                                                                <span class="main">
-                                                                    <span class="text">
-                                                                        Click to view
-                                                                    </span>
-                                                                    <span class="the-arrow -right">
-                                                                        <span class="shaft"></span>
-                                                                    </span>
-                                                                </span>
-                                                            </a>
+                                                        <span class="main">
+                                                            <span class="text">
+                                                                Click to view
+                                                            </span>
+                                                            <span class="the-arrow -right">
+                                                                <span class="shaft"></span>
+                                                            </span>
+                                                        </span>
+                                                    </a>
 
-                                                  <div class="action-btn" style="display:none;">
+                                                    <div class="action-btn" style="display:none;">
 
-                                                <button  class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit Assessment" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
+                                                        <button  class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit Assessment" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
                                                             <span onclick="EditAssessment(@item.id)" title="Edit Assessment"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
-                                                  </button>
+                                                        </button>
 
                                                         <a href="javascript:void(0);" id="mpopupLink">
                                                             <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Add Interviewers" style="width:25px!important;height:25px!important;position:relative; background: #5dbaec!important; border: 1px #5dbaec!important;">
-                                                            <span  title="Add Interviewers"><span class="fa fa-user-plus" style="left:0px;top:1px;position: relative;font-size:13px;"></span></span>
-                                                         </button></a>
+                                                                <span  title="Add Interviewers"><span class="fa fa-user-plus" style="left:0px;top:1px;position: relative;font-size:13px;"></span></span>
+                                                            </button></a>
 
-                                                 <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #7e97bab3!important; border: 1px #7e97bab3!important;">
-                                                   <span onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.id', '@item.AssessmentGroup');" title="Interviewers' List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
-                                                  </button>
-
-                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Skill Channel List" style="width:25px!important;height:25px!important;position:relative; background: #a673b182!important; border: 1px #d8c4dd82 solid!important;">
-                                                   <span onclick="javascript:getIRFList('@item.id');" title="Skill Channel List"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person-video2" viewBox="0 0 16 16"><path d="M10 9.05a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path d="M2 1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2ZM1 3a1 1 0 0 1 1-1h2v2H1V3Zm4 10V2h9a1 1 0 0 1 1 1v9c0 .285-.12.543-.31.725C14.15 11.494 12.822 10 10 10c-3.037 0-4.345 1.73-4.798 3H5Zm-4-2h3v2H2a1 1 0 0 1-1-1v-1Zm3-1H1V8h3v2Zm0-3H1V5h3v2Z" /></svg></span>
-                                                  </button>
-
-
-                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Questions List" style="width:25px!important;height:25px!important;position:relative; background:#f4d97e!important; border: 1px #f4d97e!important;">
-                                                   <span onclick="javascript:getQuestionsList('@item.id');" title="Questions List"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" /></svg>
-                                                   </span>
-                                                  </button>
-
-                                                  <button class="btn shadow btn-xs sharp me-1" aria-label="Share Verification to interviewer" style="width:25px!important;height:25px!important;position:relative; background:#78d278cf!important; border: 1px #78d278cf!important;">
-                                                   <span onclick="javascript:ShareVerificationInterviewer('@item.id');" title="Share Verification to interviewer"><svg style="position:relative;left:-1px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>
-                                                   </span>
-                                                  </button>
-
-
-                                                   <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to appoint SME" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
-                                                   <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME"><i style="font-size: 13px;position: relative;top: 2px;" class="fas fa-user-check"></i>
-                                                   </span>
-                                                  </button>
-
-                                                
-                                                   <a style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})" title="Create Email Campaign">
-                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Create Email Campaign" style="width:25px!important;height:25px!important;position:relative; background:#de6f6285!important; border: 1px #de6f6285!important;">
-                                                    <span title="Create Email Campaign"><i class="fa fa-bullhorn" style="font-size: 12.5px;position: relative; top: 1px;"></i></span>
-                                                  </button></a>
-
-
-                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Share Email to check Interviewer availability" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
-                                                    <span onclick="javascript:CheckAGLevelInterviewerAvailability('@item.id');" title="Share Email to check Interviewer availability for this Assessment Group" class="mdc-fab__icon material-icons">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                                                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                        </svg>
-                                                    </span>
-                                                </button>
-                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Interviewer Mail Activity">
-                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Mail Activity For Availability" style="background:#f0b24973!important;border: 1px #f0b24973!important;width:25px!important;height:25px!important;position:relative;">
-                                                            <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg style="position:relative;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Interviewer Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #7e97bab3!important; border: 1px #7e97bab3!important;">
+                                                            <span onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.id', '@item.AssessmentGroup');" title="Interviewers' List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
                                                         </button>
-                                                </a>
 
-                                                @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Skill Channel List" style="width:25px!important;height:25px!important;position:relative; background: #a673b182!important; border: 1px #d8c4dd82 solid!important;">
+                                                            <span onclick="javascript:getIRFList('@item.id');" title="Skill Channel List"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person-video2" viewBox="0 0 16 16"><path d="M10 9.05a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path d="M2 1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2ZM1 3a1 1 0 0 1 1-1h2v2H1V3Zm4 10V2h9a1 1 0 0 1 1 1v9c0 .285-.12.543-.31.725C14.15 11.494 12.822 10 10 10c-3.037 0-4.345 1.73-4.798 3H5Zm-4-2h3v2H2a1 1 0 0 1-1-1v-1Zm3-1H1V8h3v2Zm0-3H1V5h3v2Z" /></svg></span>
+                                                        </button>
+
+
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Questions List" style="width:25px!important;height:25px!important;position:relative; background:#f4d97e!important; border: 1px #f4d97e!important;">
+                                                            <span onclick="javascript:getQuestionsList('@item.id');" title="Questions List"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" /></svg>
+                                                            </span>
+                                                        </button>
+
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Share Verification to interviewer" style="width:25px!important;height:25px!important;position:relative; background:#78d278cf!important; border: 1px #78d278cf!important;">
+                                                            <span onclick="javascript:ShareVerificationInterviewer('@item.id');" title="Share Verification to interviewer"><svg style="position:relative;left:-1px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>
+                                                            </span>
+                                                        </button>
+
+
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to appoint SME" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
+                                                            <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME"><i style="font-size: 13px;position: relative;top: 2px;" class="fas fa-user-check"></i>
+                                                            </span>
+                                                        </button>
+
+
+                                                        <a style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})" title="Create Email Campaign">
+                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Create Email Campaign" style="width:25px!important;height:25px!important;position:relative; background:#de6f6285!important; border: 1px #de6f6285!important;">
+                                                                <span title="Create Email Campaign"><i class="fa fa-bullhorn" style="font-size: 12.5px;position: relative; top: 1px;"></i></span>
+                                                            </button></a>
+
+
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Share Email to check Interviewer availability" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
+                                                            <span onclick="javascript:CheckAGLevelInterviewerAvailability('@item.id');" title="Share Email to check Interviewer availability for this Assessment Group" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                </svg>
+                                                            </span>
+                                                        </button>
+                                                        <a style="text-decoration:none" target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Interviewer Mail Activity">
+                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Mail Activity For Availability" style="background:#f0b24973!important;border: 1px #f0b24973!important;width:25px!important;height:25px!important;position:relative;">
+                                                                <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg style="position:relative;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Interviewer Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
+                                                            </button>
+                                                        </a>
+
+                                                @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
                                                 {
 
-                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#497d9c73!important;border: 1px #497d9c73!important;width:25px!important;height:25px!important;position:relative;">
-                                                        <span onclick="location.href='@Url.Action("EditMAG", "IRF", new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})'" title="Edit MAG" style="text-decoration:none" >
-                                                                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L36.7,152a15.4,15.4,0,0,0-3.6,5.5l-.2.5a16,16,0,0,0-.9,5.3V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.3L224,99.3A16.1,16.1,0,0,0,224,76.7Zm-80-9.4L160.7,84,68,176.7,51.3,160ZM48,208V179.3L76.7,208Zm48-3.3L79.3,188,172,95.3,188.7,112Z" fill="white"></path></svg>
-                                                        </span>
-                                                    </button>
+                                                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                                                    {
+                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#497d9c73!important;border: 1px #497d9c73!important;width:25px!important;height:25px!important;position:relative;">
+                                                            <span onclick="location.href='@Url.Action("EditMAG", "IRF", new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})'" title="Edit MAG" style="text-decoration:none">
+                                                                <svg style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L36.7,152a15.4,15.4,0,0,0-3.6,5.5l-.2.5a16,16,0,0,0-.9,5.3V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.3L224,99.3A16.1,16.1,0,0,0,224,76.7Zm-80-9.4L160.7,84,68,176.7,51.3,160ZM48,208V179.3L76.7,208Zm48-3.3L79.3,188,172,95.3,188.7,112Z" fill="white"></path></svg>
+                                                            </span>
+                                                        </button>
+                                                    }
+                                                            
                                                     @if(item.TemplateCount == 0)
                                                     {
                                                         <button class="btn shadow btn-xs sharp me-1" aria-label="Create Template from MAG" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
@@ -163,21 +168,6 @@
                                                     }
                                                     
                                                 }
-
-                                                            
-                                                            @if (item.TemplateCount == 0)
-                                                            {
-                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Create Template from MAG" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
-                                                                    <span onclick="javascript:CreateTemplateFromMAG('@item.id', '@item.AssessmentGroup');" title="Create Template from MAG" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                                                                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-                                                            }
-
-                                                        }
 
                                                         @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
                                                         {
@@ -269,7 +259,8 @@
                                            
 
                                         </tr>
-                                    }
+
+                                        }
                                 </tbody>
                             </table>
                             </div>
