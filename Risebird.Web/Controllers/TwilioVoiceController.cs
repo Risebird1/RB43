@@ -61,7 +61,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public TwiMLResult IvrInterviewerAvailability(string uniqueId, string irfId, string jdTitle, string assessmentGroupId, int retryCount =0)
+        public TwiMLResult IvrInterviewerAvailability(string uniqueId, string irfId, string jdTitle, string assessmentGroupId, int retryCount = 0)
         {
             //var response = new VoiceResponse();
             //var message = string.Format("Dear {0}! Empty function worked. Greetings from RiseBird. This is to remind you that your interview is scheduled at {1}. Please confirm your availability by responding to the mail.",
@@ -73,11 +73,11 @@ namespace Risebird.Web.Controllers
             var response = new VoiceResponse();
             try
             {
-               
+
                 var link = $"https://portal.risebird.io/TwilioVoice/Show?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
                 var actionUri = new Uri(link);
                 var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);
-                
+
                 if (Convert.ToInt16(irfId) > 0)
                 {
                     gather.Say($"Dear Interviewer, greetings from Risebird. This call is to confirm your availability for taking an interview based on {jdTitle} over the next two days. Press 1 if Available. Press 2 if Not Available. Press 3 to Drop your profile.");
@@ -88,7 +88,7 @@ namespace Risebird.Web.Controllers
 
                 }
                 response.Append(gather);
-                
+
                 if (retryCount < 2)
                 {
                     response.Say("You did not press any key. Let me repeat the options.");
@@ -144,7 +144,7 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public IActionResult Show([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery]  string irfId, [FromQuery] string jdTitle,  [FromQuery] string assessmentGroupId)
+        public IActionResult Show([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] string irfId, [FromQuery] string jdTitle, [FromQuery] string assessmentGroupId)
         {
             try
             {
@@ -232,11 +232,11 @@ namespace Risebird.Web.Controllers
                              voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 }
                 //response.Say($"the irfId is {irfintId} and {unqId}",
-                             //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
-                
+                //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+
 
                 var result = _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, unqId, irfintId, "ivr").Result;
-                
+
                 //response.Say($"result is {result.Item1} and mailId is {result.Item2}");
 
                 response.Say($"result is {result.Item1} and mailId is {result.Item2}");
@@ -278,7 +278,7 @@ namespace Risebird.Web.Controllers
                              voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 }
                 //response.Say($"the assessmentgroupid is {assessmentGroupId} and {unqId}",
-                             //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 //else if (status == 4)
                 //{
                 //    response.Say("You chose Drop My Profile",
