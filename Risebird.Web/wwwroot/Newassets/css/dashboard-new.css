@@ -11130,6 +11130,7 @@ section {
     right: 10px;
     z-index:0!important;
     position: fixed;
+    display:none;
 }
 .mi-check .round label:after {
     left: 3px !important;
