@@ -91,5 +91,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList();
         Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers();
         Task<IEnumerable<PQIDetails>> GetTotalRedMarkeredInterviewers();
+        Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdict(DateTime? startDate = null, DateTime? endDate = null);
     }
 }

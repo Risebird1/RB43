@@ -11133,7 +11133,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
                         var result = await _clonableSkillChannelTemplateService.CreateClonableSkillChannelFromMAG(assessmentGroupId, assessmentGroupName, emailid);

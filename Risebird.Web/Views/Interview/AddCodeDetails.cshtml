@@ -32,7 +32,7 @@
                             <p>Files Supported: text file</p>
 
 
-                            <label for="CodeSnippetFile">
+                             <label for="CodeSnippetFile">
                                 <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your file or <span class="filepond--label-action" tabindex="0">Browse</span></a>
                             </label>
                             <input type="file" name="CodeSnippetFile" accept=".txt" id="CodeSnippetFile" style="visibility: hidden; position:absolute;" />
@@ -40,7 +40,7 @@
                                 <span id="filesList">
                                     <span id="files-names"></span>
                                 </span>
-                            </div>
+                            </div> 
                         </div>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnfileUpload" value="Submit" onclick="CodeSnippetFileUpload()" style="margin:0px 15px;">Submit</button>
                         <div style="position:absolute;top:76px;left:0px;width: 100%;margin:10px auto;"> <label id="txtfileuploading" class="txtuploading" style="display:none;margin:-4px auto;"></label></div>
@@ -104,7 +104,7 @@
     document.querySelector("#files-names").textContent = this.files[0].name;
     }
 
-</script>
+ </script>
 <script>
     function CodeSnippetFileUpload() {
         var fileControl = document.getElementById("CodeSnippetFile");
