@@ -7863,11 +7863,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientLogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 }
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
-                //if (model.IsReportwhitelabel)
-                //{
-                //    ViewBag.ClientLogo = "";
-                //    ViewBag.Risebirdlogo = "";
-                //}
+                if (model.IsReportwhitelabel)
+                {
+                    ViewBag.ClientLogo = "";
+                    ViewBag.Risebirdlogo = "";
+                }
                 //if (profileName == "Client")
                 //{
                 //    var client = await _userRepository.GetClientUserDetails(email);
