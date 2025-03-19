@@ -9810,18 +9810,7 @@ namespace Risebird.Web.Controllers
             var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
             return Json("Code snippet saved successfully.");
         }
-        [HttpPost]
-        public async Task<JsonResult> UploadInterviewTextCodeSnippet(int interviewid, string codesnippettext)
-        {
-            var fileName = interviewid.ToString() + ".txt";
-            var uploadedFileURL = string.Empty;
-            using (Stream myStream = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(codesnippettext)))
-            {
-                uploadedFileURL = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "codesnippet", null, null, myStream);
-            }
-            var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
-            return Json("Code snippet saved successfully.");
-        }
+        
         [HttpPost]
         public async Task<JsonResult> GetCodeSnippet(int interviewid)
         {
