@@ -1077,7 +1077,8 @@ namespace Risebird.Web.Controllers
             try
             {
                 await _activityTrackerService.DebugLogger("MakeIVRCallForAvailability function successfully invoked", "ivr", string.Empty);
-                var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                //var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                var apiurl = "https://api.portal.risebird.io/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 //var apiurl = "https://" + "localhost:50323" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 var client = new RestClient(apiurl);
                 var request = new RestRequest(apiurl, Method.Post);
