@@ -1077,7 +1077,8 @@ namespace Risebird.Web.Controllers
             try
             {
                 await _activityTrackerService.DebugLogger("MakeIVRCallForAvailability function successfully invoked", "ivr", string.Empty);
-                var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                //var apiurl = "https://" + Request.Host.ToString() + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
+                var apiurl = "https://api.portal.risebird.io/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 //var apiurl = "https://" + "localhost:50323" + "/api/CheckIRFAvailability/InterviewerAvailabilityCheck";
                 var client = new RestClient(apiurl);
                 var request = new RestRequest(apiurl, Method.Post);
@@ -9796,6 +9797,18 @@ namespace Risebird.Web.Controllers
             {
                 return Json("");
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> UploadInterviewTextCodeSnippet(int interviewid, string codesnippettext)
+        {
+            var fileName = interviewid.ToString() + ".txt";
+            var uploadedFileURL = string.Empty;
+            using (Stream myStream = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(codesnippettext)))
+            {
+                uploadedFileURL = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "codesnippet", null, null, myStream);
+            }
+            var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
+            return Json("Code snippet saved successfully.");
         }
         [HttpPost]
         public async Task<JsonResult> UploadInterviewTextCodeSnippet(int interviewid, string codesnippettext)
