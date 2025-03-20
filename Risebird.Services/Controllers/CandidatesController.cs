@@ -455,15 +455,37 @@ namespace Risebird.Services.Controllers
                     }
                     if (dayofweek != DateTime.Now.DayOfWeek.ToString().ToLower())
                     {
-                        for (int i = 0; i < valueset; i++)
+                        if (result.FirstOrDefault().BufferTime > 0)
                         {
-                            //var slots = Convert.ToInt32(item.Start) + i;
-                            var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
-                            var newslot = (int)(slots / 60);
-                            var newmin = Convert.ToInt32(slots % 60);
-                            DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
-                            if (result.FirstOrDefault().StartDate <= value1)
-                                model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                            int buffertimevalue = result.FirstOrDefault().BufferTime;
+                            var comdate = DateTime.Now.AddHours(buffertimevalue);
+                            for (int i = 0; i < valueset; i++)
+                            {
+                                var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
+                                var newslot = (int)(slots / 60);
+                                var newmin = Convert.ToInt32(slots % 60);
+                                DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                if (result.FirstOrDefault().StartDate <= value1)
+                                {
+                                    if (comdate < value1)
+                                    {
+                                        model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < valueset; i++)
+                            {
+                                //var slots = Convert.ToInt32(item.Start) + i;
+                                var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
+                                var newslot = (int)(slots / 60);
+                                var newmin = Convert.ToInt32(slots % 60);
+                                DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                if (result.FirstOrDefault().StartDate <= value1)
+                                    model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                            }
                         }
                     }
                     else
