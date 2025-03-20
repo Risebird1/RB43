@@ -9810,7 +9810,6 @@ namespace Risebird.Web.Controllers
             var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
             return Json("Code snippet saved successfully.");
         }
-        
         [HttpPost]
         public async Task<JsonResult> GetCodeSnippet(int interviewid)
         {
