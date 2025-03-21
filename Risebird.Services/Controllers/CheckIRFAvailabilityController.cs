@@ -73,7 +73,7 @@ namespace Risebird.Services.Controllers
                             {
                                 await _twilioHelper.MakeIVRCallToInterviewerForAvailability(interviewer.Phone, interviewer.uniqueid, obj.id, !string.IsNullOrEmpty(obj.JDTitle) ? obj.JDTitle : "your expertise", !string.IsNullOrEmpty(obj.AssessmentGroupId) ? Convert.ToInt16(obj.AssessmentGroupId) : 0);
                                 //await _twilioHelper.MakeIVRCallToInterviewerForAvailability("+918888571923", "5DF6F746-A820-4129-BE42-34970C6679E7", obj.id, !string.IsNullOrEmpty(obj.JDTitle) ? obj.JDTitle : "your expertise", !string.IsNullOrEmpty(obj.AssessmentGroupId) ? Convert.ToInt16(obj.AssessmentGroupId) : 0);
-                                
+
                             }
                         }
                         catch (Exception ex1)

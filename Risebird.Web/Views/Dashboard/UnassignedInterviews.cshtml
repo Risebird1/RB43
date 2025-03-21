@@ -856,22 +856,22 @@
                                                         {
                                                             <td class="meeting-detail-icon">
                                                                 <span class="interview_4">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewing Members" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #4fb3e4;color:#fff;">
                                                                         <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
-                                                                            <i class="fas fa-users fa-xs" style="font-size: 13px;"></i>
+                                                                            <i class="fas fa-users fa-xs" style="font-size: 13px;position:relative;left:-2px;"></i>
                                                                         </span>
                                                                     </button>
                                                                 </span>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #51a1ef!important; border: 1px #7e97bab3!important;">
-                                                                    <span class="mdc-fab__icon material-icons" onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.AssessmentGroupId', '@item.AssessmentGroup', '@item.irfIntId', '@item.IRFId');" title="Interviewers' List"><span class="fa fa-user-plus" style="left:0px;top:0px;position: relative;font-size:12px;font-family: 'Font Awesome 5 Pro';"></span></span>
+                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #51a1ef!important; border: 1px #7e97bab3!important;">
+                                                                    <span class="mdc-fab__icon material-icons" onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.AssessmentGroupId', '@item.AssessmentGroup', '@item.irfIntId', '@item.IRFId');" title="Interviewers' List"><span class="fa fa-user-plus" style="left:0px;top:0px;position: relative;font-size:12px;font-family: 'Font Awesome 5 Pro';color:#fff"></span></span>
                                                                 </button>
                                                                 @if (ViewBag.actionstatus == "InterviewCount")
                                                                 {
                                                                     <input type="hidden" value="@item.scheduleUniqueid" id="scheduleUniqueid" />
                                                                     <input type="hidden" value="@item.imid" id="imid" />
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','@item.scheduleUniqueid')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:1px;width:25px!important;height:25px!important" title="Cancel Interview and Schedule Interview"><span class="fal fa-times" style="font-size:13px;line-height:27px;animation:none;"></span></span></span>
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','@item.scheduleUniqueid')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn" style="cursor: pointer;position:relative;top:1px;width:25px!important;height:25px!important" title="Cancel Interview and Schedule Interview"><span class="fal fa-times" style="font-size:13px;line-height:27px;animation:none;"></span></span></span>
                                                                     <a style="text-decoration: none;" target="_blank" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.irfIntId })" title="Edit">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit" style="position:relative;top:2px;">
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Edit" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#54a5f6 ;color:#fff;">
                                                                             <span title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                         </button>
                                                                     </a>
@@ -889,8 +889,8 @@
                                                                     @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
                                                                     {
                                                                         <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.irfIntId, irfName = item.IRFId})" title="Client Interview Report">
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">
-                                                                                <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
+                                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Mail Activity For Availability" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#039BE5;color:#fff;">
+                                                                                <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg style="left: -1px;top:-1px;position: relative;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
                                                                             </button>
                                                                         </a>
                                                                     }
@@ -909,7 +909,7 @@
                                                             <td>
                                                                 @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Report" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#42a5f5;color:#fff;">
                                                                         <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
                                                                     </button>
                                                                 }
@@ -918,7 +918,7 @@
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
                                                                     <span>
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Suspicious Interviwer" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#42a5f5;color:#fff;">
                                                                             <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
                                                                         </button>
                                                                     </span>
@@ -931,8 +931,8 @@
                                                         {
                                                             <td>
                                                                 <span>
-                                                                    <a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="ProxyFormDetails('@item.Interviewid',true,'QCPendingReport')">
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Proxy Form" style=" position: relative; top: -1px;">
+                                                                    <a style="width:25px;height:25px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="ProxyFormDetails('@item.Interviewid',true,'QCPendingReport')">
+                                                                        <button class="btn shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Proxy Form" style=" position: relative; top: -1px;">
                                                                             <i style="font-size: 16px; position: relative; top: -1px;" class="fa fa-wpforms"></i>
                                                                         </button>
                                                                     </a>
@@ -1307,7 +1307,7 @@
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
                                                             <td class="meeting-detail-icon">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit" style="position:relative;top:3px;">
+                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Edit" style="position:relative;top:3px;width:25px!important;height:25px!important;">
                                                                     <span onclick="javascript:FetchHistory('@item.ZoomMeetingId');" title="Meeting Details" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
                                                                             <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z" />

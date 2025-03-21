@@ -344,14 +344,14 @@
                                                         }
                                                         <td>
 
-                                                            <button class="btn shadow btn-schedule btn-xs sharp me-1  feedbackreportbtn" aria-label="Click here to view recipient activity upon recieving email." style="position:relative;top:0px;left:4px;border:#dca3a3;background: #dca3a3;" data-toggle="ajax-modal-recipientActivity" data-target="#modalRecipientActivity" data-url="@Url.Action("GetRecipientMailActivitiesByMessageId", "Mail", new { recipientEmail = item.email, messageId = item.sg_message_id })">
+                                                            <button class="btn shadow btn-xs sharp me-1  feedbackreportbtn" aria-label="Click here to view recipient activity upon recieving email." style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#dca3a3;color:#fff;" data-toggle="ajax-modal-recipientActivity" data-target="#modalRecipientActivity" data-url="@Url.Action("GetRecipientMailActivitiesByMessageId", "Mail", new { recipientEmail = item.email, messageId = item.sg_message_id })">
                                                                 <span title="Click here to view recipient activity upon recieving email."><i style="font-size: 14px;color:#fff;margin-right: 0px;" class="fa fa-envelope-open"></i></span>
                                                             </button>
                                                             @* <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                     <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                     </button> *@
-                                                            <span style="margin: 0px 4px 0px 0px;">
-                                                                <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
+                                                            <span>
+                                                                <a target="_blank" class="btn shadow btn-xs sharp me-1 btn-schedule item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;color:#fff;">
                                                                     <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
                                                                 </a>
                                                             </span>
@@ -359,9 +359,9 @@
                                                             {
                                                                 @if (!string.IsNullOrEmpty(item.candidateEmail))
                                                                 {
-                                                                    <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                    <button id="getstatus_8" class="btn shadow btn-xs sharp me-1  mb-40" aria-label="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #4fb3e4;;color:#fff;">
                                                                         <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName =item.IRFId, irfId =item.InterviewId , emailId = item.candidateEmail, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                         </span>
                                                                     </button>
                                                                 }

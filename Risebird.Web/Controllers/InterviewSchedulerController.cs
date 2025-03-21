@@ -684,70 +684,167 @@ namespace Risebird.Web.Controllers
                         //    valueset = valueset + 1;
                         //}
                         //valueset = valueset * 60 / duration;
-                        for (int i = 0; i < valueset; i++)
+                        //Start: New added
+                        if (result.FirstOrDefault().BufferTime > 0)
                         {
-                            if (addontime == 0)
+                            int buffertimevalue = result.FirstOrDefault().BufferTime;
+                            var comdate = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue);
+                            int offsetbuffer = (int)DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue).TimeOfDay.TotalMinutes;
+                            for (int i = 0; i < valueset; i++)
                             {
-                                //var slots = Convert.ToInt32(item.Start) + i;
-                                var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
-                                var newslot = (int)(slots / 60);
-                                var newmin = Convert.ToInt32(slots % 60);
-                                DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
-                                if (result.FirstOrDefault().StartDate <= value1)
-                                    model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
-                            }
-                            else
-                            {
-                                var slots = Convert.ToDouble(item.Start) * 60 + (i * duration) - addontime;
-                                if (offset > 0 && (slots / 60) < 0)
+                                if (addontime == 0)
                                 {
-                                    var newslot = 24 + (int)(slots / 60);
-                                    foreach (var item2 in result1)
+                                    var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
+                                    var newslot = (int)(slots / 60);
+                                    var newmin = Convert.ToInt32(slots % 60);
+                                    DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                    if (result.FirstOrDefault().StartDate <= value1)
                                     {
-                                        if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
+                                        if (comdate < value1)
                                         {
-                                            var newmin = Convert.ToInt32(slots % 60);
-                                            if (newmin < 0)
-                                            {
-                                                newmin = -newmin;
-                                            }
-                                            DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
-                                            value1 = value.AddDays(-1);
-
-                                            if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                                model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
-                                        }
-                                    }
-                                }
-                                else if (offset < 0 && (slots / 60) >= 24)
-                                {
-                                    var newslot = (int)(slots + addontime) / 60;
-                                    foreach (var item2 in result2)
-                                    {
-                                        if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
-                                        {
-                                            var newmin = Convert.ToInt32(slots % 60);
-                                            if (newmin < 0)
-                                            {
-                                                newmin = -newmin;
-                                            }
-                                            DateTime value1 = new DateTime(year, month, (day + 1), newslot, newmin, 0);
-                                            if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                                model.Add(((int)(slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                            model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                         }
                                     }
                                 }
                                 else
                                 {
+                                    var slots = Convert.ToDouble(item.Start) * 60 + (i * duration) - addontime;
+                                    if (offset > 0 && (slots / 60) < 0)
+                                    {
+                                        var newslot = 24 + (int)(slots / 60);
+                                        foreach (var item2 in result1)
+                                        {
+                                            if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
+                                            {
+                                                var newmin = Convert.ToInt32(slots % 60);
+                                                if (newmin < 0)
+                                                {
+                                                    newmin = -newmin;
+                                                }
+                                                DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                                value1 = value.AddDays(-1);
+                                                if (result.FirstOrDefault().StartDate <= value1)
+                                                {
+                                                    if (comdate < value1)
+                                                    {
+                                                        model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else if (offset < 0 && (slots / 60) >= 24)
+                                    {
+                                        var newslot = (int)(slots + addontime) / 60;
+                                        foreach (var item2 in result2)
+                                        {
+                                            if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
+                                            {
+                                                var newmin = Convert.ToInt32(slots % 60);
+                                                if (newmin < 0)
+                                                {
+                                                    newmin = -newmin;
+                                                }
+                                                DateTime value1 = new DateTime(year, month, (day + 1), newslot, newmin, 0);
+                                                if (result.FirstOrDefault().StartDate <= value1)
+                                                {
+                                                    if (comdate < value1)
+                                                    {
+                                                        model.Add(((slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //var newslot = (int)(Convert.ToDouble(item.Start) + i);
+                                        var newslot = (int)(slots / 60);
+                                        var newmin = Convert.ToInt32(slots % 60);
+                                        if (newmin < 0)
+                                        {
+                                            newmin = -newmin;
+                                        }
+                                        DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                        if (result.FirstOrDefault().StartDate <= value1)
+                                        {
+                                            if (comdate < value1)
+                                            {
+                                                model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //End: New added
+                        else
+                        {
+                            for (int i = 0; i < valueset; i++)
+                            {
+                                if (addontime == 0)
+                                {
+                                    //var slots = Convert.ToInt32(item.Start) + i;
+                                    var slots = Convert.ToDouble(item.Start) * 60 + (i * duration);
                                     var newslot = (int)(slots / 60);
                                     var newmin = Convert.ToInt32(slots % 60);
-                                    if (newmin < 0)
-                                    {
-                                        newmin = -newmin;
-                                    }
                                     DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
-                                    if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
+                                    if (result.FirstOrDefault().StartDate <= value1)
                                         model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                }
+                                else
+                                {
+                                    var slots = Convert.ToDouble(item.Start) * 60 + (i * duration) - addontime;
+                                    if (offset > 0 && (slots / 60) < 0)
+                                    {
+                                        var newslot = 24 + (int)(slots / 60);
+                                        foreach (var item2 in result1)
+                                        {
+                                            if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
+                                            {
+                                                var newmin = Convert.ToInt32(slots % 60);
+                                                if (newmin < 0)
+                                                {
+                                                    newmin = -newmin;
+                                                }
+                                                DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                                value1 = value.AddDays(-1);
+
+                                                if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
+                                                    model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                            }
+                                        }
+                                    }
+                                    else if (offset < 0 && (slots / 60) >= 24)
+                                    {
+                                        var newslot = (int)(slots + addontime) / 60;
+                                        foreach (var item2 in result2)
+                                        {
+                                            if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
+                                            {
+                                                var newmin = Convert.ToInt32(slots % 60);
+                                                if (newmin < 0)
+                                                {
+                                                    newmin = -newmin;
+                                                }
+                                                DateTime value1 = new DateTime(year, month, (day + 1), newslot, newmin, 0);
+                                                if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
+                                                    model.Add(((int)(slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var newslot = (int)(slots / 60);
+                                        var newmin = Convert.ToInt32(slots % 60);
+                                        if (newmin < 0)
+                                        {
+                                            newmin = -newmin;
+                                        }
+                                        DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                        if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
+                                            model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
+                                    }
                                 }
                             }
                         }
