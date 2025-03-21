@@ -104,6 +104,7 @@ builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
 builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
 builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
 builder.Services.AddScoped<IEncryptionHelper, EncryptionHelper>();
+builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
 
 
 var app = builder.Build();
