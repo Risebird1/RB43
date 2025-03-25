@@ -30,7 +30,7 @@
                 <div class="row  col-sm-12">
                     @* @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
                     { *@
-                    @if (ViewBag.ProfileName != "Quality Controller")
+                    @if (ViewBag.ProfileName != "Quality Controller" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper1">
@@ -1075,7 +1075,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Admin")
+                    @if (ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper18">
@@ -1148,7 +1148,7 @@
 
                     }
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper19">
@@ -1439,7 +1439,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper23">
@@ -1507,7 +1507,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper24">
@@ -1579,7 +1579,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper25">
@@ -1727,7 +1727,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card">
@@ -1937,7 +1937,7 @@
                         </div>
                     }
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "Quality Controller")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper29">
@@ -1993,7 +1993,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper30">
@@ -2065,7 +2065,7 @@
 
                     }
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper31">
@@ -2192,7 +2192,7 @@
                         </div>
                     }
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName != "Quality Controller")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName != "Quality Controller" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper33">
@@ -2251,7 +2251,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper34">
@@ -2308,7 +2308,7 @@
                         </div>
 
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper35">
@@ -2422,7 +2422,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper37">
@@ -2481,7 +2481,7 @@
                             </div>
                         </div>
                     }
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper37">
@@ -2541,7 +2541,7 @@
                         </div>
                     }
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper37">
@@ -2773,7 +2773,7 @@
                     }
 
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "SeniorHR")
                     {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper37">
@@ -2806,7 +2806,7 @@
                         </div>
                     }
 
- @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper38">
@@ -2840,7 +2840,7 @@
                     }
 
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper38">
@@ -2874,7 +2874,7 @@
                     }
 
 
-                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                     {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper38">
