@@ -82,7 +82,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
                         var model = new DashboardVM();
-
+                        //await _assistantServiceHelper.DeleteFiles();
                         //daily interview tracking first chart
                         //model = GetDateWiseInterviews(DateTime.Now);
                         //daily interview tracking slots
