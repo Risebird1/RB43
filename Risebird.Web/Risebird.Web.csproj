@@ -55,6 +55,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
     <PackageReference Include="OfficeOpenXml.Extends" Version="1.0.6" />
+    <PackageReference Include="PdfPig" Version="0.1.10" />
     <PackageReference Include="RestClient" Version="3.1024.23771" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="Twilio" Version="7.6.0" />
