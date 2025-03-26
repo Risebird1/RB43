@@ -155,7 +155,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, string resumeLink = null, bool isRedo = false)
+        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, bool isRedo = false)
         {
             try
             {
@@ -191,7 +191,7 @@ namespace Risebird.Web.Controllers
                         //};
 
 
-                        var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink ?? resumeLink);
+                        var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink);
                         //ReadPdfContentAsync();
                         //var response = await _assistantServiceHelper.ScreenAsync(request);
                         var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
