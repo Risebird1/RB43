@@ -12,5 +12,7 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> DeleteFiles();
         Task<RunResult> GenerateTechRubric(string jobTitle);
         Task<RunResult> GenerateTranscriptAnalysis(string transcriptData);
+        Task<RunResult> GenerateResumeAnalysis(string resumeStringData);
+        Task<RunResult> GenerateReportQCAnalysis(string reportStringData);
     }
 }

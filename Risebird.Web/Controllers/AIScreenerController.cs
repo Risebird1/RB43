@@ -1,5 +1,7 @@
 ﻿using Google.Apis.Calendar.v3.Data;
 using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +16,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -179,14 +182,19 @@ namespace Risebird.Web.Controllers
                             return View(JsonConvert.DeserializeObject<RunResult>(interviewer.OpenAIScreeningResponse));
                         }
 
-                        var request = new ScreeningRequest
-                        {
-                            //Skills = skills,
-                            JDTitle = jdTitle,
-                            ResumeLink = interviewer?.ResumeLink ?? resumeLink,
-                            Type = ProfileNames.Interviewer
-                        };
-                        var response = await _assistantServiceHelper.ScreenAsync(request);
+                        //var request = new ScreeningRequest
+                        //{
+                        //    //Skills = skills,
+                        //    JDTitle = jdTitle,
+                        //    ResumeLink = interviewer?.ResumeLink ?? resumeLink,
+                        //    Type = ProfileNames.Interviewer
+                        //};
+
+
+                        var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink ?? resumeLink);
+                        //ReadPdfContentAsync();
+                        //var response = await _assistantServiceHelper.ScreenAsync(request);
+                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent);
 
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
@@ -224,6 +232,49 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(null);
+            }
+        }
+
+        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                // Download the PDF file as byte array
+                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                using (MemoryStream stream = new MemoryStream(pdfBytes))
+                {
+                    using (PdfReader reader = new PdfReader(stream))
+                    {
+                        string text = "";
+                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        {
+                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                        }
+                        return text;
+                    }
+                }
+            }
+        }
+        public static async Task<string> ReadPdfContentAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return "Invalid file.";
+
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                stream.Position = 0; // Reset stream position
+
+                using (var reader = new PdfReader(stream.ToArray()))
+                {
+                    string text = "";
+                    for (int i = 1; i <= reader.NumberOfPages; i++)
+                    {
+                        text += PdfTextExtractor.GetTextFromPage(reader, i);
+                    }
+                    return text;
+                }
             }
         }
 
@@ -271,14 +322,19 @@ namespace Risebird.Web.Controllers
                             {
                                 return null;
                             }
-                            var request = new ScreeningRequest
-                            {
-                                //Skills = skills,
-                                JDTitle = primarySpecialization,
-                                ResumeLink = uploadedFileURL,
-                                Type = ProfileNames.Interviewer
-                            };
-                            var response = await _assistantServiceHelper.ScreenAsync(request);
+                            //var request = new ScreeningRequest
+                            //{
+                            //    //Skills = skills,
+                            //    JDTitle = primarySpecialization,
+                            //    ResumeLink = uploadedFileURL,
+                            //    Type = ProfileNames.Interviewer
+                            //};
+                            //var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                            var resumeStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent);
+
+
                             var responseInJson = JsonConvert.SerializeObject(response);
                             bool saveOperationResult = false;
                             string aiResponseUrl = string.Empty;

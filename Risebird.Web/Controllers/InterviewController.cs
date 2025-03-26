@@ -1,6 +1,8 @@
 using Aspose.Html;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using iTextSharp.text.pdf.parser;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9028,27 +9030,34 @@ namespace Risebird.Web.Controllers
                 var htmlContent = await RenderToStringAsync("AIClientReport", model);
 
                 // Generate PDF from HTML content
-                var pdfContent = GeneratePdf(htmlContent);
-                string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
+                //var pdfContent = GeneratePdf(htmlContent);
+                //string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
 
 
 
-                // Upload PDF to Azure Blob Storage
-                string uploadedFileURL = string.Empty;
-                using (MemoryStream stream = new MemoryStream(pdfContent))
-                {
-                    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-                    var blob = containerRef.GetBlockBlobReference(fileName);
-                    uploadedFileURL = blob.Uri.ToString();
-                }
+                //// Upload PDF to Azure Blob Storage
+                //string uploadedFileURL = string.Empty;
+                //using (MemoryStream stream = new MemoryStream(pdfContent))
+                //{
+                //    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                //    var blob = containerRef.GetBlockBlobReference(fileName);
+                //    uploadedFileURL = blob.Uri.ToString();
+                //}
 
-                var request = new ScreeningRequest
-                {
-                    Type = ProfileNames.QualityController,
-                    ReportUrl = uploadedFileURL
-                };
-                var response = await _assistantServiceHelper.ScreenAsync(request);
+                //var request = new ScreeningRequest
+                //{
+                //    Type = ProfileNames.QualityController,
+                //    ReportUrl = uploadedFileURL
+                //};
+                //var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                //var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                //ReadPdfContentAsync();
+                //var response = await _assistantServiceHelper.ScreenAsync(request);
+                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContentreportStringContent);
+                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
+
 
                 var responseInJson = JsonConvert.SerializeObject(response);
                 //save the response in db
@@ -9075,6 +9084,27 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                // Download the PDF file as byte array
+                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                using (MemoryStream stream = new MemoryStream(pdfBytes))
+                {
+                    using (PdfReader reader = new PdfReader(stream))
+                    {
+                        string text = "";
+                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        {
+                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                        }
+                        return text;
+                    }
+                }
             }
         }
         public byte[] GeneratePdf(string htmlContent)

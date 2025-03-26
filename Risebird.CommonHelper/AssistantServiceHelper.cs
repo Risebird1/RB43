@@ -6,6 +6,7 @@ using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -30,6 +31,8 @@ namespace Risebird.CommonHelper
         private readonly string resumeParserAssistantId;
         private readonly string rubricGeneratorAssistantId;
         private readonly string aiTranscriptAnalysisAssistantId;
+        private readonly string stringResumeAnalysisAssistantId;
+        private readonly string stringReportQCAssistantId;
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -47,6 +50,8 @@ namespace Risebird.CommonHelper
             resumeParserAssistantId = _configuration["OpenAI:ResumeParserAssistantId"];
             rubricGeneratorAssistantId = _configuration["OpenAI:RubricGeneratorAssistantId"];
             aiTranscriptAnalysisAssistantId = _configuration["OpenAI:TranscriptAnalysisAssistantId"];
+            stringResumeAnalysisAssistantId = _configuration["OpenAI:StringResumeAnalysisAssistantId"];
+            stringReportQCAssistantId = _configuration["OpenAI:StringReportQCAssistantId"];
 
         }
 
@@ -79,7 +84,8 @@ namespace Risebird.CommonHelper
                 string threadId = string.Empty;
                 if (!string.IsNullOrEmpty(fileId))
                 {
-                    await Task.Delay(15000);//60000
+                    //await Task.Delay(15000);//60000// try 45000
+                    await Task.Delay(30000);//60000// try 45000
                     threadId = await CreateThreadAsync(requestModel, fileId);
                 }
                 else
@@ -111,7 +117,7 @@ namespace Risebird.CommonHelper
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
-                        return await RecreateThread(requestModel, fileId);
+                        return await RecreateThread(requestModel, fileId, 0);
                     }
                     return messages;
                 }
@@ -129,52 +135,61 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private async Task<RunResult> RecreateThread(ScreeningRequest requestModel, string fileId)
+        private async Task<RunResult> RecreateThread(ScreeningRequest requestModel, string fileId, int? counter)
         {
-            await Task.Delay(15000);
-            string threadId = string.Empty;
-            if (!string.IsNullOrEmpty(fileId))
+            if(counter == 0)
             {
-                //await Task.Delay(60000);
-                threadId = await CreateThreadAsync(requestModel, fileId);
-            }
-            else
-            {
-                return null;
-            }
-            string runId;
-            //now create a run
-            if (!string.IsNullOrEmpty(threadId))
-            {
-                runId = await CreateRun(threadId, requestModel.Type);
-            }
-            else
-            {
-                return null;
-            }
+                await Task.Delay(15000);
+                string threadId = string.Empty;
+                if (!string.IsNullOrEmpty(fileId))
+                {
+                    //await Task.Delay(60000);
+                    threadId = await CreateThreadAsync(requestModel, fileId);
+                }
+                else
+                {
+                    return null;
+                }
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, requestModel.Type);
+                }
+                else
+                {
+                    return null;
+                }
 
-            if (!string.IsNullOrEmpty(runId))
-            {
-                string runStatus = string.Empty;
-                //retrieve a run
-                while (runStatus != "completed")
+                if (!string.IsNullOrEmpty(runId))
                 {
-                    await Task.Delay(5000);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    if (runStatus == "failed")
-                        break;
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+                    if (messages != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
+                    {
+                        counter = counter + 1;
+                        messages = await RecreateThread(requestModel, fileId, counter);
+                    }
+                    return messages;
                 }
-                var messages = await ListRunMessages(threadId);
-                if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") && !string.IsNullOrEmpty(fileId))
+                else
                 {
-                    messages = await RecreateThread(requestModel, fileId);
+                    return null;
                 }
-                return messages;
             }
             else
             {
                 return null;
             }
+            
         }
         private async Task<string> CreateRun(string threadId, string profileType = null)
         {
@@ -199,6 +214,14 @@ namespace Risebird.CommonHelper
                     else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
                     {
                         assistantId = aiTranscriptAnalysisAssistantId;
+                    }
+                    else if (profileType == ProfileNames.StringResumeAnalysisAIAssistant)
+                    {
+                        assistantId = stringResumeAnalysisAssistantId;
+                    }
+                    else if (profileType == ProfileNames.StringReportQCAIAssistant)
+                    {
+                        assistantId = stringReportQCAssistantId;
                     }
                     else
                     {
@@ -403,7 +426,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null)
         {
             try
             {
@@ -442,10 +465,19 @@ namespace Risebird.CommonHelper
                 }
                 else if(!string.IsNullOrEmpty(transcriptData))
                 {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant. The transcript date you need to generate an analysis against is {transcriptData}.";
+                    queryContent = $"Generate an output as per the instructions fed to the assistant. The transcript data you need to generate an analysis against is {transcriptData}.";
 
                 }
+                else if (!string.IsNullOrEmpty(resumeStringData))
+                {
+                    queryContent = $"Generate an output as per the instructions fed to the assistant. The Resume data you need to generate an analysis against is {resumeStringData}.";
 
+                }
+                else if (!string.IsNullOrEmpty(reportStringData))
+                {
+                    queryContent = $"Generate an output as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
+
+                }
                 var threadRequest = new Thread();
                 if (requestModel != null && !string.IsNullOrEmpty(fileId))
                 {
@@ -559,41 +591,54 @@ namespace Risebird.CommonHelper
                 if (filesList != null && filesList.data != null && filesList.data.Count() > 0)
                 {
 
-                    Parallel.ForEach(filesList?.data, item =>
-                    {
-                        HttpClient client = new HttpClient();
-
-                        var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
-                        {
-                            Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
-                        };
-
-                        var response = client.SendAsync(request).Result;
-
-                        response.EnsureSuccessStatusCode();
-                        var responseContent = response.Content.ReadAsStringAsync().Result;
-
-                        //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                        //return files;
-                    }
-                    );
-                    //foreach (var item in filesList?.data)
+                    //Parallel.ForEach(filesList?.data, item =>
                     //{
                     //    HttpClient client = new HttpClient();
 
                     //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
                     //    {
-                    //        Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                    //        Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
                     //    };
 
-                    //    var response = await client.SendAsync(request);
+                    //    var response = client.SendAsync(request).Result;
 
                     //    response.EnsureSuccessStatusCode();
-                    //    var responseContent = await response.Content.ReadAsStringAsync();
+                    //    var responseContent = response.Content.ReadAsStringAsync().Result;
 
                     //    //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
                     //    //return files;
                     //}
+                    //);
+                    foreach (var item in filesList?.data)
+                    {
+                        try
+                        {
+                            HttpClient client = new HttpClient();
+
+                            //var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
+                            //{
+                            //    Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                            //};
+
+                            var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
+                            {
+                                Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                            };
+
+                            var response = await client.SendAsync(request);
+
+                            response.EnsureSuccessStatusCode();
+                            var responseContent = await response.Content.ReadAsStringAsync();
+
+                            //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
+                            //return files;
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+
+                    }
                     await DeleteFiles();
                 }
 
@@ -788,6 +833,98 @@ namespace Risebird.CommonHelper
                     }
                     var messages = await ListRunMessages(threadId);
                     
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData)
+        {
+            try
+            {
+                string threadId = string.Empty;
+                threadId = await CreateThreadAsync(resumeStringData: resumeStringData);             
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, ProfileNames.StringResumeAnalysisAIAssistant);
+                }
+                else
+                {
+                    return null;
+                }
+                await Task.Delay(15000);
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateReportQCAnalysis(string reportStringData)
+        {
+            try
+            {
+                string threadId = string.Empty;
+                threadId = await CreateThreadAsync(reportStringData: reportStringData);
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, ProfileNames.StringReportQCAIAssistant);
+                }
+                else
+                {
+                    return null;
+                }
+                await Task.Delay(15000);
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+
                     return messages;
                 }
                 else
