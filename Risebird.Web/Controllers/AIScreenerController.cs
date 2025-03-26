@@ -194,7 +194,7 @@ namespace Risebird.Web.Controllers
                         var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink ?? resumeLink);
                         //ReadPdfContentAsync();
                         //var response = await _assistantServiceHelper.ScreenAsync(request);
-                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent);
+                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
 
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
@@ -332,7 +332,7 @@ namespace Risebird.Web.Controllers
                             //var response = await _assistantServiceHelper.ScreenAsync(request);
 
                             var resumeStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent);
+                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, primarySpecialization);
 
 
                             var responseInJson = JsonConvert.SerializeObject(response);
