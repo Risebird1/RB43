@@ -9029,21 +9029,22 @@ namespace Risebird.Web.Controllers
                 // Render the partial view to a string
                 var htmlContent = await RenderToStringAsync("AIClientReport", model);
 
-                // Generate PDF from HTML content
-                //var pdfContent = GeneratePdf(htmlContent);
-                //string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
+                //Generate PDF from HTML content
+
+                var pdfContent = GeneratePdf(htmlContent);
+                string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
 
 
 
-                //// Upload PDF to Azure Blob Storage
-                //string uploadedFileURL = string.Empty;
-                //using (MemoryStream stream = new MemoryStream(pdfContent))
-                //{
-                //    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
-                //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-                //    var blob = containerRef.GetBlockBlobReference(fileName);
-                //    uploadedFileURL = blob.Uri.ToString();
-                //}
+                // Upload PDF to Azure Blob Storage
+                string uploadedFileURL = string.Empty;
+                using (MemoryStream stream = new MemoryStream(pdfContent))
+                {
+                    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                }
 
                 //var request = new ScreeningRequest
                 //{
@@ -9052,11 +9053,11 @@ namespace Risebird.Web.Controllers
                 //};
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
 
-                //var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
                 //ReadPdfContentAsync();
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
-                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContentreportStringContent);
-                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
+                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
+                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
 
 
                 var responseInJson = JsonConvert.SerializeObject(response);
