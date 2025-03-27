@@ -22,7 +22,7 @@ set @emailIDParam=@emailID
 select im.id, im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ul.EmailId as candidateEmail,               
 ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,                      
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,                      
-im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,                
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,               
 case                 
   when ul.LastName is null then ul.FirstName                
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))                
@@ -35,9 +35,10 @@ IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL
 im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, Case When irf.IsNewSkillChannel=1 then (pm.DurationSelectedMin+5) else IRF.interviewDuration end as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,      
 Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,
 irf.IsNewSkillChannel, ca.CodedResumeLink as CandidateCodedResumeLink,ISNULL(pr.ProxyvotingCount,0) as ProxyvotingCount,
-pr.id as ProxyId,IRF.IsVideoRequired, irf.TechRubricType    
+pr.id as ProxyId,IRF.IsVideoRequired, irf.TechRubricType,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink       
 from InterviewMeetings im                         
-inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId           
+inner join IRF  irf on im.IRFId=irf.IRFId
+left join InterviewComments ic on im.id = ic.InterviewId           
 left join Client cl on cl.id=IRF.ClientId          
 left join UserList ul on ul.EmailId = im.candidateEmail                      
 join  CandidatesMaster cm on ul.id=cm.UserId                      

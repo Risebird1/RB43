@@ -429,7 +429,7 @@
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
-                                                                 <th>Proxy Voting</th>                                                            
+                                                                 <th class="text-center">Proxy Voting</th>                                                            
                                                             }
 
                                                                 @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed &&  ViewBag.MeetingLineUpType != MeetingLineUpType.Pending)
@@ -466,7 +466,7 @@
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
-                                                                <th>Proxy Voting</th>
+                                                                <th class="text-center">Proxy Voting</th>
                                                             }
                                                                 @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled && ViewBag.MeetingLineUpType != MeetingLineUpType.Completed && ViewBag.MeetingLineUpType != MeetingLineUpType.Pending)
                                                             {
@@ -500,6 +500,18 @@
                                                                         @{
                                                                             var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
                                                                         }
+
+                                                                         @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
+                                                                        {
+                                                                            @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != ""){
+                                                                                <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.id, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;">
+                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Transcript Analysis" style="background:#429aa8d4;border-color:#429aa8d4; width:20px!important;height:20px!important; top:2px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                    <span title="Transcript Analysis" class="mdc-fab__icon material-icons"><img src="~/img/transcript.png" style="max-width: 21px!important;position:relative;left:-4px;top:1px;" /></span>
+                                                                </span>
+                                                            </a>
+                                                                        }
+                                                        }
+
 
                                                                         @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
                                                                         {
@@ -706,9 +718,90 @@
                                                                     </div>
                                                                     @* <div style="padding:10px 0px;color:#078706;font-weight:bold;width:100%;float:left"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>*@
                                                                     <div class="myInterview">
-                                                                            <button type="button" class="clickhere_btn pull-left" style="margin: 10px 0px 3px 0px;padding: 5px 8px;">
+                                                                            <button type="button" class="clickhere_btn pull-left" style="margin: 10px 0px 3px 0px;padding: 5px 8px;float:left">
                                                                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
+                                                                       
                                                                         </button>
+                                                                        @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
+                                                                          {
+                                                                            <div style="float: left;margin-top: 5px;position: relative;left:15px;">
+                                                                    
+                                                                                @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
+                                                                                {
+                                                                                      @if(@item.AITranscriptVerdict=="yes"){
+                                                                                        <div><img src="~/img/not-acceptable.png" style="width: 29px!important;position: absolute;left:0px;z-index: 1000;" /></div>
+
+                                                                                        <div class="interviewer-apt">
+                                                                                            <span>Not acceptable quality</span>
+                                                                                            <span>
+                                                                                                <a class="details" href="#">
+                                                                                                    <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                                    <span>
+                                                                                                        <div class="bubble">
+
+                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-36px;color: #000;font-size: 14px;">Not recommended</font>
+
+                                                                                                            <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:10px 0px 0px 0px">
+                                                                                                                <tr>
+                                                                                                                    <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                                    <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                                </tr>
+                                                                                                                <tr>
+                                                                                                                    <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path> </svg></td>
+                                                                                                                    <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">AI Transcript Verdict Positive </td>
+                                                                                                                </tr>
+
+                                                                                                            </table>
+
+
+                                                                                                        </div>
+                                                                                                    </span>
+                                                                                                </a>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                           }
+                                                                                            else{
+                                                                                        <div><img src="~/img/accept.png" style="width: 29px!important;position: absolute;left:0px;z-index: 1000;" /></div>
+
+                                                                                        <div class="interviewer-apt" style="background:#e6ee9c73;color:#2a9d36;">
+                                                                                            <span>Acceptable quality</span>
+                                                                                            <span>
+                                                                                                <a class="details" href="#">
+                                                                                                    <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                                    <span>
+                                                                                                        <div class="bubble">
+
+                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-46px;color: #000;font-size: 14px;">Recommended</font>
+
+                                                                                                            <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:10px 0px 0px 0px">
+                                                                                                                <tr>
+                                                                                                                    <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                                    <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable (Payment not under review)</td>
+                                                                                                                </tr>
+                                                                                                                <tr>
+                                                                                                                    <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path> </svg></td>
+                                                                                                                    <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">AI Transcript Verdict Negative </td>
+                                                                                                                </tr>
+
+                                                                                                            </table>
+
+
+                                                                                                        </div>
+                                                                                                    </span>
+                                                                                                </a>
+                                                                                            </span>
+                                                                                        </div>
+
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span></span>
+                                                                                }
+
+                                                                            </div>
+                                                                             }
+                                                                            
                                                                         <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
                                                                          @*@if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled){
                                                                             <div style="width:100%;float:left"><span style="font-size: 14px;color: #898282;margin-top: 5px;display: inline-block">Client Name:</span>@item.ClientName</div>

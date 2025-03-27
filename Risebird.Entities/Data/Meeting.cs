@@ -136,6 +136,7 @@ namespace Risebird.Entities.Data
         public bool CodeSnippetRequired { get; set; }
         public string CandidateVideo { get; set; }
         public string AudioTranscriptFileLink { get; set; }
-        
+        public string AITranscriptVerdict { get; set; }
+
     }
 }

@@ -755,7 +755,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == ProfileNames.Admin || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR)
+                    if (profileName == ProfileNames.Admin || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.Interviewer || profileName == ProfileNames.Finance)
                     {
                         var report = await _meetingService.GetInteviewReport(interviewId, irfId);
                         
