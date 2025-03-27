@@ -854,7 +854,7 @@ namespace Risebird.CommonHelper
             try
             {
                 string threadId = string.Empty;
-                threadId = await CreateThreadAsync(resumeStringData: resumeStringData, jdTitle: jobTitle);             
+                threadId = await CreateThreadAsync(resumeStringData: resumeStringData, jdTitle: jobTitle);
                 string runId;
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))

@@ -405,6 +405,7 @@ namespace Risebird.Entities.ViewModel
         public string Type { get; set; }
         public int id { get; set; }
         public int InterviewId { get; set; }
+        public int IRFinid { get; set; }
         public string Comment { get; set; }
         public string Status { get; set; }
         public DateTime Date { get; set; }
@@ -440,6 +441,8 @@ namespace Risebird.Entities.ViewModel
         public int QCPoints { get; set; }
         public int PaymentSLA { get; set; }
         public int VideoReward { get; set; }
+        public string AudioTranscriptFileLink { get; set; }
+        public string AITranscriptVerdict { get; set; }
     }
     public class SchedulingLinkVM
     {
