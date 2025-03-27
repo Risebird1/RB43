@@ -26,7 +26,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
         public string StatusValue { get; set; }
         public string IRFId { get; set; }
-
+        public int InterviewId { get; set; }
         public int irfIntId { get; set; }
         [Display(Name = "Interview Date")]
         [Required(ErrorMessage = "Please enter Interview Date.")]
@@ -383,7 +383,7 @@ namespace Risebird.Entities.ViewModel
         public int? CandidateIDVerificationStatus { get; set; }
         public bool IsReportwhitelabel { get; set; }
         public bool IsAITranscriptAnalysisAttempted { get; set; }
-
+        public string AITranscriptVerdict { get; set; }
     }
 
     public class VedioComments
