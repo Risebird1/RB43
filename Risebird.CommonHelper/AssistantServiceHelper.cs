@@ -426,7 +426,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle =null)
         {
             try
             {
@@ -470,7 +470,7 @@ namespace Risebird.CommonHelper
                 }
                 else if (!string.IsNullOrEmpty(resumeStringData))
                 {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant. The Resume data you need to generate an analysis against is {resumeStringData}.";
+                    queryContent = $"Generate an output as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jdTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
 
                 }
                 else if (!string.IsNullOrEmpty(reportStringData))
@@ -849,12 +849,12 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData)
+        public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle)
         {
             try
             {
                 string threadId = string.Empty;
-                threadId = await CreateThreadAsync(resumeStringData: resumeStringData);             
+                threadId = await CreateThreadAsync(resumeStringData: resumeStringData, jdTitle: jobTitle);
                 string runId;
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))
@@ -865,7 +865,7 @@ namespace Risebird.CommonHelper
                 {
                     return null;
                 }
-                await Task.Delay(15000);
+                await Task.Delay(5000);
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
@@ -894,6 +894,7 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
+
 
         public async Task<RunResult> GenerateReportQCAnalysis(string reportStringData)
         {
@@ -940,6 +941,10 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
+
+
+        
+
     }
 
     public class VectorStore

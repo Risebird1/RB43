@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -23,6 +24,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using static iTextSharp.text.pdf.AcroFields;
 //using System.Web.Mvc;
+using UglyToad.PdfPig;
 
 namespace Risebird.Web.Controllers
 {
@@ -38,12 +40,14 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService _interviewerService;
         private readonly IMeetingService _meetingService;
         private readonly IIRFRepository _irfRepository;
+        private readonly IActivityTrackerService _activityTrackerService;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
             IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper,
             IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
-            IIRFRepository irfRepository, IMeetingService meetingService)
+            IIRFRepository irfRepository, IMeetingService meetingService,
+            IActivityTrackerService activityTrackerService)
         {
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -54,7 +58,7 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _irfRepository = irfRepository;
             _meetingService = meetingService;
-
+            _activityTrackerService = activityTrackerService;
         }
 
 
@@ -155,7 +159,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, string resumeLink = null, bool isRedo = false)
+        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, bool isRedo = false)
         {
             try
             {
@@ -191,10 +195,10 @@ namespace Risebird.Web.Controllers
                         //};
 
 
-                        var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink ?? resumeLink);
+                        var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink);
                         //ReadPdfContentAsync();
                         //var response = await _assistantServiceHelper.ScreenAsync(request);
-                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent);
+                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
 
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
@@ -229,31 +233,61 @@ namespace Risebird.Web.Controllers
             }
             catch (System.Exception ex)
             {
+                var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(null);
             }
         }
 
-        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                // Download the PDF file as byte array
-                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+            //using (HttpClient client = new HttpClient())
+            //{
+            //    // Download the PDF file as byte array
+            //    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
-                using (MemoryStream stream = new MemoryStream(pdfBytes))
+            //    using (MemoryStream stream = new MemoryStream(pdfBytes))
+            //    {
+            //        using (PdfReader reader = new PdfReader(stream))
+            //        {
+            //            string text = "";
+            //            for (int i = 1; i <= reader.NumberOfPages; i++)
+            //            {
+            //                text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+            //            }
+            //            return text;
+            //        }
+            //    }
+            //}
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
                 {
-                    using (PdfReader reader = new PdfReader(stream))
+                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                    using (MemoryStream stream = new MemoryStream(pdfBytes))
                     {
-                        string text = "";
-                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
                         {
-                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                            string text = "";
+                            foreach (var page in pdfDocument.GetPages())
+                            {
+                                text += page.Text + "\n";
+                            }
+                            return text;
                         }
-                        return text;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                return null;
             }
         }
         public static async Task<string> ReadPdfContentAsync(IFormFile file)
@@ -332,7 +366,7 @@ namespace Risebird.Web.Controllers
                             //var response = await _assistantServiceHelper.ScreenAsync(request);
 
                             var resumeStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent);
+                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, primarySpecialization);
 
 
                             var responseInJson = JsonConvert.SerializeObject(response);
