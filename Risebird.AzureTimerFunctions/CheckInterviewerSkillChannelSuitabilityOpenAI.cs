@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Risebird.Business.Interface;
+
 //using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -18,6 +20,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IIRFRepository _irfRepository;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        //private readonly IActivityTrackerService _activityTrackerService;
         private readonly ILogger log;
 
         //private readonly string ContainerName;
@@ -82,7 +85,10 @@ namespace Risebird.AzureTimerFunctions
                             }
                         }
 
-                        var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = (item.ResumeLink.EndsWith(".doc") ? item.ConvertedFromDocResumeLink : item.ResumeLink), Type = ProfileNames.Interviewer });
+                        var resumeStringContent = await ReadPdfFromUrlAsync(item.ResumeLink);
+                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, item.JDTitle);
+
+                        //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = (item.ResumeLink.EndsWith(".doc") ? item.ConvertedFromDocResumeLink : item.ResumeLink), Type = ProfileNames.Interviewer });
 
                         //save the response to db
                         if (response != null)
@@ -120,6 +126,39 @@ namespace Risebird.AzureTimerFunctions
 
             //log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
+        }
+
+        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        {
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                    using (MemoryStream stream = new MemoryStream(pdfBytes))
+                    {
+                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
+                        {
+                            string text = "";
+                            foreach (var page in pdfDocument.GetPages())
+                            {
+                                text += page.Text + "\n";
+                            }
+                            return text;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                return null;
+            }
         }
     }
 }

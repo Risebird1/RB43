@@ -895,6 +895,7 @@ namespace Risebird.CommonHelper
             }
         }
 
+
         public async Task<RunResult> GenerateReportQCAnalysis(string reportStringData)
         {
             try
@@ -940,6 +941,9 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
+
+
+        
 
     }
 

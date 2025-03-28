@@ -4198,7 +4198,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _dashboardService.GetAITranscriptReportsWithVerdict(DateTime.Now.AddDays(-7), DateTime.Now);
+                        var model = await _dashboardService.GetAITranscriptReportsWithVerdict(DateTime.Now.AddDays(-30), DateTime.Now);
                         model = model.Select(x =>
                         {
                             x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();

@@ -24,6 +24,9 @@ Begin
 	left join UserList ul on ul.EmailId=im.interviewer
 	join UserList uli on uli.id= irf.RisebirdHr
 	where  ic.AIVerdict in ('No')
+	and cast(im.interviewDate as date) >= cast(dateadd(day, -30, @timeNow) as date)
+	order by im.interviewDate desc
 
 End
 GO
+
