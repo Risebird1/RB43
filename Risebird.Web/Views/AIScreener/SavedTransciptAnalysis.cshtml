@@ -55,9 +55,9 @@
                                                                 <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">AI Transcrpt Analysis Score : </span>@ViewBag.AITranscriptAnalysisScore</h3>
                                                          <h3 style="font-weight:normal;padding-top:10px;font-size:18px;"><span style="font-size: 16px;font-weight: 500;color:grey">AI Transcript Verdict : </span>
                                                              @if(@ViewBag.AITranscriptVerdict =="yes"){
-                                                                <span style="background: #65c765;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;"> @ViewBag.AITranscriptVerdict</span>
+                                                    <span style="background:#bec1bee3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;text-transform:capitalize;"> @ViewBag.AITranscriptVerdict</span>
                                                          }else{
-                                                              <span style="background: #d14717c4;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;"> @ViewBag.AITranscriptVerdict</span>
+                                                    <span style="background:#bec1bee3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;text-transform:capitalize;"> @ViewBag.AITranscriptVerdict</span>
                                                          }</h3>
                                                            </div>
                                                         
@@ -94,8 +94,9 @@
                                                             
                                                                 <!--End Scoring Section-->
                                                             </div>
-
+                                    <p style="font-weight:500;"><font style="font-size: 16px;color: #ea2d2d;font-weight:bold;">*Disclaimer: </font>AI can make errors, these results will be revalidated by humans.So it may have alterations including reversing the 'Verdict of AI'. For instance acceptable quality could be unacceptable when evaluated by humans & vice-versa.</p>
                                                         </div>
+                                                   
                                                     </div>
                                                 </div>
                                             </div>
