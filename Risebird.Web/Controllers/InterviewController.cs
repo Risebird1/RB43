@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
+using Risebird.Business;
 
 
 namespace Risebird.Web.Controllers
@@ -9100,27 +9101,57 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                // Download the PDF file as byte array
-                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+            //using (HttpClient client = new HttpClient())
+            //{
+            //    // Download the PDF file as byte array
+            //    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
-                using (MemoryStream stream = new MemoryStream(pdfBytes))
+            //    using (MemoryStream stream = new MemoryStream(pdfBytes))
+            //    {
+            //        using (PdfReader reader = new PdfReader(stream))
+            //        {
+            //            string text = "";
+            //            for (int i = 1; i <= reader.NumberOfPages; i++)
+            //            {
+            //                text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+            //            }
+            //            return text;
+            //        }
+            //    }
+            //}
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
                 {
-                    using (PdfReader reader = new PdfReader(stream))
+                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                    using (MemoryStream stream = new MemoryStream(pdfBytes))
                     {
-                        string text = "";
-                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
                         {
-                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                            string text = "";
+                            foreach (var page in pdfDocument.GetPages())
+                            {
+                                text += page.Text + "\n";
+                            }
+                            return text;
                         }
-                        return text;
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                return null;
+            }
         }
+
         public byte[] GeneratePdf(string htmlContent)
         {
             try
