@@ -25,7 +25,10 @@ Begin
  join UserList ulc on ulc.id = irf.BillingOwner
  join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
  where AIVerdict in ('No') and ti.IsActive = 1-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
+ and (irf.IsPaused = 0 or irf.IsPaused is null) and cast(irf.EndDate as date) >= cast(getdate() as date)
  order by irf.CreatedOn desc
 
 End
 GO
+
+ 

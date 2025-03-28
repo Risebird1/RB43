@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.0" />
+    <PackageReference Include="PdfPig" Version="0.1.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Risebird.Business.Interface\Risebird.Business.Interface.csproj" />
