@@ -9038,14 +9038,14 @@ namespace Risebird.Web.Controllers
 
 
                 //// Upload PDF to Azure Blob Storage
-                string uploadedFileURL = string.Empty;
-                using (MemoryStream stream = new MemoryStream(pdfContent))
-                {
-                    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-                    var blob = containerRef.GetBlockBlobReference(fileName);
-                    uploadedFileURL = blob.Uri.ToString();
-                }
+                //string uploadedFileURL = string.Empty;
+                //using (MemoryStream stream = new MemoryStream(pdfContent))
+                //{
+                //    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                //    var blob = containerRef.GetBlockBlobReference(fileName);
+                //    uploadedFileURL = blob.Uri.ToString();
+                //}
 
                 //var request = new ScreeningRequest
                 //{
@@ -9058,6 +9058,19 @@ namespace Risebird.Web.Controllers
                 //ReadPdfContentAsync();
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
                 //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContentreportStringContent);
+                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
+
+                //var request = new ScreeningRequest
+                //{
+                //    Type = ProfileNames.QualityController,
+                //    ReportUrl = uploadedFileURL
+                //};
+                //var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                //ReadPdfContentAsync();
+                //var response = await _assistantServiceHelper.ScreenAsync(request);
+                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
                 //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
 
                 //var request = new ScreeningRequest
@@ -9151,7 +9164,27 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                // Download the PDF file as byte array
+                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
+                using (MemoryStream stream = new MemoryStream(pdfBytes))
+                {
+                    using (PdfReader reader = new PdfReader(stream))
+                    {
+                        string text = "";
+                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        {
+                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                        }
+                        return text;
+                    }
+                }
+            }
+        }
         public byte[] GeneratePdf(string htmlContent)
         {
             try

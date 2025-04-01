@@ -11370,6 +11370,332 @@ section {
     width: 11px !important;
 }
 
+.input-comment {
+    width: 400px;
+    height: 60px;
+}
+
+.num {
+    display: inline-block;
+    margin: 5px auto 10px;
+    background-color: #ededed;
+    border-color: #53a5f5 !important;
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    text-align: center;
+    font-weight: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: tomato;
+    border-radius: 50%;
+    top: 5px;
+    left: 3px;
+    float: left;
+    position: relative;
+}
+
+.subheading-txt {
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 100%;
+    float: left;
+    border-bottom: 1px #c5b9b96e solid;
+    margin: 0px 10px 5px 10px;
+}
+
+    .subheading-txt h2 {
+        float: left;
+        font-size: 15px;
+        padding: 10px 0px;
+        position: relative;
+        left: 10px;
+        top: 5px;
+        color: #776363;
+    }
+#kiwi-big-iframe-wrapper {
+    position: absolute;
+    height: 550px;
+    width: auto;
+    left: 50%;
+    bottom: -8px !important;
+    right: 10px;
+    z-index:0!important;
+    position: fixed;
+    display:none;
+}
+.mi-check .round label:after {
+    left: 3px !important;
+    opacity: 0;
+    position: absolute;
+    top: 2px !important;
+    width: 11px !important;
+}
+
+.mi-check .round label:after {
+    border: 2px solid #66bb6a;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 3px !important;
+    opacity: 0;
+    position: absolute;
+    top: 2px !important;
+    width: 11px !important;
+    transform: rotate(-45deg);
+}
+
+.mi-check .round input[type="checkbox"]:checked + label {
+    background-color: #fff;
+    border-color: #66bb6a;
+}
+.mi-check .round{
+    width:19px;
+}
+.mi-check .round label {
+    border: 2px solid #ccc;
+}
+
+.accept-btn {
+    margin: 0px 0px 10px 0px;
+    float: right;
+    text-align: center;
+}
+
+    .accept-btn .mdc-button:disabled {
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.3;
+        background: grey !important;
+    }
+
+.mi-check .round label:after {
+    left: 3px!important;
+    opacity: 0;
+    position: absolute;
+    top: 2px!important;
+    width: 11px!important;
+ 
+}
+.mi-check .round label:after {
+    border: 2px solid #66bb6a;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 3px !important;
+    opacity: 0;
+    position: absolute;
+    top: 2px !important;
+    width: 11px !important;
+    transform: rotate(-45deg);
+}
+    .mi-check .round input[type="checkbox"]:checked + label {
+    background-color: #fff;
+    border-color: #66bb6a;
+}
+
+    .mi-check .round label {
+    border: 2px solid #ccc;
+}
+.accept-btn {
+    margin: 0px 0px 10px 0px;
+    float:right;
+    text-align:center;
+}
+    .accept-btn .mdc-button:disabled {
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.3;
+        background: grey !important;
+    }
+.addcode {
+    width: 800px;
+    margin: 0px auto;
+}
+
+.or::before,
+.or::after {
+    content: "";
+}
+
+/*
+        Vertical
+        Requires a height to be set on this element or its parent.
+    */
+.addcode .or--x::before {
+    right: 0.5em;
+    margin-left: 6%;
+}
+
+.addcode .or--x::before, .addcode .or--x::after {
+    position: relative;
+    border-top: 1px solid #ccc;
+    display: inline-block;
+    vertical-align: middle;
+    width: 40%;
+    margin-bottom: 0.15em;
+    overflow: hidden;
+}
+
+.addcode .or {
+    margin: 70px 0px;
+}
+
+.addcode .or span {
+    background: #42a5f5;
+    color: #fff;
+    border-radius: 100px;
+    padding: 10px;
+}
+
+.addcode textarea {
+    width: 100%;
+    height: 200px;
+    border: 3px dotted #a3a3a3;
+}
+.mandate-inst {
+    color: #d61818;
+    font-size: 15px;
+    position: relative;
+    left: 53px;
+    font-weight: 700;
+    margin: 0px;
+    top: -8px;
+    padding: 0px 0px;
+    width: 92%;
+}
+
+.input-comment {
+    width: 400px;
+    height: 60px;
+}
+
+.input-comment {
+    width: 400px;
+    height: 60px;
+}
+
+.num {
+    display: inline-block;
+    margin: 5px auto 10px;
+    background-color: #ededed;
+    border-color: #53a5f5 !important;
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    text-align: center;
+    font-weight: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: tomato;
+    border-radius: 50%;
+    top: 5px;
+    left: 3px;
+    float: left;
+    position: relative;
+}
+
+.subheading-txt {
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 100%;
+    float: left;
+    border-bottom: 1px #c5b9b96e solid;
+    margin: 0px 10px 5px 10px;
+}
+
+    .subheading-txt h2 {
+        float: left;
+        font-size: 15px;
+        padding: 10px 0px;
+        position: relative;
+        left: 10px;
+        top: 5px;
+        color: #776363;
+    }
+#kiwi-big-iframe-wrapper {
+    position: absolute;
+    height: 550px;
+    width: auto;
+    left: 50%;
+    bottom: -8px !important;
+    right: 10px;
+    z-index:0!important;
+    position: fixed;
+    display:none;
+}
+.mi-check .round label:after {
+    left: 3px !important;
+    opacity: 0;
+    position: absolute;
+    top: 2px !important;
+    width: 11px !important;
+}
+
+.input-comment {
+    width: 400px;
+    height: 60px;
+}
+
+.num {
+    display: inline-block;
+    margin: 5px auto 10px;
+    background-color: #ededed;
+    border-color: #53a5f5 !important;
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    text-align: center;
+    font-weight: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: tomato;
+    border-radius: 50%;
+    top: 5px;
+    left: 3px;
+    float: left;
+    position: relative;
+}
+
+.subheading-txt {
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 100%;
+    float: left;
+    border-bottom: 1px #c5b9b96e solid;
+    margin: 0px 10px 5px 10px;
+}
+
+    .subheading-txt h2 {
+        float: left;
+        font-size: 15px;
+        padding: 10px 0px;
+        position: relative;
+        left: 10px;
+        top: 5px;
+        color: #776363;
+    }
+#kiwi-big-iframe-wrapper {
+    position: absolute;
+    height: 550px;
+    width: auto;
+    left: 50%;
+    bottom: -8px !important;
+    right: 10px;
+    z-index:0!important;
+    position: fixed;
+    display:none;
+}
+.mi-check .round label:after {
+    left: 3px !important;
+    opacity: 0;
+    position: absolute;
+    top: 2px !important;
+    width: 11px !important;
+}
+
 .mi-check .round label:after {
     border: 2px solid #66bb6a;
     border-top: none;
