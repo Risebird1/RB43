@@ -9088,25 +9088,35 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                // Download the PDF file as byte array
-                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
-
-                using (MemoryStream stream = new MemoryStream(pdfBytes))
+                using (HttpClient client = new HttpClient())
                 {
-                    using (PdfReader reader = new PdfReader(stream))
+                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                    using (MemoryStream stream = new MemoryStream(pdfBytes))
                     {
-                        string text = "";
-                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
                         {
-                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                            string text = "";
+                            foreach (var page in pdfDocument.GetPages())
+                            {
+                                text += page.Text + "\n";
+                            }
+                            return text;
                         }
-                        return text;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                return null;
             }
         }
         public byte[] GeneratePdf(string htmlContent)
