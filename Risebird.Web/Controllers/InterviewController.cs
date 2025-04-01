@@ -9037,28 +9037,15 @@ namespace Risebird.Web.Controllers
 
 
 
-                //// Upload PDF to Azure Blob Storage
-                //string uploadedFileURL = string.Empty;
-                //using (MemoryStream stream = new MemoryStream(pdfContent))
-                //{
-                //    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
-                //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-                //    var blob = containerRef.GetBlockBlobReference(fileName);
-                //    uploadedFileURL = blob.Uri.ToString();
-                //}
-
-                //var request = new ScreeningRequest
-                //{
-                //    Type = ProfileNames.QualityController,
-                //    ReportUrl = uploadedFileURL
-                //};
-                //var response = await _assistantServiceHelper.ScreenAsync(request);
-
-                var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                //ReadPdfContentAsync();
-                //var response = await _assistantServiceHelper.ScreenAsync(request);
-                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
-                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
+                // Upload PDF to Azure Blob Storage
+                string uploadedFileURL = string.Empty;
+                using (MemoryStream stream = new MemoryStream(pdfContent))
+                {
+                    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                }
 
                 //var request = new ScreeningRequest
                 //{
