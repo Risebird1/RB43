@@ -9054,32 +9054,6 @@ namespace Risebird.Web.Controllers
                 //};
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
 
-                //var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                //ReadPdfContentAsync();
-                //var response = await _assistantServiceHelper.ScreenAsync(request);
-                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContentreportStringContent);
-                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
-
-                //var request = new ScreeningRequest
-                //{
-                //    Type = ProfileNames.QualityController,
-                //    ReportUrl = uploadedFileURL
-                //};
-                //var response = await _assistantServiceHelper.ScreenAsync(request);
-
-                var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                //ReadPdfContentAsync();
-                //var response = await _assistantServiceHelper.ScreenAsync(request);
-                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
-                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
-
-                //var request = new ScreeningRequest
-                //{
-                //    Type = ProfileNames.QualityController,
-                //    ReportUrl = uploadedFileURL
-                //};
-                //var response = await _assistantServiceHelper.ScreenAsync(request);
-
                 var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
                 //ReadPdfContentAsync();
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
