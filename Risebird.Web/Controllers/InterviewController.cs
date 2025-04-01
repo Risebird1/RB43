@@ -9060,6 +9060,19 @@ namespace Risebird.Web.Controllers
                 var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
                 //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
 
+                //var request = new ScreeningRequest
+                //{
+                //    Type = ProfileNames.QualityController,
+                //    ReportUrl = uploadedFileURL
+                //};
+                //var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                //ReadPdfContentAsync();
+                //var response = await _assistantServiceHelper.ScreenAsync(request);
+                var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
+                //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
+
 
                 var responseInJson = JsonConvert.SerializeObject(response);
                 //save the response in db
@@ -9085,56 +9098,6 @@ namespace Risebird.Web.Controllers
             {
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
-        {
-            //using (HttpClient client = new HttpClient())
-            //{
-            //    // Download the PDF file as byte array
-            //    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
-
-            //    using (MemoryStream stream = new MemoryStream(pdfBytes))
-            //    {
-            //        using (PdfReader reader = new PdfReader(stream))
-            //        {
-            //            string text = "";
-            //            for (int i = 1; i <= reader.NumberOfPages; i++)
-            //            {
-            //                text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
-            //            }
-            //            return text;
-            //        }
-            //    }
-            //}
-
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
-
-                    using (MemoryStream stream = new MemoryStream(pdfBytes))
-                    {
-                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
-                        {
-                            string text = "";
-                            foreach (var page in pdfDocument.GetPages())
-                            {
-                                text += page.Text + "\n";
-                            }
-                            return text;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
-
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
                 return null;
             }
         }
