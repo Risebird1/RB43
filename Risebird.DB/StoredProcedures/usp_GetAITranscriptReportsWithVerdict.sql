@@ -21,7 +21,7 @@ Begin
 	uli.EmailId as ChannelOwner, ic.InterviewStatus,
 	im.confirmationStatus, ic.MeetingStatus, ic.AudioTranscriptFileLink, 
 	ic.IsAITranscriptAnalysisAttempted, ic.IsAITranscriptAnalysisFailed,
-	ic.AITranscriptVerdict, ic.AIVerdict as AIQCVerdict
+	ic.AITranscriptVerdict, ic.AIVerdict as AIQCVerdict,ic.AITranscriptAnalysisScore
 	from InterviewMeetings im 
 	join IRF on IRF.IRFId=im.IRFId
 	join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
