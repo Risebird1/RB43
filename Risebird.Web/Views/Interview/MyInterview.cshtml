@@ -606,14 +606,14 @@
                                                                         @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
                                                                      {
                                                                     <td width="15%">
-                                                                        <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
+                                                                        <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Interview Instruction</span></button>
                                                                     </td>
                                                                      }
-                                                                <td style="padding-left:10px;padding-right:10px;width: 375px;">
-                                                                     @if (item.IsVideoRequired == true) {
+                                                                <td style="padding-left:20px;padding-right:10px;width: 375px;">
+                                                                  @if (item.IsVideoRequired == true) {
                                                                        <div style="position:relative;width: fit-content">
                                                                         <div class="absCenter">
-                                                                            <button class="infoButton" style="top:8px;left:-16px;">
+                                                                            <button class="infoButton" style="top:8px;left:-10px;">
                                                                                 <div class="infoButton-btn" style="width:15px;height:15px;">
                                                                                     <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
                                                                                 </div>

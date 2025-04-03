@@ -31,6 +31,7 @@ Declare @JoinLateMeeting int
 Declare @RejectedComment int   
 Declare @SelectedComment int   
 Declare @LessQuestions int   
+Declare @AIVerdictNegative int
               
 Select @TotalInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid           
           
@@ -70,6 +71,9 @@ and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) a
  Select @LessQuestions=Count(im.id) From CTE join Interviewmeetings im on im.id=CTE.Interviewid join InterviewComments ic on im.id=ic.InterviewId   
 where confirmationStatus=1 and  interviewer=@Emailid   
 and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)  
+
+Select @AIVerdictNegative=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid       
+and (AITranscriptVerdict='yes') 
           
 --Start: Completed Interview greter than 0          
 if(@CompletedInterviews>0)          
@@ -138,8 +142,14 @@ if(@LessQuestions>0)
 BEGIN          
 Set @redflagMarker=@redflagMarker+1          
 END 
+
+if(@AIVerdictNegative>0)          
+BEGIN          
+Set @redflagMarker=@redflagMarker+1          
+END 
           
 Return @redflagMarker;          
 END     
+  
 
 GO

@@ -221,7 +221,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			end
 			else
 			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,ulco.EmailId as ChannelOwner,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink from InterviewMeetings im join IRF on im.IRFId=irf.IRFId
+				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,ulco.EmailId as ChannelOwner,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore from InterviewMeetings im join IRF on im.IRFId=irf.IRFId
 				join Client cl on irf.ClientId=cl.id 
 				join InterviewComments ic on ic.InterviewId=im.id 
 				join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
