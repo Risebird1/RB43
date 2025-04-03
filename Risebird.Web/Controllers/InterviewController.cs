@@ -37,7 +37,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
-using Risebird.Business;
 
 
 namespace Risebird.Web.Controllers
@@ -9085,37 +9084,6 @@ namespace Risebird.Web.Controllers
             {
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
-
-                    using (MemoryStream stream = new MemoryStream(pdfBytes))
-                    {
-                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
-                        {
-                            string text = "";
-                            foreach (var page in pdfDocument.GetPages())
-                            {
-                                text += page.Text + "\n";
-                            }
-                            return text;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
-
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
                 return null;
             }
         }
