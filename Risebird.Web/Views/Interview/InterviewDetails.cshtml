@@ -725,6 +725,131 @@
 
     </fieldset>
 
+
+
+
+
+    @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="card" style="margin-bottom:10px;">
+
+    <label class="question default-open" for="checkbox_three">
+    <label for="checkbox_three">
+    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+    Audio Instruction
+    </label>
+    <span class="round">
+    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
+    <label style="visibility:hidden" for="checkbox_three"></label>
+
+
+    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
+    <label for="hidden_fields_three_1"></label>
+    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+
+    <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+    </span>
+    </label>
+
+    <fieldset class="answer hidden show-default" id="hidden_fields_three">
+    <audio controls><source src="@Model.AudioComment">Recording</audio>
+
+
+
+    @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = Model.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 25)
+    {
+    audiofileName = audiofileName.Substring(0, 24) + "...";
+    }
+    <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
+    }
+    else
+    {
+    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+    {
+    <span>
+    <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", " %20")>Instructions</a>
+    </span>
+    }
+    else
+    {
+    <span>
+    No Instructions
+    </span>
+    }
+    }*
+    @*   @foreach(var item in Model)
+    {
+    <div id="AudioInstruction">
+
+    @if (!string.IsNullOrEmpty(item.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = item.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 25)
+    {
+    audiofileName = audiofileName.Substring(0, 24) + "...";
+    }
+    <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
+    }
+    else
+    {
+    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+    {
+    <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", " %20")>Instructions</a></div>
+    }
+    else
+    {
+    <div> No Instructions</div>
+    }
+    }
+
+
+
+    </div>
+    }
+
+
+    @if (!string.IsNullOrEmpty(Model.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = @Model.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 50)
+    {
+    audiofileName = audiofileName.Substring(0, 50) + "...";
+    }
+    <div>
+    <div>
+    <audio controls style="height:40px;margin-top:10px;">
+    <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
+    </audio>
+    </div>
+    <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
+    </div>
+    }
+    else
+    {
+    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+    {
+    <div>
+    <audio controls>
+    <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
+
+    </audio>
+    Instructions
+    </div>
+    }
+    else
+    {
+    <div>No Instructions</div>
+    }
+    }
+
+
+    </fieldset>
+
     </div>
     </div>*@
 
@@ -760,7 +885,138 @@
 
 
 
+    @* <div class="footer-nav">
+    <div class="button-wrapper">
+    <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
 
+
+
+
+
+    @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="card" style="margin-bottom:10px;">
+
+    <label class="question default-open" for="checkbox_three">
+    <label for="checkbox_three">
+    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+    Audio Instruction
+    </label>
+    <span class="round">
+    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
+    <label style="visibility:hidden" for="checkbox_three"></label>
+
+
+    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
+    <label for="hidden_fields_three_1"></label>
+    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+
+    <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+    </span>
+    </label>
+
+    <fieldset class="answer hidden show-default" id="hidden_fields_three">
+    <audio controls><source src="@Model.AudioComment">Recording</audio>
+
+
+
+    @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = Model.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 25)
+    {
+    audiofileName = audiofileName.Substring(0, 24) + "...";
+    }
+    <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
+    }
+    else
+    {
+    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+    {
+    <span>
+    <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", " %20")>Instructions</a>
+    </span>
+    }
+    else
+    {
+    <span>
+    No Instructions
+    </span>
+    }
+    }*
+    @*   @foreach(var item in Model)
+    {
+    <div id="AudioInstruction">
+
+    @if (!string.IsNullOrEmpty(item.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = item.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 25)
+    {
+    audiofileName = audiofileName.Substring(0, 24) + "...";
+    }
+    <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
+    }
+    else
+    {
+    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+    {
+    <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", " %20")>Instructions</a></div>
+    }
+    else
+    {
+    <div> No Instructions</div>
+    }
+    }
+
+
+
+    </div>
+    }
+
+
+    @if (!string.IsNullOrEmpty(Model.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = @Model.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 50)
+    {
+    audiofileName = audiofileName.Substring(0, 50) + "...";
+    }
+    <div>
+    <div>
+    <audio controls style="height:40px;margin-top:10px;">
+    <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
+    </audio>
+    </div>
+    <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
+    </div>
+    }
+    else
+    {
+    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+    {
+    <div>
+    <audio controls>
+    <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
+
+    </audio>
+    Instructions
+    </div>
+    }
+    else
+    {
+    <div>No Instructions</div>
+    }
+    }
+
+
+    </fieldset>
+
+    </div>
+    </div>*@
+</div>
 
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
     <div class="card" style="margin-bottom:10px;">
@@ -819,6 +1075,22 @@
 
                 <div style="overflow-y:auto;max-height:470px;">
                     <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Please confirm you've read and agreed to the following by checking the box on each item below:</h1>
+                    <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                        <label class="question" for="checklist_9" style="float: left;width:100%">
+                            <span class="round" style="float:left;left:0px;">
+                                <input type="checkbox" id="checklist_9" name="InterviewCheckshow" />
+                                <label for="checklist_9" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                            </span>
+
+                            <label class="consent-label" style="margin-left: 15px;">
+                                <h2 style="font-size:14.5px;line-height: 24px;color: #979494;font-weight:400;">
+                                    <b style="color:green;padding-right: 7px;"> Quality SLA Violation :</b>
+                                    Your interviews were found having quality issues based on interview transcript analysis.
+                                    <a target="_blank" href="@Url.Action("AITranscriptVerdicts", "Dashboard")"><span style="color: #4c87b6;font-weight:500;font-weight:bold;text-decoration:underline;">Check details.</span></a> By clicking this acknowledgement you are ensuring that reported SLA violations will not be repeated in future interviews, else Risebird will take neccessary actions & block your access to the Risebird platform
+                                </h2>
+                            </label>
+                        </label>
+                    </div>
 
                     <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                         <label class="question" for="checklist_6" style="float: left;width:100%">
@@ -1336,6 +1608,7 @@
         }
         $("#divcodesnippets").empty().html(html);
     }
+   
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

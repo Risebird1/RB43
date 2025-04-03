@@ -48,11 +48,15 @@ Begin
 				(select id from Project where ProjectUniqueid =@jobId) and IsAdded = 1) and JobCountry=@countryType)
 			End
       
-			IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))      
+			IF EXISTS(select 1 from IRF where id=@IRFId and (Isnull(IsPaused,0)=1 or EndDate<Getdate()))      
+			Begin      
+			 select @operationStatus='Skill Channel is not active'      
+			End 
+			
+            Else IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))      
 			Begin      
 			 select @operationStatus='Duplicate candidate'      
-			End      
-      
+			End 
        
 			Else IF Exists(select 1 from UserList where EmailId=@EmailId and idProfile != @ProfileId)      
 			Begin      
@@ -179,14 +183,3 @@ Begin
       
 END 
 GO
-    
-    
-  
-  
-  
-  
-
-
-GO
-
-

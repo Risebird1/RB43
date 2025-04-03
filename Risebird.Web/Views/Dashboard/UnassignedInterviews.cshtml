@@ -320,6 +320,7 @@
                                                     @if (ViewBag.actionstatus == "QCPendingReport")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
+                                                        <th>AI Transcript analysis score</th>
                                                         <th>Interview Duration</th>
                                                         <th>Interviewer Joinedon</th>
 
@@ -554,6 +555,7 @@
 
                                                     @if (ViewBag.actionstatus == "QCPendingReport")
                                                     {   <th>Interviewer Issues found in the Transcript</th>
+                                                        <th>AI Transcript analysis score</th>
                                                         <th>Interview Duration</th>
                                                         <th>Interviewer Joinedon</th>
 
@@ -1236,7 +1238,7 @@
                                                                     }
                                                                 }
                                                             </td>
-
+                                                            <td class="text-center"><span class="count" style="width:26px;height:26px;line-height:26px;">@item.AITranscriptAnalysisScore</span></td>
                                                             @if (item.interviewDuration != null)
                                                             {
                                                                 <td>  @item.interviewDuration (mins)</td>

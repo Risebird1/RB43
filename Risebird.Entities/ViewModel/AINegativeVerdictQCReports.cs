@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAITranscriptAnalysisFailed { get; set; }
         public string AITranscriptVerdict { get; set; }
         public string AIQCVerdict { get; set; }
+        public int AITranscriptAnalysisScore { get; set; }
         public string CandidateMobileNumber { get; set; }
         //public intg AudioTranscriptFileLink { get; set; }
         //public int QCPresent { get; set; }

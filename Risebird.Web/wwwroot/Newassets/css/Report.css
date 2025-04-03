@@ -103,10 +103,10 @@ a {
 }
 .ratecount {
     position: relative;
-    top: -20px;
-    color: #000;
-    right: -240px;
-    font-weight: bold;
+    top: 16px;
+    color:#000;
+    right:-235px;
+    font-weight:bold;
     width:100px;
     display:block;
 }

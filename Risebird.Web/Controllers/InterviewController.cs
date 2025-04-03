@@ -9119,6 +9119,27 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public static async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                // Download the PDF file as byte array
+                byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                using (MemoryStream stream = new MemoryStream(pdfBytes))
+                {
+                    using (PdfReader reader = new PdfReader(stream))
+                    {
+                        string text = "";
+                        for (int i = 1; i <= reader.NumberOfPages; i++)
+                        {
+                            text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
+                        }
+                        return text;
+                    }
+                }
+            }
+        }
         public byte[] GeneratePdf(string htmlContent)
         {
             try

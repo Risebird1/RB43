@@ -102,10 +102,272 @@
         </p>
     </div>
 }
-<div class="scrollbar w-full pull-left" id="style-2">
+<div class="w-full pull-left red-marker" id="style-2">
 
-    <div id="tableID" class="table-responsive">
-        <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+    <div id="tableID">
+        @Html.HiddenFor(model => model.LastLogin)
+        @Html.HiddenFor(model => model.ProfileType)
+        @if (Model != null)
+        {
+            <div class="col-md-2 pull-left">
+                <div class="tbhead">Interviews</div>
+                <div class="tbtd">
+                    <span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span>
+                </div>
+            </div>
+            <div class="col-md-2 pull-left">
+                @{
+                    if (Model.TotalInterviews == 0)
+                    {
+                        Model.TotalInterviews = 1;
+                    }
+                }
+                <div class="tbhead">Completed</div>
+                <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews)%)</span></div>
+            </div>
+            @if ((Model.SelectedInterviews * 100 / Model.CompletedInterviews) >= 50)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Selected</div>
+                    <div class="tbtd">
+                        @{
+                            if (Model.CompletedInterviews == 0)
+                            {
+                                Model.CompletedInterviews = 1;
+                            }
+                        }
+                        @if ((Model.SelectedInterviews * 100 / Model.CompletedInterviews) >= 50)
+                        {
+                            <span style="color:red;width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span>
+                        }
+                        else
+                        {
+                            <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if ((Model.RejectedInterviews * 100 / Model.CompletedInterviews) >= 80)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Rejected</div>
+                    <div class="tbtd">
+                        @if ((Model.RejectedInterviews * 100 / Model.CompletedInterviews) >= 80)
+                        {
+                            <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews)%)</span>
+                        }
+                        else
+                        {
+                            <span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews)%)</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if ((Model.DroppedInterviews * 100 / Model.CompletedInterviews) >= 10)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Dropped</div>
+                    <div class="tbtd"><span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews)%)</span></div>
+                </div>
+            }
+            @if ((Model.NoShowInterviews * 100 / Model.TotalInterviews) > 5)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">NoShow</div>
+                    <div class="tbtd">
+                        @if ((Model.NoShowInterviews * 100 / Model.TotalInterviews) > 5)
+                        {
+                            <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span>
+                        }
+                        else
+                        {
+                            <span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if ((Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews) > 40)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">NoShow Candidate</div>
+                    <div class="tbtd">
+                        @if ((Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews) > 40)
+                        {
+                            <span style="color:red;width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span>
+                        }
+                        else
+                        {
+                            <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="col-md-2 pull-left">
+                <div class="tbhead">Reliability Score</div>
+                <div class="tbtd"><span onclick="ReliabilityScoreDetails('@Model.Emailid','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:10px;text-align:center;cursor:pointer;font-weight:bold;">@Model.ReliabilityScore</span></div>
+            </div>
+            @if (Model.PaymentSLA > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Payment Deduction</div>
+                    <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></div>
+                </div>
+            }
+            @if (Model.Penalty > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Late Report Count</div>
+                    <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></div>
+                </div>
+            }
+            @if (Model.CandidateRating > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Candidate Rating</div>
+                    <div class="tbtd"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Candidate Rating Details','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CandidateRating</span></div>
+                </div>
+            }
+            @if (Model.CustomerRating > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Client  Rating</div>
+                    <div class="tbtd"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Client Rating Details','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CustomerRating</span></div>
+                </div>
+            }
+            @if (Model.Redorequests > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Redo requests</div>
+                    <div class="tbtd">
+                        @if (Model.Redorequests > 0)
+                        {
+                            <span onclick="InsightsDetailsMarkersView('@Model.Emailid','Redo Details','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:10px;text-align:center;cursor:pointer">@Model.Redorequests</span>
+                        }
+                        else
+                        {
+                            <span onclick="InsightsDetailsMarkersView('@Model.Emailid','Redo Details','@Model.IRFId')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Red Flag Interviews</div>
+                    <div class="tbtd">
+                        @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10)
+                        {
+                            <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span>
+                        }
+                        else
+                        {
+                            <span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if ((Model.JoinLateMeeting * 100 / Model.TotalInterviews) > 2)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Late Join</div>
+                    <div class="tbtd">
+                        @if ((Model.JoinLateMeeting * 100 / Model.TotalInterviews) > 2)
+                        {
+                            <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span>
+                        }
+                        else
+                        {
+                            <span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.AIVerdictNegative > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Report Verdict</div>
+                    <div class="tbtd">
+                        @if (Model.AIVerdictNegative > 0)
+                        {
+                            <a href="/Dashboard/AITranscriptVerdicts" target="_blank">
+                                <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Dashboard/AITranscriptVerdicts" target="_blank">
+                                <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.SuspiciousCount > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Suspicious</div>
+                    <div class="tbtd">
+                        @if (Model.SuspiciousCount > 0)
+                        {
+                            <span onclick="InsightsDetailsMarkersView('@Model.Emailid','Suspicious Details')" style="background:#abceea;color:#fff;width: 33px !important;height: 33px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.SuspiciousCount</span>
+                        }
+                        else
+                        {
+                            <span onclick="InsightsDetailsMarkersView('@Model.Emailid','Suspicious Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.LessQuestions > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Less Questions</div>
+                    <div class="tbtd">
+                        @if (Model.LessQuestions > 0)
+                        {
+                            <span style="color:red;width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.LessQuestions</span>
+                        }
+                        else
+                        {
+                            <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.LessQuestions</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.RejectedComment > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Reject small Comment</div>
+                    <div class="tbtd">
+                        @if (Model.RejectedComment > 0)
+                        {
+                            <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedComment</span>
+                        }
+                        else
+                        {
+                            <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedComment</span>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.SelectedComment > 0)
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Select small Comment</div>
+                    <div class="tbtd">
+                        @if (Model.SelectedComment > 0)
+                        {
+                            <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedComment</span>
+                        }
+                        else
+                        {
+                            <span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedComment</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        @*         <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
             <thead>
                 <tr>
 
@@ -273,6 +535,7 @@
                 }
             </tbody>
         </table>
+ *@
     </div>
 </div>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
