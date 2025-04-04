@@ -6413,6 +6413,9 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
+                    var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
                     return View(irfList);
                 }
                 else
@@ -11169,6 +11172,12 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName)
         {
             var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveNewPriority(int irfid, int PriorityLevel)
+        {
+            var result = await _irfService.UpdateNewPriority(irfid, PriorityLevel);
             return Json("Successfully");
         }
     }

@@ -466,20 +466,17 @@
                                                                 }% }
                                                             </td>
                                                             <td>@item.IRFStatus</td>
-                                                            @if (item.PriorityLevel.HasValue)
+                                                            @if (item.PriorityLevel == 1)
                                                             {
-                                                                if (item.PriorityLevel == 1)
-                                                                {
-                                                                    <td>Low</td>
-                                                                }
-                                                                else if (item.PriorityLevel == 2)
-                                                                {
-                                                                    <td>Medium</td>
-                                                                }
-                                                                else if (item.PriorityLevel == 3)
-                                                                {
-                                                                    <td>High</td>
-                                                                }
+                                                                <td style="cursor:pointer" onclick="ChangePriority(@item.id,'@item.IRFId',@item.PriorityLevel)">Low</td>
+                                                            }
+                                                            else if (item.PriorityLevel == 2)
+                                                            {
+                                                                <td style="cursor:pointer" onclick="ChangePriority(@item.id,'@item.IRFId',@item.PriorityLevel)">Medium</td>
+                                                            }
+                                                            else if (item.PriorityLevel == 3)
+                                                            {
+                                                                <td style="cursor:pointer" onclick="ChangePriority(@item.id,'@item.IRFId',@item.PriorityLevel)">High</td>
                                                             }
                                                             @if (ViewBag.Type != "ChannelOwner" && ViewBag.profile != "Client")
                                                             {
@@ -805,6 +802,35 @@
         </div>
     </div>
 </div>
+
+<div id="PriorityModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="height:auto">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left"> Update Priority (<label id="lblPriorityModel"></label>) </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePriorityModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <input type="hidden" id="hidpriorityIrfid" />
+                    @Html.DropDownList("PriorityLevel", ViewBag.PriorityLevelList, "Select", new { @class = "form-control select-css" })
+                </div>
+                <div class="col-md-12" style="padding-top:10px">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="SaveNewPriority()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Update">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 @await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
 
@@ -1440,4 +1466,39 @@ else
     $(".nav-tabs li.active").prev('li').find('a').tab('show');
 
 
+</script>
+<script>
+    function ChangePriority(irfid,IRFName,currentPriority){
+        $("#lblPriorityModel").text(IRFName);
+        $("#PriorityLevel").val(currentPriority);
+        $("#hidpriorityIrfid").val(irfid);
+        openPrioritypopup();
+    }
+    function openPrioritypopup(){
+         var modal = document.getElementById("PriorityModel");
+        modal.style.display = "block";
+    }
+    function closePriorityModel() {
+        var modal = document.getElementById("PriorityModel");
+        modal.style.display = "none";
+    }
+    function SaveNewPriority(){
+       var PriorityLevel= $("#PriorityLevel").val();
+       var irfid=$("#hidpriorityIrfid").val();
+       if(PriorityLevel!=''){
+            $.ajax({
+            type:'POST',
+            url: '/IRF/SaveNewPriority',
+            data: { 'irfid': irfid, 'PriorityLevel': PriorityLevel },
+            success: function (data) {
+               alert("Priority Level updated successfully.");
+               //closePriorityModel();
+               window.location.reload();
+            }
+        });
+       }
+       else{
+           alert("Please select Priority Level.");
+       }
+    }
 </script>
