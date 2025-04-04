@@ -95,10 +95,13 @@ namespace Risebird.Business.Interface
         Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
+        Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
+
+
         Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(InterviewerProfileVM interviewerProfile);
-        Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization);
+        Task<InterviewerProfileVM> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization);
         Task<IEnumerable<FLNConversionVM>> GetFLNConversionData(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> SubmitInterviewerApplication(InterviewerDirectApplicationVM model);
         Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);

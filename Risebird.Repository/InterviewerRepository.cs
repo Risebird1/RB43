@@ -3418,6 +3418,33 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailId);
+                    parameters.Add("@PrimarySpecialization", PrimarySpecialization);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@completeFitmentAnalysis", model.completeFitmentAnalysis);
+                    parameters.Add("@fitmentScore", model.fitmentScore);
+                    parameters.Add("@verdict", model.verdict);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerPreOnboardingVerdictV2", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
         public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
         {
             try
@@ -3488,7 +3515,7 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization)
+        public async Task<InterviewerProfileVM> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization)
         {
             try
             {
@@ -3497,7 +3524,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@EmailId", emailId);
                     parameters.Add("@PrimarySpecialization", primarySpecialization);
-                    var result = await SqlMapper.QuerySingleAsync<string>(con, "usp_GetInterviewerPreOnboardingAIResponse", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QuerySingleAsync<InterviewerProfileVM>(con, "usp_GetInterviewerPreOnboardingAIResponse", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

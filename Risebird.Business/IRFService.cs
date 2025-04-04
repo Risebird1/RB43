@@ -4110,6 +4110,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> SaveInterviewerOpenAIScreeningResultsV2(int irfId, int userId, InterviewerResumeFitmentAnalysisSchema model)
+        {
+            try
+            {
+                return await _irfRepository.SaveInterviewerOpenAIScreeningResultsV2(irfId, userId, model);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId)
         {
             try

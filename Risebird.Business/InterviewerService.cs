@@ -1584,6 +1584,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveInterviewerPreOnboardingVerdictV2(emailId, PrimarySpecialization, model, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser)
         {
             try
@@ -1649,7 +1662,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<string> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization)
+        public async Task<InterviewerProfileVM> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization)
         {
             try
             {

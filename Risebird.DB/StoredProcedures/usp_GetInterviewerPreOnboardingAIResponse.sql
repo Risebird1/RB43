@@ -13,7 +13,9 @@ Create PROCEDURE usp_GetInterviewerPreOnboardingAIResponse
 AS
 BEGIN
 
-select top 1 OpenAIResponse from PreOnboardingInterviewerAIVerdict where EmailId =@EmailId and PrimarySpecialization = @PrimarySpecialization order by CreatedAt desc
+select top 1 OpenAIResponse as AIResponse, AIScreeningScore, AIVerdict from PreOnboardingInterviewerAIVerdict 
+where EmailId =@EmailId and PrimarySpecialization = @PrimarySpecialization 
+order by CreatedAt desc
 
 END
 Go

@@ -14,7 +14,7 @@ Create PROCEDURE [dbo].[usp_GetInterviewerOpenAIScreeningResult]
 As
 Begin
 
- select top 1 OpenAIScreeningResponse, ResumeLink, ul.EmailId from TransInterviewer ti
+ select top 1 OpenAIScreeningResponse, ResumeLink, ul.EmailId, ti.AIScreeningScore, ti.AIVerdict from TransInterviewer ti
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
  join UserList ul on ul.id = ipr.UserId
  where irfid = @irfId and ti.UserId = @userId

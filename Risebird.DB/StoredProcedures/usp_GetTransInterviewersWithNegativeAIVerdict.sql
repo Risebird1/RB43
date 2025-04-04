@@ -15,7 +15,7 @@ Begin
  select distinct ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
  irf.JDTiltle as JDTitle, irf.CreatedOn, ti.UserId, ulr.EmailId as ChannelOwner, --ti.OpenAIScreeningResponse, 
  cl.[Name] as CompanyName, ulc.EmailId as ClientHr, irf.irfid as IRFName, ag.AssessmentGroup as SkillChannelAssessmentGroup,
- ipr.CreatedBy as InterviewerProfileAddedBy, ti.IsActive, ti.AIVerdict, irf.JDLink
+ ipr.CreatedBy as InterviewerProfileAddedBy, ti.IsActive, ti.AIVerdict, irf.JDLink, ti.AIScreeningScore
  from TransInterviewer ti
  join IRF on irf.id = ti.irfId
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
