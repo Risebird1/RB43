@@ -4623,5 +4623,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateNewPriority(int irfid, int PriorityLevel)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateNewPriority(irfid, PriorityLevel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
