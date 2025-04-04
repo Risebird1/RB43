@@ -180,10 +180,14 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFName = irfName;
                         ViewBag.SaveOperationResult = "NA";
                         ViewBag.JobTitle = jdTitle;
+                        ViewBag.AIVerdict = interviewer?.AIVerdict;
+                        ViewBag.AIScreeningScore = interviewer?.AIScreeningScore;
 
                         if (interviewer != null && !string.IsNullOrEmpty(interviewer.OpenAIScreeningResponse) && !isRedo)
                         {
-                            return View(JsonConvert.DeserializeObject<RunResult>(interviewer.OpenAIScreeningResponse));
+                            return View("ScreenInterviewerV2", interviewer.OpenAIScreeningResponse);
+
+                            //return View(JsonConvert.DeserializeObject<RunResult>(interviewer.OpenAIScreeningResponse));
                         }
 
                         //var request = new ScreeningRequest
@@ -198,26 +202,55 @@ namespace Risebird.Web.Controllers
                         var resumeStringContent = await ReadPdfFromUrlAsync(interviewer?.ResumeLink);
                         //ReadPdfContentAsync();
                         //var response = await _assistantServiceHelper.ScreenAsync(request);
+                        //var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
+
+                        //var responseInJson = JsonConvert.SerializeObject(response);
+                        ////save the response in db
+                        //bool saveOperationResult = true;
+                        //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        //{
+                        //    saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson.Replace("'", ""));
+                        //}
+
+                        //if (saveOperationResult)
+                        //{
+                        //    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                        //}
+
+                        //return View(response);
+
                         var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
-
-                        var responseInJson = JsonConvert.SerializeObject(response);
-                        //save the response in db
+                        
                         bool saveOperationResult = true;
-                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        var aiAnalysisModel = new InterviewerResumeFitmentAnalysisSchema();
+                        if (response != null)
                         {
-                            saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson.Replace("'", ""));
-                        }
+                            aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            if (aiAnalysisModel != null)
+                            {
+                                //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
+                                saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResultsV2(irfId, userId, aiAnalysisModel);//responseInJson.Replace("'", "")
 
+                                ViewBag.AIVerdict = aiAnalysisModel.verdict;
+                                ViewBag.AIScreeningScore = aiAnalysisModel.fitmentScore;
+                            }
+                        }
                         if (saveOperationResult)
                         {
-                            ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                            ViewBag.SaveOperationResult = "Resume analysis saved successfully.";
                         }
                         else
                         {
-                            ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                            ViewBag.SaveOperationResult = "Failed to save Resume analysis";
                         }
 
-                        return View(response);
+                        //return View(aiAnalysis);
+                        //return View(response);
+                        return View("ScreenInterviewerV2", aiAnalysisModel.completeFitmentAnalysis);
 
                     }
                     else
@@ -368,13 +401,18 @@ namespace Risebird.Web.Controllers
                             var resumeStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
                             var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, primarySpecialization);
 
-
-                            var responseInJson = JsonConvert.SerializeObject(response);
+                            var aiAnalysisModel = new InterviewerResumeFitmentAnalysisSchema();
+                            //var responseInJson = JsonConvert.SerializeObject(response);
                             bool saveOperationResult = false;
                             string aiResponseUrl = string.Empty;
-                            if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                            if (response != null )
                             {
-                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
+                                aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+
+                                //saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
+                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, aiAnalysisModel, loggedInUser);
+                                //aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                                
                             }
                             if (saveOperationResult)
                             {
@@ -384,41 +422,42 @@ namespace Risebird.Web.Controllers
 
                                 //aiResponseUrl = Request.Scheme + "://" + Request.Host.Value + $"/AIScreener/PreOnboardingAIVerdictDetails?emailId={emailId}&primarySpecialization={primarySpecialization}";
                             }
-                            string OpenAIScreeningResponse = responseInJson; // Example input string
-                            string AIVerdict = "Yes"; // Default value
-                            int verdictIndex = OpenAIScreeningResponse.ToLower().IndexOf("verdict");
+                            //string OpenAIScreeningResponse = responseInJson; // Example input string
+                            //string AIVerdict = "Yes"; // Default value
+                            string AIVerdict = aiAnalysisModel.verdict; // Default value
+                            //int verdictIndex = OpenAIScreeningResponse.ToLower().IndexOf("verdict");
 
-                            if (verdictIndex != -1)
-                            {
-                                // Extract substring after the word 'verdict'
-                                string verdictSubstr = OpenAIScreeningResponse.Substring(verdictIndex + 7, Math.Min(50, OpenAIScreeningResponse.Length - (verdictIndex + 7)));
+                            //if (verdictIndex != -1)
+                            //{
+                            //    // Extract substring after the word 'verdict'
+                            //    string verdictSubstr = OpenAIScreeningResponse.Substring(verdictIndex + 7, Math.Min(50, OpenAIScreeningResponse.Length - (verdictIndex + 7)));
 
-                                // Remove 'annotation' and 'annotations' (case-insensitive)
-                                verdictSubstr = verdictSubstr.Replace("annotation", "", StringComparison.OrdinalIgnoreCase)
-                                                             .Replace("annotations", "", StringComparison.OrdinalIgnoreCase);
+                            //    // Remove 'annotation' and 'annotations' (case-insensitive)
+                            //    verdictSubstr = verdictSubstr.Replace("annotation", "", StringComparison.OrdinalIgnoreCase)
+                            //                                 .Replace("annotations", "", StringComparison.OrdinalIgnoreCase);
 
-                                // Convert to lowercase for case-insensitive comparison
-                                string lowerVerdict = verdictSubstr.ToLower();
+                            //    // Convert to lowercase for case-insensitive comparison
+                            //    string lowerVerdict = verdictSubstr.ToLower();
 
-                                // Check if it contains 'no', 'not', or 'doesn't'
-                                if (lowerVerdict.Contains("no") || lowerVerdict.Contains("not") || lowerVerdict.Contains("doesn't"))
-                                {
-                                    AIVerdict = "No";
-                                }
-                            }
-                            else
-                            {
-                                AIVerdict = "Sorry! Could not be determined!";//
-                            }
+                            //    // Check if it contains 'no', 'not', or 'doesn't'
+                            //    if (lowerVerdict.Contains("no") || lowerVerdict.Contains("not") || lowerVerdict.Contains("doesn't"))
+                            //    {
+                            //        AIVerdict = "No";
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    AIVerdict = "Sorry! Could not be determined!";//
+                            //}
                             // AIVerdict now contains 'No' or 'Yes' based on the condition
-                            if (AIVerdict == "Yes")
+                            if(!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower().Contains("no") || AIVerdict.ToLower().Contains("not") || AIVerdict.ToLower().Contains("doesn't")))
+                            {
+                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
+                            }
+                            else if(!string.IsNullOrEmpty(AIVerdict) && AIVerdict.ToLower().Contains("yes"))
                             {
                                 return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
-                            }
-                            else if (AIVerdict == "No")
-                            {
-                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
                             }
                             else
                             {
@@ -461,20 +500,25 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
+                        //var response = await _interviewerService.GetInterviewerPreOnboardingAIResponse(emailId, primarySpecialization);
                         var response = await _interviewerService.GetInterviewerPreOnboardingAIResponse(emailId, primarySpecialization);
                         ViewBag.InterviewerEmail = emailId;
                         ViewBag.ResumeLink = resumeLink;
                         ViewBag.PrimarySpecialization = primarySpecialization;
+                        ViewBag.AIVerdict = response?.AIVerdict;
+                        ViewBag.AIScreeningScore = response?.AIScreeningScore;
 
                         if (response != null)
                         {
-                            var modal = JsonConvert.DeserializeObject<RunResult>(response);
-                            return View(modal);
+                            //var modal = JsonConvert.DeserializeObject<RunResult>(response);
+                            //return View(modal);
+                            return View("PreOnboardingAIVerdictDetailsV2", response.AIResponse);
 
                         }
                         else
                         {
-                            return View(new RunResult());
+                            //return View(new RunResult());
+                            return View("PreOnboardingAIVerdictDetailsV2", string.Empty);
                         }
 
                     }

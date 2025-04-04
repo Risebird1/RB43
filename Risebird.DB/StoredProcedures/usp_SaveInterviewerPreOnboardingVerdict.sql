@@ -28,9 +28,7 @@ Begin
 		THEN 'No'
 		ELSE 'Yes'
 		End
-
-		
-	  
+			  
 End
 
 if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId)

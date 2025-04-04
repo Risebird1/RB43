@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[PreOnboardingInterviewerAIVerdict](
 	[ModifiedAt][datetime] NULL,
 	[CreatedBy][varchar](100) NOT NULL,
 	[ModifiedBy][varchar](100) NULL,
+	[AIScreeningScore][int] NULL,
  CONSTRAINT [PK_PreOnboardingInterviewerAIVerdict] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -47,6 +48,16 @@ WHERE Name IN (N'AIVerdict')
 BEGIN
 	ALTER TABLE PreOnboardingInterviewerAIVerdict
 	ALTER COLUMN AIVerdict varchar(50) NULL;
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIScreeningScore')
+      AND Object_ID = Object_ID(N'PreOnboardingInterviewerAIVerdict'))
+BEGIN
+    ALTER TABLE PreOnboardingInterviewerAIVerdict
+    Add AIScreeningScore int null
 END
 
 GO

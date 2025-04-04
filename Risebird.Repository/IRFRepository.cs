@@ -9118,6 +9118,31 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<bool> SaveInterviewerOpenAIScreeningResultsV2(int irfId, int userId, InterviewerResumeFitmentAnalysisSchema model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@userId", userId);
+                    parameters.Add("@completeFitmentAnalysis", model.completeFitmentAnalysis);// screeningResponseJson.Replace("'", "")
+                    parameters.Add("@fitmentScore", model.fitmentScore);
+                    parameters.Add("@verdict", model.verdict);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerOpenAIScreeningResultsV2", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<IEnumerable<TransInterviewer>> GetTransInterviewersForOpenAIScreening()
         {
             try

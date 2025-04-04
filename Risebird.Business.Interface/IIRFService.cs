@@ -177,6 +177,7 @@ namespace Risebird.Business.Interface
         Task<string> GetCodeSnippetFile(int interviewid);
         Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model);
         Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson);
+        Task<bool> SaveInterviewerOpenAIScreeningResultsV2(int irfId, int userId, InterviewerResumeFitmentAnalysisSchema model);
         Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId);
         Task<IEnumerable<IRF>> GetAllIRFMultiStackDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type, DateTime startDate);
