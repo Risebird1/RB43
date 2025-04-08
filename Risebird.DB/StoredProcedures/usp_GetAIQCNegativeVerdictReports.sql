@@ -16,14 +16,15 @@ Begin
  
 	Select distinct im.id as InterviewId, IRF.id as irfIntId, im.interviewDate,IRF.IRFId,
 	im.candidateName, im.candidateEmail, im.interviewer, ul.MobileNumber as InterviewerMobileNumber,
-	uli.EmailId as ChannelOwner, ic.InterviewStatus,
-	im.confirmationStatus, ic.MeetingStatus, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted, ic.IsAITranscriptAnalysisFailed
+	uli.EmailId as ChannelOwner, ic.InterviewStatus, ic.AIVerdict as AIQCVerdict,
+	im.confirmationStatus, ic.MeetingStatus, ic.AudioTranscriptFileLink,
+	ic.IsAITranscriptAnalysisAttempted, ic.IsAITranscriptAnalysisFailed
 	from InterviewMeetings im 
 	join IRF on IRF.IRFId=im.IRFId
 	join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
 	left join UserList ul on ul.EmailId=im.interviewer
 	join UserList uli on uli.id= irf.RisebirdHr
-	where  ic.AIVerdict in ('No')
+	where  ic.AIVerdict is not null--in ('No')
 	and cast(im.interviewDate as date) >= cast(dateadd(day, -30, @timeNow) as date)
 	order by im.interviewDate desc
 
