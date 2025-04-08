@@ -34,6 +34,7 @@ CREATE TABLE [dbo].[Client](
             [IsVideoRequired][bit] NULL,
             [IsReportwhitelabel][bit] NULL,
             [IsCandidateVerification][bit] NULL,
+            [ModifiedInterviewStatus][bit] NULL,
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -338,6 +339,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add IsCandidateVerification bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedInterviewStatus')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add ModifiedInterviewStatus bit
 END
 
 END

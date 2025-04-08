@@ -99,11 +99,11 @@
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
     meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
-    if (Model.ClientId == 149 || Model.ClientId == 151 || Model.ClientId == 67 || Model.ClientId == 81 || Model.ClientId == 171 || Model.ClientId == 172 || Model.ClientId == 160 || Model.ClientId == 176 || Model.ClientId == 78)
+    //if (Model.ClientId == 149 || Model.ClientId == 151 || Model.ClientId == 67 || Model.ClientId == 81 || Model.ClientId == 171 || Model.ClientId == 172 || Model.ClientId == 160 || Model.ClientId == 176 || Model.ClientId == 78 || Model.ClientId == 197)
+    if (Model.ModifiedInterviewStatus)
     {
         interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString() && x.Value != ((int)InterviewStatus.MarginallyRejected).ToString()).ToList();
     }
-
 }
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
