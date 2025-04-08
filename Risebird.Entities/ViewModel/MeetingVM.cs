@@ -385,6 +385,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAITranscriptAnalysisAttempted { get; set; }
         public string AITranscriptVerdict { get; set; }
         public int AITranscriptAnalysisScore { get; set; }
+        public bool ModifiedInterviewStatus { get; set; }
     }
 
     public class VedioComments

@@ -1251,6 +1251,7 @@ namespace Risebird.Business
                 reportModel.IRFInterviewerActive = interviewDetails.IRFInterviewerActive;
                 reportModel.QOSData = (await _meetingRespository.GetZoomQOSDataByMeetingId(interviewId))?.ToList();
                 reportModel.ClientId = interviewDetails.ClientId;
+                reportModel.ModifiedInterviewStatus = interviewDetails.ModifiedInterviewStatus;
                 reportModel.CommunicationalProficiency = interviewDetails.CommunicationalProficiency;
                 reportModel.IsQCDone = interviewDetails.IsQC;
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
@@ -2238,6 +2239,7 @@ namespace Risebird.Business
                 reportModel.IRFName = irfDetails.IRFId;
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 reportModel.ClientId = interviewDetails.ClientId;
+                reportModel.ModifiedInterviewStatus = interviewDetails.ModifiedInterviewStatus;
                 return reportModel;
             }
 
