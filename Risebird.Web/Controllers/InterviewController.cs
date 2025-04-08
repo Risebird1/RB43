@@ -9025,7 +9025,10 @@ namespace Risebird.Web.Controllers
                 }
 
 
-
+                if(!string.IsNullOrEmpty(model.AudioTranscriptFileLink))
+                {
+                    model.AudioTranscriptFileLink = null;
+                }
                 // Render the partial view to a string
                 var htmlContent = await RenderToStringAsync("AIClientReport", model);
 
