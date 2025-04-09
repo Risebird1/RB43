@@ -1123,7 +1123,7 @@
                                                                                 @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
                                                                                 {
                                                                                       @if(@item.AITranscriptVerdict=="yes"){
-                                                                                        <div><img src="~/img/not-acceptable.png" style="width: 29px!important;position: absolute;left:-2px;top:-1px;" /></div>
+                                                                                        <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:-2px;top:-1px;" /></div>
 
                                                                                         <div class="interviewer-apt">
                                                                                             <span>Transcript unacceptable quality based on AI</span>
@@ -1133,18 +1133,14 @@
                                                                                                     <span>
                                                                                                         <div class="bubble">
 
-                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
+                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
 
                                                                                                             <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
                                                                                                                 <tr>
                                                                                                                     <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
                                                                                                                     <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
                                                                                                                 </tr>
-                                                                                                                <tr>
-                                                                                                                    <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path> </svg></td>
-                                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Interviewer issues not found in the transcript </td>
-                                                                                                                </tr>
-
+                                                                                                                
                                                                                                             </table>
 
 
@@ -1155,9 +1151,9 @@
                                                                                         </div>
                                                                                            }
                                                                                             else{
-                                                                                        <div><img src="~/img/accept.png" style="width: 29px!important;position:absolute;left:-2px;top:-1px;" /></div>
+                                                                                        <div><img src="~/img/accept.png" style="width: 26px!important;position:absolute;left:-2px;top:-1px;" /></div>
 
-                                                                                        <div class="interviewer-apt" style="background:#e6ee9c73;color:#2a9d36;">
+                                                                                        <div class="interviewer-apt" style="background:#edf2c573;color:#2a9d36;">
                                                                                             <span>Transcript acceptable quality based on AI</span>
                                                                                             <span>
                                                                                                 <a class="details" href="#">
@@ -1191,7 +1187,84 @@
                                                                                 }
 
                                                                             </div>
-                                                                }
+                                                                    <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
+
+                                                                        @if (item.AIVerdict != null && item.AIVerdict != "")
+                                                                        {
+                                                                            @if (@item.AIVerdict == "Yes")
+                                                                            {
+                                                                                <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:4px;" /></div>
+
+                                                                                <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position: relative;left: 20px;">
+                                                                                    <span>Report acceptable quality based on AI</span>
+                                                                                    <span>
+                                                                                        <a class="details" href="#">
+                                                                                            <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                            <span>
+                                                                                                <div class="bubble">
+
+                                                                                                    <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
+
+                                                                                                    <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                        <tr>
+                                                                                                            <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
+                                                                                                            <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
+                                                                                                        </tr>
+
+
+                                                                                                    </table>
+
+
+                                                                                                </div>
+                                                                                            </span>
+                                                                                        </a>
+                                                                                    </span>
+                                                                                </div>
+
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                              
+                                                                                <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left:4px;top:4px;" /></div>
+
+                                                                                <div class="interviewer-apt">
+                                                                                    <span>Report unacceptable quality based on AI</span>
+                                                                                    <span>
+                                                                                        <a class="details" href="#">
+                                                                                            <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                            <span>
+                                                                                                <div class="bubble">
+
+                                                                                                    <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
+
+                                                                                                    <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                        <tr>
+                                                                                                            <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                            <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                        </tr>
+
+                                                                                                    </table>
+
+
+                                                                                                </div>
+                                                                                            </span>
+                                                                                        </a>
+                                                                                    </span>
+                                                                                </div>
+
+
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span></span>
+                                                                        }
+
+                                                                    </div>
+
+
+                                                                        }
 
 
 
@@ -1226,15 +1299,28 @@
                                                         @if (ViewBag.actionstatus == "QCPendingReport")
                                                         {
                                                             <td style="text-align:center">
+                                                             
                                                                 @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
                                                                 {
                                                                     @if (@item.AITranscriptVerdict == "yes")
                                                                     {
-                                                                        <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"> @item.AITranscriptVerdict<font style="font-weight:400;text-transform:none;">, check details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                        <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"> @item.AITranscriptVerdict<font style="font-weight:400;text-transform:none;">, check details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                        <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                    }
+                                                                }
+                                                                <br /><br />
+                                                                   @if (item.AIVerdict != null && item.AIVerdict != "")
+                                                                {
+                                                                    @if (@item.AIVerdict == "yes")
+                                                                    {
+                                                                         <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">, check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;"> check report quality details<svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
                                                                     }
                                                                 }
                                                             </td>

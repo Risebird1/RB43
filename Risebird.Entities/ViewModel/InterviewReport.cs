@@ -443,6 +443,7 @@ namespace Risebird.Entities.ViewModel
         public int VideoReward { get; set; }
         public string AudioTranscriptFileLink { get; set; }
         public string AITranscriptVerdict { get; set; }
+        public string AIVerdict { get; set; }
     }
     public class SchedulingLinkVM
     {

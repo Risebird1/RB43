@@ -11433,8 +11433,7 @@ textarea:focus {
 }
 
 .table-striped tbody tr:nth-of-type(even) {
-    background: #d9dde633;
-    box-shadow: 0 0 5px #868b903b;
+    background: #f8f9fb12; box-shadow: 0 0 5px #868b903b;
 }
 
 table.dataTable thead .sorting:after {
