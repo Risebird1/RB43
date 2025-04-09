@@ -510,8 +510,33 @@
                                                                 </span>
                                                             </a>
                                                                         }
-                                                        }
 
+
+                                                             @if (item.AIVerdict != null && item.AIVerdict != "")
+                                                                            {
+                                                                                @if (@item.AIVerdict == "yes")
+                                                                                {
+                                                                              <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.id, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;">
+                                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="AI QC Report" style="background:#2bac63ba;border-color:#2bac63ba; width:18px!important;height:18px!important; top:2px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                                            <span title="AI QC Report" class="mdc-fab__icon material-icons"><img src="~/img/report.png" style="max-width: 17px!important;position:relative;left: -2px;top: 3px;" /></span>
+                                                                                        </span>
+
+                                                                                    </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.id, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;">
+                                                                                        
+                                                                                      <span class="btn shadow btn-xs sharp me-1" aria-label="AI QC Report" style="background:#2bac63ba;border-color:#2bac63ba; width:18px!important;height:18px!important; top:2px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                                            <span title="AI QC Report" class="mdc-fab__icon material-icons"><img src="~/img/report.png" style="max-width: 17px!important;position:relative;left: -2px;top: 3px;" /></span>
+                                                                </span>   
+                                                                                        
+                                                                                        </a>
+
+                                                                                }
+                                                                            }
+                                                                        
+                                                                        }
 
                                                                         @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
                                                                         {
@@ -722,16 +747,17 @@
                                                                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
                                                                        
                                                                         </button>
+                                                                            <div style="clear:both"></div>
                                                                         @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                                           {
-                                                                            <div style="float: left;margin-top: 5px;position: relative;left:5px;">
+                                                                                <div style="float: left;margin-bottom:10px;margin-top: 5px;position: relative;left:5px;">
                                                                     
                                                                                 @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
                                                                                 {
                                                                                       @if(@item.AITranscriptVerdict=="yes"){
-                                                                                        <div><img src="~/img/not-acceptable.png" style="width: 29px!important;position: absolute;left:0px;z-index: 1000;" /></div>
+                                                                                        <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:0px;"/></div>
 
-                                                                                        <div class="interviewer-apt" style="top:3px; padding: 4px 4px 3px 4px;">
+                                                                                            <div class="interviewer-apt" style="top:3px; padding: 4px 4px 3px 4px;left:23px;">
                                                                                                 <span>Transcript unacceptable quality based on AI</span>
                                                                                             <span>
                                                                                                 <a class="details" href="#">
@@ -739,17 +765,14 @@
                                                                                                     <span>
                                                                                                         <div class="bubble">
 
-                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
+                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;color: #000;font-size: 14px;">Not recommended</font>
 
                                                                                                             <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:10px 0px 0px 0px">
                                                                                                                 <tr>
                                                                                                                     <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
                                                                                                                     <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
                                                                                                                 </tr>
-                                                                                                                <tr>
-                                                                                                                    <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path> </svg></td>
-                                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Interviewer issues not found in the transcript </td>
-                                                                                                                </tr>
+                                                                                                               
 
                                                                                                             </table>
 
@@ -761,9 +784,9 @@
                                                                                         </div>
                                                                                            }
                                                                                             else{
-                                                                                        <div><img src="~/img/accept.png" style="width: 29px!important;position: absolute;left:0px;z-index: 1000;" /></div>
+                                                                                        <div><img src="~/img/accept.png" style="width: 26px!important;position: absolute;left:-4px" /></div>
 
-                                                                                        <div class="interviewer-apt" style="background:#e6ee9c73;color:#2a9d36;top:3px; padding: 4px 4px 3px 4px;">
+                                                                                            <div class="interviewer-apt" style="background:#e6ee9c73;color:#2a9d36;top:3px;left:20px;padding: 4px 4px 3px 4px;">
                                                                                                 <span>Transcript acceptable quality based on AI</span>
                                                                                             <span>
                                                                                                 <a class="details" href="#">
@@ -771,7 +794,7 @@
                                                                                                     <span>
                                                                                                         <div class="bubble">
 
-                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:0px;font-size: 14px;">Recommended</font>
+                                                                                                            <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-1px;font-size: 14px;">Recommended</font>
 
                                                                                                             <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:10px 0px 0px 0px">
                                                                                                                 <tr>
@@ -796,6 +819,77 @@
                                                                                 }
 
                                                                             </div>
+                                                                                <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
+
+                                                                                    @if (item.AIVerdict != null && item.AIVerdict != "")
+                                                                                    {
+                                                                                        @if (@item.AIVerdict == "Yes")
+                                                                                        {
+                                                                                            <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top: 1px;" /></div>
+                                                                                            <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position:relative;left: 20px;top:-1px;padding: 4px 2px;">
+                                                                                                <span>Report acceptable quality based on AI</span>
+                                                                                                <span>
+                                                                                                    <a class="details" href="#">
+                                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                                        <span>
+                                                                                                            <div class="bubble">
+
+                                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-33px;color:#000;top:-1px;font-size: 14px;">Recommended</font>
+
+                                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                                    <tr>
+                                                                                                                        <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
+                                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
+                                                                                                                    </tr>
+
+
+                                                                                                                </table>
+
+
+                                                                                                            </div>
+                                                                                                        </span>
+                                                                                                    </a>
+                                                                                                </span>
+                                                                                            </div>
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left: 5px;top: 1px;" /></div>
+                                                                                            <div class="interviewer-apt" style="position:relative;top: 0px;padding: 4px 2px;">
+                                                                                                <span>Report unacceptable quality based on AI</span>
+                                                                                                <span>
+                                                                                                    <a class="details" href="#">
+                                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                                        <span>
+                                                                                                            <div class="bubble">
+
+                                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;color: #000;font-size: 14px;">Not recommended</font>
+
+                                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                                    <tr>
+                                                                                                                        <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                                    </tr>
+
+                                                                                                                </table>
+
+
+                                                                                                            </div>
+                                                                                                        </span>
+                                                                                                    </a>
+                                                                                                </span>
+                                                                                            </div>
+
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span></span>
+                                                                                    }
+
+                                                                                </div>
+
                                                                              }
                                                                             
                                                                         <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />

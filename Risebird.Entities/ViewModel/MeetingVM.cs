@@ -384,6 +384,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsReportwhitelabel { get; set; }
         public bool IsAITranscriptAnalysisAttempted { get; set; }
         public string AITranscriptVerdict { get; set; }
+        public string AIVerdict { get; set; }
         public int AITranscriptAnalysisScore { get; set; }
         public bool ModifiedInterviewStatus { get; set; }
     }
