@@ -33,5 +33,6 @@
         public int TotalInterviewers { get; set; }
         public int BillingRate { get; set; }
         public bool IsActive { get; set; }
+        public int TotalLessduration { get; set; }
     }
 }

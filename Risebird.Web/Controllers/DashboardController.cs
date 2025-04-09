@@ -3113,6 +3113,11 @@ namespace Risebird.Web.Controllers
                             type = "Lessquestion";
                             ViewBag.Type = "Lessquestion";
                         }
+                        else if (type == "Lessduration")
+                        {
+                            type = "Lessduration";
+                            ViewBag.Type = "Lessduration";
+                        }
                         else
                         {
                             type = "Latejoin";
