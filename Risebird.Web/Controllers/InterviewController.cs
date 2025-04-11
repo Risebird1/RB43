@@ -5947,7 +5947,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
             var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
-             return new JsonResult(message);
+            return new JsonResult(message);
         }
 
         #region Proctor Report
@@ -8932,7 +8932,7 @@ namespace Risebird.Web.Controllers
                 }
 
 
-                if(!string.IsNullOrEmpty(model.AudioTranscriptFileLink))
+                if (!string.IsNullOrEmpty(model.AudioTranscriptFileLink))
                 {
                     model.AudioTranscriptFileLink = null;
                 }
