@@ -4089,6 +4089,13 @@ namespace Risebird.Web.Controllers
         #region Interviewer Insights
         public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId, string type = null)
         {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
+            ViewBag.RegularAccess = "";
+            if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+            {
+                ViewBag.RegularAccess = "1";
+            }
             var result = await _interviewerService.GetInterviewerInsights(interviewer, IrfId);
             if (result == null)
             {

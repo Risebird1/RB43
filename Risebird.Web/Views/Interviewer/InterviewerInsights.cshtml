@@ -125,7 +125,7 @@
                 <div class="tbhead">Completed</div>
                 <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews)%)</span></div>
             </div>
-            @if ((Model.SelectedInterviews * 100 / Model.CompletedInterviews) >= 50)
+            @if ((Model.SelectedInterviews * 100 / Model.CompletedInterviews) >= 50 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Selected</div>
@@ -147,7 +147,7 @@
                     </div>
                 </div>
             }
-            @if ((Model.RejectedInterviews * 100 / Model.CompletedInterviews) >= 80)
+            @if ((Model.RejectedInterviews * 100 / Model.CompletedInterviews) >= 80 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Rejected</div>
@@ -163,14 +163,14 @@
                     </div>
                 </div>
             }
-            @if ((Model.DroppedInterviews * 100 / Model.CompletedInterviews) >= 10)
+            @if ((Model.DroppedInterviews * 100 / Model.CompletedInterviews) >= 10 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Dropped</div>
                     <div class="tbtd"><span style="width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews)%)</span></div>
                 </div>
             }
-            @if ((Model.NoShowInterviews * 100 / Model.TotalInterviews) > 5)
+            @if ((Model.NoShowInterviews * 100 / Model.TotalInterviews) > 5 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">NoShow</div>
@@ -186,7 +186,7 @@
                     </div>
                 </div>
             }
-            @if ((Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews) > 40)
+            @if ((Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews) > 40 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">NoShow Candidate</div>
@@ -206,35 +206,35 @@
                 <div class="tbhead">Reliability Score</div>
                 <div class="tbtd"><span onclick="ReliabilityScoreDetails('@Model.Emailid','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:10px;text-align:center;cursor:pointer;font-weight:bold;">@Model.ReliabilityScore</span></div>
             </div>
-            @if (Model.PaymentSLA > 0)
+            @if (Model.PaymentSLA > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Payment Deduction</div>
                     <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></div>
                 </div>
             }
-            @if (Model.Penalty > 0)
+            @if (Model.Penalty > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Late Report Count</div>
                     <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></div>
                 </div>
             }
-            @if (Model.CandidateRating > 0)
+            @if (Model.CandidateRating > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Candidate Rating</div>
                     <div class="tbtd"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Candidate Rating Details','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CandidateRating</span></div>
                 </div>
             }
-            @if (Model.CustomerRating > 0)
+            @if (Model.CustomerRating > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Client  Rating</div>
                     <div class="tbtd"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Client Rating Details','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CustomerRating</span></div>
                 </div>
             }
-            @if (Model.Redorequests > 0)
+            @if (Model.Redorequests > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Redo requests</div>
@@ -250,7 +250,7 @@
                     </div>
                 </div>
             }
-            @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10)
+            @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Red Flag Interviews</div>
@@ -266,7 +266,7 @@
                     </div>
                 </div>
             }
-            @if ((Model.JoinLateMeeting * 100 / Model.TotalInterviews) > 2)
+            @if ((Model.JoinLateMeeting * 100 / Model.TotalInterviews) > 2 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Late Join</div>
@@ -282,12 +282,20 @@
                     </div>
                 </div>
             }
-            @if (Model.AIVerdictNegative > 0)
+            @if (Model.AIVerdictNegative > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Report Verdict</div>
                     <div class="tbtd">
                         @if (Model.AIVerdictNegative > 0)
+                        {
+                            <span onclick="InsightsDetailsAiVerdictView('@Model.Emailid','@Model.IRFId')" style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:10px;text-align:center;cursor:pointer">@Model.AIVerdictNegative</span>
+                        }
+                        else
+                        {
+                            <span onclick="InsightsDetailsAiVerdictView('@Model.Emailid','@Model.IRFId')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
+                        }
+                        @*  @if (Model.AIVerdictNegative > 0)
                         {
                             <a href="/Dashboard/AITranscriptVerdicts" target="_blank">
                                 <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
@@ -298,11 +306,11 @@
                             <a href="/Dashboard/AITranscriptVerdicts" target="_blank">
                                 <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
                             </a>
-                        }
+                        } *@
                     </div>
                 </div>
             }
-            @if (Model.SuspiciousCount > 0)
+            @if (Model.SuspiciousCount > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Suspicious</div>
@@ -318,7 +326,7 @@
                     </div>
                 </div>
             }
-            @if (Model.LessQuestions > 0)
+            @if (Model.LessQuestions > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Less Questions</div>
@@ -334,7 +342,7 @@
                     </div>
                 </div>
             }
-            @if (Model.RejectedComment > 0)
+            @if (Model.RejectedComment > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Reject small Comment</div>
@@ -350,7 +358,7 @@
                     </div>
                 </div>
             }
-            @if (Model.SelectedComment > 0)
+            @if (Model.SelectedComment > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
                     <div class="tbhead">Select small Comment</div>

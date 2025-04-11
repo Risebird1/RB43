@@ -1194,5 +1194,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdictInterviewer(string interviewer, string Irfid)
+        {
+            try
+            {
+                return await _dashboardRespository.GetAITranscriptReportsWithVerdictInterviewer(interviewer, Irfid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

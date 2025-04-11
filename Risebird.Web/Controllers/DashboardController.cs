@@ -4227,7 +4227,7 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-
+                        ViewBag.Pagetype = "";
                         return View(model);
                     }
                     else
@@ -4239,6 +4239,47 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AITranscriptVerdictsInterviewer(string interviewer, string Irfid)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName?.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid?.Replace("\"", "");
+                ViewBag.Profile = profileName;
+                var model = await _dashboardService.GetAITranscriptReportsWithVerdictInterviewer(interviewer, Irfid);
+                model = model.Select(x =>
+                {
+                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
+                    return x;
+                }).ToList();
+                foreach (var item in model)
+                {
+                    if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                    {
+                        if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                        {
+                            item.MeetingStatusStatusDesc = "Status Pending";
+                        }
+                    }
+                    else
+                    {
+                        item.MeetingStatusStatusDesc = string.Empty;
+                    }
+                }
+                ViewBag.Pagetype = "Public";
+                return View("AITranscriptVerdicts", model);
             }
             catch (Exception ex)
             {

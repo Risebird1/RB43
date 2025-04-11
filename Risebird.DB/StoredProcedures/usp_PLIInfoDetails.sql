@@ -252,7 +252,7 @@ left join UserList ulc on ulc.id=IRF.BillingOwner
 left join UserList uli on uli.Emailid=CTE.interviewer  
 left join InterviewerProfile ip on ip.UserId=uli.id  
 left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer  
-where ul.EmailId=@EmailId  
+where ul.EmailId=@EmailId and uli.IsActive=1
 End  
 Else  
 Begin  
@@ -273,6 +273,7 @@ left join UserList ulc on ulc.id=IRF.BillingOwner
 left join UserList uli on uli.Emailid=CTE.interviewer  
 left join InterviewerProfile ip on ip.UserId=uli.id  
 left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer  
+where uli.IsActive=1
 End  
 end  
 END  
