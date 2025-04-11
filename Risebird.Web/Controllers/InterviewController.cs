@@ -5946,101 +5946,8 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            if ((status == 1 || status == 2 || status == 4) && _meetingService.CheckInterviewCancellable(meetingid))
-            {
-                var response = true;
-                //if (status == 4)
-                //{
-                //    response = _meetingService.CheckInterviewClerityTime(meetingid);
-                //}
-
-                var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
-                if (results == "Success")
-                {
-                    //if (status == 4)
-                    //{
-                    //    var clientHr = await _candidateService.FetchChannelOwnerByInterviewid(meetingid);
-                    //    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
-                    //    var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
-                    //    var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                    //}
-                    //if (status == 2 || status == 3 || (status == 4 && response == false))
-                    //if (status == 1) // availability confirmed
-                    //{
-                    //    //get irfId and interviewdate, candidateEmail and clientHrEmail
-
-                    //    var meetingDetails = await _meetingService.GetMeetingDetails(meetingid);
-                    //    await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID, meetingDetails.logolink);
-                    //}
-                    if (status == 2 || status == 3)
-                    {
-                        var value = string.Empty;
-                        if (status == 2)
-                        {
-                            value = "NO";
-                        }
-                        else if (status == 3)
-                        {
-                            value = "RESCHEDULE";
-                        }
-                        //else
-                        //{
-                        //    value = "NEED MORE CLARITY";
-                        //}
-                        //send mail scheduling link
-                        var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
-                        var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
-                        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
-                        List<string> interviewers = new List<string>();
-                        if (!string.IsNullOrEmpty(result.interviewer))
-                        {
-                            interviewers.Add(result.interviewer);
-                        }
-                        if (!string.IsNullOrEmpty(result.EmailId))
-                        {
-                            interviewers.Add(result.EmailId);
-                        }
-                        var cancellationsource = string.Empty;
-                        cancellationsource = await _meetingService.GetInterviewCancellationSource(meetingid);
-
-                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
-                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
-                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
-                        DeleteMeetingLink(result.ZoomMeetingId);
-                        //if (status == 3 && candidateId == 0)
-                        //{
-                        //    string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
-                        //    var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                        //    var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
-                        //    oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
-                        //    return Json(oneTimeSchedulingLink);
-                        //}
-                        return Json("Successfully status updated, " + value);
-                    }
-
-                    return Json("Thank you for confirming your interview.");
-                }
-                else if (results == "Already Present")
-                {
-                    return Json("Your interview is already cancelled. Kindly reschedule your interview or contact to HR/Admin.");
-                }
-                else
-                {
-                    return Json("Status update failed. Please try again!");
-                }
-            }
-            else if (status == 3)
-            {
-                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
-            }
-            else if (status == 3)
-            {
-                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
-            }
-            else
-            {
-                return Json("Fail to Update Status, Please try again");
-            }
+            var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
+             return new JsonResult(message);
         }
 
         #region Proctor Report
@@ -7938,7 +7845,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CandidateRescheduleMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            if (_meetingService.CheckInterviewCancellable(meetingid))
+            if (await _meetingService.CheckInterviewCancellable(meetingid))
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
                 var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, result.candidateEmail);

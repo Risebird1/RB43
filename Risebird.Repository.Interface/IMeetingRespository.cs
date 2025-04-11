@@ -199,7 +199,7 @@ namespace Risebird.Repository.Interface
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response);
+        Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response);
         Task<bool> ApplyInterviewPenalty(int meetingid, string JobCountry, string interviewer);
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
@@ -243,7 +243,7 @@ namespace Risebird.Repository.Interface
         Task<RedoInterviewVM> GetRedoInterviewDetailsById(int id);
         Task<bool> UpdateRejectRedoInterviewDetails(RedoInterviewVM model);
         Task<bool> ResetInterviewPayment(int id);
-        bool CheckInterviewCancellable(int meetingid);
+        Task<bool> CheckInterviewCancellable(int meetingid);
         Task<string> GetMeetingPlatformbyIRFId(string IRFId);
         Task<IEnumerable<MeetingVM>> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);

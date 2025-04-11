@@ -30,6 +30,7 @@
                         <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessduration','@ViewBag.ReturnBack')"><strong>Less Duration</strong></div>
                     }
                     else if (ViewBag.Type == "Shortselectcomment")
                     {
@@ -37,6 +38,7 @@
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessduration','@ViewBag.ReturnBack')"><strong>Less Duration</strong></div>
                     }
                     else if (ViewBag.Type == "Shortrejectcomment")
                     {
@@ -44,6 +46,7 @@
                         <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessduration','@ViewBag.ReturnBack')"><strong>Less Duration</strong></div>
                     }
                     else if (ViewBag.Type == "Lessquestion")
                     {
@@ -51,6 +54,15 @@
                         <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessduration','@ViewBag.ReturnBack')"><strong>Less Duration</strong></div>
+                    }
+                    else if (ViewBag.Type == "Lessduration")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin','@ViewBag.ReturnBack')"><strong>Late Join</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Lessduration','@ViewBag.ReturnBack')"><strong>Less Duration</strong></div>
                     }
                     else
                     {
@@ -58,6 +70,7 @@
                         <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment')"><strong>Short Select Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessduration','@ViewBag.ReturnBack')"><strong>Less Duration</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -117,6 +130,10 @@
                                                     {
                                                         <td>Late Join</td>
                                                     }
+                                                    else if (ViewBag.Type == "Lessduration")
+                                                    {
+                                                        <td>Less Duration</td>
+                                                    }
                                                     <td>Company Name</td>
                                                     <td>Action</td>
                                                 </tr>
@@ -142,6 +159,10 @@
                                                     else if (ViewBag.Type == "Latejoin")
                                                     {
                                                         <td>Late Join</td>
+                                                    }
+                                                    else if (ViewBag.Type == "Lessduration")
+                                                    {
+                                                        <td>Less Duration</td>
                                                     }
                                                     <td>Company Name</td>
                                                     <td>Action</td>
@@ -172,6 +193,10 @@
                                                         else if (ViewBag.Type == "Latejoin")
                                                         {
                                                             <td>@item.TotalLatejoin</td>
+                                                        }
+                                                        else if (ViewBag.Type == "Lessduration")
+                                                        {
+                                                            <td>@item.TotalLessduration</td>
                                                         }
                                                         <td>@item.CompanyName</td>
                                                         <td class="text-center">

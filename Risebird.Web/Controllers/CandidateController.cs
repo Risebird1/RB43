@@ -5221,7 +5221,7 @@ namespace Risebird.Web.Controllers
             var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);
             if (_result.Contains("Mail sent successfully."))
             {
-                var results = _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true);
+                var results = await _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true);
                 return Json("Information shared to contact person, HR will Connect you soon.");
             }
             return Json("Fail");

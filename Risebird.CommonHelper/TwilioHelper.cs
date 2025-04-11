@@ -349,6 +349,51 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<bool> MakeIVRCallForCandidateMeetingReminder(string userPhoneNumber, string candidateFirstName,string uniqueId,  int irfId, string jdTitle, int interviewId, int candidateId, DateTime interviewDate, string timeZoneValue)
+        {
+            try
+            {
+                await _activityTrackerService.DebugLogger($"IVRCall to Candidate for their Interview Availability Reminder", "IVR", string.Empty);
+
+                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
+
+                var link = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
+
+                var url = new Uri(link);
+
+                    var call = await CallResource.CreateAsync(
+                        to: new PhoneNumber(userPhoneNumber),
+                        from: new PhoneNumber(_twilioCallerNumber),
+                        url: url // Replace with your public endpoint
+                    );
+
+                if (call.Status != null)
+                {
+                    var result = call.Status.ToString();
+                    if (result != CallResource.StatusEnum.Failed.ToString())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+
+
+            }
+            catch (Exception ex)
+            {
+                await _activityTrackerService.DebugLogger($"MakeIVRCallForCandidateMeetingReminder function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 }

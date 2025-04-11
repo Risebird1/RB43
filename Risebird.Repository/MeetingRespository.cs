@@ -5193,7 +5193,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response)
+        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response)
         {
             try
             {
@@ -5219,7 +5219,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(checkquery, dynamicParameters);
+                    var results = await con.QueryAsync<int>(checkquery, dynamicParameters);
                     if (results.FirstOrDefault() > 0)
                     {
                         return "Already Present";
@@ -5233,7 +5233,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Fail";
             }
         }
@@ -6360,7 +6360,7 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public bool CheckInterviewCancellable(int meetingid)
+        public async Task<bool> CheckInterviewCancellable(int meetingid)
         {
             try
             {
@@ -6370,7 +6370,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@interviewdate", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, dynamicParameters);
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
                     if (results.FirstOrDefault() > 0)
                     {
                         return true;
