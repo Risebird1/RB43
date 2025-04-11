@@ -4,7 +4,7 @@
     if (ViewBag.Pagetype == "Public")
     {
         Layout = "~/Views/Shared/_PublicLayout2.cshtml";
-}
+    }
     else
     {
         Layout = "~/Views/Shared/_Layout.cshtml";
@@ -17,10 +17,10 @@
 
 <style>
     .swal2-popup .swal2-title {
-    font-size: 1.5em !important;
-    text-transform: none !important;
-    font-weight: 400 !important;
-    line-height: 28px;
+        font-size: 1.5em !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        line-height: 28px;
     }
 </style>
 
@@ -33,9 +33,9 @@
                     <div class="pull-right client-ms">
                         @if (ViewBag.Pagetype == "Public")
                         {
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                        </button> 
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
                         }
                     </div>
 
@@ -60,26 +60,26 @@
                                                 <th>Action</th>
                                                 @if (ViewBag.Pagetype != "Public")
                                                 {
-                                                <th>AI Transcript Verdict</th>
+                                                    <th>AI Transcript Verdict</th>
                                                 }
                                                 <th>AI Transcript Analysis Score</th>
                                                 <th>AI QC Verdict</th>
                                                 <th>Interview Date</th>
                                                 @if (ViewBag.Pagetype != "Public")
                                                 {
-                                                <th>Interviewer</th>
+                                                    <th>Interviewer</th>
                                                 }
                                                 <th>Candidate Name</th>
                                                 @if (ViewBag.Pagetype != "Public")
                                                 {
-                                                <th>Candidate Email</th>
-                                                <th>Interviewer Number</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Interviewer Number</th>
                                                 }
                                                 <th>Channel Id</th>
                                                 <th>Channel Owner</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
-                                                
+
                                                 @* <th>QC Completed</th> *@
 
 
@@ -90,26 +90,26 @@
                                                 <th>Action</th>
                                                 @if (ViewBag.Pagetype != "Public")
                                                 {
-                                                <th>AI Transcript Verdict</th>
+                                                    <th>AI Transcript Verdict</th>
                                                 }
                                                 <th>AI QC Verdict</th>
                                                 <th>AI Transcript Analysis Score</th>
                                                 <th>Interview Date</th>
                                                 @if (ViewBag.Pagetype != "Public")
                                                 {
-                                                <th>Interviewer</th>
+                                                    <th>Interviewer</th>
                                                 }
                                                 <th>Candidate Name</th>
                                                 @if (ViewBag.Pagetype != "Public")
                                                 {
-                                                <th>Candidate Email</th>
-                                                <th>Interviewer Number</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Interviewer Number</th>
                                                 }
                                                 <th>Channel Id</th>
                                                 <th>Channel Owner</th>
                                                 <th>Meeting Status</th>
-                                                <th>Interview Status</th>  
-                                                
+                                                <th>Interview Status</th>
+
                                                 @* <th>QC Completed</th> *@
 
 
@@ -125,25 +125,25 @@
                                                         <td>
                                                             @if (ViewBag.Pagetype != "Public")
                                                             {
-                                                            @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
-                                                            {
-                                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId ,irfId=item.irfIntId})">
-                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:23px!important;height:23px!important;position:relative;top:2px;">
-                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#fff" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16" style="position:relative;top:-2px;left: -1px;"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                    </button>
+                                                                @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
+                                                                {
+                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId ,irfId=item.irfIntId})">
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:23px!important;height:23px!important;position:relative;top:2px;">
+                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#fff" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16" style="position:relative;top:-2px;left: -1px;"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                }
+                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate AI QC Report" style="text-decoration:none;">
+                                                                    <span class="btn shadow btn-xs sharp me-1" aria-label="Generate AI QC Report" style="background:#b3bce4d1;border-color:#b3bce4d1; width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                        <span title="Generate AI QC Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
+                                                                    </span>
                                                                 </a>
-                                                            }
-                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate AI QC Report" style="text-decoration:none;">
-                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Generate AI QC Report" style="background:#b3bce4d1;border-color:#b3bce4d1; width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
-                                                                    <span title="Generate AI QC Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
-                                                                </span>
-                                                            </a>
 
-                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true, regenerateAIQC = true})" title="REGenerate AI QC Report" style="text-decoration:none;">
-                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Re-generate AI QC Report" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
-                                                                    <span title="Re-generate AI QC Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px" /></span>
-                                                                </span>
-                                                            </a>
+                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true, regenerateAIQC = true})" title="REGenerate AI QC Report" style="text-decoration:none;">
+                                                                    <span class="btn shadow btn-xs sharp me-1" aria-label="Re-generate AI QC Report" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
+                                                                        <span title="Re-generate AI QC Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px" /></span>
+                                                                    </span>
+                                                                </a>
                                                             }
                                                             <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;">
                                                                 <span class="btn shadow btn-xs sharp me-1" aria-label="Transcript Analysis" style="background:#429aa8d4;border-color:#429aa8d4; width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
@@ -152,20 +152,16 @@
                                                             </a>
                                                             @if (ViewBag.Pagetype != "Public")
                                                             {
-                                                            <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId, isRedo = true})" title="Regenerate Transcript Analysis" style="text-decoration:none;">
-                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Regenerate Transcript Analysis" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#78a1ed;background:#78a1ed;">
-                                                                    <span title="Regenerate Transcript Analysis" class="mdc-fab__icon material-icons"><img src="~/img/regenerate-transcript.png" style="max-width: 19px!important;position:relative;left: -3px;top: -2px;" /></span>
-                                                                </span>
-                                                            </a>
+                                                                <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId, isRedo = true})" title="Regenerate Transcript Analysis" style="text-decoration:none;">
+                                                                    <span class="btn shadow btn-xs sharp me-1" aria-label="Regenerate Transcript Analysis" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#78a1ed;background:#78a1ed;">
+                                                                        <span title="Regenerate Transcript Analysis" class="mdc-fab__icon material-icons"><img src="~/img/regenerate-transcript.png" style="max-width: 19px!important;position:relative;left: -3px;top: -2px;" /></span>
+                                                                    </span>
+                                                                </a>
                                                             }
                                                         </td>
                                                         @if (ViewBag.Pagetype != "Public")
-                                                            {
-                                                                
-                                                            } *@
-                                                            
-                                                        </td>
-                                                        <td>@item.AITranscriptVerdict</td>
+                                                        {
+                                                            <td>@item.AITranscriptVerdict</td>
                                                         }
                                                         <td class="text-center">
                                                             @if (@item.AITranscriptAnalysisScore == 0)
@@ -181,26 +177,26 @@
                                                         <td>@item.interviewDate</td>
                                                         @if (ViewBag.Pagetype != "Public")
                                                         {
-                                                         @if (@item.interviewer != null || @item.interviewer != "")
-                                                         {
-                                                             <td>
-                                                                 <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer"> @item.interviewer</d>
-                                                             </td>
-                                                         }
-                                                         else
-                                                         {
-                                                             <td>
-                                                                 <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
-                                                                     not
-                                                                 </d>
-                                                             </td>
-                                                         }
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                            {
+                                                                <td>
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer"> @item.interviewer</d>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                        not
+                                                                    </d>
+                                                                </td>
+                                                            }
                                                         }
                                                         <td>@item.candidateName</td>
                                                         @if (ViewBag.Pagetype != "Public")
                                                         {
-                                                        <td>@item.candidateEmail</td>
-                                                        <td>@item.InterviewerMobileNumber</td>
+                                                            <td>@item.candidateEmail</td>
+                                                            <td>@item.InterviewerMobileNumber</td>
                                                         }
                                                         <td>@item.IRFId</td>
                                                         <td>@item.ChannelOwner</td>
@@ -219,7 +215,7 @@
                                                                 <td></td>
                                                             }
                                                         }
-                                                                
+
                                                         @if (item.intervieweStatusStatDesc != "0")
                                                         {
                                                             <td> @item.intervieweStatusStatDesc</td>
@@ -237,7 +233,7 @@
                                                             <td>No</td>
                                                         } *@
 
-                                                        
+
                                                     </tr>
                                                 }
 
