@@ -6,6 +6,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -208,6 +209,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
         private TwiMLResult UpdateInterviewerAvailbilityStatusForIRF(int status, string unqId, int irfintId)
         {
             //check link expiry befire hitting db
@@ -305,6 +307,131 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+
+        [HttpPost]
+        public TwiMLResult IvrCandidateInterviewAvailability(string uniqueId, string irfId, string jdTitle, string candidateFirstName,string interviewId,string candidateId,string interviewDate,string timeZoneValue, int retryCount = 0)
+        {
+            var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function invked succesfully", "ivr", string.Empty).Result;
+
+            var response = new VoiceResponse();
+            try
+            {
+
+                var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&jdTitle={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
+                var actionUri = new Uri(link);
+                var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);
+
+                gather.Say($"Dear {candidateFirstName}, Greetings from Risebird.This is to remind you that your interview is scheduled on {interviewDate} {timeZoneValue} for requirement of {jdTitle}. Kindly confirm your availability by clicking on the appropriate response Press 1 if Available. Press 2 if Not Available or Drop profile. Press 3 to Reschedule my interview.");
+                response.Append(gather);
+
+                if (retryCount < 2)
+                {
+
+                    response.Say("You did not press any key. Let me repeat the options.");
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}&retryCount={retryCount + 1}"));
+                }
+                else
+                {
+                    response.Say("No input received. Goodbye.");
+                    response.Hangup();
+                }
+
+                return TwiML(response);
+            }
+            catch (Exception ex)
+            {
+                var resultDe = _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                return TwiML(response);
+            }
+        }
+        [HttpPost]
+        public IActionResult CandidateInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] string irfId, [FromQuery] string jdTitle, [FromQuery] string candidateFirstName, [FromQuery] string interviewId, [FromQuery] string candidateId, [FromQuery] string interviewDate, [FromQuery] string timeZoneValue)
+        {
+            try
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty).Result;
+
+                var irfintId = Convert.ToInt16(irfId);
+                var interviewIntId = Convert.ToInt32(interviewId);
+                var candidateIntId = Convert.ToInt32(candidateId);
+                var selectedOption = digits;
+                if (selectedOption == "1")
+                {
+                    return UpdateCandidateInterviewAvailbilityStatus(1, uniqueId, irfintId, interviewIntId, candidateIntId); 
+                }
+                else if (selectedOption == "2")
+                {
+                    return UpdateCandidateInterviewAvailbilityStatus(2, uniqueId, irfintId, interviewIntId, candidateIntId);
+                }
+                else if (selectedOption == "3")
+                {
+                    return UpdateCandidateInterviewAvailbilityStatus(3, uniqueId, irfintId, interviewIntId, candidateIntId);
+                }
+
+                return RedirectToAction("IvrInterviewerAvailability", new { uniqueId = uniqueId, irfId = irfId, jdTitle = jdTitle, candidateFirstName = candidateFirstName, interviewId = interviewId, candidateId = candidateId, interviewDate = interviewDate, timeZoneValue = timeZoneValue });
+
+
+            }
+            catch (Exception ex)
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+
+                //_applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var response = new VoiceResponse();
+                //response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
+        }
+
+        private TwiMLResult UpdateCandidateInterviewAvailbilityStatus(int status, string unqId, int irfintId, int meetingid,  int candidateId)
+        {
+            //check link expiry befire hitting db
+            try
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateCandidateInterviewAvailbilityStatus function invked succesfully", "ivr", string.Empty).Result;
+
+                var response = new VoiceResponse();
+                if (status == 1)
+                {
+                    response.Say("You have chosen Available",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                }
+                else if (status == 2)
+                {
+                    response.Say("You have chosen Not Available or Drop profile",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                }
+                else if (status == 3)
+                {
+                    response.Say("You have chosen Reschedule my interview",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                }
+                //response.Say($"the irfId is {irfintId} and {unqId}",
+                //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+
+                var message = _meetingService.CandidateMeetingsStatus(meetingid, status, unqId, irfintId, candidateId).Result;
+
+                //response.Say($"result is {result.Item1} and mailId is {result.Item2}");
+
+                response.Say(message);
+
+                response.Say("Thank you for submitting your response. Good bye and have nice rest of the day.");
+
+                response.Hangup();
+
+                return TwiML(response);
+            }
+            catch (Exception ex)
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateCandidateInterviewAvailbilityStatus function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var response = new VoiceResponse();               
+                return TwiML(response);
+            }
+
+        }
+
+
 
     }
 }

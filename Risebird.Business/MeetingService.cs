@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -30,8 +31,9 @@ namespace Risebird.Business
         private readonly IInterviewerRepository _interviewerRepository;
         private readonly ICandidateRepository _candidateRepository;
         private readonly ICandidateService _candidateService;
+        private readonly IZoomHelper _zoomHelper;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -47,6 +49,7 @@ namespace Risebird.Business
             _interviewerRepository = interviewerRepository;
             _candidateRepository = candidateRepository;
             _candidateService = candidateService;
+            _zoomHelper = zoomHelper;
         }
 
         public async Task<List<MeetingVM>> GetMeetingList()
@@ -3298,15 +3301,101 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response)
+
+        public async Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            if ((status == 1 || status == 2 || status == 4) && await CheckInterviewCancellable(meetingid))
+            {
+                var response = true;
+    
+                var results = await UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
+                if (results == "Success")
+                {
+                    if (status == 2 || status == 3)
+                    {
+                        var value = string.Empty;
+                        if (status == 2)
+                        {
+                            value = "NO";
+                        }
+                        else if (status == 3)
+                        {
+                            value = "RESCHEDULE";
+                        }
+                       
+                        //send mail scheduling link
+                        var result1 = await _irfService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
+                        var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                        List<string> interviewers = new List<string>();
+                        if (!string.IsNullOrEmpty(result.interviewer))
+                        {
+                            interviewers.Add(result.interviewer);
+                        }
+                        if (!string.IsNullOrEmpty(result.EmailId))
+                        {
+                            interviewers.Add(result.EmailId);
+                        }
+                        var cancellationsource = string.Empty;
+                        cancellationsource = await GetInterviewCancellationSource(meetingid);
+
+                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
+                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
+                        DeleteMeetingLink(result.ZoomMeetingId);
+                        
+                        return "Successfully status updated, " + value;
+                    }
+
+                    return "Thank you for confirming your interview.";
+                }
+                else if (results == "Already Present")
+                {
+                    return "Your interview is already cancelled. Kindly reschedule your interview or contact to HR/Admin.";
+                }
+                else
+                {
+                    return "Status update failed. Please try again!";
+                }
+            }
+            else if (status == 3)
+            {
+                return "Uable to process your request at this moment, kindly reach out to your respective HR.";
+            }
+            else if (status == 3)
+            {
+                return "Uable to process your request at this moment, kindly reach out to your respective HR.";
+            }
+            else
+            {
+                return "Fail to Update Status, Please try again";
+            }
+        }
+
+        public string DeleteMeetingLink(string meetingid)
+        {
+            //string token = _zoomHelper.ZoomToken();//ZoomToken();
+            //get oauth token
+            string token = _zoomHelper.GenerateAccessToken().Result;
+            var client = new RestClient(string.Concat("https://api.zoom.us/v2/", $"meetings/" + meetingid));
+            var request = new RestRequest(string.Concat("https://api.zoom.us/v2/", $"meetings/" + meetingid), Method.Delete);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            RestResponse response = client.Execute(request);
+            var content = response.Content;
+            return "Deleted successfully";
+        }
+
+
+        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response)
         {
             try
             {
-                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, response);
+                return await _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, response);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Fail";
             }
         }
@@ -3752,15 +3841,15 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public bool CheckInterviewCancellable(int meetingid)
+        public async Task<bool> CheckInterviewCancellable(int meetingid)
         {
             try
             {
-                return _meetingRespository.CheckInterviewCancellable(meetingid);
+                return await _meetingRespository.CheckInterviewCancellable(meetingid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

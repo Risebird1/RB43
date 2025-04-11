@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Twilio.Rest.Api.V2010.Account;
 
 namespace Risebird.CommonHelper.Interface
@@ -14,6 +15,7 @@ namespace Risebird.CommonHelper.Interface
         Task<RecordingResource> FetchCallRecordingDetails(string recordingSid);
         Task<bool> MakeIVRCall(string userPhoneNumber, string recipientName, string interviewDate, string ivrType = null);
         Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string uniqueId, int irfId, string jdTitle, int assessmentGroupId);
+        Task<bool> MakeIVRCallForCandidateMeetingReminder(string userPhoneNumber, string candidateFirstName, string uniqueId, int irfId, string jdTitle, int interviewId, int candidateId, DateTime interviewDate, string timeZoneValue);
 
     }
 }

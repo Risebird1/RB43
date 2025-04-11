@@ -164,7 +164,7 @@ namespace Risebird.Business.Interface
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response);
+        Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
@@ -201,7 +201,7 @@ namespace Risebird.Business.Interface
         Task<RedoInterviewVM> GetRedoInterviewDetailsById(int id);
         Task<bool> UpdateRejectRedoInterviewDetails(RedoInterviewVM model);
         Task<bool> ResetInterviewPayment(int id);
-        bool CheckInterviewCancellable(int meetingid);
+        Task<bool> CheckInterviewCancellable(int meetingid);
         Task<string> GetMeetingPlatformbyIRFId(string IRFId);
         Task<List<MeetingVM>> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);
@@ -250,5 +250,6 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
         Task<string> GetInterviewCancellationSource(int interviewid);
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
+        Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId);
     }
 }
