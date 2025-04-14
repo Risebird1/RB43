@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Azure.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
@@ -45,18 +48,41 @@ namespace Risebird.CommonHelper
 
         public async Task<bool> CreateUser(UserList externalUser, bool forcePasswordChangeNextLogin = false)
         {
-            var graphUser = UserViewModelToGraphUser(externalUser, forcePasswordChangeNextLogin);
-            var userJson = JsonConvert.SerializeObject(graphUser);
-            var response = await SendGraphPostRequest("/users", userJson);
-            var odataResponse = ODataResponseDto<GraphUserVM>.Parse(response);
+            try
+            {
+                var graphUserToAdd = UserViewModelToGraphUser(externalUser, forcePasswordChangeNextLogin);
+                var graphClient = await CreateGraphClient();
+                var newUser = await graphClient
+                      .Users
+                      .PostAsync(graphUserToAdd);
 
-            if (odataResponse.Error != null)
+                return newUser != null ? true : false;
+            }
+            catch (Exception ex)
             {
                 return false;
-
             }
 
-            return true;
+        }
+
+        private async Task<GraphServiceClient> CreateGraphClient()
+        {
+            var scopes = new List<string> { "https://graph.microsoft.com/.default" };
+            var tenantId = "a3bbef13-3b06-4492-b31d-22187058b9ed";
+
+            // using Azure.Identity;
+            var options = new ClientSecretCredentialOptions
+            {
+                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+            };
+
+            // https://learn.microsoft.com/dotnet/api/azure.identity.clientsecretcredential
+            var clientSecretCredential = new ClientSecretCredential(
+                tenantId, clientId, clientSecret, options);
+
+            return new GraphServiceClient(clientSecretCredential, scopes);
+
+
         }
 
         public async Task<ODataResponseDto<T>> List<T>(string api, string query)
@@ -95,71 +121,46 @@ namespace Risebird.CommonHelper
 
             return await response.Content.ReadAsStringAsync();
         }
-        private GraphUserVM UserViewModelToGraphUser(UserList userObj, bool forcePasswordChangeNextLogin = false)
+        private User UserViewModelToGraphUser(UserList userObj, bool forcePasswordChangeNextLogin = false)
         {
-            var mailNickname = string.Empty;
+            var mailNickname = FormatMailnickname(userObj.EmailId);
 
-            if (!string.IsNullOrEmpty(userObj.EmailId) && userObj.EmailId.Contains("@"))
-            {
-                mailNickname = FormatMailnickname(userObj.EmailId.Substring(0, userObj.EmailId.IndexOf("@")));
-            }
-            else
-            {
-                throw new Exception("User email must be specified");
-            }
-
-            return new GraphUserVM
+            var graphUser = new User
             {
                 AccountEnabled = true,
+
                 CreationType = "LocalAccount",
                 DisplayName = $"{userObj.FirstName} {userObj.LastName}",
                 GivenName = userObj.FirstName,
                 Surname = userObj.LastName,
                 MailNickname = mailNickname,
-                PasswordProfile = !string.IsNullOrWhiteSpace(userObj.UserPassword) ? new GraphPasswordProfileVM
-                {
-                    Password = userObj.UserPassword,
-                    ForceChangePasswordNextLogin = forcePasswordChangeNextLogin
-                } : null,
                 City = "N/A",
+                Country = "India",
                 PostalCode = "N/A",
                 StreetAddress = "N/A",
-                PasswordPolicies = "DisablePasswordExpiration",
-                SignInNames = new List<GraphSignInNameVM>
+                Identities = new List<ObjectIdentity>()
                 {
-                    new GraphSignInNameVM
+                    new ObjectIdentity
                     {
-                        Type = "emailAddress",
-                        Value = userObj.EmailId
+                        SignInType = "emailAddress",
+                        Issuer = tenant,
+                        IssuerAssignedId = userObj.EmailId,
                     }
-                }
+
+                },
+                // AdditionalData = additionalData, Not working now
+                PasswordProfile = new PasswordProfile
+                {
+                    Password = userObj.UserPassword,
+                    ForceChangePasswordNextSignIn = forcePasswordChangeNextLogin
+                },
+                PasswordPolicies = "DisablePasswordExpiration"
             };
 
+            return graphUser;
+
         }
 
-        private async Task<string> SendGraphPostRequest(string api, string json, HttpMethod httpMethod = null)
-        {
-            httpMethod = httpMethod == null ? HttpMethod.Post : httpMethod;
-            try
-            {
-                // NOTE: This client uses ADAL v2, not ADAL v4
-                AuthenticationResult result = await authContext.AcquireTokenAsync(aadGraphResourceId, credential);
-                HttpClient http = new HttpClient();
-                string url = aadGraphEndpoint + tenant + api + "?" + aadGraphVersion;
-
-                HttpRequestMessage request = new HttpRequestMessage(httpMethod, url);
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                request.Content = !string.IsNullOrEmpty(json) ? new StringContent(json, Encoding.UTF8, "application/json") : null;
-                HttpResponseMessage response = await http.SendAsync(request);
-
-                return await response.Content.ReadAsStringAsync();
-            }
-            catch (Exception)
-            {
-                return "";
-
-            }
-        }
         private string FormatMailnickname(string value)
         {
             var invalidChars = @"[\!#$%&*+/=?^`{}|~<>()‘;:,]“@".ToList();
