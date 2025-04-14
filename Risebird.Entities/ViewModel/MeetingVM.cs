@@ -56,7 +56,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientHRAttemptContact { get; set; }
         public string ClientEmail { get; set; }
         public string Comment { get; set; }
-
+        public string CommentforInterviewer { get; set; }
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
 
@@ -90,11 +90,11 @@ namespace Risebird.Entities.ViewModel
 
         public string preferredLocation { get; set; }
         public DateTime? Joinedon { get; set; }
+        public int InterviewerLateJoin { get; set; }
         [Display(Name = "Staffing Agency")]
 
         public string staffingAgency { get; set; }
         [Display(Name = "Expected Salary")]
-
         public string expectedPerHourRate { get; set; }
         [Display(Name = "Notice Period")]
 
