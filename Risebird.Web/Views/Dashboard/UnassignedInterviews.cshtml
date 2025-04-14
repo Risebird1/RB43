@@ -324,8 +324,10 @@
                                                         <th>Interview Duration</th>
                                                         <th>Deficit Duration</th>
                                                         <th>Candidate Rating</th>
+                                                        <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
-                                                         <th>Interviewer Late join</th>
+                                                        @*  <th>Interviewer Late join</th> *@
+                                                     
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
@@ -335,7 +337,7 @@
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -561,8 +563,10 @@
                                                         <th>Interview Duration</th>
                                                         <th>Deficit Duration</th>
                                                         <th>Candidate Rating</th>
+                                                        <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
-                                                        <th>Interviewer Late join</th>
+                                                        @* <th>Interviewer Late join</th> *@
+                                                        
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
@@ -572,7 +576,7 @@
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -1344,34 +1348,32 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                            <td>Deficit </td>
-                                                            <td>
-                                                                <div class="interviewer">
-                                                                @{var i = 0;}
-                                                                <input type="hidden" id="Rating_@i" value="@item.Rating" />
-                                                                <div class="star-rating" style="pointer-events:none;">
-                                                                    <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
-                                                                    <label for="Rating_5_@i" class="star">&#9733;</label>
-                                                                    <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
-                                                                    <label for="Rating_4_@i" class="star">&#9733;</label>
-                                                                    <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
-                                                                    <label for="Rating_3_@i" class="star">&#9733;</label>
-                                                                    <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
-                                                                    <label for="Rating_2_@i" class="star">&#9733;</label>
-                                                                    <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
-                                                                    <label for="Rating_1_@i" class="star">&#9733;</label>
-                                                                </div>
-                                                                </div>
-                                                                <div>
-                                                                     @if (item.CommentforInterviewer != null && item.CommentforInterviewer != "")
-                                                                    {
-                                                                        <span>@item.CommentforInterviewer</span>
-                                                                    }
-                                                                    else{
-                                                                        <span></span>
-                                                                      }
+                                                            <td>@item.deficit (mins)</td>
+                                                             <td>
+                          <div class="interviewer">
+                             @if(@item.Rating != 0){
+                             <label style="color:#42a5f5;font-size:15px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
+                              }
+                            else{
+                            <label style="font-size:15px;color:grey">NA</label>
+                                 }
+                              </div>
+                               </td>
+                               <td>
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                            {
+                                                                
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer;color: #42a5f5;"> @item.InterviewerName</d>
+                                                               
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <span style="color: #42a5f5"> @item.InterviewerName</span>
+                                                                       
                                                                     
-                                                                    </div>
+                                                               
+                                                            }
                                                             </td>
                                                             <td class="intime-on" style="padding-left:30px;">
                                                                 @if (item.IsVideoRequired == true)
@@ -1392,7 +1394,7 @@
                                                                 <div style="float:left">@item.Joinedon </div>
 
                                                             </td>
-                                                            <td>
+                                                           @*  <td>
                                                                 <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
                                                                     
                                                                     @if (item.InterviewerLateJoin != 0)
@@ -1404,7 +1406,7 @@
                                                                         <span style="color:#000;font-weight:400">No</span>
                                                                     }
                                                                 </div>
-                                                            </td>
+                                                            </td> *@
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
@@ -1441,7 +1443,7 @@
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
