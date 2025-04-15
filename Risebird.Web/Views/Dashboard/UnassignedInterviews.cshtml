@@ -322,22 +322,26 @@
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
                                                         <th>Interview Duration</th>
+                                                        <th>Deficit Duration</th>
+                                                        <th>Candidate Rating</th>
+                                                        <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
-
+                                                        @*  <th>Interviewer Late join</th> *@
+                                                     
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "QCPendingReport")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
@@ -359,7 +363,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -369,7 +373,7 @@
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -557,22 +561,26 @@
                                                     {   <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
                                                         <th>Interview Duration</th>
+                                                        <th>Deficit Duration</th>
+                                                        <th>Candidate Rating</th>
+                                                        <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
-
+                                                        @* <th>Interviewer Late join</th> *@
+                                                        
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "QCPendingReport")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
@@ -594,7 +602,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -605,7 +613,7 @@
                                                     }
 
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -965,11 +973,11 @@
                                                                 }
 
 
-                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                @* <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
                                                                         <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
                                                                     </button>
-                                                                </a>
+                                                                </a> *@
 
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
                                                                     <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
@@ -993,11 +1001,11 @@
                                                                         </button>
                                                                     </span>
                                                                 }
-                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate QC Report" style="text-decoration:none;">
+                                                               @*  <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate QC Report" style="text-decoration:none;">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
                                                                         <span title="Generate QC Report" class="mdc-fab__icon material-icons"><img src="~/img/qc-icon.png" style="width:16px;" /></span>
                                                                     </button>
-                                                                </a>
+                                                                </a> *@
                                                                 @if (ViewBag.emailid == "tanishka_gupta@risebird.io")
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
@@ -1316,7 +1324,7 @@
                                                                 {
                                                                     @if (@item.AIVerdict == "yes")
                                                                     {
-                                                                         <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">, check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                         <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
                                                                     }
                                                                     else
                                                                     {
@@ -1340,6 +1348,33 @@
                                                             {
                                                                 <td></td>
                                                             }
+                                                            <td>@item.deficit (mins)</td>
+                                                             <td>
+                          <div class="interviewer">
+                             @if(@item.Rating != 0){
+                             <label style="color:#42a5f5;font-size:15px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
+                              }
+                            else{
+                            <label style="font-size:15px;color:grey">NA</label>
+                                 }
+                              </div>
+                               </td>
+                               <td>
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                            {
+                                                                
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer;color: #42a5f5;"> @item.InterviewerName</d>
+                                                               
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <span style="color: #42a5f5"> @item.InterviewerName</span>
+                                                                       
+                                                                    
+                                                               
+                                                            }
+                                                            </td>
                                                             <td class="intime-on" style="padding-left:30px;">
                                                                 @if (item.IsVideoRequired == true)
                                                                 {
@@ -1359,7 +1394,19 @@
                                                                 <div style="float:left">@item.Joinedon </div>
 
                                                             </td>
-
+                                                           @*  <td>
+                                                                <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
+                                                                    
+                                                                    @if (item.InterviewerLateJoin != 0)
+                                                                    {
+                                                                        <span style="color:green">Yes</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span style="color:#000;font-weight:400">No</span>
+                                                                    }
+                                                                </div>
+                                                            </td> *@
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
@@ -1392,11 +1439,11 @@
                                                                 <td></td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -1414,7 +1461,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "QCPendingReport")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
                                                         {
 
                                                             <td>
@@ -1465,7 +1512,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                         {
                                                             <td>@item.Name</td>
                                                         }
@@ -1485,7 +1532,7 @@
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
                                                         {
                                                             @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                             {

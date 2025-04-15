@@ -121,6 +121,10 @@
                     {
                         Model.TotalInterviews = 1;
                     }
+                    if (Model.CompletedInterviews == 0)
+                    {
+                        Model.CompletedInterviews = 1;
+                    }
                 }
                 <div class="tbhead">Completed</div>
                 <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews)%)</span></div>
