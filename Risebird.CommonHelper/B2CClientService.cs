@@ -62,7 +62,7 @@ namespace Risebird.CommonHelper
             {
                 return false;
             }
-
+           
         }
 
         private async Task<GraphServiceClient> CreateGraphClient()

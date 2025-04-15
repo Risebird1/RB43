@@ -590,7 +590,7 @@
 
 
                                                                                 <a  target="_blank" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top:1px;position: relative;cursor: pointer;text-decoration:none">
-                                                                                <div class="btn btn-reschedule shadow btn-xs sharp-btn me-1">
+                                                                                            <div class="btn shadow btn-reschedule btn-xs sharp me-1 item4" style="width:22px;height:22px;">
                                                                                    <span title="ReSchedule Meeting" ><i class="fas fa-calendar-alt" style="color:#fff;font-size:11px;position:relative;top:-2px;" aria-hidden="true"></i></span>
                                                                                     </div>
                                                                                     </a>
@@ -598,7 +598,7 @@
                                                                                     }
 
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top">
-                                                                                        <span class="btn btn-primary shadow btn-xs sharp-btn me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
+                                                                                        <span class="btn shadow btn-primary btn-xs sharp me-1 item4" style="cursor: pointer;width:22px;height:22px;" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
                                                                                     </span>
 
 
@@ -628,7 +628,7 @@
                                                                                             </button>
                                                                                         </span>
                                                                                     }
-                                                                                    <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.imid })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                                    <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.imid })" title="Edit" style="top: 0px;left:0px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
                                                                                         <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
                                                                                     </a>
                                                                                     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp, pageUrl="https://portal.risebird.io/Client/ReScheduleMeetings" })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">

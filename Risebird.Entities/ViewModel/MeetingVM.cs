@@ -39,6 +39,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interview Duration")]
         [Required(ErrorMessage = "Please enter Interview Duration.")]
         public int interviewDuration { get; set; }
+        public int deficit { get; set; }
 
         [Display(Name = "Candidate Email")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
@@ -56,7 +57,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientHRAttemptContact { get; set; }
         public string ClientEmail { get; set; }
         public string Comment { get; set; }
-
+       
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
 
@@ -86,15 +87,16 @@ namespace Risebird.Entities.ViewModel
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
         public string interviewer { get; set; }
+       
         [Display(Name = "Preferred Location")]
 
         public string preferredLocation { get; set; }
         public DateTime? Joinedon { get; set; }
+        public int InterviewerLateJoin { get; set; }
         [Display(Name = "Staffing Agency")]
 
         public string staffingAgency { get; set; }
         [Display(Name = "Expected Salary")]
-
         public string expectedPerHourRate { get; set; }
         [Display(Name = "Notice Period")]
 
@@ -268,6 +270,8 @@ namespace Risebird.Entities.ViewModel
         //public long ZoomMeetingId { get; set; }
         public string ZoomMeetingId { get; set; }
         public int VideoDuration { get; set; }
+
+        public int DurationSelectedMin { get; set; }
         public int Interviewid { get; set; }
         public string OldInterviewer { get; set; }
         public string OldQCInterviewer { get; set; }

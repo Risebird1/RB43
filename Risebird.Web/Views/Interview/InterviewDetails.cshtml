@@ -760,6 +760,9 @@
 
 
 
+    @* <div class="footer-nav">
+    <div class="button-wrapper">
+    <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
 
 
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
@@ -798,7 +801,7 @@
 </div>
 
 
-<div id="InterviewerAlert" class="modal modal-bg">
+<div id="InterviewerAlert" class="modal modal-bg" style="z-index:1">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document" style="max-width:825px !important;top:10px;">
         <div class="modal-content">
@@ -829,9 +832,9 @@
                             <label class="consent-label" style="margin-left: 15px;">
                                 <h2 style="font-size:14.5px;line-height: 24px;color: #979494;font-weight:400;">
                                     <b style="color:green;padding-right: 7px;">
-                                        Engagement issues reported in previous interviews:
+                                        Issues found in previous interviews:
                                     </b>
-              <a target="_blank" href="@Url.Action("AITranscriptVerdicts", "Dashboard")"><span style="color: #4c87b6;font-weight:500;font-weight:bold;text-decoration:underline;">Check details.</span></a> By clicking this acknowledgement you are ensuring that reported engagement SLA violations will not be repeated in future interviews, else Risebird may deduct upto 100% of the payment. It may also block your previous payout & terminate your access to the risebird platform
+                                    <d onclick="InsightsDetails('@Model.interviewer','@Model.IRFID')" style="cursor:pointer"><span style="color: #4c87b6;font-weight:500;font-weight:bold;text-decoration:underline;">Check details.</span></d> By clicking this acknowledgement you are ensuring that reported engagement SLA violations will not be repeated in future interviews, else Risebird may deduct upto 100% of the payment. It may also block your previous payout & terminate your access to the risebird platform. In cases of any severe contract breaches or any unethical practices performed risebird may take legal actions.
                                    
                                 </h2>
                             </label>
@@ -1011,6 +1014,8 @@
         </div>
     </div>
 </div>
+
+
 <script>
     function CaptureMeetingOpenTime(interviewid) {
         $.ajax({
@@ -1313,7 +1318,7 @@
     }
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
-@* @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml") *@
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script>
     function closePopupDetailsModal() {
