@@ -39,11 +39,12 @@ namespace Risebird.AzureFunctions
             #endregion
 
             var configuration = new ConfigurationBuilder()
-             .SetBasePath(currentDirectory)
-             .AddJsonFile("appsettings.json", true, true)
-            .AddJsonFile("local.settings.json", true, true)
-            .AddEnvironmentVariables()
-             .Build();
+                    .SetBasePath(currentDirectory)
+                    .AddJsonFile("appsettings.json", true, true)
+                    .AddJsonFile("local.settings.json", true, true)
+                    .AddEnvironmentVariables()
+                    .AddCommandLine(Environment.GetCommandLineArgs())
+                    .Build();
 
 
             //services.AddSingleton<IConfiguration>(configuration);
