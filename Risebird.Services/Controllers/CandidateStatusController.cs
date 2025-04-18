@@ -44,10 +44,10 @@ namespace Risebird.Services.Controllers
             try
             {
                 var functionkey = Request.Headers["x-functions-key"].ToString();
-                if (functionkey != "b8AiZsRKltzzEvBBip2Bm1gAOWyuK0rjxSehN3aDE0PzAzFuqRFi1A==")
-                {
+                //if (functionkey != "b8AiZsRKltzzEvBBip2Bm1gAOWyuK0rjxSehN3aDE0PzAzFuqRFi1A==")
+                //{
                     return new UnauthorizedResult();
-                }
+                //}
                 var tenantId = Request.Headers["tenant-id"].ToString();
                 if (!string.IsNullOrEmpty(tenantId))
                 {
@@ -338,10 +338,10 @@ namespace Risebird.Services.Controllers
             {
                 var functionkey = Request.Headers["x-functions-key"].ToString();
                 var tenantId = Request.Headers["tenant-id"].ToString();
-                if (functionkey != "ypiAr3NN3plzXtdPhwBxUPdzmK-QQmXjWFUWWAYS0bjAAzFubl6qrw==")
-                {
+                //if (functionkey != "ypiAr3NN3plzXtdPhwBxUPdzmK-QQmXjWFUWWAYS0bjAAzFubl6qrw==")
+                //{
                     return new UnauthorizedResult();
-                }
+                //}
                 bool isAuthorizedTenant = false;
                 var clientDetails = await _clientService.GetClientByTalentId(tenantId);
                 if (clientDetails != null)
