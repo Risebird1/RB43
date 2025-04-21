@@ -52,7 +52,13 @@ BEGIN
 	[SkillName])    
      
     
-   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId, tscbd.SkillName FROM @TechSkillCommentsBulkData tscbd
+   SELECT tscbd.IRFId, tscbd.Skill, LTRIM(RTRIM(
+        REPLACE(
+            REPLACE(
+                REPLACE(tscbd.Comment, CHAR(13), ''),  -- \r
+            CHAR(10), ''),                             -- \n
+        CHAR(9), '')                                   -- \t
+    )) AS Comment, tscbd.UserId, tscbd.SkillName FROM @TechSkillCommentsBulkData tscbd
   end
      
   

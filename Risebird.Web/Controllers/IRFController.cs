@@ -109,7 +109,6 @@ namespace Risebird.Web.Controllers
             _activityTrackerService = activityTrackerService;
         }
 
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(string searchValue = null)
@@ -1401,7 +1400,17 @@ namespace Risebird.Web.Controllers
                                 model.Profile = profileName;
                                 return View(model);
                             }
-
+                            //foreach (var skill in model.SkillCollection)
+                            //{
+                            //    if (!string.IsNullOrEmpty(skill.Comment))
+                            //    {
+                            //        skill.Comment = skill.Comment
+                            //            .Replace("\r", "")
+                            //            .Replace("\n", "")
+                            //            .Replace("\t", "")
+                            //            .Trim();
+                            //    }
+                            //}
                             if (await _irfService.AddSkillComments(model))
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";

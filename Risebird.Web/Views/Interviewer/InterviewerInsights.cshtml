@@ -289,7 +289,7 @@
             @if (Model.AIVerdictNegative > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
-                    <div class="tbhead">Report Verdict</div>
+                    <div class="tbhead">Transcript Verdict</div>
                     <div class="tbtd">
                         @if (Model.AIVerdictNegative > 0)
                         {
@@ -299,18 +299,22 @@
                         {
                             <span onclick="InsightsDetailsAiVerdictView('@Model.Emailid','@Model.IRFId')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
                         }
-                        @*  @if (Model.AIVerdictNegative > 0)
+                    </div>
+                </div>
+            }
+            @if (Model.AIReportVerdictNegative > 0 || ViewBag.AIReportVerdictNegative == "1")
+            {
+                <div class="col-md-2 pull-left">
+                    <div class="tbhead">Report Verdict</div>
+                    <div class="tbtd">
+                        @if (Model.AIReportVerdictNegative > 0)
                         {
-                            <a href="/Dashboard/AITranscriptVerdicts" target="_blank">
-                                <span style="color:red;width: 150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
-                            </a>
+                            <span style="background:#abceea;color:#fff;width: 32px !important;height: 31px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:10px;text-align:center;cursor:pointer">@Model.AIReportVerdictNegative</span>
                         }
                         else
                         {
-                            <a href="/Dashboard/AITranscriptVerdicts" target="_blank">
-                                <span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIVerdictNegative</span>
-                            </a>
-                        } *@
+                            <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.AIReportVerdictNegative</span>
+                        }
                     </div>
                 </div>
             }

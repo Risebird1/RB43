@@ -93,11 +93,15 @@ namespace Risebird.AzureTimerFunctions
                         //save the response to db
                         if (response != null)
                         {
-                            var responseInJson = JsonConvert.SerializeObject(response);
+                            //var responseInJson = JsonConvert.SerializeObject(response);
+                            var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+
                             bool saveOperationResult = true;
-                            if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                            if (aiAnalysisModel != null)
                             {
-                                saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                                //saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                                saveOperationResult = await _irfRepository.SaveInterviewerOpenAIScreeningResultsV2(item.IRFId, item.UserId, aiAnalysisModel);//responseInJson.Replace("'", "")
+
                             }
                         }
                         //else
