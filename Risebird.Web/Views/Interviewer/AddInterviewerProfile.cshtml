@@ -1040,7 +1040,7 @@
         return isValid;
     }
 </script>
-<script>
+@* <script>
     function GenerateAIVerdict() {
         var button = document.getElementById("id_btn_generateAIVerdict");
 
@@ -1104,9 +1104,10 @@
                         }
                         button.innerHTML = "Processed! Click to Regenerate!";
                         button.disabled = false;
-    @* button.disabled = false;
-                            button.innerHTML = "Generate AI Verdict"; *@
+                            //button.disabled = false;
+                            //button.innerHTML = "Generate AI Verdict"; 
                         }
+                    }
                 }
                 else if (data != null && data.errorMessage != '') {
                     swal.fire(data.errorMessage);
@@ -1122,4 +1123,81 @@
             }
         });
     }
+</script> *@
+<script>
+        function GenerateAIVerdict() {
+        var button = document.getElementById("id_btn_generateAIVerdict");
+
+        button.disabled = true;
+
+        // Change the button text to "Processing...may take upto 30s! Please wait!"
+        button.innerHTML = "Processing...may take upto 30s! Please wait!";
+        var primarySpecialization = $("#PrimarySpecializationForAIVerdict").val().trim();
+        var emailId = $("#txt_EmailId").val().trim();
+
+        var resume_file = $("#ResumeFile")[0].files[0];
+
+        var formdata = new FormData();
+        formdata.append('resume_file', resume_file);
+        formdata.append('primarySpecialization', primarySpecialization);
+        formdata.append('emailId', emailId);
+
+        $.ajax({
+            type: "POST",
+            url: "/AIScreener/ScreenInterviewerBeforeOnboarding",
+            async : true,
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                if (data != null && (data.errorMessage == '' || data.errorMessage.includes("bypassed"))) {
+                    if (data.isfavourableVerdict) {
+                        document.getElementById("divAIVerdict").style.display = "none";
+                        document.getElementById("divEVverified").style.display = "block";
+                        $("#ResumeLink").val(data.resumeLink);
+                        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
+                        if (data.aiResponseHref != null && data.aiResponseHref != "") {
+                            document.getElementById("id_aiResponseUrl").style.display = "block";
+                            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
+                            //$("#AIResponse").val(data.aiResponse);
+                            button.innerHTML = "Processed! Click to Regenerate!";
+                            button.disabled = false;
+                        }
+                    } else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed")) {
+                        swal.fire("Bypassing AI Verdict due to API failure...");
+                        document.getElementById("divAIVerdict").style.display = "none";
+                        document.getElementById("divEVverified").style.display = "block";
+                        $("#ResumeLink").val(data.resumeLink);
+                        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
+                        button.innerHTML = "Bypassing...";
+                        button.disabled = true;
+                    } else {
+                        swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
+
+                        if (data.aiResponseHref != null && data.aiResponseHref != "") {
+                            document.getElementById("id_aiResponseUrl").style.display = "block";
+                            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
+                            //$("#AIResponse").val(data.aiResponse);
+                        }
+
+                        button.innerHTML = "Processed! Click to Regenerate!";
+                        button.disabled = false;
+
+                        // Previously:
+                        // button.disabled = false;
+                        // button.innerHTML = "Generate AI Verdict";
+                    }
+                } else if (data != null && data.errorMessage != '') {
+                    swal.fire(data.errorMessage);
+                    button.disabled = false;
+                    button.innerHTML = "Generate AI Verdict";
+                } else {
+                    swal.fire("Error generating verdict. Please try again.");
+                    button.disabled = false;
+                    button.innerHTML = "Generate AI Verdict";
+                }
+            }
+        });
+    }
+
 </script>

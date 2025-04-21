@@ -3370,7 +3370,10 @@ namespace Risebird.Repository
 
                     foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
-                        techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.UserId, item.SkillName);
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment?.Replace("\r", "")
+                                        .Replace("\n", "")
+                                        .Replace("\t", "")
+                                        .Trim(), item.UserId, item.SkillName);
                     }
 
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);
