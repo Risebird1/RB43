@@ -109,7 +109,6 @@ namespace Risebird.Web.Controllers
             _activityTrackerService = activityTrackerService;
         }
 
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(string searchValue = null)
