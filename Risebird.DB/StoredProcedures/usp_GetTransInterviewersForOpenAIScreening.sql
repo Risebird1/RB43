@@ -13,7 +13,7 @@ As
 Begin
 
  select distinct top 2 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
- irf.JDTiltle as JDTitle, irf.CreatedOn, ConvertedFromDocResumeLink 
+ irf.JDTiltle as JDTitle, irf.CreatedOn, ConvertedFromDocResumeLink, ti.UserId
  into #TempTable
  from TransInterviewer ti
  join IRF on irf.id = ti.irfId

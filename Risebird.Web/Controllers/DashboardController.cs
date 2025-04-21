@@ -20,7 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -42,13 +44,14 @@ namespace Risebird.Web.Controllers
         private readonly IZoomHelper _zoomHelper;
         private readonly ICandidateService _candidateService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IIRFRepository _irfRepository;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
-            IAssistantServiceHelper assistantServiceHelper)
+            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -64,6 +67,7 @@ namespace Risebird.Web.Controllers
             _zoomHelper = zoomHelper;
             _candidateService = candidateService;
             _assistantServiceHelper = assistantServiceHelper;
+            _irfRepository = irfRepository;
         }
 
         [Authorize]
@@ -81,6 +85,95 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+
+                        //try
+                        //{
+                        //    //get transinterviewers for whom screening needs to be done
+                        //    var interviewers = await _irfRepository.GetTransInterviewersForOpenAIScreening();
+
+
+
+                        //    //Parallel.ForEach(interviewers, item =>
+                        //    //{
+                        //    //    if (!string.IsNullOrEmpty(item.ResumeLink))
+                        //    //    {
+                        //    //        var response = _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer }).Result;
+
+                        //    //        //save the response to db
+
+                        //    //        var responseInJson = JsonConvert.SerializeObject(response);
+                        //    //        bool saveOperationResult = true;
+                        //    //        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        //    //        {
+                        //    //            saveOperationResult = _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson).Result;
+                        //    //        }
+                        //    //    }
+                        //    //});
+                        //    foreach (var item in interviewers)
+                        //    {
+
+
+                        //        //call screening function
+                        //        if (!string.IsNullOrEmpty(item.ResumeLink))
+                        //        {
+                        //            if ((await _azureStorageHelper.IsDocFileAsync(item.ResumeLink)) && string.IsNullOrEmpty(item.ConvertedFromDocResumeLink))
+                        //            {
+                        //                var uploadedResumeUri = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(item.ResumeLink);
+
+                        //                if (!string.IsNullOrEmpty(uploadedResumeUri))
+                        //                {
+                        //                    item.ResumeLink = uploadedResumeUri;
+                        //                    //update the interviewers' uri
+                        //                    await _irfRepository.SaveInterviewerConvertedFromDocResumeLink(item.id, uploadedResumeUri);
+                        //                }
+                        //            }
+
+                        //            var resumeStringContent = await ReadPdfFromUrlAsync(item.ResumeLink);
+                        //            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, item.JDTitle);
+
+                        //            //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = (item.ResumeLink.EndsWith(".doc") ? item.ConvertedFromDocResumeLink : item.ResumeLink), Type = ProfileNames.Interviewer });
+
+                        //            //save the response to db
+                        //            if (response != null)
+                        //            {
+                        //                //var responseInJson = JsonConvert.SerializeObject(response);
+                        //                var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+
+                        //                bool saveOperationResult = true;
+                        //                if (aiAnalysisModel != null)
+                        //                {
+                        //                    //saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                        //                    saveOperationResult = await _irfRepository.SaveInterviewerOpenAIScreeningResultsV2(item.IRFId, item.UserId, aiAnalysisModel);//responseInJson.Replace("'", "")
+
+                        //                }
+                        //            }
+                        //            //else
+                        //            //{
+                        //            //    //check if the resume is a doc file
+                        //            //    if (await _azureStorageHelper.IsDocFileAsync(item.ResumeLink))
+                        //            //    {
+                        //            //        var uploadedResumeUri = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(item.ResumeLink);
+
+                        //            //        if (!string.IsNullOrEmpty(uploadedResumeUri))
+                        //            //        {
+                        //            //            //update the interviewers' uri
+                        //            //        }
+                        //            //    }
+                        //            //}
+
+
+                        //        }
+
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //}
+
+
+
+
                         var model = new DashboardVM();
                         //await _assistantServiceHelper.DeleteFiles();
                         //daily interview tracking first chart
@@ -135,6 +228,39 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        {
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+
+                    using (MemoryStream stream = new MemoryStream(pdfBytes))
+                    {
+                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
+                        {
+                            string text = "";
+                            foreach (var page in pdfDocument.GetPages())
+                            {
+                                text += page.Text + "\n";
+                            }
+                            return text;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
                 return null;
             }
         }
