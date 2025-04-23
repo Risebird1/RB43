@@ -288,8 +288,9 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<PendingVideoMeetingsData>> FetchMeetingPendingVideo();
         Task<bool> UpdateVideoinfo(int interviewId, string videoLink = null, string meetingtype = null);
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
-        Task<string> GetOpenAIReportQC(int interviewId);
+        Task<AIReportQCAnalysisSchema> GetOpenAIReportQC(int interviewId);
         Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson);
+        Task<bool> SaveOpenAIReportQCV2(int interviewId, AIReportQCAnalysisSchema model);
         Task<int> checkInterviewEditable(int meetingid);
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
         Task<string> GetInterviewCancellationSource(int interviewid);

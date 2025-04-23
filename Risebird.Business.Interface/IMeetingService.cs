@@ -245,7 +245,8 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
         Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson);
-        Task<string> GetOpenAIReportQC(int interviewId);
+        Task<bool> SaveOpenAIReportQCV2(int interviewId, AIReportQCAnalysisSchema model);
+        Task<AIReportQCAnalysisSchema> GetOpenAIReportQC(int interviewId);
         Task<int> checkInterviewEditable(int meetingid);
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
         Task<string> GetInterviewCancellationSource(int interviewid);

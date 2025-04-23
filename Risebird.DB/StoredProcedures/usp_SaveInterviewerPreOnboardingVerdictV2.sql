@@ -20,7 +20,7 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerPreOnboardingVerdictV2]
 As
 Begin
 
-if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId)
+if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
 Begin
 	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
 	values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
