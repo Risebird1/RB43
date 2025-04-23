@@ -7432,7 +7432,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<string> GetOpenAIReportQC(int interviewId)
+        public async Task<AIReportQCAnalysisSchema> GetOpenAIReportQC(int interviewId)
         {
             try
             {
@@ -7440,7 +7440,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewId);
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetOpenAIReportQC", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<AIReportQCAnalysisSchema>(con, "usp_GetOpenAIReportQCV2", parameters, commandTimeout: 600,//usp_GetOpenAIReportQC (earlier version)
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -7462,6 +7462,30 @@ namespace Risebird.Repository
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@openAIQcResponseJson", openAIQcResponseJson);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveOpenAIReportQC", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> SaveOpenAIReportQCV2(int interviewId, AIReportQCAnalysisSchema model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@completeAnalysis", model.completeAnalysis);
+                    parameters.Add("@score", model.score);
+                    parameters.Add("@verdict", model.verdict);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveOpenAIReportQCV2", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
