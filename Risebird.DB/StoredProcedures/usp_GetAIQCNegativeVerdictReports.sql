@@ -18,7 +18,7 @@ Begin
 	im.candidateName, im.candidateEmail, im.interviewer, ul.MobileNumber as InterviewerMobileNumber,
 	uli.EmailId as ChannelOwner, ic.InterviewStatus, ic.AIVerdict as AIQCVerdict,
 	im.confirmationStatus, ic.MeetingStatus, ic.AudioTranscriptFileLink,
-	ic.IsAITranscriptAnalysisAttempted, ic.IsAITranscriptAnalysisFailed
+	ic.IsAITranscriptAnalysisAttempted, ic.IsAITranscriptAnalysisFailed, ic.AIReportQCAnalysisScore
 	from InterviewMeetings im 
 	join IRF on IRF.IRFId=im.IRFId
 	join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
