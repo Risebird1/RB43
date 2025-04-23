@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 
 namespace Risebird.Web.Controllers
@@ -8897,7 +8898,10 @@ namespace Risebird.Web.Controllers
                     ViewBag.InterviewDate = model.interviewDate;
                     ViewBag.IRFName = model.IRFName;
                     ViewBag.JdTitle = model.JDTiltle;
-                    return View("PerformQualityCheck", qcResult);
+                    ViewBag.AIVerdict = qcResult.verdict;
+                    ViewBag.AIScore = qcResult.score;
+                    //return View("PerformQualityCheck", qcResult);
+                    return View("PerformQualityCheckV2", qcResult.completeAnalysis);
                 }
                 else
                 {
@@ -8913,7 +8917,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public async Task<RunResult> PerformQualityCheck(InterviewReport model, bool? regenerateAIQC = null)
+        public async Task<AIReportQCAnalysisSchema> PerformQualityCheck(InterviewReport model, bool? regenerateAIQC = null)
         {
             try
             {
@@ -8921,14 +8925,14 @@ namespace Risebird.Web.Controllers
                 {
                     var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
 
+                    return qcResult;
+                    ////ViewBag.IRFName = model.IRFName;
+                    ////ViewBag.SaveOperationResult = "NA";
 
-                    //ViewBag.IRFName = model.IRFName;
-                    //ViewBag.SaveOperationResult = "NA";
-
-                    if (!string.IsNullOrEmpty(qcResult))
-                    {
-                        return JsonConvert.DeserializeObject<RunResult>(qcResult);
-                    }
+                    //if (!string.IsNullOrEmpty(qcResult))
+                    //{
+                    //    return JsonConvert.DeserializeObject<RunResult>(qcResult);
+                    //}
                 }
 
 
@@ -8968,15 +8972,27 @@ namespace Risebird.Web.Controllers
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
                 var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
                 //var response = await _assistantServiceHelper.GenerateReportQCAnalysis(htmlContent);
-
-
-                var responseInJson = JsonConvert.SerializeObject(response);
-                //save the response in db
                 bool saveOperationResult = true;
-                if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                var ai_qcAnalysisModel = new AIReportQCAnalysisSchema();
+                if (response != null)
                 {
-                    saveOperationResult = await _meetingService.SaveOpenAIReportQC(model.InterviewId, responseInJson);
+                    ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    if (ai_qcAnalysisModel != null)
+                    {
+                        //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
+                        saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
+
+                    }
+                    return ai_qcAnalysisModel;
                 }
+                return null;
+                //var responseInJson = JsonConvert.SerializeObject(response);
+                //save the response in db
+                //bool saveOperationResult = true;
+                //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                //{
+                //    saveOperationResult = await _meetingService.SaveOpenAIReportQC(model.InterviewId, responseInJson);
+                //}
 
                 //if (saveOperationResult)
                 //{
@@ -8987,7 +9003,7 @@ namespace Risebird.Web.Controllers
                 //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
                 //}
 
-                return response;
+                //return response;
 
             }
             catch (System.Exception ex)

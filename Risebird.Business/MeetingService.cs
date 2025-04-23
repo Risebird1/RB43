@@ -4392,7 +4392,20 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<string> GetOpenAIReportQC(int interviewId)
+
+        public async Task<bool> SaveOpenAIReportQCV2(int interviewId, AIReportQCAnalysisSchema model)
+        {
+            try
+            {
+                return await _meetingRespository.SaveOpenAIReportQCV2(interviewId, model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<AIReportQCAnalysisSchema> GetOpenAIReportQC(int interviewId)
         {
             try
             {
