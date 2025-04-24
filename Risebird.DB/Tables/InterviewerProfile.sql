@@ -49,6 +49,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
     [AssessmentGroupId] [varchar](500) null,
     [ConvertedFromDocResumeLink] [varchar](2000) null,
     [PrimarySpecializationForAcknowledgement] [varchar](250) null,
+    [AcknowledgementStatus] [varchar](5) null,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -447,6 +448,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add PrimarySpecializationForAcknowledgement varchar(250)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AcknowledgementStatus')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add AcknowledgementStatus varchar(5)
 END
 
 End
