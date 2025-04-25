@@ -11576,9 +11576,363 @@ section {
         width: 14.28% !important;
         min-height: 90px;
     }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+.onboarding-form-container #heading {
+    text-transform: uppercase;
+    color: #42a5f6;
+    font-weight: 500;
+}
+
+.onboarding-form-container #msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px
+}
+
+    .onboarding-form-container #msform fieldset {
+        background: white;
+        border: 0 none;
+        border-radius: 0.5rem;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding-bottom:0px;
+        position: relative
+    }
+
+.onboarding-form-container .form-card {
+    text-align: left
+}
+
+.onboarding-form-container #msform fieldset:not(:first-of-type) {
+    display: none;
+}
+
+.onboarding-form-container #msform input,
+.onboarding-form-container #msform textarea {
+    padding: 8px 15px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    background-color: #ECEFF1;
+    font-size: 16px;
+    letter-spacing: 1px
+}
+
+    .onboarding-form-container #msform input:focus,
+    .onboarding-form-container #msform textarea:focus {
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        border: 1px solid #673AB7;
+        outline-width: 0
+    }
+
+.onboarding-form-container #msform .action-button {
+    width: 100px;
+    background: #83b372;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    padding: 10px 5px;
+    margin: 10px 0px 0px 5px;
+    float: right;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.onboarding-form-container .next.disabled, .onboarding-form-container input:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+    background-color: #4094d8!important;
+}
+.c-input.c-checkbox {
+    display: block!important;
+    position: relative;
+    opacity: 1!important;
+}
+.onboarding-form-container #msform .action-button:hover,
+.onboarding-form-container #msform .action-button:focus {
+    background-color: #83b372;
+}
+
+.onboarding-form-container #msform .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 8px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right;
+    border-radius: 4px;
+}
+
+    .onboarding-form-container #msform .action-button-previous:hover,
+    .onboarding-form-container #msform .action-button-previous:focus {
+        background-color: #000000
+    }
+
+.onboarding-form-container .card {
+    z-index: 0;
+    border: none;
+    position: relative;
+    box-shadow: none !important;
+}
+
+.onboarding-form-container .fs-title {
+    font-size: 25px;
+    color: #4094d8;
+    margin-bottom: 6px;
+    font-weight: normal;
+    text-align: left
+}
+
+.onboarding-form-container .purple-text {
+    color: #52a4e6;
+    font-weight: normal
+}
+
+.onboarding-form-container .steps {
+    font-size: 21px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right
+}
+
+.onboarding-form-container .fieldlabels {
+    color: gray;
+    text-align: left
+}
+
+.onboarding-form-container #progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey;
+    padding:0px;
+}
+
+    .onboarding-form-container #progressbar .active {
+        color: #52a4e6;
+    }
+    .onboarding-form-container #progressbar .active span{
+        color: #000;
+        font-weight:normal;
+    }
+    .onboarding-form-container #progressbar li {
+        list-style-type: none;
+        font-size: 15px;
+        width: 12.5%;
+        float: left;
+        position: relative;
+        font-weight: 400
+    }
+
+    .onboarding-form-container #progressbar #account:before {
+        font-family: FontAwesome;
+        content: "\f007"
+    }
+    .onboarding-form-container #progressbar #question:before {
+        font-family: FontAwesome;
+        content: "\f0e6"
+    }
+    .onboarding-form-container #progressbar #video:before {
+        font-family: FontAwesome;
+        content: "\f1c8"
+    }
+    .onboarding-form-container #progressbar #personal:before {
+        font-family: FontAwesome;
+        content: "\f005"
+    }
+
+    .onboarding-form-container #progressbar #payment:before {
+        font-family: FontAwesome;
+        content: "\f0e3"
+    }
+
+    .onboarding-form-container #progressbar #confirm:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+    .onboarding-form-container #progressbar #feedback.feedback:before {
+        font-family: FontAwesome;
+        content: "\f164";
+    }
+    .onboarding-form-container #progressbar #account.interaction:before {
+        font-family: FontAwesome;
+        content: "\f0c0"
+    }
+    
+    .onboarding-form-container #progressbar li:before {
+        width: 50px;
+        height: 50px;
+        line-height: 45px;
+        display: block;
+        font-size: 20px;
+        color: #ffffff;
+        background: lightgray!important;
+        border-radius: 50%;
+        margin: 0 auto 10px auto;
+        padding: 2px
+    }
+.onboarding-form-container .progress {
+    background-color: #e9ecef;
+}
+
+.onboarding-form-container #progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1
+}
+
+    .onboarding-form-container #progressbar li.active:before,
+    .onboarding-form-container #progressbar li.active:after {
+        background: #42a5f6!important;
+    }
+
+.onboarding-form-container .progress {
+    height: 20px!important
+}
+
+.onboarding-form-container .progress-bar {
+    background-color: #42a5f6!important;
+}
+
+.onboarding-form-container .fit-image {
+    width: 100%;
+    object-fit: cover
+}
+
+.onboarding-form-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 2rem 2rem 1rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border: 1px #f2ecec solid;
+}
+
+    .onboarding-form-container #msform .continue-skipbtn {
+        width: 400px !important;
+        background: #e83232c9;
+        font-weight: bold;
+        color: white;
+        border: 0px !important;
+        border-radius: 4px !important;
+        cursor: pointer;
+        padding: 10px 5px;
+        margin: 20px 0px 10px 0px;
+        position: relative;
+        left: -60px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .onboarding-form-container #msform .acknowledge {
+        width: 200px;
+    }
+/* bubble style */
+.hoverBubble {
+    background: #d9eaf8;
+    color: #ffffff;
+    cursor: pointer;
+    opacity: 0;
+    padding: 5px;
+    position: absolute;
+    text-align: left;
+    bottom: 60px;
+    right: 0px;
+    visibility: hidden;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-transition: all 0.25s;
+    -moz-transition: all 0.25s;
+    -ms-transition: all 0.25s;
+    -o-transition: all 0.25s;
+    transition: all 0.25s;
+    padding: 20px;
+    width: 490px;
+    padding: 20px;
+}
+
+.bubblePosition {
+    bottom: 115%;
+    height: 150px;
+    right: 80px;
+    min-height: 130px;
+    top: auto;
+    width: 530px;
+}
+
+    .hoverBubble:after,
+    .bubblePosition:after {
+        border: 8px solid transparent;
+        border-top-color: #d9eaf8;
+        bottom: -15px;
+        content: '';
+        height: 0px;
+        left: 0;
+        margin: 0 auto;
+        position: absolute;
+        right: 0;
+        width: 0px;
+    }
+
+/* bubble hover */
+
+.trigger:hover .hoverBubble {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: all 0.25s;
+    -moz-transition: all 0.25s;
+    -ms-transition: all 0.25s;
+    -o-transition: all 0.25s;
+    transition: all 0.25s;
+}
+
+/* content in the bubble */
+.hoverBubble i {
+    display: block;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.hoverBubble p {
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 100px;
+}
+
+.hoverBubble h3 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+#last-step{
+    margin-top:30px;
+}
+
+#video-btn{
+    opacity: 1!important;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -12759,7 +13113,15 @@ section {
         height: 200px !important;
         overflow-y: scroll !important;
     }
-}
+    .onboarding-form-container #progressbar{
+        padding:0px!important;
+    }
+    .onboarding-form-container {
+        max-width: 100%!important;
+        padding: 2rem 1rem 1rem 1rem!important;
+    }
+
+    }
 
 
 
@@ -12795,7 +13157,9 @@ section {
     .topheader-header {
         right: 28px;
     }
-
+    .onboarding-form-container #progressbar {
+        padding: 0px!important;
+    }
     .logo-cm {
         position: relative;
         top: 4px !important;
@@ -13766,6 +14130,12 @@ section {
     .candidate-tab .pipe {
         display: none !important;
     }
+    .onboarding-form-container #progressbar li{
+        width:100%!important;
+    }
+        .onboarding-form-container #progressbar li:before {
+            margin: 15px auto 10px auto;
+        }
 }
 
 
@@ -14068,6 +14438,11 @@ section {
 }
 
 @media only screen and (max-width: 415px) {
+    .onboarding-form-container #msform .continue-skipbtn {
+        font-size: 11px !important;
+        position: relative!important;
+        left: 24px!important;
+    }
     .toggle-title {
         padding: 10px 0px !important;
     }

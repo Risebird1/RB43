@@ -1797,5 +1797,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewerAcknowledgementStatus(string loggedInUser, string value)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateInterviewerAcknowledgementStatus(loggedInUser, value);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

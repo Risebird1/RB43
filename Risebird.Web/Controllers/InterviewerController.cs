@@ -4078,7 +4078,7 @@ namespace Risebird.Web.Controllers
                     }
                     await _meetingService.AddTransInterviewersReliabilityScoresService(resultReliability);
                 }
-                return Json("Successfully updated youir response.");
+                return Json("Successfully updated your response.");
             }
             else
             {
@@ -4510,6 +4510,56 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> InterviewersOnboarding()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                ViewBag.Emailid = emailid;
+                if (profileName == "Interviewer")
+                {
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> InterviewersOnboardingConfirmation(string value)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                ViewBag.Emailid = emailid;
+                if (profileName == "Interviewer")
+                {
+                    var model = await _interviewerService.UpdateInterviewerAcknowledgementStatus(emailid, value);
+                    return RedirectToAction("InterviewerIndex", "Dashboard");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }
