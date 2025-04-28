@@ -11934,6 +11934,31 @@ section {
     opacity:1!important;
     display:block!important;
 }
+.agreement-policy {
+    width: 770px;
+    margin-bottom: -3px;
+    text-decoration: underline;
+    font-size: 16px;
+    display: block;
+    clear: both;
+    margin-left: 25px;
+}
+.agree-txt {
+    position: relative;
+    left: -120px;
+}
+.onboarding-form-container #msform #videos .continue-skipbtn.confirmvideo-btn {
+    float: left;
+    position: relative;
+    left: 35px;
+    display: block;
+}
+
+.onboarding-form-container #msform #videos .continue-skipbtn.confirmwithoutterms-btn {
+    float: left;
+    position: relative;
+    left: 30px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -13432,8 +13457,27 @@ section {
         width: 100%;
         float: left;
     }
+    .agreement-policy {
+        width:100%;
+    }
+    .agree-txt {
+        position: relative;
+        left: 0px!important;
+    }
 
-    .regenerate-wrap .form-control {
+    .onboarding-form-container #msform #videos .continue-skipbtn.confirmvideo-btn {
+        float: left;
+        position: relative;
+        left: 0px;
+        display: block;
+    }
+
+    .onboarding-form-container #msform #videos .continue-skipbtn.confirmwithoutterms-btn {
+        float: left;
+        position: relative;
+        left: 0px;
+    }
+        .regenerate-wrap .form-control {
         width: 100% !important;
     }
 

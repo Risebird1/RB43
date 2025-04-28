@@ -108,11 +108,13 @@
                                 </ol>
 
                             </div>
-                            <div style="float:left;margin-top: 10px;">
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
                                 <label class="c-input c-checkbox">
                                     <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx" onchange="isChecked(this, 'sub')">
-                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the overall terms and conditions of the agreement.</span>
                                 </label>
+                                    <input style="position:relative;left:-120px;"  onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmvideo-btn" value="Continue without agreeing to Terms & Services" />
+
                             </div>
 
                             <input id="sub" disabled="disabled" type="button" name="next" class="next action-button" value="Next" />
@@ -191,12 +193,14 @@
                                 </ol>
 
                             </div>
-                            <div style="float:left;margin-top: 10px;">
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
                                 <label class="c-input c-checkbox">
                                     <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx1" onchange="isChecked(this, 'sub1')">
-                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                    <span  class="agree-txt c-indicator" style="font-size: 17px;color: green;font-weight: 600;">I agree to the overall terms and conditions of the agreement.</span>
                                 </label>
-                                <input id="continue-skip" onclick="AcceptIntrest()" type="button" name="" class="action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Video On Policy" />
+                                <input   onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+
+                                <input id="continue-skip" onclick="AcceptIntrest()" type="button" name="" class="action-button continue-skipbtn confirmvideo-btn" value="Continue without agreeing to Video On Policy" />
 
                             </div>
 
@@ -564,7 +568,7 @@
                                 <p style=" font-size: 18px; margin-bottom:10px;">
                                     By signing this agreement, you further acknowledge and agree to the following :
                                 </p>
-                                <ol style="list-style: disc;font-size: 16px;">
+                                <ol style="list-style: disc;font-size: 16px;margin-bottom:5px;">
                                     <li>
                                         Risebird maintains a high-quality standard for interviews; you agree to follow all official guidelines without exception.
                                     </li>
@@ -579,14 +583,22 @@
                                         Risebird is not liable for any third-party claims or losses resulting from actions taken in breach of this agreement.
                                     </li>
                                 </ol>
-                                <p>
+                                                                  <a class="agreement-policy"  target="_blank" title="Service Agreement for Interviewer Onboarding" href="https://risebirdportal.blob.core.windows.net/template/E-Service_Agreement_for_Interviewer_Onboarding.pdf">Click here to view the summary of overall Service Agreement for Interviewer Onbording on Risebird platform</a>
+
+                 <div class="overall-accepterms-div"  style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input onclick="Acknowledge()" class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the overall terms and conditions of the agreement.</span>
+                                </label>
+
+                            </div>
+                                <p style="clear:both">
                                     By signing below, I explicitly confirm that I have thoroughly read, understood, and commit to abide by all the terms, responsibilities, and penalties as outlined in this agreement. I acknowledge my full liability for penalties and legal actions arising from any breaches herein.
                                 </p>
                                 <div class="row justify-content-center">
-                                    <div class="col-md-12 text-right accepterms-div">
-                                        <input class="confirmwithoutterms-btn continue-skipbtn"  onclick="AcceptContinueWithTerms()" style="position:relative;left:0px;margin:10px;" id="continue-terms-skip" type="button" name="next" class="next action-button continue-skipbtn" value="Continue without agreeing to Terms & Services" />
-                                        <input onclick="Acknowledge()" type="button" name="next" class="next acknowledge action-button" value="Acknowledge" />
-
+                                    <div class="col-md-12 text-right overall-accepterms-div show-div">
+                                      <input class="overall-confirmwithoutterms-btn next action-button continue-skipbtn"  onclick="AcceptContinueWithTerms()" style="position:relative;left:0px;margin:10px;"  type="button" name="next" value="Continue without agreeing to Terms & Services" />
+@*  <input onclick="Acknowledge()" type="button" name="next" class="next acknowledge action-button" value="Acknowledge" /> *@
                                     </div>
                                 </div>
                             </div>
@@ -813,6 +825,10 @@
         document.getElementById('sub6').disabled = !e.target.checked;
 
     });
+        document.getElementById('termsChkbx7').addEventListener('click', function (e) {
+        document.getElementById('sub7').disabled = !e.target.checked;
+
+    });
     $(".acknowledge").click(function () {
        // $('#last-step').show();
         $("#progressbar li#confirm").eq($("fieldset").index(next_fs)).addClass("active");
@@ -856,6 +872,7 @@
         modal.style.display = "block";
         var modal1 = document.getElementById("continue-skip");
         modal1.style.display = "block";
+   
 
     }
     function closeConfirmAccept() {
