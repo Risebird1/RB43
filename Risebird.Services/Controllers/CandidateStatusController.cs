@@ -214,6 +214,7 @@ namespace Risebird.Services.Controllers
                                     status = item.CandidateLatestStatus,
                                     techscore = item.TechScoreone,
                                     interviewerComment = item.InterviewerComment,
+                                    CodeSnippet = item.CodeSnippet,
                                     questions = _questions,
                                     skillset = _skillset
                                 });
@@ -253,6 +254,7 @@ namespace Risebird.Services.Controllers
                                         status = item.InterviewStatusTwoDesc,
                                         techscore = item.TechScoretwo,
                                         interviewerComment = item.InterviewerCommentTwo,
+                                        CodeSnippet = item.CodeSnippetTwo,
                                         questions = _questions,
                                         skillset = _skillset
                                     });
@@ -438,13 +440,19 @@ namespace Risebird.Services.Controllers
                                         score = score
                                     });
                                 }
+                                if (result.CandidateLatestStatus.ToUpper() != "CANCELLED")
+                                {
+                                    result.Cancellationsource = "";
+                                }
                                 _skills.Add(new SkillDetails
                                 {
                                     isPrimary = true,
                                     skillName = result.JDTiltle,
                                     status = result.CandidateLatestStatus,
+                                    Cancellationsource = result.Cancellationsource,
                                     techscore = result.TechScoreone,
                                     interviewerComment = result.InterviewerComment,
+                                    CodeSnippet = result.CodeSnippet,
                                     questions = _questions,
                                     skillset = _skillset
                                 });
@@ -482,8 +490,10 @@ namespace Risebird.Services.Controllers
                                         isPrimary = false,
                                         skillName = result.JDTitleTwo,
                                         status = result.InterviewStatusTwoDesc,
+                                        Cancellationsource = result.Cancellationsource,
                                         techscore = result.TechScoretwo,
                                         interviewerComment = result.InterviewerCommentTwo,
+                                        CodeSnippet = result.CodeSnippetTwo,
                                         questions = _questions,
                                         skillset = _skillset
                                     });

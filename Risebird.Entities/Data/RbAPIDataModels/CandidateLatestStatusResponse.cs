@@ -58,8 +58,10 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string skillName { get; set; }
         public bool isPrimary { get; set; }
         public string status { get; set; }
+        public string Cancellationsource { get; set; }
         public int techscore { get; set; }
         public string interviewerComment { get; set; }
+        public string CodeSnippet { get; set; }
         public List<QuestionCommentsDetails> questions { get; set; }
         public List<SkillsSetsDetails> skillset { get; set; }
     }
@@ -115,6 +117,9 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string jobId { get; set; }
         public List<SkillsSets> skillset { get; set; }
         public string TranscriptLink { get; set; }
+        public string CodeSnippet { get; set; }
+        public string CodeSnippetTwo { get; set; }
+        public string Cancellationsource { get; set; }
     }
     public class SkillsSetsDetails
     {
