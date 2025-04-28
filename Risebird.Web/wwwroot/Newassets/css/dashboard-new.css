@@ -11934,6 +11934,7 @@ section {
     opacity:1!important;
     display:block!important;
 }
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

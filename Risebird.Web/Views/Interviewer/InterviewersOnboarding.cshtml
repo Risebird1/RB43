@@ -196,7 +196,7 @@
                                     <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx1" onchange="isChecked(this, 'sub1')">
                                     <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
                                 </label>
-                                <input id="continue-skip" onclick="AcceptIntrest()" type="button" name="" class="action-button continue-skipbtn" value="Continue without agreeing to Video On Policy" />
+                                <input id="continue-skip" onclick="AcceptIntrest()" type="button" name="" class="action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Video On Policy" />
 
                             </div>
 
@@ -205,7 +205,7 @@
                             <p style="text-align: left; width: 100%; float: left; font-size: 15px;color:#000;margin-bottom:0px;">The above given terms and service are mandatory in nature. So this has be acknowledged widthin 15days to continue to take interview on the Risebird platform. Incase you are not willing to work with updated terms & service then you are not allowed to take interviews which is scheduled beyound 15 days. This relaxation for acknowledgement is provided for 15 days only</p>
                             </span> *@
 
-                            <input id="sub1" disabled="disabled" onclick="InterviewerVideoConfirmationStatus(1)" type="button" name="next" class="next action-button" value="Next" />
+                            <input id="sub1" disabled="disabled" onclick="InterviewerVideoConfirmationStatus(1)" type="button" name="next" class="next action-button confirmwithoutterms-btn" value="Next" />
                             <input type="button" name="previous" class="previous action-button-previous" value="Back" tyle="float:left" />
 
                         </fieldset>
@@ -266,7 +266,7 @@
                                     <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx2" onchange="isChecked(this, 'sub2')">
                                     <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
                                 </label>
-                                <input  onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+                                <input  onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmvideo-btn" value="Continue without agreeing to Terms & Services" />
 
                             </div>
 
@@ -583,9 +583,8 @@
                                     By signing below, I explicitly confirm that I have thoroughly read, understood, and commit to abide by all the terms, responsibilities, and penalties as outlined in this agreement. I acknowledge my full liability for penalties and legal actions arising from any breaches herein.
                                 </p>
                                 <div class="row justify-content-center">
-                                    <div class="col-md-12 text-right">
-                                        <input  onclick="AcceptContinueWithTerms()" style="position:relative;left:0px;margin:10px;" id="continue-terms-skip" type="button" name="next" class="next action-button continue-skipbtn" value="Continue without agreeing to Terms & Services" />
-
+                                    <div class="col-md-12 text-right accepterms-div">
+                                        <input class="confirmwithoutterms-btn continue-skipbtn"  onclick="AcceptContinueWithTerms()" style="position:relative;left:0px;margin:10px;" id="continue-terms-skip" type="button" name="next" class="next action-button continue-skipbtn" value="Continue without agreeing to Terms & Services" />
                                         <input onclick="Acknowledge()" type="button" name="next" class="next acknowledge action-button" value="Acknowledge" />
 
                                     </div>
@@ -618,7 +617,7 @@
 
                 </div>
                 <div class="row">
-                    <div id="video-btn" class="col-md-12 text-center">
+                    <div id="video-btn" class="col-md-12 text-center accepterms-div">
 
                         <input id="next-page-btn" onclick="InterviewerVideoConfirmationStatus(2)" name="next" style="text-transform:capitalize;font-size: 14px!important;" type="button" class="next action-button mdc-button mdc-button--raised mdc-ripple-upgraded" value="Yes, Confirm!">
                         <input style="font-size:14px;padding: 6px 15px;" type="button" onclick="closeConfirmAccept()" id="hangUpButton" class="btn btn-fill btn-danger" value="Cancel">
@@ -831,9 +830,7 @@
            
         })
 
-
-     
-      
+  
 </script>
 <script>
     function InterviewerVideoConfirmationStatus(response) {
@@ -845,6 +842,7 @@
                     document.getElementById("myintrestConfirmAccept").style.display = "none";
                     document.getElementById("videos").style.display = "none";
                     document.getElementById("questions").style.display = "block";
+                    document.getElementById("questions").style.opacity = "1";
                     document.getElementById("video-btn").style.display = "block";
                     document.getElementById("video-btn").style.opacity = "1";
                }
