@@ -1559,6 +1559,7 @@ namespace Risebird.Repository
                                     CodeSnippet = dt.Rows[i]["CodeSnippet"] != null ? dt.Rows[i]["CodeSnippet"].ToString() : string.Empty,
                                     CodeSnippetTwo = dt.Rows[i]["CodeSnippetTwo"] != null ? dt.Rows[i]["CodeSnippetTwo"].ToString() : string.Empty,
                                     Cancellationsource = dt.Rows[i]["Cancellationsource"] != null ? dt.Rows[i]["Cancellationsource"].ToString() : string.Empty,
+                                    ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
 
                                 });
                             }
@@ -1697,6 +1698,10 @@ namespace Risebird.Repository
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : null,
                                     jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
                                     TranscriptLink = dt.Rows[i]["AudioTranscriptFileLink"] != null ? dt.Rows[i]["AudioTranscriptFileLink"].ToString() : string.Empty,
+                                    
+                                    CodeSnippet = dt.Rows[i]["CodeSnippet"] != null ? dt.Rows[i]["CodeSnippet"].ToString() : string.Empty,
+                                    CodeSnippetTwo = dt.Rows[i]["CodeSnippetTwo"] != null ? dt.Rows[i]["CodeSnippetTwo"].ToString() : string.Empty,
+                                    ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
                                 });
                             }
                             _resultVM = listCandidates;

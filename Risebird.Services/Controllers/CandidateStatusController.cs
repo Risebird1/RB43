@@ -272,6 +272,7 @@ namespace Risebird.Services.Controllers
                                     transcriptUrl = item.TranscriptLink,
                                     skills = _skills,
                                     createdOn = item.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    createdBy = item.ClientHRAttemptContact,
                                     currentStatusUpdatedAt = item.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
                                 });
                             }
@@ -511,6 +512,7 @@ namespace Risebird.Services.Controllers
                                     transcriptUrl = result.TranscriptLink,
                                     skills = _skills,
                                     createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    createdBy = result.ClientHRAttemptContact,
                                     currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
                                 });
                             }

@@ -31,7 +31,8 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  InterviewId int null,        
  interviewDate datetime null,  
  addedOn datetime null,  
- statusUpdatedAt datetime null    
+ statusUpdatedAt datetime null,
+ ClientHRAttemptContact varchar(150)
 );       
     
 DECLARE @TemporaryCandidateTableFinal TABLE (                      
@@ -42,14 +43,15 @@ DECLARE @TemporaryCandidateTableFinal TABLE (
  InterviewId int null,        
  interviewDate datetime null,  
  addedOn datetime null,  
- statusUpdatedAt datetime null  
+ statusUpdatedAt datetime null,
+ ClientHRAttemptContact varchar(150)
 );   
   
   
 if(@IRFId is not null and @IRFId != 0)  
 Begin  
  INSERT INTO @TemporaryCandidateTableVariable        
- Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate, la.addedOn, la.statusUpdatedAt     
+ Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate, la.addedOn, la.statusUpdatedAt,ca.ClientHRAttemptContact     
  from Candidate ca   
  join CandidatesMaster cm on  ca.CandidateMasterId = cm.id  
  outer apply dbo.fn_CandidateLatestStatusForApi(cm.UserId, ca.IRFId, @timeNow) La        
@@ -58,7 +60,7 @@ End
 Else if(@jobId is not null and @jobId != '')  
 Begin  
  INSERT INTO @TemporaryCandidateTableVariable        
- Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate, la.addedOn, la.statusUpdatedAt     
+ Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate, la.addedOn, la.statusUpdatedAt,ca.ClientHRAttemptContact     
  from Candidate ca   
  join CandidatesMaster cm on  ca.CandidateMasterId = cm.id  
  join IRF on irf.id = ca.IRFId  
@@ -72,7 +74,6 @@ begin
 Insert into @TemporaryCandidateTableFinal    
 Select td.* from @TemporaryCandidateTableVariable td join Candidate ca on ca.CandidateMasterId=td.CandidateMasterId and ca.IRFId=td.IRFId    
 join TransClientUser tc on tc.IRFId=ca.IRFId  
-  
 where ca.ClientHRAttemptContact=@requestedByClientUser and tc.ClientUserId= @ClientUserId  
 end    
 else if(@Roleid=4)    
@@ -105,7 +106,7 @@ CASE
     ELSE CandidateLatestStatus  
 END AS CandidateLatestStatus,  
 ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,  
-addedOn, statusUpdatedAt,ic.AudioTranscriptFileLink,im.Cancellationsource,im.CodeSnippet,im.CodeSnippetTwo    
+addedOn, statusUpdatedAt,ic.AudioTranscriptFileLink,im.Cancellationsource,im.CodeSnippet,im.CodeSnippetTwo,tctv.ClientHRAttemptContact    
 --from @TemporaryCandidateTableVariable tctv     
 from @TemporaryCandidateTableFinal tctv  
 left join InterviewMeetings im on im.id = tctv.InterviewId        
@@ -131,6 +132,7 @@ Select tsr.Interviewid,[LevelTech].Name as EvaluatedAt,tsr.SkillName,tsr.Weighta
 join @TemporaryCandidateTableVariable td on tsr.InterviewId=td.InterviewId    
 left join [LevelTech] on tsr.RequiredLevelId=[LevelTech].id  
 End 
+
 GO
 
 

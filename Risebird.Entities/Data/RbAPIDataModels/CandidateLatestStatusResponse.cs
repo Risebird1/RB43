@@ -45,6 +45,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string transcriptUrl { get; set; }
         public int communicationScore { get; set; }
         public string createdOn { get; set; }
+        public string createdBy { get; set; }
         public string currentStatusUpdatedAt { get; set; }
         public List<SkillDetails> skills { get; set; }
     }
@@ -120,6 +121,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string CodeSnippet { get; set; }
         public string CodeSnippetTwo { get; set; }
         public string Cancellationsource { get; set; }
+        public string ClientHRAttemptContact { get; set; }
     }
     public class SkillsSetsDetails
     {
