@@ -428,8 +428,9 @@ namespace Risebird.Business
                 {
                     InterviewerProfileVM profileModel = interviewerProfile.FirstOrDefault();
                     // Get all the List from DB
-                    profileModel.InterviewerAvailabilityDetails = _interviewerRepository.GetAvailabilityList(profileModel.id).Result.ToList();
-                    profileModel.InterviewerAccDetails = _interviewerRepository.GetAccDetailsList(profileModel.id).Result;
+                    var interviewerAvailabilityDetails = await _interviewerRepository.GetAvailabilityList(profileModel.id);
+                    profileModel.InterviewerAvailabilityDetails = interviewerAvailabilityDetails.ToList();
+                    profileModel.InterviewerAccDetails = await _interviewerRepository.GetAccDetailsList(profileModel.id);
                     profileModel.InterviewerAccDetails.AccountNumber = string.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
                     return profileModel;
                 }

@@ -1,21 +1,12 @@
-﻿using Google.Apis.Calendar.v3.Data;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risebird.Business;
+﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Threading.Tasks;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
-using Task = System.Threading.Tasks.Task;
 
 namespace Risebird.Web.Controllers
 {
@@ -310,27 +301,28 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public TwiMLResult IvrCandidateInterviewAvailability(string uniqueId, string irfId, string jdTitle, string candidateFirstName,string interviewId,string candidateId,string interviewDate,string timeZoneValue, int retryCount = 0)
+        public TwiMLResult IvrCandidateInterviewAvailability(string uniqueId, int irfId,int interviewId,int candidateId, int retryCount = 0)
         {
             var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function invked succesfully", "ivr", string.Empty).Result;
 
+            var candidateInterviewDetails = _meetingService.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId).Result;
             var response = new VoiceResponse();
             try
             {
 
                 //var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&jdTitle={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
-                var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&candidateFirstName={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
+                var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&interviewId={interviewId}&candidateId={candidateId}";
                 var actionUri = new Uri(link);
                 var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);
 
-                gather.Say($"Dear {candidateFirstName}, Greetings from Risebird.This is to remind you that your interview is scheduled on {interviewDate} {timeZoneValue} for requirement of {jdTitle}. Kindly confirm your availability by clicking on the appropriate response Press 1 if Available. Press 2 if Not Available or Drop profile. Press 3 to Reschedule my interview.");
+                gather.Say($"Dear {candidateInterviewDetails.FirstName}, Greetings from Risebird.This is to remind you that your interview is scheduled on {candidateInterviewDetails.interviewDate} {candidateInterviewDetails.TimeZonesValue} for requirement of {candidateInterviewDetails.PrimarySkillInvite}. Kindly confirm your availability by clicking on the appropriate response Press 1 if Available. Press 2 if Not Available or Drop profile. Press 3 to Reschedule my interview.");
                 response.Append(gather);
 
                 if (retryCount < 2)
                 {
 
                     response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}&retryCount={retryCount + 1}"));
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&interviewId={interviewId}&candidateId={candidateId}&retryCount={retryCount + 1}"));
                 }
                 else
                 {
@@ -347,30 +339,27 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public IActionResult CandidateInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] string irfId, [FromQuery] string jdTitle, [FromQuery] string candidateFirstName, [FromQuery] string interviewId, [FromQuery] string candidateId, [FromQuery] string interviewDate, [FromQuery] string timeZoneValue)
+        public IActionResult CandidateInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] int irfId, [FromQuery] int interviewId, [FromQuery] int candidateId)
         {
             try
             {
                 var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty).Result;
 
-                var irfintId = Convert.ToInt16(irfId);
-                var interviewIntId = Convert.ToInt32(interviewId);
-                var candidateIntId = Convert.ToInt32(candidateId);
                 var selectedOption = digits;
                 if (selectedOption == "1")
                 {
-                    return UpdateCandidateInterviewAvailbilityStatus(1, uniqueId, irfintId, interviewIntId, candidateIntId); 
+                    return UpdateCandidateInterviewAvailbilityStatus(1, uniqueId, irfId, interviewId, candidateId); 
                 }
                 else if (selectedOption == "2")
                 {
-                    return UpdateCandidateInterviewAvailbilityStatus(2, uniqueId, irfintId, interviewIntId, candidateIntId);
+                    return UpdateCandidateInterviewAvailbilityStatus(2, uniqueId, irfId, interviewId, candidateId);
                 }
                 else if (selectedOption == "3")
                 {
-                    return UpdateCandidateInterviewAvailbilityStatus(3, uniqueId, irfintId, interviewIntId, candidateIntId);
+                    return UpdateCandidateInterviewAvailbilityStatus(3, uniqueId, irfId, interviewId, candidateId);
                 }
 
-                return RedirectToAction("IvrInterviewerAvailability", new { uniqueId = uniqueId, irfId = irfId, jdTitle = jdTitle, candidateFirstName = candidateFirstName, interviewId = interviewId, candidateId = candidateId, interviewDate = interviewDate, timeZoneValue = timeZoneValue });
+                return RedirectToAction("IvrCandidateInterviewAvailability", new { uniqueId = uniqueId, irfId = irfId, interviewId = interviewId, candidateId = candidateId });
 
 
             }
