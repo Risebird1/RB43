@@ -75,7 +75,7 @@
             <span class="sr-only">Close</span>
         </button>
         <i class="start-icon fa fa-exclamation-triangle faa-flash animated"></i>
-            <strong class="font__weight-semibold">Warning!</strong> Please Finish your video KYC before 25th Novemeber to continue taking interviews in Risebird platform.     <span onclick="openVideoKYCModel()" aria-hidden="true" style="cursor:pointer;color: #227622;font-weight: bold;padding-left:3px;display:inline-block;text-shadow:none;">Please Click here</span>
+            <strong class="font__weight-semibold">Warning!</strong> Please Finish your video KYC before 15th May to continue taking interviews in Risebird platform.     <span onclick="openVideoKYCModel()" aria-hidden="true" style="cursor:pointer;color: #227622;font-weight: bold;padding-left:3px;display:inline-block;text-shadow:none;">Please Click here</span>
         </div>
 
     </div>
@@ -626,6 +626,23 @@
                                                     <li>
                                                         <strong>For Late Feedback Report- </strong> Customers demand the feedback report of candidates immediately after the completion of interviews. While other IAAS platforms have been penalizing interviewers for submitting reports after 3 hrs, Risebird has been avoiding any penalties but now our customers are demanding the reporting time to be at par or before the other IAAS platform. In order to achieve the same, we have to penalize for any submission made after 3 hrs (50% deduction on payment) after 24 hrs (100% deduction on payment terms ).
                                                     </li>*@
+                                                        @if (Model.AcknowledgementStatus.ToUpper() == "NO")
+                                                        {
+                                                        <li style="margin:10px 0px 0px 0px; background-size: 17px;">
+                                                                Risebird Platform overall <strong>mandatory terms of service agreement are pending,</strong> final date for acknowledgement is on 15thMay 2025 - <a style="text-decoration:none;" target="_blank" href="#" onclick="InterviewerAcknowledgment()">click here to do it now </a>
+                                                        </li>
+                                                        }
+
+                                                        <li style="margin:10px 0px 0px 0px; background-size: 17px;">
+                                                            Risebird platform  <strong>mandatory video-on policy  agreement are pending,</strong> final date for acknowledgement is on 15thMay 2025 -   <a style="text-decoration:none;" target="_blank" href="#" onclick="InterviewerAcknowledgment()">click here to do it now</a>
+                                                        </li>
+                                                        @if (ViewBag.VideoKYC)
+                                                         {
+                                                        <li style="margin:10px 0px 0px 0px; background-size: 17px;">
+                                                           Video KYC,   final date for acknowledgement is on 15thMay 2025 -  <a style="text-decoration:none;" target="_blank" href="#" onclick="InterviewerAcknowledgment()">click here to do it now</a>
+
+                                                        </li>
+                                                         }
                                                         <li style="margin:10px 0px 0px 0px; background-size: 17px;"> <strong> It is mandatory for an interviewer to give confirmation before an interview.</strong>. Interviewers are expected to respond to the mails titled : <strong>Upcoming Risebird Interviews Confirmation</strong> that they receive at 8am (morning) & 4pm (evening) everyday.</li>
 
                                                         <li style="margin:0px 0px; background-size: 17px;">All the interviews will be assessed for <strong>Quality by our QC Team</strong>. Kindly ensure you adhere to all the standard practices apropos of an interview. Failure to do so shall attract a heavy <strong>Penalty.</strong><a target="_blank" href="https://risebirdportal.blob.core.windows.net/regulatorycompliancedocuments/Risebird_QC_Guidelines.docx">Click Here</a> to find a complete guide to standard practices.</li>
@@ -1101,5 +1118,12 @@
                 closeInterviewerRedMarkerReportModel();
             }
         });
+    }
+
+
+
+
+    function InterviewerAcknowledgment() {
+        window.location.href = "/Interviewer/InterviewersOnboarding";
     }
 </script>
