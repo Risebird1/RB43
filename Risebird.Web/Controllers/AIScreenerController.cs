@@ -484,6 +484,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                var resultDe = _activityTrackerService.DebugLogger($"ScreenInterviewerBeforeOnboarding function error : {ex.Message}, {ex.StackTrace}", "openai", string.Empty).Result;
+
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Failed to generate verdict. Please try again." });
             }

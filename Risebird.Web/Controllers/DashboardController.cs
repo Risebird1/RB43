@@ -1744,6 +1744,10 @@ namespace Risebird.Web.Controllers
                             ViewBag.VideoConfirmationPopup = false;
 
                         }
+                        if (model.AcknowledgementStatus.ToUpper() != "YES" && model.AcknowledgementStatus.ToUpper() != "NO")
+                        {
+                            return RedirectToAction("InterviewersOnboarding", "Interviewer");
+                        }
                         //Boradcastmessage
                         return View(model);
                     }
