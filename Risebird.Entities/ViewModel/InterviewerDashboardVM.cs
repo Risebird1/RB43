@@ -14,6 +14,7 @@
         public bool PaymentSLAConfirmation { get; set; }
         public bool RedmarkerAcknowledge { get; set; }
         public bool VideoKYC { get; set; }
+        public string AcknowledgementStatus { get; set; }
     }
 
 }

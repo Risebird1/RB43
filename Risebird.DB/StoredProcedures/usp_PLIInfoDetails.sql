@@ -8,128 +8,273 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE usp_GetInterviewerInsights     
-@Emailid varchar(150),       
-@IrfId varchar(15)      
-AS      
-BEGIN      
-if(@IrfId='')      
-begin      
-set @IrfId=null      
-end      
-Declare @TotalInterviews int        
-Declare @CompletedInterviews int        
-Declare @SelectedInterviews int        
-Declare @RejectedInterviews int        
-Declare @NoShowInterviews int        
-Declare @NoShowCandidateInterviews int        
-Declare @DroppedInterviews int        
-Declare @PaymentSLA int        
-Declare @Penalty int        
-Declare @CandidateRating decimal        
-Declare @CustomerRating decimal        
-Declare @Redorequests int        
-Declare @RedFlags int        
-Declare @JoinLateMeeting int,@JoinLateCandidateNoShow int         
-Declare @UnassignInterviews int        
-Declare @SuspiciousCount int        
-Declare @RejectedComment int       
-Declare @SelectedComment int       
-Declare @LessQuestions int       
-Declare @ReliabilityScore int    
-Declare @AIVerdictNegative int
-Declare @AIReportVerdictNegative int
-  
-Select @TotalInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
-        
-        
-Select @CompletedInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)  and (@IrfId is null or im.IRFId=@IrfId)      
-        
-Select @SelectedInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4) and (@IrfId is null or im.IRFId=@IrfId)      
-        
-Select @RejectedInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and (@IrfId is null or im.IRFId=@IrfId)      
-        
-Select @NoShowInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (MeetingStatus=5 or MeetingStatus=9) and (@IrfId is null or im.IRFId=@IrfId)       
-        
-Select @NoShowCandidateInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and MeetingStatus=1 and (@IrfId is null or im.IRFId=@IrfId)       
-        
-Select @DroppedInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and MeetingStatus=3 and (@IrfId is null or im.IRFId=@IrfId)       
-        
-Select @PaymentSLA=Count(distinct ps.id) from PaymentSLADetails ps join Interviewmeetings im on im.id=ps.Interviewid where im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
-        
-Select @Penalty=Count(distinct ip.id) from InterviewPoints ip join Interviewmeetings im on im.id=ip.Interviewid where (PenaltyAmount>0 or Comment like '%Late Report%') and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)       
-        
-Select @CandidateRating=Count(distinct cfd.Rating) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and cfd.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId)      
-        
-Select @CustomerRating=Count(Rating) From ClientCommentsForReport cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid and cr.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId)       
-        
-Select @Redorequests=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and RedoInterview=1 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
-        
-Select @RedFlags=Count(distinct tq.id) from Trans_QCFormReport tq join Interviewmeetings im  on im.id=tq.InterviewId where confirmationStatus=1 and Redflags>0 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
-        
-Select @JoinLateMeeting=Count(distinct im.id) from InterviewMeetingsJoinTime imj join InterviewMeetings im on im.id=imj.interviewid where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)       
- 
-        
-Select @JoinLateCandidateNoShow=Count(distinct im.id) from InterviewMeetingsJoinTime imj join InterviewMeetings im on im.id=imj.interviewid join InterviewComments ic on ic.Interviewid=im.id         
-where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and ic.MeetingStatus=1 and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
-        
-Select @UnassignInterviews=Count(distinct ip.id) From InterviewPoints ip join InterviewMeetings im on im.id=ip.Interviewid join InterviewComments ic on ic.Interviewid=im.id Left join UserList ul on ul.id=ip.userid        
-where points<0 and ic.MeetingStatus!=5 and ic.MeetingStatus!=2 and ul.EmailId=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
-        
-Select @SuspiciousCount=Count(distinct si.Id) From SuspiciousInterviewer si join UserList ul on ul.id=si.UserId where SuspiciousStatus=1 and ul.EmailId=@Emailid       
-      
-Select @SelectedComment=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)  and Len(ic.InterviewerComment)<500 and (@IrfId is null or im.IRFId=@IrfId)      
-      
-Select @RejectedComment=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and Len(ic.InterviewerComment)<250 and (@IrfId is null or im.IRFId=@IrfId)      
-      
- ;with CTE(Interviewid,totalQuestions) as  (select qd.Interviewid,Count(qd.id) as totalQuestions from QuestionsDiscussed qd join InterviewMeetings im on im.id=qd.InterviewId  group by qd.Interviewid having Count(qd.id)<5)      
- Select @LessQuestions=Count(distinct im.id) From CTE join Interviewmeetings im on im.id=CTE.Interviewid join InterviewComments ic on im.id=ic.InterviewId       
-where confirmationStatus=1 and  interviewer=@Emailid       
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (@IrfId is null or im.IRFId=@IrfId)      
+CREATE Procedure usp_PLIInfoDetails    
+@timeNow datetime,    
+@type varchar(50),    
+@EmailId varchar(150)    
+AS    
+BEGIN    
+Declare @Role varchar(150)                  
+Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid    
     
-Select @ReliabilityScore=Sum(tq.Point) from TransInterviewersReliabilityScores tq left join Interviewmeetings im  on im.id=tq.InterviewMeetingId     
-left join InterviewerProfile ip on tq.InterviewerId=ip.id  join UserList ul on ul.id=ip.Userid         
-where ul.EmailId=@Emailid and (@IrfId is null or im.IRFId=@IrfId)        
+declare @yesterdayDate date = cast(dateadd(day, -1, @timeNow) as date)      
     
---Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,ip.ResumeLink as ResumeLink,      
---@TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,        
---@NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,Isnull(ul.FirstName,'') as interviewerName,        
---Case When Isnull(si.id,0)>0 then 1 else 0 end as IsSuspicious,@PaymentSLA as PaymentSLA,@Penalty as Penalty,@CandidateRating as CandidateRating,@CustomerRating as CustomerRating,        
---@Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount,      
---@SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions,ul.uniqueid      
---from InterviewerProfile ip join UserList ul on ul.id=ip.Userid         
---left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id     
---left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1        
---where ul.EmailId=@Emailid        
---Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end,ul.uniqueid,ip.ResumeLink      
+DECLARE @tbl_RelevantIRFs TABLE (                          
+ id int,    
+ IRFId varchar(15)    
+)      
+      
+INSERT INTO @tbl_RelevantIRFs          
+select IRF.id, im.IRFId  from InterviewMeetings im      
+join IRF on IRF.IRFId=im.IRFId    
+where (cast(im.interviewDate as date)>= @yesterdayDate) and confirmationStatus = 1     
+    
+DECLARE @tbl_RelevantInterviews TABLE (                          
+ IRFId varchar(15),    
+ Interviewer varchar(150),    
+ TotalInterview int    
+)      
+    
+Insert into @tbl_RelevantInterviews    
+Select distinct ir.IRFId,im.interviewer,Count(distinct im.id) TotalInterview from @tbl_RelevantIRFs ir     
+join TransInterviewer ti on ti.IRFId=ir.id    
+join UserList ul on ul.id=ti.UserId    
+join InterviewMeetings im on im.IRFId=ir.IRFId and im.interviewer=ul.EmailId     
+group by ir.IRFId,im.interviewer    
+    
+    
+DECLARE @tbl_InterviewerCompleted TABLE (                          
+    IRFId varchar(15),    
+    interviewer varchar(200),      
+    TotalCompletedMeetings int      
+);       
+      
+INSERT INTO @tbl_InterviewerCompleted          
+select ir.IRFId,im.interviewer, count(distinct im.id) from @tbl_RelevantIRFs ir    
+join InterviewMeetings im on im.IRFId=ir.IRFId    
+left join InterviewComments ic on ic.InterviewId = im.id      
+where (ic.MeetingStatus in (4, 6, 7, 8))      
+group by ir.IRFId,im.interviewer      
+    
+if(@type Like '%Shortselectcomment%')      
+Begin    
+if(@Role='SeniorHR')    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotallessComment    
+from @tbl_RelevantIRFs ir join Interviewmeetings im on im.IRFId=ir.IRFId    
+join InterviewComments ic on im.id=ic.InterviewId     
+where confirmationStatus=1     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)     
+and (InterviewStatus=2 or InterviewStatus=4)    
+and Len(ic.InterviewerComment)<500     
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotallessComment     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+where ul.EmailId=@EmailId    
+End    
+Else    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotallessComment    
+from @tbl_RelevantIRFs ir join Interviewmeetings im on im.IRFId=ir.IRFId    
+join InterviewComments ic on im.id=ic.InterviewId     
+where confirmationStatus=1     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)     
+and (InterviewStatus=2 or InterviewStatus=4)    
+and Len(ic.InterviewerComment)<500     
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotallessComment     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+End    
+END    
+else if(@type Like '%Shortrejectcomment%')    
+begin    
+if(@Role='SeniorHR')    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotallessComment    
+from @tbl_RelevantIRFs ir join Interviewmeetings im on im.IRFId=ir.IRFId    
+join InterviewComments ic on im.id=ic.InterviewId     
+where confirmationStatus=1     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)    
+and (InterviewStatus=3 or InterviewStatus=5)    
+and Len(ic.InterviewerComment)<250    
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotallessComment     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+where ul.EmailId=@EmailId    
+End    
+Else    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotallessComment    
+from @tbl_RelevantIRFs ir join Interviewmeetings im on im.IRFId=ir.IRFId    
+join InterviewComments ic on im.id=ic.InterviewId     
+where confirmationStatus=1     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)    
+and (InterviewStatus=3 or InterviewStatus=5)    
+and Len(ic.InterviewerComment)<250    
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotallessComment     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+End    
+end    
+else if(@type Like '%Lessquestion%')    
+begin    
+if(@Role='SeniorHR')    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotallessQuestions    
+from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId join QuestionsDiscussed qd on im.id=qd.InterviewId      
+join InterviewComments ic on im.id=ic.InterviewId       
+where confirmationStatus=1     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)    
+group by im.IRFId,im.interviewer  having Count(qd.id)<5)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotallessQuestions     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+where ul.EmailId=@EmailId    
+End    
+Else    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotallessQuestions    
+from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId join QuestionsDiscussed qd on im.id=qd.InterviewId      
+join InterviewComments ic on im.id=ic.InterviewId       
+where confirmationStatus=1     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)    
+group by im.IRFId,im.interviewer  having Count(qd.id)<5)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotallessQuestions     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+End    
+end    
+else if(@type Like '%Latejoin%')    
+begin    
+if(@Role='SeniorHR')    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotalLatejoin    
+from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId    
+join InterviewMeetingsJoinTime imj on im.id=imj.interviewid join InterviewComments ic on ic.Interviewid=im.id         
+where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9)    
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotalLatejoin     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+where ul.EmailId=@EmailId    
+End    
+Else    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotalLatejoin    
+from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId    
+join InterviewMeetingsJoinTime imj on im.id=imj.interviewid join InterviewComments ic on ic.Interviewid=im.id         
+where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9)    
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotalLatejoin     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+End    
+end    
   
-Select @AIVerdictNegative=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (AITranscriptVerdict='yes') and (@IrfId is null or im.IRFId=@IrfId) 
-
-Select @AIReportVerdictNegative=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid         
-and (AIVerdict='no') and (@IrfId is null or im.IRFId=@IrfId) 
-  
-  
-Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,@ReliabilityScore as ReliabilityScore,ip.ResumeLink as ResumeLink,      
-@TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,        
-@NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,Isnull(ul.FirstName,'') as interviewerName,        
-Case When Isnull(si.id,0)>0 then 1 else 0 end as IsSuspicious,@PaymentSLA as PaymentSLA,@Penalty as Penalty,@CandidateRating as CandidateRating,@CustomerRating as CustomerRating,        
-@Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount,      
-@SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions,ul.uniqueid,ir.ProfileType,@AIVerdictNegative as AIVerdictNegative,
-@AIReportVerdictNegative as AIReportVerdictNegative
-from InterviewerProfile ip join UserList ul on ul.id=ip.Userid         
-left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1      
-left join InterviewerRecommendation ir on ir.Userid=ip.UserId    
-where ul.EmailId=@Emailid        
-Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end,ul.uniqueid,ip.ResumeLink,ir.ProfileType   
-   
-END        
+else if(@type Like '%Lessduration%')    
+begin    
+if(@Role='SeniorHR')    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotalLessduration  
+from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId    
+join IRF on IRF.IRFId=ir.IRFId  
+join PlanTypeChargesMaster pt on pt.CompanyType=IRF.CompanyType and pt.PlanTypeEnumValue=IRF.Heuristicsscore and pt.CountryType=IRF.JobCountry  
+join InterviewComments ic on ic.Interviewid=im.id         
+where (ic.VideoDuration-pt.DurationSelectedMin<0 and ic.VideoDuration-pt.DurationSelectedMin>-pt.DurationSelectedMin) and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)    
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotalLessduration     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+where ul.EmailId=@EmailId and uli.IsActive=1  
+End    
+Else    
+Begin    
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotalLessduration    
+from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId    
+join IRF on IRF.IRFId=ir.IRFId  
+join PlanTypeChargesMaster pt on pt.CompanyType=IRF.CompanyType and pt.PlanTypeEnumValue=IRF.Heuristicsscore and pt.CountryType=IRF.JobCountry  
+join InterviewComments ic on ic.Interviewid=im.id         
+where (ic.VideoDuration-pt.DurationSelectedMin<0 and ic.VideoDuration-pt.DurationSelectedMin>-pt.DurationSelectedMin) and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)    
+group by im.IRFId,im.interviewer)    
+select IRF.id,CTE.IRFId,CTE.interviewer,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,imt.TotalInterview,icm.TotalCompletedMeetings,CTE.TotalLessduration     
+from CTE    
+left join @tbl_RelevantInterviews imt on imt.IRFId=CTE.IRFId and imt.Interviewer=CTE.interviewer    
+join IRF on IRF.IRFId=CTE.IRFId    
+join UserList ul on IRF.RisebirdHr=ul.id    
+join Client cl on cl.id=IRF.Clientid    
+left join UserList ulc on ulc.id=IRF.BillingOwner    
+left join UserList uli on uli.Emailid=CTE.interviewer    
+left join InterviewerProfile ip on ip.UserId=uli.id    
+left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interviewer=CTE.interviewer    
+where uli.IsActive=1  
+End    
+end    
+END 
 GO

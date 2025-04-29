@@ -46,13 +46,17 @@ namespace Risebird.AzureTimerFunctions
                         {
                             using (HttpClient client = new HttpClient())
                             {
-
+                                if (data.Status.ToLower() != "cancelled")
+                                {
+                                    data.Cancellationsource = "";
+                                }
                                 var requestBody = new
                                 {
                                     skillChannelId = data.IRFId,
                                     candidateEmailId = data.CandidateEmailId,
                                     currentStatus = data.Status,
-                                    jobId = data.jobId
+                                    jobId = data.jobId,
+                                    Cancellationsource = data.Cancellationsource
                                 };
 
                                 //staging request

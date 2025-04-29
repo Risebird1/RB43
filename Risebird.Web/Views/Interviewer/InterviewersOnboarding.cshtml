@@ -1,0 +1,920 @@
+﻿@*@model Risebird.Web.Views.Interviewer.InterviewerOnboardingModel*@
+@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Http;
+@using Risebird.Entities.Enum
+@using Microsoft.Extensions.Configuration;
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration configuration
+@{
+    ViewData["Title"] = "Interviewer Onboarding";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+
+}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+    * {
+        margin: 0;
+        padding: 0
+    }
+
+    html {
+        height: 100%
+    }
+
+    p {
+        color: grey
+    }
+
+    .onboarding-form-container #progressbar #account.feedback:before {
+        font-family: FontAwesome;
+        content: "\f164";
+    }
+
+    .onboarding-form-container #progressbar #account.interaction:before {
+        font-family: FontAwesome;
+        content: "\f0c0"
+    }
+
+    @@media only screen and (max-width: 991px) {
+        .onboarding-form-container #progressbar {
+            padding: 0px !important;
+        }
+    }
+</style>
+<div class="container-fluid">
+    <div class="onboarding-form-container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card">
+                    <h2 id="heading" class="text-center">
+                        Risebird Interviewer Onboarding Policy Agreement
+                    </h2>
+                    <p class="text-center">This Agreement comprehensively outlines the terms and conditions governing your responsibilities and conduct as an interviewer providing services through Risebird. By signing this agreement, you acknowledge understanding and agreeing to comply strictly with all policies, procedures, standards, and penalties detailed herein.</p>
+                    <form id="msform">
+                        <!-- progressbar -->
+                        <ul id="progressbar">
+                            <li class="active" id="account"><strong>Professional Conduct</strong></li>
+                            <li id="video"><strong>Interviewer <br />Video-On Policy</strong></li>
+                            <li id="question"><strong>Question Design <BR /> & Assessment</strong></li>
+                            <li id="account" class="interaction"><strong>Candidate Interaction & Ethics</strong></li>
+                            <li id="feedback" class="feedback"><strong>Feedback<BR /> Accuracy</strong></li>
+                            <li id="personal"><strong>Quality Control Measures</strong></li>
+                            <li id="payment"><strong>Penalization and Legal Actions</strong></li>
+                            <li id="confirm"><strong> Agreement Acknowledgement</strong></li>
+                        </ul>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div> <br> <!-- fieldsets -->
+                        <fieldset>
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">
+                                            Interviewer Responsibilities <span style="font-size: 22px;color: grey; ">(Grouped into 5 Core Categories)</span>:
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 1 - 8</h2>
+                                    </div>
+                                </div>
+                                Each category outlines a key area of responsibility expected from all Risebird interviewers. Please review these expectations carefully, as they directly impact your eligibility for interviews, continued access to the platform, and payment processing.
+                                <h5 style="margin-top:10px;font-size:21px;">Category 1 : Professional Conduct, Communication, Technical Readiness, Ethics, and Time Discipline</h5>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li> Adhere strictly to ethical standards; avoid bribery, collusion, impersonation, biases, or unethical reporting.</li>
+                                    <li> Maintain absolute confidentiality concerning candidate information, interview details, business strategies, and any proprietary information about Risebird.</li>
+                                    <li> Comply rigorously with data protection and privacy regulations.</li>
+                                    <li> Avoid engaging in forgery or deception, including using fake profiles, identities, or evaluations.</li>
+                                    <li>Truthfully represent your qualifications, skills, and experience.</li>
+                                    <li>Do not violate intellectual property rights of any third party; you will bear sole responsibility for any infringement.</li>
+                                    <li>Be punctual and adhere strictly to scheduled interview timings.</li>
+                                    <li>Avoid late starts, premature endings, or inefficient pacing of the interview.</li>
+                                    <li>Inform Risebird proactively if unable to honor scheduled commitments.</li>
+                                    <li>Ensure interviews are neither artificially shortened nor unnecessarily extended.</li>
+                                    <li>Communicate clearly, professionally, and fluently in English.</li>
+                                    <li>Clearly articulate interview questions and instructions to avoid confusion.</li>
+                                    <li>Respond promptly and effectively to communications from Risebird and clients.</li>
+                                    <li>Always maintain professionalism, fairness, and impartiality during interviews.</li>
+                                    <li>Dress in professional attire when webcam usage is required.</li>
+                                    <li>Maintain courteous and respectful communication at all times.</li>
+                                    <li>Do not engage in aggressive, disparaging, disrespectful, or inappropriate interactions.</li>
+                                    <li>Avoid consumption of alcohol, drugs, or other substances before or during interviews.</li>
+                                    <li>Ensure robust and reliable infrastructure, including stable internet and quality audio/video equipment.</li>
+                                    <li>Address technical issues proactively and swiftly to minimize disruptions.</li>
+                                </ol>
+
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx" onchange="isChecked(this, 'sub')">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                    <input style="position:relative;"  onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmvideo-btn" value="Continue without agreeing to Terms & Services" />
+
+                            </div>
+
+                            <input id="sub" disabled="disabled" type="button" name="next" class="next action-button" value="Next" />
+
+                        </fieldset>
+
+                        <fieldset id="videos">
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">
+                                            Interviewer Responsibilities :
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 2 - 8</h2>
+                                    </div>
+                                </div>
+                                <h5 style="margin-top:10px;font-size:21px;">Category 2 : Mandatory Interviewer Video-On Policy, Integrity & Privacy Assurance</h5>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li>
+                                        Keep your camera on during the entire interview session. Keeping your video off while the interviewee has their camera on is not only unprofessional, but also unethical and disrespectful. It makes the interviewee feel like they are speaking to a faceless presence or a non-human AI agent rather than a real human expert. It creates a significant credibility gap and can raise unnecessary doubts about the interviewer’s identity, sincerity, and engagement. From the candidate's perspective, it feels like interacting with a blank screen or an AI-based agent rather than a human expert — degrading the authenticity and trust of the interview process. It gives the impression that the interviewer is not fully present or engaged, leading to discomfort, loss of confidence, and questions about the legitimacy of the process. Furthermore, allowing video-off flexibility enables fake or non-serious interviewers to conduct low-engagement interviews without being noticed. This undermines the trust and quality standards of the Risebird platform, damages its brand and reputation, and negatively impacts future business opportunities for all other hardworking and genuine interviewers.
+
+                                    </li>
+                                    <li>
+                                        Risebird is committed to upholding interviewer privacy and data protection
+                                        <ol style="list-style: circle; font-size: 15px; margin: 10px;">
+                                            <li>
+                                                Risebird never shares resumes, emails, phone numbers, company names, or any other personal information with clients.
+                                            </li>
+                                            <li>
+                                                All interview video recordings are automatically deleted from all records within 15 to 45 days.
+                                            </li>
+                                            <li>
+                                                Video recordings are shared only through secure URLs, accessible exclusively by authorized personnel.
+                                            </li>
+                                            <li>
+                                                Videos cannot be downloaded or screen recorded through the platform.
+                                            </li>
+                                            <li>
+                                                In most cases, clients only browse a few minutes of the video to verify authenticity and rarely review full sessions.
+                                            </li>
+                                            <li>Interviewers are never matched to interview candidates from their current company.</li>
+                                            <li>
+                                                Interviewers are also never matched to clients that represent their current employer.
+                                            </li>
+                                            <li>
+                                                Interviewers with a consistent video-on track record will be included in Risebird's Preferred Interviewer List.
+                                            </li>
+                                            <li>
+                                                Priority for future interview allocations will be given to interviewers maintaining video-on compliance.
+                                            </li>
+                                            <li>
+                                                Risebird plans to discontinue assigning interviews to interviewers who do not keep their camera on during interviews in the coming weeks.
+                                            </li>
+                                            <li>
+                                                In the rarest of rare cases where interviewers face concerns or issues with video-on participation, they are encouraged to clarify that a video conversation alone does not constitute any employment or part-time work association with Risebird or its clients. Proof of monetary transaction is a prerequisite for any professional engagement acknowledgement.
+                                            </li>
+                                            <li>
+                                                Additionally, conducting video interviews on Risebird can enhance your visibility as a professional. Many clients, upon seeing an impressive interview recording, may express interest in hiring the interviewer for full-time roles.
+                                            </li>
+                                            <li>
+                                                In this sense, video interviews on Risebird function similarly to publishing professional content on LinkedIn — creating passive opportunities for employment through visible expertise.
+                                            </li>
+                                        </ol>
+                                    </li>
+                                    <li>
+                                        Conduct interviews personally without any impersonation or delegation.
+                                    </li>
+                                    <li>
+                                        Do not engage in multitasking or unrelated activities during the interview.
+                                    </li>
+                                    <li>
+                                        Maintain full attention and active engagement throughout the interview duration.
+                                    </li>
+                                </ol>
+
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx1" onchange="isChecked(this, 'sub1')">
+                                    <span  class="agree-txt c-indicator" style="font-size: 17px;color: green;font-weight: 600;">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                <input   onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+
+                                <input id="continue-skip" onclick="AcceptIntrest()" type="button" name="" class="action-button continue-skipbtn confirmvideo-btn" value="Continue without agreeing to Video On Policy" />
+
+                            </div>
+
+                            @* <span class="continue-skip">
+                            <input type="button" onclick="InterviewerVideoConfirmationStatus(2)" name="next" class="next action-button" value="Continue without acknowledgement" />
+                            <p style="text-align: left; width: 100%; float: left; font-size: 15px;color:#000;margin-bottom:0px;">The above given terms and service are mandatory in nature. So this has be acknowledged widthin 15days to continue to take interview on the Risebird platform. Incase you are not willing to work with updated terms & service then you are not allowed to take interviews which is scheduled beyound 15 days. This relaxation for acknowledgement is provided for 15 days only</p>
+                            </span> *@
+
+                            <input id="sub1" disabled="disabled" onclick="InterviewerVideoConfirmationStatus(1)" type="button" name="next" class="next action-button confirmwithoutterms-btn" value="Next" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Back" tyle="float:left" />
+
+                        </fieldset>
+
+                        <fieldset id="questions">
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">
+                                            Interviewer Responsibilities :
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 3 - 8</h2>
+                                    </div>
+                                </div>
+                                <h5 style="margin-top:10px;font-size:21px;"> Category 3 : Question Design and Assessment Standards</h5>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li>
+                                        Prepare original, relevant, probing, and appropriately challenging questions.
+                                    </li>
+                                    <li>
+                                        Align all questions with the designated scoring rubric, ensuring they reflect the expected depth, topic areas, and outcomes.
+                                    </li>
+                                    <li>
+                                        Tailor questions to match the seniority level, job description (JD), client expectations, and interview flow.
+                                    </li>
+                                    <li>
+                                        Avoid mismatched questions — for example, asking a basic coding problem to an architect-level candidate.
+                                    </li>
+                                    <li>
+                                        Focus on evaluating actual hands-on skills and applied talent rather than relying on theoretical or memorized knowledge.
+                                    </li>
+                                    <li>
+                                        Focus on evaluating actual hands-on skills and applied talent rather than relying on theoretical or memorized knowledge.
+                                    </li>
+                                    <li>
+                                        Design questions that are insightful, discerning, and capable of evaluating real-time thinking.
+                                    </li>
+                                    <li>
+                                        Avoid questions that can be easily answered using generative AI tools or by memorizing theoretical material.
+                                    </li>
+                                    <li>Maintain at least 80% original content in questions to avoid plagiarism.</li>
+                                    <li>
+                                        Clearly disclose the use of AI-generated content or assistance if applicable.
+                                    </li>
+                                    <li>
+                                        Regularly refine and update questions to reflect current industry standards and client feedback.
+                                    </li>
+                                    <li>
+                                        Avoid repetitive, abstract, or irrelevant questions that detract from accurate candidate assessment.
+                                    </li>
+                                </ol>
+
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx2" onchange="isChecked(this, 'sub2')">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                <input  onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmvideo-btn" value="Continue without agreeing to Terms & Services" />
+
+                            </div>
+
+
+                            <input id="sub2" disabled="disabled" type="button" name="next" class="next action-button" value="Next" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Back" tyle="float:left" />
+                        </fieldset>
+
+                        <fieldset id="accounts">
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">
+                                            Interviewer Responsibilities :
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 4 - 8</h2>
+                                    </div>
+                                </div>
+                                <h5 style="margin-top:10px;font-size:21px;">  Category 4 : Candidate Interaction and Ethics</h5>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li>
+                                        Strictly adhere to professional boundaries; avoid soliciting personal or sensitive information.
+                                    </li>
+                                    <li>
+                                        Avoid rushing through the interview or skipping essential evaluation steps.
+                                    </li>
+                                    <li>
+                                        Allow the candidate ample time to express themselves and respond to questions thoughtfully.
+                                    </li>
+                                    <li>
+                                        Practice active listening; do not interrupt, speak over, or ignore candidate inputs.
+                                    </li>
+                                    <li>
+                                        Do not waste time discussing unrelated topics or deviating from the evaluation scope during the interview.
+                                    </li>
+                                    <li>
+                                        Avoid unconscious bias, generalization errors, confirmation bias, or any subjective judgments that may unfairly influence evaluation.
+                                    </li>
+                                    <li>
+                                        Never comment on a candidate's appearance, intelligence, accent, or other personal traits — such actions are considered unethical and may result in severe disciplinary or legal action.
+                                    </li>
+                                    <li>
+                                        Treat candidates with dignity and avoid biased or prejudiced interactions.
+                                    </li>
+                                    <li>
+                                        Do not engage in personal arguments or disputes with candidates.
+                                    </li>
+                                    <li>
+                                        Promptly and professionally address candidate queries or concerns during the interview.
+                                    </li>
+                                    <li>
+                                        Show respect and trust in the candidate's potential and capabilities.
+                                    </li>
+                                    <li>
+                                        Aim to bring out the best in each candidate by offering small hints or gentle nudges when appropriate.
+                                    </li>
+                                    <li>
+                                        Foster a positive environment that encourages open dialogue and reduces performance pressure.
+                                    </li>
+                                    <li>
+                                        Ensure the candidate feels heard, supported, and motivated to showcase their strengths and problem-solving skills.
+                                    </li>
+                                    <li>
+                                        Do not waste time discussing unrelated topics or deviating from the evaluation scope during the interview.
+                                    </li>
+                                    <li>
+                                        Avoid unconscious bias, generalization errors, confirmation bias, or any subjective judgments that may unfairly influence evaluation.
+                                    </li>
+                                    <li>
+                                        Never comment on a candidate's appearance, intelligence, accent, or other personal traits — such actions are considered unethical and may result in severe disciplinary or legal action.
+                                    </li>
+                                    <li>
+                                        Treat candidates with dignity and avoid biased or prejudiced interactions.
+                                    </li>
+                                    <li>
+                                        Do not engage in personal arguments or disputes with candidates.
+                                    </li>
+                                    <li>
+                                        Promptly and professionally address candidate queries or concerns during the interview.
+                                    </li>
+                                </ol>
+
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx3" onchange="isChecked(this, 'sub3')">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                <input  onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+
+                            </div>
+                            <input id="sub3" disabled="disabled" type="button" name="next" class="next action-button" value="Next" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Back" tyle="float:left" />
+
+                        </fieldset>
+
+                        <fieldset id="feedbacks">
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">
+                                            Interviewer Responsibilities :
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 5 - 8</h2>
+                                    </div>
+                                </div>
+                                <h5 style="margin-top:10px;font-size:18px;"> Category 5 : Feedback Accuracy, Reporting Integrity, and Proctoring</h5>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li>
+                                        Provide comprehensive, detailed, accurate, grammatically correct, and timely feedback.
+                                    </li>
+                                    <li>
+                                        Clearly articulate candidate strengths, areas of improvement, and rationale for selection decisions.
+                                    </li>
+                                    <li>
+                                        Ensure accuracy and honesty in feedback without exaggeration, falsification, or generic responses.
+                                    </li>
+                                    <li>
+                                        Accurately update candidate status (e.g., properly marking no-shows, completion, rejection, or acceptance).
+                                    </li>
+                                    <li>
+                                        Never falsify reports or misrepresent interview durations and outcomes.
+                                    </li>
+                                    <li>
+                                        Actively monitor candidates for suspicious behaviors, including cheating or impersonation.
+                                    </li>
+                                    <li>
+                                        Immediately report any suspicious activity or misconduct by candidates to Risebird.
+                                    </li>
+                                    <li>
+                                        Avoid unnecessary delays or idle time during interviews when a candidate is not engaged or has exited.
+                                    </li>
+                                    <li>
+                                        Adhere strictly to ethical standards; avoid bribery, collusion, impersonation, biases, or unethical reporting.
+                                    </li>
+                                    <li>
+                                        Maintain absolute confidentiality concerning candidate information, interview details, business strategies, and any proprietary information about Risebird.
+                                    </li>
+                                    <li>
+                                        Comply rigorously with data protection and privacy regulations.
+                                    </li>
+                                    <li>
+                                        Avoid engaging in forgery or deception, including using fake profiles, identities, or evaluations.
+                                    </li>
+                                    <li>
+                                        Truthfully represent your qualifications, skills, and experience.
+                                    </li>
+                                    <li>
+                                        Do not violate intellectual property rights of any third party; you will bear sole responsibility for any infringement.
+                                    </li>
+                                    <li>
+                                        Be punctual and adhere strictly to scheduled interview timings.
+                                    </li>
+                                    <li>
+                                        Avoid late starts, premature endings, or inefficient pacing of the interview.
+                                    </li>
+                                    <li>
+                                        Inform Risebird proactively if unable to honor scheduled commitments.
+                                    </li>
+                                    <li>
+                                        Ensure interviews are neither artificially shortened nor unnecessarily extended.
+                                    </li>
+                                    <li>
+                                        Communicate clearly, professionally, and fluently in English.
+                                    </li>
+                                    <li>
+                                        Clearly articulate interview questions and instructions to avoid confusion.
+                                    </li>
+                                    <li>
+                                        Respond promptly and effectively to communications from Risebird and clients.
+                                    </li>
+                                </ol>
+
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx4" onchange="isChecked(this, 'sub4')">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                <input onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+
+                            </div>
+
+                            <input id="sub4" disabled="disabled" type="button" name="next" class="next action-button" value="Next" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Back" tyle="float:left" />
+
+                        </fieldset>
+                        <fieldset id="personals">
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">Quality Control Measures:</h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 6 - 8</h2>
+                                    </div>
+                                </div>
+                                <p style=" font-size: 18px; margin-bottom:10px;">
+                                    Risebird systematically conducts quality assessments through:
+                                </p>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li>
+                                        AI-based analysis of interview transcripts and reports
+                                    </li>
+                                    <li>
+                                        Human monitoring and assessment
+                                    </li>
+                                    <li>
+                                        System-generated data such as selection rates, rejection rates, interview punctuality, interviewer no-shows, etc.
+                                    </li>
+                                    <li>
+                                        Feedback collected through reverse rating by candidates
+                                    </li>
+                                    <li>
+                                        Feedback and evaluation from clients on interviewer performance
+                                    </li>
+                                    <li>
+                                        Redo interview requests raised by either candidates or clients due to substandard interview experience
+                                    </li>
+                                </ol>
+
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx5" onchange="isChecked(this, 'sub5')">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                <input onclick="AcceptContinueWithTerms()" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+
+                            </div>
+
+                            <input id="sub5" type="button" disabled="disabled" name="next" class="next action-button" value="Next" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Back" />
+
+                        </fieldset>
+                        <fieldset id="payments">
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">Penalization and Legal Actions :</h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 7 - 8</h2>
+                                    </div>
+                                </div>
+
+                                <p style=" font-size: 18px; margin-bottom:10px;">Risebird reserves the authority to impose the following penalties for any breaches of the above responsibilities and standards:</p>
+                                <ol style="list-style: disc;font-size: 16px;">
+                                    <li>
+                                        Deduction of interview payments (5%-100%) based on severity.
+                                    </li>
+                                    <li>
+                                        Payment delays pending dispute resolution or corrective measures.
+                                    </li>
+                                    <li>Indefinite withholding of payments during severe breach investigations.</li>
+                                    <li>Temporary or permanent deactivation of interviewer profile from Risebird.</li>
+                                    <li>
+                                        Initiating court proceedings to recover financial damages including losses from client relationships, reputational harm, legal fees, and contractual penalties.
+                                    </li>
+                                    <li>
+                                        Legal action under POSH (Prevention of Sexual Harassment) regulations for inappropriate or harassing behavior.
+                                    </li>
+                                    <li>
+                                        Legal action for severe ethical violations including bribery, fraud, collusion, forgery, misrepresentation, deception, or unauthorized disclosure of confidential information.
+                                    </li>
+                                </ol>
+                            </div>
+                            <div class="accepterms-div show-div" style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox">
+                                    <input class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox" id="termsChkbx6" onchange="isChecked(this, 'sub6')">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+                                <input onclick="AcceptContinueWithTerms()" id="continue-terms-skip" type="button" name="next" class="next action-button continue-skipbtn confirmwithoutterms-btn" value="Continue without agreeing to Terms & Services" />
+
+                            </div>
+
+                            <input id="sub6" type="button" disabled="disabled" name="next" class="next action-button" value="Next" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Back" />
+
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h2 class="fs-title">Agreement Acknowledgement :</h2>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h2 class="steps">Step 8 - 8</h2>
+                                    </div>
+                                </div>
+                                <p style=" font-size: 18px; margin-bottom:10px;">
+                                    By signing this agreement, you further acknowledge and agree to the following :
+                                </p>
+                                <ol style="list-style: disc;font-size: 16px;margin-bottom:5px;">
+                                    <li>
+                                        Risebird maintains a high-quality standard for interviews; you agree to follow all official guidelines without exception.
+                                    </li>
+                                    <li>You shall not claim to represent Risebird or any of its clients.</li>
+                                    <li>
+                                        You shall not contact, solicit, or engage with Risebird clients or candidates outside the platform.
+                                    </li>
+                                    <li>
+                                        Your personal information will be kept confidential and used only for business purposes under this agreement.
+                                    </li>
+                                    <li>
+                                        Risebird is not liable for any third-party claims or losses resulting from actions taken in breach of this agreement.
+                                    </li>
+                                </ol>
+                                                                  <a class="agreement-policy"  target="_blank" title="Service Agreement for Interviewer Onboarding" href="https://risebirdportal.blob.core.windows.net/template/E-Service_Agreement_for_Interviewer_Onboarding.pdf">Click here to view the summary of overall Service Agreement for Interviewer Onbording on Risebird platform</a>
+
+                 <div class="accepterms-div show-div"  style="float:left;margin-top: 10px;">
+                                <label class="c-input c-checkbox" style="padding:0px;">
+                                    <input onclick="Acknowledge()" class="next action-button" style="width:40px;height:20px;float:left;margin: 5px 0px;" type="checkbox">
+                                    <span style="font-size: 17px;color: green;font-weight: 600;" class="c-indicator">I agree to the terms and conditions of the agreement.</span>
+                                </label>
+
+                            </div>
+                                <p style="clear:both">
+                                    By signing below, I explicitly confirm that I have thoroughly read, understood, and commit to abide by all the terms, responsibilities, and penalties as outlined in this agreement. I acknowledge my full liability for penalties and legal actions arising from any breaches herein.
+                                </p>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-12 text-right accepterms-div show-div">
+                                      <input class="confirmwithoutterms-btn next action-button continue-skipbtn"  onclick="AcceptContinueWithTerms()" style="position:relative;left:0px;margin:10px;"  type="button" name="next" value="Continue without agreeing to Terms & Services" />
+@*  <input onclick="Acknowledge()" type="button" name="next" class="next acknowledge action-button" value="Acknowledge" /> *@
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myintrestConfirmAccept" class="modal modal-bg">
+    <!-- Modal content -->
+
+
+    <div class="modal-dialog modal-lg" role="document" style="max-width:500px">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 0px 10px 10px 10px;">
+                <h5 class="modal-title">Agree to Continue </h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeConfirmAccept()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row ">
+
+                    <p style="line-height: 20px; padding: 0px 25px;color: #ba4b4b;font-weight:normal">The interviewer video-on policy are mandatory in nature. So this has be acknowledged widthin 15days to continue to take interview on the Risebird platform. Incase you are not willing to turn on your video during the interview then you are advised not to take interviews which is scheduled beyond 15 days. The relaxation for video-on policy is for 15 days only</p>
+                    <h1 style="font-size:17px;" class="text-center col-md-12"> Are you sure, you want to continue without Video-On Policy? </h1>
+
+                </div>
+                <div class="row">
+                    <div id="video-btn" class="col-md-12 text-center accepterms-div show-div">
+
+                        <input id="next-page-btn" onclick="InterviewerVideoConfirmationStatus(2)" name="next" style="text-transform:capitalize;font-size: 14px!important;" type="button" class="next action-button mdc-button mdc-button--raised mdc-ripple-upgraded" value="Yes, Confirm!">
+                        <input style="font-size:14px;padding: 6px 15px;" type="button" onclick="closeConfirmAccept()" id="hangUpButton" class="btn btn-fill btn-danger" value="Cancel">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div id="ContinueWithTerms" class="modal modal-bg">
+    <!-- Modal content -->
+
+
+    <div class="modal-dialog modal-lg" role="document" style="max-width:500px">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 0px 10px 10px 10px;">
+                <h5 class="modal-title">Agree to Continue </h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeContinueWithTerms()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row ">
+
+                    <p style="line-height: 20px; padding: 0px 25px;color: #ba4b4b;font-weight:normal">The terms & services are mandatory in nature. So this has be acknowledged widthin 15days to continue to take interview on the Risebird platform. Incase you are not willing to work with updated terms & services then you are not advised to take interviews which is scheduled beyond 15 days. The relaxation for terms & services is for 15 days only</p>
+                    <h1 style="font-size:17px;" class="text-center col-md-12"> Are you sure, you want to continue without Terms &  Services? </h1>
+
+                </div>
+                <div class="row">
+                    <div  class="col-md-12 text-center">
+
+                        <input onclick="InterviewerAcknowledgment('No')" name="next" style="text-transform:capitalize;font-size: 14px!important;" type="button" class="next action-button mdc-button mdc-button--raised mdc-ripple-upgraded" value="Yes, Continue!">
+                        <input style="font-size:14px;padding: 6px 15px;" type="button" onclick="closeContinueWithTerms()" id="hangUpButton" class="btn btn-fill btn-danger" value="Cancel">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="AcknowledgeSuccess" class="modal modal-bg">
+    <!-- Modal content -->
+
+
+    <div class="modal-dialog modal-lg" role="document" style="max-width:500px">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 0px 10px 10px 10px;">
+                <h5 class="modal-title">Acknowlegment </h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeAcknowledge()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row ">
+
+
+                    <fieldset id="last-step">
+                        <div class="form-card">
+
+                            <h2 class="purple-text text-center"><strong style="color:green">SUCCESS !</strong></h2> <br>
+                            <div class="row justify-content-center">
+                                <div class="col-3">
+                                    <img style="position: relative;top: -14px;" src="~/img/acknowledge-tick.png" class="fit-image">
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-md-12 text-center">
+                                    <h5 class="purple-text text-center" style="color: #7e7171; line-height:29px; margin: 0px 0px 20px 0px;">You Have Successfully Acknowledged the Onboarding Agreement</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+
+                        <input onclick="InterviewerAcknowledgment('yes')" name="next" style="text-transform:capitalize;font-size: 14px!important;margin-bottom:20px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="OK">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        var current_fs, next_fs, previous_fs; //fieldsets
+        var opacity;
+        var current = 1;
+        var steps = $("fieldset").length;
+
+        setProgressBar(current);
+
+        $(".next").click(function () {
+
+            current_fs = $(this).parent();
+            next_fs = $(this).parent().next();
+
+            //Add Class Active
+            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+            $("#progressbar li#confirm").eq($("fieldset").index(next_fs)).removeClass("active");
+            //show the next fieldset
+            next_fs.show();
+            //hide the current fieldset with style
+            current_fs.animate({ opacity: 0 }, {
+                step: function (now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    next_fs.css({ 'opacity': opacity });
+                },
+                duration: 500
+            });
+            setProgressBar(++current);
+        });
+
+        $(".previous").click(function () {
+
+            current_fs = $(this).parent();
+            previous_fs = $(this).parent().prev();
+
+            //Remove class active
+            $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+            //show the previous fieldset
+            previous_fs.show();
+
+            //hide the current fieldset with style
+            current_fs.animate({ opacity: 0 }, {
+                step: function (now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    previous_fs.css({ 'opacity': opacity });
+                },
+                duration: 500
+            });
+            setProgressBar(--current);
+        });
+
+        function setProgressBar(curStep) {
+            var percent = parseFloat(100 / steps) * curStep;
+            percent = percent.toFixed();
+            $(".progress-bar")
+                .css("width", percent + "%")
+        }
+
+        $(".submit").click(function () {
+            return false;
+        })
+
+
+    });
+</script>
+<script>
+    document.getElementById('termsChkbx').addEventListener('click', function (e) {
+        document.getElementById('sub').disabled = !e.target.checked;
+
+    });
+
+    document.getElementById('termsChkbx1').addEventListener('click', function (e) {
+        document.getElementById('sub1').disabled = !e.target.checked;
+
+    });
+    document.getElementById('termsChkbx2').addEventListener('click', function (e) {
+        document.getElementById('sub2').disabled = !e.target.checked;
+
+    });
+    document.getElementById('termsChkbx3').addEventListener('click', function (e) {
+        document.getElementById('sub3').disabled = !e.target.checked;
+
+    });
+    document.getElementById('termsChkbx4').addEventListener('click', function (e) {
+        document.getElementById('sub4').disabled = !e.target.checked;
+
+    });
+    document.getElementById('termsChkbx5').addEventListener('click', function (e) {
+        document.getElementById('sub5').disabled = !e.target.checked;
+
+    });
+    document.getElementById('termsChkbx6').addEventListener('click', function (e) {
+        document.getElementById('sub6').disabled = !e.target.checked;
+
+    });
+        document.getElementById('termsChkbx7').addEventListener('click', function (e) {
+        document.getElementById('sub7').disabled = !e.target.checked;
+
+    });
+    $(".acknowledge").click(function () {
+       // $('#last-step').show();
+        $("#progressbar li#confirm").eq($("fieldset").index(next_fs)).addClass("active");
+
+    })
+
+ 
+
+  
+</script>
+<script>
+     $("#next-page-btn").click(function () {
+            // $('#last-step').show();
+            $("#progressbar li#question").addClass("active");
+
+        })
+</script>
+<script>
+      
+  $(".confirmwithoutterms-btn").click(function () {
+            // $('#last-step').show();
+            $(".accepterms-div").addClass("show-div");
+           
+        })
+    </script>
+<script>
+    function InterviewerVideoConfirmationStatus(response) {
+              $.ajax({
+                    url: '/Interviewer/UpdateVideoConfirmationStatus',
+                    type: 'POST',
+                    data: { responsestatus: response },
+                    success: function (data) {
+                    document.getElementById("myintrestConfirmAccept").style.display = "none";
+                    document.getElementById("videos").style.display = "none";
+                    document.getElementById("questions").style.display = "block";
+                    document.getElementById("questions").style.opacity = "1";
+                    document.getElementById("video-btn").style.display = "block";
+                    document.getElementById("video-btn").style.opacity = "1";
+               }
+               });
+         }
+
+
+
+    function AcceptIntrest() {
+        var modal = document.getElementById("myintrestConfirmAccept");
+        modal.style.display = "block";
+        var modal1 = document.getElementById("continue-skip");
+        modal1.style.display = "block";
+   
+
+    }
+    function closeConfirmAccept() {
+        var modal = document.getElementById("myintrestConfirmAccept");
+        modal.style.display = "none";
+    }
+     function AcceptContinueWithTerms() {
+        var modal = document.getElementById("ContinueWithTerms");
+        modal.style.display = "block";
+  
+
+
+    }
+    function closeContinueWithTerms() {
+        var modal = document.getElementById("ContinueWithTerms");
+        modal.style.display = "none";
+    
+       
+    }
+
+    function Acknowledge() {
+        var modal = document.getElementById("AcknowledgeSuccess");
+        modal.style.display = "block";
+        var modal1 = document.getElementById("continue-skip");
+        modal1.style.display = "block";
+
+    }
+    function closeAcknowledge() {
+        var modal = document.getElementById("AcknowledgeSuccess");
+        modal.style.display = "none";
+    }
+
+    function InterviewerAcknowledgment(value) {
+        window.location.href = "/Interviewer/InterviewersOnboardingConfirmation?value="+value;
+    }
+
+
+</script>
+

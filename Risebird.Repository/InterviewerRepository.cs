@@ -3776,6 +3776,27 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewerAcknowledgementStatus(string loggedInUser, string value)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@value", value);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAcknowledgementStatus", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 
 }
