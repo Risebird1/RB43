@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.MicroService", "Ri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.Services", "Risebird.Services\Risebird.Services.csproj", "{F35A480B-51C2-44F4-B801-4754DFE816F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.AzureTimerFunctions", "Risebird.AzureTimerFunctions\Risebird.AzureTimerFunctions.csproj", "{C4B0CB49-CBE5-4EE1-993A-84600859B8AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.AzureTimerFunctions", "Risebird.AzureTimerFunctions\Risebird.AzureTimerFunctions.csproj", "{C4B0CB49-CBE5-4EE1-993A-84600859B8AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -29,7 +29,8 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  InterviewId int null,                
  interviewDate datetime null,      
  addedOn datetime null,      
- statusUpdatedAt datetime null      
+ statusUpdatedAt datetime null,
+ ClientHRAttemptContact varchar(150)
 );               
             
 DECLARE @TemporaryCandidateTableFinal TABLE (                              
@@ -40,7 +41,8 @@ DECLARE @TemporaryCandidateTableFinal TABLE (
  InterviewId int null,                
  interviewDate datetime null,      
  addedOn datetime null,      
- statusUpdatedAt datetime null      
+ statusUpdatedAt datetime null,
+ ClientHRAttemptContact varchar(150)
 );    
   
 ----Candidate Added Date            
@@ -60,7 +62,7 @@ begin
 if(@irfId!=0)             
 begin            
 INSERT INTO @TemporaryCandidateTableVariable             
-Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt             
+Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt,ca.ClientHRAttemptContact             
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId            
 join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
@@ -71,7 +73,7 @@ end
 else if(@jobId!='')             
 begin   
 INSERT INTO @TemporaryCandidateTableVariable             
-Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt             
+Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt,ca.ClientHRAttemptContact             
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId     
 join ProjectIRFMapping pim on IRF.id=pim.IRFId join Project po on pim.ProjectId=po.id  
 join UserList ul on ul.EmailId=im.candidateEmail            
@@ -83,7 +85,7 @@ end
 else            
 begin            
 INSERT INTO @TemporaryCandidateTableVariable             
-Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt             
+Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt,ca.ClientHRAttemptContact             
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId            
 join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
@@ -96,7 +98,7 @@ end
 else if(@irfId!=0)                
 begin            
 INSERT INTO @TemporaryCandidateTableVariable                
-Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt             
+Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt,ca.ClientHRAttemptContact             
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId            
 join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
@@ -107,7 +109,7 @@ end
 else if(@jobId!='')             
 begin   
 INSERT INTO @TemporaryCandidateTableVariable             
-Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt             
+Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate,la.addedOn,la.statusUpdatedAt,ca.ClientHRAttemptContact             
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId     
 join ProjectIRFMapping pim on IRF.id=pim.IRFId join Project po on pim.ProjectId=po.id  
 join UserList ul on ul.EmailId=im.candidateEmail            
@@ -154,7 +156,7 @@ ic.InterviewStatus, ic.InterviewerComment, ic.VideoLink, im.confirmationStatus, 
 ice.MeetingStatus as MeetingStatusTwo,ice.InterviewStatus as InterviewStatusTwo,          
 ice.InterviewerComment as InterviewerCommentTwo,      
 ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,tctv.addedOn,tctv.statusUpdatedAt,      
-Case When CandidateLatestStatus like '%FUTURESCHEDULE%' then 'SCHEDULED' else CandidateLatestStatus end as CandidateLatestStatus,Project.ProjectUniqueid as jobId,ic.AudioTranscriptFileLink     
+Case When CandidateLatestStatus like '%FUTURESCHEDULE%' then 'SCHEDULED' else CandidateLatestStatus end as CandidateLatestStatus,Project.ProjectUniqueid as jobId,ic.AudioTranscriptFileLink,im.CodeSnippet,im.CodeSnippetTwo,tctv.ClientHRAttemptContact     
 from @TemporaryCandidateTableVariable tctv                
 join InterviewMeetings im on im.id = tctv.InterviewId                
 join IRF on IRF.IRFId=im.IRFId                 
@@ -173,6 +175,5 @@ Select qd.InterviewId,qd.Comment,qd.SkillName,qd.SkillSet,qd.RatingId From Quest
 Select tsr.Interviewid,[LevelTech].Name as EvaluatedAt,tsr.SkillName,tsr.WeightageRequired,tsr.WeightageActual,tsr.SkillSet 
 From TechSkillReport tsr join @TemporaryCandidateTableVariable td on tsr.InterviewId=td.InterviewId 
 left join [LevelTech] on tsr.RequiredLevelId=[LevelTech].id
-END         
-  
+END   
 GO
