@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Web;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
@@ -317,9 +318,18 @@ namespace Risebird.Web.Controllers
             var response = new VoiceResponse();
             try
             {
+                //var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&candidateFirstName={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
 
-                //var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&jdTitle={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
-                var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&candidateFirstName={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
+                var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow" +
+                          $"?uniqueId={HttpUtility.UrlEncode(uniqueId)}" +
+                          $"&irfId={HttpUtility.UrlEncode(irfId.ToString())}" +
+                          $"&candidateFirstName={HttpUtility.UrlEncode(candidateFirstName)}" +
+                          $"&jdTitle={HttpUtility.UrlEncode(jdTitle)}" +
+                          $"&interviewId={HttpUtility.UrlEncode(interviewId.ToString())}" +
+                          $"&candidateId={HttpUtility.UrlEncode(candidateId.ToString())}" +
+                          $"&interviewDate={HttpUtility.UrlEncode(interviewDate.ToString())}" +
+                          $"&timeZoneValue={HttpUtility.UrlEncode(timeZoneValue)}";
+
                 var actionUri = new Uri(link);
                 var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);
 
@@ -330,7 +340,18 @@ namespace Risebird.Web.Controllers
                 {
 
                     response.Say("You did not press any key. Let me repeat the options.");
-                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}&retryCount={retryCount + 1}"));
+                    var redirectLink = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability" +
+                          $"?uniqueId={HttpUtility.UrlEncode(uniqueId)}" +
+                          $"&irfId={HttpUtility.UrlEncode(irfId.ToString())}" +
+                          $"&candidateFirstName={HttpUtility.UrlEncode(candidateFirstName)}" +
+                          $"&jdTitle={HttpUtility.UrlEncode(jdTitle)}" +
+                          $"&interviewId={HttpUtility.UrlEncode(interviewId.ToString())}" +
+                          $"&candidateId={HttpUtility.UrlEncode(candidateId.ToString())}" +
+                          $"&interviewDate={HttpUtility.UrlEncode(interviewDate.ToString())}" +
+                          $"&timeZoneValue={HttpUtility.UrlEncode(timeZoneValue)}" +
+                          $"&retryCount={HttpUtility.UrlEncode((retryCount + 1).ToString())}";
+                    //response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}&retryCount={retryCount + 1}"));
+                    response.Redirect(new Uri(redirectLink));
                 }
                 else
                 {
