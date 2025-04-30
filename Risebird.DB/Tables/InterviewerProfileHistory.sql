@@ -39,7 +39,8 @@ CREATE TABLE [dbo].[InterviewerProfileHistory](
 	[isVerified] [bit] NULL,
 	[CompanyName] [varchar](100) NULL,
 	[IsEmployed] [bit] NULL,
-	[EmploymentComment] [varchar](50) NULL)
+	[EmploymentComment] [varchar](50) NULL,
+	[AcknowledgementStatus] [varchar](5) NULL)
 	
 
 End
