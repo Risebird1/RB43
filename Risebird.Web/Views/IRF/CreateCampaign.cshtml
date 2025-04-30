@@ -374,6 +374,7 @@
         }
         @Html.HiddenFor(x => x.CampaignName)
         @Html.HiddenFor(x => x.AssessmentGroupName)
+        @Html.HiddenFor(x => x.id)
         @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
         {
             @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
