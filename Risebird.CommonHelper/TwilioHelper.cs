@@ -4,6 +4,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
 using System.Threading.Tasks;
+using System.Web;
 using Twilio;
 using Twilio.Clients;
 using Twilio.Exceptions;
@@ -448,8 +449,21 @@ namespace Risebird.CommonHelper
 
                 TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
                 jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
+                //uniqueId = "71F06F95-9081-4C06-99F1-237168EAC317";
+                //userPhoneNumber = "+918888571923";
 
-                var link = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
+                //var link = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&candidateFirstName={candidateFirstName}&jdTitle={jdTitle}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
+
+
+                var link = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability" +
+                          $"?uniqueId={HttpUtility.UrlEncode(uniqueId)}" +
+                          $"&irfId={HttpUtility.UrlEncode(irfId.ToString())}" +
+                          $"&candidateFirstName={HttpUtility.UrlEncode(candidateFirstName)}" +
+                          $"&jdTitle={HttpUtility.UrlEncode(jdTitle)}" +
+                          $"&interviewId={HttpUtility.UrlEncode(interviewId.ToString())}" +
+                          $"&candidateId={HttpUtility.UrlEncode(candidateId.ToString())}" +
+                          $"&interviewDate={HttpUtility.UrlEncode(interviewDate.ToString())}" +
+                          $"&timeZoneValue={HttpUtility.UrlEncode(timeZoneValue)}";
 
                 var url = new Uri(link);
 

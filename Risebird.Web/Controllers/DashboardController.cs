@@ -87,7 +87,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-                        await CandidateIVRCall();
+                        //await CandidateIVRCall();
                         //try
                         //{
                         //    //get transinterviewers for whom screening needs to be done
