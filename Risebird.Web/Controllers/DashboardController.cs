@@ -3385,7 +3385,8 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer") { 
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer")
+                    {
                         var model = await _dashboardService.GetTotalRedMarkeredInterviewers();
                         return View(model);
                     }
@@ -4472,7 +4473,9 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         ViewBag.Profile = profileName;
-                        var model = await _dashboardService.GetTotalInterviews();
+                        DateTime startdate =DateTime.Now.AddMonths(-1);
+                        DateTime enddate = DateTime.Now.AddDays(1);
+                        var model = await _dashboardService.GetTotalInterviews(startdate, enddate);
                         return View("TotalInterviews", model);
                     }
                     else

@@ -36,4 +36,27 @@
         public int TotalLessduration { get; set; }
         public string TranscriptVerdit { get; set; }
     }
+    public class ToalInterviewerInterviewDetails
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public int UserId { get; set; }
+        public string interviewer { get; set; }
+        public int TotalInterview { get; set; }
+        public int TotalCompletedMeetings { get; set; }
+        public int TotalSelectMeetings { get; set; }
+        public int TotalRejectMeetings { get; set; }
+        public string CompanyName { get; set; }
+        public bool IsEmployed { get; set; }
+        public bool Isavailable { get; set; }
+        public string NickName { get; set; }
+        public int RedMarker { get; set; }
+        public string AIVerdict { get; set; }
+        public string ResumeLink { get; set; }
+        public int TotalFuture { get; set; }
+        public int TranscriptVerdit { get; set; }
+        public int SkillChannelFutureAssignedInterview { get; set; }
+        public int TotalDeficitMeetings { get; set; }
+        public string VideoKYC { get; set; }
+    }
 }

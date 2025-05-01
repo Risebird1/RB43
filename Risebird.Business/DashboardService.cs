@@ -1207,11 +1207,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<PQIDetails>> GetTotalInterviews()
+        public async Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate, DateTime enddate)
         {
             try
             {
-                return await _dashboardRespository.GetTotalInterviews();
+                return await _dashboardRespository.GetTotalInterviews(startdate, enddate);
             }
             catch (Exception e)
             {

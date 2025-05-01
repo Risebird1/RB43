@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.PQIDetails>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ToalInterviewerInterviewDetails>
 @using Risebird.Entities.Data;
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Enum
@@ -52,76 +52,80 @@
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                  
+
                                                     <th>Interviewer</th>
-                                                    @* <th>Red Markers</th> *@
-                                                    <th>Skill Channel</th>
-                                                   @*  <th>JD Title</th>
-                                                    <th>Client HR</th>
-                                                    <th>Client</th> *@
-                                                    <th>Channel Owner</th>
+                                                    <th>Resume</th>
+                                                    <th>Company</th>
+                                                    <th>Employed</th>
+                                                    <th>Video KYC</th>
                                                     <th>Completed Interviews</th>
+                                                    <th>Total Interviews</th>
                                                     <th>Total Selected Interviews</th>
                                                     <th>Total Rejected Interviews</th>
                                                     <th>Transcript Verdict</th>
                                                     <th>Future Assigned Interviews</th>
-                                                    <th>Future SkillChannel Interviews</th>
-                                                   
+                                                    <th>Future Interviews</th>
+                                                    <th>Deficit Meetings</th>
+                                                    <th>Available</th>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                   
+
                                                     <th>Interviewer</th>
-                                                   @*  <th>Red Markers</th> *@
-                                                    <th>Skill Channel</th>
-                                                   @*  <th>JD Title</th>
-                                                    <th>Client HR</th>
-                                                    <th>Client</th> *@
-                                                    <th>Channel Owner</th>
+                                                    <th>Resume</th>
+                                                    <th>Company</th>
+                                                    <th>Employed</th>
+                                                    <th>Video KYC</th>
                                                     <th>Completed Interviews</th>
+                                                    <th>Total Interviews</th>
                                                     <th>Total Selected Interviews</th>
                                                     <th>Total Rejected Interviews</th>
-                                                    <th>Transcript Verdict</th> 
+                                                    <th>Transcript Verdict</th>
                                                     <th>Future Assigned Interviews</th>
-                                                    <th>Future SkillChannel Interviews</th>
-                                                   
+                                                    <th>Future Interviews</th>
+                                                    <th>Deficit Meetings</th>
+                                                    <th>Available</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @if (Model != null && Model.Count() > 0)
                                                 {
-                                                @foreach (var item in Model)
-                                                {
-                                                    <tr>
-                                                      
-                                                        <td>
-                                                            <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
-                                                        </td>
-                                                      @*  <td><c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer','@item.IRFId')">@item.RedMarker</c></td> *@
-                                                        <td>@item.IRFId</td>
-                                                        @* <td>@item.JDTiltle</td>
-                                                        <td>@item.Clienthr</td>
-                                                        <td>@item.Client</td> *@
-                                                            <td>@item.ChannelOwner</td>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
+                                                            </td>
+                                                            <td><a target="_blank" href="@item.ResumeLink">Resume</a></td>
+                                                            <td>@item.CompanyName</td>
+                                                            @if (item.IsEmployed)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                            <td>@item.VideoKYC</td>
                                                             <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a></td>
-
-
-                                                            <td>@item.TotalSelected</td>
-                                                            <td>@item.TotalRejected<td>
-                                                            
-                                                            @if (!string.IsNullOrWhiteSpace(item.TranscriptVerdit))
-                                                        {
-                                                                <td>@item.TranscriptVerdit</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        <td>@item.TotalFuture</td>
-                                                        <td>@item.TotalInterview</td>
-                                                       
-                                                    </tr>
-                                                }
+                                                            <td>@item.TotalInterview</td>
+                                                            <td>@item.TotalSelectMeetings</td>
+                                                            <td>@item.TotalRejectMeetings</td>
+                                                            <td>@item.TranscriptVerdit</td>
+                                                            <td>@item.SkillChannelFutureAssignedInterview</td>
+                                                            <td>@item.TotalFuture</td>
+                                                            <td>@item.TotalDeficitMeetings</td>
+                                                            @if (item.Isavailable)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                        </tr>
+                                                    }
                                                 }
                                             </tbody>
                                         </table>

@@ -2221,13 +2221,16 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<PQIDetails>> GetTotalInterviews()
+        public async Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate,DateTime enddate)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_TotalInterviewerInterviewDetails", null,
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", startdate);
+                    parameters.Add("@enddate", enddate);
+                    var result = await SqlMapper.QueryAsync<ToalInterviewerInterviewDetails>(con, "usp_TotalInterviewerInterviewDetails", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result?.ToList();
                 }
