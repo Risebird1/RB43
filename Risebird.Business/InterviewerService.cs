@@ -1810,5 +1810,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> AddInternalInterviewerToIRFPostPositiveVerdict(InterviewerDirectApplicationVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.AddInternalInterviewerToIRFPostPositiveVerdict(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<InterviewerExistsInSystemAndOrSkillChannelDTO> CheckIfInterviewerExistsInSystemAndOrSkillChannel(string emailId, int irfId)
+        {
+            try
+            {
+                return await _interviewerRepository.CheckIfInterviewerExistsInSystemAndOrSkillChannel(emailId, irfId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

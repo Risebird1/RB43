@@ -1,0 +1,216 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerDirectApplicationVM
+@using Risebird.Entities.Enum
+
+@{
+    ViewData["Title"] = "Apply";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+}
+
+@* <script>
+    var Header = "<a href='/Interviewer/Index'>Interviewers</a>&nbsp;/&nbsp;Add Interviewer";
+    $('#txtpageHeader').empty().html(Header);
+</script> *@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+
+
+    <div class="mt50">
+    </div>
+    <div class="content interviewerprofile client">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section interviewer">
+                        
+                        <div>
+                            @using (Html.BeginForm("FTApply", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return validateForm();" }))//checkEmailidExist()
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m.EncryptedIrfId)
+                                @Html.HiddenFor(m => m.id)
+                                @Html.HiddenFor(m => m.IRFId)
+                               
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        @* <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">(Please enter 10 digit mobile number without space, country code or special characters)</span>
+                                            </div>
+                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenght = "10" } })
+                                        </div> *@
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                            </div>
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        </div>
+                                        @* <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                            </div>
+                                            @Html.EditorFor(model => model.ReferredBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        </div> *@
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group" style="margin-top: -10px;">
+                                        <span class="desp-label control-label">
+                                            Upload Resume
+                                        </span>
+                                        @* <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div> *@
+
+
+                                    </div>
+
+                                    <div class="" id="uploadDiv">
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf" })
+                                    </div>
+                                </div>
+                                
+
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area">
+                                            <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+@* @if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+} *@
+<script>
+   
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+
+    }
+    
+</script>
+
+<script>
+    function checkEmailidExist() {
+        debugger;
+        if (validateForm()) {
+            var interviewer = $("#EmailId").val().trim();
+            $.ajax({
+                url: '/Interviewer/GetInterviwerExists',
+                type: 'POST',
+                async : false,
+                data: { 'interviewer': interviewer },
+                success: function (result) {
+                    if (result) {
+                        swal.fire(result);
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            });
+        }
+        else {
+            // Prevent form submission if validation fails
+            alert("Validation failed.");
+            return false;
+        }
+    }
+
+    // Function to validate phone number and email
+    function validateForm() {
+        //const phoneNumber = document.getElementById("Phone").value;
+        const emailId = document.getElementById("EmailId").value;
+
+        // Regular expression for 10-digit phone number without spaces or special characters
+        //const phoneRegex = /^[0-9]{10}$/;
+        // Regular expression for valid email format
+        const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+        let isValid = true;
+
+        // Validate phone number
+        // if (!phoneRegex.test(phoneNumber)) {
+        //     alert("Please enter a valid 10-digit mobile number without spaces, country code, or special characters.");
+        //     isValid = false;
+        // }
+
+        // Validate email
+        if (!emailRegex.test(emailId)) {
+            alert("Please enter a valid email address.");
+            isValid = false;
+        }
+        var fileInput = document.getElementById("ResumeFile");
+
+        // Check if a file has been selected
+        if (!(fileInput.files.length > 0)) {
+            alert("Resume File not selected. Please choose a file to upload.");
+            isValid = false;
+        } 
+
+        return isValid;
+    }
+</script>

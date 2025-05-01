@@ -54,8 +54,8 @@
             success: function (result) {
                 if (result != null) {
                     encodedUrl = result;
-                    let decodedUrl = decodeURIComponent(encodedUrl);
-                    $("#txtInterviewerApplicationLink").text(decodedUrl);
+                    //let decodedUrl = decodeURIComponent(encodedUrl);
+                    $("#txtInterviewerApplicationLink").text(encodedUrl);//decodedUrl
                 }
                 else {
                     swal.fire("Some error occured. Please try again!");
