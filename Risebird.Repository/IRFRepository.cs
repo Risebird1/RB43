@@ -7080,6 +7080,30 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<string> GetAssessmentGroupFromIRFId(int irfId) 
+        { 
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAssessmentGroupFromIRFId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails)
         {
             try

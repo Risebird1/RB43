@@ -12,7 +12,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string EmailId { get; set; }
 
-        [Required]
+        //[Required]
         public string Phone { get; set; }
         public string ResumeLink { get; set; }
         public string EncryptedIrfId { get; set; }
@@ -44,6 +44,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Referred By")]
         public string ReferredBy { get; set; }
         public string AcknowledgementStatus { get; set; }
+        public string ApplicationType { get; set; } //either internal or opentoall
+        public int AIAnalysisScore { get; set; } //either internal or opentoall
 
     }
 }
