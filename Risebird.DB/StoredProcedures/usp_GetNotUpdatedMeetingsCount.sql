@@ -21,14 +21,15 @@ declare @TechQCCount int =(Select count(id) from TechQualityDetails where isActi
     
 if(@Role='SeniorHR' or @Role = 'HR')--or @Role='SupportAdmin'                  
 BEGIN          
-declare @UnassignedInterviewsCount int = (select Count(distinct im.id) from InterviewMeetings im     
+declare @UnassignedInterviewsCount int = (select Count(distinct im.id) from InterviewMeetings im  
+      join InterviewComments ic on ic.Interviewid=im.id
              join IRF on im.IRFId=irf.IRFId     
                 join Client cl on irf.ClientId=cl.id     
     join SeniorHr sh on sh.Clientid=irf.ClientId     
     left join UserList ulsh on ulsh.id=sh.Userid     
     join UserList ul on ul.id= irf.RisebirdHr    
     join AssessmentGroup asg on asg.id = irf.AssessmentGroupId     
-    where ul.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )        
+    where ul.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and ic.MeetingStatus=2 and DATEDIFF(DAY, interviewDate, @currentdate)<1 )        
         
 declare @UnfilledMeetingStatusCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId                  
  left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id    
@@ -228,7 +229,7 @@ Else
 Begin    
 set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and Requester in('Interviewer','Client'))     
 End    
-set @UnassignedInterviewsCount  = (select Count(distinct im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )        
+set @UnassignedInterviewsCount  = (select Count(distinct im.id) from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id  where confirmationStatus=1 and interviewer is null and ic.MeetingStatus=2 and DATEDIFF(DAY, interviewDate, @currentdate)<1 )        
         
 set @UnfilledMeetingStatusCount = (select Count(distinct im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2
   
