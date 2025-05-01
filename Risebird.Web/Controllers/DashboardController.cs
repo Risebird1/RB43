@@ -4476,7 +4476,7 @@ namespace Risebird.Web.Controllers
                         DateTime startdate =DateTime.Now.AddMonths(-1);
                         DateTime enddate = DateTime.Now.AddDays(1);
                         var model = await _dashboardService.GetTotalInterviews(startdate, enddate);
-                        return View("TotalInterviews", model);
+                        return View(model);
                     }
                     else
                     {
