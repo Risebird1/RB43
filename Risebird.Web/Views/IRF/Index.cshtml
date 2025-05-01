@@ -425,11 +425,18 @@
                                                                     </button>
                                                                     <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Interviewers'' Application Url" style="width:25px!important;height:25px!important; background:#b1ba4eb8!important; border-color:#b1ba4eb8!important">
                                                                         <span onclick="javascript:CopyInterviewerApplicationLink('@item.id', '@item.IRFId');" title="Generate Interviewers'' Application Url">
-                                                                   <img style="position:relative;top:-1px;" src="~/img/generate-icon.png">
+                                                                        <img style="position:relative;top:-1px;" src="~/img/generate-icon.png">
 
                                                                         </span>
                                                                     </button>
 
+
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Internal Interviewers'' Application Url for SkillChannel" style="width:25px!important;height:25px!important; background:#b1ba4eb8!important; border-color:#b1ba4eb8!important">
+                                                                        <span onclick="javascript:CopyInternalInterviewerIRFApplicationLink('@item.id', '@item.IRFId');" title="Generate Internal Interviewers'' Application Url for SkillChannel">
+                                                                            <img style="position:relative;top:-1px;" src="~/img/generate-icon.png">
+
+                                                                        </span>
+                                                                    </button>
 
                                                                     @*  <button class="mdc-fab app-fab--absolute" aria-label="Search And Match Link" style="position:relative;top:0px;">
                                                         <span onclick="javascript:openEmbedUrlPopUp('@item.id','@item.IRFId', '@item.AffindaEmbedUrl', '@item.urlCreationTimeElapsed');" title="Search And Match Link">
@@ -1314,6 +1321,7 @@
 
 @await Html.PartialAsync("~/Views/Common/AffindaEmbedUrlModalPopUpPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_GenerateInterviewerApplicationUrl.cshtml")
+@await Html.PartialAsync("~/Views/Common/_GenerateInternalInterviewerIRFApplicationUrl.cshtml")
 
 <script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
 <script>

@@ -275,25 +275,7 @@ namespace Risebird.Web.Controllers
 
         public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
-            //using (HttpClient client = new HttpClient())
-            //{
-            //    // Download the PDF file as byte array
-            //    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
-
-            //    using (MemoryStream stream = new MemoryStream(pdfBytes))
-            //    {
-            //        using (PdfReader reader = new PdfReader(stream))
-            //        {
-            //            string text = "";
-            //            for (int i = 1; i <= reader.NumberOfPages; i++)
-            //            {
-            //                text += PdfTextExtractor.GetTextFromPage(reader, i) + "\n";
-            //            }
-            //            return text;
-            //        }
-            //    }
-            //}
-
+            
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -318,7 +300,7 @@ namespace Risebird.Web.Controllers
             {
                 var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
 
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
                 return null;
             }
