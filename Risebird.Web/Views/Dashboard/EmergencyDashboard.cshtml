@@ -2990,11 +2990,10 @@
     }
     function OpenRibbonDetails(actionstatus) {
         if ('@ViewBag.ProfileName' == "Quality Controller") {
-              window.open('/Dashboard/GetColdCandidatesList?returnBack=" + 1', '_blank');
             window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=" + 2;
         }
         else {
-            window.open('/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=" + 1', '_blank');
+            window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=" + 1;
 
         }
     }
