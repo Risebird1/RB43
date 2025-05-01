@@ -45,13 +45,14 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IIRFRepository _irfRepository;
+        private readonly ITwilioHelper _twilioHelper;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
-            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository)
+            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, ITwilioHelper twilioHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -68,6 +69,7 @@ namespace Risebird.Web.Controllers
             _candidateService = candidateService;
             _assistantServiceHelper = assistantServiceHelper;
             _irfRepository = irfRepository;
+            _twilioHelper = twilioHelper;
         }
 
         [Authorize]
@@ -85,7 +87,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-
+                        //await CandidateIVRCall();
                         //try
                         //{
                         //    //get transinterviewers for whom screening needs to be done
@@ -232,6 +234,42 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        //private async Task CandidateIVRCall()
+        //{
+        //    //var candidatemeetinglist = await _meetingService.FetchCandidateMeetingsForReminder();
+        //    string timeZoneValue = "IST";
+        //    //foreach (var item in candidatemeetinglist)
+        //    //{
+        //    //    try
+        //    //    {
+        //    //        timeZoneValue = "IST";
+
+        //    //        var primaryskill = item.PrimarySkillInvite;
+        //    //        string yesbutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=1&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        string nobutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=2&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        string rescheulebutton = "https://portal.risebird.io/Interview/CandidateRescheduleMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        string needcleritybutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=4&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+
+        //    //        if (!string.IsNullOrWhiteSpace(item.TimeZonesValue)
+        //    //            && item.TimeZoneoffset.HasValue
+        //    //            && !item.TimeZonesValue.Contains("Chennai"))
+        //    //        {
+        //    //            timeZoneValue = item.TimeZonesValue.Split(")").ElementAtOrDefault(1);
+
+        //    //            item.interviewDate = item.interviewDate.AddMinutes(-(330 + item.TimeZoneoffset.Value));
+
+        //    //        }
+
+        //    //        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.FirstName, item.uniqueid, item.Irfid, item.PrimarySkillInvite, item.Interviewid, item.candidateid, item.interviewDate, item.TimeZonesValue);
+
+        //    //    }
+        //    //    catch (Exception ex)
+        //    //    {
+        //    //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    //    }
+        //    //}
+        //    await _twilioHelper.MakeIVRCallForCandidateMeetingReminder("+918888571923", "Harshit", string.Empty, 16323, "expertise", 427827, 0, DateTime.Now, timeZoneValue);
+        //}
         public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
 

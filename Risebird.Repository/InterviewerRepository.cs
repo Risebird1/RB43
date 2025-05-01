@@ -3797,6 +3797,59 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> AddInternalInterviewerToIRFPostPositiveVerdict(InterviewerDirectApplicationVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", model.EmailId);
+                    parameters.Add("@Phone", model.Phone);
+                    parameters.Add("@ResumeLink", model.ResumeLink);
+                    parameters.Add("@IRFId", model.IRFId);
+                    parameters.Add("@OpenAIScreeningResponse", model.OpenAIResponse);
+                    parameters.Add("@verdict", model.AIVerdict);
+                    parameters.Add("@score", model.AIAnalysisScore);
+                    parameters.Add("@ReferredBy", model.ReferredBy);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_AddInternalInterviewerToIRFPostPositiveVerdict", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<InterviewerExistsInSystemAndOrSkillChannelDTO> CheckIfInterviewerExistsInSystemAndOrSkillChannel(string emailId, int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailID", emailId);
+                dynamicParameters.Add("@irfId", irfId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<InterviewerExistsInSystemAndOrSkillChannelDTO>(con, "usp_CheckIfInterviewerExistsInSystemAndOrSkillChannel", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
     }
 
 }

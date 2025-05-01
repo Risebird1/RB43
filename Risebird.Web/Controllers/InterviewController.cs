@@ -9179,7 +9179,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "SupportAdmin" && emailid == "tanishka_gupta@risebird.io")
+                    if (profileName == "SupportAdmin" && emailid == "shivani_laad@risebird.io") //"tanishka_gupta@risebird.io"
                     {
                         var result = await _meetingService.DeleteQuestionsDiscussedFromReport(interviewId);
                         return Json(result);

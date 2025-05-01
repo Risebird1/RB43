@@ -4,6 +4,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
+using System.Web;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
@@ -309,6 +310,7 @@ namespace Risebird.Web.Controllers
             var response = new VoiceResponse();
             try
             {
+                //var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&candidateFirstName={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
 
                 //var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&jdTitle={jdTitle}&jdTitle={candidateFirstName}&interviewId={interviewId}&candidateId={candidateId}&interviewDate={interviewDate}&timeZoneValue={timeZoneValue}";
                 var link = $"https://portal.risebird.io/TwilioVoice/CandidateInterviewAvailabilityShow?uniqueId={uniqueId}&irfId={irfId}&interviewId={interviewId}&candidateId={candidateId}";
