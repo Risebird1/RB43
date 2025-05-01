@@ -285,5 +285,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetVideoConsentForm(int irfid);
         Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName);
         Task<bool> UpdateNewPriority(int irfid, int PriorityLevel);
+        Task<string> GetAssessmentGroupFromIRFId(int irfId);
     }
 }

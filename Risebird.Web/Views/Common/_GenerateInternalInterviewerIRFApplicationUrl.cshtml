@@ -1,0 +1,85 @@
+﻿<div id="CopyInternalInterviewerIRFApplicationLinkModal" class="modal modal-bg" style="z-index:199;">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="height:auto">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="id_internalInterviewerIRFApplicationModal"> Internal Interviewer Application Url Link </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCopyInternalInterviewerIRFApplicationUrlLinkModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Enrollment Link:  <b id="txtInternalInterviewerIRFApplicationLink"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtInternalInterviewerIRFApplicationLink')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text_InternalInterviewerIRFApplicationLink" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCopyInternalInterviewerIRFApplicationUrlLinkModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // function openHMLink(irfId) {
+    //     var currentPort = window.location.port;
+    //     var url = window.location.protocol + '//' + window.location.hostname + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + irfId;
+    //     window.open(url, '_blank');
+    // }
+    function CopyInternalInterviewerIRFApplicationLink(irfId, irfName) {
+        debugger;
+        var modal = document.getElementById("CopyInternalInterviewerIRFApplicationLinkModal");
+        modal.style.display = "block";
+        $("#txtInternalInterviewerIRFApplicationLink").text('');
+        $("#id_internalInterviewerIRFApplicationModal").text('');
+        $("#id_internalInterviewerIRFApplicationModal").text('Interviewer Application Url Link : ' + irfName)
+        var link = '';
+        $.ajax({
+            url: '/IRF/GenerateInternalInterviewerApplicationLink',
+            type: 'POST',
+            data: { 'irfId': irfId },
+            success: function (result) {
+                if (result != null) {
+                    encodedUrl = result;
+                    debugger;
+                    //let decodedUrl = decodeURIComponent(encodedUrl);
+                    $("#txtInternalInterviewerIRFApplicationLink").text(encodedUrl);//decodedUrl
+                }
+                else {
+                    swal.fire("Some error occured. Please try again!");
+                }
+            }
+        });
+        
+    }
+    function closeCopyInternalInterviewerIRFApplicationUrlLinkModel() {
+        var modal = document.getElementById("CopyInternalInterviewerIRFApplicationLinkModal");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        if (element == '#txtInternalInterviewerIRFApplicationLink') {
+            $('#special_text_InternalInterviewerIRFApplicationLink').text('Copied');
+        }
+        else {
+            $('#special_text').text('Copied');
+        }
+    }
+</script>
