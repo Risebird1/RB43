@@ -1206,5 +1206,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<PQIDetails>> GetTotalInterviews()
+        {
+            try
+            {
+                return await _dashboardRespository.GetTotalInterviews();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

@@ -91,6 +91,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList();
         Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers();
         Task<IEnumerable<PQIDetails>> GetTotalRedMarkeredInterviewers();
+        Task<IEnumerable<PQIDetails>> GetTotalInterviews();
         Task<IEnumerable<Meeting>> GetPendingAITranscriptAnalysis();
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdict(DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdictInterviewer(string interviewer, string Irfid);

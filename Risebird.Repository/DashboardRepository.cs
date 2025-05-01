@@ -2220,5 +2220,29 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<PQIDetails>> GetTotalInterviews()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_TotalInterviewerInterviewDetails", null,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
