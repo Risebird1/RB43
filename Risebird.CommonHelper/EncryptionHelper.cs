@@ -516,5 +516,81 @@ namespace Risebird.CommonHelper
             }
         }
         #endregion
+
+        #region SecurityEncryptionandDecryptionOfString
+        public async Task<string> EncryptStringValue(string val)
+        {
+            try
+            {
+                using (Aes aesAlg = Aes.Create())
+                {
+                    aesAlg.Key = _byteKey;
+                    aesAlg.GenerateIV(); // Generate a new IV for each encryption
+
+                    ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                    using (MemoryStream msEncrypt = new MemoryStream())
+                    {
+                        // Prepend the IV
+                        msEncrypt.Write(aesAlg.IV, 0, aesAlg.IV.Length);
+
+                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            // Write the integer to the crypto stream
+                            await swEncrypt.WriteAsync(val);
+                        }
+                        var _encriptvalue = Convert.ToBase64String(msEncrypt.ToArray());
+                        _encriptvalue = _encriptvalue.Replace("+", "_");
+                        return _encriptvalue;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+        public async Task<string> DecryptStringValue(string encryptedId)
+        {
+            try
+            {
+                encryptedId = encryptedId.Replace("_", "+");
+                byte[] fullCipher = Convert.FromBase64String(encryptedId);
+
+                using (Aes aesAlg = Aes.Create())
+                {
+                    aesAlg.Key = _byteKey;
+                    // Extract the IV (the first 16 bytes)
+                    byte[] iv = new byte[16];
+                    Array.Copy(fullCipher, 0, iv, 0, iv.Length);
+                    aesAlg.IV = iv;
+
+                    // Extract the cipher text (remaining bytes after IV)
+                    byte[] cipherText = new byte[fullCipher.Length - iv.Length];
+                    Array.Copy(fullCipher, iv.Length, cipherText, 0, cipherText.Length);
+
+                    ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                    using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                    {
+                        // Read the decrypted integer from the stream
+                        string decryptedData = await srDecrypt.ReadToEndAsync();
+                        return decryptedData;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        #endregion
     }
 }
