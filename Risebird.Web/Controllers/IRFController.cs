@@ -28,6 +28,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList.Extensions;
@@ -10505,11 +10506,51 @@ namespace Risebird.Web.Controllers
 
                     if (irfId > 0)
                     {
-                        //var encryptedId = await _encryptionHelper.EncryptInteger(irfId);
+                        var encryptedId = await _encryptionHelper.EncryptStringValue(irfId.ToString());
+                        
+                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + HttpUtility.UrlEncode(encryptedId);
+                        //var url = Url.Action("Apply", "Interviewer",
+                        //        new { id = irfId },
+                        //        Request.Scheme);
+                        return Json(url);
+                    }
+                    else
+                    {
+                        return Json(null);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Some error occured. Please try again!");
+                return Json(null);
+            }
+        }
+
+
+        //irfLink for interviewers who are already a part of the system
+        [HttpPost]
+        public async Task<IActionResult> GenerateInternalInterviewerApplicationLink(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (irfId > 0)
+                    {
+                        var encryptedId = await _encryptionHelper.EncryptStringValue(irfId.ToString());
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = encryptedId },
                         //        Request.Scheme);
-                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + irfId.ToString();
+                        //var url = "https://portal.risebird.io/Interviewer/FTApply?id=" + irfId.ToString();
+
+                        var url = "https://portal.risebird.io/Interviewer/FTApply?id=" + HttpUtility.UrlEncode(encryptedId);
                         //var url = Url.Action("Apply", "Interviewer",
                         //        new { id = irfId },
                         //        Request.Scheme);

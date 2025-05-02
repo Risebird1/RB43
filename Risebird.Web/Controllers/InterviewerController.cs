@@ -22,6 +22,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -53,6 +54,8 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
         ISkillService skillService, IProfileService profileService,
@@ -61,7 +64,8 @@ namespace Risebird.Web.Controllers
         INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository,
         IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService,
         IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper,
-        IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper)
+        IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper,
+        IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper)
 
         {
             _interviewerService = interviewerService;
@@ -85,6 +89,8 @@ namespace Risebird.Web.Controllers
             _sasUrlHelper = sasUrlHelper;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _encryptionHelper = encryptionHelper;
+            _assistantServiceHelper = assistantServiceHelper;
+            _pdfReaderHelper = pdfReaderHelper;
         }
 
 
@@ -4312,7 +4318,8 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
-                    irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                    irfId = Convert.ToInt32((await _encryptionHelper.DecryptStringValue(decodedEncryptedId)));
+
                 }
 
                 //dec = dec.Replace(" ", "+");
@@ -4443,6 +4450,201 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Something's wrong. Please try again later.");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FTApply(string id, string upt = null)//, int irf
+        {
+            //check link expiry befire hitting db
+
+            try
+            {
+                int resultId;
+                int? irfId = new int?();
+                // Try to convert the string to an integer
+                bool success = int.TryParse(id, out resultId);
+                string decodedEncryptedId = string.Empty;
+                // Check if the conversion was successful
+                if (success)
+                {
+                    irfId = resultId;
+                }
+                else
+                {
+                    decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                    //irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                    irfId = Convert.ToInt32((await _encryptionHelper.DecryptStringValue(decodedEncryptedId)));
+                }
+
+                //dec = dec.Replace(" ", "+");
+                //string decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                //var irfId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                //var irfId = id;
+                if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
+                {
+                    //first check if the irf id is valid
+                    bool isValid = true;
+                    if (isValid)
+                    {
+                        return View(new InterviewerDirectApplicationVM { IRFId = irfId.Value, EncryptedIrfId = decodedEncryptedId });
+
+                    }
+                    else
+                    {
+                        return Json("Invalid");
+                    }
+
+                }
+                else
+                {
+                    return Json("Bad Request!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Something's wrong. Please try again later.");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FTApply(InterviewerDirectApplicationVM model)//, int irf
+        {
+            try
+            {
+
+                //first check if this interviewer is already present in the transInterviewer table, it could be either a yes or a no verdict
+                var existenceCheck = await _interviewerService.CheckIfInterviewerExistsInSystemAndOrSkillChannel(model.EmailId, model.IRFId);
+                if(existenceCheck.IsExistsInSystem && !existenceCheck.AlreadyExistsInSkillChannel)
+                {
+                    if (model.ResumeFile != null)
+                    {
+                        string uploadedFileURL = string.Empty;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+
+                            await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            model.ResumeLink = uploadedFileURL;
+                        }
+
+
+                    }
+
+                    int? irfId = model.IRFId;
+                    //var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
+                    //var irfId = model.EncryptedIrfId;
+                    if (irfId.HasValue && irfId.Value > 0 && !string.IsNullOrEmpty(model.ResumeLink))//!string.IsNullOrEmpty(irfId)
+                    {
+                        //model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
+                        model.AssessmentGroup = await _irfService.GetAssessmentGroupFromIRFId(model.IRFId);
+
+                        //first screen the interviewer's resume
+                        var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(model.ResumeLink);
+                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, model.AssessmentGroup);
+
+                        bool saveOperationResult = true;
+                        var aiAnalysisModel = new InterviewerResumeFitmentAnalysisSchema();
+                        if (response != null)
+                        {
+                            aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            if (aiAnalysisModel != null)
+                            {
+                                saveOperationResult = await _interviewerService.AddInternalInterviewerToIRFPostPositiveVerdict(new InterviewerDirectApplicationVM { EmailId = model.EmailId, IRFId = model.IRFId, OpenAIResponse = aiAnalysisModel.completeFitmentAnalysis, AIVerdict = aiAnalysisModel.verdict, AIAnalysisScore = aiAnalysisModel.fitmentScore, ResumeLink = model.ResumeLink });//, irf
+                                if (saveOperationResult)
+                                {
+                                    if (aiAnalysisModel.verdict.ToLower() == "yes")
+                                    {
+                                        //_notificationHelper.SendUnassignedInterviewsNotifications();
+
+                                        var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", model.IRFId);
+                                        foreach (var item in _AllInterviewerInterview.Where(x => x.EmailId == model.EmailId))
+                                        {
+                                            if (!string.IsNullOrEmpty(item.EmailId))
+                                            {
+                                                string sendreporturl = string.Empty;
+                                                if (string.IsNullOrEmpty(item.uniqueid))
+                                                {
+                                                    Guid uniqueid = Guid.NewGuid();
+                                                    var _uniqueid = await _clientService.PublicInterviewerUrlSave(item.EmailId, uniqueid.ToString());
+                                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
+                                                    if (!string.IsNullOrEmpty(_uniqueid))
+                                                    {
+                                                        sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + item.uniqueid;
+                                                }
+                                                try
+                                                {
+                                                    //Email Message Send
+                                                    Mail _mail1 = new Mail
+                                                    {
+                                                        TO = item.EmailId,
+                                                        CC = "talent@risebird.io",
+                                                        Subject = "New interviews have come up! Please assign."
+                                                    };
+                                                    var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, irfId);
+                                                    //What's App Message Send
+                                                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                                    _whatsAppVM.Emailid = item.EmailId;
+                                                    _whatsAppVM.MessageValue = item.Total.ToString();
+                                                    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
+                                                    _whatsAppVM.Event = "Interviewer Common Interview";
+                                                    _whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
+                                                    await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                }
+                                            }
+
+                                            return Json("Your profile matches the requirement. You will be recieving an invitation to assign open interviews over mail, shortly. Thankyou!");
+
+                                        }
+                                    }
+                                    else if (aiAnalysisModel.verdict.ToLower() == "no")
+                                    {
+                                        return Json("Your interest has been recorded. We will get back to you shortly. Thankyou!");
+                                    }
+                                }
+                                else
+                                {
+                                    return Json("Oops! An error occured. Please try again later.");
+                                }
+                                
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        return Json("Unexpected Error! Please try later.");
+                    }
+                }
+                else
+                {
+                    return Json("Not Applicable");
+                }
+
+                return Json("An unexpected error occured. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Something went wrong. Please try again later.");
             }
 
         }

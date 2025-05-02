@@ -1206,5 +1206,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate, DateTime enddate)
+        {
+            try
+            {
+                return await _dashboardRespository.GetTotalInterviews(startdate, enddate);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
