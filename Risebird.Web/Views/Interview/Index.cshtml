@@ -1837,23 +1837,26 @@
                 <div class="row ">
                     <fieldset>
                         <div class="form-card text-center">
-                           <h2 style="color: green;font-size: 18px;margin: 15px 0px 10px 0px;">Are you sure? You want to cancel the interviews </h2>
-                           <h3 style="margin-bottom:10px;">Give reasons for cancellation of the interview </h3>
+                           <h2 style="margin: 15px 0px 10px 0px;color: #d52a2a;font-weight: 700;">Are you sure? You want to cancel the interviews </h2>
+                           <h3 style="margin-bottom:5px;">Give reasons for cancellation of the interview </h3>
                             <div class="row justify-content-center">
                                 <div class="col-md-12" >
                                     <div class="custom-select" style="margin: 15px 0px 0px 0px;">
                                                     @* @Html.DropDownListFor(model => model.MeetingStatusStatusDesc, new List<SelectListItem>{
-                                                new SelectListItem{Value="0",Text="0"},
-                                                new SelectListItem{Value="10",Text="10%"},
-                                                new SelectListItem{Value="15",Text="15%"},
-                                                new SelectListItem{Value="20",Text="20%"}},
+                                                new SelectListItem{Value="0",Text=""},
+                                                new SelectListItem{Value="1",Text=""},
+                                                new SelectListItem{Value="2",Text=""},
+                                                new SelectListItem{Value="3",Text=""}},
                                                              new { @class = "pull-left", @style = "width:200px;" }) *@
 
-                                                             <select>
-                                                    <option> Interviewer unassigned, interviewer not available</option>
-                                                     <option>Interview personal issues, interviewer technical issues</option>
+                                                    <select>
+                                                    <option> Interviewer unassigned </option>
+                                                    <option>Interviewer not available</option>
+                                                     <option>Interview personal issues</option>
+                                                      <option>Interviewer technical issues</option>
                                                      <option>Candidate asked to cancel</option>
-                                                     <option>Client asked to cancel, candidate unresponsive</option>
+                                                     <option>Client asked to cancel</option>
+                                                     <option>Candidate unresponsive</option>
                                                 </select>
                                                 </div> 
                                 </div>
@@ -1864,7 +1867,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
 
-                        <button type="button" name="next" style="text-transform:capitalize;font-size: 14px!important;margin-bottom: 10px;width: 100px;"  class="mdc-button mdc-button--raised mdc-ripple-upgraded">Save</button>
+                        <button type="button" name="next" style="text-transform:capitalize;font-size: 14px!important;margin-bottom: 10px;width: 100px;margin-top:15px;height: 40px!important;font-size: 15px!important;"  class="mdc-button mdc-button--raised mdc-ripple-upgraded">Save</button>
                     </div>
                 </div>
             </div>
