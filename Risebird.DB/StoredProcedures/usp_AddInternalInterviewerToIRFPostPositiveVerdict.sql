@@ -29,8 +29,8 @@ begin try
 	if exists(select top 1 id from UserList where EmailId = @EmailId)
 	Begin
 		declare @userId int = (select top 1 id from UserList where EmailId = @EmailId)
-		declare @rate int, @InterviewerProfileId int
-
+		declare @rate int, @InterviewerProfileId int, @assessmentGroupId int
+		set @assessmentGroupId = (select AssessmentGroupId from IRF where id =@IRFId)
 		select @InterviewerProfileId=(select id from InterviewerProfile where UserId= @userId) 
 		set @rate =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @IRFId) 
 				and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @IRFId)
@@ -41,6 +41,38 @@ begin try
 			insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
 			values (@IRFId, @InterviewerProfileId, @userId, 1, 1, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
 		End
+
+
+		DECLARE @existingList VARCHAR(MAX);
+
+    -- Get current comma-separated string
+    SELECT @existingList = AssessmentGroupId
+    FROM InterviewerProfile
+    WHERE userId = @userId;
+
+    -- If @assessmentGroupId is NOT in the list
+    IF NOT EXISTS (
+        SELECT 1
+        FROM STRING_SPLIT(@existingList, ',')
+        WHERE TRIM(value) = @assessmentGroupId
+    )
+    BEGIN
+        -- Handle null or empty list
+        IF @existingList IS NULL OR LTRIM(RTRIM(@existingList)) = ''
+        BEGIN
+            SET @existingList = @assessmentGroupId;
+        END
+        ELSE
+        BEGIN
+            SET @existingList = @existingList + ',' + @assessmentGroupId;
+        END
+
+        -- Update the table
+        UPDATE InterviewerProfile
+        SET AssessmentGroupId = @existingList
+        WHERE userId = @userId;
+    END
+
 	End
 	
 
