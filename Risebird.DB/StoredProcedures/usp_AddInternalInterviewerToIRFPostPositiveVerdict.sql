@@ -42,6 +42,9 @@ begin try
 			values (@IRFId, @InterviewerProfileId, @userId, 1, 1, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
 		End
 
+		UPDATE InterviewerProfile
+        SET ResumeLink = @ResumeLink
+        WHERE userId = @userId
 
 		DECLARE @existingList VARCHAR(MAX);
 
