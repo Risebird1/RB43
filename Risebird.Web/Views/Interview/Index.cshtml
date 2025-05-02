@@ -746,7 +746,9 @@
                                                                         }
                                                                         @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                         {
-                                                                            <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+@*  <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>*@ 
+                                                                        <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterview()" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+
                                                                         }
                                                                         @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                         {
@@ -1808,6 +1810,70 @@
         </div>
     </div>
 </div>
+<div id="InterviewCancelation" class="modal modal-bg">
+    <!-- Modal content -->
+
+
+    <div class="modal-dialog modal-lg" role="document" style="max-width:500px">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <img class="icons-dash" src="/img/cancel-int.png" style="top:6px;left:0px;">
+
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Cancel Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeCancelInterview()" aria-hidden="true" style="cursor:pointer;">×</span>
+            </button>
+            
+            <div class="modal-body">
+                <div class="row ">
+                    <fieldset>
+                        <div class="form-card text-center">
+                           <h2 style="margin: 15px 0px 10px 0px;color: #d52a2a;font-weight: 700;">Are you sure? You want to cancel the interviews </h2>
+                           <h3 style="margin-bottom:5px;">Give reasons for cancellation of the interview </h3>
+                            <div class="row justify-content-center">
+                                <div class="col-md-12" >
+                                    <div class="custom-select" style="margin: 15px 0px 0px 0px;">
+                                                    @* @Html.DropDownListFor(model => model.MeetingStatusStatusDesc, new List<SelectListItem>{
+                                                new SelectListItem{Value="0",Text=""},
+                                                new SelectListItem{Value="1",Text=""},
+                                                new SelectListItem{Value="2",Text=""},
+                                                new SelectListItem{Value="3",Text=""}},
+                                                             new { @class = "pull-left", @style = "width:200px;" }) *@
+
+                                                    <select>
+                                                    <option> Interviewer unassigned </option>
+                                                    <option>Interviewer not available</option>
+                                                     <option>Interview personal issues</option>
+                                                      <option>Interviewer technical issues</option>
+                                                     <option>Candidate asked to cancel</option>
+                                                     <option>Client asked to cancel</option>
+                                                     <option>Candidate unresponsive</option>
+                                                </select>
+                                                </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+
+                        <button type="button" name="next" style="text-transform:capitalize;font-size: 14px!important;margin-bottom: 10px;width: 100px;margin-top:15px;height: 40px!important;font-size: 15px!important;"  class="mdc-button mdc-button--raised mdc-ripple-upgraded">Save</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
@@ -2505,6 +2571,17 @@
             }
         });
     }
+        function CancelInterview() {
+    var modal = document.getElementById("InterviewCancelation");
+    modal.style.display = "block";
+    
+
+}
+function closeCancelInterview() {
+    var modal = document.getElementById("InterviewCancelation");
+    modal.style.display = "none";
+}
+
 </script>
 
 <script>
