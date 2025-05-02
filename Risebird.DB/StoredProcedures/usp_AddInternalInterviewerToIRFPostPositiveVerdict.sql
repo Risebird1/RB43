@@ -29,7 +29,7 @@ begin try
 	if exists(select top 1 id from UserList where EmailId = @EmailId)
 	Begin
 		declare @userId int = (select top 1 id from UserList where EmailId = @EmailId)
-		declare @rate int, @InterviewerProfileId int, @assessmentGroupId int
+		declare @rate int, @InterviewerProfileId int, @assessmentGroupId varchar(100)
 		set @assessmentGroupId = (select AssessmentGroupId from IRF where id =@IRFId)
 		select @InterviewerProfileId=(select id from InterviewerProfile where UserId= @userId) 
 		set @rate =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @IRFId) 
@@ -42,6 +42,9 @@ begin try
 			values (@IRFId, @InterviewerProfileId, @userId, 1, 1, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
 		End
 
+		UPDATE InterviewerProfile
+        SET ResumeLink = @ResumeLink
+        WHERE userId = @userId
 
 		DECLARE @existingList VARCHAR(MAX);
 

@@ -4567,7 +4567,7 @@ namespace Risebird.Web.Controllers
                                         //_notificationHelper.SendUnassignedInterviewsNotifications();
 
                                         var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", model.IRFId);
-                                        foreach (var item in _AllInterviewerInterview.Where(x => x.EmailId == model.EmailId))
+                                        foreach (var item in _AllInterviewerInterview?.Where(x => x.EmailId == model.EmailId))
                                         {
                                             if (!string.IsNullOrEmpty(item.EmailId))
                                             {
