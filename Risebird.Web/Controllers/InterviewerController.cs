@@ -22,6 +22,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -4564,8 +4565,55 @@ namespace Risebird.Web.Controllers
                                     if (aiAnalysisModel.verdict.ToLower() == "yes")
                                     {
                                         //_notificationHelper.SendUnassignedInterviewsNotifications();
-                                        return Json("Your profile matches the requirement. You will be recieving an invitation to assign open interviews over mail, shortly. Thankyou!");
 
+                                        var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", model.IRFId);
+                                        foreach (var item in _AllInterviewerInterview.Where(x => x.EmailId == model.EmailId))
+                                        {
+                                            if (!string.IsNullOrEmpty(item.EmailId))
+                                            {
+                                                string sendreporturl = string.Empty;
+                                                if (string.IsNullOrEmpty(item.uniqueid))
+                                                {
+                                                    Guid uniqueid = Guid.NewGuid();
+                                                    var _uniqueid = await _clientService.PublicInterviewerUrlSave(item.EmailId, uniqueid.ToString());
+                                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
+                                                    if (!string.IsNullOrEmpty(_uniqueid))
+                                                    {
+                                                        sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + item.uniqueid;
+                                                }
+                                                try
+                                                {
+                                                    //Email Message Send
+                                                    Mail _mail1 = new Mail
+                                                    {
+                                                        TO = item.EmailId,
+                                                        CC = "talent@risebird.io",
+                                                        Subject = "New interviews have come up! Please assign."
+                                                    };
+                                                    var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, irfId);
+                                                    //What's App Message Send
+                                                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                                    _whatsAppVM.Emailid = item.EmailId;
+                                                    _whatsAppVM.MessageValue = item.Total.ToString();
+                                                    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
+                                                    _whatsAppVM.Event = "Interviewer Common Interview";
+                                                    _whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
+                                                    await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                }
+                                            }
+
+                                            return Json("Your profile matches the requirement. You will be recieving an invitation to assign open interviews over mail, shortly. Thankyou!");
+
+                                        }
                                     }
                                     else if (aiAnalysisModel.verdict.ToLower() == "no")
                                     {

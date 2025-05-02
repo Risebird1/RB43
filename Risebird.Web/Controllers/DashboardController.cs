@@ -234,42 +234,42 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        private async Task CandidateIVRCall()
-        {
-            //var candidatemeetinglist = await _meetingService.FetchCandidateMeetingsForReminder();
-            string timeZoneValue = "IST";
-            //foreach (var item in candidatemeetinglist)
-            //{
-            //    try
-            //    {
-            //        timeZoneValue = "IST";
+        //private async Task CandidateIVRCall()
+        //{
+        //    //var candidatemeetinglist = await _meetingService.FetchCandidateMeetingsForReminder();
+        //    string timeZoneValue = "IST";
+        //    //foreach (var item in candidatemeetinglist)
+        //    //{
+        //    //    try
+        //    //    {
+        //    //        timeZoneValue = "IST";
 
-            //        var primaryskill = item.PrimarySkillInvite;
-            //        string yesbutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=1&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
-            //        string nobutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=2&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
-            //        string rescheulebutton = "https://portal.risebird.io/Interview/CandidateRescheduleMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
-            //        string needcleritybutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=4&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        var primaryskill = item.PrimarySkillInvite;
+        //    //        string yesbutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=1&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        string nobutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=2&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        string rescheulebutton = "https://portal.risebird.io/Interview/CandidateRescheduleMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+        //    //        string needcleritybutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=4&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
 
-            //        if (!string.IsNullOrWhiteSpace(item.TimeZonesValue)
-            //            && item.TimeZoneoffset.HasValue
-            //            && !item.TimeZonesValue.Contains("Chennai"))
-            //        {
-            //            timeZoneValue = item.TimeZonesValue.Split(")").ElementAtOrDefault(1);
+        //    //        if (!string.IsNullOrWhiteSpace(item.TimeZonesValue)
+        //    //            && item.TimeZoneoffset.HasValue
+        //    //            && !item.TimeZonesValue.Contains("Chennai"))
+        //    //        {
+        //    //            timeZoneValue = item.TimeZonesValue.Split(")").ElementAtOrDefault(1);
 
-            //            item.interviewDate = item.interviewDate.AddMinutes(-(330 + item.TimeZoneoffset.Value));
+        //    //            item.interviewDate = item.interviewDate.AddMinutes(-(330 + item.TimeZoneoffset.Value));
 
-            //        }
+        //    //        }
 
-            //        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.FirstName, item.uniqueid, item.Irfid, item.PrimarySkillInvite, item.Interviewid, item.candidateid, item.interviewDate, item.TimeZonesValue);
+        //    //        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.FirstName, item.uniqueid, item.Irfid, item.PrimarySkillInvite, item.Interviewid, item.candidateid, item.interviewDate, item.TimeZonesValue);
 
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            //    }
-            //}
-            await _twilioHelper.MakeIVRCallForCandidateMeetingReminder("+918888571923", "Harshit", string.Empty, 16323, "expertise", 427827, 0, DateTime.Now, timeZoneValue);
-        }
+        //    //    }
+        //    //    catch (Exception ex)
+        //    //    {
+        //    //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    //    }
+        //    //}
+        //    await _twilioHelper.MakeIVRCallForCandidateMeetingReminder("+918888571923", "Harshit", string.Empty, 16323, "expertise", 427827, 0, DateTime.Now, timeZoneValue);
+        //}
         public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
 
@@ -3385,7 +3385,8 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer") { 
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer")
+                    {
                         var model = await _dashboardService.GetTotalRedMarkeredInterviewers();
                         return View(model);
                     }
@@ -4454,5 +4455,45 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> TotalInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
+                    {
+                        ViewBag.Profile = profileName;
+                        DateTime startdate =DateTime.Now.AddMonths(-1);
+                        DateTime enddate = DateTime.Now.AddDays(1);
+                        var model = await _dashboardService.GetTotalInterviews(startdate, enddate);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
     }
 }

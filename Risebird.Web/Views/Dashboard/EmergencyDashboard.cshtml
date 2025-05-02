@@ -2907,6 +2907,43 @@
                         </div>
                     }
 
+                
+                
+                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper38">
+                                    <div id="survey-feedback">
+                                        <div style="cursor:pointer" onclick="TotalInterviews()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #728bcf;padding:0px!important;"><i class="fa fa-users" style="font-size: 24px; color: #fff;position: relative; top: 14px;"></i></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span style="margin-bottom:20px;"><strong> Total interview <br/> by interviewer </strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;line-height: 12px;">
+                                                                <div class="header-front"></div>
+                                                                <strong><span style="font-size:15px;">Click here </span> </strong>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <button class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                
+                
+                
                 </div>
             </div>
             <div>
@@ -2945,11 +2982,11 @@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script>
     function MissedCandidate() {
-        window.location.href = "/Dashboard/InterviewManagementDetails?returnBack=" + 1;
+          window.open('/Dashboard/InterviewManagementDetails?returnBack=" + 1', '_blank');
     }
 
     function MialsDetails(recipientType) {
-        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + 1;
+          window.open('/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + 1', '_blank');
     }
     function OpenRibbonDetails(actionstatus) {
         if ('@ViewBag.ProfileName' == "Quality Controller") {
@@ -2962,49 +2999,49 @@
     }
 
     function CallibrationCallsIRFDetalis(type) {
-        window.location.href = "/IRF/CalibrationMeetingsDetails?type=" + type + "&returnBack=" + 1;
+          window.open('/IRF/CalibrationMeetingsDetails?type=" + type + "&returnBack=" + 1', '_blank');
     }
 
     function PotentialRiskByCandidate() {
-        window.location.href = "/Dashboard/PotentialRiskByCandidate?returnBack=" + 1;
+          window.open('/Dashboard/PotentialRiskByCandidate?returnBack=" + 1', '_blank');
     }
     function DMApprove() {
-        window.location.href = "/Dashboard/GetDMApproveDetails?returnBack=" + 1;
+          window.open('/Dashboard/GetDMApproveDetails?returnBack=" + 1', '_blank');
     }
 
     function ColdCandidatesDetalis() {
-        window.location.href = "/Dashboard/GetColdCandidatesList?returnBack=" + 1;
+        window.open('/Dashboard/GetColdCandidatesList?returnBack=" + 1', '_blank');
     }
 
     function PQIDetalis() {
-        window.location.href = "/Dashboard/InterviewerIRFDetails?returnBack=" + 1;
+        window.open('/Dashboard/InterviewerIRFDetails?returnBack=" + 1', '_blank');
     }
     function TechQCInterviews() {
-        window.location.href = "/Dashboard/TechQCDetails?returnBack=" + 1;
+        window.open('/Dashboard/TechQCDetails?returnBack=" + 1', '_blank');
     }
 
     function AIVerdict() {
-        window.location.href = "/Dashboard/InterviewersWithNegativeAIVerdict";
+            window.open('/Dashboard/InterviewersWithNegativeAIVerdict', '_blank');
     }
     function AIReportQCVerdict() {
-        window.location.href = "/Dashboard/AIQCNegative";
+        window.open('/Dashboard/AIQCNegative', '_blank');
     }
     function CandidateNotConfirmedMeetings() {
-        window.location.href = "/Dashboard/UnconfirmedCandidates";
+       window.open('/Dashboard/UnconfirmedCandidates', '_blank');
     }
 
     function InterviewersBilling() {
-        window.location.href = "/Dashboard/SkillChannelInterviewerBilling";
+        window.open('/Dashboard/SkillChannelInterviewerBilling', '_blank');
     }
      function RemovedInterviewers() {
-        window.location.href = "/Dashboard/ClientRemovedInterviewers";
+        window.open('/Dashboard/ClientRemovedInterviewers', '_blank');
     }
 
     function RedMarkedInterviewers(){
-        window.location.href = "/Dashboard/TotalRedMarkeredInterviewers";
+         window.open('/Dashboard/TotalRedMarkeredInterviewers', '_blank');
     }
     function NotScheduledMeetingsCO() {
-        window.location.href = "/Dashboard/NotScheduledMeetingsCO";
+        window.open('/Dashboard/NotScheduledMeetingsCO', '_blank');
     }
     function SkillChannelsByTemplate() {
         window.location.href = "/IRF/SkillChannelsByTemplate?returnBack=" + 1;
@@ -3024,41 +3061,48 @@
     }
 
     function BlackListCompany() {
-        window.location.href = "/Dashboard/BlackListCompany?returnBack=" + 1;
+      window.open('/Dashboard/BlackListCompany?returnBack=" + 1', '_blank');
+ 
     }
     function PaymentSlacompliance() {
-        window.location.href = "/Interview/PaymentSlaDetails?returnBack=" + 1;
+        window.open('/Interview/PaymentSlaDetails?returnBack=" + 1', '_blank');
     }
     function HighRiskInterviewers() {
-        window.location.href = "/Dashboard/HighRiskInterviewers?returnBack=" + 1;
+       window.open('/Dashboard/HighRiskInterviewers?returnBack=" + 1', '_blank');
     }
     function OpenCandidateWaiting() {
-        window.location.href = "/Dashboard/Participantwaiting?returnBack=" + 1;
+        window.open('/Dashboard/Participantwaiting?returnBack=" + 1', '_blank');
     }
     function ProxyReport() {
-        window.location.href = "/Dashboard/ProxyReport?returnBack=" + 1;
+       window.open('/Dashboard/ProxyReport?returnBack=" + 1', '_blank');
     }
     function Campaign() {
-        window.location.href = "/IRF/Campaigns?returnBack=" + 1;
+        window.open('/IRF/Campaigns?returnBack=" + 1', '_blank');
+     
     }
     function PLIDetalis() {
-        window.location.href = "/Dashboard/InterviewerIRFLogisticDetails?returnBack=" + 1;
+        window.open('/Dashboard/InterviewerIRFLogisticDetails?returnBack=" + 1', '_blank');
     }
     function PotentialPauseIRFDetalis(type) {
-        window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1;
+        window.open('/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1', '_blank');
     }
     function InterviewerVideoKYC() {
-        window.location.href = "/Dashboard/InterviewerVideoKYC?returnBack=" + 1;
+        window.open('/Dashboard/InterviewerVideoKYC?returnBack=" + 1', '_blank');
     }
     function AllEmergencyInterview() {
-        window.location.href = "/Dashboard/AllEmergencyInterviewDetails";
+        window.open('/Dashboard/AllEmergencyInterviewDetails', '_blank');
     }
 
     function SurchargeDetails() {
-        window.location.href = "/Dashboard/GetSurchargesDetails";
+         window.open('/Dashboard/GetSurchargesDetails', '_blank');
+      
     }
      function AITranscriptVerdicts() {
-        window.location.href = "/Dashboard/AITranscriptVerdicts";
+        window.open('/Dashboard/AITranscriptVerdicts', '_blank');
+    }
+
+    function TotalInterviews() {
+        window.open('/Dashboard/TotalInterviews', '_blank');
     }
 </script>
 
