@@ -95,7 +95,7 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 if (data.Status.ToLower() != "cancelled")
                                 {
-                                    data.Cancellationsource = "";
+                                    data.Cancellationreason = "";
                                 }
                                 var requestBody = new
                                 {
@@ -103,7 +103,7 @@ namespace Risebird.AzureTimerFunctions
                                     candidateEmailId = data.CandidateEmailId,
                                     currentStatus = data.Status,
                                     jobId = data.jobId,
-                                    Cancellationsource = data.Cancellationsource
+                                    Cancellationreason = data.Cancellationreason
                                 };
                                 //staging request
                                 //var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-result")
