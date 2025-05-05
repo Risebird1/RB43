@@ -27,7 +27,7 @@
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section interviewer">
-                        
+
                         <div>
                             @using (Html.BeginForm("Apply", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return checkEmailidExist();" }))
                             {
@@ -36,24 +36,24 @@
                                 @Html.HiddenFor(m => m.EncryptedIrfId)
                                 @Html.HiddenFor(m => m.id)
                                 @Html.HiddenFor(m => m.IRFId)
-                               
+
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">(Please enter the mobile number associated with your UAN. This information is required solely for verification purposes, and your identity will be kept strictly confidential)</span>
+                                            <div class="mandate" style="line-height: 17px;">
+                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span> <span style="color:#e02929;">( Please enter 10 digit mobile number without space, country code or special characters associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
                                             </div>
-                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenght = "10" } })
+                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenghth = "10", @style = "margin-top: 13px !important" } })
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span><span style="color:#e02929;">( Please enter your personal email id associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
                                             </div>
                                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                                @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span>
                                             </div>
                                             @Html.EditorFor(model => model.ReferredBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
@@ -65,21 +65,21 @@
                                             Upload Resume
                                         </span>
                                         @* <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                            <div class="mdc-radio mdc-radio--touch">
-                                                <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
-                                                <div class="mdc-radio__background">
-                                                    <div class="mdc-radio__outer-circle"></div>
-                                                    <div class="mdc-radio__inner-circle"></div>
-                                                </div>
-                                                <div class="mdc-radio__ripple"></div>
-                                            </div>
-                                        </div> *@
+                                    <div class="mdc-radio mdc-radio--touch">
+                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
+                                    <div class="mdc-radio__background">
+                                    <div class="mdc-radio__outer-circle"></div>
+                                    <div class="mdc-radio__inner-circle"></div>
+                                    </div>
+                                    <div class="mdc-radio__ripple"></div>
+                                    </div>
+                                    </div> *@
 
 
                                     </div>
 
                                     <div class="" id="uploadDiv">
-                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf",@style="margin: 0px 0px 10px 0px !important;" })
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf", @style = "margin: 0px 0px 10px 0px !important;" })
                                     </div>
                                 </div>
 
@@ -127,7 +127,7 @@
     </script>
 } *@
 <script>
-   
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -143,7 +143,7 @@
         }
 
     }
-    
+
 </script>
 
 <script>
@@ -154,15 +154,14 @@
             $.ajax({
                 url: '/Interviewer/GetInterviwerExists',
                 type: 'POST',
-                async : false,
+                async: false,
                 data: { 'interviewer': interviewer },
                 success: function (result) {
                     if (result) {
                         swal.fire(result);
                         return false;
                     }
-                    else
-                    {
+                    else {
                         return true;
                     }
                 }
@@ -204,7 +203,7 @@
         if (!(fileInput.files.length > 0)) {
             alert("Resume File not selected. Please choose a file to upload.");
             isValid = false;
-        } 
+        }
 
         return isValid;
     }
