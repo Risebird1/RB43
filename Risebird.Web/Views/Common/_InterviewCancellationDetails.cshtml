@@ -23,6 +23,7 @@
                         <input type="hidden" id="hidCancelinterviewskillChannelName" />
                         <input type="hidden" id="hidCancelinterviewzoomMeetingId" />
                         <input type="hidden" id="hidCancelinterviewloginuser" />
+                        <input type="hidden" id="hidCancelinterviewscheduleUniqueid" />
                         <div class="form-card text-center">
                             <h2 style="margin: 15px 0px 10px 0px;color: #d52a2a;font-weight: 700;">Are you sure? You want to cancel the interviews </h2>
                             <h3 style="margin-bottom:5px;">Give reasons for cancellation of the interview </h3>
@@ -64,7 +65,7 @@
          $("#hidCancelinterviewskillChannelName").val(skillChannelName);
          $("#hidCancelinterviewzoomMeetingId").val(zoomMeetingId);
          $("#hidCancelinterviewloginuser").val(loginuser);
-         $("#ddrInterviewerscheduleUniqueid").val(scheduleUniqueid);
+         $("#hidCancelinterviewscheduleUniqueid").val(scheduleUniqueid);
          reschedulevalue=reschdeule;
          $.ajax({
                 type: "GET",
@@ -98,7 +99,7 @@
          $("#hidCancelinterviewskillChannelName").val('');
          $("#hidCancelinterviewzoomMeetingId").val('');
          $("#hidCancelinterviewloginuser").val('');
-         $("#ddrInterviewerscheduleUniqueid").val('');
+         $("#hidCancelinterviewscheduleUniqueid").val('');
          reschedulevalue=0;
     }
     function SaveCanceInterview(){
@@ -108,8 +109,9 @@
          var IRFid=$("#hidCancelinterviewIRFid").val();
          var zoomMeetingId=$("#hidCancelinterviewzoomMeetingId").val();
          var loginuser=$("#hidCancelinterviewloginuser").val();
+         var scheduleUniqueid=$("#hidCancelinterviewscheduleUniqueid").val();
          var cancellationreason=$("#ddrInterviewerCancellationReason").val();
-         var scheduleUniqueid=$("#ddrInterviewerscheduleUniqueid").val();
+         
           $.ajax({
                  url: '/Candidate/PublicCancelInterview',
                  type: 'POST',
@@ -117,6 +119,7 @@
                  success: function (data) {
                     if (data != null && data.toLowerCase().includes('success')) {
                         swal.fire(data);
+                        closeCancelInterview();
                         if(reschedulevalue==1)
                         {
                             ReschuduleMeeting(id, scheduleUniqueid, IRFid, CandidateEmail);
