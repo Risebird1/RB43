@@ -41,7 +41,7 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">(Please enter 10 digit mobile number without space, country code or special characters)</span>
+                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">(Please enter the mobile number associated with your UAN. This information is required solely for verification purposes, and your identity will be kept strictly confidential)</span>
                                             </div>
                                             @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenght = "10" } })
                                         </div>
@@ -79,24 +79,19 @@
                                     </div>
 
                                     <div class="" id="uploadDiv">
-                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf" })
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf",@style="margin: 0px 0px 10px 0px !important;" })
                                     </div>
                                 </div>
-                                
 
 
-                                <div class="card-footer ">
+
+                                <div class="card-footer" style="width: calc(100% - 10px);">
                                     <div class="row">
-
                                         <div class="col-md-12 mc-button-area">
                                             <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Apply</button>
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
 
                             }
 
