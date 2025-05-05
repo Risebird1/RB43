@@ -234,7 +234,7 @@
                                                                         </div>
                                                                     </div>
 
-                                                                 
+
                                                                     @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                     {
                                                                         <div class="form-group">
@@ -317,7 +317,7 @@
                                                                         </div>
                                                                     }
 
-                                                                   
+
                                                                     <div class="form-group">
                                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                             Meeting Status
@@ -350,7 +350,7 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                 
+
                                                                     <div class="form-group">
 
 
@@ -392,7 +392,7 @@
                                                             <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <tr>
-                                                                      
+
                                                                         <th style="border-left: 0px !important;" id='start'>Interview Date</th>
                                                                         <th>Candidate Details</th>
                                                                         <th>Client HR</th>
@@ -409,7 +409,7 @@
                                                                 </thead>
                                                                 <tfoot>
                                                                     <tr>
-                                                                       
+
                                                                         <th style="border-left: 0px !important;">Interview Date</th>
                                                                         <th>Candidate Details</th>
                                                                         <th>Client HR</th>
@@ -546,7 +546,7 @@
                                                                                 <td> @item.confirmationStatus</td>
                                                                             }
 
-                                                                          
+
 
                                                                             @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                                             {
@@ -621,7 +621,7 @@
                                                                         }*@
                                                                             </td>
                                                                         </tr>
-                                                                       @*  @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
+                                                                        @*  @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                         {
                                                                             <tr class="collapse @item.imid">
                                                                                 <td colspan="999" class="child-section">
@@ -735,7 +735,7 @@
                                                 </div>
 
 
-                                          
+
 
                                             </div>
 
@@ -835,7 +835,7 @@
                                                                         </div>
                                                                     </div>
 
-                                                    
+
                                                                     @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                     {
                                                                         <div class="form-group">
@@ -920,7 +920,7 @@
                                                                         </div>
                                                                     }
 
-                                                                   
+
                                                                     <div class="form-group">
                                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                             Meeting Status
@@ -953,7 +953,7 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                   
+
                                                                     <div class="form-group">
 
 
@@ -995,7 +995,7 @@
                                                             <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <tr>
-                                                                     
+
                                                                         <th style="border-left: 0px !important;" id='start'>Interview Date</th>
                                                                         <th>Candidate Details</th>
                                                                         <th>Client HR</th>
@@ -1012,7 +1012,7 @@
                                                                 </thead>
                                                                 <tfoot>
                                                                     <tr>
-                                                                      
+
                                                                         <th style="border-left: 0px !important;">Interview Date</th>
                                                                         <th>Candidate Details</th>
                                                                         <th>Client HR</th>
@@ -1029,11 +1029,11 @@
                                                                 </tfoot>
                                                                 <tbody id="tblbodyPriority">
 
-                                                                   
+
                                                                     @foreach (var item in Model)
                                                                     {
                                                                         <tr id="@item.imid" data-changes="1">
-                                                                          
+
                                                                             <td> @item.interviewDate </td>
 
                                                                             @if (item.candidateName != null && item.candidateName != "")
@@ -1207,7 +1207,7 @@
                                                                                         </span>
                                                                                     </button>
                                                                                 }
-                                                                       
+
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -1282,7 +1282,7 @@
         </div>
     </div>
 </div>
-
+@await Html.PartialAsync("~/Views/Common/_InterviewCancellationDetails.cshtml")
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -1318,7 +1318,7 @@
         if ('@filter' != "") {
             ApplySessionFilter();
         }
-        
+
     });
     function RefreshSearch() {
         $(".dataTables_filter input").val('');
@@ -1346,7 +1346,7 @@
         $('input[data-type="search"]').val('');
         $('input[data-type="search"]').trigger("keyup");
     });
- 
+
     function ResetFilter() {
         window.location.href = "/Client/ResetAllPriorityClientMeetingsFilter?Emailid=" + $("#txtvideoemailid").val();
 
@@ -1401,15 +1401,17 @@
         }
     }
     function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
-        $.ajax({
-            url: '/Candidate/PublicCancelInterview',
-            type: 'POST',
-            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
-            success: function (data) {
-                swal.fire(data);
-                window.location.href = "/Client/AllMeetings";
-            }
-        });
+        var emailId= $("#hidtxtemailid").val();
+        CancelInterviewwithreason(id, interviewdate, CandidateEmail, IRFid,"","",emailId,"client");
+        // $.ajax({
+        //     url: '/Candidate/PublicCancelInterview',
+        //     type: 'POST',
+        //     data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
+        //     success: function (data) {
+        //         swal.fire(data);
+        //         window.location.href = "/Client/AllMeetings";
+        //     }
+        // });
     }
 </script>
 <script>

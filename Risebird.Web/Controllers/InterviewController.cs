@@ -4306,7 +4306,7 @@ namespace Risebird.Web.Controllers
                         //if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
                         if (await _meetingService.PublicCancelInterview(id, email))
                         {
-                            var updatedStatus = await _iRFRepository.UpdateCancellationSource(id, email);
+                            var updatedStatus = await _iRFRepository.UpdateCancellationSource(id, email, "");
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                             var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                             List<string> interviewers = new List<string>();

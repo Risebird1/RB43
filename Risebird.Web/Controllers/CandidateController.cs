@@ -4450,14 +4450,14 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId, string zoomMeetingId = null)
+        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId, string cancellationreason, string zoomMeetingId = null)
         {
             try
             {
                 if (await _meetingService.PublicCancelInterview(id, emailId))
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
-                    var updatedStatus = await _irfRepository.UpdateCancellationSource(id, emailId);
+                    var updatedStatus = await _irfRepository.UpdateCancellationSource(id, emailId, cancellationreason);
                     var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, id);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
@@ -4519,7 +4519,7 @@ namespace Risebird.Web.Controllers
                     if (await _meetingService.PublicCancelInterview(interviewId, emailId))
                     {
                         var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
-                        var updatedStatus = await _irfRepository.UpdateCancellationSource(interviewId, emailId);
+                        var updatedStatus = await _irfRepository.UpdateCancellationSource(interviewId, emailId, "");
                         var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, interviewId);
                         var result = await _candidateService.FetchChannelOwnerandInterviewer(interviewId);
                         var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(interviewId);
@@ -7240,6 +7240,29 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
+        }
+        #endregion
+        #region Interview Cancellation Reason
+        public SelectList GetInterviewCancellationReasonList(string profile)
+        {
+            var list = new List<SelectListItem>();
+            if (profile == "rbuser")
+            {
+                list.Add(new SelectListItem { Text = "Interviewer unassigned", Value = "Interviewer unassigned" });
+                list.Add(new SelectListItem { Text = "Interviewer not available", Value = "Interviewer not available" });
+                list.Add(new SelectListItem { Text = "Interview personal issues", Value = "Interview personal issues" });
+                list.Add(new SelectListItem { Text = "Interviewer technical issues", Value = "Interviewer technical issues" });
+                list.Add(new SelectListItem { Text = "Candidate asked to cancel", Value = "Candidate asked to cancel" });
+                list.Add(new SelectListItem { Text = "Client asked to cancel", Value = "Client asked to cancel" });
+                list.Add(new SelectListItem { Text = "Candidate unresponsive", Value = "Candidate unresponsive" });
+            }
+            else
+            {
+                list.Add(new SelectListItem { Text = "Candidate is not interested", Value = "Candidate is not interested" });
+                list.Add(new SelectListItem { Text = "Interview not needed anymore", Value = "Interview not needed anymore" });
+                list.Add(new SelectListItem { Text = "Candidate unresponsive", Value = "Candidate unresponsive" });
+            }
+            return new SelectList(list, "Value", "Text");
         }
         #endregion
     }
