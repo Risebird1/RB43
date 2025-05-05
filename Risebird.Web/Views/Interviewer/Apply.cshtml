@@ -40,20 +40,20 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">( Please enter 10 digit mobile number without space, country code or special characters associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
+                                            <div class="mandate" style="line-height: 17px;">
+                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span> <span style="color:#e02929;">( Please enter 10 digit mobile number without space, country code or special characters associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
                                             </div>
-                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenght = "10" } })
+                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenghth = "10", @style = "margin-top: 13px !important" } })
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span><span style="color:#e02929;">( Please enter your personal email id associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span><span style="color:#e02929;">( Please enter your personal email id associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
                                             </div>
                                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                                @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 0px" })<span class="red">*</span>
                                             </div>
                                             @Html.EditorFor(model => model.ReferredBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
