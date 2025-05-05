@@ -13,6 +13,7 @@ namespace Risebird.Entities.ViewModel
         public string EmailId { get; set; }
 
         //[Required]
+        [DisplayName("Mobile Number")]
         public string Phone { get; set; }
         public string ResumeLink { get; set; }
         public string EncryptedIrfId { get; set; }
