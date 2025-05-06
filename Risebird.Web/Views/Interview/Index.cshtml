@@ -477,33 +477,36 @@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th id='start'>Skill Channel ID</th>
                                                     <th>Interview Date</th>
-                                                    @if(ViewBag.profile != "Quality Controller"){
-                                                    <th>Candidate Details</th>
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Candidate Details</th>
                                                     }
                                                     else
-                                                    {<th>Candidate Name</th>
+                                                    {
+                                                        <th>Candidate Name</th>
                                                     }
-                                                      @if(ViewBag.profile != "Quality Controller"){
-                                                    <th>Mobile Number</th>
-                                                      }
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Mobile Number</th>
+                                                    }
                                                     @*Hide Columns for Cancel Intervies*@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
                                                         <th>Type</th>
 
                                                         <th>JD Title</th>
-                                                         @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Meeting Link</th>
-                                                    }
-                                                     @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Interviewer Portal</th>
-                                                    }
-                                                     @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Candidate Portal</th>
-                                                    }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Meeting Link</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Interviewer Portal</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Candidate Portal</th>
+                                                        }
                                                         <th>Company Name</th>
                                                         <th>Red Markers</th>
                                                         <th>Interveiwer</th>
@@ -513,16 +516,17 @@
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
-                                                         @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Resume</th>
-                                                    }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Resume</th>
+                                                        }
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
 
-                                                         @if (ViewBag.profile != "Quality Controller"){
-                                                        <th>Client HR</th>
-                                                    }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Client HR</th>
+                                                        }
 
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
@@ -577,18 +581,18 @@
                                                     {
                                                         <th>Type</th>
                                                         <th>JD Title</th>
-                                                         @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Meeting Link</th>
-                                                    }
-                                                     @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Interviewer Portal</th>
-                                                    }
-                                                     @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Candidate Portal</th>
-                                                    }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Meeting Link</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Interviewer Portal</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Candidate Portal</th>
+                                                        }
                                                         <th>Company Name</th>
                                                         <th>Red Markers</th>
                                                         <th>Interviewer</th>
@@ -598,15 +602,16 @@
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
-                                                         @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                        <th>Resume</th>
-                                                    }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Resume</th>
+                                                        }
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
-                                                     @if (ViewBag.profile != "Quality Controller"){
-                                                        <th>Client HR</th>
-                                                    }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Client HR</th>
+                                                        }
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
                                                         <th>Video Duration</th>
@@ -729,7 +734,7 @@
                                                                                 </button>
                                                                             </span>
 
-                                                                           
+
                                                                         }
                                                                         @*<span class="interview_8">
                                                             <button class="mdc-fab app-fab--absolute " aria-label="Comment">
@@ -746,7 +751,9 @@
                                                                         }
                                                                         @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                         {
-                                                                            <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+                                                                            @* <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>*@                                                                    
+
+                                                                                                                                                                                                                                              <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
                                                                         }
                                                                         @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                         {
@@ -794,7 +801,7 @@
 
                                                                 @if (ViewBag.Type != CancelInterviews)
                                                                 {
-                                                                    @if(ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin") @* || ViewBag.profile == "SupportAdmin" *@
+                                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin") @* || ViewBag.profile == "SupportAdmin" *@
                                                                     {
                                                                         <span class="interview_9">
                                                                             <a style="text-decoration:none" target="_blank" href='@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'>
@@ -805,7 +812,7 @@
                                                                         </span>
 
                                                                     }
-                                                                    
+
                                                                     @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
 
                                                                     {
@@ -863,7 +870,7 @@
                                                                         </span>
                                                                     </a>
                                                                 }
-                                                                
+
                                                             </div>
 
 
@@ -875,8 +882,9 @@
                                                         <td style="padding-left:25px;">
                                                             @if (item.IsOnline == 1)
                                                             {
-                                                                @if (item.IsVideoRequired == true) {
-                                                                       <div style="position:relative;z-index:10;">
+                                                                @if (item.IsVideoRequired == true)
+                                                                {
+                                                                    <div style="position:relative;z-index:10;">
                                                                         <div class="absCenter">
                                                                             <button class="infoButton" style="top:8px;left:-145px;">
                                                                                 <div class="infoButton-btn" style="width:15px;height:15px;">
@@ -887,52 +895,55 @@
                                                                                 </div>
                                                                             </button>
                                                                         </div>
-                                                                        </div>
-                                                                    }
-                                                                     
-                                                                     <span class="name-field"> @* <a onclick="directopenChat('@item.candidateEmail')"> *@<span class="dot" style="background-color:green"></span>@item.candidateName @* </a> *@ </span>
-                                                                      
+                                                                    </div>
+                                                                }
+
+                                                                <span class="name-field"> @* <a onclick="directopenChat('@item.candidateEmail')"> *@<span class="dot" style="background-color:green"></span>@item.candidateName @* </a> *@ </span>
+
                                                             }
                                                             else
-                                                            {   
-                                                                @if (item.IsVideoRequired == true) {
-                                                                                   <div style="position:relative;width:fit-content">
+                                                            {
+                                                                @if (item.IsVideoRequired == true)
+                                                                {
+                                                                    <div style="position:relative;width:fit-content">
                                                                         <div class="absCenter">
                                                                             <button class="infoButton" style="top:8px;left:-11px;">
                                                                                 <div class="infoButton-btn" style="width:15px;height:15px;">
                                                                                     <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
                                                                                 </div>
                                                                                 <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
-                                                                                     <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
                                                                                 </div>
                                                                             </button>
                                                                         </div>
-                                                                        </div>
-                                                                    }
+                                                                    </div>
+                                                                }
                                                                 <span class="name-field">  @item.candidateName</span>
                                                             }
-                                                            @if(ViewBag.profile != "Quality Controller"){
-                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span class="email-field" style="color:red"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
-                                                            }
-                                                              
-                                                              }
-                                                        </td>
-                                                        @if(ViewBag.profile != "Quality Controller"){
-                                                        <td style="padding:0px 7px;">
-                                                            <span class="call-area">
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                @if (item.zoomLink != null && item.zoomLink != "")
                                                                 {
-                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>
+                                                                    <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
                                                                 }
-                                                            </span>
-                                                            @item.MobileNumber
+                                                                else
+                                                                {
+                                                                    <span class="email-field" style="color:red"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                                }
+
+                                                            }
                                                         </td>
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <td style="padding:0px 7px;">
+                                                                <span class="call-area">
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>
+                                                                    }
+                                                                </span>
+                                                                @item.MobileNumber
+                                                            </td>
                                                         }
                                                         @*Hide Columns for Cancel Intervies*@
                                                         @if (ViewBag.Type != CancelInterviews)
@@ -947,33 +958,33 @@
                                                             }
 
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
-                                                             @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
+                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                {
+                                                                    <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td><span style="color:red">No Meeting Link</span></td>
+                                                                }
                                                             }
-                                                            else
+                                                            @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                <td><span style="color:red">No Meeting Link</span></td>
+                                                                <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
+                                                                    <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
+                                                                        <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
+                                                                    </div>
+                                                                </td>
                                                             }
-                                                    }
-                                                     @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                            <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
-                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
-                                                                    <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
-                                                                </div>
-                                                            </td>
-                                                    }
-                                                     @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                            <td onclick="captureclick('Meeting','CandidatePortal','@item.imid')">
-                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
-                                                                    <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
-                                                                </div>
-                                                            </td>
-                                                    }
+                                                            @if (ViewBag.profile != "Quality Controller")
+                                                            {
+                                                                <td onclick="captureclick('Meeting','CandidatePortal','@item.imid')">
+                                                                    <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
+                                                                        <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
+                                                                    </div>
+                                                                </td>
+                                                            }
                                                             @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                             {
                                                                 @if (item.CompanyName.Length > 30)
@@ -1184,20 +1195,20 @@
                                                             {
                                                                 <td>No Response</td>
                                                             }
-                                                             @if (ViewBag.profile != "Quality Controller")
-                                                    {
-                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                            @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                <td>
+                                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                                {
+                                                                    <td>
 
-                                                                    <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@item.resumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
-                                                                </td>
+                                                                        <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@item.resumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }
-                                                    }
                                                             @if (item.JDLink != null && item.JDLink != "")
                                                             {
                                                                 <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
@@ -1210,20 +1221,21 @@
 
                                                             <td> @item.risebirdHR</td>
 
-                                                            @if (ViewBag.profile != "Quality Controller"){
-                                                            @if (item.IsHrOnline == 1)
+                                                            @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
-                                                                </td>
+                                                                @if (item.IsHrOnline == 1)
+                                                                {
+                                                                    <td>
+                                                                        <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>
+                                                                        <span style="color:red"> @item.CandidateClientHR</span>
+                                                                    </td>
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                  <span style="color:red"> @item.CandidateClientHR</span> 
-                                                                </td>
-                                                            }
-                                                        }
 
                                                             <td> @item.ClientName </td>
 
@@ -1788,7 +1800,7 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="video-url">
-                        
+
                         <label class="label-field desp-label">Details for Skill Channel Url:  <b id="txtUrl"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtUrl')">
                             <p class="special-text">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
@@ -1808,8 +1820,10 @@
         </div>
     </div>
 </div>
+
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewCancellationDetails.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 
 <script src="~/js/Aadhaar.js"></script>

@@ -46,17 +46,13 @@ namespace Risebird.AzureTimerFunctions
                         {
                             using (HttpClient client = new HttpClient())
                             {
-                                if (data.Status.ToLower() != "cancelled")
-                                {
-                                    data.Cancellationreason = "";
-                                }
+
                                 var requestBody = new
                                 {
                                     skillChannelId = data.IRFId,
                                     candidateEmailId = data.CandidateEmailId,
                                     currentStatus = data.Status,
-                                    jobId = data.jobId,
-                                    Cancellationreason = data.Cancellationreason
+                                    jobId = data.jobId
                                 };
 
                                 //staging request
@@ -98,13 +94,21 @@ namespace Risebird.AzureTimerFunctions
                         {
                             using (HttpClient client = new HttpClient())
                             {
-
+                                if (string.IsNullOrWhiteSpace(data.Cancellationreason))
+                                {
+                                    data.Cancellationreason = data.Cancellationsource;
+                                }
+                                if (data.Status.ToLower() != "cancelled")
+                                {
+                                    data.Cancellationreason = "";
+                                }
                                 var requestBody = new
                                 {
                                     skillChannelId = data.IRFId,
                                     candidateEmailId = data.CandidateEmailId,
                                     currentStatus = data.Status,
-                                    jobId = data.jobId
+                                    jobId = data.jobId,
+                                    Cancellationreason = data.Cancellationreason
 
                                 };
                                 //staging request

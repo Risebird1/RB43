@@ -168,7 +168,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null);
         Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null, int? irfId = null, int? companyType = null);
         Task<bool> IsQuestionUsedInReport(string question);
-        Task<bool> UpdateCancellationSource(int interviewid, string emailId);
+        Task<bool> UpdateCancellationSource(int interviewid, string emailId,string cancellationreason);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false);
         Task<IRFRecommendations> GetIRFRecommendation(int cloneIRFId);

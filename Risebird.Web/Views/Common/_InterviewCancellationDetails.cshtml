@@ -1,0 +1,139 @@
+﻿<div id="InterviewCancelation" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width:500px">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <img class="icons-dash" src="/img/cancel-int.png" style="top:6px;left:0px;">
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Cancel Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeCancelInterview()" aria-hidden="true" style="cursor:pointer;">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="row ">
+                    <fieldset>
+                        <input type="hidden" id="hidCancelinterviewid" />
+                        <input type="hidden" id="hidCancelinterviewinterviewdate" />
+                        <input type="hidden" id="hidCancelinterviewCandidateEmail" />
+                        <input type="hidden" id="hidCancelinterviewIRFid" />
+                        <input type="hidden" id="hidCancelinterviewskillChannelName" />
+                        <input type="hidden" id="hidCancelinterviewzoomMeetingId" />
+                        <input type="hidden" id="hidCancelinterviewloginuser" />
+                        <input type="hidden" id="hidCancelinterviewscheduleUniqueid" />
+                        <div class="form-card text-center">
+                            <h2 style="margin: 15px 0px 10px 0px;color: #d52a2a;font-weight: 700;">Are you sure? You want to cancel the interviews </h2>
+                            <h3 style="margin-bottom:5px;">Give reasons for cancellation of the interview </h3>
+                            <div class="row justify-content-center">
+                                <div class="col-md-12">
+                                    <div class="custom-select" style="margin: 15px 0px 0px 0px;">
+                                        <select id="ddrInterviewerCancellationReason">
+                                            @* <option> Interviewer unassigned </option>
+                                            <option>Interviewer not available</option>
+                                            <option>Interview personal issues</option>
+                                            <option>Interviewer technical issues</option>
+                                            <option>Candidate asked to cancel</option>
+                                            <option>Client asked to cancel</option>
+                                            <option>Candidate unresponsive</option> *@
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <button type="button" name="next" onclick="SaveCanceInterview()" style="text-transform:capitalize;font-size: 14px!important;margin-bottom: 10px;width: 100px;margin-top:15px;height: 40px!important;font-size: 15px!important;" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Save</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    var reschedulevalue=0;
+     function CancelInterviewwithreason(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId,loginuser,profilecancellation,scheduleUniqueid,reschdeule) {
+         $("#hidCancelinterviewid").val(id);
+         $("#hidCancelinterviewinterviewdate").val(interviewdate);
+         $("#hidCancelinterviewCandidateEmail").val(CandidateEmail);
+         $("#hidCancelinterviewIRFid").val(IRFid);
+         $("#hidCancelinterviewskillChannelName").val(skillChannelName);
+         $("#hidCancelinterviewzoomMeetingId").val(zoomMeetingId);
+         $("#hidCancelinterviewloginuser").val(loginuser);
+         $("#hidCancelinterviewscheduleUniqueid").val(scheduleUniqueid);
+         reschedulevalue=reschdeule;
+         $.ajax({
+                type: "GET",
+                url: "/Candidate/GetInterviewCancellationReasonList",
+                data: { 'profile': profilecancellation },
+                success: function (data) {
+                    var drpinterviewercancellation = $("#ddrInterviewerCancellationReason");
+                    $("#ddrInterviewerCancellationReason option").remove();
+                    if (data.length > 0) {
+                        $(data).each(function () {
+                            var option = $("<option />");
+                            option.html(this.text);
+                            //Set Value part.
+                            option.val(this.value);
+                            //Add the Option element to DropDownList.
+                            drpinterviewercancellation.append(option);
+                        });
+                    }
+                }
+            });
+        var modal = document.getElementById("InterviewCancelation");
+        modal.style.display = "block";
+    }
+    function closeCancelInterview() {
+        var modal = document.getElementById("InterviewCancelation");
+        modal.style.display = "none";
+        $("#hidCancelinterviewid").val('');
+         $("#hidCancelinterviewinterviewdate").val('');
+         $("#hidCancelinterviewCandidateEmail").val('');
+         $("#hidCancelinterviewIRFid").val('');
+         $("#hidCancelinterviewskillChannelName").val('');
+         $("#hidCancelinterviewzoomMeetingId").val('');
+         $("#hidCancelinterviewloginuser").val('');
+         $("#hidCancelinterviewscheduleUniqueid").val('');
+         reschedulevalue=0;
+    }
+    function SaveCanceInterview(){
+         var id=$("#hidCancelinterviewid").val();
+         var interviewdate=$("#hidCancelinterviewinterviewdate").val();
+         var CandidateEmail=$("#hidCancelinterviewCandidateEmail").val();
+         var IRFid=$("#hidCancelinterviewIRFid").val();
+         var zoomMeetingId=$("#hidCancelinterviewzoomMeetingId").val();
+         var loginuser=$("#hidCancelinterviewloginuser").val();
+         var scheduleUniqueid=$("#hidCancelinterviewscheduleUniqueid").val();
+         var cancellationreason=$("#ddrInterviewerCancellationReason").val();
+         
+          $.ajax({
+                 url: '/Candidate/PublicCancelInterview',
+                 type: 'POST',
+                 data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': loginuser, 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId,'cancellationreason':cancellationreason },
+                 success: function (data) {
+                    if (data != null && data.toLowerCase().includes('success')) {
+                        swal.fire(data);
+                        closeCancelInterview();
+                        if(reschedulevalue==1)
+                        {
+                            ReschuduleMeeting(id, scheduleUniqueid, IRFid, CandidateEmail);
+                        }
+                        else
+                        {
+                            window.location.reload();
+                        }
+                    }
+                    else {
+                       swal.fire("Error cancelling!", "Please try again", "error");
+
+                     }
+                 }
+          });
+    }
+</script>

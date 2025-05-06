@@ -39,7 +39,7 @@ Begin
 declare @IRFId varchar(50)
 declare @CandidateEmail varchar(150)
 select @IRFId=IRFId,@CandidateEmail= candidateEmail from InterviewMeetings where id=@InterviewId 
-update InterviewMeetings set confirmationStatus=2,Cancellationsource='Cold Candidate' where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
+update InterviewMeetings set confirmationStatus=2,Cancellationsource=@ColdMarkedBY,CancellationReason='Cold Candidate' where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
 select interviewer,interviewDate,candidateName from InterviewMeetings where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
 End
 --Add Cold Marked for webhook
