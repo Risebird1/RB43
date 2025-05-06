@@ -20,7 +20,7 @@ BEGIN
 	select ida.id, ida.EmailId, ida.Phone, ida.ResumeLink, ida.CreatedAt, ida.IRFId, irf.IRFId as SkillChannelName,
 	irf.JDTiltle, irf.JDTitleTwo, ida.AIVerdict, ida.AIEvaluationGeneratedAt, ida.AIEvaluationPerformedBy,
 	ida.isVerified, ida.IsEmployed, ida.CompanyName, ida.ReferredBy, ida.EVGeneratedAt, ida.EVGeneratedBy,
-	irf.IsDeleted as IsIrfDeleted, ag.AssessmentGroup, ul.EmailId as ChannelOwner, irf.CreatedOn as ChannelCreationDate,
+	irf.IsDeleted as IsIrfDeleted, ag.AssessmentGroup, ul.EmailId as ChannelOwner, irf.CreatedOn as ChannelCreationDate, ida.AIAnalysisScore,
 	CASE 
         WHEN ulI.IsActive = 1 THEN 'Acknowledged'
         ELSE ''
