@@ -56,6 +56,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsSurchargeApprove] [bit] NULL,
     [CodeSnippetTwo][varchar] (200),
     [CandidateInterviewChecks][varchar] (300),
+    [CancellationReason][varchar] (50),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -417,6 +418,15 @@ IF NOT EXISTS(
 BEGIN
     Alter table InterviewMeetings 
     Add CandidateInterviewChecks varchar(300)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CancellationReason')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    Alter table InterviewMeetings 
+    Add CancellationReason varchar(50)
 END
 END
 GO

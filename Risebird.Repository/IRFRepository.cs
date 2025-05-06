@@ -6104,14 +6104,15 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<bool> UpdateCancellationSource(int interviewid, string emailId)
+        public async Task<bool> UpdateCancellationSource(int interviewid, string emailId, string cancellationreason)
         {
             try
             {
-                var query = "Update InterviewMeetings set Cancellationsource=@Cancellationsource where id=@meetingid";
+                var query = "Update InterviewMeetings set Cancellationsource=@Cancellationsource,cancellationreason=@Cancellationreason where id=@meetingid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", interviewid);
                 dynamicParameters.Add("@Cancellationsource", emailId);
+                dynamicParameters.Add("@Cancellationreason", cancellationreason);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, dynamicParameters);
@@ -7080,8 +7081,8 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<string> GetAssessmentGroupFromIRFId(int irfId) 
-        { 
+        public async Task<string> GetAssessmentGroupFromIRFId(int irfId)
+        {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))

@@ -42,7 +42,7 @@ BEGIN
  InterviewBiometryScore,	JoiningBiometryScore,	HRCoordinatorEmailId,	HRComment	,HRImageFileURL,
  ZoomMeetingId,	IsMeetingNotificationSent,	NotificationSentDate,	IsNotificationSentToEI,
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
- IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, ActionType, PerformedAt, PerformedBy, TimeZoneoffset,TimeZonesValue,IsDeleted)
+ IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, ActionType, PerformedAt, PerformedBy, TimeZoneoffset,TimeZonesValue,IsDeleted,CancellationReason)
 
  (select id,	IRFId,	interviewDate,	interviewSlot,	interviewDuration,	@candidateEmailId,	ClientHrContact, resumeLink,
  confirmationStatus,	zoomLink,	risebirdHR,	interviewer,	IntervIewOnDevice,	PreferredLocation,
@@ -51,7 +51,7 @@ BEGIN
  InterviewBiometryScore,	JoiningBiometryScore,	HRCoordinatorEmailId,	HRComment	,HRImageFileURL,
  ZoomMeetingId,	IsMeetingNotificationSent,	NotificationSentDate,	IsNotificationSentToEI,
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
- IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, 'Inserted', DATEADD(MINUTE, 330, getdate()), sCreatedBy, TimeZoneoffset, TimeZonesValue,IsDeleted
+ IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, 'Inserted', DATEADD(MINUTE, 330, getdate()), sCreatedBy, TimeZoneoffset, TimeZonesValue,IsDeleted,CancellationReason
  from InterviewMeetings where id = @id)
  
  if(@Confirmationstatus=1)

@@ -11941,11 +11941,11 @@ section {
     font-size: 16px;
     display: block;
     clear: both;
-    margin-left: 10px;
+    margin-left: 25px;
 }
 .agree-txt {
     position: relative;
-    left: -150px;
+    left: -120px;
 }
 .onboarding-form-container #msform #videos .continue-skipbtn.confirmvideo-btn {
     float: left;
@@ -11958,6 +11958,9 @@ section {
     float: left;
     position: relative;
     left: 30px;
+}
+#InterviewCancelation .custom-select select{
+    width:320px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {

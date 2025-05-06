@@ -1723,6 +1723,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveApplicantInterviewerAIVerdictV2(id, model, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id)
         {
             try

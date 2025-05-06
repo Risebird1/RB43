@@ -60,6 +60,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public bool isPrimary { get; set; }
         public string status { get; set; }
         public string Cancellationsource { get; set; }
+        public string Cancellationreason { get; set; }
         public int techscore { get; set; }
         public string interviewerComment { get; set; }
         public string CodeSnippet { get; set; }
@@ -121,6 +122,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string CodeSnippet { get; set; }
         public string CodeSnippetTwo { get; set; }
         public string Cancellationsource { get; set; }
+        public string Cancellationreason { get; set; }
         public string ClientHRAttemptContact { get; set; }
     }
     public class SkillsSetsDetails
