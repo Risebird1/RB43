@@ -1559,6 +1559,7 @@ namespace Risebird.Repository
                                     CodeSnippet = dt.Rows[i]["CodeSnippet"] != null ? dt.Rows[i]["CodeSnippet"].ToString() : string.Empty,
                                     CodeSnippetTwo = dt.Rows[i]["CodeSnippetTwo"] != null ? dt.Rows[i]["CodeSnippetTwo"].ToString() : string.Empty,
                                     Cancellationsource = dt.Rows[i]["Cancellationsource"] != null ? dt.Rows[i]["Cancellationsource"].ToString() : string.Empty,
+                                    Cancellationreason = dt.Rows[i]["Cancellationreason"] != null ? dt.Rows[i]["Cancellationreason"].ToString() : string.Empty,
                                     ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
 
                                 });
