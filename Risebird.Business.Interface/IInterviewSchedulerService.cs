@@ -34,7 +34,7 @@ namespace Risebird.Business.Interface
         Task<bool> CheckEmailAddressAllow(string EmailId);
         Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId);
         Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid);
-        Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate);
+        Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate,string loginemail);
         Task<CandidateIRFData> CheckCandidateDetailsByEmail(string IRFId, string Emailid);
         Task<IEnumerable<RecommendedSlotsVM>> FetchrecommendedSlots(List<DateTime> _slotscheck);
         Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid);
