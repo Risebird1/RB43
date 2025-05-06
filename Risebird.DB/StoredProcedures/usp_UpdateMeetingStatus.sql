@@ -32,7 +32,7 @@ update InterviewComments set MeetingStatus=null where InterviewId in
   IRFId varchar(200)
   );
 UPDATE InterviewMeetings  
-SET confirmationStatus = 2,Cancellationsource='Paused by: '+ @emailid 
+SET confirmationStatus = 2,Cancellationsource=@emailid,CancellationReason= 'Skill Channel Paused'
 OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, inserted.ClientHrContact, inserted.interviewDate, inserted.id as imid ,inserted.IRFId
 into @OutputTable
 WHERE IRFId = @IRFId and interviewDate >= @date  

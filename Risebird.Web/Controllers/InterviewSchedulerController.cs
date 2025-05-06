@@ -1249,6 +1249,14 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ReScheduleEvent(ScheculeInterview model, string id, string CandidateEmail)
         {
+            //Start:Try to Track whom do this
+            var loginEmailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                loginEmailid = HttpContext.Session.GetString("email")?.Trim();
+                loginEmailid = loginEmailid.Replace("\"", "");
+            }
+            //End:Try to Track whom do this
             var timeZones1 = TimeZoneInfo.GetSystemTimeZones();
             List<SelectListItem> items = new List<SelectListItem>();
             foreach (var tzi in timeZones1)
@@ -1350,7 +1358,7 @@ namespace Risebird.Web.Controllers
                     if (result)
                     {
                         //Start: Cancel the previous meetings
-                        var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime);
+                        var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime, loginEmailid);
                         if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
                         {
                             //cancel interviewmmeting over portal

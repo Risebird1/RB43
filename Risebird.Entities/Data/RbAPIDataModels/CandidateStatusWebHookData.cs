@@ -10,6 +10,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string CandidateEmailId { get; set; }
         public string Status { get; set; }
         public string Cancellationreason { get; set; }
+        public string Cancellationsource { get; set; }
         public DateTime PerformedAt { get; set; }
     }
 }

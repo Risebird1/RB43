@@ -10,14 +10,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_UpdateReSchedulingInterview  
 @interviewid int,  
-@source varchar(100)  
+@source varchar(100),
+@reason varchar(50)
 AS  
 BEGIN 
 declare @confirmationstatus int
 Select @confirmationstatus=confirmationStatus From InterviewMeetings where id=@interviewid  
 if(@confirmationstatus=1)
 begin
-Update InterviewMeetings set ConfirmationStatus=2,Cancellationsource=@source where id=@interviewid  
+Update InterviewMeetings set ConfirmationStatus=2,CancellationSource=@source,CancellationReason=@reason where id=@interviewid  
 Select ul.uniqueid,ulh.Emailid as ChannelOwner,im.InterviewDate,im.TimeZonesValue,im.TimeZoneoffset,IRF.id as IRFId,im.ZoomMeetingId   
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join UserList ul on im.candidateEmail=ul.EmailId  
 left join UserList ulh on ulh.id=IRF.RisebirdHr  
