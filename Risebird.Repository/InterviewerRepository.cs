@@ -3635,6 +3635,32 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    parameters.Add("@PerformedBy", loggedInUser);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@completeAnalysis", model.completeFitmentAnalysis);
+                    parameters.Add("@verdict", model.verdict);
+                    parameters.Add("@score", model.fitmentScore);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveApplicantInterviewerAIVerdictV2", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
         public async Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id)
         {
             try
