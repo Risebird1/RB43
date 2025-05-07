@@ -57,7 +57,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientHRAttemptContact { get; set; }
         public string ClientEmail { get; set; }
         public string Comment { get; set; }
-       
+
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
 
@@ -87,7 +87,7 @@ namespace Risebird.Entities.ViewModel
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
         public string interviewer { get; set; }
-       
+
         [Display(Name = "Preferred Location")]
 
         public string preferredLocation { get; set; }
@@ -391,6 +391,7 @@ namespace Risebird.Entities.ViewModel
         public string AIVerdict { get; set; }
         public int AITranscriptAnalysisScore { get; set; }
         public bool ModifiedInterviewStatus { get; set; }
+        public string Cancellationreason { get; set; }
     }
 
     public class VedioComments
