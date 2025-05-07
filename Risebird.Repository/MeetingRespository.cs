@@ -1532,7 +1532,7 @@ namespace Risebird.Repository
                     }
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
-                            commandType: CommandType.StoredProcedure, commandTimeout:100);
+                            commandType: CommandType.StoredProcedure, commandTimeout: 100);
 
                     if (reportDetails.MeetingStatus != 2)
                     {
@@ -5210,7 +5210,7 @@ namespace Risebird.Repository
                     {
                         status = 0;
                     }
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=@status,Cancellationsource='Candidate' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=@status,Cancellationsource='Candidate',Cancellationreason='Candidate Not Available' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 checkquery = "Select count(im.id) from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid and CandidateResponse=0 and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
@@ -5606,7 +5606,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
+                var query = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='System',CancellationReason='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -7551,7 +7551,7 @@ namespace Risebird.Repository
                     {
                         return result.FirstOrDefault();
                     }
-                    
+
 
                 }
 

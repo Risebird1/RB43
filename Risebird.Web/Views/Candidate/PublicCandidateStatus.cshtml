@@ -66,333 +66,333 @@
 </script>
 <style>
     .star-rating {
-    border: solid 1px white;
-    display: flex;
-    direction: rtl;
-    font-size: 2.0em;
-    justify-content: space-around;
-    padding: 0 .2em;
-    text-align: center;
-    width: 100%;
-    margin-bottom: 10px;
-    background-color: lightgray;
+        border: solid 1px white;
+        display: flex;
+        direction: rtl;
+        font-size: 2.0em;
+        justify-content: space-around;
+        padding: 0 .2em;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 10px;
+        background-color: lightgray;
     }
 
-    .star-rating input {
-    display: none;
-    }
+        .star-rating input {
+            display: none;
+        }
 
-    .star-rating label {
-    /*color: #ccc;*/
-    color: #e4e4e4;
-    cursor: pointer;
-    }
+        .star-rating label {
+            /*color: #ccc;*/
+            color: #e4e4e4;
+            cursor: pointer;
+        }
 
-    .star-rating :checked ~ label {
-    color: #f90;
-    }
+        .star-rating :checked ~ label {
+            color: #f90;
+        }
 
-    .star-rating label:hover,
-    .star-rating label:hover ~ label {
-    color: #fc0;
-    }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #fc0;
+        }
 
     .card-title-space {
-    margin: 20px 0px;
-    float: right
+        margin: 20px 0px;
+        float: right
     }
 
     .mb10 {
-    margin-bottom: 10px
+        margin-bottom: 10px
     }
 
     .topheader-header [data-tooltip]:before {
-    background: #92938b !important;
-    color: #fff !important;
-    box-shadow: none;
-    top: 42px;
-    width: 455px;
-    height: 27px;
-    clear: both;
-    text-transform: initial;
-    position: absolute;
-    z-index: 100;
-    border: none !important;
-    font-size: 11px;
-    left:-225px;
+        background: #92938b !important;
+        color: #fff !important;
+        box-shadow: none;
+        top: 42px;
+        width: 455px;
+        height: 27px;
+        clear: both;
+        text-transform: initial;
+        position: absolute;
+        z-index: 100;
+        border: none !important;
+        font-size: 11px;
+        left: -225px;
     }
 
 
     .topheader-header [data-tooltip]:after {
-    border-top: 8px solid #92938b !important;
-    border-right: 7px solid transparent !important;
-    border-left: 7px solid transparent !important;
-    top: 35px;
-    transform: rotate(180deg);
+        border-top: 8px solid #92938b !important;
+        border-right: 7px solid transparent !important;
+        border-left: 7px solid transparent !important;
+        top: 35px;
+        transform: rotate(180deg);
     }
 
     #dropbtnStats {
-    background: transparent;
-    color: white;
-    font-size: 16px;
-    border: none;
+        background: transparent;
+        color: white;
+        font-size: 16px;
+        border: none;
     }
 
     #dropdownStats {
-    position: relative;
-    display: inline-block;
+        position: relative;
+        display: inline-block;
     }
 
     #dropdown-contentStats {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    left: 10%;
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        left: 10%;
     }
 
-    #dropdown-contentStats a:hover {
-    background: #eaeaf1 !important;
-    }
+        #dropdown-contentStats a:hover {
+            background: #eaeaf1 !important;
+        }
 
-    #dropdown-contentStats:before {
-    content: "";
-    display: block;
-    width: 0;
-    height: 0;
-    border-right: 15px solid transparent;
-    border-bottom: 15px solid transparent;
-    border-left: 15px solid #dad3d338;
-    position: absolute;
-    top: -3px;
-    right: 100px;
-    transform: rotate(45deg);
-    }
+        #dropdown-contentStats:before {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-right: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 15px solid #dad3d338;
+            position: absolute;
+            top: -3px;
+            right: 100px;
+            transform: rotate(45deg);
+        }
 
-    #dropdown-contentStats a {
-    color: black !important;
-    padding: 0px 10px;
-    text-decoration: none;
-    display: block;
-    border-bottom: 1px dotted #ccc;
-    }
+        #dropdown-contentStats a {
+            color: black !important;
+            padding: 0px 10px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px dotted #ccc;
+        }
 
     .dropdown-contentStats a:hover {
-    background-color: #ddd;
+        background-color: #ddd;
     }
 
 </style>
 
 <style>
     .hopscotch-arrow.down {
-    transform: rotate( 1deg );
-    top: 7.9rem;
-    right: -.3rem;
+        transform: rotate( 1deg );
+        top: 7.9rem;
+        right: -.3rem;
     }
 
     .sidebar-mini .sidebar:hover {
-    width: 80px !important;
+        width: 80px !important;
     }
 
     /*.mob_h {
-    display: none !important
-    }*/
+                display: none !important
+                }*/
     .modal-backdrop {
-    visibility: hidden !important;
+        visibility: hidden !important;
     }
 
     .modal.in {
-    background-color: rgba(0,0,0,0.5);
+        background-color: rgba(0,0,0,0.5);
     }
 
     .navbar {
-    position: fixed;
+        position: fixed;
     }
 </style>
 
 <style>
     ul.tabs {
-    margin: 0;
-    padding: 0;
-    float: left;
-    list-style: none;
-    height: 32px;
-    border-bottom: 1px solid #333;
-    width: 100%;
+        margin: 0;
+        padding: 0;
+        float: left;
+        list-style: none;
+        height: 32px;
+        border-bottom: 1px solid #333;
+        width: 100%;
     }
 
-    ul.tabs li {
-    float: left;
-    margin: 0;
-    cursor: pointer;
-    padding: 0px 21px;
-    height: 31px;
-    line-height: 31px;
-    border-top: 1px solid #333;
-    border-left: 1px solid #333;
-    border-bottom: 0px solid #333;
-    background-color: #fff;
-    color: #666;
-    overflow: hidden;
-    position: relative;
-    }
+        ul.tabs li {
+            float: left;
+            margin: 0;
+            cursor: pointer;
+            padding: 0px 21px;
+            height: 31px;
+            line-height: 31px;
+            border-top: 1px solid #333;
+            border-left: 1px solid #333;
+            border-bottom: 0px solid #333;
+            background-color: #fff;
+            color: #666;
+            overflow: hidden;
+            position: relative;
+        }
 
     .tab_last {
-    border-right: 1px solid #333;
+        border-right: 1px solid #333;
     }
 
     ul.tabs li:hover {
-    background-color: #ccc;
-    color: #fff;
+        background-color: #ccc;
+        color: #fff;
     }
 
     ul.tabs li.active {
-    background-color: #57aef4;
-    color: #fff;
-    border-bottom: 1px solid #57aef4;
-    display: block;
+        background-color: #57aef4;
+        color: #fff;
+        border-bottom: 1px solid #57aef4;
+        display: block;
     }
 
     .tab_container {
-    border: 1px solid #333;
-    border-top: none;
-    clear: both;
-    float: left;
-    width: 100%;
-    background: #fff;
-    overflow: auto;
+        border: 1px solid #333;
+        border-top: none;
+        clear: both;
+        float: left;
+        width: 100%;
+        background: #fff;
+        overflow: auto;
     }
 
     .tab_content {
-    padding: 10px 15px;
-    display: none;
+        padding: 10px 15px;
+        display: none;
     }
 
     .tab_drawer_heading {
-    display: none;
+        display: none;
     }
 
     @@media screen and (max-width:1024px) {
-    ul.tabs {
-    margin: 60px 0px 0px 0px;
-    }
+        ul.tabs {
+            margin: 60px 0px 0px 0px;
+        }
 
-    .tabs-wrapper {
-    padding: 0px;
-    }
+        .tabs-wrapper {
+            padding: 0px;
+        }
 
-    .topheader-link-wrap {
-    padding: 10px;
-    }
+        .topheader-link-wrap {
+            padding: 10px;
+        }
 
-    .topheader-header .desktop-view {
-    clear: both;
-    position: relative;
-    top: -4px;
-    left: -64px;
-    }
+        .topheader-header .desktop-view {
+            clear: both;
+            position: relative;
+            top: -4px;
+            left: -64px;
+        }
     }
 
     @@media screen and (max-width: 768px) {
 
-    .tabs-wrapper {
-    width: 95%;
-    padding: 0px;
-    }
+        .tabs-wrapper {
+            width: 95%;
+            padding: 0px;
+        }
 
-    .topheader-link-wrap {
-    padding: 0px 7px;
-    }
+        .topheader-link-wrap {
+            padding: 0px 7px;
+        }
 
-    .topheader-header .desktop-view {
-    clear: both;
-    position: relative;
-    top: 47px;
-    left: -150px;
-    }
+        .topheader-header .desktop-view {
+            clear: both;
+            position: relative;
+            top: 47px;
+            left: -150px;
+        }
     }
 
     @@media screen and (max-width: 767px) {
-    .tabs {
-    display: none;
-    }
+        .tabs {
+            display: none;
+        }
 
-    .tabs-wrapper {
-    width: 100%;
-    margin-top: 50px;
-    }
+        .tabs-wrapper {
+            width: 100%;
+            margin-top: 50px;
+        }
 
-    .tab_drawer_heading {
-    background-color: #d3d2d2;
-    color: #fff;
-    border-top: 0px;
-    margin: 5px 0;
-    padding: 5px 20px;
-    display: block;
-    cursor: pointer;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    }
+        .tab_drawer_heading {
+            background-color: #d3d2d2;
+            color: #fff;
+            border-top: 0px;
+            margin: 5px 0;
+            padding: 5px 20px;
+            display: block;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-    .d_active {
-    background-color: #666;
-    color: #fff;
-    }
+        .d_active {
+            background-color: #666;
+            color: #fff;
+        }
 
-    .tab_content {
-    padding: 0px;
-    }
+        .tab_content {
+            padding: 0px;
+        }
 
-    .tab_container .nopad {
-    padding: 0px !important;
-    }
+        .tab_container .nopad {
+            padding: 0px !important;
+        }
 
-    .tab_container {
-    border: 0px !important;
-    padding: 10px;
-    }
+        .tab_container {
+            border: 0px !important;
+            padding: 10px;
+        }
 
-    .content.client .client-tab #candidateTable_filter {
-    position: absolute;
-    right: 20px;
-    top: -17px;
-    margin: 10px 0px 10px -11px;
-    }
+        .content.client .client-tab #candidateTable_filter {
+            position: absolute;
+            right: 20px;
+            top: -17px;
+            margin: 10px 0px 10px -11px;
+        }
 
-    .client-tab table.dataTable {
-    margin-top: 30px !important;
-    }
+        .client-tab table.dataTable {
+            margin-top: 30px !important;
+        }
 
-    .topheader-header .mobile-view {
-    clear: both;
-    position: relative;
-    top: -45px;
-    left: 130px;
-    }
+        .topheader-header .mobile-view {
+            clear: both;
+            position: relative;
+            top: -45px;
+            left: 130px;
+        }
     }
 
     @@media screen and (max-width: 480px) {
-    .topheader-header .mobile-view {
-    clear: both;
-    position: relative;
-    top: -40px;
-    left: 120px;
-    }
+        .topheader-header .mobile-view {
+            clear: both;
+            position: relative;
+            top: -40px;
+            left: 120px;
+        }
     }
 
     @@media screen and (max-width: 360px) {
-    .topheader-header .mobile-view {
-    clear: both;
-    position: relative;
-    top: -45px;
-    left: 225px;
-    }
+        .topheader-header .mobile-view {
+            clear: both;
+            position: relative;
+            top: -45px;
+            left: 225px;
+        }
     }
 
 </style>
@@ -591,7 +591,7 @@
                                         </div>
                                     </button>
                                 }
-                               
+
                             </div>
 
 
@@ -611,7 +611,7 @@
                                 <span class="filter">
 
                                     <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
-                                       <span class="fa fa-filter"></span> Filter
+                                        <span class="fa fa-filter"></span> Filter
                                     </span>
                                 </span>
                                 @if (ViewBag.ClientRole != "Reviewer")
@@ -647,11 +647,11 @@
                                         <div class="modal-dialog modal-lg" role="document">
                                             <div class="modal-content">
                                                 <div class="filheader">
-                                                   <div class="filavatar">
-                    <span>
-                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16"> <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z" fill="white"></path> </svg>
-                    </span>
-                </div>
+                                                    <div class="filavatar">
+                                                        <span>
+                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16"> <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z" fill="white"></path> </svg>
+                                                        </span>
+                                                    </div>
                                                     <h5 class="modal-title pull-left" id="filterModalLabel">Filter</h5>
                                                 </div>
                                                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -1774,6 +1774,7 @@
 </div>
 @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewCancellationDetails.cshtml")
 <div id="modal_recipientActivity_placeholder"></div>
 
 <div id="modal_clientComment_placeholder"></div>
@@ -2106,8 +2107,9 @@
         });
     }
     function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
-
-        swal.fire({
+        var emailid=$("#hidtxtemailid").val();
+        CancelInterviewwithreason(id,interviewdate, CandidateEmail, IRFid,"","",emailid,"client");
+    @* swal.fire({
             title: 'Are you sure?',
             text: "The Interview for " + CandidateEmail + " scheduled for date: " + interviewdate + " will be cancelled!",
             type: 'warning',
@@ -2162,7 +2164,7 @@
                     'error'
                 )
             }
-        })
+        }) *@
 
 
     }

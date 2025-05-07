@@ -75,6 +75,15 @@ BEGIN
     ALTER TABLE InterviewMeetingsHistory
     Add IsDeleted bit
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CancellationReason')
+      AND Object_ID = Object_ID(N'InterviewMeetingsHistory'))
+BEGIN
+    ALTER TABLE InterviewMeetingsHistory
+    Add CancellationReason varchar(50)
+END
 
 End
 

@@ -656,13 +656,14 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate,string loginemail)
         {
             try
             {
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@interviewid", interviewid);
-                dp.Add("@source", "Reschedule on " + newinterviewdate.ToString());
+                dp.Add("@reason", "Reschedule on " + newinterviewdate.ToString());
+                dp.Add("@source", loginemail);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<RescheduleInterviewDetails>(con, "usp_UpdateReSchedulingInterview", dp,

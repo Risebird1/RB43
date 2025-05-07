@@ -560,7 +560,7 @@ namespace Risebird.Business
                 {
                     if (!string.IsNullOrEmpty(meetingToUpdate.confirmationStatus) && Convert.ToInt16(meetingToUpdate.confirmationStatus) == (int)ReceiveMeetingStatus.Cancelled)
                     {
-                        _ = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser);
+                        _ = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser, "Meeting Update");
                         _ = await _irfService.AddCandidateStatus(meetingToUpdate.LoggedInUser, meetingToUpdate.CandidateMasterId, meetingToUpdate.irfIntId, "Meeting Cancelled", (int)CandidateStatusOptions.Cancelled, meetingToUpdate.imid);
                     }
 
@@ -3307,7 +3307,7 @@ namespace Risebird.Business
             if ((status == 1 || status == 2 || status == 4) && await CheckInterviewCancellable(meetingid))
             {
                 var response = true;
-    
+
                 var results = await UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
                 if (results == "Success")
                 {
@@ -3322,7 +3322,7 @@ namespace Risebird.Business
                         {
                             value = "RESCHEDULE";
                         }
-                       
+
                         //send mail scheduling link
                         var result1 = await _irfService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
                         var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
@@ -3343,7 +3343,7 @@ namespace Risebird.Business
                         var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
                         var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
-                        
+
                         return "Successfully status updated, " + value;
                     }
 

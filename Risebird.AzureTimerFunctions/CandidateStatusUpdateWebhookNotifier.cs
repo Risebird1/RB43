@@ -93,6 +93,10 @@ namespace Risebird.AzureTimerFunctions
                         {
                             using (HttpClient client = new HttpClient())
                             {
+                                if (string.IsNullOrWhiteSpace(data.Cancellationreason))
+                                {
+                                    data.Cancellationreason = data.Cancellationsource;
+                                }
                                 if (data.Status.ToLower() != "cancelled")
                                 {
                                     data.Cancellationreason = "";
