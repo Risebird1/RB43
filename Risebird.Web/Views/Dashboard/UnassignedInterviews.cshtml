@@ -326,7 +326,7 @@
                                                         <th>Candidate Rating</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
-                                                        @*  <th>Interviewer Late join</th> *@
+                                                        <th>Interviewer Late join</th>
 
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
@@ -566,7 +566,7 @@
                                                         <th>Candidate Rating</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
-                                                        @* <th>Interviewer Late join</th> *@
+                                                        <th>Interviewer Late join</th>
 
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
@@ -1125,9 +1125,19 @@
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
                                                                 @if (ViewBag.actionstatus == "QCPendingReport")
-                                                                {
+                                                                { <div>
+                                                                    
+                                                                    @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
+                                                                    {
+                                                                    
+                                                                        <span aria-label="Click here to call the candidate">
+                                                                                <span onclick="CommonCallButtonClick('@item.candidateName','@item.InterviewerMobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" style="width: 16px;margin: 7px 0px 7px 0px;"></span>
+                                                                        </span>@item.InterviewerMobileNumber
+                                                                    
+                                                                    }
+                                                                    </div>
 
-                                                                    <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
+                                                                <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
                                                                         @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
                                                                         {
@@ -1401,7 +1411,7 @@
                                                                 <div style="float:left">@item.Joinedon </div>
 
                                                             </td>
-                                                            @*  <td>
+                                                            <td>
                                                                 <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
 
                                                                     @if (item.InterviewerLateJoin != 0)
@@ -1413,7 +1423,7 @@
                                                                         <span style="color:#000;font-weight:400">No</span>
                                                                     }
                                                                 </div>
-                                                            </td> *@
+                                                            </td> 
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {

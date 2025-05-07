@@ -24,13 +24,13 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
                      
                     
  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                         
-  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                                   
+  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry, IRF.CalendlyLink,                                  
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,                       
   case when ulc.LastName is null then ulc.FirstName                      
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                      
   end as candidateName,                      
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                    
-  IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                              
+  IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.CalendlyLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                              
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                          
@@ -39,7 +39,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId          
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,IRF.IsVideoRequired,         
+  im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,IRF.IsVideoRequired, IRF.CalendlyLink,        
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
 ,iman.interviewDate RescheduleDate,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted 
@@ -69,7 +69,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   Union                        
   select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                         
                         
-  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                                   
+  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry, IRF.CalendlyLink,                                  
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,                       
   case                       
   when ulc.LastName is null then ulc.FirstName                      
@@ -77,7 +77,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   end as candidateName,                      
   im.currentEmployerName,                                     
   im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                    
-  IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                              
+  IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.CalendlyLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                              
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                      
@@ -86,7 +86,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId          
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,IRF.IsVideoRequired,         
+  im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,IRF.IsVideoRequired, IRF.CalendlyLink,        
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId    
   ,iman.interviewDate RescheduleDate,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted  
@@ -116,7 +116,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
 else if(@EmailId is not null and ((select idProfile from UserList where EmailId=@EmailId)=31))                                 
  Begin                          
   select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                         
-  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                                   
+  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry, IRF.CalendlyLink,                                  
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,                       
   case                       
   when ulc.LastName is null then ulc.FirstName                      
@@ -124,7 +124,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   end as candidateName,                      
   im.currentEmployerName,                                     
   im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                    
-  IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                              
+  IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.CalendlyLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                              
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                          
@@ -163,7 +163,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
 else                          
  Begin                          
   select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                         
-  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                                   
+  im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,IRF.CalendlyLink,                                   
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,                       
   case                       
   when ulc.LastName is null then ulc.FirstName                      
@@ -180,7 +180,7 @@ else
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId           
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,        
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,        
-  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner, IRF.IsVideoRequired,        
+  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner, IRF.IsVideoRequired, IRF.CalendlyLink,       
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker          
  --,si.Uniqueid as SchedulerUniqueid    
  ,iman.interviewDate RescheduleDate ,ti.PerSuccessRate, ic.AudioTranscriptFileLink, ic.IsAITranscriptAnalysisAttempted   
@@ -205,7 +205,7 @@ else
   where im.interviewDate >= @startDate AND im.interviewDate < @endDate                           
  End        
                                      
-End                       
+End                        
                  
 GO
 
