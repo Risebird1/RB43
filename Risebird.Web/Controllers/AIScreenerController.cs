@@ -402,36 +402,15 @@ namespace Risebird.Web.Controllers
                                 new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
                                 Request.Scheme);
 
-                                //aiResponseUrl = Request.Scheme + "://" + Request.Host.Value + $"/AIScreener/PreOnboardingAIVerdictDetails?emailId={emailId}&primarySpecialization={primarySpecialization}";
                             }
-                            //string OpenAIScreeningResponse = responseInJson; // Example input string
-                            //string AIVerdict = "Yes"; // Default value
+                            else
+                            {
+                                return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Pre-onboarding failed. Please try again." });
+
+                            }
+
                             string AIVerdict = aiAnalysisModel.verdict; // Default value
-                            //int verdictIndex = OpenAIScreeningResponse.ToLower().IndexOf("verdict");
-
-                            //if (verdictIndex != -1)
-                            //{
-                            //    // Extract substring after the word 'verdict'
-                            //    string verdictSubstr = OpenAIScreeningResponse.Substring(verdictIndex + 7, Math.Min(50, OpenAIScreeningResponse.Length - (verdictIndex + 7)));
-
-                            //    // Remove 'annotation' and 'annotations' (case-insensitive)
-                            //    verdictSubstr = verdictSubstr.Replace("annotation", "", StringComparison.OrdinalIgnoreCase)
-                            //                                 .Replace("annotations", "", StringComparison.OrdinalIgnoreCase);
-
-                            //    // Convert to lowercase for case-insensitive comparison
-                            //    string lowerVerdict = verdictSubstr.ToLower();
-
-                            //    // Check if it contains 'no', 'not', or 'doesn't'
-                            //    if (lowerVerdict.Contains("no") || lowerVerdict.Contains("not") || lowerVerdict.Contains("doesn't"))
-                            //    {
-                            //        AIVerdict = "No";
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    AIVerdict = "Sorry! Could not be determined!";//
-                            //}
-                            // AIVerdict now contains 'No' or 'Yes' based on the condition
+                            
                             if(!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower().Contains("no") || AIVerdict.ToLower().Contains("not") || AIVerdict.ToLower().Contains("doesn't")))
                             {
                                 return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
