@@ -1188,7 +1188,7 @@
                         // button.innerHTML = "Generate AI Verdict";
                     }
                 } 
-                else if (data != null && data.errorMessage.includes("onboarding") != '') {
+                else if (data != null && data.errorMessage.includes("onboarding")) {
                     swal.fire(data.errorMessage);
                     //button.disabled = false;
                     button.innerHTML = "Unexpected Error. Please try later.";
