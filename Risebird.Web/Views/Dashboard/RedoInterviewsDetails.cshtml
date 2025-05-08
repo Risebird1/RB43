@@ -69,10 +69,6 @@
                     <div class="mobile-view"> <h4 class="card-title"> Redo Interviews</h4></div>
                 </div>
                 <div class="pull-left">
-                   
-                 
-                 
-                  
                 </div>
                 <div class="pull-right">
                     <div>
@@ -82,7 +78,7 @@
                                 <div class="mdc-button__ripple"></div>
                             </button>
                         </span>
-                       
+
                     </div>
                 </div>
             </div>
@@ -179,9 +175,9 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            
-                                                           
-                                                           
+
+
+
 
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
@@ -201,7 +197,7 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                           
+
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
@@ -220,7 +216,7 @@
                                                                 </div>
                                                             </div>
 
-                                                         
+
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
@@ -231,7 +227,7 @@
                                                                         </button>
 
 
-                                                                        <button  type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                                                                             <font style="font-size:12px;"> Apply Filter</font>
                                                                         </button>
 
@@ -267,27 +263,15 @@
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
-                                                   
+
                                                     @*Hide Columns for Cancel Intervies*@
-                                                        <th>JD Title</th>
-                                                        @if (ViewBag.profile != "Quality Controller")
-                                                        {
-                                                            <th>Meeting Link</th>
-                                                        }
-                                                        @if (ViewBag.profile != "Quality Controller")
-                                                        {
-                                                            <th>Interviewer Portal</th>
-                                                        }
-                                                        @if (ViewBag.profile != "Quality Controller")
-                                                        {
-                                                            <th>Candidate Portal</th>
-                                                        }
-                                                        <th>Company Name</th>
-                                                        <th>Red Markers</th>
-                                                        <th>Interveiwer</th>
-                                                        <th>Meeting Status</th>
-                                                        <th>Interview Status</th>
-                                                   
+                                                    <th>JD Title</th>
+                                                    <th>Company Name</th>
+                                                    <th>Red Markers</th>
+                                                    <th>Interveiwer</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Interview Status</th>
+
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -303,34 +287,19 @@
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
-                                                   
-                                                        <th>JD Title</th>
-                                                        @if (ViewBag.profile != "Quality Controller")
-                                                        {
-                                                            <th>Meeting Link</th>
-                                                        }
-                                                        @if (ViewBag.profile != "Quality Controller")
-                                                        {
-                                                            <th>Interviewer Portal</th>
-                                                        }
-                                                        @if (ViewBag.profile != "Quality Controller")
-                                                        {
-                                                            <th>Candidate Portal</th>
-                                                        }
-                                                        <th>Company Name</th>
-                                                        <th>Red Markers</th>
-                                                        <th>Interviewer</th>
-                                                       
-                                                      
-                                                       
-                                                        <th>Meeting Status</th>
-                                                        <th>Interview Status</th>
-                                                  
+
+                                                    <th>JD Title</th>
+                                                    <th>Company Name</th>
+                                                    <th>Red Markers</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Interview Status</th>
+
 
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                              @foreach (var item in Model)
+                                                @foreach (var item in Model)
                                                 {
                                                     var colorcode = "#bfd2f42b";
                                                     @if (item.isVerified)
@@ -351,40 +320,28 @@
                                                     <tr id=@item.imid style="background:@colorcode">
                                                         <td id="actionwrap" class="flex-w text-center">
 
-                                                          
+
 
                                                             <div class="action-btn">
                                                                 @*For Hide All column in Cancel Intervies*@
-                                                               
-                                                                    
-                                                                    @if (item.IsAadhaarVerificationRequired == true)
-                                                                    {
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
-                                                                            <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
-                                                                                <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
-                                                                            </span>
-                                                                        </button>
-                                                                    }
-                                                               
-                                                               
 
-                                                              
-                                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin") @* || ViewBag.profile == "SupportAdmin" *@
-                                                                    {
-                                                                        <span class="interview_9">
-                                                                            <a style="text-decoration:none" target="_blank" href='@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'>
-                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
-                                                                                    <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                                </button>
-                                                                            </a>
+
+                                                                @if (item.IsAadhaarVerificationRequired == true)
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
+                                                                        <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
+                                                                            <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
                                                                         </span>
+                                                                    </button>
+                                                                }
 
-                                                                    
 
+
+
+                                                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                                                {
                                                                     @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
-
                                                                     {
-                                                                       
                                                                         <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                             <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
                                                                                 <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
@@ -407,17 +364,7 @@
                                                                                 <span title="Blacklist Company" class="mdc-fab__icon material-icons"><img class="icons-blacklist" src="~/img/blacklist.png" /></span>
                                                                             </button>
                                                                         </a>
-
-
                                                                     }
-                                                                }
-                                                                @if (ViewBag.emailid == "shivani_laad@risebird.io")
-                                                                {
-                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
-                                                                        <span onclick="javascript:DeleteQuestionsDiscussed('@item.imid', '@item.interviewer', '@item.candidateEmail', '@item.interviewDate.ToString()');" title="Delete Questions Discussed" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                                        </span>
-                                                                    </button>
                                                                 }
 
                                                                 @if ((ViewBag.profile == ProfileNames.Admin || ViewBag.profile == ProfileNames.SupportAdmin || ViewBag.profile == ProfileNames.SeniorHR) && !string.IsNullOrEmpty(item.AudioTranscriptFileLink))
@@ -470,17 +417,18 @@
                                                                 }
 
                                                                 <span class="name-field"> @* <a onclick="directopenChat('@item.candidateEmail')"> *@<span class="dot" style="background-color:green"></span>@item.candidateName @* </a> *@ </span>
-                                                                  @if (ViewBag.profile != "Quality Controller") {
-                                                            <div style="padding: 0px 0px 5px 7px;position: relative;left: -10px;">
-                                                                <span class="call-area">
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" /></span>
-                                                                    }
-                                                                </span>
-                                                                @item.MobileNumber
-                                                            </div>
-                                                        }
+                                                                @if (ViewBag.profile != "Quality Controller")
+                                                                {
+                                                                    <div style="padding: 0px 0px 5px 7px;position: relative;left: -10px;">
+                                                                        <span class="call-area">
+                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                            {
+                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" /></span>
+                                                                            }
+                                                                        </span>
+                                                                        @item.MobileNumber
+                                                                    </div>
+                                                                }
                                                             }
                                                             else
                                                             {
@@ -500,17 +448,18 @@
                                                                     </div>
                                                                 }
                                                                 <span class="name-field">  @item.candidateName</span>
-                                                                      @if (ViewBag.profile != "Quality Controller") {
-                                                            <div style="padding: 0px 0px 5px 7px;position:relative;left:-10px;">
-                                                                <span class="call-area">
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" /></span>
-                                                                    }
-                                                                </span>
-                                                                @item.MobileNumber
-                                                            </div>
-                                                        }
+                                                                @if (ViewBag.profile != "Quality Controller")
+                                                                {
+                                                                    <div style="padding: 0px 0px 5px 7px;position:relative;left:-10px;">
+                                                                        <span class="call-area">
+                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                            {
+                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" /></span>
+                                                                            }
+                                                                        </span>
+                                                                        @item.MobileNumber
+                                                                    </div>
+                                                                }
                                                             }
                                                             @if (ViewBag.profile != "Quality Controller")
                                                             {
@@ -525,179 +474,152 @@
 
                                                             }
                                                         </td>
-                                                      
+
                                                         @*Hide Columns for Cancel Intervies*@
-                                                        
-                                                          
 
-                                                            <td> @item.JDTiltle.Split("|")[0] </td>
-                                                            @if (ViewBag.profile != "Quality Controller")
+
+
+                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+                                                        @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                        {
+                                                            @if (item.CompanyName.Length > 30)
                                                             {
-                                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                                {
-                                                                    <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td><span style="color:red">No Meeting Link</span></td>
-                                                                }
-                                                            }
-                                                            @if (ViewBag.profile != "Quality Controller")
-                                                            {
-                                                                <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
-                                                                    <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
-                                                                        <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                            @if (ViewBag.profile != "Quality Controller")
-                                                            {
-                                                                <td onclick="captureclick('Meeting','CandidatePortal','@item.imid')">
-                                                                    <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
-                                                                        <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                            @if (!string.IsNullOrWhiteSpace(item.CompanyName))
-                                                            {
-                                                                @if (item.CompanyName.Length > 30)
-                                                                {
-                                                                    <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td style="font-size:13px; color:brown">@item.CompanyName</td>
-                                                                }
+                                                                <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                                <td style="font-size:13px; color:brown">@item.CompanyName</td>
                                                             }
-                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        @if (@item.interviewer != null || @item.interviewer != "")
+                                                        {
+                                                            <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="color:red">@item.RedMarker</td>
+                                                        }
+                                                        @if (@item.interviewer != null || @item.interviewer != "")
+                                                        {
+                                                            @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
                                                             {
-                                                                <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td style="color:red">@item.RedMarker</td>
-                                                            }
-                                                            @if (@item.interviewer != null || @item.interviewer != "")
-                                                            {
-                                                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
-                                                                {
-                                                                    <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
-                                                                        <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
-                                                                            @item.interviewer
-                                                                        </d>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>
-                                                                        <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
-                                                                            @item.interviewer
-                                                                        </d>
-                                                                    </td>
-                                                                }
-
+                                                                <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                        @item.interviewer
+                                                                    </d>
+                                                                </td>
                                                             }
                                                             else
                                                             {
                                                                 <td>
                                                                     <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
-                                                                        not
+                                                                        @item.interviewer
                                                                     </d>
                                                                 </td>
                                                             }
-                                                           
-                                                      
-                                                            @if (item.MeetingStatusStatusDesc == "Status Pending")
-                                                            {
-                                                                <td>
-                                                                    <span class="status mpending">@item.MeetingStatusStatusDesc</span>
-                                                                </td>
-                                                            }
-                                                            else if (item.MeetingStatusStatusDesc == "Completed")
-                                                            {
 
-                                                                <td>
-                                                                    <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
-                                                                </td>
-                                                            }
-                                                            else if (item.MeetingStatusStatusDesc == "Scheduled")
-                                                            {
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                    not
+                                                                </d>
+                                                            </td>
+                                                        }
 
-                                                                <td>
-                                                                    <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
-                                                                </td>
-                                                            }
 
-                                                            else if (item.MeetingStatusStatusDesc == "Dropped")
-                                                            {
+                                                        @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                        {
+                                                            <td>
+                                                                <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Completed")
+                                                        {
 
-                                                                <td>
-                                                                    <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
-                                                                </td>
-                                                            }
-                                                            else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
-                                                            {
+                                                            <td>
+                                                                <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                        {
 
-                                                                <td>
-                                                                    <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
-                                                                </td>
-                                                            }
-                                                            else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
-                                                            {
+                                                            <td>
+                                                                <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
 
-                                                                <td>
-                                                                    <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
-                                                                </td>
-                                                            }
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                        {
 
-                                                            else
-                                                            {
-                                                                <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
+                                                            <td>
+                                                                <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                        {
 
-                                                            }
+                                                            <td>
+                                                                <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                        {
 
-                                                            @if (item.InterviewStatus == 2)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else if (item.InterviewStatus == 3)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
+                                                            <td>
+                                                                <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
 
-                                                            else if (item.InterviewStatus == 5)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else if (item.InterviewStatus == 4)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:green; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
+                                                        else
+                                                        {
+                                                            <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
 
-                                                            else if (item.InterviewStatus == 1)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-center">@item.intervieweStatusStatDesc</td>
-                                                            }
+                                                        }
 
-                                                       
+                                                        @if (item.InterviewStatus == 2)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+                                                        else if (item.InterviewStatus == 3)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.InterviewStatus == 5)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+                                                        else if (item.InterviewStatus == 4)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:green; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.InterviewStatus == 1)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center">@item.intervieweStatusStatDesc</td>
+                                                        }
+
+
 
                                                     </tr>
                                                 }
@@ -716,7 +638,7 @@
                     @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
                     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
-                  
+
 
 
                     <!-- end row -->
@@ -879,101 +801,101 @@
 
 <script type="text/javascript">
 
-    $(document).ready(function () {
+     $(document).ready(function () {
 
-        //$("#ResetFilter").click(function () {
-        //    ResetFilter();
-        //})
-        if ('@filter' != "") {
-            ApplySessionFilter();
-        }
+         //$("#ResetFilter").click(function () {
+         //    ResetFilter();
+         //})
+         if ('@filter' != "") {
+             ApplySessionFilter();
+         }
 
-        //    $("#PrimarySkill").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-
-
-        //    $("#RFID").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-        //    $("#ClientHR").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-
-        //    $("#ConfirmationStatus").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-
-        //    $("#MeetingStatus").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-
-        //    $("#InterviewStatus").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-
-        //    $("#Interviewer").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //    });
-
-        //    $("#ClientName").multiselect({
-        //        includeSelectAllOption: true,
-        //        selectedClass: 'active1',
-        //        buttonWidth: '100%',
-        //        maxHeight: 200
-        //    });
-        //    $("#Client").multiselect({
-        //        includeSelectAllOption: true,
-        //        selectedClass: 'active1',
-        //        buttonWidth: '100%',
-        //        maxHeight: 200
-        //    });
-        //$("#IsCandidateResponsed").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
+         //    $("#PrimarySkill").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //        });
 
 
-    });
+         //    $("#RFID").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //        });
+         //    $("#ClientHR").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //        });
 
-    function ResetFilter(type) {
+         //    $("#ConfirmationStatus").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //        });
 
-        window.location.href = "/Interview/ResetInterviewFilter?type=" + type;
-    }
+         //    $("#MeetingStatus").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //        });
 
-    function ApplySessionFilter() {
-        var strtDte = '@strtDte';
-        var endDte = '@endDte';
-        @* var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills)); *@
-        var rFID = @Html.Raw(Json.Serialize(RFID));
-       @*  var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+         //    $("#InterviewStatus").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //        });
+
+         //    $("#Interviewer").multiselect({
+         //            includeSelectAllOption: true,
+         //            selectedClass: 'active1',
+         //            buttonWidth: '100%',
+         //            maxHeight: 200
+         //    });
+
+         //    $("#ClientName").multiselect({
+         //        includeSelectAllOption: true,
+         //        selectedClass: 'active1',
+         //        buttonWidth: '100%',
+         //        maxHeight: 200
+         //    });
+         //    $("#Client").multiselect({
+         //        includeSelectAllOption: true,
+         //        selectedClass: 'active1',
+         //        buttonWidth: '100%',
+         //        maxHeight: 200
+         //    });
+         //$("#IsCandidateResponsed").multiselect({
+         //    includeSelectAllOption: true,
+         //    selectedClass: 'active1',
+         //    buttonWidth: '100%',
+         //    maxHeight: 200
+         //});
+
+
+     });
+
+     function ResetFilter(type) {
+
+         window.location.href = "/Interview/ResetInterviewFilter?type=" + type;
+     }
+
+     function ApplySessionFilter() {
+         var strtDte = '@strtDte';
+         var endDte = '@endDte';
+    @* var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills)); *@
+         var rFID = @Html.Raw(Json.Serialize(RFID));
+    @*  var clientHR = @Html.Raw(Json.Serialize(ClientHR));
         var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus)); *@
-        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
-        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
-       @*  var interviewer = @Html.Raw(Json.Serialize(Interviewer));
+         var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+         var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+    @*  var interviewer = @Html.Raw(Json.Serialize(Interviewer));
         var clientName = @Html.Raw(Json.Serialize(ClientName));
         var client = @Html.Raw(Json.Serialize(Client));
         var isCandidateResponsed = @Html.Raw(Json.Serialize(IsCandidateResponsed));
@@ -981,22 +903,22 @@
         var aadhaarVerified = @Html.Raw(Json.Serialize(AadhaarVerified));
         var channelOwner = @Html.Raw(Json.Serialize(ChannelOwner)); *@
 
-        $('input[name=StartDate]').val(strtDte);
-        $('input[name=EndDate]').val(endDte);
-       @*  $("#PrimarySkill").val(primarySkillsArr); *@
-        $("#RFID").val(rFID);
+         $('input[name=StartDate]').val(strtDte);
+         $('input[name=EndDate]').val(endDte);
+    @*  $("#PrimarySkill").val(primarySkillsArr); *@
+         $("#RFID").val(rFID);
     @*     $("#ClientHR").val(clientHR);
         $("#ConfirmationStatus").val(confirmationStatus); *@
-        $("#MeetingStatus").val(meetingStatus);
-        $("#InterviewStatus").val(interviewStatus);
-   @*      $("#Interviewer").val(interviewer);
+         $("#MeetingStatus").val(meetingStatus);
+         $("#InterviewStatus").val(interviewStatus);
+    @*      $("#Interviewer").val(interviewer);
         $("#ClientName").val(clientName);
         $("#Client").val(client);
         $("#TemplateName").val(templateName);
         $("#AadhaarVerified").val(aadhaarVerified);
         $("#ChannelOwner").val(channelOwner); *@
 
-    }
+     }
 
 
 </script>
@@ -1178,12 +1100,12 @@
     }
 </script>
 <script>
-   
+
     function closeVideoDetailsModel() {
         var modal = document.getElementById("VideoDetailsModel");
         modal.style.display = "none";
     }
-    
+
     function SaveVideoDetails() {
         $.ajax({
             type: "GET",
@@ -1194,7 +1116,7 @@
         });
     }
 
-   
+
 
 </script>
 <script>
