@@ -1,0 +1,1813 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Data
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Interviews";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
+    string[] primarySkills = new string[] { };
+    string[] RFID = new string[] { };
+    string[] ClientHR = new string[] { };
+    string[] ConfirmationStatus = new string[] { };
+    string[] MeetingStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] Interviewer = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] Client = new string[] { };
+    bool[] IsCandidateResponsed = new bool[] { };
+    string[] TemplateName = new string[] { };
+    bool[] AadhaarVerified = new bool[] { };
+    string[] ChannelOwner = new string[] { };
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>
+        (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
+    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
+    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+    IsCandidateResponsed = filter.IsCandidateResponsed != null ? filter.IsCandidateResponsed : new bool[] { };
+    TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
+    AadhaarVerified = filter.AadhaarVerified != null ? filter.AadhaarVerified : new bool[] { };
+    ChannelOwner = filter.ChannelOwner != null ? filter.ChannelOwner : new string[] { };
+}
+<script>
+    var Header = "Interviews";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
+
+<script>
+    function shrink() {
+
+        curr = document.getElementById('actionwrap').width;
+        curr = (curr == 'auto' ? '88%' : 'auto');
+        document.getElementById('actionwrap').width = curr;
+        $('.action-btn').toggle("fast");
+        $('.the-arrow.-right').toggleClass("newarrow");
+    }
+</script>
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Redo Interviews</h4></div>
+                </div>
+                <div class="pull-left">
+                   
+                 
+                 
+                  
+                </div>
+                <div class="pull-right">
+                    <div>
+                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" , new { type = ViewBag.Type })'"></i></span>
+                        <span class="interview_3">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                        </span>
+                       
+
+
+                     
+                       
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="interviewerMemberModal" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                    </div>
+                    <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
+                </button>
+
+                <div class="modal-body" id="memberTableBody">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <form action="@Url.Action("Index","Interview", new { type = ViewBag.Type })" method="post" id="form" onsubmit="return checkfilterDate();">
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="TemplateName">Template</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="TemplateName" data-placeholder="None Selected" name="TemplateName" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.TemplateName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Jd Title</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="PrimarySkill" data-placeholder="None Selected" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item.Split(" |")[0]">@item.Split("|")[0]</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                    Client
+                                                                    HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientHR" name="ClientHR" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                    Meeting Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="MeetingStatus" name="MeetingStatus" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Where(x => !string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
+                                                                    Interviewer
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Interviewer" name="Interviewer" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                                                                    Project Name
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ChannelOwner">
+                                                                    Channel Owner
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ChannelOwner" name="ChannelOwner" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ChannelOwner).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel ID</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="RFID" name="RFID" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
+                                                                    Confirmation Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ConfirmationStatus" data-placeholder="None Selected" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                    Interview Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="InterviewStatus" data-placeholder="None Selected" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                    Client
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Client" name="Client" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.Client).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsCandidateResponsed">
+                                                                    Candidate Responsed
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="IsCandidateResponsed" data-placeholder="None Selected" name="IsCandidateResponsed" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="true">Responsed</option>
+                                                                        <option value="false">No Response</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerified">
+                                                                    Aadhaar Verified
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="AadhaarVerified" data-placeholder="None Selected" name="AadhaarVerified" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="true">Verified</option>
+                                                                        <option value="false">Not Verified</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12">
+
+
+                                                                        <button type="button" onclick="ResetFilter('@ViewBag.Type')" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
+
+
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
+
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="scrollbar int-table" id="style-2">
+
+                                    <div id="tableID" class="second ">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    <th id='start'>Skill Channel ID</th>
+                                                    <th>Interview Date</th>
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Candidate Details</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Mobile Number</th>
+                                                    }
+                                                    @*Hide Columns for Cancel Intervies*@
+                                                        <th>JD Title</th>
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Meeting Link</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Interviewer Portal</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Candidate Portal</th>
+                                                        }
+                                                        <th>Company Name</th>
+                                                        <th>Red Markers</th>
+                                                        <th>Interveiwer</th>
+                                                       
+                                                        <th>Meeting Status</th>
+                                                        <th>Interview Status</th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    <th>Skill Channel ID</th>
+                                                    <th>Interview Date</th>
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Candidate Details</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
+                                                    @if (ViewBag.profile != "Quality Controller")
+                                                    {
+                                                        <th>Mobile Number</th>
+                                                    }
+                                                       
+                                                        <th>JD Title</th>
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Meeting Link</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Interviewer Portal</th>
+                                                        }
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <th>Candidate Portal</th>
+                                                        }
+                                                        <th>Company Name</th>
+                                                        <th>Red Markers</th>
+                                                        <th>Interviewer</th>
+                                                       
+                                                      
+                                                       
+                                                        <th>Meeting Status</th>
+                                                        <th>Interview Status</th>
+                                                  
+
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                              @foreach (var item in Model)
+                                                {
+                                                    var colorcode = "#bfd2f42b";
+                                                    @if (item.isVerified)
+                                                    {
+                                                        if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                                                        {
+                                                            colorcode = "#fff";
+                                                        }
+                                                        else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                                                        {
+                                                            colorcode = "#fcfccab5";
+                                                        }
+                                                        else if (item.EmploymentComment.Contains("No record"))
+                                                        {
+                                                            colorcode = "#faddbfa3";
+                                                        }
+                                                    }
+                                                    <tr id=@item.imid style="background:@colorcode">
+                                                        <td id="actionwrap" class="flex-w text-center">
+
+                                                            <a class="animated-arrow" href="#" onclick="shrink();">
+
+                                                                <span class="main">
+                                                                    <span class="text">
+                                                                        Click to view
+                                                                    </span>
+                                                                    <span class="the-arrow -right">
+                                                                        <span class="shaft"></span>
+                                                                    </span>
+                                                                </span>
+                                                            </a>
+
+                                                            <div class="action-btn" style="display:none;">
+                                                                @*For Hide All column in Cancel Intervies*@
+                                                               
+                                                                    
+                                                                    @if (item.IsAadhaarVerificationRequired == true)
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
+                                                                            <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
+                                                                                <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+                                                               
+                                                               
+
+                                                              
+                                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin") @* || ViewBag.profile == "SupportAdmin" *@
+                                                                    {
+                                                                        <span class="interview_9">
+                                                                            <a style="text-decoration:none" target="_blank" href='@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'>
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                    <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                </button>
+                                                                            </a>
+                                                                        </span>
+
+                                                                    
+
+                                                                    @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
+
+                                                                    {
+                                                                       
+                                                                        <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                                <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                                                        @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                                    <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                </button>
+                                                                            </span>
+
+                                                                        }
+                                                                    }
+                                                                    @if (item.CompanyName != null && item.CompanyName != "")
+                                                                    {
+                                                                        <a target="_blank" onclick="javascript:BlckListCompanyModalDetails('@item.CompanyName');">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Blacklist Company">
+                                                                                <span title="Blacklist Company" class="mdc-fab__icon material-icons"><img class="icons-blacklist" src="~/img/blacklist.png" /></span>
+                                                                            </button>
+                                                                        </a>
+
+
+                                                                    }
+                                                                }
+                                                                @if (ViewBag.emailid == "shivani_laad@risebird.io")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete Questions Discussed">
+                                                                        <span onclick="javascript:DeleteQuestionsDiscussed('@item.imid', '@item.interviewer', '@item.candidateEmail', '@item.interviewDate.ToString()');" title="Delete Questions Discussed" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+
+                                                                @if ((ViewBag.profile == ProfileNames.Admin || ViewBag.profile == ProfileNames.SupportAdmin || ViewBag.profile == ProfileNames.SeniorHR) && !string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                                                                {
+                                                                    <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.imid, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;">
+                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Transcript Analysis" style="background:#b3bce4d1;border-color:#b3bce4d1; width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                            <span title="Transcript Analysis" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
+                                                                        </span>
+                                                                    </a>
+
+                                                                    <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.imid, irfId = item.irfIntId, isRedo = true})" title="Regenerate Transcript Analysis" style="text-decoration:none;">
+                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Regenerate Transcript Analysis" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
+                                                                            <span title="Regenerate Transcript Analysis" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px" /></span>
+                                                                        </span>
+                                                                    </a>
+                                                                }
+
+                                                            </div>
+
+
+
+                                                        </td>
+                                                        <td title=@item.IRFId> @item.IRFId </td>
+                                                        <td> @item.interviewDate </td>
+
+                                                        <td style="padding-left:25px;">
+                                                            @if (item.IsOnline == 1)
+                                                            {
+                                                                @if (item.IsVideoRequired == true)
+                                                                {
+                                                                    <div style="position:relative;z-index:10;">
+                                                                        <div class="absCenter">
+                                                                            <button class="infoButton" style="top:8px;left:-145px;">
+                                                                                <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px 0px 7px;width:auto;">Mandate : <b style="color:red">Video On</b></div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                                <span class="name-field"> @* <a onclick="directopenChat('@item.candidateEmail')"> *@<span class="dot" style="background-color:green"></span>@item.candidateName @* </a> *@ </span>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (item.IsVideoRequired == true)
+                                                                {
+                                                                    <div style="position:relative;width:fit-content">
+                                                                        <div class="absCenter">
+                                                                            <button class="infoButton" style="top:8px;left:-11px;">
+                                                                                <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                    <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <span class="name-field">  @item.candidateName</span>
+                                                            }
+                                                            @if (ViewBag.profile != "Quality Controller")
+                                                            {
+                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                {
+                                                                    <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="email-field" style="color:red"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                                }
+
+                                                            }
+                                                        </td>
+                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        {
+                                                            <td style="padding:0px 7px;">
+                                                                <span class="call-area">
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>
+                                                                    }
+                                                                </span>
+                                                                @item.MobileNumber
+                                                            </td>
+                                                        }
+                                                        @*Hide Columns for Cancel Intervies*@
+                                                        
+                                                          
+
+                                                            <td> @item.JDTiltle.Split("|")[0] </td>
+                                                            @if (ViewBag.profile != "Quality Controller")
+                                                            {
+                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                {
+                                                                    <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td><span style="color:red">No Meeting Link</span></td>
+                                                                }
+                                                            }
+                                                            @if (ViewBag.profile != "Quality Controller")
+                                                            {
+                                                                <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
+                                                                    <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
+                                                                        <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                            @if (ViewBag.profile != "Quality Controller")
+                                                            {
+                                                                <td onclick="captureclick('Meeting','CandidatePortal','@item.imid')">
+                                                                    <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
+                                                                        <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                            @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                            {
+                                                                @if (item.CompanyName.Length > 30)
+                                                                {
+                                                                    <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="font-size:13px; color:brown">@item.CompanyName</td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                            {
+                                                                <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:red">@item.RedMarker</td>
+                                                            }
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                            {
+                                                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
+                                                                {
+                                                                    <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
+                                                                        <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                            @item.interviewer
+                                                                        </d>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>
+                                                                        <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                            @item.interviewer
+                                                                        </d>
+                                                                    </td>
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                        not
+                                                                    </d>
+                                                                </td>
+                                                            }
+                                                           
+                                                      
+                                                            @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.MeetingStatusStatusDesc == "Completed")
+                                                            {
+
+                                                                <td>
+                                                                    <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                            {
+
+                                                                <td>
+                                                                    <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+
+                                                            else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                            {
+
+                                                                <td>
+                                                                    <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                            {
+
+                                                                <td>
+                                                                    <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                            {
+
+                                                                <td>
+                                                                    <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+
+                                                            else
+                                                            {
+                                                                <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
+
+                                                            }
+
+                                                            @if (item.InterviewStatus == 2)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.InterviewStatus == 3)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+
+                                                            else if (item.InterviewStatus == 5)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.InterviewStatus == 4)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:green; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+
+                                                            else if (item.InterviewStatus == 1)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center">@item.intervieweStatusStatDesc</td>
+                                                            }
+
+                                                       
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+                    @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+                    @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+                  
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<div id="BlckListCompanyModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Blacklist Company Details</h5>
+            </div>
+            <button onclick="closeBlackListCompanyModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="BlackListCompanybody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnBlackListCompany">
+                    <label style="font-size:14px;">Comment</label>
+                    <textarea name="Comment" id="txtComment" class="form-control" style="height:80px;"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveBlckListCompanyModal()" id="btnBlackListCompanySave">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+
+                        <label class="label-field desp-label">Details for Skill Channel Url:  <b id="txtUrl"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtUrl')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewCancellationDetails.cshtml")
+
+
+
+<script src="~/js/common.js"></script>
+<script src="~/js/buttonclickevent.js"></script>
+<script>
+    function closeBlackListCompanyModal() {
+        var modal = document.getElementById("BlckListCompanyModal");
+        modal.style.display = "none";
+    }
+    function BlckListCompanyModalDetails(CompanyName) {
+        var modal = document.getElementById("BlckListCompanyModal");
+        modal.style.display = "block";
+        $('#hdnBlackListCompany').val(CompanyName);
+
+    }
+    function SaveBlckListCompanyModal() {
+        var comment = $('#txtComment').val().trim();
+        var CompanyName = $('#hdnBlackListCompany').val();
+        if (comment != '') {
+            $.ajax({
+                url: '/Interview/AddBlackListCompanyComment',
+                data: { 'CompanyName': CompanyName, 'Comment': comment },
+                type: "POST",
+                success: function (data) {
+                    swal.fire(data);
+                    closeBlackListCompanyModal();
+                }
+            });
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+
+</script>
+
+<script>
+    var closeMember = document.getElementById("membersPopUp");
+    // When the user clicks on <span> (x), close the modal
+    closeMember.onclick = function () {
+        var modal = document.getElementById("interviewerMemberModal");
+        modal.style.display = "none";
+    }
+    function getIRFMembers(id) {
+
+        $.ajax({
+            url: '/IRF/GetIRFInterviewerMembers',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("interviewerMemberModal");
+                modal.style.display = "block";
+                $('#memberTableBody').html('');
+                $('#memberTableBody').html(data);
+
+
+            }
+        });
+    }
+
+</script>
+<script>
+    var span = document.getElementById("sentimentPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("sentimentModal");
+        modal.style.display = "none";
+    }
+
+
+    function SentimentModalClick(imid) {
+
+        // Get the modal
+        var modal = document.getElementById("sentimentModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        document.getElementById("sentimentImid").value = imid;
+    }
+</script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //$("#ResetFilter").click(function () {
+        //    ResetFilter();
+        //})
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+
+        //    $("#PrimarySkill").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
+
+
+        //    $("#RFID").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
+        //    $("#ClientHR").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
+
+        //    $("#ConfirmationStatus").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
+
+        //    $("#MeetingStatus").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
+
+        //    $("#InterviewStatus").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
+
+        //    $("#Interviewer").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //    });
+
+        //    $("#ClientName").multiselect({
+        //        includeSelectAllOption: true,
+        //        selectedClass: 'active1',
+        //        buttonWidth: '100%',
+        //        maxHeight: 200
+        //    });
+        //    $("#Client").multiselect({
+        //        includeSelectAllOption: true,
+        //        selectedClass: 'active1',
+        //        buttonWidth: '100%',
+        //        maxHeight: 200
+        //    });
+        //$("#IsCandidateResponsed").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+
+
+    });
+
+    function ResetFilter(type) {
+
+        window.location.href = "/Interview/ResetInterviewFilter?type=" + type;
+    }
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var rFID = @Html.Raw(Json.Serialize(RFID));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var client = @Html.Raw(Json.Serialize(Client));
+        var isCandidateResponsed = @Html.Raw(Json.Serialize(IsCandidateResponsed));
+        var templateName = @Html.Raw(Json.Serialize(TemplateName));
+        var aadhaarVerified = @Html.Raw(Json.Serialize(AadhaarVerified));
+        var channelOwner = @Html.Raw(Json.Serialize(ChannelOwner));
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#RFID").val(rFID);
+        $("#ClientHR").val(clientHR);
+        $("#ConfirmationStatus").val(confirmationStatus);
+        $("#MeetingStatus").val(meetingStatus);
+        $("#InterviewStatus").val(interviewStatus);
+        $("#Interviewer").val(interviewer);
+        $("#ClientName").val(clientName);
+        $("#Client").val(client);
+        $("#TemplateName").val(templateName);
+        $("#AadhaarVerified").val(aadhaarVerified);
+        $("#ChannelOwner").val(channelOwner);
+
+    }
+
+
+</script>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
+
+<script>
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style='z-index:0' onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+
+
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+
+    //(function () {
+    //    var searchForm = document.getElementById('meeting'),
+
+    //        clearBtn = textInput.nextSibling;
+    //    textInput.onkeyup = function () {
+    //        // Show the clear button if text input value is not empty
+    //        clearBtn.style.visibility = (this.value.length) ? "visible" : "hidden";
+    //    };
+    //    // Hide the clear button on click, and reset the input value
+    //    clearBtn.onclick = function () {
+    //        this.style.visibility = "hidden";
+    //        textInput.value = "";
+    //    };
+    //})();
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+<script src="~/js/TwilioCallMaker.js"></script>
+
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
+<script>
+   
+    function closeVideoDetailsModel() {
+        var modal = document.getElementById("VideoDetailsModel");
+        modal.style.display = "none";
+    }
+    
+    function SaveVideoDetails() {
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: {},
+            success: function (data) {
+            }
+        });
+    }
+
+   
+
+</script>
+<script>
+    function InterviewerPortalUrl(irfid, interviewid) {
+        $.ajax({
+            url: '/Interview/GetInterviewerPortalUrl',
+            data: { 'irfid': irfid, 'interviewid': interviewid },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtUrl").text(result);
+            }
+        });
+    }
+    function CopyPublicUrl(EmailId, IRFId, type) {
+        $.ajax({
+            url: '/Candidate/GetPublicURLCandidate',
+            data: { 'Emailid': EmailId, 'IRFId': IRFId, 'type': type },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtUrl").text(result);
+            }
+        });
+    }
+
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+
+</script>
+@*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
+<script>
+    $('input:radio[name="receivers"]').click(function () {
+
+        if ($(this).val() == 'IRF') {
+            $('#IRFLIST').show();
+        } else {
+            $('#IRFLIST').hide()
+        }
+    });
+</script>
+
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"HR\"")
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
+
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
+
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            // var element = $('#' + elementObject[0].id);
+            var element = $('.' + elementObject[0].className);
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+
+                {
+                    title: "Interviews",
+                    content: "View all Interviews detail here and click on next button to know its features",
+                    target: ".interview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('.interview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('.interview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+                {
+                    title: "Export",
+                    content: "Click here to export the Interviews data in excel sheet",
+                    target: ".interview_2",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: 10,
+                    onPrev: function () {
+
+                        $('.interview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+                {
+                    title: "Filter",
+                    content: "Filter based on available attributes or reset filter if applied earlier",
+                    target: ".interview_3",
+                    placement: "left",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: "550",
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+
+                {
+                    title: "Interviewing Member",
+                    content: "Click here to view interviewing member",
+                    target: ".interview_4",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -10,
+                    yOffset: 10,
+                    onPrev: function () {
+
+                        $('.interview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Candidate Survey Feedback",
+                    content: "Click here to view candidate survey feedback ",
+                    target: ".interview_5",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -10,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.interview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Upload Videos",
+                    content: "Click here to upload videos",
+                    target: ".interview_6",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.interview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Edit",
+                    content: "Click here to edit interview",
+                    target: ".interview_7",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -10,
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Interview Comment",
+                    content: "Click here to add interview comment",
+                    target: ".interview_8",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -20,
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Feedback Report",
+                    content: "Click here to view & generate feedback report",
+                    target: ".interview_9",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    xOffset: -20,
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Zoom Link",
+                    content: "Showing zoom link here",
+                    target: ".interview_10",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    xOffset: '0px',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('.interview_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.interview_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Interviewer",
+                    content: "Click on Interviewer menu to see its features",
+                    target: ".interviewer_menu",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -30,
+                    xOffset: -10,
+                    onNext: function () {
+                        $('.interviewer_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.interviewer_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+                //{
+                //    title: "Risetube",
+                //    content: "Click on Risetube menu to see its features",
+                //    target: ".risetubemenu",
+                //    placement: "left",
+                //    showPrevButton: true,
+                //    zindex: 999999,
+                //    yOffset: -20,
+                //    xOffset: 0,
+                //    onNext: function () {
+                //        $('.risetubemenu').removeClass('overlay-relative');
+                //        $('.helper').remove();
+                //    },
+                //    onPrev: function () {
+                //        $('.risetubemenu').removeClass('overlay-relative');
+                //        $('.helper').remove();
+                //    }
+                //},
+
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+}
+
+<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/filtervalidation.js"></script>
+@*<script src="~/js/CallTwilio.js"></script>*@
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
+    }
+</script>
