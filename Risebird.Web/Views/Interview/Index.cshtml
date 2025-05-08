@@ -858,18 +858,25 @@
 
                                                                 @if ((ViewBag.profile == ProfileNames.Admin || ViewBag.profile == ProfileNames.SupportAdmin || ViewBag.profile == ProfileNames.SeniorHR) && !string.IsNullOrEmpty(item.AudioTranscriptFileLink))
                                                                 {
+
                                                                     <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.imid, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;">
-                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Transcript Analysis" style="background:#b3bce4d1;border-color:#b3bce4d1; width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
-                                                                            <span title="Transcript Analysis" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
+                                                                        <span class="mdc-fab app-fab--absolute" aria-label="Transcript Analysis" style="background:#b3bce4d1;border-color:#b3bce4d1; top:3px;position:relative;left:0px; margin: 0px">
+                                                                            <span title="Transcript Analysis" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 10px;position: relative;left: -2px;top: 2px;"></i></span>
                                                                         </span>
                                                                     </a>
 
                                                                     <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.imid, irfId = item.irfIntId, isRedo = true})" title="Regenerate Transcript Analysis" style="text-decoration:none;">
-                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Regenerate Transcript Analysis" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
-                                                                            <span title="Regenerate Transcript Analysis" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px" /></span>
+                                                                        <span class="mdc-fab app-fab--absolute" aria-label="Regenerate Transcript Analysis" style="top:3px;position:relative;left:0px;margin: 0px;border:#9dcb79;background:#9dcb79;">
+                                                                            <span title="Regenerate Transcript Analysis" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="width:10px!important;position:relative;left:-2px" /></span>
                                                                         </span>
                                                                     </a>
                                                                 }
+
+                                                                <a target="_blank" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top:1px;position: relative;cursor: pointer;text-decoration:none">
+                                                                    <div class="mdc-fab app-fab--absolute" style="width:22px;height:22px;left:0px; top: -5px;position: relative;">
+                                                                        <span title="ReSchedule Meeting"><i class="fas fa-calendar-alt" style="color:#fff;font-size:14px;position:relative;top:-2px;" aria-hidden="true"></i></span>
+                                                                    </div>
+                                                                </a>
 
                                                             </div>
 
