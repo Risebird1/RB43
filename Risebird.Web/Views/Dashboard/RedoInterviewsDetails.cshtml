@@ -50,7 +50,7 @@
     ChannelOwner = filter.ChannelOwner != null ? filter.ChannelOwner : new string[] { };
 }
 <script>
-    var Header = "Interviews";
+    var Header = "Redo Interviews";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
@@ -77,17 +77,12 @@
                 <div class="pull-right">
                     <div>
                         <span class="interview_3">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <button style="display:none" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
                         </span>
                        
-
-
-                     
-                       
-                        
                     </div>
                 </div>
             </div>
@@ -167,58 +162,6 @@
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 border-rv">
 
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="TemplateName">Template</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="TemplateName" data-placeholder="None Selected" name="TemplateName" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in Model.Select(x => x.TemplateName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-
-
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Jd Title</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="PrimarySkill" data-placeholder="None Selected" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item.Split(" |")[0]">@item.Split("|")[0]</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
-                                                                    Client
-                                                                    HR
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientHR" name="ClientHR" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
@@ -236,54 +179,9 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
-                                                                    Interviewer
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="Interviewer" name="Interviewer" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
-                                                                    Project Name
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ChannelOwner">
-                                                                    Channel Owner
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ChannelOwner" name="ChannelOwner" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.ChannelOwner).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                            
+                                                           
+                                                           
 
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
@@ -303,22 +201,7 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
-                                                                    Confirmation Status
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ConfirmationStatus" data-placeholder="None Selected" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                           
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
@@ -337,44 +220,7 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
-                                                                    Client
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="Client" name="Client" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.Client).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsCandidateResponsed">
-                                                                    Candidate Responsed
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="IsCandidateResponsed" data-placeholder="None Selected" name="IsCandidateResponsed" class="form-control multiselect" multiple="multiple">
-                                                                        <option value="true">Responsed</option>
-                                                                        <option value="false">No Response</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerified">
-                                                                    Aadhaar Verified
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="AadhaarVerified" data-placeholder="None Selected" name="AadhaarVerified" class="form-control multiselect" multiple="multiple">
-                                                                        <option value="true">Verified</option>
-                                                                        <option value="false">Not Verified</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                         
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
@@ -385,7 +231,7 @@
                                                                         </button>
 
 
-                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <button  type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                                                                             <font style="font-size:12px;"> Apply Filter</font>
                                                                         </button>
 
@@ -1121,34 +967,34 @@
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
         var endDte = '@endDte';
-        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        @* var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills)); *@
         var rFID = @Html.Raw(Json.Serialize(RFID));
-        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
-        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus));
+       @*  var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus)); *@
         var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
         var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
-        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
+       @*  var interviewer = @Html.Raw(Json.Serialize(Interviewer));
         var clientName = @Html.Raw(Json.Serialize(ClientName));
         var client = @Html.Raw(Json.Serialize(Client));
         var isCandidateResponsed = @Html.Raw(Json.Serialize(IsCandidateResponsed));
         var templateName = @Html.Raw(Json.Serialize(TemplateName));
         var aadhaarVerified = @Html.Raw(Json.Serialize(AadhaarVerified));
-        var channelOwner = @Html.Raw(Json.Serialize(ChannelOwner));
+        var channelOwner = @Html.Raw(Json.Serialize(ChannelOwner)); *@
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
-        $("#PrimarySkill").val(primarySkillsArr);
+       @*  $("#PrimarySkill").val(primarySkillsArr); *@
         $("#RFID").val(rFID);
-        $("#ClientHR").val(clientHR);
-        $("#ConfirmationStatus").val(confirmationStatus);
+    @*     $("#ClientHR").val(clientHR);
+        $("#ConfirmationStatus").val(confirmationStatus); *@
         $("#MeetingStatus").val(meetingStatus);
         $("#InterviewStatus").val(interviewStatus);
-        $("#Interviewer").val(interviewer);
+   @*      $("#Interviewer").val(interviewer);
         $("#ClientName").val(clientName);
         $("#Client").val(client);
         $("#TemplateName").val(templateName);
         $("#AadhaarVerified").val(aadhaarVerified);
-        $("#ChannelOwner").val(channelOwner);
+        $("#ChannelOwner").val(channelOwner); *@
 
     }
 
