@@ -319,13 +319,8 @@
                                                     }
                                                     <tr id=@item.imid style="background:@colorcode">
                                                         <td id="actionwrap" class="flex-w text-center">
-
-
-
                                                             <div class="action-btn">
                                                                 @*For Hide All column in Cancel Intervies*@
-
-
                                                                 @if (item.IsAadhaarVerificationRequired == true)
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
@@ -334,10 +329,6 @@
                                                                         </span>
                                                                     </button>
                                                                 }
-
-
-
-
                                                                 @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
                                                                 {
                                                                     @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
