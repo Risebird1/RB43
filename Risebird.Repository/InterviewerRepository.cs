@@ -3434,9 +3434,13 @@ namespace Risebird.Repository
                     parameters.Add("@completeFitmentAnalysis", model.completeFitmentAnalysis);
                     parameters.Add("@fitmentScore", model.fitmentScore);
                     parameters.Add("@verdict", model.verdict);
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerPreOnboardingVerdictV2", parameters, commandTimeout: 600,
+                    parameters.Add("@result", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 5215585);
+
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerPreOnboardingVerdictV2", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
-                    return true;
+
+                    var queryPerformed = parameters.Get<Boolean>("@result");
+                    return queryPerformed;
                 }
 
             }
