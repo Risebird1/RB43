@@ -21,7 +21,7 @@
 
     <div class="mt50">
     </div>
-    <div class="content interviewerprofile client">
+    <div class="apply-form">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
@@ -41,19 +41,23 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
                                             <div class="mandate" style="line-height: 17px;">
-                                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span> <span style="color:#e02929;">( Please enter 10 digit mobile number without space, country code or special characters associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
+                                                <span class="circle">
+                                                    <i class="fa fa-user" aria-hidden="true" style="position: relative;left: -3px;"></i><i class="fa fa-phone" aria-hidden="true" style="position: relative;top: -15px;right: -9px;font-size:10px;"></i>
+                                                </span>    @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px;font-size:15px!important;font-weight: 600!important;" })<span class="red">*</span> <span style="color:#e02929;font-size: 13.5px;">( Please enter 10 digit mobile number without space, country code or special characters associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
                                             </div>
                                             @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlenghth = "10", @style = "margin-top: 13px !important" } })
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span><span style="color:#e02929;">( Please enter your personal email id associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
+                                                <span class="circle">
+                                                    <i class="fa fa-user" aria-hidden="true" style="position: relative;left: -3px;top:-5px;"></i><i class="fa fa-envelope" aria-hidden="true" style="position: relative;top: -21px;right: -9px;font-size:11px;"></i>
+                                                </span>  @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px;font-size:15px!important;font-weight: 600!important;" })<span class="red">*</span><span style="color:#e02929;font-size: 13.5px;">( Please enter your personal email id associated with your UAN. This information is required solely for verification purpose, and your identity will be kept strictly confidential)</span>
                                             </div>
                                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
                                         <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px" })<span class="red">*</span>
+                                            <div class="mandate" style="position: relative;top: -5px;line-height:30px;">
+                                                <span class="circle" style="padding:0px;">  <img style="width:25px;position: relative;left: 4px;" src="~/img/refered-by.png" /> </span>   @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 0px;font-size:15px!important;font-weight: 600!important;" })<span class="red">*</span>
                                             </div>
                                             @Html.EditorFor(model => model.ReferredBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
@@ -61,8 +65,10 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group" style="margin-top: -10px;">
-                                        <span class="desp-label control-label">
-                                            Upload Resume
+                                        <span class="desp-label control-label" style="font-weight: 600!important;font-size: 15px!important; position: relative;  top: 6px;  line-height: 30px;">
+                                            <span class="circle">
+                                                <i class="fa fa-upload" aria-hidden="true" style="position: relative;top: -8px;right: 1px;"></i>
+                                            </span>    Upload Resume
                                         </span>
                                         @* <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                     <div class="mdc-radio mdc-radio--touch">
@@ -88,7 +94,7 @@
                                 <div class="card-footer" style="width: calc(100% - 10px);">
                                     <div class="row">
                                         <div class="col-md-12 mc-button-area">
-                                            <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Apply</button>
+                                            <button style="width:130px;font-size:15px!important" type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Apply</button>
                                         </div>
                                     </div>
                                 </div>

@@ -8956,7 +8956,7 @@ namespace Risebird.Web.Controllers
         #region Assessment Group Campaigns
 
         [Authorize]
-        public async Task<IActionResult> CreateCampaign(int assessmentGroupId, string assessmentGroupName, bool isAlreadyMasterAG)
+        public async Task<IActionResult> CreateCampaign(int assessmentGroupId, string assessmentGroupName, bool isAlreadyMasterAG, bool isAlreadySecondary)
         {
             try
             {
@@ -8973,6 +8973,7 @@ namespace Risebird.Web.Controllers
                         model.AssessmentGroupName = assessmentGroupName;
                         model.CurrentForm = "form_1";
                         model.IsAlreadyMasterAG = isAlreadyMasterAG;
+                        //model.IsAlreadySecondary = isAlreadySecondary;
                         //var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
                         var allAGs = (await _irfService.GetSimilarAssessmentGroups(assessmentGroupName.Trim(), isAlreadyMasterAG));//call db and search for assessmentGroups that carry a similar name.         /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
 

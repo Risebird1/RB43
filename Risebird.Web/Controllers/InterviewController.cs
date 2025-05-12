@@ -5945,9 +5945,9 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason)
         {
-            var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
+            var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, cancellationreason);
             return new JsonResult(message);
         }
 
