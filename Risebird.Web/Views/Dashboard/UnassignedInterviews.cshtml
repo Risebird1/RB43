@@ -1127,7 +1127,8 @@
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
                                                                 @if (ViewBag.actionstatus == "QCPendingReport")
-                                                                { <div>
+                                                                {
+                                                                    <div>
                                                                     
                                                                     @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
                                                                     {
@@ -1141,11 +1142,9 @@
 
                                                                 <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
-                                                                        @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
+                                                                        @if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "yes")
                                                                         {
-                                                                            @if (@item.AITranscriptVerdict == "yes")
-                                                                            {
-                                                                                <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:-2px;top:-1px;" /></div>
+                                                                               <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:-2px;top:-1px;" /></div>
 
                                                                                 <div class="interviewer-apt">
                                                                                     <span>Transcript unacceptable quality based on AI</span>
@@ -1171,9 +1170,9 @@
                                                                                         </a>
                                                                                     </span>
                                                                                 </div>
-                                                                            }
-                                                                            else
-                                                                            {
+                                                                        }
+                                                                        else if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "no"){
+                                                                            
                                                                                 <div><img src="~/img/accept.png" style="width: 26px!important;position:absolute;left:-2px;top:-1px;" /></div>
 
                                                                                 <div class="interviewer-apt" style="background:#edf2c573;color:#2a9d36;">
@@ -1201,9 +1200,7 @@
                                                                                         </a>
                                                                                     </span>
                                                                                 </div>
-
                                                                             }
-                                                                        }
                                                                         else
                                                                         {
                                                                             <span></span>
@@ -1212,10 +1209,8 @@
                                                                     </div>
                                                                     <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
-                                                                        @if (item.AIVerdict != null && item.AIVerdict != "")
-                                                                        {
-                                                                            @if (@item.AIVerdict == "Yes")
-                                                                            {
+                                                                      
+                                                                      @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes") {
                                                                                 <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:4px;" /></div>
 
                                                                                 <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position: relative;left: 20px;">
@@ -1246,7 +1241,7 @@
 
 
                                                                             }
-                                                                            else
+                                                                            else if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "no")
                                                                             {
 
                                                                                 <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left:4px;top:4px;" /></div>
@@ -1278,11 +1273,10 @@
 
 
                                                                             }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <span></span>
-                                                                        }
+                                                                       
+                                                                      else{
+                                                                          <span></span>
+                                                                      }
 
                                                                     </div>
 
