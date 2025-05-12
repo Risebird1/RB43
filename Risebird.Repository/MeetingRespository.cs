@@ -5193,7 +5193,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response)
+        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response,string cancellationreason)
         {
             try
             {
@@ -5210,7 +5210,7 @@ namespace Risebird.Repository
                     {
                         status = 0;
                     }
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=@status,Cancellationsource='Candidate',Cancellationreason='Candidate Not Available' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=@status,Cancellationsource='Candidate',Cancellationreason=@cancellationreason from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 checkquery = "Select count(im.id) from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid and CandidateResponse=0 and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
@@ -5226,6 +5226,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
+                        dynamicParameters.Add("@cancellationreason", cancellationreason);
                         var resultset = con.Query(query, dynamicParameters);
                         return "Success";
                     }

@@ -5221,7 +5221,7 @@ namespace Risebird.Web.Controllers
             var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);
             if (_result.Contains("Mail sent successfully."))
             {
-                var results = await _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true);
+                var results = await _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true,"");
                 return Json("Information shared to contact person, HR will Connect you soon.");
             }
             return Json("Fail");
@@ -7255,6 +7255,16 @@ namespace Risebird.Web.Controllers
                 list.Add(new SelectListItem { Text = "Candidate asked to cancel", Value = "Candidate asked to cancel" });
                 list.Add(new SelectListItem { Text = "Client asked to cancel", Value = "Client asked to cancel" });
                 list.Add(new SelectListItem { Text = "Candidate unresponsive", Value = "Candidate unresponsive" });
+            }
+            else if (profile == "candidate")
+            {
+                list.Add(new SelectListItem { Text = "Not interested", Value = "Not interested" });
+                list.Add(new SelectListItem { Text = "Not aware about the opportunity", Value = "Not aware about the opportunity" });
+                list.Add(new SelectListItem { Text = "Personal issues", Value = "Personal issues" });
+                list.Add(new SelectListItem { Text = "Technical issues", Value = "Technical issues" });
+                list.Add(new SelectListItem { Text = "Not schedule as per given slot", Value = "Not schedule as per given slot" });
+                list.Add(new SelectListItem { Text = "Issue with risebird platform", Value = "Issue with risebird platform" });
+                list.Add(new SelectListItem { Text = "Want to give direct client interview", Value = "Want to give direct client interview" });
             }
             else
             {
