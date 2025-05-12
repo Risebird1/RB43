@@ -32,5 +32,6 @@ namespace Risebird.Entities.ViewModel
 
         public IEnumerable<SecondaryAssessmentGroups> SecondaryAGListForMAG { get; set; }//used in edit MAG form, to show the list of secondary ags already added to a mag
 
+        public bool IsAlreadySecondary { get; set; }
     }
 }

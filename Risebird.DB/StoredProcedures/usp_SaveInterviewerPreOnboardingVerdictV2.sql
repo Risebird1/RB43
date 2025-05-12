@@ -22,18 +22,22 @@ As
 Begin
 
 select @result = 0
-if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
-Begin
-	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
-	values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
 
-	select @result = 1
+if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId)
+Begin
+	if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
+	Begin
+		update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
+		ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
+		where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+
+		select @result = 1
+	End	
 End
 else
 Begin
-	update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
-	ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
-	where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
+	values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
 
 	select @result = 1
 End
