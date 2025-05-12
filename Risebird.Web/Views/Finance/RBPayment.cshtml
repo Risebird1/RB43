@@ -124,10 +124,10 @@
                                                     <td class="inline-blk" style="width:300px;">
                                                         <div style="font-size:15px;">@item.Comment</div>
                                                         <div style="float: left;margin-top:3px;margin-bottom:15px;position: relative;left:0px;">
-                                                        @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
-                                                        {
-                                                            @if (@item.AITranscriptVerdict == "yes")
-                                                            {
+                                                       
+                                                           
+                                                                @if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "yes")
+                                                                {
                                                                     <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:0px;" /></div>
 
                                                                 <div class="interviewer-apt" style="left:23px;">
@@ -155,7 +155,8 @@
                                                                     </span>
                                                                 </div>
                                                             }
-                                                            else
+                                                            else if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "no")
+                                                            
                                                             {
                                                                 <div><img src="~/img/accept.png" style="width: 26px!important;position: absolute;left:0px;" /></div>
 
@@ -185,14 +186,17 @@
                                                                 </div>
 
                                                             }
-                                                        }
+                                                            else
+                                                            {
+                                                                <span></span>
+                                                            }
                                                   </div>
                                                         <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
-                                                            @if (item.AIVerdict != null && item.AIVerdict != "")
+
+                                                            @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes")
                                                             {
-                                                                @if (@item.AIVerdict == "Yes")
-                                                                {
+                                                                
                                                                    <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:-1px;" /></div>
 
                                                                     <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position: relative;left: 20px;top:0px;">
@@ -221,8 +225,9 @@
                                                                         </span>
                                                                     </div>
                                                                 }
-                                                                else
-                                                                {
+                                                            else if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "no")
+                                                            {
+                                                                
                                                                     <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left: 4px;top:-1px;" /></div>
 
                                                                     <div class="interviewer-apt" style="position:relative;top:0px;">
@@ -251,12 +256,11 @@
                                                                     </div>
 
                                                                 }
-                                                            }
                                                             else
                                                             {
                                                                 <span></span>
                                                             }
-
+                                                           
                                                         </div>
 
 
