@@ -11962,6 +11962,26 @@ section {
 #InterviewCancelation .custom-select select{
     width:320px;
 }
+.apply-form {
+    margin: 20px auto;
+    display: block;
+    width: 800px;
+    left: -30px;
+    position: relative;
+}
+.circle {
+    background: #c4bfbf;
+    border-radius: 100%;
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    padding: 10px;
+    position: relative;
+    top: -2px;
+    left: -6px;
+    float: left;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -12844,8 +12864,10 @@ section {
         padding: 20px 10px;
         margin-bottom: 10px;
     }
-
-    .calibration-btn {
+    .apply-form {
+        padding:0px!important;
+    }
+        .calibration-btn {
         top: 3px !important;
         right: 18px;
     }
@@ -13197,7 +13219,10 @@ section {
         top: 4px !important;
         left: 10px !important;
     }
-
+    .apply-form {
+        width: 700px !important;
+        left: 0px !important;
+    }
     #userProfileForm .tab-menu ul li a {
         font-size: 15px;
     }
@@ -13456,7 +13481,11 @@ section {
 
 
 @media only screen and (max-width: 767px) {
-    #clientduser li {
+    .apply-form {
+        width:100%!important;
+        left:0px!important;
+    }
+        #clientduser li {
         width: 100%;
         float: left;
     }

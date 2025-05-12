@@ -403,7 +403,7 @@ namespace Risebird.Web.Controllers
                 //response.Say($"the irfId is {irfintId} and {unqId}",
                 //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
 
-                var message = _meetingService.CandidateMeetingsStatus(meetingid, status, unqId, irfintId, candidateId).Result;
+                var message = _meetingService.CandidateMeetingsStatus(meetingid, status, unqId, irfintId, candidateId,"").Result;
 
                 //response.Say($"result is {result.Item1} and mailId is {result.Item2}");
 
