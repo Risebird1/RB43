@@ -16,21 +16,31 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerPreOnboardingVerdictV2]
 @fitmentScore int,
 @verdict varchar(25),
 @PerformedBy varchar(200),
-@timeNow datetime
+@timeNow datetime,
+@result bit out
 As
 Begin
 
-if not exists (select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
+select @result = 0
+
+if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId)
 Begin
-	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
-	values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
+	if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
+	Begin
+		update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
+		ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
+		where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+
+		select @result = 1
+	End	
 End
 else
 Begin
-	update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
-	ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
-	where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
-End
+	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
+	values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
 
+	select @result = 1
+End
+ 
 End
 GO
