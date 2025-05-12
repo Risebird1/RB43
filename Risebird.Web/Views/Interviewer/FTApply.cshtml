@@ -21,7 +21,7 @@
 
     <div class="mt50">
     </div>
-    <div class="content interviewerprofile client">
+    <div class="apply-form">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
@@ -47,7 +47,9 @@
                                         </div> *@
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                                <span class="circle">
+                                                    <i class="fa fa-user" aria-hidden="true" style="position: relative;left: -3px;top:-5px;"></i><i class="fa fa-envelope" aria-hidden="true" style="position: relative;top: -21px;right: -9px;font-size:11px;"></i>
+                                                </span>    @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding: 7px 5px 10px 0px; font-weight: 600!important; font- size: 15px!important;" })<span class="red">*</span>
                                             </div>
                                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         </div>
@@ -60,9 +62,11 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group" style="margin-top: -10px;">
-                                        <span class="desp-label control-label">
-                                            Upload Resume
+                                    <div class="form-group">
+                                        <span class="desp-label control-label" style="padding: 7px 5px 10px 0px; font-weight: 600!important; font- size: 15px!important;line-height:30px;">
+                                            <span class="circle">
+                                                <i class="fa fa-upload" aria-hidden="true" style="position: relative;top: -8px;right: 1px;"></i>
+                                            </span>           Upload Resume
                                         </span>
                                         @* <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
@@ -89,7 +93,7 @@
                                     <div class="row">
 
                                         <div class="col-md-12 mc-button-area">
-                                            <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Apply</button>
+                                            <button style="width:130px;font-size:15px!important" type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Apply</button>
                                         </div>
                                     </div>
                                 </div>
