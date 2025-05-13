@@ -11,6 +11,6 @@ CREATE PROCEDURE usp_UpdateCandidateAcknowledge
 @interviewchecks varchar(1000)
 AS
 BEGIN
-Update InterviewMeetings set CandidateInterviewChecks=@interviewchecks where id=@interviewchecks
+Update InterviewMeetings set CandidateInterviewChecks=@interviewchecks where id=@interviewid
 END
 Go
