@@ -1265,6 +1265,10 @@ namespace Risebird.Business
                 reportModel.TechRubricType = irfDetails.TechRubricType;
                 reportModel.CandidateIDVerificationStatus = interviewDetails.CandidateIDVerificationStatus;
                 reportModel.IsReportwhitelabel = interviewDetails.IsReportwhitelabel;
+                if (!string.IsNullOrWhiteSpace(interviewDetails.CandidateInterviewChecks))
+                {
+                    reportModel.Candidateconsent = interviewDetails.CandidateInterviewChecks.ToLower().Contains("candidateconsent") ? true : false;
+                }
                 return reportModel;
             }
             catch (Exception e)
@@ -3302,7 +3306,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason)
+        public async Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason)
         {
             if ((status == 1 || status == 2 || status == 4) && await CheckInterviewCancellable(meetingid))
             {
@@ -3383,7 +3387,7 @@ namespace Risebird.Business
         }
 
 
-        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response,string cancellationreason)
+        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response, string cancellationreason)
         {
             try
             {
