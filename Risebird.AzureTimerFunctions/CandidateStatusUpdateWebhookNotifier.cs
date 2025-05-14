@@ -107,7 +107,7 @@ namespace Risebird.AzureTimerFunctions
                                     candidateEmailId = data.CandidateEmailId,
                                     currentStatus = data.Status,
                                     jobId = data.jobId,
-                                    Cancellationreason = data.Cancellationreason
+                                    reason = data.Cancellationreason
                                 };
                                 //staging request
                                 //var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-result")
