@@ -138,7 +138,7 @@
             <div class="card-header bg-w clearfix" style="height:50px;">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                           @* <button id="selectedcandidate_9" class="mdc-button mdc-button--raised mdc-ripple-upgraded" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;border-color:#72ade8;z-index: 100;position:relative;top:3px;left:20px;">
+                    @* <button id="selectedcandidate_9" class="mdc-button mdc-button--raised mdc-ripple-upgraded" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;border-color:#72ade8;z-index: 100;position:relative;top:3px;left:20px;">
                             <span onclick="OpenL2Model(@Model.InterviewId)">
                                 <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
                                 L2 Feedback
@@ -163,8 +163,8 @@
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
-                            
-                       
+
+
                         }
                         else if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 2)
                         {
@@ -174,14 +174,14 @@
                                     <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
-                          
-                            
+
+
                         }
-                 
+
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
                         {
                             <div class="pull-right">
-                                                                           
+
                                 <div class="reportdropdown">
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" type="button" style="padding:0px 5px;">
                                         <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg> HM Instruction</text></span>
@@ -189,7 +189,7 @@
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
                                         <text>Rate Interviewer</text>
                                     </button>
-                        
+
                                     @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                     {
                                         <button class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -212,7 +212,7 @@
                                 </button>
                                 }
                                 </div>*@
-                                                                           
+
                                 </div>
                             </div>
                             @if (Model.IRFInterviewerActive)
@@ -227,7 +227,7 @@
                         {
                             @if (ViewBag.profile != "Interviewer" && ViewBag.profile != "Quality Controller")
                             {
-                            <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px" value="Generate PDF" onclick="getPDF()"></div>
+                                <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px" value="Generate PDF" onclick="getPDF()"></div>
                             }}
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
                         {
@@ -334,10 +334,11 @@
 
                                                         }
                                                         @*Turing*@
-                                                       @if(ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer" ){
-                                                        <div class="report-heading">Candidate Name</div>
-                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
-                                                       }
+                                                        @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                        {
+                                                            <div class="report-heading">Candidate Name</div>
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                        }
                                                     }
                                                     else
                                                     {
@@ -356,19 +357,21 @@
                                                             </div>
                                                         }
                                                         @*Turing*@
-                                                         @if(ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer" ){
-                                                        <div class="report-heading">Candidate Name</div>
-                                                        <h2>@Model.CandidateName</h2>
-                                                         }
+                                                        @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                        {
+                                                            <div class="report-heading">Candidate Name</div>
+                                                            <h2>@Model.CandidateName</h2>
+                                                        }
                                                     }
                                                 }
-                                                 @if(ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer" ){
-                                                <div class="report-heading">
-                                                    Email Id:
-                                                </div>
+                                                @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                {
+                                                    <div class="report-heading">
+                                                        Email Id:
+                                                    </div>
 
-                                                <h4>@Model.CandidateEmail</h4>
-                                                 }
+                                                    <h4>@Model.CandidateEmail</h4>
+                                                }
 
                                                 @*<div class="report-heading">
                                             Position
@@ -381,12 +384,20 @@
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
-                                                <div class="" style="color:green;margin: 10px 0px 0px 0px;">Candidate ID Verification Status: </div>
+                                                <div class="" style="color:green;font-weight:bold;margin: 10px 0px 0px 0px;">Candidate ID Verification Status: </div>
                                                 @{
                                                     var candidateidverification = Model.CandidateIDVerificationStatus.HasValue ? ((CandidateIDVerificationOptionEnum)Convert.ToInt32(Model.CandidateIDVerificationStatus)).GetDescription() : string.Empty;
                                                 }
-                                                <h5 style="color:#445346;font-size:15px;">@candidateidverification</h5>
-
+                                                <h5 style="color:#445346;font-size:15px;padding: 10px 0px 0px 0px;">@candidateidverification</h5>
+                                                <div class="" style="color:green;font-weight:bold;margin: 10px 0px 0px 0px;">Candidate Job Consent Acknowledgement: </div>
+                                                @if (Model.Candidateconsent)
+                                                {
+                                                    <h5 style="color:forestgreen;font-size:15px;padding: 10px 0px 0px 0px;">Yes</h5>
+                                                }
+                                                else
+                                                {
+                                                    <h5 style="color:red;font-size:15px;padding: 10px 0px 0px 0px;">No</h5>
+                                                }
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
                                                 @if (Model.CommunicationalProficiency != 0)
