@@ -35,6 +35,10 @@
         public bool IsActive { get; set; }
         public int TotalLessduration { get; set; }
         public string TranscriptVerdit { get; set; }
+        public bool IsEmployed { get; set; }
+        public bool AcknowledgementStatus { get; set; }
+        public int VideoConfirmation { get; set; }
+        public int RedMarkerStatus { get; set; }
     }
     public class ToalInterviewerInterviewDetails
     {
