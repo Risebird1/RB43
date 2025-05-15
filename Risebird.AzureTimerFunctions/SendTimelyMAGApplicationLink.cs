@@ -46,7 +46,7 @@ namespace Risebird.AzureTimerFunctions
                     {
                         try
                         {
-                            var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(item.id, true, true); //item.id here is the id of the assessment group and not a mag table primary id
+                            var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(item.id, true, false); //item.id here is the id of the assessment group and not a mag table primary id
 
                             if (interviewers != null && interviewers.Count() > 0)
                             {
@@ -57,7 +57,7 @@ namespace Risebird.AzureTimerFunctions
                                 //send the mag link to all the interviewers, will have to create a template
                                 foreach (var interviewer in interviewers)
                                 {
-                                    await _notificationHelper.SendMAGApplicationLinkToInterviewers(interviewer.EmailId, interviewer.uniqueid, magLink);
+                                    await _notificationHelper.SendMAGApplicationLinkToInterviewers(interviewer.EmailId, interviewer.uniqueid, magLink, item.id);
 
                                 }
                             }
