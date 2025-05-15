@@ -1265,6 +1265,7 @@ namespace Risebird.Business
                 reportModel.TechRubricType = irfDetails.TechRubricType;
                 reportModel.CandidateIDVerificationStatus = interviewDetails.CandidateIDVerificationStatus;
                 reportModel.IsReportwhitelabel = interviewDetails.IsReportwhitelabel;
+                reportModel.ConsentRequired = interviewDetails.ConsentRequired;
                 if (!string.IsNullOrWhiteSpace(interviewDetails.CandidateInterviewChecks))
                 {
                     reportModel.Candidateconsent = interviewDetails.CandidateInterviewChecks.ToLower().Contains("candidateconsent") ? true : false;

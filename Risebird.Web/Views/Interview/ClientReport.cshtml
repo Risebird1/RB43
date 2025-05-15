@@ -389,14 +389,17 @@
                                                     var candidateidverification = Model.CandidateIDVerificationStatus.HasValue ? ((CandidateIDVerificationOptionEnum)Convert.ToInt32(Model.CandidateIDVerificationStatus)).GetDescription() : string.Empty;
                                                 }
                                                 <h5 style="color:#445346;font-size:15px;padding: 10px 0px 0px 0px;">@candidateidverification</h5>
-                                                <div class="" style="color:green;font-weight:bold;margin: 10px 0px 0px 0px;">Candidate Job Consent Acknowledgement: </div>
-                                                @if (Model.Candidateconsent)
+                                                @if (Model.ConsentRequired)
                                                 {
-                                                    <h5 style="color:forestgreen;font-size:15px;padding: 10px 0px 0px 0px;">Yes</h5>
-                                                }
-                                                else
-                                                {
-                                                    <h5 style="color:red;font-size:15px;padding: 10px 0px 0px 0px;">No</h5>
+                                                    <div class="" style="color:green;font-weight:bold;margin: 10px 0px 0px 0px;">Candidate Job Consent Acknowledgement: </div>
+                                                    @if (Model.Candidateconsent)
+                                                    {
+                                                        <h5 style="color:forestgreen;font-size:15px;padding: 10px 0px 0px 0px;">Yes</h5>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h5 style="color:red;font-size:15px;padding: 10px 0px 0px 0px;">No</h5>
+                                                    }
                                                 }
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>

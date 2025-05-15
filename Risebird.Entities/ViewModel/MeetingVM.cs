@@ -393,6 +393,7 @@ namespace Risebird.Entities.ViewModel
         public bool ModifiedInterviewStatus { get; set; }
         public string Cancellationreason { get; set; }
         public string CandidateInterviewChecks { get; set; }
+        public bool ConsentRequired { get; set; }
     }
 
     public class VedioComments
