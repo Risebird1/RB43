@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -2020,7 +2021,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null)
+        public async Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null, int? agId = null)
         {
             try
             {
@@ -2042,7 +2043,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return await SendMail(msg, irfId);
+                return await SendMail(msg, irfId, assessmentGroupId:agId);
             }
             catch (Exception)
             {
@@ -3425,6 +3426,31 @@ namespace Risebird.CommonHelper
             {
                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public async Task<string> SendMAGApplicationLinkToInterviewers(string interviewerEmailId, string uniqueId, string magLink)//List<string> interviewerEmailIds
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Risebird : New Interviews have come up!";
+                //foreach (var emailId in interviewerEmailIds.Select(x=>x.Trim()).Distinct())
+                //{
+                //    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, null));
+                //}
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
+
+                object[] parameters = new object[] { magLink, uniqueId };//asessmentGroups, dropButton 
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "MagApplicationTemplateV2.html");
+
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail.";
             }
         }
     }
