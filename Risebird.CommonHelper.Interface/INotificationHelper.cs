@@ -76,7 +76,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null, string CancellationSource = null);
         Task<string> SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName, int? irfId = null, int? interviewId = null);
         Task<string> SendPublicUrlToInterviewer(Mail model, string UrlDetails);
-        Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null);
+        Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null, int? agId = null);
         Task<string> SendPasswordresetNotification(Mail model);
         Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, int InterviewDuration, string jdLink = null, string clientLogoLink = null, string companyLink = null);
         Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink, int? irfId = null, int? interviewId = null);
@@ -124,5 +124,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendWelcomeEmailToInterviewer(string interviewerEmailId, string password, string HMVideoForTargetIRFUrl);
         Task<string> SendNotificationToClientForSelectedCandidatewithReport(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string reportlink, string clientlogo = null);
         Task<string> SendAsssessmentGroupNotMappedToJobTitleMail(string requestedBy, string ccEmail, string jobTitle);
+
+        Task<string> SendMAGApplicationLinkToInterviewers(string interviewerEmailId, string uniqueId, string magLink);
     }
 }

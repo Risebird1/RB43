@@ -19,63 +19,144 @@ CREATE PROCEDURE [dbo].[usp_AddInternalInterviewerToIRFPostPositiveVerdict]
 @OpenAIScreeningResponse varchar(max),
 @verdict varchar(20),
 @score int,
-@timeNow datetime
+@timeNow datetime,
+@agId int,
+@isMagApplication bit
  
 AS    
 Begin  
 
 begin try
 	begin tran
-	if exists(select top 1 id from UserList where EmailId = @EmailId)
+	if(@isMagApplication = 0)
 	Begin
-		declare @userId int = (select top 1 id from UserList where EmailId = @EmailId)
-		declare @rate int, @InterviewerProfileId int, @assessmentGroupId varchar(100)
-		set @assessmentGroupId = (select AssessmentGroupId from IRF where id =@IRFId)
-		select @InterviewerProfileId=(select id from InterviewerProfile where UserId= @userId) 
-		set @rate =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @IRFId) 
-				and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @IRFId)
-				and CompanyType = (select CompanyType from IRF where id = @IRFId))
-
-		if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
+		if exists(select top 1 id from UserList where EmailId = @EmailId)
 		Begin
-			insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
-			values (@IRFId, @InterviewerProfileId, @userId, 1, 1, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
+			declare @userId int = (select top 1 id from UserList where EmailId = @EmailId)
+			declare @rate int, @InterviewerProfileId int, @assessmentGroupId varchar(100)
+			set @assessmentGroupId = (select AssessmentGroupId from IRF where id =@IRFId)
+			select @InterviewerProfileId=(select id from InterviewerProfile where UserId= @userId) 
+			set @rate =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @IRFId) 
+					and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @IRFId)
+					and CompanyType = (select CompanyType from IRF where id = @IRFId))
+
+			if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
+			Begin
+				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
+				values (@IRFId, @InterviewerProfileId, @userId, 1, 1, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
+			End
+
+			UPDATE InterviewerProfile
+			SET ResumeLink = @ResumeLink
+			WHERE userId = @userId
+
+			DECLARE @existingList VARCHAR(MAX);
+
+		-- Get current comma-separated string
+		SELECT @existingList = AssessmentGroupId
+		FROM InterviewerProfile
+		WHERE userId = @userId;
+
+		-- If @assessmentGroupId is NOT in the list
+		IF NOT EXISTS (
+			SELECT 1
+			FROM STRING_SPLIT(@existingList, ',')
+			WHERE TRIM(value) = @assessmentGroupId
+		)
+		BEGIN
+			-- Handle null or empty list
+			IF @existingList IS NULL OR LTRIM(RTRIM(@existingList)) = ''
+			BEGIN
+				SET @existingList = @assessmentGroupId;
+			END
+			ELSE
+			BEGIN
+				SET @existingList = @existingList + ',' + @assessmentGroupId;
+			END
+
+			-- Update the table
+			UPDATE InterviewerProfile
+			SET AssessmentGroupId = @existingList
+			WHERE userId = @userId;
+		END
+
+		End
+	End
+	else
+	Begin
+		
+		if exists(select top 1 id from UserList where EmailId = @EmailId)
+		Begin
+			declare @userId2 int = (select top 1 id from UserList where EmailId = @EmailId)
+			declare @rate2 int, @InterviewerProfileId2 int
+			select @InterviewerProfileId2=(select id from InterviewerProfile where UserId= @userId2) 
+
+			
+			declare @tbl_targetIRFs table (irfId int)
+
+			insert into @tbl_targetIRFs
+			select distinct irf.id  from IRF 
+		    where AssessmentGroupId = @agId and (IsPaused is null or IsPaused = 0)
+
+			while exists (select top 1 irfId from @tbl_targetIRFs)
+			Begin
+
+				declare @targetIRFId int
+				set @targetIRFId = (select top 1 irfId from @tbl_targetIRFs)
+
+				set @rate2 =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @targetIRFId) 
+					and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @targetIRFId)
+					and CompanyType = (select CompanyType from IRF where id = @targetIRFId))
+
+				if not exists(select 1 from TransInterviewer where UserId = @userId2 and IRFId = @targetIRFId)
+				Begin
+					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
+					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, 1, @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1)
+				End
+
+				delete from @tbl_targetIRFs where irfId = @targetIRFId
+			End
+
+			
+			
+
+			UPDATE InterviewerProfile
+			SET ResumeLink = @ResumeLink
+			WHERE userId = @userId2
+
+			DECLARE @existingList2 VARCHAR(MAX);
+
+			-- Get current comma-separated string
+			SELECT @existingList2 = AssessmentGroupId
+			FROM InterviewerProfile
+			WHERE userId = @userId2;
+
+			-- If @assessmentGroupId is NOT in the list
+			IF NOT EXISTS (
+				SELECT 1
+				FROM STRING_SPLIT(@existingList2, ',')
+				WHERE TRIM(value) = @agId
+			)
+			BEGIN
+				-- Handle null or empty list
+				IF @existingList2 IS NULL OR LTRIM(RTRIM(@existingList2)) = ''
+				BEGIN
+					SET @existingList2 = @agId;
+				END
+				ELSE
+				BEGIN
+					SET @existingList = @existingList + ',' + @agId;
+				END
+
+				-- Update the table
+				UPDATE InterviewerProfile
+				SET AssessmentGroupId = @existingList2
+				WHERE userId = @userId2;
+			END
+
 		End
 
-		UPDATE InterviewerProfile
-        SET ResumeLink = @ResumeLink
-        WHERE userId = @userId
-
-		DECLARE @existingList VARCHAR(MAX);
-
-    -- Get current comma-separated string
-    SELECT @existingList = AssessmentGroupId
-    FROM InterviewerProfile
-    WHERE userId = @userId;
-
-    -- If @assessmentGroupId is NOT in the list
-    IF NOT EXISTS (
-        SELECT 1
-        FROM STRING_SPLIT(@existingList, ',')
-        WHERE TRIM(value) = @assessmentGroupId
-    )
-    BEGIN
-        -- Handle null or empty list
-        IF @existingList IS NULL OR LTRIM(RTRIM(@existingList)) = ''
-        BEGIN
-            SET @existingList = @assessmentGroupId;
-        END
-        ELSE
-        BEGIN
-            SET @existingList = @existingList + ',' + @assessmentGroupId;
-        END
-
-        -- Update the table
-        UPDATE InterviewerProfile
-        SET AssessmentGroupId = @existingList
-        WHERE userId = @userId;
-    END
-
+		
 	End
 	
 

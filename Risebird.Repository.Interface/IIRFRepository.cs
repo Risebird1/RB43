@@ -286,5 +286,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName);
         Task<bool> UpdateNewPriority(int irfid, int PriorityLevel);
         Task<string> GetAssessmentGroupFromIRFId(int irfId);
+        Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG();
+        Task<string> GetAssessmentGroupById(int assessmentGroupId);
     }
 }
