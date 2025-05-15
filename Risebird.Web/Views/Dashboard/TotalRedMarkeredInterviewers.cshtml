@@ -23,6 +23,38 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Total Interviewer IRF Details</h4></div>
                 </div>
+                <div class="pull-left">
+                    @if (ViewBag.Type == "Pending")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "UnderReview")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Reviewed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+
+                </div>
                 <div class="pull-right">
                     <div>
                         <div class="pull-left" style="margin-left:10px">
@@ -65,6 +97,9 @@
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
+                                                    <th>Video confirmation</th>
+                                                    <th>Is Employed</th>
+                                                    <th>Acknowledgement status</th>
                                             </thead>
                                             <tfoot>
                                                 <tr>
@@ -81,6 +116,9 @@
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
+                                                    <th>Video confirmation</th>
+                                                    <th>Is Employed</th>
+                                                    <th>Acknowledgement status</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -117,6 +155,9 @@
                                                                                                     <span class="fas fa-upload" style="font-size:12px;"></span>
                                                                                                 </span>
                                                                                             </button>
+                                                           
+                                                            
+
                                                         </td>
                                                         <td> 
                                                             <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
@@ -140,6 +181,9 @@
                                                         <td>@item.TotalFuture</td>
                                                         <td>@item.TotalInterview</td>
                                                         <td>@item.TotalInterviewers</td>
+                                                        <td>Yes</td>
+                                                        <td>Yes</td>
+                                                        <td>No</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -241,5 +285,10 @@
 
         
 
+    }
+</script>
+<script>
+    function Changeurldetails(type) {
+        window.location.href = "/Dashboard/TotalRedMarkeredInterviewers?type=" + type;
     }
 </script>

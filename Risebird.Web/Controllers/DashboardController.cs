@@ -3421,7 +3421,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Type = type;
             return View("InterviewerIRFDetails", model);
         }
-        public async Task<IActionResult> TotalRedMarkeredInterviewers()
+        public async Task<IActionResult> TotalRedMarkeredInterviewers(string type)
         {
             try
             {
