@@ -10,7 +10,7 @@ CREATE Procedure usp_RedmarkerInterviewers
 AS    
 BEGIN    
 Select ul.EmailId as interviewer,ul.MobileNumber,ip.NickName,ip.ResumeLink,ip.CompanyName,trm.RedMarker,trm.IRFId as id,IRF.IRFId,ul.id as UserId,IRF.JDTiltle,cl.Name as Client,    
-ulc.EmailId as ChannelOwner,ulb.EmailId as Clienthr,tc.TotalCompletedMeetings,tr.AIVerdict,sti.TotalInterview,Fti.TotalFuture,Tai.TotalInterviewers,ip.IsEmployed,ip.AcknowledgementStatus,ip.VideoConfirmation,tr.RedMarkerStatus    
+ulc.EmailId as ChannelOwner,ulb.EmailId as Clienthr,tc.TotalCompletedMeetings,tr.AIVerdict,sti.TotalInterview,Fti.TotalFuture,Tai.TotalInterviewers,ip.IsEmployed,ip.AcknowledgementStatus,ip.VideoConfirmation,tr.RedMarkerStatus,tr.IsActive    
 From TransInterviewerRedMarker trm join InterviewerProfile ip on trm.Interviewerid=ip.Id     
 join IRF on IRF.id=trm.IRFId    
 join UserList ul on ul.id=ip.UserId    
