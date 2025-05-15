@@ -3385,7 +3385,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer" || profileName == "Finance")
                     {
                         var model = await _dashboardService.GetTotalRedMarkeredInterviewers();
                         return View(model);
@@ -4473,7 +4473,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         ViewBag.Profile = profileName;
-                        DateTime startdate =DateTime.Now.AddMonths(-1);
+                        DateTime startdate = DateTime.Now.AddMonths(-1);
                         DateTime enddate = DateTime.Now.AddDays(1);
                         var model = await _dashboardService.GetTotalInterviews(startdate, enddate);
                         return View(model);
@@ -4598,7 +4598,7 @@ namespace Risebird.Web.Controllers
                         {
                             var startDate = DateTime.Now.AddDays(-30);
                             var endDate = DateTime.Now.Date.AddDays(1);
-                            
+
 
                             modelList = await _meetingService.GetAllMeetingList(startDate, endDate, emailId);
 
@@ -4637,11 +4637,11 @@ namespace Risebird.Web.Controllers
 
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         }
-                       ViewBag.Type = "RedoInterviews";
-                         modelList = modelList.Where(x => x.RedoInterview == true).ToList();
+                        ViewBag.Type = "RedoInterviews";
+                        modelList = modelList.Where(x => x.RedoInterview == true).ToList();
 
-                       
-                       
+
+
                         return View("RedoInterviewsDetails", modelList);
                     }
                     else

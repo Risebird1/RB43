@@ -1265,6 +1265,10 @@ namespace Risebird.Business
                 reportModel.TechRubricType = irfDetails.TechRubricType;
                 reportModel.CandidateIDVerificationStatus = interviewDetails.CandidateIDVerificationStatus;
                 reportModel.IsReportwhitelabel = interviewDetails.IsReportwhitelabel;
+                if (!string.IsNullOrWhiteSpace(interviewDetails.CandidateInterviewChecks))
+                {
+                    reportModel.Candidateconsent = interviewDetails.CandidateInterviewChecks.ToLower().Contains("candidateconsent") ? true : false;
+                }
                 return reportModel;
             }
             catch (Exception e)
@@ -3302,13 +3306,13 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        public async Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason)
         {
             if ((status == 1 || status == 2 || status == 4) && await CheckInterviewCancellable(meetingid))
             {
                 var response = true;
 
-                var results = await UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
+                var results = await UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response, cancellationreason);
                 if (results == "Success")
                 {
                     if (status == 2 || status == 3)
@@ -3362,10 +3366,6 @@ namespace Risebird.Business
             {
                 return "Uable to process your request at this moment, kindly reach out to your respective HR.";
             }
-            else if (status == 3)
-            {
-                return "Uable to process your request at this moment, kindly reach out to your respective HR.";
-            }
             else
             {
                 return "Fail to Update Status, Please try again";
@@ -3387,11 +3387,11 @@ namespace Risebird.Business
         }
 
 
-        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response)
+        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response, string cancellationreason)
         {
             try
             {
-                return await _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, response);
+                return await _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, response, cancellationreason);
             }
             catch (Exception ex)
             {

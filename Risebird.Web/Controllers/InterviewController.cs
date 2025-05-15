@@ -5945,9 +5945,9 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason)
         {
-            var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
+            var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, cancellationreason);
             return new JsonResult(message);
         }
 
@@ -8888,7 +8888,7 @@ namespace Risebird.Web.Controllers
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
-                    var qcResult = await PerformQualityCheck(model, regenerateAIQC);
+                    var qcResult = await PerformQualityCheck(model, regenerateAIQC, isBackgroudJobRequest);
                     if (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
                     {
                         return new OkResult();
@@ -8917,23 +8917,27 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public async Task<AIReportQCAnalysisSchema> PerformQualityCheck(InterviewReport model, bool? regenerateAIQC = null)
+        public async Task<AIReportQCAnalysisSchema> PerformQualityCheck(InterviewReport model, bool? regenerateAIQC = null, bool? isBackgroudJobRequest = null)
         {
             try
             {
-                if (regenerateAIQC == null || (regenerateAIQC.HasValue && regenerateAIQC.Value == false))
+                if(isBackgroudJobRequest == null || (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value == false))
                 {
-                    var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
+                    if ((regenerateAIQC == null || (regenerateAIQC.HasValue && regenerateAIQC.Value == false)))
+                    {
+                        var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
 
-                    return qcResult;
-                    ////ViewBag.IRFName = model.IRFName;
-                    ////ViewBag.SaveOperationResult = "NA";
+                        return qcResult;
+                        ////ViewBag.IRFName = model.IRFName;
+                        ////ViewBag.SaveOperationResult = "NA";
 
-                    //if (!string.IsNullOrEmpty(qcResult))
-                    //{
-                    //    return JsonConvert.DeserializeObject<RunResult>(qcResult);
-                    //}
+                        //if (!string.IsNullOrEmpty(qcResult))
+                        //{
+                        //    return JsonConvert.DeserializeObject<RunResult>(qcResult);
+                        //}
+                    }
                 }
+                
 
 
                 if (!string.IsNullOrEmpty(model.AudioTranscriptFileLink))
