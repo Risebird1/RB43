@@ -6155,7 +6155,7 @@ namespace Risebird.Repository
         {
             try
             {
-                if(isTestDb.HasValue && isTestDb.Value)
+                if (isTestDb.HasValue && isTestDb.Value)
                 {
                     string conStringTest = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
                     connectionString = conStringTest;

@@ -4723,7 +4723,7 @@ namespace Risebird.Web.Controllers
                 //first check if this interviewer is already present in the transInterviewer table, it could be either a yes or a no verdict
                 //var existenceCheck = await _interviewerService.CheckIfInterviewerExistsInSystemAndOrSkillChannel(model.EmailId, model.IRFId);
                 var role = _interviewerService.GetUserRolebyEmailid(model.EmailId);
-                if (string.IsNullOrEmpty(role)) //if the variable 'role' is empty here, it means the emailId exists in the system as an Interviewer. For further clarity, check the GetInterviwerExists function above. It is used in a few forms too, like Apply and is operational.
+                if (!string.IsNullOrEmpty(role) && role.ToLower() == "interviewer") //if the variable 'role' is empty here, it means the emailId exists in the system as an Interviewer. For further clarity, check the GetInterviwerExists function above. It is used in a few forms too, like Apply and is operational.
                 {
                     if (model.ResumeFile != null)
                     {
