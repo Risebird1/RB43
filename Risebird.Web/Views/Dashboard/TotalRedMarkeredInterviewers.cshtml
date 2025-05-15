@@ -23,6 +23,37 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Total Interviewer IRF Details</h4></div>
                 </div>
+                <div class="pull-left">
+                    @if (ViewBag.Type == "UnderReview")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Reviewed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Removed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+
+                </div>
                 <div class="pull-right">
                     <div>
                         <div class="pull-left" style="margin-left:10px">
@@ -65,6 +96,9 @@
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
+                                                    <th>Video confirmation</th>
+                                                    <th>Is Employed</th>
+                                                    <th>Acknowledgement status</th>
                                             </thead>
                                             <tfoot>
                                                 <tr>
@@ -81,6 +115,9 @@
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
+                                                    <th>Video confirmation</th>
+                                                    <th>Is Employed</th>
+                                                    <th>Acknowledgement status</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -88,41 +125,68 @@
                                                 {
                                                     <tr>
                                                         <td class="text-center">
-                                                            <span>
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer" style="width:27px!important;height:27px!important;position:relative;top:2px;">
-                                                                    <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                            @if (ViewBag.Type == "Removed" || ViewBag.Type == "UnderReview")
+                                                            {
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer" style="width:27px!important;height:27px!important;position:relative;top:2px;">
+                                                                        <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                            @if (ViewBag.Type == "Pending" || ViewBag.Type == "UnderReview")
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
+                                                                    <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.interviewer', '@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                    </span>
                                                                 </button>
-                                                            </span>
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
-                                                                <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.interviewer', '@item.id');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                                </span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats" style="width:27px!important;height:27px!important">
-                                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})">
-                                                                    <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                            }
+                                                            @if (ViewBag.Type == "Pending")
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats" style="width:27px!important;height:27px!important">
+                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})">
+                                                                        <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                                    </a>
+                                                                </button>
+                                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTiltle, userId = item.UserId, irfId = item.id, irfName = item.IRFId})">
+                                                                    <span class="mdc-fab app-fab--absolute" aria-label="Screen Resume" style="width:27px!important;height:27px!important">
+                                                                        <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -1px;left: 0px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 10px;position: relative;left: -1px;top: 3px;"></i></span>
+                                                                    </span>
                                                                 </a>
-                                                            </button>
-                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTiltle, userId = item.UserId, irfId = item.id, irfName = item.IRFId})">
-                                                                <span class="mdc-fab app-fab--absolute" aria-label="Screen Resume" style="width:27px!important;height:27px!important">
-                                                                    <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -1px;left: 0px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 10px;position: relative;left: -1px;top: 3px;"></i></span>
+                                                                <span title="Screen Interviewer(Regenerate)" onclick="ScreenInterviewer('@item.JDTiltle', '@item.id', '@item.IRFId','@item.UserId', '@item.ResumeLink', true)" class="mdc-fab app-fab--absolute" style="width:28px!important;height:28px!important">
+                                                                    <i class="fa fa-user" style="font-size: 11px"></i><i class="fas fa-search" style="font-size: 8px;position: relative;left: 0px; top: 2px;"></i>
                                                                 </span>
-                                                            </a>
-                                                            <span title="Screen Interviewer(Regenerate)" onclick="ScreenInterviewer('@item.JDTiltle', '@item.id', '@item.IRFId','@item.UserId', '@item.ResumeLink', true)" class="mdc-fab app-fab--absolute" style="width:28px!important;height:28px!important">
-                                                                <i class="fa fa-user" style="font-size: 11px"></i><i class="fas fa-search" style="font-size: 8px;position: relative;left: 0px; top: 2px;"></i>
-                                                            </span>
-                                                           
-                                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes" style="width:28px!important;height:28px!important">
-                                                                                                <span onclick="javascript:OpenUploadResumeModal('@item.UserId', '@item.interviewer');" title="Upload Resumes">
-                                                                                                    <span class="fas fa-upload" style="font-size:12px;"></span>
-                                                                                                </span>
-                                                                                            </button>
+
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes" style="width:28px!important;height:28px!important">
+                                                                    <span onclick="javascript:OpenUploadResumeModal('@item.UserId', '@item.interviewer');" title="Upload Resumes">
+                                                                        <span class="fas fa-upload" style="font-size:12px;"></span>
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                            @if (ViewBag.Type == "UnderReview")
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:0px;">
+                                                                    <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
+                                                                        <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
+
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                            @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="" style="width:27px!important;height:27px!important">
+                                                                    <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
+                                                                        <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 40px;" />
+
+                                                                    </span>
+                                                                </button>
+                                                            }
+
                                                         </td>
-                                                        <td> 
+                                                        <td>
                                                             <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
                                                         </td>
                                                         <td><c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer','@item.IRFId')">@item.RedMarker</c></td>
-
                                                         <td>@item.IRFId</td>
                                                         <td>@item.JDTiltle</td>
                                                         <td>@item.Clienthr</td>
@@ -140,6 +204,27 @@
                                                         <td>@item.TotalFuture</td>
                                                         <td>@item.TotalInterview</td>
                                                         <td>@item.TotalInterviewers</td>
+                                                        @if (item.VideoConfirmation == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else if (item.VideoConfirmation == 2)
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        @if (item.IsEmployed)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        <td>@item.AcknowledgementStatus</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -233,13 +318,29 @@
 <script>
     function ScreenInterviewer(jdTitle, irfId, irfName,userId,resumeLink, isRedo = false)
     {
-       
+
        var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
-            
+
             var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&isRedo=' + isRedo;//'&resumeLink=' + resumeLink +
             window.open(newTabUrl, '_blank');
 
-        
 
+
+    }
+</script>
+<script>
+    function Changeurldetails(type) {
+        window.location.href = "/Dashboard/TotalRedMarkeredInterviewers?type=" + type;
+    }
+    function RedmarkerStatusChange(interviewid,IRFid,status){
+         $.ajax({
+            type: "POST",
+            url: "/Dashboard/UpdateRedMarkeredInterviewerstatus",
+            data: {'interviewid':interviewid, 'IRFid':IRFid,'status':status },
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
     }
 </script>

@@ -399,6 +399,7 @@ namespace Risebird.Entities.ViewModel
         public int AITranscriptAnalysisScore { get; set; }
         public bool ModifiedInterviewStatus { get; set; }
         public bool Candidateconsent { get; set; }
+        public bool ConsentRequired { get; set; }
     }
     public class RBInterviewDetails
     {

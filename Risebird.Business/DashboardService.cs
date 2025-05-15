@@ -1219,6 +1219,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status)
+        {
+            try
+            {
+                return await _dashboardRespository.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
     }
 }

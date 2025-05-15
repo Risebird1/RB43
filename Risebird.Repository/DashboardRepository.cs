@@ -2221,7 +2221,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate,DateTime enddate)
+        public async Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate, DateTime enddate)
         {
             try
             {
@@ -2246,6 +2246,30 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@IRFid", IRFid);
+                    parameters.Add("@status", status);
+                    var result = await SqlMapper.QueryAsync<ToalInterviewerInterviewDetails>(con, "usp_UpdateRedMarkeredInterviewerstatus", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
     }
 }
