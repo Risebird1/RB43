@@ -6151,10 +6151,15 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false)
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false, bool? isTestDb = false)
         {
             try
             {
+                if(isTestDb.HasValue && isTestDb.Value)
+                {
+                    string conStringTest = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                    connectionString = conStringTest;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
@@ -7090,6 +7095,30 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAssessmentGroupFromIRFId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<string> GetAssessmentGroupById(int assessmentGroupId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@assessmentGroupId", assessmentGroupId);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAssessmentGroupById", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -9887,6 +9916,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                //string conStringTest = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                //connectionString = conStringTest;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "usp_GetUnassignedInterviewsMAG", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
     }
 }

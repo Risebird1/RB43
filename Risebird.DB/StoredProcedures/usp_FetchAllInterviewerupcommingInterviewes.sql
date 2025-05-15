@@ -12,7 +12,8 @@ GO
 CREATE Procedure usp_FetchAllInterviewerupcommingInterviewes    
 @timeNow datetime,  
 @type varchar(10),
-@irfId int = null
+@irfId int = null,
+@agId int = null
 AS      
 BEGIN      
 --Declare @Count int=0  
@@ -50,6 +51,8 @@ BEGIN
 --where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and im.interviewDate>=@timeNow and tirf.IsActive=1 and iav.Isverified=1 and ul.IsActive=1)       
 --Select CTE.EmailId,COUNT(CTE.id) as Total,ip.uniqueid from CTE left join InterviewerPublicURLs ip on ip.Emailid=CTE.EmailId group by CTE.EmailId,ip.uniqueid      
 --END  
+if(@irfId is not null)
+Begin
 ;With CTE as (                
 select im.id, im.IRFId, im.interviewDate,im.candidateEmail,           
 im.interviewer,ul.EmailId, irf.id as irfIntId from InterviewMeetings im              
@@ -58,8 +61,25 @@ inner join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId
 left join [dbo].[InterviewerProfile] inte on tirf.InterviewerId = inte.id          
 left join [dbo].[UserList] ul on inte.UserId = ul.id           
 where interviewer is null and confirmationStatus = 1 and im.interviewDate>=@timeNow and tirf.IsAvailable=1 and tirf.IsActive=1 and ul.IsActive=1 and (@irfId is null or irf.id =@irfId))       
-Select CTE.EmailId,COUNT(CTE.id) as Total,ip.uniqueid, irfIntId from CTE left join InterviewerPublicURLs ip on ip.Emailid=CTE.EmailId group by CTE.EmailId,ip.uniqueid, irfIntId      
-  
+Select CTE.EmailId,COUNT(CTE.id) as Total,ip.uniqueid, irfIntId from CTE left join InterviewerPublicURLs ip on ip.Emailid=CTE.EmailId group by CTE.EmailId,ip.uniqueid, irfIntId        
+End
+else if(@agId is not null)
+Begin
+;With CTE as (                
+select im.id, im.IRFId, im.interviewDate,im.candidateEmail,           
+im.interviewer,ul.EmailId, irf.id as irfIntId from InterviewMeetings im              
+inner join IRF irf on im.IRFId=irf.IRFId               
+inner join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId              
+left join [dbo].[InterviewerProfile] inte on tirf.InterviewerId = inte.id          
+left join [dbo].[UserList] ul on inte.UserId = ul.id           
+where interviewer is null and confirmationStatus = 1 and 
+im.interviewDate>=@timeNow and tirf.IsAvailable=1 and tirf.IsActive=1 and ul.IsActive=1
+and (irf.AssessmentGroupId = @agId))       
+Select CTE.EmailId,COUNT(CTE.id) as Total,ip.uniqueid, irfIntId from CTE 
+left join InterviewerPublicURLs ip on ip.Emailid=CTE.EmailId 
+group by CTE.EmailId,ip.uniqueid, irfIntId        
+End
+
 END 
 GO  
     

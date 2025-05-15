@@ -206,5 +206,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName);
         Task<bool> UpdateNewPriority(int irfid, int PriorityLevel);
         Task<string> GetAssessmentGroupFromIRFId(int irfId);
+        Task<string> GetAssessmentGroupById(int assessmentGroupId);
     }
 }
