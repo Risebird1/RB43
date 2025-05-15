@@ -3421,7 +3421,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Type = type;
             return View("InterviewerIRFDetails", model);
         }
-        public async Task<IActionResult> TotalRedMarkeredInterviewers()
+        public async Task<IActionResult> TotalRedMarkeredInterviewers(string type)
         {
             try
             {
@@ -3434,7 +3434,28 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Interviewer" || profileName == "Finance")
                     {
+                        if (string.IsNullOrWhiteSpace(type))
+                        {
+                            type = "Pending";
+                        }
                         var model = await _dashboardService.GetTotalRedMarkeredInterviewers();
+                        if (type == "UnderReview")
+                        {
+                            model = model.Where(x => x.RedMarkerStatus == 1 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Reviewed")
+                        {
+                            model = model.Where(x => x.RedMarkerStatus == 2 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Removed")
+                        {
+                            model = model.Where(x => x.IsActive != true).ToList();
+                        }
+                        else if (type == "Pending")
+                        {
+                            model = model.Where(x => x.IsActive == true && x.RedMarkerStatus != 1 && x.RedMarkerStatus != 2).ToList();
+                        }
+                        ViewBag.Type = type;
                         return View(model);
                     }
                     else
@@ -4706,6 +4727,16 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status)
+        {
+            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status);
+            if (result)
+            {
+                return Json("Interviewer Moved Successfully.");
+            }
+            return Json("Fail to Move the Interviewer, Please try again.");
         }
     }
 }
