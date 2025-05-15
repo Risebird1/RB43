@@ -2240,7 +2240,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId = null)
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId = null, int? agId = null)
         {
             try
             {
@@ -2250,6 +2250,7 @@ namespace Risebird.Repository
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@type", type);
                     parameters.Add("@irfId", irfId);
+                    parameters.Add("@agId", agId);
                     var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
                            commandType: CommandType.StoredProcedure);
                     return (List<CommonInterviewDetailsVM>)results;
@@ -3844,6 +3845,8 @@ namespace Risebird.Repository
                     parameters.Add("@score", model.AIAnalysisScore);
                     parameters.Add("@ReferredBy", model.ReferredBy);
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@agId", model.AssessmentGroupId);
+                    parameters.Add("@isMagApplication", (!string.IsNullOrEmpty(model.DirectApplicationFor) && model.DirectApplicationFor == DirectApplicationForTypes.MAG) ? true : false);
                     var result = await SqlMapper.QueryAsync(con, "usp_AddInternalInterviewerToIRFPostPositiveVerdict", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;

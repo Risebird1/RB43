@@ -4648,5 +4648,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> GetAssessmentGroupById(int assessmentGroupId)
+        {
+            try
+            {
+                return await _irfRepository.GetAssessmentGroupById(assessmentGroupId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

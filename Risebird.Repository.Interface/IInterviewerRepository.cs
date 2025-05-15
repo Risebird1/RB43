@@ -69,7 +69,7 @@ namespace Risebird.Repository.Interface
         string GetUserRolebyEmailid(string Emailid);
         Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid, string type);
         string FetchClientName(string IRFId);
-        Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId = null);
+        Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId = null, int? agId = null);
         Task<List<string>> FetchAllPasswordResetDetails(int noofdays);
         Task<List<TdsCertificateReport>> FetchTdsCertificatesbyEmailid(string Emailid);
         bool AddTdsCertificates(TdsCertificateReport model);

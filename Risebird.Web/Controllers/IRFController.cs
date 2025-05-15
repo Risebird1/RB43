@@ -10576,6 +10576,42 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> GenerateMAGApplicationLink(int assessmentGroupId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (assessmentGroupId > 0)
+                    {
+                        var encryptedId = await _encryptionHelper.EncryptStringValue(assessmentGroupId.ToString());
+                        var url = "https://portal.risebird.io/Interviewer/MAGApply?id=" + HttpUtility.UrlEncode(encryptedId);
+
+                        //var url = Url.Action("Apply", "Interviewer",
+                        //        new { id = irfId },
+                        //        Request.Scheme);
+
+                        return Json(url);
+                    }
+                    else
+                    {
+                        return Json(null);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json("Some error occured. Please try again!");
+                return Json(null);
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddInterviewerToIRF(int irfId, int userId)
         {
             try

@@ -23,7 +23,7 @@ join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id
 left join UserList ulco on IRF.RisebirdHr=ulco.id
 Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime 
 left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt 
-where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) 
+where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) --IsNull(IsProctor,0)=0 and 
 and interviewDate<@timeNow and DATEDIFF(DAY, interviewDate,@timeNow)<7 and ISNULL(im.RedoInterview,0)=0 --and tq.id is null 
 and (ic.IsAIQCAtempted is null or ic.IsAIQCAtempted = 0) and ic.OpenAIQCResponse is null
 

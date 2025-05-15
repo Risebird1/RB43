@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsIrfDeleted { get; set; }
         public string AssessmentGroup { get; set; }
         public int AssessmentGroupId { get; set; }
+        public string EncryptedAssessmentGroupId { get; set; }
         public string ChannelOwner { get; set; }
         public DateTime ChannelCreationDate { get; set; }
         public string OpenAIResponse { get; set; }
@@ -47,6 +48,7 @@ namespace Risebird.Entities.ViewModel
         public string AcknowledgementStatus { get; set; }
         public string ApplicationType { get; set; } //either internal or opentoall
         public int AIAnalysisScore { get; set; } //either internal or opentoall
+        public string DirectApplicationFor { get; set; } //either MAG or a solitary Skill Channel
 
     }
 }
