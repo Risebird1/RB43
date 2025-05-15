@@ -1,4 +1,5 @@
 ﻿
+using ExcelDataReader.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Risebird.Web.Controllers
 {
@@ -46,13 +48,14 @@ namespace Risebird.Web.Controllers
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IIRFRepository _irfRepository;
         private readonly ITwilioHelper _twilioHelper;
+        private readonly IEncryptionHelper _encryptionHelper;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
-            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, ITwilioHelper twilioHelper)
+            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -70,6 +73,7 @@ namespace Risebird.Web.Controllers
             _assistantServiceHelper = assistantServiceHelper;
             _irfRepository = irfRepository;
             _twilioHelper = twilioHelper;
+            _encryptionHelper = encryptionHelper;
         }
 
         [Authorize]
@@ -87,6 +91,49 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+
+                        //try
+                        //{
+                        //    //get all mags that have unassigned interviews an hour or later from the current tiime.
+                        //    var unassignedMags = await _irfRepository.GetUnassignedInterviewsMAG();
+                        //    //for each mag, first get all the interviewers mapped to it, if the list is not null, create a mag link and send them all the link
+
+
+                        //    if (unassignedMags != null && unassignedMags.Count() > 0)
+                        //    {
+                        //        foreach (var item in unassignedMags)
+                        //        {
+                        //            try
+                        //            {
+                        //                var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(item.id, true, true); //item.id here is the id of the assessment group and not a mag table primary id
+
+                        //                if (interviewers != null && interviewers.Count() > 0)
+                        //                {
+                        //                    //create mag link
+                        //                    var encryptedId = await _encryptionHelper.EncryptStringValue(item.id.ToString());
+                        //                    var magLink = "https://portal.risebird.io/Interviewer/MAGApply?id=" + HttpUtility.UrlEncode(encryptedId);
+
+                        //                    //send the mag link to all the interviewers, will have to create a template
+                        //                    foreach (var interviewer in interviewers)
+                        //                    {
+                        //                        await _notificationHelper.SendMAGApplicationLinkToInterviewers(interviewer.EmailId, interviewer.uniqueid, magLink, item.id);
+
+                        //                    }
+                        //                }
+                        //            }
+                        //            catch (Exception ex)
+                        //            {
+                        //                //log.LogInformation($"SendTimelyMAGApplicationLink : C# Timer trigger {ex.Message}");
+                        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //            }
+
+                        //        }
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //}
                         //await CandidateIVRCall();
                         //try
                         //{

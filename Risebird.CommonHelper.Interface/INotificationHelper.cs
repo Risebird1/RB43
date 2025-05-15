@@ -125,6 +125,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendNotificationToClientForSelectedCandidatewithReport(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string reportlink, string clientlogo = null);
         Task<string> SendAsssessmentGroupNotMappedToJobTitleMail(string requestedBy, string ccEmail, string jobTitle);
 
-        Task<string> SendMAGApplicationLinkToInterviewers(string interviewerEmailId, string uniqueId, string magLink);
+        Task<string> SendMAGApplicationLinkToInterviewers(string interviewerEmailId, string uniqueId, string magLink, int? assessmentGroupId = null);
     }
 }
