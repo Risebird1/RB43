@@ -46,7 +46,7 @@ namespace Risebird.AzureTimerFunctions
                     {
                         try
                         {
-                            var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(item.id, true); //item.id here is the id of the assessment group and not a mag table primary id
+                            var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(item.id, true, true); //item.id here is the id of the assessment group and not a mag table primary id
 
                             if (interviewers != null && interviewers.Count() > 0)
                             {

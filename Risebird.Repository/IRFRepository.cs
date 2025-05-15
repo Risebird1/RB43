@@ -6151,12 +6151,15 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false)
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid, bool isMinimalData = false, bool? isTestDb = false)
         {
             try
             {
-                string conStringTest = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-                connectionString = conStringTest;
+                if(isTestDb.HasValue && isTestDb.Value)
+                {
+                    string conStringTest = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                    connectionString = conStringTest;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
