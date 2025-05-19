@@ -479,8 +479,8 @@
             var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
 
             var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
-            var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
-            //var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
 
             var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&isRedo=' + isRedo;//'&resumeLink=' + resumeLink + 
             window.open(newTabUrl, '_blank');
