@@ -1,7 +1,135 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
 @if (ViewBag.type != "Client")
 {
-    <div class="col-md-4 pull-left">
+    
+    <div class="w-full clearfix">
+        <h2 style="font-size: 16px;margin: 0px 0px;padding: 3px;font-weight: 600;">
+            Personal Information
+        </h2>
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
+            <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
+        </div>
+
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Company:</strong></span>
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyName))
+            {
+                <span class="pull-left" style="color:brown;font-size:12px;">@Model.CompanyName</span>
+            }
+            else
+            {
+                <span class="pull-left">@Model.EmploymentComment</span>
+            }
+        </div>
+
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Contact:</strong></span>
+            @if (Model.MobileNumber != null && Model.MobileNumber != string.Empty)
+            {
+                <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@Model.interviewerName','@Model.MobileNumber','@Model.Emailid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+            }
+            @Model.MobileNumber
+        </div>
+
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Resume Link:</strong></span>
+            @if (Model.ResumeLink != null && Model.ResumeLink != "")
+            {
+                <span class="pull-left" style="color:brown;font-size:12px;"> <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume</a></span>
+            }
+            else
+            {
+                <span class="pull-left" style="color:brown;font-size:12px;"> No Resume</span>
+            }
+
+        </div>
+
+</div>
+
+    <div class="w-full clearfix" style="background:#fff;padding-bottom: 10px;color: indianred;font-size: 14px;">
+        <h1 style="font-size: 16px;background: #f2c9c9;padding: 3px 5px;">
+            Critical Red Markers
+        </h1>
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Employee:</strong></span>
+
+            @if (Model.IsEmployed)
+            {
+                <span class="pull-left">Working</span>
+            }
+            else
+            {
+                <span class="pull-left">Not Working</span>
+            }
+
+        </div>
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Availability:</strong></span>
+
+            @if (Model.Isavailable == 1)
+            {
+                <span class="text-center pull-left"><span class="avail">Yes</span></span>
+            }
+            else if (Model.Isavailable == 2)
+            {
+                <span class="text-center pull-left"><span class="noavail">Not Available</span></span>
+            }
+            else if (Model.Isavailable == 3)
+            {
+                <span class="text-center pull-left"><span class="clarity">Need more clarity</span></span>
+            }
+            else if (Model.Isavailable == 4)
+            {
+                <span class="text-center pull-left"><span class="drop">Drop my profile</span></span>
+            }
+            else
+            {
+                <span></span>
+            }
+        </div>
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Video Confirmation:</strong></span>
+            @if (Model.VideoConfirmation == 1)
+            {
+                <span class="text-center pull-left"><span class="avail">Yes</span></span>
+            }
+            else if (Model.VideoConfirmation == 2)
+            {
+                <span class="text-center pull-left"><span class="noavail">No</span></span>
+            }
+            else
+            {
+                <span></span>
+            }
+        </div>
+       <div class="redmarker-blk">
+             <span class="pull-left" style="margin-right:10px;"><strong>AI Verdict:</strong></span>
+
+            @if (!string.IsNullOrWhiteSpace(Model.AIVerdict))
+            {
+                <span>@Model.AIVerdict</span>
+            }
+            else
+            {
+                <span></span>
+            }
+        </div>
+        <div class="redmarker-blk">
+            <span class="pull-left" style="margin-right:10px;"><strong>Acknowledgement Status:</strong></span>
+
+            <span>
+                @Model.AcknowledgementStatus
+            </span>
+           </div>
+</div>
+
+
+
+
+
+
+@*     <div class="col-md-4 pull-left">
         <p class="clearfix">
             <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
             <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
@@ -100,7 +228,7 @@
             }
 
         </p>
-    </div>
+    </div> *@
 }
 <div class="w-full pull-left red-marker" id="style-2">
 

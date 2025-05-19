@@ -11985,6 +11985,11 @@ section {
     left: -6px;
     float: left;
 }
+.redmarker-blk {
+    width: auto;
+    float: left;
+    margin: 5px 20px 5px 20px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
