@@ -292,9 +292,9 @@
                                                                                             <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
                                                                                                 <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
                                                                                             </span>
-                                                                                            __
+                                                                                           
                                                                                             <span id="regenerateBtn_@i" title="Screen Interviewer(Regenerate)" onclick="ScreenInterviewer(this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId', true)" class="mdc-fab app-fab--absolute">
-                                                                                                <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
+                                                                                                <i class="fa fa-user"></i><img src="/img/regenerate.png" style="max-width:13px!important;position:relative;left: 0px;">
                                                                                             </span>
                                                                                             <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes">
                                                                                                 <span onclick="javascript:OpenUploadResumeModal('@Model.InterviewerCollection[i].UserId', '@Model.InterviewerCollection[i].EmailId');" title="Upload Resumes">

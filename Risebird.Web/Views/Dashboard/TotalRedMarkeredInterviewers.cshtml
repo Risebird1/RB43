@@ -92,13 +92,10 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Completed Interviews</th>
-                                                    <th>AI Verdict</th>
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
-                                                    <th>Video confirmation</th>
-                                                    <th>Is Employed</th>
-                                                    <th>Acknowledgement status</th>
+                                                    
                                             </thead>
                                             <tfoot>
                                                 <tr>
@@ -111,13 +108,10 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Completed Interviews</th>
-                                                    <th>AI Verdict</th>
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
-                                                    <th>Video confirmation</th>
-                                                    <th>Is Employed</th>
-                                                    <th>Acknowledgement status</th>
+                                                    
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -162,6 +156,11 @@
                                                                         <span class="fas fa-upload" style="font-size:12px;"></span>
                                                                     </span>
                                                                 </button>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile" style="width:28px!important;height:28px!important;background:#d18fec94;border:#d18fec94;">
+                                                                    <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })" target="_blank">
+                                                                        <span title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><i class="fa fa-user" style="font-size:13px;position: relative;left:3px;"></i><svg style="position:relative;top:3px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /><a target="_blank" href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"></a></svg></span>
+                                                                    </a>
+                                                                </button>
                                                             }
                                                             @if (ViewBag.Type == "UnderReview")
                                                             {
@@ -174,9 +173,9 @@
                                                             }
                                                             @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="" style="width:27px!important;height:27px!important">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="" style="width:27px!important;height:27px!important;position:relative;top:6px;">
                                                                     <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
-                                                                        <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 40px;" />
+                                                                        <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 33px;" />
 
                                                                     </span>
                                                                 </button>
@@ -192,39 +191,15 @@
                                                         <td>@item.Clienthr</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
-                                                        <td><a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a></td>
-                                                        @if (!string.IsNullOrWhiteSpace(item.AIVerdict))
-                                                        {
-                                                            <td>@item.AIVerdict</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
+                                                        <td>
+                                                            <a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a></td>
+                                                        
                                                         <td>@item.TotalFuture</td>
                                                         <td>@item.TotalInterview</td>
                                                         <td>@item.TotalInterviewers</td>
-                                                        @if (item.VideoConfirmation == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else if (item.VideoConfirmation == 2)
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (item.IsEmployed)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        <td>@item.AcknowledgementStatus</td>
+                                                       
+                                                       
+                                                        
                                                     </tr>
                                                 }
                                             </tbody>
@@ -289,6 +264,8 @@
             $(this).hide();
         });
     });
+
+
 </script>
 <script type="text/javascript">
     $(".dataloading").hide();
