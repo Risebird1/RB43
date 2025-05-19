@@ -20,6 +20,7 @@ CREATE TABLE [dbo].[TransInterviewer](
             [AddedAt][datetime] null,
             [ModifiedAt][datetime] null,
             [AIScreeningScore][int] null,
+            [RedMarkerStatus][int] null,
 			CONSTRAINT [FK_TIIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
             [IsSurchargeApprove] [bit] NULL,
@@ -205,6 +206,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TransInterviewer
     Add AIScreeningScore int null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RedMarkerStatus')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add RedMarkerStatus int null
 END
 
 END
