@@ -55,6 +55,8 @@ BEGIN
 if(@ClientActionOnInterviewer='Rejected')
 begin
 Update TransInterviewer Set ClientAction=@ClientActionOnInterviewer,IsActive=0 Where Userid=@interviewerUserId and IRFId=@irfId
+Update InterviewMeetings set Interviewer=null where IRFId in(Select IRFId From IRF where id=@irfId) and interviewDate>DateAdd(Minute,330,GetDate())
+and Interviewer in(Select EmailId From UserList where id=@interviewerUserId)
 End
 Else If(@ClientActionOnInterviewer='Shortlisted')
 BEGIN

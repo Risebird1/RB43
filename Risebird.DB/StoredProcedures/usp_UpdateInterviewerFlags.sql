@@ -21,5 +21,11 @@ ip.IsApproved=isnull(@IsApproved,ip.IsApproved)
 from InterviewerProfile ip join UserList ul on ip.Userid=ul.id
 where ul.EmailId=@Emailid
 Update UserList set IsActive=IsNull(@IsActive,IsActive) where EmailId=@Emailid
+if(@IsActive=0)
+begin
+Update InterviewMeetings set Interviewer=null where Interviewer in(Select Emailid from UserList where  EmailId=@Emailid)
+and interviewDate>DateAdd(Minute,330,GetDate())
+Update TransInterviewer set IsActive=0,IsAvailable=0 where UserId in(Select id from UserList where  EmailId=@Emailid)
+end
 END
 GO
