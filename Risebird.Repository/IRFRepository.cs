@@ -901,7 +901,8 @@ namespace Risebird.Repository
                                     IsResumeRedactAttempted = !string.IsNullOrEmpty(dt.Rows[i]["IsResumeRedactAttempted"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsResumeRedactAttempted"]) : false,
                                     IsCampaignActivity = !string.IsNullOrEmpty(dt.Rows[i]["IsCampaignActivity"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsCampaignActivity"]) : false,
                                     CampaignName = !string.IsNullOrEmpty(dt.Rows[i]["CampaignName"].ToString()) ? dt.Rows[i]["CampaignName"].ToString() : null,
-                                    AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null
+                                    AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null,
+                                    AIScreeningScore = !string.IsNullOrEmpty(dt.Rows[i]["AIScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[i]["AIScreeningScore"]) : 0,
 
                                 });
                             }
