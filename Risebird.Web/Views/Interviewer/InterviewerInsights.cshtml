@@ -103,24 +103,36 @@
                 <span></span>
             }
         </div>
-       <div class="redmarker-blk">
+     @*   <div class="redmarker-blk">
              <span class="pull-left" style="margin-right:10px;"><strong>AI Verdict:</strong></span>
 
-            @if (!string.IsNullOrWhiteSpace(Model.AIVerdict))
+             @if (!string.IsNullOrWhiteSpace(Model.AIVerdict))
             {
                 <span>@Model.AIVerdict</span>
             }
             else
             {
                 <span></span>
-            }
-        </div>
+            } 
+        </div> *@
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Acknowledgement Status:</strong></span>
+            @if (Model.AcknowledgementStatus == "yes")
+            {
+               
+                    <span class="text-center pull-left"><span class="avail">Yes</span></span>
 
-            <span>
-                @Model.AcknowledgementStatus
-            </span>
+               
+
+            }
+            else if (Model.AcknowledgementStatus == "no")
+            {
+                <span class="text-center pull-left"><span class="noavail">No</span></span>
+            }
+            else
+            {
+                <span></span>
+            }
            </div>
 </div>
 
