@@ -16,7 +16,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using Risebird.Repository;
+//using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -53,10 +53,10 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _irfRepository;
         private readonly ITwilioHelper _twilioHelper;
         private readonly IEncryptionHelper _encryptionHelper;
-        private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
-        private readonly ICandidateRepository _candidateRepository;
-        private readonly IValidationHelper _validationHelper;
-        private readonly IIRFService _irfService;
+        //private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        //private readonly ICandidateRepository _candidateRepository;
+        //private readonly IValidationHelper _validationHelper;
+        //private readonly IIRFService _irfService;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
@@ -64,7 +64,7 @@ namespace Risebird.Web.Controllers
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
             IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, 
-            ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService)
+            ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -83,10 +83,10 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _twilioHelper = twilioHelper;
             _encryptionHelper = encryptionHelper;
-            _affIndaResumeParserHelper = affIndaResumeParserHelper;
-            _candidateRepository = candidateRepository;
-            _validationHelper = validationHelper;
-            _irfService = irfService;
+            //_affIndaResumeParserHelper = affIndaResumeParserHelper;
+            //_candidateRepository = candidateRepository;
+            //_validationHelper = validationHelper;
+            //_irfService = irfService;
         }
 
         [Authorize]
