@@ -95,7 +95,8 @@
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
-                                                    
+                                                    <th>Comment</th>
+
                                             </thead>
                                             <tfoot>
                                                 <tr>
@@ -111,7 +112,7 @@
                                                     <th>Future Assigned Interviews</th>
                                                     <th>Future SkillChannel Interviews</th>
                                                     <th>Active Interviewers</th>
-                                                    
+                                                    <th>Comment</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -165,19 +166,21 @@
                                                             @if (ViewBag.Type == "UnderReview")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:0px;">
-                                                                    <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
+                                                                    <span onclick="javascript:CommentDetails('@item.UserId', '@item.id','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
                                                                         <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
-
+                                                                    </span>
+                                                                </button>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:0px;">
+                                                                    <span onclick="javascript:FetchCommentDetails('@item.UserId', '@item.id');" title="Comments History" class="mdc-fab__icon material-icons">
+                                                                        <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
                                                                     </span>
                                                                 </button>
                                                             }
                                                             @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="" style="width:27px!important;height:27px!important;position:relative;top:6px;">
-@*                                                                     <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">*@                
-                                                                     <span  onclick="javascript:CommentDetails('@item.interviewer');" title="Move To Under Review" class="mdc-fab__icon material-icons">
+                                                                    <span onclick="javascript:CommentDetails('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
                                                                         <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 33px;" />
-
                                                                     </span>
                                                                 </button>
                                                             }
@@ -193,14 +196,15 @@
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td>
-                                                            <a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a></td>
-                                                        
+                                                            <a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a>
+                                                        </td>
+
                                                         <td>@item.TotalFuture</td>
                                                         <td>@item.TotalInterview</td>
                                                         <td>@item.TotalInterviewers</td>
-                                                       
-                                                       
-                                                        
+                                                        <td>@item.RedMarkerReviewComment</td>
+
+
                                                     </tr>
                                                 }
                                             </tbody>
@@ -230,7 +234,9 @@
             </button>
             <div class="modal-body" id="SuspiciousTypebody" style="overflow:auto;max-height:30vw">
                 <form method="post">
-                    <input type="hidden" id="hdnInterviewerEmail">
+                    <input type="hidden" id="hdninterviewid">
+                    <input type="hidden" id="hdIRFid">
+                    <input type="hidden" id="hdstatus">
                     <label style="font-size:14px;">Comment</label>
                     <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
                 </form>
@@ -243,29 +249,43 @@
         </div>
     </div>
 </div>
+<div id="RedMarkerCommentHistory" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Comments History</h5>
+            </div>
+            <button onclick="closeRedMarkerCommentHistory()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divRedMarkerCommentHistory" style="overflow:auto;max-height:30vw">
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     function closeCommentDetailsModal() {
         var modal = document.getElementById("CommentDetailsModal");
         modal.style.display = "none";
     }
-    function CommentDetails(Emailid) {
+    function CommentDetails(interviewid,IRFid,status) {
         var modal = document.getElementById("CommentDetailsModal");
         modal.style.display = "block";
-        $('#hdnInterviewerEmail').val(Emailid);
+        $('#hdninterviewid').val(interviewid);
+        $('#hdIRFid').val(IRFid);
+        $('#hdstatus').val(status);
     }
     function SaveCommentDetails() {
         var comment = $('#Comment').val().trim();
-        var emailId = $('#hdnInterviewerEmail').val();
+        var interviewid = $('#hdninterviewid').val();
+        var IRFid = $('#hdIRFid').val();
+        var status = $('#hdstatus').val();
         if (comment != '') {
-            $.ajax({
-                url: '/Interviewer/AddInterviewerComment',
-                data: { 'Email': emailId, 'Comment': comment },
-                type: "POST",
-                success: function (data) {
-                    alert(data);
-                    closeCommentDetailsModal();
-                }
-            });
+           RedmarkerStatusChange(interviewid,IRFid,status);
         }
         else {
             alert("Please enter the comment.");
@@ -368,14 +388,55 @@
         window.location.href = "/Dashboard/TotalRedMarkeredInterviewers?type=" + type;
     }
     function RedmarkerStatusChange(interviewid,IRFid,status){
+        var comment = $('#Comment').val().trim();
          $.ajax({
             type: "POST",
             url: "/Dashboard/UpdateRedMarkeredInterviewerstatus",
-            data: {'interviewid':interviewid, 'IRFid':IRFid,'status':status },
+            data: {'interviewid':interviewid, 'IRFid':IRFid,'status':status,'Comment':comment },
             success: function (data) {
                 alert(data);
                 location.reload();
             }
         });
+    }
+    function FetchCommentDetails(interviewid,IRFid){
+         $.ajax({
+            type: "POST",
+            url: "/Dashboard/FetchRedMarkerCommentDetails",
+            data: {'interviewid':interviewid, 'IRFid':IRFid },
+            success: function (data) {
+                openRedMarkerCommentHistory();
+            }
+        });
+    }
+    function closeRedMarkerCommentHistory() {
+        var modal = document.getElementById("RedMarkerCommentHistory");
+        modal.style.display = "none";
+    }
+    function openRedMarkerCommentHistory() {
+        var modal = document.getElementById("RedMarkerCommentHistory");
+        modal.style.display = "block";
+    }
+    function BindRedMarkerHistory(data){
+        var html='';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="65%" class="table_heading">Comment</th>';
+        html += '  <th width="20%" class="table_heading">Created On</th>';
+        html += '  <th width="15%" class="table_heading">Created By</th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].comment + '</td>';
+            html += '    <td>' + data[i].createdOn + '</td>';
+            html += '  <td>' + data[i].createdBy + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divRedMarkerCommentHistory").empty().html(html);
     }
 </script>

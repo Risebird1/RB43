@@ -1219,16 +1219,28 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status)
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy)
         {
             try
             {
-                return await _dashboardRespository.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status);
+                return await _dashboardRespository.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, CreatedBy);
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchRedMarkerCommentDetails(interviewid, IRFid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

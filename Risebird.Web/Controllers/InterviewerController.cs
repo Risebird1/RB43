@@ -4519,7 +4519,7 @@ namespace Risebird.Web.Controllers
 
                 //first check if this interviewer is already present in the transInterviewer table, it could be either a yes or a no verdict
                 var existenceCheck = await _interviewerService.CheckIfInterviewerExistsInSystemAndOrSkillChannel(model.EmailId, model.IRFId);
-                if(existenceCheck.IsExistsInSystem && !existenceCheck.AlreadyExistsInSkillChannel)
+                if (existenceCheck.IsExistsInSystem && !existenceCheck.AlreadyExistsInSkillChannel)
                 {
                     if (model.ResumeFile != null)
                     {
@@ -4745,7 +4745,7 @@ namespace Risebird.Web.Controllers
                     }
 
                     int? assessmentGroupId = model.AssessmentGroupId;
-                    
+
                     if (assessmentGroupId.HasValue && assessmentGroupId.Value > 0 && !string.IsNullOrEmpty(model.ResumeLink))//!string.IsNullOrEmpty(irfId)
                     {
                         //model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
@@ -4800,7 +4800,7 @@ namespace Risebird.Web.Controllers
                                                             CC = "talent@risebird.io",
                                                             Subject = "New interviews have come up! Please assign."
                                                         };
-                                                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, agId:model.AssessmentGroupId);
+                                                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, agId: model.AssessmentGroupId);
                                                         //What's App Message Send
                                                         //WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                                         //_whatsAppVM.Emailid = item.EmailId;
@@ -4975,15 +4975,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
-        [HttpPost]
-        //public async Task<JsonResult> AddInterviewerComment(string Email, string Comment)
-        //{
-            
-        //}
-
-
-
     }
 }
 
