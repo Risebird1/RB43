@@ -198,13 +198,10 @@
                                                         <td>
                                                             <a target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">@item.TotalCompletedMeetings</a>
                                                         </td>
-
                                                         <td>@item.TotalFuture</td>
                                                         <td>@item.TotalInterview</td>
                                                         <td>@item.TotalInterviewers</td>
                                                         <td>@item.RedMarkerReviewComment</td>
-
-
                                                     </tr>
                                                 }
                                             </tbody>

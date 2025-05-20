@@ -1,9 +1,9 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
 @if (ViewBag.type != "Client")
 {
-    
+
     <div class="w-full clearfix">
-        
+
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
             <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
@@ -43,10 +43,10 @@
 
         </div>
 
-</div>
+    </div>
 
     <div class="w-full clearfix" style="padding-bottom: 10px;font-size: 14px;">
-      
+
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Employee:</strong></span>
 
@@ -99,27 +99,21 @@
                 <span></span>
             }
         </div>
-      @*  <div class="redmarker-blk">
-             <span class="pull-left" style="margin-right:10px;"><strong>AI Verdict:</strong></span>
-
-             @if (!string.IsNullOrWhiteSpace(Model.AIVerdict))
-            {
-                <span>@Model.AIVerdict</span>
-            }
-            else
-            {
-                <span></span>
-            } 
-        </div> *@ 
+        @if (!string.IsNullOrWhiteSpace(Model.IRFId))
+        {
+            <div class="redmarker-blk">
+                <span class="pull-left" style="margin-right:10px;"><strong>AI Verdict:</strong></span>
+                @if (!string.IsNullOrWhiteSpace(Model.AIVerdict))
+                {
+                    <span>@Model.AIVerdict</span>
+                }
+            </div>
+        }
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Acknowledgement Status:</strong></span>
             @if (Model.AcknowledgementStatus == "yes")
             {
-               
-                    <span class="text-center pull-left"><span class="avail">Yes</span></span>
-
-               
-
+                <span class="text-center pull-left"><span class="avail">Yes</span></span>
             }
             else if (Model.AcknowledgementStatus == "no")
             {
@@ -129,15 +123,10 @@
             {
                 <span></span>
             }
-           </div>
-</div>
+        </div>
+    </div>
 
-
-
-
-
-
-@*     <div class="col-md-4 pull-left">
+    @*     <div class="col-md-4 pull-left">
         <p class="clearfix">
             <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
             <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
