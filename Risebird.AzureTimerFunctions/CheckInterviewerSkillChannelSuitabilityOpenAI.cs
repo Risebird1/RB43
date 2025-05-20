@@ -41,7 +41,7 @@ namespace Risebird.AzureTimerFunctions
         [Function("CheckInterviewerSkillChannelSuitabilityOpenAI")]
         public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * * , ILogger log
         {
-            //log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");
+            log.LogInformation($"CheckInterviewerSkillChannelSuitabilityOpenAI : C# Timer trigger function started executing  at: {DateTime.Now}");
 
             try
             {
@@ -86,24 +86,31 @@ namespace Risebird.AzureTimerFunctions
                         }
 
                         var resumeStringContent = await ReadPdfFromUrlAsync(item.ResumeLink);
-                        var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, item.JDTitle);
-
-                        //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = (item.ResumeLink.EndsWith(".doc") ? item.ConvertedFromDocResumeLink : item.ResumeLink), Type = ProfileNames.Interviewer });
-
-                        //save the response to db
-                        if (response != null)
+                        if(!string.IsNullOrEmpty(resumeStringContent))
                         {
-                            //var responseInJson = JsonConvert.SerializeObject(response);
-                            var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, item.JDTitle);
 
-                            bool saveOperationResult = true;
-                            if (aiAnalysisModel != null)
+                            //save the response to db
+                            if (response != null)
                             {
-                                //saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
-                                saveOperationResult = await _irfRepository.SaveInterviewerOpenAIScreeningResultsV2(item.IRFId, item.UserId, aiAnalysisModel);//responseInJson.Replace("'", "")
+                                //var responseInJson = JsonConvert.SerializeObject(response);
+                                var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
 
+                                bool saveOperationResult = true;
+                                if (aiAnalysisModel != null)
+                                {
+                                    //saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                                    saveOperationResult = await _irfRepository.SaveInterviewerOpenAIScreeningResultsV2(item.IRFId, item.UserId, aiAnalysisModel);//responseInJson.Replace("'", "")
+
+                                }
                             }
                         }
+                        else
+                        {
+                            log.LogInformation($"CheckInterviewerSkillChannelSuitabilityOpenAI : C# Timer trigger failed at: {DateTime.Now} because the variable resumeStringContent is either null or empty.");
+
+                        }
+
                         //else
                         //{
                         //    //check if the resume is a doc file
@@ -126,9 +133,11 @@ namespace Risebird.AzureTimerFunctions
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                log.LogInformation($"CheckInterviewerSkillChannelSuitabilityOpenAI : C# Timer trigger failed at: {DateTime.Now} with exception {ex.Message}");
+
             }
 
-            //log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"CheckInterviewerSkillChannelSuitabilityOpenAI : C# Timer trigger function executed at: {DateTime.Now}");
 
         }
 
