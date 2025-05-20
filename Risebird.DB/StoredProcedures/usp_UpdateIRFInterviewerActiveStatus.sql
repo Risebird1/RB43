@@ -19,15 +19,14 @@ if(@IsActive = 0)
 Begin
 Update TransInterviewer set IsActive =@IsActive, ModifiedBy = @PerformedBy, ModifiedAt = @timeNow, IsAvailable = 0 
 where IRFId= @irfId and UserId = @userId
+Update InterviewMeetings set Interviewer=null where IRFId in(Select IRFId From IRF where id=@IRFId) and interviewDate>DateAdd(Minute,330,GetDate())
+and Interviewer in(Select EmailId From UserList where id=@userId)
 End
 Else
 Begin
 Update TransInterviewer set IsActive = @IsActive, ModifiedBy = @PerformedBy, ModifiedAt = @timeNow 
 where IRFId= @irfId and UserId = @userId
 End
-
-
-
 END
 Go
 

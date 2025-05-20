@@ -20,7 +20,7 @@ join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
 outer apply (select ag.AssessmentGroup, ag.id from MasterAssessmentGroup mag 
 join AssessmentGroup ag on ag.id = mag.AssessmentGroupId where AssessmentGroupId = irf.AssessmentGroupId) Mag
 where interviewDate >= dateadd(MINUTE, 390, GETDATE()) and confirmationStatus = 1
-and interviewer is null
+and interviewer is null and Mag.id is not null
 
 End
 Go

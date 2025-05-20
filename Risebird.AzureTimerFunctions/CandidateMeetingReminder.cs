@@ -70,6 +70,9 @@ namespace Risebird.AzureTimerFunctions
 
 
                     string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.uniqueid + "?IRFId=" + item.Irfid;
+                    nobutton = dashboardLink;
+                    rescheulebutton = dashboardLink;
+                    needcleritybutton = dashboardLink;
                     if (item.Typefunction == 2)
                     {
                         //Send Notifications
