@@ -174,7 +174,8 @@
                                                             @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="" style="width:27px!important;height:27px!important;position:relative;top:6px;">
-                                                                    <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
+@*                                                                     <span onclick="javascript:RedmarkerStatusChange('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">*@                
+                                                                     <span  onclick="javascript:CommentDetails('@item.interviewer');" title="Move To Under Review" class="mdc-fab__icon material-icons">
                                                                         <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 33px;" />
 
                                                                     </span>
@@ -214,6 +215,63 @@
         </div>
     </div>
 </div>
+<div id="CommentDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Comments For Interviewer</h5>
+            </div>
+            <button onclick="closeCommentDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="SuspiciousTypebody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnInterviewerEmail">
+                    <label style="font-size:14px;">Comment</label>
+                    <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveCommentDetails()" id="btnCommentSave">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function closeCommentDetailsModal() {
+        var modal = document.getElementById("CommentDetailsModal");
+        modal.style.display = "none";
+    }
+    function CommentDetails(Emailid) {
+        var modal = document.getElementById("CommentDetailsModal");
+        modal.style.display = "block";
+        $('#hdnInterviewerEmail').val(Emailid);
+    }
+    function SaveCommentDetails() {
+        var comment = $('#Comment').val().trim();
+        var emailId = $('#hdnInterviewerEmail').val();
+        if (comment != '') {
+            $.ajax({
+                url: '/Interviewer/AddInterviewerComment',
+                data: { 'Email': emailId, 'Comment': comment },
+                type: "POST",
+                success: function (data) {
+                    alert(data);
+                    closeCommentDetailsModal();
+                }
+            });
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+</script>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @await Html.PartialAsync("~/Views/IRF/UploadInterviewerResumePartial.cshtml")

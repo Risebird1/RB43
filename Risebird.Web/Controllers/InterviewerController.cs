@@ -4975,6 +4975,15 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpPost]
+        //public async Task<JsonResult> AddInterviewerComment(string Email, string Comment)
+        //{
+            
+        //}
+
+
+
     }
 }
 

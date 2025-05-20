@@ -3,9 +3,7 @@
 {
     
     <div class="w-full clearfix">
-        <h2 style="font-size: 16px;margin: 0px 0px;padding: 3px;font-weight: 600;">
-            Personal Information
-        </h2>
+        
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
             <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
@@ -47,10 +45,8 @@
 
 </div>
 
-    <div class="w-full clearfix" style="background:#fff;padding-bottom: 10px;color: indianred;font-size: 14px;">
-        <h1 style="font-size: 16px;background: #f2c9c9;padding: 3px 5px;">
-            Critical Red Markers
-        </h1>
+    <div class="w-full clearfix" style="padding-bottom: 10px;font-size: 14px;">
+      
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Employee:</strong></span>
 
@@ -103,7 +99,7 @@
                 <span></span>
             }
         </div>
-     @*   <div class="redmarker-blk">
+      @*  <div class="redmarker-blk">
              <span class="pull-left" style="margin-right:10px;"><strong>AI Verdict:</strong></span>
 
              @if (!string.IsNullOrWhiteSpace(Model.AIVerdict))
@@ -114,7 +110,7 @@
             {
                 <span></span>
             } 
-        </div> *@
+        </div> *@ 
         <div class="redmarker-blk">
             <span class="pull-left" style="margin-right:10px;"><strong>Acknowledgement Status:</strong></span>
             @if (Model.AcknowledgementStatus == "yes")
