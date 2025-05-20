@@ -170,9 +170,10 @@
                                                                         <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
                                                                     </span>
                                                                 </button>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:0px;">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:-2px;">
                                                                     <span onclick="javascript:FetchCommentDetails('@item.UserId', '@item.id');" title="Comments History" class="mdc-fab__icon material-icons">
-                                                                        <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
+                                                                        <i class="fa fa-comment-lines" style="font-size: 15px;position: relative;left: 2px;"></i>
+                                                                    <i class="fa fa-history" aria-hidden="true" style=" font-size: 11px;position: relative;top: 4px;left: -2px;"></i>
                                                                     </span>
                                                                 </button>
                                                             }
@@ -202,8 +203,32 @@
                                                         <td>@item.TotalFuture</td>
                                                         <td>@item.TotalInterview</td>
                                                         <td>@item.TotalInterviewers</td>
-                                                        <td>@item.RedMarkerReviewComment</td>
-
+                                                        @* <td>@item.RedMarkerReviewComment</td> *@
+                                                           <td>
+                                                        @if (item.RedMarkerReviewComment != null && item.RedMarkerReviewComment != "")
+                                                        {
+                                                            @if (item.RedMarkerReviewComment.Length > 20)
+                                                            {
+                                                                <div class="article">
+                                                                    <p style="margin-bottom:0px;">
+                                                                        @item.RedMarkerReviewComment.Substring(0, 20)
+                                                                    </p>
+                                                                    <p class="moretext_@item.id moretext">
+                                                                        @item.RedMarkerReviewComment.Substring(20, @item.RedMarkerReviewComment.Length - 20)
+                                                                    </p>
+                                                                </div>
+                                                                <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="article">
+                                                                    <p>
+                                                                        @item.RedMarkerReviewComment.Substring(0, @item.RedMarkerReviewComment.Length)
+                                                                    </p>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </td>
 
                                                     </tr>
                                                 }
@@ -289,6 +314,16 @@
         }
         else {
             alert("Please enter the comment.");
+        }
+    }
+        function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
         }
     }
 </script>
