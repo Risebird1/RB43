@@ -49,6 +49,8 @@ namespace Risebird.Entities.ViewModel
         public string ProfileType { get; set; }
         public int AIVerdictNegative { get; set; }
         public int AIReportVerdictNegative { get; set; }
+        public string AcknowledgementStatus { get; set; }
+        public string AIVerdict { get; set; }
     }
     public class InterviewerInsightsMarkersDetailsVM
     {
