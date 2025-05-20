@@ -16,6 +16,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+//using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+//using System.Web.WebPages;
+//using UglyToad.PdfPig.Logging;
+//using Risebird.Entities.Data.AffIndaModels;
 
 namespace Risebird.Web.Controllers
 {
@@ -49,13 +53,18 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _irfRepository;
         private readonly ITwilioHelper _twilioHelper;
         private readonly IEncryptionHelper _encryptionHelper;
+        //private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        //private readonly ICandidateRepository _candidateRepository;
+        //private readonly IValidationHelper _validationHelper;
+        //private readonly IIRFService _irfService;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
-            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper)
+            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, 
+            ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -74,6 +83,10 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _twilioHelper = twilioHelper;
             _encryptionHelper = encryptionHelper;
+            //_affIndaResumeParserHelper = affIndaResumeParserHelper;
+            //_candidateRepository = candidateRepository;
+            //_validationHelper = validationHelper;
+            //_irfService = irfService;
         }
 
         [Authorize]
@@ -94,135 +107,136 @@ namespace Risebird.Web.Controllers
 
                         //try
                         //{
-                        //    //get all mags that have unassigned interviews an hour or later from the current tiime.
-                        //    var unassignedMags = await _irfRepository.GetUnassignedInterviewsMAG();
-                        //    //for each mag, first get all the interviewers mapped to it, if the list is not null, create a mag link and send them all the link
+                        //    //log.LogInformation($" ResumeParserJob : Timer trigger function started executing at: {DateTime.Now}");
 
+                        //    //get all the resumes that need to be parsed
 
-                        //    if (unassignedMags != null && unassignedMags.Count() > 0)
+                        //    var resumeList = await _candidateRepository.GetCandidateResumesForParsing();
+                        //    var candidateList = new List<CandidateQuickAddModel>();
+                        //    var candidateResumeList = new List<CandidateResume>();
+
+                        //    foreach (var resume in resumeList)
                         //    {
-                        //        foreach (var item in unassignedMags)
+                        //        //string resumeLinkToParse = string.Empty;
+                        //        //if(!resume.ResumeLink.Contains(".pdf"))
+                        //        //{
+                        //        //    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
+                        //        //}
+                        //        //else
+                        //        //{
+                        //        //    resumeLinkToParse = resume.ResumeLink;
+                        //        //}
+                        //        //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { ResumeLink = resumeLinkToParse, Type = ProfileNames.ResumeParserAIAssistant });
+
+                        //        // call the api for each of those resumes, return a candidate
+                        //        var candidateData = await _affIndaResumeParserHelper.UploadAndParseResume(resume.ResumeLink, resume.SkillChannelName, resume.IsAffindaIndexCreated);
+
+
+
+                        //        try
                         //        {
-                        //            try
+                        //            if (!string.IsNullOrEmpty(candidateData.Item1))
                         //            {
-                        //                var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(item.id, true, true); //item.id here is the id of the assessment group and not a mag table primary id
-
-                        //                if (interviewers != null && interviewers.Count() > 0)
+                        //                var documentData = JsonConvert.DeserializeObject<Document>(candidateData.Item1);
+                        //                var candidate = new CandidateQuickAddModel();
+                        //                candidate.Name = documentData.data?.name?.raw;
+                        //                if (!string.IsNullOrEmpty(candidateData.Item2))
                         //                {
-                        //                    //create mag link
-                        //                    var encryptedId = await _encryptionHelper.EncryptStringValue(item.id.ToString());
-                        //                    var magLink = "https://portal.risebird.io/Interviewer/MAGApply?id=" + HttpUtility.UrlEncode(encryptedId);
+                        //                    candidate.AffindaResumeIdentifier = candidateData.Item2;
+                        //                }
+                        //                if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
+                        //                {
+                        //                    candidate.EmailId = documentData.data.emails[0].Trim();
+                        //                    candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
 
-                        //                    //send the mag link to all the interviewers, will have to create a template
-                        //                    foreach (var interviewer in interviewers)
+                        //                    if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
                         //                    {
-                        //                        await _notificationHelper.SendMAGApplicationLinkToInterviewers(interviewer.EmailId, interviewer.uniqueid, magLink, item.id);
+                        //                        candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
+                        //                    }
+                        //                    if (candidate.EmailId.StartsWith("%20"))
+                        //                    {
+                        //                        candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                        //                                                                            //candidate.EmailId.Replace("%20", "");
 
                         //                    }
+                        //                    if (candidate.EmailId.StartsWith("?:"))
+                        //                    {
+                        //                        candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                        //                                                                            //candidate.EmailId.Replace("?:", "");
+
+                        //                    }
+                        //                    if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
+                        //                    {
+                        //                        candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
+                        //                                                                            //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
+                        //                    }
+                        //                    if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
+                        //                    {
+                        //                        //mark it as cant be processed in the database
+                        //                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                        //                        continue;
+                        //                    }
+
                         //                }
+                        //                else
+                        //                {
+                        //                    //mark it as cant be processed in the database
+                        //                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
+                        //                    continue;
+                        //                }
+                        //                if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
+                        //                {
+                        //                    //candidate.Phone = !string.IsNullOrEmpty(documentData.data.phoneNumberDetails[0].internationalCountryCode) ? documentData.data.phoneNumberDetails[0].rawText : null;
+                        //                    candidate.Phone = documentData.data.phoneNumberDetails[0].rawText;
+                        //                    if (candidate.Phone == "911" || candidate.Phone == "+911")
+                        //                    {
+                        //                        candidate.Phone = null;
+                        //                    }
+                        //                }
+                        //                candidate.ResumeLink = resume.ResumeLink;
+                        //                candidate.CandidateResumeId = resume.id;
+                        //                candidate.IRFId = resume.IRFId;
+                        //                candidate.AddedByUserId = resume.AddedBy;
+                        //                candidate.ClientHREmail = resume.ClientHREmailId;
+                        //                candidateList.Add(candidate);
                         //            }
-                        //            catch (Exception ex)
+                        //            else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
                         //            {
-                        //                //log.LogInformation($"SendTimelyMAGApplicationLink : C# Timer trigger {ex.Message}");
-                        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+
                         //            }
-
                         //        }
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        //}
-                        //await CandidateIVRCall();
-                        //try
-                        //{
-                        //    //get transinterviewers for whom screening needs to be done
-                        //    var interviewers = await _irfRepository.GetTransInterviewersForOpenAIScreening();
-
-
-
-                        //    //Parallel.ForEach(interviewers, item =>
-                        //    //{
-                        //    //    if (!string.IsNullOrEmpty(item.ResumeLink))
-                        //    //    {
-                        //    //        var response = _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer }).Result;
-
-                        //    //        //save the response to db
-
-                        //    //        var responseInJson = JsonConvert.SerializeObject(response);
-                        //    //        bool saveOperationResult = true;
-                        //    //        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
-                        //    //        {
-                        //    //            saveOperationResult = _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson).Result;
-                        //    //        }
-                        //    //    }
-                        //    //});
-                        //    foreach (var item in interviewers)
-                        //    {
-
-
-                        //        //call screening function
-                        //        if (!string.IsNullOrEmpty(item.ResumeLink))
+                        //        catch (Exception ex)
                         //        {
-                        //            if ((await _azureStorageHelper.IsDocFileAsync(item.ResumeLink)) && string.IsNullOrEmpty(item.ConvertedFromDocResumeLink))
-                        //            {
-                        //                var uploadedResumeUri = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(item.ResumeLink);
+                        //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
-                        //                if (!string.IsNullOrEmpty(uploadedResumeUri))
-                        //                {
-                        //                    item.ResumeLink = uploadedResumeUri;
-                        //                    //update the interviewers' uri
-                        //                    await _irfRepository.SaveInterviewerConvertedFromDocResumeLink(item.id, uploadedResumeUri);
-                        //                }
-                        //            }
-
-                        //            var resumeStringContent = await ReadPdfFromUrlAsync(item.ResumeLink);
-                        //            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, item.JDTitle);
-
-                        //            //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = (item.ResumeLink.EndsWith(".doc") ? item.ConvertedFromDocResumeLink : item.ResumeLink), Type = ProfileNames.Interviewer });
-
-                        //            //save the response to db
-                        //            if (response != null)
-                        //            {
-                        //                //var responseInJson = JsonConvert.SerializeObject(response);
-                        //                var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
-
-                        //                bool saveOperationResult = true;
-                        //                if (aiAnalysisModel != null)
-                        //                {
-                        //                    //saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
-                        //                    saveOperationResult = await _irfRepository.SaveInterviewerOpenAIScreeningResultsV2(item.IRFId, item.UserId, aiAnalysisModel);//responseInJson.Replace("'", "")
-
-                        //                }
-                        //            }
-                        //            //else
-                        //            //{
-                        //            //    //check if the resume is a doc file
-                        //            //    if (await _azureStorageHelper.IsDocFileAsync(item.ResumeLink))
-                        //            //    {
-                        //            //        var uploadedResumeUri = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(item.ResumeLink);
-
-                        //            //        if (!string.IsNullOrEmpty(uploadedResumeUri))
-                        //            //        {
-                        //            //            //update the interviewers' uri
-                        //            //        }
-                        //            //    }
-                        //            //}
-
-
+                        //            continue;
                         //        }
 
                         //    }
+
+                        //    if (candidateResumeList != null && candidateResumeList.Count() > 0)
+                        //    {
+                        //        await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeList);
+                        //    }
+
+                        //    // add the candidate to database and update IsProcessed and IsResumeParsed
+                        //    if (candidateList != null && candidateList.Count() > 0)
+                        //    {
+                        //        foreach (var irfId in candidateList.Select(x => x.IRFId).Distinct())
+                        //        {
+                        //            var candidateSubList = candidateList.Where(x => x.IRFId == irfId)?.ToList();
+                        //            await _irfService.AddCandidateUsingResumeParserJob(candidateSubList, irfId);
+                        //        }
+                        //    }
+
+
+                        //    //log.LogInformation($" ResumeParserJob : Timer trigger function started finished execution at: {DateTime.Now}");
                         //}
                         //catch (Exception ex)
                         //{
                         //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         //}
-
-
-
-
                         var model = new DashboardVM();
                         //await _assistantServiceHelper.DeleteFiles();
                         //daily interview tracking first chart
@@ -317,38 +331,38 @@ namespace Risebird.Web.Controllers
         //    //}
         //    await _twilioHelper.MakeIVRCallForCandidateMeetingReminder("+918888571923", "Harshit", string.Empty, 16323, "expertise", 427827, 0, DateTime.Now, timeZoneValue);
         //}
-        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
-        {
+        //public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        //{
 
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
-                    using (MemoryStream stream = new MemoryStream(pdfBytes))
-                    {
-                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
-                        {
-                            string text = "";
-                            foreach (var page in pdfDocument.GetPages())
-                            {
-                                text += page.Text + "\n";
-                            }
-                            return text;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+        //            using (MemoryStream stream = new MemoryStream(pdfBytes))
+        //            {
+        //                using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
+        //                {
+        //                    string text = "";
+        //                    foreach (var page in pdfDocument.GetPages())
+        //                    {
+        //                        text += page.Text + "\n";
+        //                    }
+        //                    return text;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
 
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
-                return null;
-            }
-        }
+        //        return null;
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
