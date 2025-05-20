@@ -27,9 +27,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.WebPages;
-using UglyToad.PdfPig.Logging;
-using Risebird.Entities.Data.AffIndaModels;
+//using System.Web.WebPages;
+//using UglyToad.PdfPig.Logging;
+//using Risebird.Entities.Data.AffIndaModels;
 
 namespace Risebird.Web.Controllers
 {
@@ -331,38 +331,38 @@ namespace Risebird.Web.Controllers
         //    //}
         //    await _twilioHelper.MakeIVRCallForCandidateMeetingReminder("+918888571923", "Harshit", string.Empty, 16323, "expertise", 427827, 0, DateTime.Now, timeZoneValue);
         //}
-        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
-        {
+        //public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
+        //{
 
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
-                    using (MemoryStream stream = new MemoryStream(pdfBytes))
-                    {
-                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
-                        {
-                            string text = "";
-                            foreach (var page in pdfDocument.GetPages())
-                            {
-                                text += page.Text + "\n";
-                            }
-                            return text;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+        //            using (MemoryStream stream = new MemoryStream(pdfBytes))
+        //            {
+        //                using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
+        //                {
+        //                    string text = "";
+        //                    foreach (var page in pdfDocument.GetPages())
+        //                    {
+        //                        text += page.Text + "\n";
+        //                    }
+        //                    return text;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
 
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
-                return null;
-            }
-        }
+        //        return null;
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
