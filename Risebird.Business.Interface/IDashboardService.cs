@@ -1,6 +1,7 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -94,6 +95,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate, DateTime enddate);
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdict(DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdictInterviewer(string interviewer, string Irfid);
-        Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status);
+        Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy);
+        Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid);
     }
 }
