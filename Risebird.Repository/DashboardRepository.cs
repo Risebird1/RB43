@@ -2246,7 +2246,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status)
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status,string Comment,string CreatedBy)
         {
             try
             {
@@ -2256,6 +2256,9 @@ namespace Risebird.Repository
                     parameters.Add("@interviewid", interviewid);
                     parameters.Add("@IRFid", IRFid);
                     parameters.Add("@status", status);
+                    parameters.Add("@Comment", Comment);
+                    parameters.Add("@Type", "IRF");
+                    parameters.Add("@CreatedBy", CreatedBy);
                     var result = await SqlMapper.QueryAsync<ToalInterviewerInterviewDetails>(con, "usp_UpdateRedMarkeredInterviewerstatus", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return true;
@@ -2270,6 +2273,30 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return false;
+        }
+        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@IRFid", IRFid);
+                    var result = await SqlMapper.QueryAsync<RedMarkerDetailsVM>(con, "usp_FetchRedMarkerCommentDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
         }
     }
 }

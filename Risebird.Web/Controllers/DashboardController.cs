@@ -4743,14 +4743,26 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status)
+        public async Task<JsonResult> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment)
         {
-            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status);
+            string emailId = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+            }
+            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId);
             if (result)
             {
                 return Json("Interviewer Moved Successfully.");
             }
             return Json("Fail to Move the Interviewer, Please try again.");
+        }
+        [HttpPost]
+        public async Task<JsonResult> FetchRedMarkerCommentDetails(int interviewid, int IRFid)
+        {
+            var model = await _dashboardService.FetchRedMarkerCommentDetails(interviewid, IRFid);
+            return Json(model);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using System;
+
+namespace Risebird.Entities.ViewModel
 {
     public class PQIDetails
     {
@@ -39,6 +41,7 @@
         public string AcknowledgementStatus { get; set; }
         public int VideoConfirmation { get; set; }
         public int RedMarkerStatus { get; set; }
+        public string RedMarkerReviewComment { get; set; }
     }
     public class ToalInterviewerInterviewDetails
     {
@@ -62,5 +65,13 @@
         public int SkillChannelFutureAssignedInterview { get; set; }
         public int TotalDeficitMeetings { get; set; }
         public string VideoKYC { get; set; }
+    }
+    public class RedMarkerDetailsVM
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
+        public string Comment { get; set; }
     }
 }
