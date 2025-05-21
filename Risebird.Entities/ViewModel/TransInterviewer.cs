@@ -40,6 +40,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerProfileAddedBy { get; set; }
         public string SkillChannelAssessmentGroup { get; set; }
         public int AIScreeningScore { get; set; }
+        public int RedMarker { get; set; }
 
     }
 }
