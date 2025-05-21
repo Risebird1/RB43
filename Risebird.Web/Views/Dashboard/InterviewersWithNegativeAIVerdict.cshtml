@@ -10,7 +10,7 @@
     ViewData["Title"] = "AI Verdict - Negative";
     ViewBag.PageHeader = "AI Verdict - Negative";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+
 }
 
 
@@ -81,7 +81,7 @@
 
                             <div class="toolbar">
 
-                                
+
                                 <div style="overflow-x:auto;overflow-y:hidden">
 
                                     <div id="tableID" class="second  style-2" style="overflow-x:scroll">
@@ -99,7 +99,7 @@
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
                                                     <th>Comment</th>
-                                                    
+
 
                                                 </tr>
                                             </thead>
@@ -125,7 +125,7 @@
                                                     foreach (var item in Model)
                                                     {
 
-                                                     <tr id=@item.id>
+                                                        <tr id=@item.id>
                                                             <td class="text-center">
                                                                 <div>
                                                                     @if (ViewBag.Type == "Pending")
@@ -149,19 +149,13 @@
                                                                         </button>
                                                                     }
                                                                     @if (ViewBag.Type == "Pending" || ViewBag.Type == "UnderReview")
-                                                            {
-                                                                    <button class="btn shadow btn-xs sharp me-1 trash-btn" aria-label="Delete" style="width:23px!important;height:23px!important;background: #ee6f6f !important;position:relative;left:-6px;border-color:#ee6f6f!important">
-                                                                        <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.EmailId', '@item.IRFId');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;left:-1px;top:-2px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" style="position:relative;left:-2px;top:-2px;" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                            }
-                                                                    @* <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Stats" style="width: 23px!important;height:23px!important;background:#a3d6ebe3;border:#a3d6ebe3;position:relative;left:-6px;">
-                                                                        <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.IRFId, irfName = item.IRFName})" target="_blank">
-                                                                            <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;top:-2px;"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
-                                                                        </a>
-                                                                    </button>*@
-
+                                                                    {
+                                                                        <button class="btn shadow btn-xs sharp me-1 trash-btn" aria-label="Delete" style="width:23px!important;height:23px!important;background: #ee6f6f !important;position:relative;left:-6px;border-color:#ee6f6f!important">
+                                                                            <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.EmailId', '@item.IRFId');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;left:-1px;top:-2px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" style="position:relative;left:-2px;top:-2px;" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
                                                                     @if (ViewBag.Type == "UnderReview")
                                                                     {
                                                                         <button class="btn shadow btn-xs sharp me-1" aria-label="Move to Reviewed" style="width:23px!important;height:23px!important;position:relative;top:0px; left:-6px;background: #53a5f5 !important;">
@@ -217,9 +211,9 @@
                                                             <td>@item.IRFName</td>
                                                             <td style="padding:0px 40px 0px 0px">
                                                                 <div><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">JD Title:</span>@item.JDTitle</div>
-                                                                  <div style=" margin-top: 4px;"><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">Link</span><a style="left: 3px;top: -1px;position: relative;letter-spacing: 0.4px;border-radius: 3px;padding: 2px 7px;font-size: 11px;color: #fff;text-decoration: none;background: #9ebfd9e6;" target="_blank" href="@item.JDLink">Click here</a></div>
-                                                                </td>
-                                                            
+                                                                <div style=" margin-top: 4px;"><span style="color: #42a5f5;font-size: 13px; padding: 0px 4px;font-weight: 500;">Link</span><a style="left: 3px;top: -1px;position: relative;letter-spacing: 0.4px;border-radius: 3px;padding: 2px 7px;font-size: 11px;color: #fff;text-decoration: none;background: #9ebfd9e6;" target="_blank" href="@item.JDLink">Click here</a></div>
+                                                            </td>
+
                                                             <td>@item.CreatedOn</td>
                                                             <td>
                                                                 <span style="display:block">@item.EmailId</span>
@@ -229,13 +223,13 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                <span></span>
+                                                                    <span></span>
                                                                 }
-                                                            
+
                                                             </td>
                                                             <td>@item.TotalFuture</td>
                                                             <td>@item.TotalInterview</td>
-                                                           @* @if (!string.IsNullOrEmpty(item.ResumeLink))
+                                                            @* @if (!string.IsNullOrEmpty(item.ResumeLink))
                                                             {
                                                                <td><a style="padding:0px;" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-4px;" src="/img/resume-icon.png" width="16">Resume</a> </td>
                                                             }
@@ -243,9 +237,9 @@
                                                             {
                                                                <td></td>
                                                             }*@
-                                                           <td>@item.AIScreeningScore</td>
-                                                           <td>@item.CompanyName</td>
-                                                           <td>@item.ChannelOwner</td>
+                                                            <td>@item.AIScreeningScore</td>
+                                                            <td>@item.CompanyName</td>
+                                                            <td>@item.ChannelOwner</td>
                                                             <td>
                                                                 @if (item.RedMarkerReviewComment != null && item.RedMarkerReviewComment != "")
                                                                 {
@@ -272,7 +266,7 @@
                                                                 }
                                                             </td>
                                                         </tr>
-                                                        
+
 
                                                     }
                                                 }
@@ -308,7 +302,7 @@
 
     </div>
 
-    
+
 </div>
 <div id="CommentDetailsModal" class="modal modal-bg">
     <!-- Modal content -->
@@ -376,11 +370,23 @@
         var IRFid = $('#hdIRFid').val();
         var status = $('#hdstatus').val();
         if (comment != '') {
-            RedmarkerStatusChange(interviewid, IRFid, status);
+            NegativeAIVerdictStatusChange(interviewid, IRFid, status);
         }
         else {
             alert("Please enter the comment.");
         }
+    }
+    function NegativeAIVerdictStatusChange(interviewid, IRFid, status){
+        var comment = $('#Comment').val().trim();
+         $.ajax({
+            type: "POST",
+            url: "/Dashboard/UpdateNegativeAIVerdictStatusChange",
+            data: {'interviewid':interviewid, 'IRFid':IRFid,'status':status,'Comment':comment },
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
     }
     function moreless(id) {
         $('.moretext_' + id).slideToggle();
@@ -427,7 +433,7 @@
 
     // $(document).ready(function () {
     //     applyDataTable();
-      
+
     // });
     // function applyDataTable() {
     //     var table = $('#verdictTable').DataTable({
@@ -473,7 +479,7 @@
         loader.style.left = left + "px";
     };
     ShowProgress();
-   
+
 
     window.onload = function () {
         setTimeout(function () {
@@ -500,36 +506,12 @@
     }
 </script>
 <script>
-    // $('#more-info-btn_' + id').mousehover(function () {
-    //  $('#morepopup_' + id').addClass('show');
-    //})
-
-    //$('#more-info-btn_' + id').mouseleave(function () {
-    //    $('#morepopup_' + id').removeClass('show')
-    //})
-
-
-    //    $(function () {
-    //    $('#more-info-btn_' + id').mouseenter(function () {
-    //            $('#morepopup_' + id').addClass("show");
-    //    }).mouseleave(function () {
-    //        $('#morepopup_' + id').removeClass("show");
-    //    });
-    //});
-    //$(document).ready(function () {
-    //$('.more-info-btn_' + id).hover(function () {
-    //            $('#morepopup_' + id).addClass("show");
-      
-    //});
-    //});
-
     function moreinfo(id) {
-
-    $('#more-info-btn_' + id).hover(function () {
-        $('#morepopup_' + id).addClass('show');
-    }, function () {
-        $('#morepopup_' + id).removeClass('show');
-    });
+        $('#more-info-btn_' + id).hover(function () {
+            $('#morepopup_' + id).addClass('show');
+        }, function () {
+            $('#morepopup_' + id).removeClass('show');
+        });
     }
 
 
@@ -537,7 +519,49 @@
         window.location.href = "/Dashboard/InterviewersWithNegativeAIVerdict?type=" + type;
     }
 </script>
-
+<script>
+    function FetchCommentDetails(interviewid,IRFid){
+         $.ajax({
+            type: "POST",
+            url: "/Dashboard/FetchRedMarkerCommentDetails",
+            data: {'interviewid':interviewid, 'IRFid':IRFid,'type':"NegativeAIVerdict" },
+            success: function (data) {
+                openRedMarkerCommentHistory();
+                BindRedMarkerHistory(data);
+            }
+        });
+    }
+    function closeRedMarkerCommentHistory() {
+        var modal = document.getElementById("RedMarkerCommentHistory");
+        modal.style.display = "none";
+    }
+    function openRedMarkerCommentHistory() {
+        var modal = document.getElementById("RedMarkerCommentHistory");
+        modal.style.display = "block";
+    }
+    function BindRedMarkerHistory(data){
+        var html='';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="65%" class="table_heading">Comment</th>';
+        html += '  <th width="20%" class="table_heading">Created On</th>';
+        html += '  <th width="15%" class="table_heading">Created By</th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].comment + '</td>';
+            html += '    <td>' + data[i].createdOn + '</td>';
+            html += '  <td>' + data[i].createdBy + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divRedMarkerCommentHistory").empty().html(html);
+    }
+</script>
 
 
 

@@ -11,6 +11,7 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Twilio.Base;
 
 namespace Risebird.Business
 {
@@ -1219,11 +1220,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy)
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy, string type, string source)
         {
             try
             {
-                return await _dashboardRespository.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, CreatedBy);
+                return await _dashboardRespository.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, CreatedBy, type, source);
             }
             catch (Exception e)
             {
@@ -1231,11 +1232,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid)
+        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid,string type)
         {
             try
             {
-                return await _dashboardRespository.FetchRedMarkerCommentDetails(interviewid, IRFid);
+                return await _dashboardRespository.FetchRedMarkerCommentDetails(interviewid, IRFid, type);
             }
             catch (Exception e)
             {

@@ -22,7 +22,7 @@ outer Apply (Select Count(im.id) as TotalCompletedMeetings from InterviewMeeting
 outer Apply (Select Count(id) as TotalFuture from InterviewMeetings where interviewer=ul.EmailId and interviewDate>DATEADD(MINUTE,330,Getdate())) Fti    
 outer Apply (Select Count(id) as TotalInterview from InterviewMeetings where IRFId=IRF.IRFId and interviewDate>DATEADD(MINUTE,330,Getdate())) sti    
 outer Apply (Select Count(ti.Id) as TotalInterviewers from TransInterviewer ti join UserList ul on ul.id=ti.UserId where ti.IsActive=1 and ul.IsActive=1 and ti.IRFId=IRF.id) Tai    
-outer Apply (Select Top 1 Comment as RedMarkerReviewComment from RedMarkerStatusDetails where InterviewerUserid=ul.id and IRFId=IRF.id Order by CreatedOn desc) Rcd
+outer Apply (Select Top 1 Comment as RedMarkerReviewComment from RedMarkerStatusDetails where InterviewerUserid=ul.id and IRFId=IRF.id and Type='IRF' Order by CreatedOn desc) Rcd
 where trm.RedMarker>0  and Isnull(IRF.IsPaused,0)=0 and tc.TotalCompletedMeetings>=10  
 END      
 GO

@@ -43,6 +43,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalFuture { get; set; }
         public int TotalInterview { get; set; }
         public string RedMarkerReviewComment { get; set; }
+        public int NegativeAIVerdictStatus { get; set; }
 
     }
 }
