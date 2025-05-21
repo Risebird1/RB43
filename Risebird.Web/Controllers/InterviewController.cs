@@ -3319,7 +3319,7 @@ namespace Risebird.Web.Controllers
                         {
                             Guid _guid = Guid.NewGuid();
                             string outputFileName = model.CandidateFile.FileName.Replace(" ", "_");
-                            outputFileName = outputFileName + _guid.ToString();
+                            outputFileName = _guid.ToString() + outputFileName;
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFile);
                             FileInfo fi = new FileInfo(outputFileName);
                             if (fi.Extension.ToLower() == ".txt")
@@ -3338,7 +3338,7 @@ namespace Risebird.Web.Controllers
                         {
                             Guid _guid = Guid.NewGuid();
                             string outputFileName = model.CandidateFileTwo.FileName.Replace(" ", "_");
-                            outputFileName = outputFileName + _guid.ToString();
+                            outputFileName = _guid.ToString() + outputFileName;
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFileTwo);
                             FileInfo fi = new FileInfo(outputFileName);
                             if (fi.Extension.ToLower() == ".txt")
@@ -5945,7 +5945,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason)
+        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason)
         {
             var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, cancellationreason);
             return new JsonResult(message);
@@ -8921,7 +8921,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(isBackgroudJobRequest == null || (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value == false))
+                if (isBackgroudJobRequest == null || (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value == false))
                 {
                     if ((regenerateAIQC == null || (regenerateAIQC.HasValue && regenerateAIQC.Value == false)))
                     {
@@ -8937,7 +8937,7 @@ namespace Risebird.Web.Controllers
                         //}
                     }
                 }
-                
+
 
 
                 if (!string.IsNullOrEmpty(model.AudioTranscriptFileLink))
