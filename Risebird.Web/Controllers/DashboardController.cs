@@ -4218,7 +4218,7 @@ namespace Risebird.Web.Controllers
         /// Gets active skills channel Interviewers whose AI verdict is negative i.e, not suitable.
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> InterviewersWithNegativeAIVerdict()
+        public async Task<IActionResult> InterviewersWithNegativeAIVerdict(string type)
         {
             try
             {
@@ -4232,7 +4232,28 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         ViewBag.Profile = profileName;
+                        if (string.IsNullOrWhiteSpace(type))
+                        {
+                            type = "Pending";
+                        }
                         var model = await _dashboardService.GetTransInterviewersWithNegativeAIVerdict();
+                        if (type == "UnderReview")
+                        {
+                            model = model.Where(x => x.TotalFuture == 1 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Reviewed")
+                        {
+                            model = model.Where(x => x.TotalFuture < 1 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Removed")
+                        {
+                            model = model.Where(x => x.IsActive != true).ToList();
+                        }
+                        else if (type == "Pending")
+                        {
+                            model = model.Where(x => x.IsActive == true && x.TotalFuture != 1 && x.TotalFuture != 0).ToList();
+                        }
+                        ViewBag.Type = type;
                         return View("InterviewersWithNegativeAIVerdict", model);
                     }
                     else

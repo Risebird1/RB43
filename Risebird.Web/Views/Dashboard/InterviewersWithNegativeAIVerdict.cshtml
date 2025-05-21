@@ -27,7 +27,36 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">AI Verdict - Negative</h4></div>
                 </div>
-
+                <div class="pull-left">
+                    @if (ViewBag.Type == "UnderReview")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Reviewed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Removed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                </div>
                 <div class="pull-right">
                     @* <div>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -64,10 +93,12 @@
                                                     <th>Job Details</th>
                                                     <th>Created On</th>
                                                     <th>Interviewer</th>
+                                                    <th>Future Assigned Interviews</th>
+                                                    <th>Future SkillChannel Interviews</th>
                                                     <th>Screening Score</th>
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
-                                                   
+                                                    <th>Comment</th>
                                                     
 
                                                 </tr>
@@ -79,10 +110,12 @@
                                                     <th>Job Details</th>
                                                     <th>Created On</th>
                                                     <th>Interviewer</th>
+                                                    <th>Future Assigned Interviews</th>
+                                                    <th>Future SkillChannel Interviews</th>
                                                     <th>Screening Score</th>
                                                     <th>Client</th>
                                                     <th>Channel Owner</th>
-                                                  
+                                                    <th>Comment</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -95,34 +128,62 @@
                                                      <tr id=@item.id>
                                                             <td class="text-center">
                                                                 <div>
-                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName})">
-                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#a3abcdd1;border-color:#a3abcdd1;width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
-                                                                            <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
-                                                                        </span>
-                                                                    </a>
+                                                                    @if (ViewBag.Type == "Pending")
+                                                                    {
+                                                                        <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName})">
+                                                                            <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#a3abcdd1;border-color:#a3abcdd1;width:23px!important;height:23px!important; top:3px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
+                                                                                <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="color:#fff;font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
+                                                                            </span>
+                                                                        </a>
 
-                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName, isRedo = true})">
-                                                                        <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
-                                                                            <span title="Screen Resume(Regenerate)" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px" /></span>
-                                                                        </span>
-                                                                    </a>
+                                                                        <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName, isRedo = true})">
+                                                                            <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="width:23px!important;height:23px!important; top:3px;position:relative;left:-6px;margin: 0px 0px 0px 3px;border:#9dcb79;background:#9dcb79;">
+                                                                                <span title="Screen Resume(Regenerate)" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px" /></span>
+                                                                            </span>
+                                                                        </a>
 
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to edit Interviewer Profile" style="width:23px!important;height:23px!important;background:#d18fec94;border:#d18fec94;position:relative;left:-6px;">
+                                                                            <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })" target="_blank">
+                                                                                <span title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /><a target="_blank" href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"></a></svg></span>
+                                                                            </a>
+                                                                        </button>
+                                                                    }
+                                                                    @if (ViewBag.Type == "Pending" || ViewBag.Type == "UnderReview")
+                                                            {
                                                                     <button class="btn shadow btn-xs sharp me-1 trash-btn" aria-label="Delete" style="width:23px!important;height:23px!important;background: #ee6f6f !important;position:relative;left:-6px;border-color:#ee6f6f!important">
                                                                         <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.EmailId', '@item.IRFId');" title="Delete" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;left:-1px;top:-2px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" style="position:relative;left:-2px;top:-2px;" /></svg>
                                                                         </span>
                                                                     </button>
+                                                            }
                                                                     @* <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Stats" style="width: 23px!important;height:23px!important;background:#a3d6ebe3;border:#a3d6ebe3;position:relative;left:-6px;">
                                                                         <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.IRFId, irfName = item.IRFName})" target="_blank">
                                                                             <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" style="position:relative;top:-2px;"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                         </a>
                                                                     </button>*@
 
-                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Click here to edit Interviewer Profile" style="width:23px!important;height:23px!important;background:#d18fec94;border:#d18fec94;position:relative;left:-6px;">
-                                                                        <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })" target="_blank">
-                                                                            <span title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /><a target="_blank" href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"></a></svg></span>
-                                                                        </a>
-                                                                    </button>
+                                                                    @if (ViewBag.Type == "UnderReview")
+                                                                    {
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Move to Reviewed" style="width:23px!important;height:23px!important;position:relative;top:0px; left:-6px;background: #53a5f5 !important;">
+                                                                            <span onclick="javascript:CommentDetails('@item.UserId', '@item.IRFId','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
+                                                                                <img src="~/img/review.png" style="max-width:14px;position:relative;top:-1px;left:-1px;" />
+                                                                            </span>
+                                                                        </button>
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Comments History" style="width:23px!important;height:23px!important;position:relative;top:0px;background: #53a5f5 !important;">
+                                                                            <span onclick="javascript:FetchCommentDetails('@item.UserId', '@item.IRFId');" title="Comments History" class="mdc-fab__icon material-icons">
+                                                                                <i class="fa fa-comment-lines" style="font-size: 12px;position: relative;left: -2px;top: -3px;"></i>
+                                                                                <i class="fa fa-history" aria-hidden="true" style="font-size: 11px;position: relative;top: 4px;left: -15px;"></i>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+                                                                    @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
+                                                                    {
+                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Move To Under Review" style="width:23px!important;height:23px!important;position:relative;top:0px;left:-6px;background: #53a5f5 !important;">
+                                                                            <span onclick="javascript:CommentDetails('@item.UserId', '@item.IRFId','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
+                                                                                <img src="~/img/reviewed.png" style="position:relative;left:-8px;top: -1px;max-width: 33px;" />
+                                                                            </span>
+                                                                        </button>
+                                                                    }
 
 
 
@@ -172,6 +233,8 @@
                                                                 }
                                                             
                                                             </td>
+                                                            <td>@item.TotalFuture</td>
+                                                            <td>@item.TotalInterview</td>
                                                            @* @if (!string.IsNullOrEmpty(item.ResumeLink))
                                                             {
                                                                <td><a style="padding:0px;" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-4px;" src="/img/resume-icon.png" width="16">Resume</a> </td>
@@ -183,6 +246,31 @@
                                                            <td>@item.AIScreeningScore</td>
                                                            <td>@item.CompanyName</td>
                                                            <td>@item.ChannelOwner</td>
+                                                            <td>
+                                                                @if (item.RedMarkerReviewComment != null && item.RedMarkerReviewComment != "")
+                                                                {
+                                                                    @if (item.RedMarkerReviewComment.Length > 20)
+                                                                    {
+                                                                        <div class="article">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.RedMarkerReviewComment.Substring(0, 20)
+                                                                            </p>
+                                                                            <p class="moretext_@item.id moretext">
+                                                                                @item.RedMarkerReviewComment.Substring(20, @item.RedMarkerReviewComment.Length - 20)
+                                                                            </p>
+                                                                        </div>
+                                                                        <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article">
+                                                                            <p>
+                                                                                @item.RedMarkerReviewComment.Substring(0, @item.RedMarkerReviewComment.Length)
+                                                                            </p>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </td>
                                                         </tr>
                                                         
 
@@ -222,7 +310,89 @@
 
     
 </div>
+<div id="CommentDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Comments For Interviewer</h5>
+            </div>
+            <button onclick="closeCommentDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="SuspiciousTypebody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdninterviewid">
+                    <input type="hidden" id="hdIRFid">
+                    <input type="hidden" id="hdstatus">
+                    <label style="font-size:14px;">Comment</label>
+                    <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
 
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveCommentDetails()" id="btnCommentSave">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="RedMarkerCommentHistory" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Comments History</h5>
+            </div>
+            <button onclick="closeRedMarkerCommentHistory()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divRedMarkerCommentHistory" style="overflow:auto;max-height:30vw">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function closeCommentDetailsModal() {
+        var modal = document.getElementById("CommentDetailsModal");
+        modal.style.display = "none";
+    }
+    function CommentDetails(interviewid, IRFid, status) {
+        var modal = document.getElementById("CommentDetailsModal");
+        modal.style.display = "block";
+        $('#hdninterviewid').val(interviewid);
+        $('#hdIRFid').val(IRFid);
+        $('#hdstatus').val(status);
+    }
+    function SaveCommentDetails() {
+        var comment = $('#Comment').val().trim();
+        var interviewid = $('#hdninterviewid').val();
+        var IRFid = $('#hdIRFid').val();
+        var status = $('#hdstatus').val();
+        if (comment != '') {
+            RedmarkerStatusChange(interviewid, IRFid, status);
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+</script>
 <script>
 
     $(document).ready(function () {
@@ -360,6 +530,11 @@
     }, function () {
         $('#morepopup_' + id).removeClass('show');
     });
+    }
+
+
+    function Changeurldetails(type) {
+        window.location.href = "/Dashboard/InterviewersWithNegativeAIVerdict?type=" + type;
     }
 </script>
 
