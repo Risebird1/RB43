@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
-            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository, 
+            IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository,
             ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
@@ -4218,7 +4218,7 @@ namespace Risebird.Web.Controllers
         /// Gets active skills channel Interviewers whose AI verdict is negative i.e, not suitable.
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> InterviewersWithNegativeAIVerdict()
+        public async Task<IActionResult> InterviewersWithNegativeAIVerdict(string type)
         {
             try
             {
@@ -4232,7 +4232,28 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         ViewBag.Profile = profileName;
+                        if (string.IsNullOrWhiteSpace(type))
+                        {
+                            type = "Pending";
+                        }
                         var model = await _dashboardService.GetTransInterviewersWithNegativeAIVerdict();
+                        if (type == "UnderReview")
+                        {
+                            model = model.Where(x => x.NegativeAIVerdictStatus == 1 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Reviewed")
+                        {
+                            model = model.Where(x => x.NegativeAIVerdictStatus ==2 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Removed")
+                        {
+                            model = model.Where(x => x.IsActive != true).ToList();
+                        }
+                        else if (type == "Pending")
+                        {
+                            model = model.Where(x => x.IsActive == true && x.NegativeAIVerdictStatus != 1 && x.NegativeAIVerdictStatus != 2).ToList();
+                        }
+                        ViewBag.Type = type;
                         return View("InterviewersWithNegativeAIVerdict", model);
                     }
                     else
@@ -4751,7 +4772,7 @@ namespace Risebird.Web.Controllers
                 emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
             }
-            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId);
+            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId, "IRF", "RedMarker");
             if (result)
             {
                 return Json("Interviewer Moved Successfully.");
@@ -4759,10 +4780,26 @@ namespace Risebird.Web.Controllers
             return Json("Fail to Move the Interviewer, Please try again.");
         }
         [HttpPost]
-        public async Task<JsonResult> FetchRedMarkerCommentDetails(int interviewid, int IRFid)
+        public async Task<JsonResult> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type)
         {
-            var model = await _dashboardService.FetchRedMarkerCommentDetails(interviewid, IRFid);
+            var model = await _dashboardService.FetchRedMarkerCommentDetails(interviewid, IRFid, type);
             return Json(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateNegativeAIVerdictStatusChange(int interviewid, int IRFid, int status, string Comment)
+        {
+            string emailId = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+            }
+            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId, "NegativeAIVerdict", "NegativeAIVerdict");
+            if (result)
+            {
+                return Json("Interviewer Moved Successfully.");
+            }
+            return Json("Fail to Move the Interviewer, Please try again.");
         }
     }
 }

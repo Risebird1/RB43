@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[RedMarkerStatusDetails](
 	[InterviewerUserid] [int] NULL,
 	[IRFId] [int] NULL,
 	[Comment] [varchar](300) NULL,
-	[Type] [varchar](10) NULL,
+	[Type] [varchar](30) NULL,
 	[CreatedOn] [Datetime] NULL,
 	[CreatedBy] [varchar](200) NULL,
 	[Status] [int] NULL,
