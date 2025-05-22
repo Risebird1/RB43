@@ -6935,7 +6935,7 @@ namespace Risebird.Web.Controllers
                                     TO = item.EmailId,
                                     Subject = "Current Availability (2 days) check for skills based on: " + item.AGName + " Risebird Interviews"
                                 };
-                                var emailresult = await _notificationHelper.CheckAGLevelInterviewerAvailability(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, item.AGName, assessmentGroupId);
+                                var emailresult = await _notificationHelper.CheckAGLevelInterviewerAvailability(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, item.AGName, assessmentGroupId, item.uniqueid);
 
                                 source = "wp";
 
