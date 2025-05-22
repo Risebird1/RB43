@@ -41,6 +41,10 @@ namespace Risebird.Entities.ViewModel
         public string SkillChannelAssessmentGroup { get; set; }
         public int AIScreeningScore { get; set; }
         public int RedMarker { get; set; }
+        public int TotalFuture { get; set; }
+        public int TotalInterview { get; set; }
+        public string RedMarkerReviewComment { get; set; }
+        public int NegativeAIVerdictStatus { get; set; }
 
     }
 }
