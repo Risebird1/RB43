@@ -10587,10 +10587,6 @@ namespace Risebird.Web.Controllers
                         var encryptedId = await _encryptionHelper.EncryptStringValue(assessmentGroupId.ToString());
                         var url = "https://portal.risebird.io/Interviewer/MAGApply?id=" + HttpUtility.UrlEncode(encryptedId);
 
-                        //var url = Url.Action("Apply", "Interviewer",
-                        //        new { id = irfId },
-                        //        Request.Scheme);
-
                         return Json(url);
                     }
                     else

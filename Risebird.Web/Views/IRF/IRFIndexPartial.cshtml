@@ -114,6 +114,11 @@
 
                                     </span>
                                 </button>
+                                <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Internal Interviewers' Application Url for SkillChannel" style="width:25px!important;height:25px!important; background:#9f809cb8 !important; border-color:#9f809cb8!important">
+                                    <span onclick="javascript:CopyInternalInterviewerIRFApplicationLink('@item.id', '@item.IRFId');" title="Generate Internal Interviewers' Application Url for SkillChannel">
+                                        <i class="fa fa-user" style="color: white;font-size: 13px;position: relative;left: -3px;"></i><img style="position:relative;top: -25px;width: 11px;left: 6px;" src="/img/generate-icon.png">
+                                    </span>
+                                </button>
                             }
                             @if (Model.Profile == "Client")
                             {
