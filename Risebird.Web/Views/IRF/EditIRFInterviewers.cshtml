@@ -41,6 +41,7 @@
                                             <thead>
                                                 <tr>
                                                     <th width="40%" class="table_heading">User <span class="red">*</span></th>
+                                                    @* <th>Red Marker</th> *@
                                                     <th width="20%" class="table_heading">Resume</th>
                                                     <th width="20%" class="table_heading">Skills</th>
                                                     <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
@@ -55,6 +56,7 @@
                                                     <th width="10%" class="table_heading">Availability</th>
                                                     <th width="10%" class="table_heading">Campaign</th>
                                                     <th width="10%" class="table_heading">AI Verdict</th>
+                                                    <th width="10%" class="table_heading">AIScreeningScore</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -73,8 +75,10 @@
                                                         @Html.Hidden("InterviewerCollection[0].CampaignId")
                                                         @Html.Hidden("InterviewerCollection[0].OpenAIScreeningResponse")
                                                         @Html.Hidden("InterviewerCollection[0].AIVerdict")
+                                                        @Html.Hidden("InterviewerCollection[0].AIScreeningScore")
                                                         @Html.Hidden("InterviewerCollection[0].IsSurchargeApprove")
-
+@*                                                         <td><c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@Model.InterviewerCollection[0].EmailId','@Model.IRFId')">@Model.RedMarker</c></td>
+ *@
                                                         <td class="cadName">
                                                             @*<a onclick="" data-tooltip="">No Resume</a>*@
                                                             <a href="" target="_blank" id="InterviewerCollection_0__ResumeLink" data-tooltip="">Resume</a>
@@ -128,7 +132,9 @@
                                                         <td>
                                                             @Html.TextBox("InterviewerCollection[0].AIVerdict", null, new { @class = "form-control", @readonly = "readonly" })
                                                         </td>
-
+                                                        <td>
+                                                            @Html.TextBox("InterviewerCollection[0].AIScreeningScore", null, new { @class = "form-control", @readonly = "readonly" })
+                                                        </td>
                                                         <td class="action text-center">
                                                             @*   <span id="btnPlus_0" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@ 
 
@@ -157,6 +163,7 @@
                                                                 @Html.HiddenFor(m => m.InterviewerCollection[i].CampaignId)
                                                                 @Html.HiddenFor(m => m.InterviewerCollection[i].OpenAIScreeningResponse)
                                                                 @Html.HiddenFor(m => m.InterviewerCollection[i].AIVerdict)
+                                                                @Html.HiddenFor(m => m.InterviewerCollection[i].AIScreeningScore)
                                                                 @Html.HiddenFor(m => m.InterviewerCollection[i].IsSurchargeApprove)
 
 
@@ -276,6 +283,16 @@
                                                                                             <span></span>
                                                                                         }
                                                                                     </td>
+                                                            <td>
+                                                                @if (Model.InterviewerCollection[i].AIScreeningScore!=0)
+                                                                {
+                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].AIScreeningScore, new { @class = "form-control", @readonly = "readonly", @title = "AI Screening Score" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span></span>
+                                                                }
+                                                            </td>
 
                                                                                     <td class="action text-center">
                                                                                         <div>
