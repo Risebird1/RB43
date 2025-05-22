@@ -123,7 +123,7 @@
                                                         </button>
 
                                                         @{
-                                                           
+
                                                             if (string.IsNullOrEmpty(item.ParentAG))
                                                             {
                                                                 //isSecondary = true;
@@ -135,7 +135,16 @@
                                                                 </a>
                                                             }
                                                         }
-                                                       @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG, isAlreadySecondary = isSecondary})" title="Create Email Campaign">
+                                                        @if(item.IsMasterAG.HasValue && item.IsMasterAG.Value)
+                                                        {
+                                                            <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Internal Interviewers' Application Url for MAG" style="width:25px!important;height:25px!important; background:#9f809cb8 !important; border-color:#9f809cb8!important">
+                                                                <span onclick="javascript:CopyInternalInterviewerMAGApplicationLink('@item.id', '@item.AssessmentGroup');" title="Generate Internal Interviewers' Application Url for MAG">
+                                                                    <i class="fa fa-user" style="color: white;font-size: 13px;position: relative;left: -3px;"></i><img style="position:relative;top: -25px;width: 11px;left: 6px;" src="/img/generate-icon.png">
+                                                                </span>
+                                                            </button>
+                                                        }
+                                                        
+                                                        @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG, isAlreadySecondary = isSecondary})" title="Create Email Campaign">
                                                             <button class="btn shadow btn-xs sharp me-1" aria-label="Create Email Campaign" style="width:25px!important;height:25px!important;position:relative; background:#de6f6285!important; border: 1px #de6f6285!important;">
                                                                 <span title="Create Email Campaign"><i class="fa fa-bullhorn" style="font-size: 12.5px;position: relative; top: 1px;"></i></span>
                                                             </button></a> *@
@@ -368,6 +377,8 @@
     </div>
 </div> *@
 @await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_GenerateInternalInterviewerMAGApplicationUrl.cshtml")
+
 <div id="SkillChannelListModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
