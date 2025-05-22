@@ -3178,7 +3178,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewer, string yesbutton, string nobutton, string agName, int campaignId)
+        public async Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewer, string yesbutton, string nobutton, string agName, int campaignId, string uniqueId)
         {
             try
             {
@@ -3187,7 +3187,7 @@ namespace Risebird.CommonHelper
                 msg.Subject = "Current Availability (2 days) check for skills based on: " + agName + " Risebird Interviews";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, null));
 
-                object[] parameters = new object[] { yesbutton, nobutton, agName };
+                object[] parameters = new object[] { yesbutton, nobutton, agName, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");//CheckAGLevelInterviewerAvailability
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CampaignLevelInterviewerAvailability.html");
 
