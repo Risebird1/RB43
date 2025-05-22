@@ -2246,7 +2246,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status,string Comment,string CreatedBy)
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status,string Comment,string CreatedBy,string type,string source)
         {
             try
             {
@@ -2257,8 +2257,9 @@ namespace Risebird.Repository
                     parameters.Add("@IRFid", IRFid);
                     parameters.Add("@status", status);
                     parameters.Add("@Comment", Comment);
-                    parameters.Add("@Type", "IRF");
+                    parameters.Add("@Type", type);
                     parameters.Add("@CreatedBy", CreatedBy);
+                    parameters.Add("@source", source);
                     var result = await SqlMapper.QueryAsync<ToalInterviewerInterviewDetails>(con, "usp_UpdateRedMarkeredInterviewerstatus", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return true;
@@ -2274,7 +2275,7 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid)
+        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid,string type)
         {
             try
             {
@@ -2283,6 +2284,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewid", interviewid);
                     parameters.Add("@IRFid", IRFid);
+                    parameters.Add("@type", type);
                     var result = await SqlMapper.QueryAsync<RedMarkerDetailsVM>(con, "usp_FetchRedMarkerCommentDetails", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result;
