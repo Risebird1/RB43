@@ -23,6 +23,37 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Total Interviews Details</h4></div>
                 </div>
+                <div class="pull-left">
+                    @if (ViewBag.Type == "UnderReview")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Under Review')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Reviewed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else if (ViewBag.Type == "Removed")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
+                    }
+
+                </div>
                 <div class="pull-right">
                     <div>
                         <div class="pull-left" style="margin-left:10px">
@@ -97,11 +128,36 @@
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
                                                                     <span>
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer" style="width: 27px!important;height: 27px !important;">
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="16" src="/img/suspicious.png" /></span>
                                                                         </button>
                                                                     </span>
 
+                                                                }
+                                                                @if (ViewBag.Type == "Pending" || ViewBag.Type == "UnderReview")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
+                                                                        <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.interviewer', '@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                                 @if (ViewBag.Type == "UnderReview")
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Move to Reviewed" style="width:27px!important;height:27px!important;position:relative;top:0px;">
+                                                                    <span onclick="javascript:CommentDetails('@item.UserId', '@item.id','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
+                                                                        <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
+                                                                    </span>
+                                                                    </button>
+                                                            }
+
+                                                                @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="" style="width:27px!important;height:27px!important;position:relative;top:6px;">
+                                                                        <span onclick="javascript:CommentDetails('@item.UserId', '@item.id','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
+                                                                            <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 33px;" />
+                                                                        </span>
+                                                                    </button>
                                                                 }
                                                             </td>
                                                             <td>
@@ -236,5 +292,8 @@
 
 
 
+    }
+    function Changeurldetails(type) {
+        window.location.href = "/Dashboard/TotalInterviews?type=" + type;
     }
 </script>

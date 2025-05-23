@@ -4562,7 +4562,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> TotalInterviews()
+        public async Task<IActionResult> TotalInterviews(string type)
         {
             try
             {
@@ -4578,7 +4578,29 @@ namespace Risebird.Web.Controllers
                         ViewBag.Profile = profileName;
                         DateTime startdate = DateTime.Now.AddMonths(-1);
                         DateTime enddate = DateTime.Now.AddDays(1);
+                        if (string.IsNullOrWhiteSpace(type))
+                        {
+                            type = "Pending";
+                        }
                         var model = await _dashboardService.GetTotalInterviews(startdate, enddate);
+                        if (type == "UnderReview")
+                        {
+                           // model = model.Where(x => x.NegativeAIVerdictStatus == 1 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Reviewed")
+                        {
+                         //   model = model.Where(x => x.NegativeAIVerdictStatus == 2 && x.IsActive == true).ToList();
+                        }
+                        else if (type == "Removed")
+                        {
+                           // model = model.Where(x => x.IsActive != true).ToList();
+                        }
+                        else if (type == "Pending")
+                        {
+                         //   model = model.Where(x => x.IsActive == true && x.NegativeAIVerdictStatus != 1 && x.NegativeAIVerdictStatus != 2).ToList();
+                        }
+                        ViewBag.Type = type;
+
                         return View(model);
                     }
                     else

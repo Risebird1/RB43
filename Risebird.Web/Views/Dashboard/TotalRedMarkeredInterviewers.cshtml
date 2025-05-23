@@ -171,12 +171,12 @@
                                                             }
                                                             @if (ViewBag.Type == "UnderReview")
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:0px;">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Move to Reviewed" style="width:27px!important;height:27px!important;position:relative;top:0px;">
                                                                     <span onclick="javascript:CommentDetails('@item.UserId', '@item.id','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
                                                                         <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
                                                                     </span>
                                                                 </button>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Delete" style="width:27px!important;height:27px!important;position:relative;top:-2px;">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Comments History" style="width:27px!important;height:27px!important;position:relative;top:-2px;">
                                                                     <span onclick="javascript:FetchCommentDetails('@item.UserId', '@item.id');" title="Comments History" class="mdc-fab__icon material-icons">
                                                                         <i class="fa fa-comment-lines" style="font-size: 15px;position: relative;left: 2px;"></i>
                                                                         <i class="fa fa-history" aria-hidden="true" style=" font-size: 11px;position: relative;top: 4px;left: -2px;"></i>
