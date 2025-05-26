@@ -118,11 +118,13 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
         Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
+        Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForApplicantUponEdit(int applicantId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(int userId, int targetIrfId);
         Task<InterviewerProfileVM> GetInterviewerPreOnboardingAIResponse(string emailId, string primarySpecialization);
         Task<IEnumerable<FLNConversionVM>> GetFLNConversionData(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> SubmitInterviewerApplication(InterviewerDirectApplicationVM model);
         Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
+        Task<InterviewerDirectApplicationVM> GetApplicantById(int applicantId);
         Task<bool> SaveApplicantInterviewerAIVerdict(int id, string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
         Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
         Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id);
@@ -134,5 +136,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateInterviewerAcknowledgementStatus(string loggedInUser, string value);
         Task<bool> AddInternalInterviewerToIRFPostPositiveVerdict(InterviewerDirectApplicationVM model);
         Task<InterviewerExistsInSystemAndOrSkillChannelDTO> CheckIfInterviewerExistsInSystemAndOrSkillChannel(string emailId, int irfId);
+        Task<bool> UpdateApplicantById(InterviewerDirectApplicationVM model, string loggedInUser);
+        Task<bool> UpdateApplicantSkillChannelById(InterviewerDirectApplicationVM model, string loggedInUser);
     }
 }

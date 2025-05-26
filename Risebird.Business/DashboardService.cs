@@ -1232,7 +1232,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid,string type)
+        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type)
         {
             try
             {
@@ -1244,6 +1244,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchPropableRedoDetails(emailid, profileName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

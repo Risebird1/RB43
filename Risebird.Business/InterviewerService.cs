@@ -1642,6 +1642,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForApplicantUponEdit(int applicantId)
+        {
+            try
+            {
+                return await _interviewerRepository.GetApplicableSkillChannelsForApplicantUponEdit(applicantId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(InterviewerProfileVM interviewerProfile)
         {
             try
@@ -1699,11 +1711,51 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateApplicantById(InterviewerDirectApplicationVM model, string loggedInUser)
+        {
+            try
+            {
+                model.MAGIds = string.Join(",", model.MAGIdArray);
+                return await _interviewerRepository.UpdateApplicantById(model, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateApplicantSkillChannelById(InterviewerDirectApplicationVM model, string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateApplicantSkillChannelById(model, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
                 return await _interviewerRepository.GetInterviewerApplicants(loggedInUser, startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<InterviewerDirectApplicationVM> GetApplicantById(int applicantId)
+        {
+            try
+            {
+                return await _interviewerRepository.GetApplicantById(applicantId);
             }
             catch (Exception ex)
             {
