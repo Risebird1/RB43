@@ -1,0 +1,167 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerDirectApplicationVM
+@using Risebird.Entities.Enum
+@{
+    ViewData["Title"] = "Edit Applicant";
+    ViewBag.PageHeader = "";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<a href='/Interviewer/Applicants'>Applicants</a>&nbsp;/&nbsp;Edit Applicant";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .dashboardcode-bsmultiselect .form-control {
+    background: rgb(241, 241, 241) !important;
+    }
+
+    .dashboardcode-bsmultiselect .form-control.focus {
+    background: #fff !important;
+    }
+
+    .dashboardcode-bsmultiselect ul li input[type=search]:focus {
+    border: 0px !important;
+    }
+</style>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+
+
+    <div class="mt50">
+    </div>
+    <div class="content client interviewer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section interviewer">
+
+                        @using (Html.BeginForm("EditApplicant", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" })) @* , @onsubmit = "return Checkvalidation();"  *@
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(m => m.id) 
+                            <!-- Add Interviewer personal Details Start-->
+                            @if (!Model.ShowAddToSkillChannelOption)
+                            {
+                                <div class="row">
+                                    
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label " })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text", @readonly = "readonly" } })
+                                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MAGIds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            <select id="MAGIdArray" name="MAGIdArray" class="form-control multiselect" multiple="multiple">
+                                                @foreach (var item in Model.MAGList)
+                                                {
+                                                    @if (item != null)
+                                                    {
+                                                        @* @if (item.Selected)
+                                                        {
+                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        } *@
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+
+                                            </select>
+
+                                            @Html.ValidationMessageFor(model => model.MAGList, "", new { @id = "err_assessmentgroup", @class = "text-danger" })
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group" style="margin-top: -10px;">
+                                                <span class="desp-label control-label" style="font-weight: 600!important;font-size: 15px!important; position: relative;  top: 6px;  line-height: 30px;">
+                                                    <span class="circle">
+                                                        <i class="fa fa-upload" aria-hidden="true" style="position: relative;top: -8px;right: 1px;"></i>
+                                                    </span>    Upload Resume
+                                                </span>
+                                               
+                                            </div>
+
+                                            <div class="" id="uploadDiv">
+                                                @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf", @style = "margin: 0px 0px 10px 0px !important;" })
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                @Html.HiddenFor(m => m.ShowAddToSkillChannelOption)
+
+
+                            }
+
+                            else
+                            {
+                                @Html.Hidden("ShowAddToSkillChannelOption", true)
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownListFor(model => model.IRFId, Model.SkillChannelList, "Select", new { @class = "select-css form-control text-box single-line" })
+                                    @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                                </div>
+                            }
+                            <div class="card-footer ">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back", "Applicants", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Submit</button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                        
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+</div>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
