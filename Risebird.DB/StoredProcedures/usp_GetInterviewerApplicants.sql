@@ -19,7 +19,7 @@ BEGIN
 
 	select ida.id, ida.EmailId, ida.Phone, ida.ResumeLink, ida.CreatedAt, ida.IRFId, irf.IRFId as SkillChannelName,
 	irf.JDTiltle, irf.JDTitleTwo, ida.AIVerdict, ida.AIEvaluationGeneratedAt, ida.AIEvaluationPerformedBy,
-	ida.isVerified, ida.IsEmployed, ida.CompanyName, ida.ReferredBy, ida.EVGeneratedAt, ida.EVGeneratedBy,
+	ida.isVerified, ida.IsEmployed, ida.CompanyName, ida.ReferredBy, ida.EVGeneratedAt, ida.EVGeneratedBy, ida.ModifiedBy, ida.ModifiedAt, ida.IsAIScreeningAttempted,
 	irf.IsDeleted as IsIrfDeleted, ag.AssessmentGroup, ul.EmailId as ChannelOwner, irf.CreatedOn as ChannelCreationDate, ida.AIAnalysisScore,
 	CASE 
         WHEN ulI.IsActive = 1 THEN 'Acknowledged'
@@ -31,8 +31,6 @@ BEGIN
 	join UserList ul on ul.id = irf.RisebirdHr
 	join Client cl on cl.id = irf.ClientId
 	left join UserList ulI on ulI.EmailId = ida.EmailId
-
-
 
 END 
 GO
