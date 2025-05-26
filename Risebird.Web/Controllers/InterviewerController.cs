@@ -699,6 +699,142 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> EditApplicant(int applicantId, bool showAddToSkillChannelOption)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (showAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                    {
+                        InterviewerDirectApplicationVM model = await _interviewerService.GetApplicantById(applicantId);
+                        model.ShowAddToSkillChannelOption = showAddToSkillChannelOption;
+
+                        // Get all the select Lists
+                        await GetApplicantSpecificSelectList(model);
+                        if (TempData["MessageApplicantUpdate"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageApplicantUpdate"].ToString();
+                            TempData.Remove("MessageApplicantUpdate");
+
+                        }
+                        ViewBag.Profile = profileName;
+                        return View("EditApplicant", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditApplicant(InterviewerDirectApplicationVM model)//, int irf
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
+                    {
+                        if (!model.ShowAddToSkillChannelOption)
+                        {
+                            if (model.ResumeFile != null)
+                            {
+                                string uploadedFileURL = string.Empty;
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+
+                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    model.ResumeLink = uploadedFileURL;
+                                }
+
+
+                            }
+                            if(model.MAGIdArray != null)
+                            {
+                                var result = await _interviewerService.UpdateApplicantById(model, emailId);//, irf
+                                if (result)
+                                {
+                                    TempData["MessageApplicantUpdate"] = "Updated and Assessment Groups mapped successfully. Kindly select the target Skill Channel from the drop-down to finish onboarding!";
+                                    return RedirectToAction("EditApplicant", new { applicantId = model.id, showAddToSkillChannelOption = true });
+                                }
+                                else
+                                {
+                                    TempData["MessageApplicants"] = "Failed to update applicants.";
+                                    return RedirectToAction("Applicants");
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "MAG not selected.");
+                                return View(model);
+                            }
+
+
+
+                        }
+                        else // update target skill channel for the applicant
+                        {
+                            var saveResult = await _interviewerService.UpdateApplicantById(model, emailId);
+                            if (saveResult)
+                            {
+                                TempData["MessageApplicants"] = "Successfully edited";
+                                return RedirectToAction("Applicants");
+                            }
+                            else
+                            {
+                                TempData["MessageApplicants"] = "Failed to update applicants.";
+                                return RedirectToAction("Applicants");
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                
+                
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+                //return Json("Something's wrong. Please try again later.");
+            }
+
+        }
         [HttpGet]
         private async Task GetAllSelectList(InterviewerProfileVM model)
         {
@@ -810,6 +946,34 @@ namespace Risebird.Web.Controllers
                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.AvailabilityStatus = new SelectList(AvailabilityStatus, "ID", "Name");
             model.SkillChannelList = new SelectList(await _interviewerService.GetApplicableSkillChannelsForInterviewerPostAdding(model.UserId), "id", "IRFId");
+        }
+
+        [HttpGet]
+        private async Task GetApplicantSpecificSelectList(InterviewerDirectApplicationVM model)
+        {
+            
+            //var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
+            var Assessmentgroup = await _irfService.GetAllMAGs();
+
+            var selectList = new List<SelectListItem>();
+            var AssessmentselectList = new List<SelectListItem>();
+            foreach (var item in Assessmentgroup)
+            {
+                //bool selected = false;
+                //if (model.AssessmentGroupArray != null && model.AssessmentGroupArray.Contains(item.id.ToString()))
+                //{
+                //    selected = true;
+                //}
+                //var selectItem = new SelectListItem(item.AssessmentGroup, item.id.ToString(), selected);
+                var selectItem = new SelectListItem(item.AssessmentGroup, item.id.ToString(), false);
+                AssessmentselectList.Add(selectItem);
+            }
+            model.MAGList = AssessmentselectList;
+            if(model.ShowAddToSkillChannelOption)
+            {
+                model.SkillChannelList = new SelectList(await _interviewerService.GetApplicableSkillChannelsForApplicantUponEdit(model.id), "id", "IRFId");
+
+            }
         }
 
         [HttpPost]
@@ -4873,6 +5037,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")//|| profileName== "InterviewerManagement"
                     {
+                        if (TempData["MessageApplicants"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageApplicants"].ToString();
+                            TempData.Remove("MessageApplicants");
+
+                        }
                         var model = await _interviewerService.GetInterviewerApplicants(emailId);
                         return View(model);
                     }

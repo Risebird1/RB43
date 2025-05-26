@@ -10587,10 +10587,6 @@ namespace Risebird.Web.Controllers
                         var encryptedId = await _encryptionHelper.EncryptStringValue(assessmentGroupId.ToString());
                         var url = "https://portal.risebird.io/Interviewer/MAGApply?id=" + HttpUtility.UrlEncode(encryptedId);
 
-                        //var url = Url.Action("Apply", "Interviewer",
-                        //        new { id = irfId },
-                        //        Request.Scheme);
-
                         return Json(url);
                     }
                     else
@@ -10993,7 +10989,7 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                 {
                     if (Request.Form.Files.Count() > 0)
                     {
