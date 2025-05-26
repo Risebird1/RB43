@@ -98,7 +98,7 @@ namespace Risebird.MicroService
                             Subject = "Current Availability (2 days) check for skills based on: " + assessmentGroupName + " Risebird Interviews"
                         };
 
-                        var emailresult = await _notificationHelper.SendCampaignLevelInterviewerAvailabilityMails(item.EmailId, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, assessmentGroupName, campaignId);
+                        var emailresult = await _notificationHelper.SendCampaignLevelInterviewerAvailabilityMails(item.EmailId, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, assessmentGroupName, campaignId, item.uniqueid);
 
                     }
                     catch (Exception ex)
