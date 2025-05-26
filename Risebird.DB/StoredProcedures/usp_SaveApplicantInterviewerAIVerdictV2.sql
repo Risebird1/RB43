@@ -25,7 +25,9 @@ Begin
 	if exists (select top 1 id from InterviewerDirectApplication where id=@id)
 	Begin
 
-		update InterviewerDirectApplication set OpenAIResponse = @completeAnalysis, AIVerdict = @verdict, AIAnalysisScore = @score, AIEvaluationPerformedBy = @PerformedBy, AIEvaluationGeneratedAt = @timeNow where id=@id
+		update InterviewerDirectApplication set OpenAIResponse = @completeAnalysis, AIVerdict = @verdict, AIAnalysisScore = @score,
+		AIEvaluationPerformedBy = @PerformedBy, AIEvaluationGeneratedAt = @timeNow, IsAIScreeningAttempted = 1 
+		where id=@id
 
 	End
 		

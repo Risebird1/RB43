@@ -31,7 +31,7 @@ begin try
 		Begin
 
 			Update InterviewerDirectApplication set EmailId = @EmailId, ResumeLink = @ResumeLink, 
-			Phone = @Phone, MAGIds = @MAGIds, ModifiedAt = @timeNow, ModifiedBy = @ModifiedBy, isVerified = 0, IsEmployed = null
+			Phone = @Phone, MAGIds = @MAGIds, ModifiedAt = @timeNow, ModifiedBy = @ModifiedBy, isVerified = 0, IsEmployed = null, IsAIScreeningAttempted = 0
 			where id = @id
 			select @result = 1
 		End 
