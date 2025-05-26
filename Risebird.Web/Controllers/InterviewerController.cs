@@ -800,7 +800,7 @@ namespace Risebird.Web.Controllers
                         }
                         else // update target skill channel for the applicant
                         {
-                            var saveResult = await _interviewerService.UpdateApplicantById(model, emailId);
+                            var saveResult = await _interviewerService.UpdateApplicantSkillChannelById(model, emailId);
                             if (saveResult)
                             {
                                 TempData["MessageApplicants"] = "Successfully edited";
