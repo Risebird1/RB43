@@ -709,7 +709,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (showAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (/*showAddToSkillChannelOption && */profileName == "InterviewerManagement"))
                     {
                         InterviewerDirectApplicationVM model = await _interviewerService.GetApplicantById(applicantId);
                         model.ShowAddToSkillChannelOption = showAddToSkillChannelOption;
