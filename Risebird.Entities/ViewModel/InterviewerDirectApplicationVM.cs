@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -49,6 +51,11 @@ namespace Risebird.Entities.ViewModel
         public string ApplicationType { get; set; } //either internal or opentoall
         public int AIAnalysisScore { get; set; } //either internal or opentoall
         public string DirectApplicationFor { get; set; } //either MAG or a solitary Skill Channel
+        public string MAGIds { get; set; } 
+        public string[] MAGIdArray { get; set; } 
+        public bool ShowAddToSkillChannelOption { get; set; }
+        public List<SelectListItem> MAGList { get; set; } 
+        public SelectList SkillChannelList { get; set; } 
 
     }
 }

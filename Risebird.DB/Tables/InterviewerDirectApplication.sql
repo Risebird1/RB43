@@ -26,6 +26,7 @@ CREATE TABLE [dbo].[InterviewerDirectApplication](
 	[EVGeneratedAt] datetime NULL,
 	[ReferredBy] [varchar](200) NULL,
 	[AIAnalysisScore] [int] NULL,
+	[MAGIds] [varchar](300) NULL,
  CONSTRAINT [PK_InterviewerDirectApplication] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -170,6 +171,16 @@ WHERE Name IN (N'AIAnalysisScore')
 BEGIN
 	ALTER TABLE InterviewerDirectApplication
 	add AIAnalysisScore int NULL
+END
+
+IF not EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'MAGIds')
+    AND Object_ID = Object_ID(N'InterviewerDirectApplication'))
+BEGIN
+	ALTER TABLE InterviewerDirectApplication
+	add MAGIds varchar(300)
 END
 
 GO
