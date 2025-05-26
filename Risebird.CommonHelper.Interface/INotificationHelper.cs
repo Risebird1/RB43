@@ -58,7 +58,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null);
         Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
         Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId);
-        Task<string> CandidateWaitingEINotification(Mail model, string reassignmentLink, string zoomLink, int interviewId, string jdLink);
+        Task<string> CandidateWaitingEINotification(Mail model, string reassignmentLink, string zoomLink, int interviewId, string jdLink, string uniqueId);
         Task<string> AppologyNotificationToCandidate(Mail model, string candidateName, int interviewId);
         Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName, string clientlogo, int interviewId);
         Task<string> AppologyNotificationToCandidateSecond(Mail model, string candidateName, int interviewId);
@@ -76,7 +76,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null, string CancellationSource = null);
         Task<string> SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName, int? irfId = null, int? interviewId = null);
         Task<string> SendPublicUrlToInterviewer(Mail model, string UrlDetails);
-        Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null, int? agId = null);
+        Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, string uniqueId, int? irfId = null, int? agId = null);
         Task<string> SendPasswordresetNotification(Mail model);
         Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, int InterviewDuration, string jdLink = null, string clientLogoLink = null, string companyLink = null);
         Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink, int? irfId = null, int? interviewId = null);
@@ -84,7 +84,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string DashboardLink, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill, int? irfId = null, string companyTypeDesc = null, string countryTypeDesc = null, string planTypeDesc = null, int? selectedDuration = null, int? rejectedDuration = null);
-        Task<string> CheckAGLevelInterviewerAvailability(Mail model, string Interviewname, string yesbutton, string nobutton, string agName, int assessmentGroupId);
+        Task<string> CheckAGLevelInterviewerAvailability(Mail model, string Interviewname, string yesbutton, string nobutton, string agName, int assessmentGroupId, string uniqueId);
         Task<string> SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
         Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt, string clientlogo);
         Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset, string clientlogo);
@@ -115,7 +115,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId);
         Task<string> SendInterviewerRedMarkersNotification(Mail model, string _template, string acklink);
         Task<string> SendInerviewerMeetingReminder(Mail model, string url);
-        Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewers, string yesbutton, string nobutton, string agName, int campaignId);
+        Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewers, string yesbutton, string nobutton, string agName, int campaignId, string uniqueId);
         Task<string> SendNotificationToClientForSelectedCandidate(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string clientlogo = null);
         Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate, int irfid);
         Task<string> SendTechSupportMail(string Comment, DateTime RequestedOn, string RequestBy);

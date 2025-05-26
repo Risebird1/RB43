@@ -123,7 +123,7 @@ namespace Risebird.AzureTimerFunctions
                             CC = CCEmails,
                             Subject = "Risebird Urgent Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
-                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink);
+                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink,item.uniqueid);
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.emergencyinterviewer;
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";

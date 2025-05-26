@@ -1526,7 +1526,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> CandidateWaitingEINotification(Mail model, string ressignmentlink, string zoomlink, int interviewId, string jdLink)
+        public async Task<string> CandidateWaitingEINotification(Mail model, string ressignmentlink, string zoomlink, int interviewId, string jdLink, string uniqueId)
         {
             try
             {
@@ -1551,7 +1551,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                     }
                 }
-                object[] parameters = new object[] { ressignmentlink, jdLink };
+                object[] parameters = new object[] { ressignmentlink, jdLink, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV3.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2021,7 +2021,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null, int? agId = null)
+        public async Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, string uniqueId, int? irfId = null, int? agId = null)
         {
             try
             {
@@ -2037,7 +2037,7 @@ namespace Risebird.CommonHelper
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
 
-                object[] parameters = new object[] { totalCount, UrlDetails };
+                object[] parameters = new object[] { totalCount, UrlDetails, uniqueId };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerCommonInterviewNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -2261,7 +2261,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> CheckAGLevelInterviewerAvailability(Mail model, string Interviewname, string yesbutton, string nobutton, string agName, int assessmentGroupId)
+        public async Task<string> CheckAGLevelInterviewerAvailability(Mail model, string Interviewname, string yesbutton, string nobutton, string agName, int assessmentGroupId, string uniqueId)
         {
             try
             {
@@ -2274,7 +2274,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, agName };
+                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, agName,uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckAGLevelInterviewerAvailability.html");
 
@@ -3178,7 +3178,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewer, string yesbutton, string nobutton, string agName, int campaignId)
+        public async Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewer, string yesbutton, string nobutton, string agName, int campaignId, string uniqueId)
         {
             try
             {
@@ -3187,7 +3187,7 @@ namespace Risebird.CommonHelper
                 msg.Subject = "Current Availability (2 days) check for skills based on: " + agName + " Risebird Interviews";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, null));
 
-                object[] parameters = new object[] { yesbutton, nobutton, agName };
+                object[] parameters = new object[] { yesbutton, nobutton, agName, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");//CheckAGLevelInterviewerAvailability
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CampaignLevelInterviewerAvailability.html");
 
