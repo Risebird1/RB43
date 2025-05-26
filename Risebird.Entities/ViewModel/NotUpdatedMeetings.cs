@@ -60,5 +60,6 @@ namespace Risebird.Entities.ViewModel
         public int irfId { get; set; }
         public string candidateUniqueId { get; set; }
         public string JDLink { get; set; }
+        public string uniqueid { get; set; }
     }
 }

@@ -4205,7 +4205,7 @@ namespace Risebird.Web.Controllers
                             CC = "talent@risebird.io",
                             Subject = "New interviews have come up! Please assign."
                         };
-                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, irfId);
+                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, irfId);
                         //What's App Message Send
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.EmailId;
@@ -4761,7 +4761,7 @@ namespace Risebird.Web.Controllers
                                                             CC = "talent@risebird.io",
                                                             Subject = "New interviews have come up! Please assign."
                                                         };
-                                                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, irfId);
+                                                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, irfId);
                                                         //What's App Message Send
                                                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                                         _whatsAppVM.Emailid = item.EmailId;
@@ -4964,7 +4964,7 @@ namespace Risebird.Web.Controllers
                                                             CC = "talent@risebird.io",
                                                             Subject = "New interviews have come up! Please assign."
                                                         };
-                                                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, agId: model.AssessmentGroupId);
+                                                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, agId: model.AssessmentGroupId);
                                                         //What's App Message Send
                                                         //WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                                         //_whatsAppVM.Emailid = item.EmailId;
