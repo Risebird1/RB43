@@ -95,7 +95,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetPendingAITranscriptAnalysis();
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdict(DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAITranscriptReportsWithVerdictInterviewer(string interviewer, string Irfid);
-        Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status,string Comment,string CreatedBy, string type, string source);
-        Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid,string type);
+        Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy, string type, string source);
+        Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type);
+        Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName);
     }
 }

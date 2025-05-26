@@ -1334,6 +1334,10 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
+                        else if (actionstatus == RibbonActionType.PropableRedo)
+                        {
+                            modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName);
+                        }
                         else
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
@@ -1424,7 +1428,10 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Interviewer Churn Data";
                         }
-
+                        else if (actionstatus == RibbonActionType.PropableRedo)
+                        {
+                            ViewBag.PageHeader = "Propable Redo Interviews";
+                        }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
 
@@ -4243,7 +4250,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (type == "Reviewed")
                         {
-                            model = model.Where(x => x.NegativeAIVerdictStatus ==2 && x.IsActive == true).ToList();
+                            model = model.Where(x => x.NegativeAIVerdictStatus == 2 && x.IsActive == true).ToList();
                         }
                         else if (type == "Removed")
                         {
