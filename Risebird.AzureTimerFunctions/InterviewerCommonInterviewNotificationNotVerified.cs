@@ -51,6 +51,7 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                             }
+                            _uniqueid = item.uniqueid;
                         }
                         else
                         {
