@@ -21,5 +21,6 @@
         public static readonly string RedoInterview = "RedoInterviewCount";
         public static readonly string PotentialRiskByClient = "PotentialRiskByClient";
         public static readonly string InterviewerChurn = "InterviewerChurn";
+        public static readonly string PropableRedo = "PropableRedo";
     }
 }

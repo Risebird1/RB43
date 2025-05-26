@@ -44,17 +44,25 @@
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo")
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>Propable Redo</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCReport")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>Propable Redo</strong></div>
                         }
                         else
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>Propable Redo</strong></div>
                         }
                     }
                 </div>
@@ -72,13 +80,13 @@
                            || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount"
                            || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
                            || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "DeletedZoomMeetings"
-                           || ViewBag.actionstatus == "InterviewerChurn" || ViewBag.actionstatus == "VideoLink"))
+                           || ViewBag.actionstatus == "InterviewerChurn" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo"))
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                                 </button>
                             }
-                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink"))
+                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo"))
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
@@ -97,7 +105,7 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo")
                         {
                             <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
                         }
@@ -264,7 +272,7 @@
                                                         <th>Action</th>
                                                     }
 
-                                                    @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport"))
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo")
                                                     {
 
                                                         <th>
@@ -317,13 +325,17 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
                                                         <th>Interview Duration</th>
                                                         <th>Deficit Duration</th>
                                                         <th>Candidate Rating</th>
+                                                        if (ViewBag.actionstatus == "PropableRedo")
+                                                        {
+                                                            <th>Redo Reason</th>
+                                                        }
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
                                                         <th>Interviewer Late join</th>
@@ -333,11 +345,11 @@
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -363,7 +375,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -373,7 +385,7 @@
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -459,7 +471,7 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
@@ -519,7 +531,17 @@
 
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
+                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                    {
+                                                        <th>Action</th>
+                                                    }
 
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PropableRedo")
+                                                    {
+                                                        <th>
+                                                            Action
+                                                        </th>
+                                                    }
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
 
@@ -558,13 +580,17 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
                                                         <th>Interview Duration</th>
                                                         <th>Deficit Duration</th>
                                                         <th>Candidate Rating</th>
+                                                        if (ViewBag.actionstatus == "PropableRedo")
+                                                        {
+                                                            <th>Redo Reason</th>
+                                                        }
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Joinedon</th>
                                                         <th>Interviewer Late join</th>
@@ -574,11 +600,11 @@
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -604,7 +630,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -615,7 +641,7 @@
                                                     }
 
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -701,21 +727,11 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
-                                                    {
-                                                        <th>Action</th>
-                                                    }
-
-                                                    @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus"))
-                                                    {
-                                                        <th>
-                                                            Action
-                                                        </th>
-                                                    }
+                                                   
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
@@ -941,7 +957,7 @@
                                                             </td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo")
                                                         {
                                                             <td>
                                                                 <span>
@@ -970,9 +986,9 @@
                                                                 {
                                                                     <span class="interview_9">
                                                                         <a target="_blank" href="@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Feedback Report" style="text-decoration:none;">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                                 <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                        </button>
+                                                                            </button>
                                                                         </a>
                                                                     </span>
                                                                 }
@@ -1128,81 +1144,84 @@
                                                             <td>
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
-                                                                @if (ViewBag.actionstatus == "QCPendingReport")
+                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo")
                                                                 {
                                                                     <div>
-                                                                    
-                                                                    @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
-                                                                    {
-                                                                    
-                                                                        <span aria-label="Click here to call the candidate">
+
+                                                                        @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
+                                                                        {
+
+                                                                            <span aria-label="Click here to call the candidate">
                                                                                 <span onclick="CommonCallButtonClick('@item.candidateName','@item.InterviewerMobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" style="width: 16px;margin: 7px 0px 7px 0px;"></span>
-                                                                        </span>@item.InterviewerMobileNumber
-                                                                    
-                                                                    }
+                                                                            </span>
+
+                                                                            @item.InterviewerMobileNumber
+
+                                                                        }
                                                                     </div>
 
-                                                                <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
+                                                                    <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
                                                                         @if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "yes")
                                                                         {
-                                                                               <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:-2px;top:-1px;" /></div>
+                                                                            <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:-2px;top:-1px;" /></div>
 
-                                                                                <div class="interviewer-apt">
-                                                                                    <span>Transcript unacceptable quality based on AI</span>
-                                                                                    <span>
-                                                                                        <a class="details" href="#">
-                                                                                            <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
-                                                                                            <span>
-                                                                                                <div class="bubble">
+                                                                            <div class="interviewer-apt">
+                                                                                <span>Transcript unacceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
 
-                                                                                                    <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
 
-                                                                                                    <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
-                                                                                                        <tr>
-                                                                                                            <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
-                                                                                                            <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
-                                                                                                        </tr>
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                    </tr>
 
-                                                                                                    </table>
+                                                                                                </table>
 
 
-                                                                                                </div>
-                                                                                            </span>
-                                                                                        </a>
-                                                                                    </span>
-                                                                                </div>
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
                                                                         }
-                                                                        else if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "no"){
-                                                                            
-                                                                                <div><img src="~/img/accept.png" style="width: 26px!important;position:absolute;left:-2px;top:-1px;" /></div>
+                                                                        else if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "no")
+                                                                        {
 
-                                                                                <div class="interviewer-apt" style="background:#edf2c573;color:#2a9d36;">
-                                                                                    <span>Transcript acceptable quality based on AI</span>
-                                                                                    <span>
-                                                                                        <a class="details" href="#">
-                                                                                            <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
-                                                                                            <span>
-                                                                                                <div class="bubble">
+                                                                            <div><img src="~/img/accept.png" style="width: 26px!important;position:absolute;left:-2px;top:-1px;" /></div>
 
-                                                                                                    <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
+                                                                            <div class="interviewer-apt" style="background:#edf2c573;color:#2a9d36;">
+                                                                                <span>Transcript acceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
 
-                                                                                                    <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
-                                                                                                        <tr>
-                                                                                                            <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
-                                                                                                            <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
-                                                                                                        </tr>
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
 
-
-                                                                                                    </table>
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
+                                                                                                    </tr>
 
 
-                                                                                                </div>
-                                                                                            </span>
-                                                                                        </a>
-                                                                                    </span>
-                                                                                </div>
-                                                                            }
+                                                                                                </table>
+
+
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
+                                                                        }
                                                                         else
                                                                         {
                                                                             <span></span>
@@ -1211,84 +1230,81 @@
                                                                     </div>
                                                                     <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
-                                                                      
-                                                                      @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes") {
-                                                                                <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:4px;" /></div>
 
-                                                                                <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position: relative;left: 20px;">
-                                                                                    <span>Report acceptable quality based on AI</span>
-                                                                                    <span>
-                                                                                        <a class="details" href="#">
-                                                                                            <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
-                                                                                            <span>
-                                                                                                <div class="bubble">
+                                                                        @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes")
+                                                                        {
+                                                                            <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:4px;" /></div>
 
-                                                                                                    <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
+                                                                            <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position: relative;left: 20px;">
+                                                                                <span>Report acceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
 
-                                                                                                    <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
-                                                                                                        <tr>
-                                                                                                            <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
-                                                                                                            <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
-                                                                                                        </tr>
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
 
-
-                                                                                                    </table>
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
+                                                                                                    </tr>
 
 
-                                                                                                </div>
-                                                                                            </span>
-                                                                                        </a>
-                                                                                    </span>
-                                                                                </div>
+                                                                                                </table>
 
 
-                                                                            }
-                                                                            else if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "no")
-                                                                            {
-
-                                                                                <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left:4px;top:4px;" /></div>
-
-                                                                                <div class="interviewer-apt">
-                                                                                    <span>Report unacceptable quality based on AI</span>
-                                                                                    <span>
-                                                                                        <a class="details" href="#">
-                                                                                            <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
-                                                                                            <span>
-                                                                                                <div class="bubble">
-
-                                                                                                    <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
-
-                                                                                                    <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
-                                                                                                        <tr>
-                                                                                                            <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
-                                                                                                            <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
-                                                                                                        </tr>
-
-                                                                                                    </table>
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
 
 
-                                                                                                </div>
-                                                                                            </span>
-                                                                                        </a>
-                                                                                    </span>
-                                                                                </div>
+                                                                        }
+                                                                        else if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "no")
+                                                                        {
+
+                                                                            <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left:4px;top:4px;" /></div>
+
+                                                                            <div class="interviewer-apt">
+                                                                                <span>Report unacceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
+
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
+
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                    </tr>
+
+                                                                                                </table>
 
 
-                                                                            }
-                                                                       
-                                                                      else{
-                                                                          <span></span>
-                                                                      }
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
+
+
+                                                                        }
+
+                                                                        else
+                                                                        {
+                                                                            <span></span>
+                                                                        }
 
                                                                     </div>
 
 
                                                                 }
-
-
-
-
-
                                                                 @if (ViewBag.actionstatus == "InterviewCount")
                                                                 {
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -1300,22 +1316,14 @@
                                                                         @item.MobileNumber
 
                                                                     }
-
-
                                                                 }
-
-
-
-
-
-
                                                             </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <td>@item.Joinedon</td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo")
                                                         {
                                                             <td style="text-align:center">
 
@@ -1374,6 +1382,10 @@
                                                                     }
                                                                 </div>
                                                             </td>
+                                                            if (ViewBag.actionstatus == "PropableRedo")
+                                                            {
+                                                                <td>@item.StatusValue</td>
+                                                            }
                                                             <td>
                                                                 @if (@item.interviewer != null || @item.interviewer != "")
                                                                 {
@@ -1421,7 +1433,7 @@
                                                                         <span style="color:#000;font-weight:400">No</span>
                                                                     }
                                                                 </div>
-                                                            </td> 
+                                                            </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
@@ -1454,11 +1466,11 @@
                                                                 <td></td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -1527,7 +1539,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                         {
                                                             <td>@item.Name</td>
                                                         }
@@ -1547,7 +1559,7 @@
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo")
                                                         {
                                                             @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                             {
@@ -1965,7 +1977,7 @@
 
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo")
                                                         {
                                                             <td>@item.ChannelOwner</td>
                                                         }

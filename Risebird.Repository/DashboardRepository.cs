@@ -2246,7 +2246,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status,string Comment,string CreatedBy,string type,string source)
+        public async Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy, string type, string source)
         {
             try
             {
@@ -2275,7 +2275,7 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid,string type)
+        public async Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type)
         {
             try
             {
@@ -2299,6 +2299,30 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_propableRedoInterview", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }
