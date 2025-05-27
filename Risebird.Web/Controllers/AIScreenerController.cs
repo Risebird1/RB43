@@ -532,7 +532,7 @@ namespace Risebird.Web.Controllers
 
                         if (aiEvaluation != null)
                         {
-                            if (aiEvaluation.OpenAIResponse != null)
+                            if (aiEvaluation.OpenAIResponse != null && aiEvaluation.IsAIScreeningAttempted == true)
                             {
                                 //var modal = JsonConvert.DeserializeObject<RunResult>(aiEvaluation.OpenAIResponse);
                                 //return View(modal);
