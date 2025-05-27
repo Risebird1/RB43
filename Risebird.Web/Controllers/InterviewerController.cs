@@ -4406,49 +4406,55 @@ namespace Risebird.Web.Controllers
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
                     var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
+                    
                     if (result != null)
                     {
 
                         if (!string.IsNullOrEmpty(result.EmailId))
                         {
-                            string sendreporturl = string.Empty;
-                            if (string.IsNullOrEmpty(result.uniqueid))
+                            var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified");
+                            foreach (var item in _AllInterviewerInterview?.Where(x => x.EmailId == result.EmailId))
                             {
-                                Guid uniqueid = Guid.NewGuid();
-                                var _uniqueid = await _clientService.PublicInterviewerUrlSave(result.EmailId, uniqueid.ToString());
-                                sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
-                                if (!string.IsNullOrEmpty(_uniqueid))
+                                string sendreporturl = string.Empty;
+                                if (string.IsNullOrEmpty(result.uniqueid))
                                 {
-                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                                    Guid uniqueid = Guid.NewGuid();
+                                    var _uniqueid = await _clientService.PublicInterviewerUrlSave(result.EmailId, uniqueid.ToString());
+                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
+                                    if (!string.IsNullOrEmpty(_uniqueid))
+                                    {
+                                        sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                                    }
+                                }
+                                else
+                                {
+                                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + result.uniqueid;
+                                }
+                                try
+                                {
+                                    //Email Message Send
+                                    Mail _mail1 = new Mail
+                                    {
+                                        TO = result.EmailId,
+                                        CC = "talent@risebird.io",
+                                        Subject = "New interviews have come up! Please assign."
+                                    };
+                                    var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, result.uniqueid);
+                                    //What's App Message Send
+                                    //WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                    //_whatsAppVM.Emailid = item.EmailId;
+                                    //_whatsAppVM.MessageValue = item.Total.ToString();
+                                    //_whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
+                                    //_whatsAppVM.Event = "Interviewer Common Interview";
+                                    //_whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
+                                    //await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                                }
+                                catch (Exception ex)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 }
                             }
-                            else
-                            {
-                                sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + result.uniqueid;
-                            }
-                            try
-                            {
-                                //Email Message Send
-                                Mail _mail1 = new Mail
-                                {
-                                    TO = result.EmailId,
-                                    CC = "talent@risebird.io",
-                                    Subject = "New interviews have come up! Please assign."
-                                };
-                                var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, 0, result.uniqueid);
-                                //What's App Message Send
-                                //WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                                //_whatsAppVM.Emailid = item.EmailId;
-                                //_whatsAppVM.MessageValue = item.Total.ToString();
-                                //_whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
-                                //_whatsAppVM.Event = "Interviewer Common Interview";
-                                //_whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
-                                //await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
-                            }
-                            catch (Exception ex)
-                            {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                            }
+                            
                         }
                         return Json("Status updated successfully.");
                     }
