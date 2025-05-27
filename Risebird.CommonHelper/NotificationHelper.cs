@@ -2036,8 +2036,12 @@ namespace Risebird.CommonHelper
                 }
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
-
-                object[] parameters = new object[] { totalCount, UrlDetails, uniqueId };
+                string count = string.Empty;
+                if(totalCount > 0)
+                {
+                    count = totalCount.ToString();
+                }
+                object[] parameters = new object[] { count, UrlDetails, uniqueId };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerCommonInterviewNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 

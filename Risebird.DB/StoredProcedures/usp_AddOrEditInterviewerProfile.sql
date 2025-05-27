@@ -297,22 +297,22 @@ Declare @v_User_Id int;
  End
 
 
-  INSERT INTO [dbo].[TransInterviewerSkill]
-		(InterviewerProfileId, 
-		SkillId,  
-		Category, 
-		Ip, 
-		Level, 
-		SkillExperience, 
-		Nature)
- Values 
-		(@InterviewerProfileId, 
-		 @skillId,
-		 1, 
-		 1, 
-		 1,
-		 1,
-		 1);
+ -- INSERT INTO [dbo].[TransInterviewerSkill]
+	--	(InterviewerProfileId, 
+	--	SkillId,  
+	--	Category, 
+	--	Ip, 
+	--	Level, 
+	--	SkillExperience, 
+	--	Nature)
+ --Values 
+	--	(@InterviewerProfileId, 
+	--	 @skillId,
+	--	 1, 
+	--	 1, 
+	--	 1,
+	--	 1,
+	--	 1);
 
 
 

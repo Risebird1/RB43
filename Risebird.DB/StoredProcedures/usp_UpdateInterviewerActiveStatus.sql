@@ -25,7 +25,7 @@ Begin
 	update UserList set IsActive = 1 where id = @userId
 	update TransInterviewer set IsActive = 1 where UserId = @userId
 
-	select EmailId, UserPassword, @hmVideoInstructionLink as HMVideoForTargetIRF from UserList where id = @userId
+	select EmailId, UserPassword, @hmVideoInstructionLink as HMVideoForTargetIRF, uniqueid from UserList where id = @userId
 end
 
 END

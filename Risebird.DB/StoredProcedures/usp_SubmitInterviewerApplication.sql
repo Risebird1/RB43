@@ -25,7 +25,7 @@ begin try
 	begin tran
 	if not exists (select top 1 id from UserList where EmailId = @EmailId)
 	Begin
-		if not exists (select top 1 id from InterviewerDirectApplication where irfid = @IRFId and EmailId = @EmailId)
+		if not exists (select top 1 id from InterviewerDirectApplication where irfid = @IRFId and EmailId = RTRIM(LTRIM(@EmailId)))
 		Begin
 			Insert into InterviewerDirectApplication(IRFId, EmailId, Phone, ResumeLink, CreatedAt, CreatedBy, ReferredBy)  
 			values(@IRFId, @EmailId, @Phone, @ResumeLink, @timeNow, @EmailId, @ReferredBy) 
