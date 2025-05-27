@@ -207,6 +207,16 @@
 
                                                                     </button>
                                                                 }
+                                                                else if (item.isVerified && !item.IsAIScreeningAttempted)
+                                                                {
+                                                                                <button id="btn_aiVerdict_@item.id" class="btn shadow btn-xs sharp me-1" aria-label="Generate AI Verdict" style="width:23px!important;height:23px!important;background: #28897794;border:#28897794;position:relative;left:-6px;">
+
+                                                                                    <span onclick="javascript:GenerateAIVerdict('@item.id','@item.EmailId', '@item.JDTiltle', '@item.SkillChannelName');" title="Generate AI Verdict" class="mdc-fab__icon material-icons">
+                                                                                        <img style="max-width:21px;height: 14px;position: relative;left:-1px;top: -1px;" src="~/img/generate-icon.png" />
+                                                                                    </span>
+
+                                                                                </button>
+                                                                }
                                                                 else
                                                                 {
                                                                     <button id="btn_aiVerdict_@item.id" class="btn shadow btn-xs sharp me-1" aria-label="Generate AI Verdict" style="width:23px!important;height:23px!important;background: #28897794;border:#28897794;position:relative;left:-6px;" disabled>
