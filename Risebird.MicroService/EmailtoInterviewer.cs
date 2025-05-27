@@ -63,7 +63,7 @@ namespace Risebird.MicroService
                                     Subject = "Upcoming Risebird Interviews Confirmation Check In - Mandatory"
                                 };
                                 var InterviewerUrl = "https://portal.risebird.io/Interview/PublicMyInterviewInvite?id=" + mail.uniqueid;
-                                var emailsend = await _notificationHelper.SendInerviewerMeetingReminder(_mail, InterviewerUrl);
+                                var emailsend = await _notificationHelper.SendInerviewerMeetingReminder(_mail, InterviewerUrl, mail.uniqueid);
                             }
                             catch (Exception ex)
                             {
