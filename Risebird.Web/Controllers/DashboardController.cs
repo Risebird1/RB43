@@ -1,5 +1,4 @@
-﻿
-using ExcelDataReader.Log;
+﻿using ExcelDataReader.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -3442,6 +3441,30 @@ namespace Risebird.Web.Controllers
             ViewBag.Type = type;
             return View("InterviewerIRFDetails", model);
         }
+        [HttpPost]
+        public async Task<JsonResult> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment)
+        {
+            string emailId = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+            }
+            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId, "IRF", "RedMarker");
+            if (result)
+            {
+                return Json("Interviewer Moved Successfully.");
+            }
+            return Json("Fail to Move the Interviewer, Please try again.");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type)
+        {
+            var model = await _dashboardService.FetchRedMarkerCommentDetails(interviewid, IRFid, type);
+            return Json(model);
+        }
+
         public async Task<IActionResult> TotalRedMarkeredInterviewers(string type)
         {
             try
@@ -4569,7 +4592,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> TotalInterviews()
+        public async Task<IActionResult> TotalInterviews(string type)
         {
             try
             {
@@ -4586,6 +4609,27 @@ namespace Risebird.Web.Controllers
                         DateTime startdate = DateTime.Now.AddMonths(-1);
                         DateTime enddate = DateTime.Now.AddDays(1);
                         var model = await _dashboardService.GetTotalInterviews(startdate, enddate);
+                        if (string.IsNullOrWhiteSpace(type))
+                        {
+                            type = "Pending";
+                        }
+                        if (type == "UnderReview")
+                        {
+                            model = model.Where(x => x.RedMarkerStatus == 1).ToList();
+                        }
+                        else if (type == "Reviewed")
+                        {
+                            model = model.Where(x => x.RedMarkerStatus == 2).ToList();
+                        }
+                        //else if (type == "Removed")
+                        //{
+                        //    model = model.Where(x => x.IsActive != true).ToList();
+                        //}
+                        else if (type == "Pending")
+                        {
+                            model = model.Where(x => x.RedMarkerStatus != 1 && x.RedMarkerStatus != 2).ToList();
+                        }
+                        ViewBag.Type = type;
                         return View(model);
                     }
                     else
@@ -4771,28 +4815,6 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment)
-        {
-            string emailId = string.Empty;
-            if (HttpContext.Session.GetString("email") != null)
-            {
-                emailId = HttpContext.Session.GetString("email")?.Trim();
-                emailId = emailId.Replace("\"", "");
-            }
-            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId, "IRF", "RedMarker");
-            if (result)
-            {
-                return Json("Interviewer Moved Successfully.");
-            }
-            return Json("Fail to Move the Interviewer, Please try again.");
-        }
-        [HttpPost]
-        public async Task<JsonResult> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type)
-        {
-            var model = await _dashboardService.FetchRedMarkerCommentDetails(interviewid, IRFid, type);
-            return Json(model);
-        }
-        [HttpPost]
         public async Task<JsonResult> UpdateNegativeAIVerdictStatusChange(int interviewid, int IRFid, int status, string Comment)
         {
             string emailId = string.Empty;
@@ -4802,6 +4824,22 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
             }
             var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId, "NegativeAIVerdict", "NegativeAIVerdict");
+            if (result)
+            {
+                return Json("Interviewer Moved Successfully.");
+            }
+            return Json("Fail to Move the Interviewer, Please try again.");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateTotalInterviewInterviewerstatus(int interviewid, int IRFid, int status, string Comment)
+        {
+            string emailId = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+            }
+            var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(interviewid, IRFid, status, Comment, emailId, "TotalInterview", "TotalInterview");
             if (result)
             {
                 return Json("Interviewer Moved Successfully.");
