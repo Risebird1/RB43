@@ -4406,7 +4406,7 @@ namespace Risebird.Web.Controllers
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
                     var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
-                    
+
                     if (result != null)
                     {
 
@@ -4454,7 +4454,7 @@ namespace Risebird.Web.Controllers
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 }
                             }
-                            
+
                         }
                         return Json("Status updated successfully.");
                     }
