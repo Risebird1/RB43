@@ -56,6 +56,9 @@ namespace Risebird.Entities.ViewModel
         public bool ShowAddToSkillChannelOption { get; set; }
         public List<SelectListItem> MAGList { get; set; } 
         public SelectList SkillChannelList { get; set; } 
+        public bool IsAIScreeningAttempted { get; set; } 
+        public string ModifiedBy { get; set; } 
+        public DateTime? ModifiedAt { get; set; } 
 
     }
 }

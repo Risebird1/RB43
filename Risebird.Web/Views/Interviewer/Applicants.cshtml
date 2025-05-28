@@ -192,19 +192,42 @@
                                                                 {
                                                                     <button id="btn_ev_@item.id" class="btn shadow btn-xs sharp me-1 trash-btn" aria-label="Verify Employment" style="width:23px!important;height:23px!important;background: #92c794 !important;position:relative;left:-5px;border-color:#92c794!important">
                                                                         <span onclick="javascript:VerifyEVandNext('@item.Phone','@item.EmailId', '@item.SkillChannelName', '@item.id');" title="Verify Employment" class="mdc-fab__icon material-icons">
-                                                                                   <img style="max-width: 26px;height:22px;position: relative;left:-5px;top:-2px;"  src="~/img/verify-emp.png" />
+                                                                            <img style="max-width: 26px;height:22px;position: relative;left:-5px;top:-2px;"  src="~/img/verify-emp.png" />
                                                                         </span>
                                                                     </button>
                                                                 }
-                                                                
 
-                                                                <button id="btn_aiVerdict_@item.id" class="btn shadow btn-xs sharp me-1" aria-label="Generate AI Verdict" style="width:23px!important;height:23px!important;background: #28897794;border:#28897794;position:relative;left:-6px;" disabled>
+                                                                @if(!string.IsNullOrEmpty(item.ModifiedBy) && !item.IsAIScreeningAttempted)
+                                                                {
+                                                                    <button id="btn_aiVerdict_@item.id" class="btn shadow btn-xs sharp me-1" aria-label="Generate AI Verdict" style="width:23px!important;height:23px!important;background: #28897794;border:#28897794;position:relative;left:-6px;">
 
-                                                                    <span onclick="javascript:GenerateAIVerdict('@item.id','@item.EmailId', '@item.JDTiltle', '@item.SkillChannelName');" title="Generate AI Verdict" class="mdc-fab__icon material-icons">
-                                                                                       <img style="max-width:21px;height: 14px;position: relative;left:-1px;top: -1px;"  src="~/img/generate-icon.png" />
-                                                                    </span>
-                                                                    
-                                                                </button>
+                                                                        <span onclick="javascript:GenerateAIVerdict('@item.id','@item.EmailId', '@item.JDTiltle', '@item.SkillChannelName');" title="Generate AI Verdict" class="mdc-fab__icon material-icons">
+                                                                            <img style="max-width:21px;height: 14px;position: relative;left:-1px;top: -1px;" src="~/img/generate-icon.png" />
+                                                                        </span>
+
+                                                                    </button>
+                                                                }
+                                                                else if (item.isVerified && item.IsEmployed && !item.IsAIScreeningAttempted)
+                                                                {
+                                                                    <button id="btn_aiVerdict_@item.id" class="btn shadow btn-xs sharp me-1" aria-label="Generate AI Verdict" style="width:23px!important;height:23px!important;background: #28897794;border:#28897794;position:relative;left:-6px;">
+
+                                                                        <span onclick="javascript:GenerateAIVerdict('@item.id','@item.EmailId', '@item.JDTiltle', '@item.SkillChannelName');" title="Generate AI Verdict" class="mdc-fab__icon material-icons">
+                                                                            <img style="max-width:21px;height: 14px;position: relative;left:-1px;top: -1px;" src="~/img/generate-icon.png" />
+                                                                        </span>
+
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button id="btn_aiVerdict_@item.id" class="btn shadow btn-xs sharp me-1" aria-label="Generate AI Verdict" style="width:23px!important;height:23px!important;background: #28897794;border:#28897794;position:relative;left:-6px;" disabled>
+
+                                                                        <span onclick="javascript:GenerateAIVerdict('@item.id','@item.EmailId', '@item.JDTiltle', '@item.SkillChannelName');" title="Generate AI Verdict" class="mdc-fab__icon material-icons">
+                                                                            <img style="max-width:21px;height: 14px;position: relative;left:-1px;top: -1px;" src="~/img/generate-icon.png" />
+                                                                        </span>
+
+                                                                    </button>
+                                                                }
+
 
                                                             </td>
 

@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[InterviewerDirectApplication](
 	[ReferredBy] [varchar](200) NULL,
 	[AIAnalysisScore] [int] NULL,
 	[MAGIds] [varchar](300) NULL,
+	[IsAIScreeningAttempted] [bit] NULL,
  CONSTRAINT [PK_InterviewerDirectApplication] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -181,6 +182,15 @@ WHERE Name IN (N'MAGIds')
 BEGIN
 	ALTER TABLE InterviewerDirectApplication
 	add MAGIds varchar(300)
+END
+IF not EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'IsAIScreeningAttempted')
+    AND Object_ID = Object_ID(N'InterviewerDirectApplication'))
+BEGIN
+	ALTER TABLE InterviewerDirectApplication
+	add IsAIScreeningAttempted bit
 END
 
 GO

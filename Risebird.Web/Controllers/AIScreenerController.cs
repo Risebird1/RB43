@@ -532,7 +532,7 @@ namespace Risebird.Web.Controllers
 
                         if (aiEvaluation != null)
                         {
-                            if (aiEvaluation.OpenAIResponse != null)
+                            if (aiEvaluation.OpenAIResponse != null && aiEvaluation.IsAIScreeningAttempted == true)
                             {
                                 //var modal = JsonConvert.DeserializeObject<RunResult>(aiEvaluation.OpenAIResponse);
                                 //return View(modal);
@@ -555,58 +555,63 @@ namespace Risebird.Web.Controllers
                                     {
                                         aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
 
-                                        //saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, aiAnalysisModel, loggedInUser);
-                                        //saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdict(id, aiEvaluation.EmailId, aiEvaluation.JDTiltle, aiAnalysisModel.completeFitmentAnalysis, loggedInUser);
-                                        saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdictV2(id, aiAnalysisModel, loggedInUser);
-
-                                    }
-                                    if (saveOperationResult)
-                                    {
-                                        aiResponseUrl = Url.Action("ApplicantAIEvaluation", "AIScreener",
-                                        new { id = id },
-                                        Request.Scheme);
-
-                                    }
-                                    
-                                    string AIVerdict = aiAnalysisModel.verdict;
-                                    
-                                    if (!string.IsNullOrEmpty(AIVerdict) && AIVerdict.ToLower() == "yes")
-                                    {
-                                        if (aiEvaluation.IsEmployed && aiEvaluation.IsEmployed)
+                                        string AIVerdict = aiAnalysisModel.verdict;
+                                        if(!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower() == "yes" || AIVerdict.ToLower() == "no"))
                                         {
-                                            //call method to add Interviewer here
-                                            var obj = new InterviewerProfileVM();
-                                            obj.EmailId = aiEvaluation.EmailId;
-                                            obj.MobileNumber = aiEvaluation.Phone;
-                                            obj.ResumeLink = aiEvaluation.ResumeLink;
-                                            obj.CompanyName = aiEvaluation.CompanyName;
-                                            obj.isVerified = aiEvaluation.isVerified;
-                                            obj.IsEmployed = aiEvaluation.IsEmployed;
-                                            obj.DOB = aiEvaluation.DOB.HasValue ? aiEvaluation.DOB.Value : DateTime.Now;
-                                            obj.FirstName = aiEvaluation.FirstName;
-                                            obj.LastName = aiEvaluation.LastName;
-                                            obj.TargetIrfId = aiEvaluation.IRFId;
-                                            obj.AssessmentGroupId = aiEvaluation.AssessmentGroupId.ToString();
-                                            obj.PrimarySpecializationForAIVerdict = aiEvaluation.JDTiltle;
-                                            obj.Country = "";
-                                            obj.PrimarySpecializationForAcknowledgement = aiEvaluation.JDTiltle;
-                                            obj.AIResponse = aiEvaluation.OpenAIResponse;
-                                            obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
-                                            int userId;
-                                            string agList;
-                                            _interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId, true);
-                                        }
-                                        return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+                                            saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdictV2(id, aiAnalysisModel, loggedInUser);
+                                            if (saveOperationResult)
+                                            {
+                                                aiResponseUrl = Url.Action("ApplicantAIEvaluation", "AIScreener",
+                                                new { id = id },
+                                                Request.Scheme);
 
-                                    }
-                                    else if (!string.IsNullOrEmpty(AIVerdict) &&  AIVerdict.ToLower() == "no")
-                                    {
-                                        return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });
+                                            }
+                                            if (AIVerdict.ToLower() == "yes")
+                                            {
+                                                if (aiEvaluation.IsEmployed)
+                                                {
+                                                    //call method to add Interviewer here
+                                                    var obj = new InterviewerProfileVM();
+                                                    obj.EmailId = aiEvaluation.EmailId;
+                                                    obj.MobileNumber = aiEvaluation.Phone;
+                                                    obj.ResumeLink = aiEvaluation.ResumeLink;
+                                                    obj.CompanyName = aiEvaluation.CompanyName;
+                                                    obj.isVerified = aiEvaluation.isVerified;
+                                                    obj.IsEmployed = aiEvaluation.IsEmployed;
+                                                    obj.DOB = aiEvaluation.DOB.HasValue ? aiEvaluation.DOB.Value : DateTime.Now;
+                                                    obj.FirstName = aiEvaluation.FirstName;
+                                                    obj.LastName = aiEvaluation.LastName;
+                                                    obj.TargetIrfId = aiEvaluation.IRFId;
+                                                    obj.AssessmentGroupId = aiEvaluation.AssessmentGroupId.ToString();
+                                                    obj.PrimarySpecializationForAIVerdict = aiEvaluation.JDTiltle;
+                                                    obj.Country = "";
+                                                    obj.PrimarySpecializationForAcknowledgement = aiEvaluation.JDTiltle;
+                                                    obj.AIResponse = aiEvaluation.OpenAIResponse;
+                                                    obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
+                                                    int userId;
+                                                    string agList;
+                                                    _interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId, true);
+                                                }
+                                                return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+
+                                            }
+                                            else
+                                            {
+                                                return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "Failed to generate verdict. Please try again." });
+
+                                        }
 
                                     }
                                     else
                                     {
-                                        return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "API Failure! Verdict bypassed!" });
+                                        return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "Failed to generate verdict. Please try again." });
+
                                     }
 
                                 }
