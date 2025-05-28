@@ -50,6 +50,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
     [ConvertedFromDocResumeLink] [varchar](2000) null,
     [PrimarySpecializationForAcknowledgement] [varchar](250) null,
     [AcknowledgementStatus] [varchar](5) null,
+    [RedMarkerStatus] [int] NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -458,6 +459,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add AcknowledgementStatus varchar(5)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RedMarkerStatus')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add RedMarkerStatus int null
 END
 
 End
