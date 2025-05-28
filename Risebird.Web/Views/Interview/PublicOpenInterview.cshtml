@@ -314,11 +314,11 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("recommend")) {
+            if (msg.includes("Success")) {
                 swal.fire("Assigned Successfully", '@ViewBag.Message', "success");
             }
             else {
-                swal.fire("Failed", '@ViewBag.Message', "error");
+               swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
