@@ -4621,10 +4621,10 @@ namespace Risebird.Web.Controllers
                         {
                             model = model.Where(x => x.RedMarkerStatus == 2).ToList();
                         }
-                        //else if (type == "Removed")
-                        //{
-                        //    model = model.Where(x => x.IsActive != true).ToList();
-                        //}
+                        else if (type == "Removed")
+                        {
+                            model = model.Where(x => x.RedMarkerStatus == 3).ToList();
+                        }
                         else if (type == "Pending")
                         {
                             model = model.Where(x => x.RedMarkerStatus != 1 && x.RedMarkerStatus != 2).ToList();
@@ -4845,6 +4845,31 @@ namespace Risebird.Web.Controllers
                 return Json("Interviewer Moved Successfully.");
             }
             return Json("Fail to Move the Interviewer, Please try again.");
+        }
+        [HttpPost]
+        public async Task<JsonResult> InactivateInterviewer(int interviewerId, string comment)
+        {
+            try
+            {
+                string emailId = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                }
+
+                var result = await _interviewerService.InactivateInterviewer(interviewerId, emailId, comment);
+                if (result)
+                {
+                    return Json(new { success = true, message = "Interviewer inactivated successfully." });
+                }
+                return Json(new { success = false, message = "Failed to inactivate interviewer. Please try again." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while inactivating the interviewer." });
+            }
         }
     }
 }

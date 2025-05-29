@@ -138,5 +138,6 @@ namespace Risebird.Repository.Interface
         Task<InterviewerExistsInSystemAndOrSkillChannelDTO> CheckIfInterviewerExistsInSystemAndOrSkillChannel(string emailId, int irfId);
         Task<bool> UpdateApplicantById(InterviewerDirectApplicationVM model, string loggedInUser);
         Task<bool> UpdateApplicantSkillChannelById(InterviewerDirectApplicationVM model, string loggedInUser);
+        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment);
     }
 }

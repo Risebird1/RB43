@@ -1898,5 +1898,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment)
+        {
+            try
+            {
+                var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment);
+                return flagUpdateResult;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

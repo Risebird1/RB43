@@ -28,28 +28,28 @@
                         <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
-                        @* <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div> *@
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
                     }
                     else if (ViewBag.Type == "Reviewed")
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
-                        @* <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div> *@
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
                     }
-                    @*  else if (ViewBag.Type == "Removed")
+                    else if (ViewBag.Type == "Removed")
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
-                    } *@
+                    }
                     else
                     {
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Pending')"><strong>Pending</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('UnderReview')"><strong>Under Review</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Reviewed')"><strong>Reviewed</strong></div>
-                        @* <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div> *@
+                        <div class="feedback-tab" onclick="Changeurldetails('Removed')"><strong>Removed</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -153,6 +153,14 @@
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Move To Under Review" style="width:27px!important;height:27px!important;position:relative;top:6px;">
                                                                         <span onclick="javascript:CommentDetails('@item.UserId','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
                                                                             <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 33px;" />
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                                @if (ViewBag.Type != "Removed")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Remove Interviewer" style="width:27px!important;height:27px!important">
+                                                                        <span onclick="javascript:removeInterviewer('@item.UserId');" title="Remove Interviewer" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                         </span>
                                                                     </button>
                                                                 }
@@ -423,5 +431,70 @@
         html += '</tbody>';
         html += ' </table></div>';
         $("#divRedMarkerCommentHistory").empty().html(html);
+    }
+</script>
+
+<script>
+    function removeInterviewer(interviewerId) {
+        Swal.fire({
+            title: 'Remove Interviewer',
+            text: "Are you sure you want to remove this interviewer from the system?",
+            icon: 'warning',
+            html: `
+                <div class="form-group">
+                    <label for="remove-comment" class="text-left d-block mb-2">Please provide a reason for removal:</label>
+                    <textarea id="remove-comment" class="form-control" rows="3" style="margin-top:10px;"></textarea>
+                </div>`,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove',
+            cancelButtonText: 'Cancel',
+            preConfirm: () => {
+                const comment = document.getElementById('remove-comment').value;
+                if (!comment || comment.trim() === '') {
+                    Swal.showValidationMessage('Please enter a comment');
+                    return false;
+                }
+                return comment;
+            }
+        }).then((result) => {
+            debugger;
+            if (result.dismiss !== 'cancel') {
+                const comment = result.value;
+                $.ajax({
+                    url: '/Dashboard/InactivateInterviewer',
+                    type: 'POST',
+                    data: {
+                        interviewerId: interviewerId,
+                        comment: comment
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Removed!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while processing your request.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
     }
 </script>
