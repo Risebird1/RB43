@@ -120,5 +120,14 @@ namespace Risebird.Business.Interface
         Task<InterviewerExistsInSystemAndOrSkillChannelDTO> CheckIfInterviewerExistsInSystemAndOrSkillChannel(string emailId, int irfId);
         Task<bool> UpdateApplicantById(InterviewerDirectApplicationVM model, string loggedInUser);
         Task<bool> UpdateApplicantSkillChannelById(InterviewerDirectApplicationVM model, string loggedInUser);
+
+        /// <summary>
+        /// Inactivates an interviewer in the system and handles all related business rules
+        /// </summary>
+        /// <param name="interviewerId">The ID of the interviewer to inactivate</param>
+        /// <param name="modifiedBy">Email of the user performing the action</param>
+        /// <param name="comment">Reason for inactivating the interviewer</param>
+        /// <returns>True if successful, false otherwise</returns>
+        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment);
     }
 }
