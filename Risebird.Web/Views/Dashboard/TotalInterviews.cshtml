@@ -459,7 +459,6 @@
                 return comment;
             }
         }).then((result) => {
-            debugger;
             if (result.dismiss !== 'cancel') {
                 const comment = result.value;
                 $.ajax({

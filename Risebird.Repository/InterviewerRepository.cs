@@ -3992,8 +3992,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@comment", comment);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QuerySingleAsync<InterviewerExistsInSystemAndOrSkillChannelDTO>(con, "usp_CheckIfInterviewerExistsInSystemAndOrSkillChannel", dynamicParameters,
-                       commandType: CommandType.StoredProcedure);
+                    await SqlMapper.QueryAsync(con, "usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
