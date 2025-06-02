@@ -31,7 +31,7 @@ BEGIN
         -- Update InterviewerProfile flags
         UPDATE ip
         SET ModifiedBy = @ModifiedBy,
-            ModifiedOn = GETDATE()
+            ModifiedOn = @modifiedOn
         FROM InterviewerProfile ip
         WHERE ip.UserId = @InterviewerId
 
@@ -39,7 +39,7 @@ BEGIN
         UPDATE InterviewMeetings 
         SET Interviewer = NULL,
             sModifiedBy = @ModifiedBy,
-            dtModifiedOn = GETDATE()
+            dtModifiedOn = @modifiedOn
         WHERE 
             Interviewer = @EmailId
             AND interviewDate > DATEADD(MINUTE, 330, GETDATE())
