@@ -39,8 +39,13 @@ namespace Risebird.Entities.ViewModel
         public string CompanyName { get; set; }
         public bool isVerified { get; set; }
         public bool IsEmployed { get; set; }
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        [DisplayName("Name")]
+
+        public string NameAsMentionedByApplicant { get; set; }
         public DateTime? DOB { get; set; }
         public string EVGeneratedBy { get; set; }
         public DateTime EVGeneratedAt { get; set; }
@@ -59,6 +64,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIScreeningAttempted { get; set; } 
         public string ModifiedBy { get; set; } 
         public DateTime? ModifiedAt { get; set; } 
+        public bool IsQueryPerformedSuccessfully { get; set; } 
 
     }
 }
