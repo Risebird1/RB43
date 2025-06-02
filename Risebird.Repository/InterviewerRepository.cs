@@ -2253,7 +2253,14 @@ namespace Risebird.Repository
                     parameters.Add("@agId", agId);
                     var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
                            commandType: CommandType.StoredProcedure);
-                    return (List<CommonInterviewDetailsVM>)results;
+                    if (results != null && results.Count() > 0)
+                    {
+                        return (List<CommonInterviewDetailsVM>)results;
+
+                    }
+                    else
+                        return null;
+                        
                 }
             }
             catch (SqlException e)
