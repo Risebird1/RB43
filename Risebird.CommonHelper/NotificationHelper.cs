@@ -3149,7 +3149,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInerviewerMeetingReminder(Mail model, string url)
+        public async Task<string> SendInerviewerMeetingReminder(Mail model, string url,string uniqueId)
         {
             try
             {
@@ -3170,7 +3170,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                     }
                 }
-                object[] parameters = new object[] { url };
+                object[] parameters = new object[] { url, uniqueId };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;

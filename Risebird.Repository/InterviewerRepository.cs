@@ -4081,7 +4081,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-
+        }
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewerId", interviewerId);
+                dynamicParameters.Add("@modifiedBy", modifiedBy);
+                dynamicParameters.Add("@modifiedOn", DateTime.Now);
+                dynamicParameters.Add("@comment", comment);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<InterviewerExistsInSystemAndOrSkillChannelDTO>(con, "usp_CheckIfInterviewerExistsInSystemAndOrSkillChannel", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 

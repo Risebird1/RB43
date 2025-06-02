@@ -65,6 +65,8 @@ namespace Risebird.Entities.ViewModel
         public int SkillChannelFutureAssignedInterview { get; set; }
         public int TotalDeficitMeetings { get; set; }
         public string VideoKYC { get; set; }
+        public int RedMarkerStatus { get; set; }
+        public string RedMarkerReviewComment { get; set; }
     }
     public class RedMarkerDetailsVM
     {
