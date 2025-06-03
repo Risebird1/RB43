@@ -108,9 +108,11 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<InterviewerDirectApplicationVM> GetApplicantById(int applicantId);
         Task<bool> SaveApplicantInterviewerAIVerdict(int id, string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
-        Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
+        Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink = null);
         Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id);
         Task<bool> UpdateApplicantsEmploymentDetails(InterviewerDirectApplicationVM obj, string loggedInUser);
+
+        Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj);
         Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> UpdateInterviewerResume(int userId, string resumeLink, string loggedInUser);
         Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser);
@@ -129,5 +131,6 @@ namespace Risebird.Business.Interface
         /// <param name="comment">Reason for inactivating the interviewer</param>
         /// <returns>True if successful, false otherwise</returns>
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment);
+        Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
     }
 }

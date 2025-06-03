@@ -1775,11 +1775,23 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink =null)
         {
             try
             {
-                return await _interviewerRepository.SaveApplicantInterviewerAIVerdictV2(id, model, loggedInUser);
+                return await _interviewerRepository.SaveApplicantInterviewerAIVerdictV2(id, model, loggedInUser, resumeLink);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> SaveApplicantErrorMessage(int id, string errorMessage)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveApplicantErrorMessage(id, errorMessage);
             }
             catch (Exception ex)
             {
@@ -1811,6 +1823,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj)
+        {
+            try
+            {
+                return await _interviewerRepository.InsertApplicantsRenewed(obj);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

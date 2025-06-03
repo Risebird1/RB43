@@ -897,48 +897,7 @@
     //    return false;
     //}
 </script>
-<script>
-    @* function VerifyEVandNext() {
-        var mobilenumber = $("#txt_evmobile").val();
-        var candidateEmailid = $("#txt_evEmailId").val();
-        if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
-            $.ajax({
-                url: '/Aadhaar/EvVerification',
-                type: 'POST',
-                async: false,
-                data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
-                success: function (result) {
-                    if (result.message == null) {
-                        document.getElementById("divEVverification").style.display = "none";
-                        document.getElementById("divEVverified").style.display = "block";
-                        $("#txt_MobileNumber").val(result.mobileNumber);
-                        $("#txt_EmailId").val(result.candidateEmail);
-                        $("#CompanyName").val(result.companyName);
-                        $("#isVerified").val(result.isVerified);
-                        $("#IsEmployed").val(result.isemployed);
-                        var str = result.name;
-                        if (str != null) {
-                            var index = str.indexOf(" ");
-                            if (index > 0) {
-                                $("#txt_FirstName").val(str.slice(0, index));
-                                $("#txt_LastName").val(str.slice(index + 1));
-                            } else {
-                                $("#FirstName").val(result.name);
-                            }
-                        }
-                        $("#DOB").val(result.dob);
-                    } else {
-                        swal.fire(result.message);
-                    }
-                }
-            });
 
-        } else {
-            swal.fire("Please enter Mobile Number and Email Address.");
-        }
-
-    } *@
-</script>
 <script>
     var clickverification = 0;
     function checkEmailidExist() {
