@@ -7478,7 +7478,7 @@ input.theatre-btn:focus {
     .sidebar-mini .main-panel {
         width: calc(100% - 80px);
     }
-
+      
     .sidebar-mini .sidebar {
         display: block;
         z-index: 1030;

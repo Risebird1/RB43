@@ -7,166 +7,313 @@
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 }
 
-
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
+<style>
+    .swal2-popup .swal2-title {
+      font-size: 20px !important;
+      line-height: 25px;
+      text-transform: none !important;
+    }
+</style>
 
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-
-
-    <div class="mt50">
-    </div>
-    <div class="content interviewerprofile client">
+<div class="main-panel applyForm" id="main-panel">
+    <div class="mt50"></div>
+    <div class="content interviewerprofile client" style="padding-bottom:0px;">
         <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
-
+            <div class="col-md-11 center-block">
+                <div class="mdc-card card bl-bg" style="margin-bottom:0px;">
                     <div class="mdc-card-wrapper__text-section interviewer">
-                        <div id="divEVverification">
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="dashboard-view" style="position:relative;top:-10px;">
-                                        <span class="dashboard-iconcolor" style="background-image:none!;width:30px!important;height:30px!important"><i class="fa fa-home" aria-hidden="true" style="font-size: 17px;color: #fff;position: relative;top: -14px;left: -6px;"></i></span>
-                                        
-                                    </div>
-                                </div>
+                        <!-- Step wizard -->
+                        <div class="step-wizard">
+                            <div class="step-wizard-item active" data-step="1">
+                                <div class="step-number">1</div>
+                                <div class="step-title">Personal Info & Verification</div>
                             </div>
+                            <div class="step-wizard-item" data-step="2">
+                                <div class="step-number">2</div>
+                                <div class="step-title">Resume Upload</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: Personal Information & Verification -->
+                        <div class="form-step active" id="step1">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div style="position:relative;top:-10px;">
+                                        <span class="dashboard-iconcolor" style="background-image:none!;width:30px!important;height:30px!important;background-image: none!important;">
+                                            <i class="fa fa-user" aria-hidden="true" style="font-size: 17px;color: #fff;position: relative;top: -5px;left: -3px;"></i>
+                                        </span>
+                                        <h4>Personal Information</h4>
+                                    </div>
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.NameAsMentionedByApplicant, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                            @Html.LabelFor(model => model.NameAsMentionedByApplicant, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 10px" })<span class="red">*</span>
                                         </div>
                                         @Html.EditorFor(model => model.NameAsMentionedByApplicant, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span> <span style="color:#e02929;">(Please enter 10 digit mobile number without space, country code or special characters)</span>
+                                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 10px" })<span class="red" style="padding-right:5px;">*</span>
+                                            <span style="color:#e02929;font-size:12.9px;">Please enter your 10-digit mobile number linked to your UAN (no spaces, country code, or special characters). This is for verification only and will remain confidential.</span>
                                         </div>
                                         @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlength = "10" } })
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 10px" })<span class="red" style="padding-right:10px;">*</span>
+                                            <span style="color:#e02929;font-size:12.9px;">Please enter your personal email id associated with your UAN. This is for verification only and will remain confidential</span>
                                         </div>
                                         @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 15px" })<span class="red">*</span>
+                                            @Html.LabelFor(model => model.ReferredBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px 5px 0px 10px" })<span class="red">*</span>
                                         </div>
                                         @Html.EditorFor(model => model.ReferredBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                     </div>
+
+                                    <!-- Verification Button -->
+                                    <button type="button" id="verifyButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="checkEmailidExist()">Verify Details</button>
+
+                                    <!-- Verification Status -->
+                                    <div class="verification-status" id="verificationStatus" style="display: none;"></div>
                                 </div>
                             </div>
-                            <div class="card-footer ">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        
-                                        <button type="button" value="Verify" onclick="checkEmailidExist()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Verify</button>
+                        </div>
+
+                        <!-- Step 2: Resume Upload -->
+                        <div class="form-step" id="step2">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div style="position:relative;top:-10px;">
+                                        <span class="dashboard-iconcolor" style="width:30px!important;height:30px!important;background-image: none!important;">
+                                            <i class="fa fa-upload" aria-hidden="true" style="font-size: 17px;color: #fff;position: relative;top: -7px;left: -5px;"></i>
+                                        </span>
+                                        <h4>Resume Upload</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="desp-label control-label" style="font-weight: 600!important;font-size: 15px!important;padding-left:30px;">Upload Resume (.pdf only)</span>
+                                        <div class="" id="uploadDiv">
+                                            @*                                             @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf", @style = "margin: 0px 0px 10px 0px !important;" })
+                                            *@
+                                            <div class="drop-box">
+                                                <header>
+                                                    <h4>Select File here</h4>
+                                                </header>
+                                                <p>Files Supported: PDF</p>
+
+                                                @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf", @id = "ResumeFile", @style = "visibility: hidden; position: absolute;" })
+                                                <label for="ResumeFile" class="drop-btn text-light" role="button">
+                                                    Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span>
+                                                </label>
+                                                 <div id="files-area">
+                                                    <span id="filesList">
+                                                        <span id="files-names"></span>
+                                                    </span>
+                                                     </div>
+                                               
+                                            </div>
+
+
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="step-buttons">
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="prevStep(2)">Previous</button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GenerateAIVerdict()" id="id_btn_generateAIVerdict">Submit</button>
                             </div>
                         </div>
 
                         @Html.HiddenFor(Model => Model.AssessmentGroup)
                         @Html.HiddenFor(Model => Model.IRFId)
                         @Html.HiddenFor(Model => Model.id)
-
-                        <div id="divAIVerdict" style="display:none">
-                            
-                            <div class="row">
-                                <div class="form-group" style="margin-top: -10px;">
-                                    <span class="desp-label control-label" style="font-weight: 600!important;font-size: 15px!important; position: relative;  top: 6px;  line-height: 30px;">
-                                        <span class="circle">
-                                            <i class="fa fa-upload" aria-hidden="true" style="position: relative;top: -8px;right: 1px;"></i>
-                                        </span>    Upload Resume (.pdf only)
-                                    </span>
-                                    
-                                </div>
-
-                                <div class="" id="uploadDiv">
-                                    @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".pdf", @style = "margin: 0px 0px 10px 0px !important;" })
-                                </div>
-                            </div>
-                            <div class="card-footer ">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        <button type="button" value="generateAIVerdict" id="id_btn_generateAIVerdict" onclick="GenerateAIVerdict()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Submit</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            @* @Html.HiddenFor(Model => Model.EmailId) *@
-
-                            @* <div class="row">
-                                <a id="id_aiResponseUrl" href="#" target="_blank" style="display:none">Click here to review AI Verdict</a>
-                            </div> *@
-                        </div>
-                        @* @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" }) *@
-                        
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
-
 </div>
 
+<!-- Why Join Risebird Section -->
+<div class="main-panel applyForm mt-5">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <h2 class="text-center mb-4" style="color: #2c3e50; font-weight: 600;">Why Join Risebird?</h2>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-lock" style="color: #3498db;"></i> Confidential & Secure</h4>
+                                    <p>Your profile is never visible to clients, never linked to your employer, and never shown to candidates.</p>
+                                </div>
+
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-clock-o" style="color: #e67e22;"></i> Fully Flexible</h4>
+                                    <p>Conduct interviews between 6 AM and 12 AM — weekdays and weekends. No fixed hours or obligations.</p>
+                                </div>
+
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-money" style="color: #27ae60;"></i> Transparent Compensation</h4>
+                                    <ul class="feature-list">
+                                        <li>View exact payment before accepting any interview</li>
+                                        <li>Fixed payment dates</li>
+                                        <li>Only 10% TDS deducted — certificates provided</li>
+                                    </ul>
+                                </div>
+
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-home" style="color: #9b59b6;"></i> 100% Remote</h4>
+                                    <p>Conduct all interviews online. We never request on-site participation.</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-line-chart" style="color: #e74c3c;"></i> Career Visibility</h4>
+                                    <p>Exceptional interviewers often receive freelance or full-time job offers via the platform — shared with prior consent.</p>
+                                </div>
+
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-cogs" style="color: #1abc9c;"></i> Simple Onboarding</h4>
+                                    <p>Just a 15-minute welcome call and a short 5–10 min portal video to get started.</p>
+                                </div>
+
+                                <div class="feature-box mb-4">
+                                    <h4><i class="fa fa-refresh" style="color: #f1c40f;"></i> Ongoing ROI</h4>
+                                    <p>Continuous income, on your schedule, with zero selling or sourcing.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="highlights-section mt-4 p-4" style="background: #f8f9fa; border-radius: 10px;">
+                            <h3 class="text-center mb-4" style="color: #2c3e50;">🌟 Risebird Highlights</h3>
+                            <div class="row text-center">
+                                <div class="col-md-6 col-lg-3 mb-3">
+                                    <div class="highlight-box">
+                                        <h4 class="highlight-number">30,000+</h4>
+                                        <p>Interviewers</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3 mb-3">
+                                    <div class="highlight-box">
+                                        <h4 class="highlight-number">5 Lakh+</h4>
+                                        <p>Interviews Conducted</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3 mb-3">
+                                    <div class="highlight-box">
+                                        <h4 class="highlight-number">₹25+ Crores</h4>
+                                        <p>Paid to Interviewers</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3 mb-3">
+                                    <div class="highlight-box">
+                                        <h4 class="highlight-number">2,600+</h4>
+                                        <p>Companies</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <p class="trust-text"><i class="fa fa-star" style="color: #f1c40f;"></i> Trusted by Fortune 500 Clients</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="welcome-text" style="font-size: 1.2em; color: #2c3e50;">We look forward to welcoming you to our community of interview experts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    
-    // var emailidvalidation = "";
-    // function checkEmailid() {
-    //     $.ajax({
-    //         url: '/Interviewer/EmailIdVilidation',
-    //         type: 'POST',
-    //         async: false,
-    //         data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
-    //         success: function (data) {
-    //             debugger;
-    //             emailidvalidation = data;
-    //             if (data != "Not") {
-    //                 $("#err_txt_EmailId").text(data);
-    //             } else {
-    //                 emailidvalidation = "";
-    //             }
-    //         }
-    //     });
-    // }
+    // Multi-step form handling
+    let currentStep = 1;
+    const totalSteps = 2;
 
-    
-    // function RadioChanged(val) {
-    //     if (val == 'Upload') {
-    //         document.getElementById("uploadDiv").style.display = "block";
-    //         document.getElementById("linkDiv").style.display = "none";
-    //         document.getElementById("ResumeLink").value = '';
+    function updateStepWizard(step) {
+        // Remove active class from all steps
+        document.querySelectorAll('.step-wizard-item').forEach(item => {
+            item.classList.remove('active');
+            item.classList.remove('completed');
+        });
 
-    //     }
-    //     else {
-    //         document.getElementById("uploadDiv").style.display = "none";
-    //         document.getElementById("linkDiv").style.display = "block";
-    //         document.getElementById("File").value = '';
+        // Add appropriate classes
+        for (let i = 1; i <= totalSteps; i++) {
+            const stepItem = document.querySelector(`.step-wizard-item[data-step="${i}"]`);
+            if (i < step) {
+                stepItem.classList.add('completed');
+            } else if (i === step) {
+                stepItem.classList.add('active');
+            }
+        }
+    }
 
-    //     }
+    function showStep(step) {
+        // Hide all steps
+        document.querySelectorAll('.form-step').forEach(stepElement => {
+            stepElement.classList.remove('active');
+        });
 
-    // }
-   
-</script>
+        // Show current step
+        document.getElementById(`step${step}`).classList.add('active');
+        updateStepWizard(step);
+    }
 
-<script>
+    function validateStep(step) {
+        switch(step) {
+            case 1:
+                const name = document.getElementById('NameAsMentionedByApplicant').value;
+                const phone = document.getElementById('Phone').value;
+                const email = document.getElementById('EmailId').value;
+                const referredBy = document.getElementById('ReferredBy').value;
+
+                if (!name || !phone || !email || !referredBy) {
+                    swal.fire('Please fill in all required fields.');
+                    return false;
+                }
+                return validateForm(); // Use existing validation
+            case 2:
+                const resumeFile = document.getElementById('ResumeFile').files[0];
+                if (!resumeFile) {
+                    swal.fire('Please upload your resume.');
+                    return false;
+                }
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    function prevStep(currentStepNum) {
+        currentStep = currentStepNum - 1;
+        showStep(currentStep);
+    }
+
+    // Modified checkEmailidExist function
     var clickverification = 0;
     var emailId;
     function checkEmailidExist() {
-        debugger;
         if (validateForm()) {
             var interviewer = $("#EmailId").val().trim();
             if (clickverification == 0) {
                 clickverification = 1;
+
+                // Show loading state
+                const verifyButton = document.getElementById('verifyButton');
+                const verificationStatus = document.getElementById('verificationStatus');
+                verifyButton.disabled = true;
+                verifyButton.innerHTML = 'Verifying...';
+                verificationStatus.style.display = 'none';
+
                 $.ajax({
                     url: '/Interviewer/GetInterviwerExists',
                     type: 'POST',
@@ -174,44 +321,51 @@
                     data: { 'interviewer': interviewer },
                     success: function (result) {
                         if (result) {
-                            swal.fire("Not Applicable!");//is already an internal panel. External links are not applicable to such panels. Should be given internal link.
+                            showVerificationError("Not Applicable!");
                             clickverification = 0;
-                        }
-                        else {
-                            debugger;
+                        } else {
                             var mobilenumber = $("#Phone").val();
                             emailId = $("#EmailId").val();
                             var nameAsMentionedByApplicant = $("#NameAsMentionedByApplicant").val();
                             var isApplicantRenewedVar = true;
                             var irfId = $("#IRFId").val();
                             var referredBy = $("#ReferredBy").val();
+
                             if (mobilenumber.trim() != '' && emailId.trim() != '') {
                                 if (mobilenumber.trim().length == 10) {
                                     $.ajax({
                                         url: '/Aadhaar/EvVerification',
                                         type: 'POST',
-                                        data: { mobilenumber: mobilenumber, candidateemail: emailId, isApplicantRenewed : isApplicantRenewedVar, nameAsMentionedByApplicant : nameAsMentionedByApplicant, irfId : irfId, referredBy :referredBy },
+                                        data: {
+                                            mobilenumber: mobilenumber,
+                                            candidateemail: emailId,
+                                            isApplicantRenewed: isApplicantRenewedVar,
+                                            nameAsMentionedByApplicant: nameAsMentionedByApplicant,
+                                            irfId: irfId,
+                                            referredBy: referredBy
+                                        },
                                         success: function (result) {
-                                            debugger;
                                             if (result.message == null) {
-                                                document.getElementById("divEVverification").style.display = "none";
-                                                document.getElementById("divAIVerdict").style.display = "block";
                                                 $("#id").val(result.id);
                                                 $("#AssessmentGroup").val(result.assessmentGroup);
-                                                
+                                                showVerificationSuccess();
+                                                // Move to next step after short delay
+                                                setTimeout(() => {
+                                                    currentStep = 2;
+                                                    showStep(2);
+                                                }, 1000);
                                             } else {
-                                                swal.fire(result.message);
+                                                showVerificationError(result.message);
                                                 clickverification = 0;
                                             }
                                         }
                                     });
                                 } else {
-                                    swal.fire("Please enter a valid 10 digit Mobile Number.");
+                                    showVerificationError("Please enter a valid 10 digit Mobile Number.");
                                     clickverification = 0;
                                 }
-
                             } else {
-                                swal.fire("Please enter a Mobile Number and Email Address.");
+                                showVerificationError("Please enter a Mobile Number and Email Address.");
                                 clickverification = 0;
                             }
                         }
@@ -219,54 +373,69 @@
                 });
             }
         }
-        else {
-            // Prevent form submission if validation fails
-            alert("Validation failed.");
-        }
     }
 
-    // Function to validate phone number and email
+    function showVerificationSuccess() {
+        const verifyButton = document.getElementById('verifyButton');
+        const verificationStatus = document.getElementById('verificationStatus');
+
+        verifyButton.disabled = true;
+        verifyButton.innerHTML = 'Verified ✓';
+        verifyButton.style.backgroundColor = '#28a745';
+
+        verificationStatus.className = 'verification-status success';
+        verificationStatus.innerHTML = 'Verification successful! Proceeding to resume upload...';
+        verificationStatus.style.display = 'block';
+    }
+
+    function showVerificationError(message) {
+        const verifyButton = document.getElementById('verifyButton');
+        const verificationStatus = document.getElementById('verificationStatus');
+
+        verifyButton.disabled = false;
+        verifyButton.innerHTML = 'Verify Details';
+        verifyButton.style.backgroundColor = '';
+
+        verificationStatus.className = 'verification-status error';
+        verificationStatus.innerHTML = message;
+        verificationStatus.style.display = 'block';
+    }
+
+    // Existing validation function
     function validateForm() {
         const phoneNumber = document.getElementById("Phone").value;
         const emailId = document.getElementById("EmailId").value;
-
-        // Regular expression for 10-digit phone number without spaces or special characters
         const phoneRegex = /^[0-9]{10}$/;
-        // Regular expression for valid email format
         const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
-
         let isValid = true;
 
-        // Validate phone number
         if (!phoneRegex.test(phoneNumber)) {
-            alert("Please enter a valid 10-digit mobile number without spaces, country code, or special characters.");
+            swal.fire("Please enter a valid 10-digit mobile number without spaces, country code, or special characters.");
             isValid = false;
         }
 
-        // Validate email
         if (!emailRegex.test(emailId)) {
-            alert("Please enter a valid email address.");
+            swal.fire("Please enter a valid email address.");
             isValid = false;
         }
 
         return isValid;
     }
-</script>
 
-<script>
+    // Modified GenerateAIVerdict function
     function GenerateAIVerdict() {
-        debugger;
+        if (!validateStep(2)) {
+            return;
+        }
+
         var applicantId = $("#id").val();
         var buttonAI = document.getElementById("id_btn_generateAIVerdict");
 
         buttonAI.disabled = true;
-        buttonAI.innerHTML = "Processing...may take upto 30s! Please wait!";
-        // Change the button text to "Processing...may take upto 30s! Please wait!"
-        alert('Application is under process...may take upto 30s! Please wait!');
-        //button.innerHTML = "Processing...may take upto 30s! Please wait!";
+        buttonAI.innerHTML = "Processing...";
+        swal.fire('Application is under process...may take upto 30s! Please wait!');
 
         var resume_file = $("#ResumeFile")[0].files[0];
-
         var formdata = new FormData();
         formdata.append('resume_file', resume_file);
         formdata.append('id', applicantId);
@@ -274,48 +443,72 @@
         $.ajax({
             type: "POST",
             url: "/AIScreener/ApplicantAIScreeningRenewed",
-            async : true,
+            async: true,
             contentType: false,
             processData: false,
             data: formdata,
             success: function (data) {
-                debugger;
                 if (data != null && (data.errorMessage == '' || data.errorMessage.includes('bypassed'))) {
                     if (data.isfavourableVerdict) {
-                        // document.getElementById("id_aiVerdict_" + id).innerHTML = 'Yes';
-                        // document.getElementById("id_aiScore_" + id).innerHTML = data.aiAnalysisScore;
-
-                        // document.getElementById('id_aiUrl_' + id).style.display = "block";
                         buttonAI.innerHTML = "Processed!";
-
                         swal.fire("Processed! An acknowledgement mail has been sent. Kindly confirm.");
-                        //buttonAI.disabled = false;
-                    }
-                    else if (!data.isfavourableVerdict && data.errorMessage.includes('bypassed')) {
-
+                    } else if (!data.isfavourableVerdict && data.errorMessage.includes('bypassed')) {
                         buttonAI.innerHTML = "Error";
                         swal.fire("Error processing. Please try again later.");
-                        
-                    }
-                    else {
-
+                    } else {
                         buttonAI.innerHTML = "Processed";
                         swal.fire("Processed. Unfortunately, your profile does not match the current requirement. Thank you for applying!");
-
                     }
-                }
-                else if (data != null && data.errorMessage != '') {
+                } else if (data != null && data.errorMessage != '') {
                     buttonAI.innerHTML = "Error";
                     swal.fire(data.errorMessage);
-                    //buttonAI.disabled = false;
-                }
-                else {
+                } else {
                     buttonAI.innerHTML = "Error";
                     swal.fire("Error processing. Please try again later.");
-                    //buttonAI.disabled = false;
                 }
-
             }
         });
     }
+</script>
+
+
+
+
+
+<script>
+    const dt = new DataTransfer();
+
+    $("#ResumeFile").on('change', function (e) {
+        // Clear previous files and UI
+        dt.clearData();
+        $("#filesList > #files-names").empty();
+
+        // Get the first file (ignore others)
+        const file = this.files[0];
+        if (!file) return;
+          // Validate file type
+        if (file.type !== 'application/pdf') {
+            swal.fire('Please upload a PDF file only.');
+            this.value = '';
+            return;
+        }
+        // Add file to DataTransfer object
+        dt.items.add(file);
+        this.files = dt.files;
+
+        // Create display block
+        let fileBloc = $('<span/>', { class: 'file-block' }),
+            fileName = $('<span/>', { class: 'name', text: file.name });
+        fileBloc.append('<span class="file-delete"><span>+</span></span>')
+            .append(fileName);
+        $("#filesList > #files-names").append(fileBloc);
+
+        // Add delete functionality
+        $('span.file-delete').click(function () {
+            // Remove file display
+            $(this).parent().remove();
+            dt.clearData();
+            document.getElementById('ResumeFile').value = '';
+        });
+    });
 </script>
