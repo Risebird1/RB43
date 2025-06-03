@@ -835,6 +835,119 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationForm(string id, string upt = null)//, int irf
+        {
+            //check link expiry befire hitting db
+
+            try
+            {
+                int resultId;
+                int? irfId = new int?();
+                // Try to convert the string to an integer
+                bool success = int.TryParse(id, out resultId);
+                string decodedEncryptedId = string.Empty;
+                // Check if the conversion was successful
+                if (success)
+                {
+                    irfId = resultId;
+                }
+                else
+                {
+                    decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                    irfId = Convert.ToInt32((await _encryptionHelper.DecryptStringValue(decodedEncryptedId)));
+
+                }
+
+
+                if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
+                {
+
+
+                    InterviewerDirectApplicationVM model = new InterviewerDirectApplicationVM();
+                    model.IRFId = irfId.Value;
+                    model.EncryptedAssessmentGroupId = decodedEncryptedId;
+                    
+                    //if (TempData["MessageApplicantUpdate"] != null)
+                    //{
+                    //    ViewBag.Message = TempData["MessageApplicantUpdate"].ToString();
+                    //    TempData.Remove("MessageApplicantUpdate");
+
+                    //}
+                    return View("ApplyRenewed", model);
+
+                }
+                else
+                {
+                    return Json("Bad Request!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Something's wrong. Please try again later.");
+            }
+
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> ApplyRenewed(InterviewerDirectApplicationVM model)//, int irf
+        //{
+        //    try
+        //    {
+
+        //        if (model.ResumeFile != null)
+        //        {
+        //            string uploadedFileURL = string.Empty;
+        //            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+        //            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        //                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+        //            {
+        //                var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+
+        //                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+        //                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+        //                var blob = containerRef.GetBlockBlobReference(resumeFileName);
+        //                uploadedFileURL = blob.Uri.ToString();
+        //                model.ResumeLink = uploadedFileURL;
+        //            }
+
+
+        //        }
+
+        //        int? irfId = model.IRFId;
+        //        //var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
+        //        //var irfId = model.EncryptedIrfId;
+        //        if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
+        //        {
+        //            model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
+        //            var result = await _interviewerService.SubmitInterviewerApplication(model);//, irf
+        //            if (result)
+        //            {
+        //                return Json("Your application has been submitted successfully!");
+        //            }
+        //            else
+        //            {
+        //                return Json("Submission failed!");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return Json("Failed!");
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json("Something's wrong. Please try again later.");
+        //    }
+
+        //}
+        
+        
         [HttpGet]
         private async Task GetAllSelectList(InterviewerProfileVM model)
         {
@@ -4572,51 +4685,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                //if(!ModelState.IsValid)
-                //{
-                //    return View(model);
-                //}
-                //else
-                //{
-                //    if (model.ResumeFile != null)
-                //    {
-                //        string uploadedFileURL= string.Empty;
-                //        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
-                //        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                //                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                //        {
-                //            var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
-
-                //            await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
-                //            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                //            var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                //            uploadedFileURL = blob.Uri.ToString();
-                //            model.ResumeLink = uploadedFileURL;
-                //        }
-
-
-                //    }
-                //    var irfId = await _encryptionHelper.DecryptInteger(model.EncryptedIrfId);
-                //    //var irfId = model.EncryptedIrfId;
-                //    if (irfId.HasValue && irfId.Value > 0)//!string.IsNullOrEmpty(irfId)
-                //    {
-                //        model.IRFId = Convert.ToInt32(irfId);//irfId.Value;
-                //        var result = await _interviewerService.SubmitInterviewerApplication(model);//, irf
-                //        if (result)
-                //        {
-                //            return Json("Your application has been submitted successfully!");
-                //        }
-                //        else
-                //        {
-                //            return Json("Submission failed!");
-                //        }
-                //    }
-                //    else
-                //    {
-                //        return Json("Failed!");
-                //    }
-                //}
-
+                
                 if (model.ResumeFile != null)
                 {
                     string uploadedFileURL = string.Empty;

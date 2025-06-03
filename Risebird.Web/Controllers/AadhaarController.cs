@@ -765,14 +765,18 @@ namespace Risebird.Web.Controllers
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
         [HttpPost]
-        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber, int? applicantId)
+        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber, int? applicantId, bool isApplicantRenewed = false, string nameAsMentionedByApplicant = null, int? irfId = null, string referredBy = null)
         {
-            string loggedInUser;
-            loggedInUser = HttpContext.Session.GetString("email")?.Trim();
-            if (!string.IsNullOrEmpty(loggedInUser))
+            string loggedInUser = string.Empty;
+            if(!isApplicantRenewed)
             {
-                loggedInUser = loggedInUser.Replace("\"", "");
+                loggedInUser = HttpContext.Session.GetString("email")?.Trim();
+                if (!string.IsNullOrEmpty(loggedInUser))
+                {
+                    loggedInUser = loggedInUser.Replace("\"", "");
+                }
             }
+            
             var employementdetails = new EmploymentDetailsDM();
             if (!string.IsNullOrWhiteSpace(mobilenumber))
             {
@@ -835,7 +839,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (!string.IsNullOrWhiteSpace(employementdetails.message))
                     {
-                        employementdetails.message = "No employement records are found, so we don't process further.";
+                        employementdetails.message = "Employment records not found.";
                     }
                     else if (string.IsNullOrEmpty(employementdetails.CandidateEmail) || employementdetails.CandidateEmail.ToLower() != candidateemail.ToLower())
                     {
@@ -846,7 +850,7 @@ namespace Risebird.Web.Controllers
                         var companystatus = await _aadhaarService.CheckCompanyStatus(employementdetails.CompanyName);
                         if (companystatus != null)
                         {
-                            employementdetails.message = "For this employment Company is in black list in our system.";
+                            employementdetails.message = "Company in blacklist!";
                         }
                     }
                 }
@@ -855,8 +859,13 @@ namespace Risebird.Web.Controllers
             {
                 employementdetails.message = "Fail to verify,please check the details and try again.";
             }
+            if(employementdetails != null  && string.IsNullOrEmpty(employementdetails.message) && !employementdetails.Isemployed)
+            {
+                employementdetails.message = "Employment records not found.";
+
+            }
             employementdetails.CandidateEmail = employementdetails.CandidateEmail?.Trim();
-            if (applicantId.HasValue && employementdetails != null && employementdetails.message == null)
+            if ((applicantId.HasValue || (isApplicantRenewed && irfId.HasValue)) && employementdetails != null && employementdetails.message == null)
             {
                 var model = new InterviewerDirectApplicationVM();
                 //update verification status in interviewer direct application table
@@ -880,8 +889,24 @@ namespace Risebird.Web.Controllers
                 model.IsEmployed = employementdetails.Isemployed;
                 model.CompanyName = employementdetails.CompanyName;
                 model.DOB = employementdetails.DOB;
-                model.id = applicantId.Value;
-                await _interviewerService.UpdateApplicantsEmploymentDetails(model, loggedInUser);
+                if(applicantId.HasValue)
+                {
+                    model.id = applicantId.Value;
+
+                    await _interviewerService.UpdateApplicantsEmploymentDetails(model, loggedInUser);
+
+                }
+                else if(isApplicantRenewed && irfId.HasValue && irfId.Value > 0)
+                {
+                    model.EmailId = candidateemail;
+                    model.Phone = mobilenumber;
+                    model.ReferredBy = referredBy;
+                    model.IRFId = irfId.Value;
+                    model.NameAsMentionedByApplicant = nameAsMentionedByApplicant;
+                    model.IsEmployed = true;
+                    model = await _interviewerService.InsertApplicantsRenewed(model);
+                    return Json(new { id = model.id, assessmentGroup = model.AssessmentGroup, message = employementdetails.message });
+                }
             }
             return Json(employementdetails);
         }
