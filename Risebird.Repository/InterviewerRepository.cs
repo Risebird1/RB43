@@ -2253,7 +2253,14 @@ namespace Risebird.Repository
                     parameters.Add("@agId", agId);
                     var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
                            commandType: CommandType.StoredProcedure);
-                    return (List<CommonInterviewDetailsVM>)results;
+                    if (results != null && results.Count() > 0)
+                    {
+                        return (List<CommonInterviewDetailsVM>)results;
+
+                    }
+                    else
+                        return null;
+
                 }
             }
             catch (SqlException e)
@@ -3451,6 +3458,37 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        //public async Task<bool> SaveApplicantAIVerdict(InterviewerDirectApplicationVM model)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var parameters = new DynamicParameters();
+        //            parameters.Add("@id", model.id);
+        //            parameters.Add("@PerformedBy", model.EmailId);
+        //            parameters.Add("@timeNow", DateTime.Now);
+        //            parameters.Add("@ResumeLink", model.ResumeLink);
+        //            parameters.Add("@OpenAIResponse", model.OpenAIResponse);
+        //            parameters.Add("@AIAnalysisScore", model.AIAnalysisScore);
+        //            parameters.Add("@AIVerdict", model.AIVerdict);
+        //            parameters.Add("@result", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 5215585);
+
+        //            var result = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerPreOnboardingVerdictV2", parameters, commandTimeout: 600,
+        //                commandType: CommandType.StoredProcedure);
+
+        //            var queryPerformed = parameters.Get<Boolean>("@result");
+        //            return queryPerformed;
+        //        }
+
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return false;
+        //}
         public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
         {
             try
@@ -3740,7 +3778,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink = null)
         {
             try
             {
@@ -3753,7 +3791,32 @@ namespace Risebird.Repository
                     parameters.Add("@completeAnalysis", model.completeFitmentAnalysis);
                     parameters.Add("@verdict", model.verdict);
                     parameters.Add("@score", model.fitmentScore);
+                    parameters.Add("@resumeLink", resumeLink);
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveApplicantInterviewerAIVerdictV2", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> SaveApplicantErrorMessage(int id, string errorMessage)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@ErrorMessage", errorMessage);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveApplicantErrorMessage", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -3813,6 +3876,51 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        /// <summary>
+        /// External applicants inserted through skill channel link
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public async Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", obj.IRFId);
+                    parameters.Add("@isVerified", obj.isVerified);
+                    parameters.Add("@IsEmployed", obj.IsEmployed);
+                    parameters.Add("@EmailId", obj.EmailId);
+                    parameters.Add("@Phone", obj.Phone);
+                    parameters.Add("@CompanyName", obj.CompanyName);
+                    parameters.Add("@FirstName", obj.FirstName);
+                    parameters.Add("@LastName", obj.LastName);
+                    parameters.Add("@DOB", (obj.DOB.HasValue ? obj.DOB.Value : null));
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@PerformedBy", obj.EmailId);
+                    parameters.Add("@ReferredBy", obj.ReferredBy);
+                    parameters.Add("@result", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 5215585);
+                    parameters.Add("@id", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
+                    parameters.Add("@assessmentGroup", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_InsertApplicantsRenewed", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+
+                    obj.IsQueryPerformedSuccessfully = parameters.Get<Boolean>("@result");
+                    obj.AssessmentGroup = parameters.Get<String>("@assessmentGroup");
+                    obj.id = parameters.Get<Int32>("@id");
+                    return obj;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return obj;
         }
         public async Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null)
         {

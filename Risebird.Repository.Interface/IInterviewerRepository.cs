@@ -126,7 +126,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewerDirectApplicationVM>> GetInterviewerApplicants(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<InterviewerDirectApplicationVM> GetApplicantById(int applicantId);
         Task<bool> SaveApplicantInterviewerAIVerdict(int id, string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
-        Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
+        Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink = null);
         Task<InterviewerDirectApplicationVM> GetApplicantInterviewerAIEvaluation(int id);
         Task<bool> UpdateApplicantsEmploymentDetails(InterviewerDirectApplicationVM obj, string loggedInUser);
         Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
@@ -138,6 +138,9 @@ namespace Risebird.Repository.Interface
         Task<InterviewerExistsInSystemAndOrSkillChannelDTO> CheckIfInterviewerExistsInSystemAndOrSkillChannel(string emailId, int irfId);
         Task<bool> UpdateApplicantById(InterviewerDirectApplicationVM model, string loggedInUser);
         Task<bool> UpdateApplicantSkillChannelById(InterviewerDirectApplicationVM model, string loggedInUser);
+        Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj);
+        Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
+
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment);
     }
 }

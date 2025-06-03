@@ -14,7 +14,8 @@ Create PROCEDURE [dbo].[usp_SaveApplicantInterviewerAIVerdictV2]
 @verdict varchar(50),
 @score int,
 @PerformedBy varchar(200),
-@timeNow datetime
+@timeNow datetime,
+@resumeLink varchar(max) = null
 As
 Begin
 
@@ -26,7 +27,11 @@ Begin
 	Begin
 
 		update InterviewerDirectApplication set OpenAIResponse = @completeAnalysis, AIVerdict = @verdict, AIAnalysisScore = @score,
-		AIEvaluationPerformedBy = @PerformedBy, AIEvaluationGeneratedAt = @timeNow, IsAIScreeningAttempted = 1 
+		AIEvaluationPerformedBy = @PerformedBy, AIEvaluationGeneratedAt = @timeNow, IsAIScreeningAttempted = 1,
+		ResumeLink = CASE 
+                        WHEN (@resumeLink IS NOT NULL and @resumeLink != '') THEN @resumeLink 
+                        ELSE ResumeLink 
+                    END
 		where id=@id
 
 	End

@@ -10508,10 +10508,12 @@ namespace Risebird.Web.Controllers
                     if (irfId > 0)
                     {
                         var encryptedId = await _encryptionHelper.EncryptStringValue(irfId.ToString());
-                        
-                        var url = "https://portal.risebird.io/Interviewer/Apply?id=" + HttpUtility.UrlEncode(encryptedId);
-                        //var url = Url.Action("Apply", "Interviewer",
-                        //        new { id = irfId },
+
+                        //var url = "https://portal.risebird.io/Interviewer/Apply?id=" + HttpUtility.UrlEncode(encryptedId);
+
+                        var url = Request.Scheme + "://" + Request.Host.Value + "/Interviewer/ApplicationForm?id=" + HttpUtility.UrlEncode(encryptedId);
+                        //var url = Url.Action("ApplicationForm", "Interviewer",
+                        //        new { id = HttpUtility.UrlEncode(encryptedId) },
                         //        Request.Scheme);
                         return Json(url);
                     }

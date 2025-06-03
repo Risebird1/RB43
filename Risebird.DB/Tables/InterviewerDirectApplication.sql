@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[InterviewerDirectApplication](
 	[IRFId] [int] NOT NULL,
 	[EmailId] [varchar](100) NOT NULL,
 	[Phone] [varchar](20) NOT NULL,
-	[ResumeLink] [varchar](max) NOT NULL,
+	[ResumeLink] [varchar](max) NULL,
 	[CreatedAt][datetime] Null,
 	[ModifiedAt][datetime] NULL,
 	[CreatedBy][varchar](100) NOT NULL,
@@ -28,6 +28,7 @@ CREATE TABLE [dbo].[InterviewerDirectApplication](
 	[AIAnalysisScore] [int] NULL,
 	[MAGIds] [varchar](300) NULL,
 	[IsAIScreeningAttempted] [bit] NULL,
+	[ErrorMessage] [varchar](500) NULL,
  CONSTRAINT [PK_InterviewerDirectApplication] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -191,6 +192,15 @@ WHERE Name IN (N'IsAIScreeningAttempted')
 BEGIN
 	ALTER TABLE InterviewerDirectApplication
 	add IsAIScreeningAttempted bit
+END
+IF not EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'ErrorMessage')
+    AND Object_ID = Object_ID(N'InterviewerDirectApplication'))
+BEGIN
+	ALTER TABLE InterviewerDirectApplication
+	add ErrorMessage varchar(500)
 END
 
 GO
