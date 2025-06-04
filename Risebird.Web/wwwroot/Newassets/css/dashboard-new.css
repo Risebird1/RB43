@@ -13164,7 +13164,7 @@ section {
 
 
 @media (min-width: 991px) {
-    .sidebar-mini .main-panel {
+    .sidebar-mini .main-panel.applyForm {
         width: calc(100% - 20px);
     }
 }
