@@ -166,7 +166,7 @@ namespace Risebird.Entities.ViewModel
 
         public int ClientId { get; set; }
         public string JDTiltle { get; set; }
-
+        public string MAGName { get; set; }
         public string ClientName { get; set; }
         [Display(Name = "Approved")]
         public int? IsApproved { get; set; }
@@ -394,6 +394,7 @@ namespace Risebird.Entities.ViewModel
         public string Cancellationreason { get; set; }
         public string CandidateInterviewChecks { get; set; }
         public bool ConsentRequired { get; set; }
+       
     }
 
     public class VedioComments
