@@ -1787,6 +1787,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveExternalApplicantResume(id, resumeLink);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<bool> SaveApplicantErrorMessage(int id, string errorMessage)
         {
             try
