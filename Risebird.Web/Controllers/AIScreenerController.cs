@@ -761,6 +761,8 @@ namespace Risebird.Web.Controllers
                         {
                             if (!string.IsNullOrEmpty(aiEvaluation.ResumeLink))
                             {
+                                //save resume in db 
+                                await _interviewerService.SaveExternalApplicantResume(id, aiEvaluation.ResumeLink);
 
                                 var resumeStringContent = await ReadPdfFromUrlAsync(aiEvaluation.ResumeLink);
                                 var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, aiEvaluation.JDTiltle);

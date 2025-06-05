@@ -3806,6 +3806,30 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    parameters.Add("@resumeLink", resumeLink);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveExternalApplicantResume", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<bool> SaveApplicantErrorMessage(int id, string errorMessage)
         {
             try
