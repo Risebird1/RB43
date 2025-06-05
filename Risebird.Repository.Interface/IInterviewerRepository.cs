@@ -142,5 +142,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
 
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment);
+        Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
     }
 }

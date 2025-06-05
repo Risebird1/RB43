@@ -132,5 +132,6 @@ namespace Risebird.Business.Interface
         /// <returns>True if successful, false otherwise</returns>
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment);
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
+        Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
     }
 }
