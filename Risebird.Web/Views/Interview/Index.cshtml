@@ -753,7 +753,17 @@
                                                                         {
                                                                             @* <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>*@                                                                    
 
-                                                                                                                                                                                                                                              <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+                                                                                                                                                                                                                                                              <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+                                                                        }
+                                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                                                        {
+                                                                            <span class="interview_emergency">
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Emergency Assign">
+                                                                                    <span onclick="openEmergencyAssignModal(@item.imid, '@item.IRFId','@item.irfIntId')" title="Emergency Interview Assignment" class="mdc-fab__icon material-icons">
+                                                                                        <i class="fa fa-exclamation-triangle" style="font-size: 14px;"></i>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
                                                                         }
                                                                         @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                         {
@@ -3098,5 +3108,105 @@
                 }
             });
         }
+    }
+</script>
+<div id="emergencyAssignModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Interview Assign Send Invite</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeemergencyAssignModal()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <input type="hidden" id="selectedInterviewId" />
+                <input type="hidden" id="selectedMeetingid" />
+                <div class="form-group">
+                    <label for="interviewerList">Select Interviewer</label>
+                    <select class="form-control" id="interviewerList">
+                        <option value="">Loading interviewers...</option>
+                    </select>
+                </div>
+            </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="assignEmergencyInterviewer()">Assign</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeemergencyAssignModal(){
+        var modal = document.getElementById("emergencyAssignModal");
+        modal.style.display = "none";
+    }
+    function openEmergencyAssignModal(interviewId, Meetingid,irfintid) {
+        $('#selectedInterviewId').val(interviewId);
+        $('#selectedMeetingid').val(Meetingid);
+        $.ajax({
+                url: '/Interview/GetAvailableInterviewers',
+                method: 'GET',
+                data: { irfId: irfintid },
+                success: function (data) {
+                       var modal = document.getElementById("emergencyAssignModal");
+                       modal.style.display = "block";
+                        var drpPrimarySkills = $("#interviewerList");
+                        $("#interviewerList option").remove();
+                         if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        option.html(this);
+                        option.val(this);
+                        drpPrimarySkills.append(option);
+                    });
+                }
+                }
+        });
+    }
+
+    function assignEmergencyInterviewer() {
+        var interviewId = $('#selectedInterviewId').val();
+        var Meetingid = $('#selectedMeetingid').val();
+        var interviewer = $('#interviewerList').val();
+
+        Swal.fire({
+            title: 'Confirm Assignment',
+            text: 'Are you sure you want to assign this interview?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, assign!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                     url: '/Interview/GetAvailableInterviewers',
+                     method: 'GET',
+                     data:  {
+                        interviewId: interviewId,
+                        Meetingid: Meetingid,
+                        interviewer: interviewer
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Success!', response.message, 'success').then(() => {
+                                closeemergencyAssignModal();
+                                //location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error!', 'Failed to assign interview.', 'error');
+                    }
+                });
+            }
+        });
     }
 </script>
