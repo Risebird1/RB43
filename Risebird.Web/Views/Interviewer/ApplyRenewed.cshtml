@@ -122,8 +122,8 @@
                                 </div>
                             </div>
                             <div class="step-buttons">
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="prevStep(2)">Previous</button>
-       
+@*                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="prevStep(2)">Previous</button>
+ *@       
                                 <button type="button" value="generateAIVerdict" id="id_btn_generateAIVerdict" onclick="GenerateAIVerdict()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Submit</button>
 
                             
@@ -296,10 +296,10 @@
         }
     }
 
-    function prevStep(currentStepNum) {
-        currentStep = currentStepNum - 1;
-        showStep(currentStep);
-    }
+    // function prevStep(currentStepNum) {
+    //     currentStep = currentStepNum - 1;
+    //     showStep(currentStep);
+    // }
 
     // Modified checkEmailidExist function
     var clickverification = 0;
