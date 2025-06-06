@@ -72,6 +72,7 @@ namespace Risebird.Web.Controllers
         private readonly IConverter _converter;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly IActivityTrackerService _activityTrackerService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -89,7 +90,7 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository,
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
-            IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper)//IConverter converter,
+            IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -119,6 +120,7 @@ namespace Risebird.Web.Controllers
             _converter = converter;
             _assistantServiceHelper = assistantServiceHelper;
             _encryptionHelper = encryptionHelper;
+            _activityTrackerService = activityTrackerService;
         }
 
 
@@ -202,9 +204,9 @@ namespace Risebird.Web.Controllers
                             filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                             filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
                             filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
-                            filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName;
+                            filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName = filter.TemplateName;
                             filter.AadhaarVerified = filter.AadhaarVerified == null ? filter.AadhaarVerified = modelList.Select(x => x.AadhaarVerified).ToArray() : filter.AadhaarVerified = filter.AadhaarVerified;
-                            filter.ChannelOwner = filter.ChannelOwner == null ? filter.ChannelOwner = modelList.Select(x => x.ChannelOwner).ToArray() : filter.ChannelOwner;
+                            filter.ChannelOwner = filter.ChannelOwner == null ? filter.ChannelOwner = modelList.Select(x => x.ChannelOwner).ToArray() : filter.ChannelOwner = filter.ChannelOwner;
 
                             modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && filter.RFID.Contains(c.IRFId)
@@ -375,8 +377,8 @@ namespace Risebird.Web.Controllers
                     filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
                     filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                    filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName;
-                    filter.ChannelOwner = filter.ChannelOwner == null ? filter.ChannelOwner = modelList.Select(x => x.ChannelOwner).ToArray() : filter.ChannelOwner;
+                    filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName = filter.TemplateName;
+                    filter.ChannelOwner = filter.ChannelOwner == null ? filter.ChannelOwner = modelList.Select(x => x.ChannelOwner).ToArray() : filter.ChannelOwner = filter.ChannelOwner;
 
                     modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
@@ -4193,79 +4195,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //[Authorize]
-        //[HttpGet]
-        //public async Task<IActionResult> CandidateInterviews(string status)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //            profileName = profileName.Replace("\"", "");
-        //            if (profileName == "Candidate")
-        //            {
-        //                var emailid = HttpContext.Session.GetString("email")?.Trim();
-        //                emailid = emailid.Replace("\"", "");
-        //                var myInterview = _meetingService.GetCandidateInterviews(emailid, status);
-        //                myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
-        //                foreach (var item in myInterview)
-        //                {
-        //                    if (!string.IsNullOrEmpty(item.resumeLink))
-        //                    {
-        //                        try
-        //                        {
-        //                            item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
-
-        //                        }
-        //                        catch (Exception)
-        //                        {
-        //                            item.resumeLink = "";
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        item.resumeLink = "";
-        //                    }
-
-        //                    if (item.InterviewStatus.HasValue)
-        //                    {
-        //                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-        //                    }
-        //                    if (item.MeetingStatus.HasValue)
-        //                    {
-        //                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-
-        //                    }
-
-        //                    if (item.interviewDate <= DateTime.Now)
-        //                    {
-        //                        item.CancelationStatus = "N";
-        //                    }
-        //                    else
-        //                    {
-        //                        item.CancelationStatus = "Y";
-        //                    }
-        //                }
-        //                return View(myInterview);
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("SignOut", "Session");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
-
         [HttpGet]
         public IActionResult UploadAudio(int candidateId, int irfId, string rfName)
         {
@@ -5065,33 +4994,6 @@ namespace Risebird.Web.Controllers
                 return Json("No Data");
             }
         }
-
-        //public JsonResult ChangeCandidateStatus(int videoid, string Status)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //            profileName = profileName.Replace("\"", "");
-        //            if (profileName == "Candidate")
-        //            {
-        //                //To update candidate status
-        //                var model = _meetingService.UpdateCandidateStatus(videoid, Status);
-        //            }
-        //            return Json("Success");
-        //        }
-        //        else
-        //        {
-        //            return Json("Fail");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return Json("Fail");
-        //    }
-        //}
 
         [HttpGet]
         public async Task<IActionResult> AnalyseSentiment(int imid)
@@ -5944,7 +5846,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicOpenInterview", new { emailid = emailid, id = uniqueid });
             }
         }
-        [HttpGet]
+
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason)
         {
             var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, cancellationreason);
@@ -6609,7 +6511,7 @@ namespace Risebird.Web.Controllers
 
                 Sheet.Cells[1, 7].Value = "Whether hands-on coding is present";
                 Sheet.Cells[1, 8].Value = "Whether candidate video is clearly visible";
-                Sheet.Cells[1, 9].Value = "Clarity in Interviewer’s communication";
+                Sheet.Cells[1, 9].Value = "Clarity in Interviewer's communication";
                 Sheet.Cells[1, 10].Value = "Whether video duration is sufficient";
                 Sheet.Cells[1, 11].Value = "Is the interview properly structured";
                 Sheet.Cells[1, 12].Value = "Whether scoring rubrics is filled correctly";
@@ -6620,7 +6522,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 17].Value = "Delay in resuming an interview";
                 Sheet.Cells[1, 18].Value = "Background Noise";
                 Sheet.Cells[1, 19].Value = "Poor interviewer infrastructure";
-                Sheet.Cells[1, 20].Value = "Poor handling of candidate’s queries";
+                Sheet.Cells[1, 20].Value = "Poor handling of candidate's queries";
                 Sheet.Cells[1, 21].Value = "Asking personal questions or making personal remarks";
                 Sheet.Cells[1, 22].Value = "Getting into arguments";
                 Sheet.Cells[1, 23].Value = "Biased View";
@@ -9262,6 +9164,70 @@ namespace Risebird.Web.Controllers
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             ViewBag.InterviewId = interviewId;
             return View();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetAvailableInterviewers(int irfId)
+        {
+            try
+            {
+                var interviewers = await _irfService.GetIRFInterviewerMembers(irfId);
+                var interviewersList = interviewers?.Where(x => x.IsActive)?.Select(x => x.EmailId).ToList();
+                return Json(interviewersList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Failed to get available interviewers." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> AssignEmergencyInterviewer(int interviewId, string Meetingid, string interviewer)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var result = _meetingService.ReassignMeeting(interviewId.ToString(), Meetingid, interviewer);
+                if (result.Contains("Successfully"))
+                {
+                    var currenturl = Request.Host + "/Interview/AssignEmergencyInterviewer?interviewid=" + interviewId;
+                    await TrackInterviewerRelatedbuttonClient("Interview", currenturl, "Reassign Interview", interviewId, 0);
+                    return Json(new { success = true, message = "Interview assigned successfully." });
+                }
+                //string linkurl = "https://portal.risebird.io/Interview/ReassignMeetingByEI?id=" + Meetingid;
+                //Mail _mail = new Mail
+                //{
+                //    TO = interviewer,
+                //    //Subject = "Risebird Urgent Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
+                //};
+                ////var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink, item.uniqueid);
+                return Json(new { success = true, message = "An error occurred while assigning the interview." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while assigning the interview." });
+            }
+        }
+        public async Task TrackInterviewerRelatedbuttonClient(string type, string currenturl, string buttonaction, int interviewid, int interviewerid)
+        {
+            string emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+            }
+            var model = new CapturePageDM();
+            model.ButtonAction = buttonaction;
+            model.currenturl = currenturl;
+            model.Functiontype = type;
+            model.PerformedBy = emailid;
+            model.Interviewid = interviewid;
+            model.Interviewerid = interviewerid;
+            await _activityTrackerService.SaveCaptureInterviewerRelatedPageClick(model);
         }
     }
 }

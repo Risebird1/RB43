@@ -203,7 +203,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseBrowserLink();
+    //app.UseBrowserLink();
     app.UseDeveloperExceptionPage();
 }
 else
