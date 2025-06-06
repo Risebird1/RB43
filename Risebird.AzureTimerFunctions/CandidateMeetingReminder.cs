@@ -110,7 +110,7 @@ namespace Risebird.AzureTimerFunctions
                         //Send Call, WhatsApp and mail
 
                         //IVR Call
-                        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.FirstName,item.uniqueid,item.Irfid,item.PrimarySkillInvite,item.Interviewid,item.candidateid, item.interviewDate, item.TimeZonesValue);
+                        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.uniqueid,item.Irfid,item.Interviewid,item.candidateid);
                     }
                     else if (item.Typefunction == 6)
                     {
@@ -150,7 +150,7 @@ namespace Risebird.AzureTimerFunctions
                         }
 
                         //IVR Call
-                        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.FirstName, item.uniqueid, item.Irfid, item.PrimarySkillInvite, item.Interviewid, item.candidateid, item.interviewDate, item.TimeZonesValue);
+                        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.uniqueid, item.Irfid, item.Interviewid, item.candidateid);
 
                     }
                     else if (item.Typefunction == 24)
@@ -191,7 +191,7 @@ namespace Risebird.AzureTimerFunctions
                         }
 
                         //IVR Call
-                        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.FirstName, item.uniqueid, item.Irfid, item.PrimarySkillInvite, item.Interviewid, item.candidateid, item.interviewDate, item.TimeZonesValue);
+                        await _twilioHelper.MakeIVRCallForCandidateMeetingReminder(item.MobileNumber, item.uniqueid, item.Irfid, item.Interviewid, item.candidateid);
 
                     }
                     else if (item.Typefunction == 1)
