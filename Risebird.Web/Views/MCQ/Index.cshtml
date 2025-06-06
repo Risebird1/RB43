@@ -369,16 +369,11 @@
                     <input type="hidden" id="idMcqTile" />
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkills">
                                 Primary Skills
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <select class="form-control" id="ddlPrimarySkills" style="width:100% !important">
-                                    @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
-                                    {
-                                        <option value="@item.Text">@item.Text</option>
-                                    }
-                                </select>
+                                <input type="text" class="form-control" placeholder="Primary Skills" id="ddlPrimarySkills" style="margin-top: 10px;margin-bottom: 10px;" />
                             </div>
                         </div>
                     </div>
@@ -388,12 +383,7 @@
                                 Secondary Skills
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <select class="form-control" id="ddlSecondarySkills" style="width:100% !important">
-                                    @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
-                                    {
-                                        <option value="@item.Text">@item.Text</option>
-                                    }
-                                </select>
+                                <input type="text" class="form-control" placeholder="Secondary Skills" id="ddlSecondarySkills" style="margin-top: 10px;margin-bottom: 10px;" />
                             </div>
                         </div>
                     </div>
