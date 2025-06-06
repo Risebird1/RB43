@@ -29,7 +29,7 @@ using Microsoft.Graph.Models.Security;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AIScreenerController : Controller
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
