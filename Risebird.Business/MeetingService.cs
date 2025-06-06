@@ -4467,6 +4467,11 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
+        {
+            return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);
+        }
     }
 }
 

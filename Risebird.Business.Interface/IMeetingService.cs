@@ -252,5 +252,6 @@ namespace Risebird.Business.Interface
         Task<string> GetInterviewCancellationSource(int interviewid);
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
         Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason);
+        Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
     }
 }
