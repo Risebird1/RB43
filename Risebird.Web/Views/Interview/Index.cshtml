@@ -718,7 +718,7 @@
                                                                         {
                                                                             <span class="interview_emergency">
                                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Emergency Assign">
-                                                                                    <span onclick="openEmergencyAssignModal(@item.imid, '@item.IRFId','@item.irfIntId')" title="Emergency Interview Assignment" class="mdc-fab__icon material-icons">
+                                                                                    <span onclick="openEmergencyAssignModal(@item.imid, '@item.ZoomMeetingId','@item.irfIntId')" title="Emergency Interview Assignment" class="mdc-fab__icon material-icons">
                                                                                         <i class="fa fa-exclamation-triangle" style="font-size: 14px;"></i>
                                                                                     </span>
                                                                                 </button>
@@ -3184,27 +3184,23 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, assign!'
         }).then((result) => {
-            if (result.isConfirmed) {
+            if (result.dismiss !== 'cancel') {
                 $.ajax({
-                     url: '/Interview/GetAvailableInterviewers',
-                     method: 'GET',
-                     data:  {
+                    url: '/Interview/AssignEmergencyInterviewer',
+                    method: 'POST',
+                    data:  {
                         interviewId: interviewId,
                         Meetingid: Meetingid,
                         interviewer: interviewer
                     },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire('Success!', response.message, 'success').then(() => {
+                    success: function (data) {
+                           if (data.success) {
+                            Swal.fire('Success!', data.message, 'success').then(() => {
                                 closeemergencyAssignModal();
-                                //location.reload();
                             });
                         } else {
-                            Swal.fire('Error!', response.message, 'error');
+                            Swal.fire('Error!', data.message, 'error');
                         }
-                    },
-                    error: function() {
-                        Swal.fire('Error!', 'Failed to assign interview.', 'error');
                     }
                 });
             }
