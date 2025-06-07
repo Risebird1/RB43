@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Risebird.Repository.Interface\Risebird.Repository.Interface.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OpenAI" Version="2.1.0" />
+  </ItemGroup>
+
 </Project>

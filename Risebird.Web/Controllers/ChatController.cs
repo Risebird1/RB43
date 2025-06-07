@@ -250,5 +250,19 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult SendMessage([FromBody] string message)
+        {
+            // TODO: Implement actual message handling
+            return Json(new { 
+                response = "This is a sample response.",
+                timestamp = DateTime.UtcNow
+            });
+        }
     }
 }

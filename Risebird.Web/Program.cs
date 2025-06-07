@@ -19,6 +19,7 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
 using System;
 using System.IO.Compression;
+using Risebird.Business.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -197,6 +198,8 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
 builder.Services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
 builder.Services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
+builder.Services.AddScoped<IAIChatRepository, AIChatRepository>();
+builder.Services.AddScoped<IAIChatService, AIChatService>();
 
 
 var app = builder.Build();
@@ -313,7 +316,6 @@ else
 //           .Allow("https://clients-api.pushengage.com/")
 //           .Allow("https://notify.pushengage.com/")
 //           .Allow("https://in.fw-cdn.com/")
-//           .Allow("https://risebird-761501124871951521-a9a82b8ad3492d917284689.freshchat.com/")
 //            .Allow("https://app.interakt.ai/")
 //            .Allow("https://api.interakt.ai/v1/public/chat-widget/")
 //           //.Allow("https://widget.freshworks.com/widgetBase/static/media/frame.d7ae132c.css")
