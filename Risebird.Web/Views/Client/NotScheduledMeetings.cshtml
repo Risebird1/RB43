@@ -982,14 +982,6 @@ top:-1px;
 <!-- Add this script section at the end of the file -->
 <script>
 $(document).ready(function() {
-    // Initialize multiselect for bulk RFID
-    $("#BulkRFID").multiselect({
-        includeSelectAllOption: true,
-        selectedClass: 'active1',
-        buttonWidth: '100%',
-        maxHeight: 200
-    });
-
     $("#shareBulkInvite").click(function() {
         var startDate = $("#BulkStartDate").val();
         var endDate = $("#BulkEndDate").val();
