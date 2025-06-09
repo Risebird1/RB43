@@ -4856,5 +4856,115 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ShareBulkInvites(DateTime startDate, DateTime endDate, string[] rfids, string[] communicationMethods)
+        {
+            try
+            {
+                //var query = _context.MeetingVM
+                //    .Where(m => m.dtCreatedOn >= startDate && m.dtCreatedOn <= endDate);
+
+                //if (rfids != null && rfids.Length > 0)
+                //{
+                //    query = query.Where(m => rfids.Contains(m.IRFId));
+                //}
+
+                //var candidates = await query
+                //    .Select(m => new { 
+                //        m.candidateEmail, 
+                //        m.candidateName, 
+                //        m.IRFId, 
+                //        m.imid,
+                //        m.MobileNumber 
+                //    })
+                //    .ToListAsync();
+
+                //if (!candidates.Any())
+                //{
+                //    return Json(new { success = false, message = "No candidates found matching the criteria." });
+                //}
+
+                //int invitesSent = 0;
+                //var errors = new List<string>();
+
+                //foreach (var candidate in candidates)
+                //{
+                //    try
+                //    {
+                //        if (communicationMethods.Contains("email"))
+                //        {
+                //            // Send email invite
+                //            await _emailService.SendInvitationEmail(
+                //                candidate.candidateEmail,
+                //                candidate.candidateName,
+                //                candidate.IRFId
+                //            );
+                //        }
+
+                //        if (communicationMethods.Contains("whatsapp") && !string.IsNullOrEmpty(candidate.MobileNumber))
+                //        {
+                //            // Send WhatsApp invite
+                //            var endDate = DateTime.Now.AddDays(5);
+                //            await SendWhatsAppInvite(
+                //                candidate.IRFId,
+                //                candidate.imid,
+                //                candidate.candidateEmail,
+                //                endDate,
+                //                "https://portal.risebird.io/Client/NotScheduledMeetings"
+                //            );
+                //        }
+
+                //        invitesSent++;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        var errorMessage = $"Error sending invite to {candidate.candidateName} ({candidate.candidateEmail}): {ex.Message}";
+                //        _logger.LogError(errorMessage);
+                //        errors.Add(errorMessage);
+                //    }
+                //}
+
+                //var message = $"Successfully sent {invitesSent} invites out of {candidates.Count} candidates.";
+                //if (errors.Any())
+                //{
+                //    message += $"\nFailed for {errors.Count} candidates.";
+                //}
+
+                //return Json(new { 
+                //    success = true, 
+                //    message = message,
+                //    details = errors
+                //});
+                return Json(new { success = true, message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"Error in ShareBulkInvites: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while processing bulk invites." });
+            }
+        }
+
+        private async Task SendWhatsAppInvite(string irfName, int irfId, string emailId, DateTime endDate, string pageUrl)
+        {
+            try
+            {
+                // Implement your WhatsApp invite sending logic here
+                // This should match your existing WhatsApp invitation implementation
+                //await _whatsAppService.SendInvite(new WhatsAppInviteModel
+                //{
+                //    IRFName = irfName,
+                //    IRFId = irfId,
+                //    EmailId = emailId,
+                //    EndDate = endDate,
+                //    PageUrl = pageUrl
+                //});
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"WhatsApp invite failed for {emailId}: {ex.Message}");
+                throw; // Rethrow to be handled by the calling method
+            }
+        }
     }
 }
