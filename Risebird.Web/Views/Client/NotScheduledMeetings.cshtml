@@ -1024,14 +1024,14 @@ $(document).ready(function() {
         }).then((result) => {
                  if (result.dismiss !== 'cancel')  {
                 // Show loading state
-                Swal.fire({
-                    title: 'Sending Invites',
-                    html: 'Please wait while we process your request...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
+                // Swal.fire({
+                //     title: 'Sending Invites',
+                //     html: 'Please wait while we process your request...',
+                //     allowOutsideClick: false,
+                //     didOpen: () => {
+                //         Swal.showLoading();
+                //     }
+                // });
 
                 $.ajax({
                     url: '/Client/ShareBulkInvites',
