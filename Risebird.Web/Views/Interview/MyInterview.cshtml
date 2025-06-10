@@ -511,7 +511,8 @@
                                                                                   </a>
                                                                                  }
 
-                                                                          @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes"){
+                                                                            @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower().Contains("yes"))
+                                                                            {
                                                                               <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.id, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;">
                                                                                         <span class="btn shadow btn-xs sharp me-1" aria-label="AI QC Report" style="background:#2bac63ba;border-color:#2bac63ba; width:18px!important;height:18px!important; top:2px;position:relative;left:-2px; margin: 0px 0px 0px 3px;">
                                                                                             <span title="AI QC Report" class="mdc-fab__icon material-icons"><img src="~/img/report.png" style="max-width: 17px!important;position:relative;left: -2px;top: 3px;" /></span>
@@ -819,7 +820,7 @@
                                                                                 <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
 
-                                                                                    @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes")
+                                                                                    @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower().Contains("yes"))
                                                                                     {
                                                                                             <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top: 1px;" /></div>
                                                                                             <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position:relative;left: 20px;top:-1px;padding: 4px 2px;">
