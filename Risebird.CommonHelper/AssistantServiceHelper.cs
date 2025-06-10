@@ -34,6 +34,7 @@ namespace Risebird.CommonHelper
         private readonly string stringResumeAnalysisAssistantId;
         private readonly string stringReportQCAssistantId;
         private readonly string stringReportQCAssistantIdStructuredOutput;//gives output in a structured json format as opposed to the other one which takes in a string but gives back a string making it difficult and often an error prone task to extract the verdict.
+        private readonly string stringResumeAnalysisAssistantIdV2;
 
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
@@ -55,6 +56,7 @@ namespace Risebird.CommonHelper
             stringResumeAnalysisAssistantId = _configuration["OpenAI:StringResumeAnalysisAssistantId"];
             stringReportQCAssistantId = _configuration["OpenAI:StringReportQCAssistantId"];
             stringReportQCAssistantIdStructuredOutput = _configuration["OpenAI:StringReportQCAssistantIdStructuredOutPut"];
+            stringResumeAnalysisAssistantIdV2 = _configuration["OpenAI:InterviewerScreenerAssistantIdV2"];
 
         }
 
@@ -220,7 +222,8 @@ namespace Risebird.CommonHelper
                     }
                     else if (profileType == ProfileNames.StringResumeAnalysisAIAssistant)
                     {
-                        assistantId = stringResumeAnalysisAssistantId;
+                        //assistantId = stringResumeAnalysisAssistantId;
+                        assistantId = stringResumeAnalysisAssistantIdV2;
                     }
                     else if (profileType == ProfileNames.StringReportQCAIAssistant)
                     {
