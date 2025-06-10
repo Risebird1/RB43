@@ -43,7 +43,7 @@ namespace Risebird.AzureTimerFunctions
                         foreach (var meeting in unassignedMeetingsByIRF)
                         {
                             //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.irfIntId);
-                            var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.irfIntId);
+                            var irfInterviewers = await _meetingRespository.GetEmergencyInterviewersForIRF(meeting.irfIntId);
 
                             //get all the active interviewers for the IRF
                             //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
