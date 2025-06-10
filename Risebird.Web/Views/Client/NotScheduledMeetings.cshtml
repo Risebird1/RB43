@@ -910,68 +910,73 @@ top:-1px;
                 <span aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6 col-sm-6 border-rv">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkStartDate">
-                                Start Date
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <input id="BulkStartDate" name="BulkStartDate" type="date" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkEndDate">
-                                End Date
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <input id="BulkEndDate" name="BulkEndDate" type="date" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkRFID">
-                                Skill Channel Id
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <select id="BulkRFID" name="BulkRFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                    @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                                    {
-                                        @if (item != null && item != "")
-                                        {
-                                            <option value="@item">@item</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label">
-                                Communication Method
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="emailCheckbox" value="email" checked>
-                                    <label class="form-check-label" for="emailCheckbox">Email</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="whatsappCheckbox" value="whatsapp">
-                                    <label class="form-check-label" for="whatsappCheckbox">WhatsApp</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="loader text-center" style="display:none;">
+                    <img src="~/Newassets/img/lazyload.gif" />
                 </div>
-                <div class="row mt-3">
-                    <div class="col-md-12 text-right">
-                        <button type="button" id="shareBulkInvite" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color: #28a745;">
-                            <font style="font-size:12px;"> Share Invite</font>
-                        </button>
+                <div class="share-invite-form">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 border-rv">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkStartDate">
+                                    Start Date
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="BulkStartDate" name="BulkStartDate" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkEndDate">
+                                    End Date
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="BulkEndDate" name="BulkEndDate" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkRFID">
+                                    Skill Channel Id
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <select id="BulkRFID" name="BulkRFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                        {
+                                            @if (item != null && item != "")
+                                            {
+                                                <option value="@item">@item</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label">
+                                    Communication Method
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="emailCheckbox" value="email" checked>
+                                        <label class="form-check-label" for="emailCheckbox">Email</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="whatsappCheckbox" value="whatsapp">
+                                        <label class="form-check-label" for="whatsappCheckbox">WhatsApp</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-right">
+                            <button type="button" id="shareBulkInvite" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color: #28a745;">
+                                <font style="font-size:12px;"> Share Invite</font>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -979,7 +984,7 @@ top:-1px;
     </div>
 </div>
 
-<!-- Add this script section at the end of the file -->
+<!-- Update the JavaScript for handling the loader -->
 <script>
 $(document).ready(function() {
     $("#shareBulkInvite").click(function() {
@@ -1022,17 +1027,11 @@ $(document).ready(function() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, share invites!'
         }).then((result) => {
-                 if (result.dismiss !== 'cancel')  {
-                // Show loading state
-                // Swal.fire({
-                //     title: 'Sending Invites',
-                //     html: 'Please wait while we process your request...',
-                //     allowOutsideClick: false,
-                //     didOpen: () => {
-                //         Swal.showLoading();
-                //     }
-                // });
-
+            if (result.dismiss !== 'cancel') {
+                // Show loader and hide form
+                $("#shareInviteModal .loader").show();
+                $("#shareInviteModal .share-invite-form").hide();
+                
                 $.ajax({
                     url: '/Client/ShareBulkInvites',
                     type: 'POST',
@@ -1043,6 +1042,10 @@ $(document).ready(function() {
                         communicationMethods: communicationMethods
                     },
                     success: function(response) {
+                        // Hide loader and show form
+                        $("#shareInviteModal .loader").hide();
+                        $("#shareInviteModal .share-invite-form").show();
+                        
                         if(response.success) {
                             Swal.fire({
                                 icon: 'success',
@@ -1050,6 +1053,7 @@ $(document).ready(function() {
                                 text: response.message
                             }).then(() => {
                                 $("#shareInviteModal").modal('hide');
+                                location.reload();
                             });
                         } else {
                             Swal.fire({
@@ -1060,6 +1064,10 @@ $(document).ready(function() {
                         }
                     },
                     error: function() {
+                        // Hide loader and show form
+                        $("#shareInviteModal .loader").hide();
+                        $("#shareInviteModal .share-invite-form").show();
+                        
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
