@@ -5120,7 +5120,7 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<IEnumerable<string>> GetEmergencyInterviewersForIRF(string irfId)
+        public async Task<IEnumerable<InterviewerProfileVM>> GetEmergencyInterviewersForIRF(int irfId)
         {
             try
             {
@@ -5128,7 +5128,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_EmergencyInterviwersForIRF", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_EmergencyInterviwersForIRF", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result;
                 }

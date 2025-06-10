@@ -49,7 +49,7 @@ namespace Risebird.AzureTimerFunctions
                             //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
                             foreach (var item in irfInterviewers)
                             {
-                                await _notificationHelper.EmergencyInterviewerMail(item.emailId, meeting.interviewDate.ToString(), item.uniqueId, meeting.irfIntId, meeting.imid);
+                                await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(), item.uniqueid, meeting.irfIntId, meeting.imid);
 
                                 
                             }
@@ -65,7 +65,7 @@ namespace Risebird.AzureTimerFunctions
                         }
 
                     }
-                }
+                
 
                 log.LogInformation($"C# OpenInterviewsNotification executed at: {DateTime.Now}");
             }
