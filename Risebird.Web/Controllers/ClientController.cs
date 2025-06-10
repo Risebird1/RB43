@@ -4858,10 +4858,30 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ShareBulkInvites(DateTime startDate, DateTime endDate, string[] rfids, string[] communicationMethods)
+        public async Task<IActionResult> ShareNotScheduleBulkInvites(DateTime? startDate, DateTime? endDate, string[] rfids, string[] communicationMethods)
         {
             try
             {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var meetings = await _meetingService.GetClientNotScheduledMeetingList(0, emailid);
+                    if (startDate != null && endDate != null)
+                    {
+                        meetings = meetings.Where(t => t.dtCreatedOn >= startDate && t.dtCreatedOn <= endDate).ToList();
+                    }
+                    meetings = meetings.Where(x => rfids != null && rfids.Count() > 0 ? rfids.Contains(x.IRFId) : x.IRFId == null).ToList();
+                    if (communicationMethods.FirstOrDefault() == "email")
+                    {
+                        //Send mail
+                    }
+                    else
+                    {
+                        //send whatsApp
+                    }
+                }
+
                 //var query = _context.MeetingVM
                 //    .Where(m => m.dtCreatedOn >= startDate && m.dtCreatedOn <= endDate);
 

@@ -960,12 +960,14 @@ top:-1px;
                                 </label>
                                 <div class="col-md-12 col-sm-12">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="emailCheckbox" value="email" checked>
-                                        <label class="form-check-label" for="emailCheckbox">Email</label>
+                                        <input type="radio" name="Communicationmethod" id="cmmemail" /> Email
+                                      @*   <input class="form-check-input" type="checkbox" id="emailCheckbox" value="email" checked>
+                                        <label class="form-check-label" for="emailCheckbox">Email</label> *@
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="whatsappCheckbox" value="whatsapp">
-                                        <label class="form-check-label" for="whatsappCheckbox">WhatsApp</label>
+                                        <input type="radio" name="Communicationmethod" id="cmmwhatapp" /> WhatsApp
+                                      @*   <input class="form-check-input" type="checkbox" id="whatsappCheckbox" value="whatsapp">
+                                        <label class="form-check-label" for="whatsappCheckbox">WhatsApp</label> *@
                                     </div>
                                 </div>
                             </div>
@@ -993,10 +995,10 @@ $(document).ready(function() {
         var rfids = $("#BulkRFID").val();
         var communicationMethods = [];
         
-        if($("#emailCheckbox").is(":checked")) {
+        if($("#cmmemail").is(":checked")) {
             communicationMethods.push("email");
         }
-        if($("#whatsappCheckbox").is(":checked")) {
+        if($("#cmmwhatapp").is(":checked")) {
             communicationMethods.push("whatsapp");
         }
 
@@ -1033,7 +1035,7 @@ $(document).ready(function() {
                 $("#shareInviteModal .share-invite-form").hide();
                 
                 $.ajax({
-                    url: '/Client/ShareBulkInvites',
+                        url: '/Client/ShareNotScheduleBulkInvites',
                     type: 'POST',
                     data: {
                         startDate: startDate,
