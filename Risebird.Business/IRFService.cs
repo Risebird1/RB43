@@ -961,6 +961,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<List<string>> EmergencyInterviwersForIRF(string irfId)
+        {
+            try
+            {
+                return (await _irfRepository.GetListOfInterviwerBasedOnIRFId(irfId)).ToList();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public bool CheckUniqueness(string value, bool isCloneTemplate = false)
         {
             try

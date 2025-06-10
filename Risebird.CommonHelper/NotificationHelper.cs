@@ -7,6 +7,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using Syncfusion.Compression;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -105,7 +106,7 @@ namespace Risebird.CommonHelper
         //}
 
 
-        public async Task<string> SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate, int? irfId = null, int? interviewId = null)
+        public async Task<string> SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate, string uniqueId, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -119,7 +120,7 @@ namespace Risebird.CommonHelper
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mails, null));
                 }
 
-                object[] parameters = new object[] { meetingDate };
+                object[] parameters = new object[] { meetingDate, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotificationV2.html");//"InterviewMailTemplate.html"
                 string msgBody = string.Format(rawEmail, parameters);
@@ -133,6 +134,37 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+
+
+        public async Task<string> EmergencyInterviewerMail(string emailId, string meetingDate, string uniqueId, int? irfId = null, int? interviewId = null)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Urgent");
+                msg.Subject = "New Interview has been scheduled on date: " + meetingDate;
+
+                //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, null));
+
+
+
+                object[] parameters = new object[] { meetingDate, uniqueId };
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotificationV2.html");//"InterviewMailTemplate.html"
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return await SendMail(msg, irfId, interviewId);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+
 
         //public async Task<string> SendQCInterviewerMail(List<string> interviwers, string meetingDate)
         //{
@@ -1484,7 +1516,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId)
+        public async Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId, string uniqueId)
         {
             try
             {
@@ -1512,7 +1544,7 @@ namespace Risebird.CommonHelper
                 }
                 else
                 {
-                    object[] parameters = new object[] { zoomlink };
+                    object[] parameters = new object[] { zoomlink, uniqueId };
                     //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotification.html");
                     string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotificationV2.html");
 
@@ -1678,7 +1710,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill)
+        public async Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill, string uniqueId)
         {
             try
             {
@@ -1691,7 +1723,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { RequiredSkill };
+                object[] parameters = new object[] { RequiredSkill, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewerRequestNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewerRequestNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -1757,7 +1789,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate)
+        public async Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate, string uniqueId)
         {
             try
             {
@@ -1769,7 +1801,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
+                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink, uniqueId };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -1862,7 +1894,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer)
+        public async Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer,string uniqueId)
         {
             try
             {
@@ -1874,7 +1906,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { JdTitle, PrimarySkill, interviewer };
+                object[] parameters = new object[] { JdTitle, PrimarySkill, interviewer, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestAssignationNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestAssignationNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2896,7 +2928,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl)
+        public async Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl, string uniqueId)
         {
             try
             {
@@ -2908,7 +2940,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { Name, reviewurl };
+                object[] parameters = new object[] { Name, reviewurl, uniqueId };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerInterest.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -3317,7 +3349,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendAcknowledgementEmailToInterviewer(string interviewerEmailId, string interviewerName, string yesButton, string dropButton, string asessmentGroups, string primarySpecialization)
+        public async Task<string> SendAcknowledgementEmailToInterviewer(string interviewerEmailId, string interviewerName, string yesButton, string dropButton, string asessmentGroups, string primarySpecialization, string uniqueId)
         {
             try
             {
@@ -3327,7 +3359,7 @@ namespace Risebird.CommonHelper
                 var toMails = interviewerEmailId;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, null));
 
-                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, yesButton };//asessmentGroups, dropButton 
+                object[] parameters = new object[] { interviewerName, interviewerEmailId, primarySpecialization, yesButton, uniqueId };//asessmentGroups, dropButton 
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerAcknowledgementTemplateV2.html");
 
                 string msgBody = string.Format(rawEmail, parameters);

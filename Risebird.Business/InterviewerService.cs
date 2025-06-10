@@ -150,7 +150,7 @@ namespace Risebird.Business
 
                         string dropProfileButton = "";
                         //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement,interviewerProfile.uniqueid).Result;
 
                     }
 
@@ -1664,7 +1664,7 @@ namespace Risebird.Business
 
                     string dropProfileButton = "";
                     //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement, interviewerProfile.uniqueid).Result;
                     return true;
                 }
                 return false;

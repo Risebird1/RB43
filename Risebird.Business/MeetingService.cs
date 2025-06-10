@@ -351,10 +351,12 @@ namespace Risebird.Business
             {
                 if (await _meetingRespository.AddMeeting(meeting))
                 {
+                    //var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
                     var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
                     if (interviwers != null && string.IsNullOrEmpty(meeting.interviewer))
                     {
-                        await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                        //await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                        await _notificationHelper.EmergencyInterviewerMail(interviwers, meeting.interviewDate.ToString());
                         return true;
                     }
                     else if (!string.IsNullOrEmpty(meeting.interviewer))
@@ -910,7 +912,14 @@ namespace Risebird.Business
                         if (interviewers != null)
                         {
                             interviewers.Remove(email);
-                            await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(), meeting.irfIntId, meetingid);
+
+                            //.Remove(x => x.emailId == email)
+                            foreach (var item in interviewers)
+                            {
+
+                            }
+                            //await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(),meeting.uniqueId, meeting.irfIntId, meetingid);
+                            await _notificationHelper.EmergencyInterviewerMail(interviewers, meeting.interviewDate.ToString(),meeting.uniqueId, meeting.irfIntId, meetingid);
                         }
                         //var hrs = _userService.GetAllHrsEmailld()?.ToList();
                         //if (hrs != null)

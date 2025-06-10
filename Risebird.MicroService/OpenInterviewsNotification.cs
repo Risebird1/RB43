@@ -47,13 +47,19 @@ namespace Risebird.MicroService
                         {
                             //get all the active interviewers for the IRF
                             //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
-
-
-                            if (irfInterviewers != null && irfInterviewers.Count() > 0)
+                            foreach (var item in irfInterviewers)
                             {
-                                //send mails to the active irf interviewers
-                                await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
+
+                                //await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.uniqueId, meeting.irfIntId, meeting.imid);
+                                await _notificationHelper.EmergencyInterviewerMail(irfInterviewers.Select(x => x.EmailId), meeting.interviewDate.ToString(), meeting.uniqueId, meeting.irfIntId, meeting.imid);
+
                             }
+
+                            //if (irfInterviewers != null && irfInterviewers.Count() > 0)
+                            //{
+                            //    //send mails to the active irf interviewers
+                            //    await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(),meeting.uniqueId, meeting.irfIntId, meeting.imid);
+                            //}
 
                         }
 
