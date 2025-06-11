@@ -110,7 +110,7 @@ namespace Risebird.Business
                         TO = string.Join(";", Interviewers),
                         Subject = "Risebird: Insta interview request for " + meeting.CandidateName
                     };
-                    var emailsent = _notificationHelper.InstaInterviewerNotification(_mail1, meeting.RequiredSkill);
+                    var emailsent = _notificationHelper.InstaInterviewerNotification(_mail1, meeting.RequiredSkill,meeting.uniqueid);
                     return true;
                 }
                 return false;

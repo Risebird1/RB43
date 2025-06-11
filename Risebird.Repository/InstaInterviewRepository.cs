@@ -329,7 +329,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = ";With CTE AS(Select  * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where Isinstaavailable=1) Select Distinct ul.Emailid From CTE join Userlist ul on CTE.Userid=ul.id where CTE.value=@Assessmentgroupid";
+                var query = ";With CTE AS(Select  * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where Isinstaavailable=1) Select Distinct ul.Emailid,ul.uniqueid From CTE join Userlist ul on CTE.Userid=ul.id where CTE.value=@Assessmentgroupid";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@Assessmentgroupid", Assessmentgroupid);
                 using (SqlConnection con = new SqlConnection(connectionString))

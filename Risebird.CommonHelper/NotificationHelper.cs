@@ -1710,7 +1710,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill)
+        public async Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill, string uniqueId)
         {
             try
             {
@@ -1723,7 +1723,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { RequiredSkill };
+                object[] parameters = new object[] { RequiredSkill, uniqueId };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewerRequestNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewerRequestNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
