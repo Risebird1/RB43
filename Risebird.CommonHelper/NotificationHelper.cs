@@ -1535,7 +1535,7 @@ namespace Risebird.CommonHelper
                 }
                 if (whowaiting == "Interviewer")
                 {
-                    object[] parameters = new object[] { zoomlink, candidateName, InterviewDate };
+                    object[] parameters = new object[] { zoomlink, candidateName, InterviewDate, uniqueId };
                     // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerWaitingNotification.html");
                     string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerWaitingNotificationV2.html");
                     string msgBody = string.Format(rawEmail, parameters);
