@@ -54,7 +54,7 @@ namespace Risebird.AzureTimerFunctions
                                 
                             }
 
-                            }
+                        }
 
                             //if (irfInterviewers != null && irfInterviewers.Count() > 0)
                             //{

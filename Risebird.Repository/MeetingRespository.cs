@@ -5128,7 +5128,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_EmergencyInterviwersForIRF", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_InterviwersForIRFbyIntId", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result;
                 }

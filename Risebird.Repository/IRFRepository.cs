@@ -3681,7 +3681,7 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(int irfId)
+        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(string irfId)
         {
             try
             {

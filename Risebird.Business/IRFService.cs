@@ -961,11 +961,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(int irfId)
+        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(string irfId)
         {
             try
             {
-                return await _irfRepository.EmergencyInterviwersForIRF(irfId);
+                return (await _irfRepository.EmergencyInterviwersForIRF(irfId)).ToList();
             }
             catch (Exception e)
             {
