@@ -4964,7 +4964,14 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, message = "An error occurred while processing bulk invites." });
             }
         }
-
+        private async Task SendNotSchdeuledMailInvite(int irfId, string CandidateemailId, string loggedInUserEmail)
+        {
+            var linkurl = "https://" + Request.Host.ToString();
+            if (await _irfService.SendInvite(Convert.ToInt32(irfId), CandidateemailId, loggedInUserEmail, linkurl))
+            {
+                //return Json("Invitation has been sent Successfully!");
+            }
+        }
         private async Task SendWhatsAppInvite(string irfName, int irfId, string emailId, DateTime endDate, string pageUrl)
         {
             try
