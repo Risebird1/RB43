@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "AI Chat";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+}
+    <link rel="stylesheet" href="~/Newassets/css/chat.css" />
+
+<div class="chat-layout">
+    <div class="side-panel">
+        <button class="new-chat-button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            New chat
+        </button>
+        <div class="chat-history-header">Chats</div>
+        <div class="chat-history">
+            <!-- Chat history items will be dynamically added here -->
+        </div>
+        <div class="side-panel-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <svg width="20px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div class="user-name">@User.Identity.Name</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <button class="mobile-menu-button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        <div class="chat-messages">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="chat-input-container">
+            <h1 style="text-align: center;font-size: 28px; padding-bottom: 30px;line-height: 34px;letter-spacing: .38px;"> What can I help with?</h1>
+
+            <div class="chat-input-wrapper">
+                <textarea class="chat-input" placeholder="Ask anything..." rows="1"></textarea>
+                <button class="send-button" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <script src="~/Newassets/js/chat.js"></script>
+    <script>
+        // Update the API endpoint to use the new controller
+        ChatUI.prototype.makeApiCall = async function(message) {
+            const response = await fetch('/api/aichat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message })
+            });
+
+            if (!response.ok) {
+                throw new Error('API call failed');
+            }
+
+            const data = await response.json();
+            return data.response;
+        };
+
+        // Initialize mobile menu functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuButton = document.querySelector('.mobile-menu-button');
+            const sidePanel = document.querySelector('.side-panel');
+            
+            menuButton.addEventListener('click', () => {
+                sidePanel.classList.toggle('open');
+            });
+
+            // Close side panel when clicking outside
+            document.addEventListener('click', (e) => {
+                if (sidePanel.classList.contains('open') && 
+                    !sidePanel.contains(e.target) && 
+                    !menuButton.contains(e.target)) {
+                    sidePanel.classList.remove('open');
+                }
+            });
+        });
+    </script>
