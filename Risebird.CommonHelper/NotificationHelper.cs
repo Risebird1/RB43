@@ -1789,7 +1789,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate, string uniqueId)
+        public async Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate)
         {
             try
             {
@@ -1801,7 +1801,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink, uniqueId };
+                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink};
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
