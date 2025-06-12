@@ -49,10 +49,7 @@
         <script src="~/Newassets/js/chardinjs.js?v=2024"></script>
         <script src="~/Newassets/js/demo.js?v=2024"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NNotScheduleCandidate", "1");
-
     }
-
-
 }
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
@@ -67,10 +64,7 @@
         <script src="~/Newassets/js/chardinjs.js?v=2024"></script>
         <script src="~/Newassets/js/demo.js?v=2024"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NNotScheduleCandidate", "1");
-
     }
-
-
 }
 <div class="main-panel" id="main-panel">
     <div>
@@ -85,12 +79,16 @@
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
-                            <div class="filter-note" style="text-align: right;"> Note: To visualize data older than 45 days, please apply filter</div>
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="filter-note align-right" style="text-align: right;"> Note: To visualize data older than 45 days, please apply filter</div>
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
-                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("NotScheduledMeetingstoExcel", "Client")'"></i></span>
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="float: left;margin-right: 5px;background-color: #28a745;color: white!important;" data-bs-toggle="modal" data-bs-target="#shareInviteModal">
+                                <span class="mdc-button__label"><span class="fas fa-share" data-toggle="tooltip" data-placement="top" title="Share Invite" data-original-title="Share Invite"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Share Invite</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("NotScheduledMeetingstoExcel", "Client")'"></i></span>
                         </div>
                         <div style="float:left">
                         </div>
@@ -375,7 +373,7 @@
                                                                                         </span>
                                                                                     </a> *@
                                                                                     @*<button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
-                                                                                        <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                                                        <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 8.36 8 8.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                                                     </button>*@
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
@@ -897,5 +895,192 @@ top:-1px;
 <script src="~/js/twiliocallmaker.js"></script>
 <script src="~/js/filtervalidation.js"></script>
 <loading></loading>
+
+<!-- Add this new modal before the end of the main-panel div -->
+<div class="modal fade" id="shareInviteModal" tabindex="-1" role="dialog" aria-labelledby="shareInviteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fas fa-share"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="shareInviteModalLabel">Share Invite</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="loader text-center" style="display:none;">
+                    <img src="~/Newassets/img/lazyload.gif" />
+                </div>
+                <div class="share-invite-form">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 border-rv">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkStartDate">
+                                    Start Date
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="BulkStartDate" name="BulkStartDate" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkEndDate">
+                                    End Date
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="BulkEndDate" name="BulkEndDate" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkRFID">
+                                    Skill Channel Id
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <select id="BulkRFID" name="BulkRFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                        {
+                                            @if (item != null && item != "")
+                                            {
+                                                <option value="@item">@item</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label">
+                                    Communication Method
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" name="Communicationmethod" id="cmmemail" /> Email
+                                      @*   <input class="form-check-input" type="checkbox" id="emailCheckbox" value="email" checked>
+                                        <label class="form-check-label" for="emailCheckbox">Email</label> *@
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" name="Communicationmethod" id="cmmwhatapp" /> WhatsApp
+                                      @*   <input class="form-check-input" type="checkbox" id="whatsappCheckbox" value="whatsapp">
+                                        <label class="form-check-label" for="whatsappCheckbox">WhatsApp</label> *@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-right">
+                            <button type="button" id="shareBulkInvite" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color: #28a745;">
+                                <font style="font-size:12px;"> Share Invite</font>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update the JavaScript for handling the loader -->
+<script>
+$(document).ready(function() {
+    $("#shareBulkInvite").click(function() {
+        var startDate = $("#BulkStartDate").val();
+        var endDate = $("#BulkEndDate").val();
+        var rfids = $("#BulkRFID").val();
+        var communicationMethods = [];
+        
+        if($("#cmmemail").is(":checked")) {
+            communicationMethods.push("email");
+        }
+        if($("#cmmwhatapp").is(":checked")) {
+            communicationMethods.push("whatsapp");
+        }
+
+        if(!startDate || !endDate) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please select both Start Date and End Date'
+            });
+            return;
+        }
+
+        if(communicationMethods.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please select at least one communication method'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Share Invites',
+            text: "Are you sure you want to share invites with all filtered candidates?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, share invites!'
+        }).then((result) => {
+            if (result.dismiss !== 'cancel') {
+                // Show loader and hide form
+                $("#shareInviteModal .loader").show();
+                $("#shareInviteModal .share-invite-form").hide();
+                
+                $.ajax({
+                        url: '/Client/ShareNotScheduleBulkInvites',
+                    type: 'POST',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate,
+                        rfids: rfids,
+                        communicationMethods: communicationMethods
+                    },
+                    success: function(response) {
+                        // Hide loader and show form
+                        $("#shareInviteModal .loader").hide();
+                        $("#shareInviteModal .share-invite-form").show();
+                        
+                        if(response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message
+                            }).then(() => {
+                                $("#shareInviteModal").modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        // Hide loader and show form
+                        $("#shareInviteModal .loader").hide();
+                        $("#shareInviteModal .share-invite-form").show();
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while sharing invites.'
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 
 
