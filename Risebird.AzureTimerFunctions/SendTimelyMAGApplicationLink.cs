@@ -29,7 +29,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("SendTimelyMAGApplicationLink")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer)//0 0 * * * *
         {
             log.LogInformation($"SendTimelyMAGApplicationLink : C# Timer trigger function started executing  at: {DateTime.Now}");
 

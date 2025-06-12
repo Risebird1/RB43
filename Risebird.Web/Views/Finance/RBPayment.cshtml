@@ -194,7 +194,7 @@
                                                         <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
 
 
-                                                            @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "yes")
+                                                            @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower().Contains("yes"))
                                                             {
                                                                 
                                                                    <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:-1px;" /></div>
@@ -308,7 +308,7 @@
                                                         <br /><br />
                                                         @if (item.AIVerdict != null && item.AIVerdict != "")
                                                         {
-                                                            @if (@item.AIVerdict == "Yes")
+                                                            @if (@item.AIVerdict.ToLower().Contains("yes"))
                                                             {
                                                                 <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.IRFinid, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
                                                             }

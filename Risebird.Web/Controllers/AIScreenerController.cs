@@ -29,7 +29,7 @@ using Microsoft.Graph.Models.Security;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AIScreenerController : Controller
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
@@ -230,7 +230,7 @@ namespace Risebird.Web.Controllers
                         var aiAnalysisModel = new InterviewerResumeFitmentAnalysisSchema();
                         if (response != null)
                         {
-                            aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                            aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
                             if (aiAnalysisModel != null)
                             {
                                 //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
@@ -390,7 +390,7 @@ namespace Risebird.Web.Controllers
                             string aiResponseUrl = string.Empty;
                             if (response != null )
                             {
-                                aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                                aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
 
                                 //saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
                                 saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, aiAnalysisModel, loggedInUser);
@@ -594,10 +594,10 @@ namespace Risebird.Web.Controllers
 
                                     if (response != null)
                                     {
-                                        aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                                        aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
 
                                         string AIVerdict = aiAnalysisModel.verdict;
-                                        if(!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower() == "yes" || AIVerdict.ToLower() == "no"))
+                                        if(!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower().Contains("yes") || AIVerdict.ToLower() == "no"))
                                         {
                                             saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdictV2(id, aiAnalysisModel, loggedInUser);
                                             if (saveOperationResult)
@@ -607,7 +607,7 @@ namespace Risebird.Web.Controllers
                                                 Request.Scheme);
 
                                             }
-                                            if (AIVerdict.ToLower() == "yes")
+                                            if (AIVerdict.ToLower().Contains("yes"))// == "yes"
                                             {
                                                 if (aiEvaluation.IsEmployed)
                                                 {
@@ -773,10 +773,10 @@ namespace Risebird.Web.Controllers
 
                                 if (response != null)
                                 {
-                                    aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                                    aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
 
                                     string AIVerdict = aiAnalysisModel.verdict;
-                                    if (!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower() == "yes" || AIVerdict.ToLower() == "no"))
+                                    if (!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower().Contains("yes") || AIVerdict.ToLower() == "no"))
                                     {
                                         saveOperationResult = await _interviewerService.SaveApplicantInterviewerAIVerdictV2(id, aiAnalysisModel, aiEvaluation.EmailId, aiEvaluation.ResumeLink);
                                         if (saveOperationResult)
@@ -786,7 +786,7 @@ namespace Risebird.Web.Controllers
                                             Request.Scheme);
 
                                         }
-                                        if (AIVerdict.ToLower() == "yes")
+                                        if (AIVerdict.ToLower().Contains("yes"))//== "yes"
                                         {
                                             if (aiEvaluation.IsEmployed)
                                             {
