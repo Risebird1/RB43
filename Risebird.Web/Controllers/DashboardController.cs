@@ -1333,9 +1333,9 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        else if (actionstatus == RibbonActionType.PropableRedo)
+                        else if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview)
                         {
-                            modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName);
+                            modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
                         else
                         {
