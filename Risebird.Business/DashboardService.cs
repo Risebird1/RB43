@@ -1244,11 +1244,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName)
+        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName,string actionstatus)
         {
             try
             {
-                return await _dashboardRespository.FetchPropableRedoDetails(emailid, profileName);
+                return await _dashboardRespository.FetchPropableRedoDetails(emailid, profileName, actionstatus);
             }
             catch (Exception ex)
             {

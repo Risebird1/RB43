@@ -301,34 +301,21 @@ namespace Risebird.Services.Controllers
                                                 _ScheduleCandidateStatus.meetingLink = zoomLink.join_url;
                                                 _ScheduleCandidateStatus.onboardingStatus = "successful";
                                                 //Send Mail Notification
-                                                if (item.isCandidateportal)
+                                                var candidateUniqueId = await _candidateService.GetCandidateUniqueId(item.EmailId);
+                                                item._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(reqData.skillChannelId);
+                                                var portallink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + item._IRFDetails.inIRFid;
+                                                Mail _mail = new Mail
                                                 {
-                                                    var candidateUniqueId = await _candidateService.GetCandidateUniqueId(item.EmailId);
-                                                    item._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(reqData.skillChannelId);
-                                                    var portallink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + item._IRFDetails.inIRFid;
-                                                    Mail _mail = new Mail
-                                                    {
-                                                        TO = item.EmailId,
-                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                    };
-                                                    _ = await _notificationHelper.SendInterviewInvite(_mail, item.EmailId, portallink, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
-                                                    Mail _mail1 = new Mail
-                                                    {
-                                                        TO = reqData.requestedBy,
-                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                    };
-                                                    var resultmail = await _notificationHelper.SendInterviewInvite(_mail1, item.EmailId, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
-                                                }
-                                                else
+                                                    TO = item.EmailId,
+                                                    Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                                                };
+                                                _ = await _notificationHelper.SendInterviewInvite(_mail, item.EmailId, portallink, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
+                                                Mail _mail1 = new Mail
                                                 {
-                                                    Mail _mail = new Mail
-                                                    {
-                                                        TO = item.EmailId,
-                                                        CC = reqData.requestedBy,//zoomLink.accountemail,
-                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                    };
-                                                    _ = await _notificationHelper.SendInterviewInvite(_mail, item.EmailId, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
-                                                }
+                                                    TO = reqData.requestedBy,
+                                                    Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                                                };
+                                                var resultmail = await _notificationHelper.SendInterviewInvite(_mail1, item.EmailId, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
                                             }
                                             else
                                             {
