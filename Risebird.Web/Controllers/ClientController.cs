@@ -4856,5 +4856,142 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ShareNotScheduleBulkInvites(DateTime? startDate, DateTime? endDate, string[] rfids, string[] communicationMethods)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var meetings = await _meetingService.GetClientNotScheduledMeetingList(0, emailid);
+                    if (startDate != null && endDate != null)
+                    {
+                        meetings = meetings.Where(t => t.dtCreatedOn >= startDate && t.dtCreatedOn <= endDate).ToList();
+                    }
+                    meetings = meetings.Where(x => rfids != null && rfids.Count() > 0 ? rfids.Contains(x.IRFId) : x.IRFId == null).ToList();
+                    if (communicationMethods.FirstOrDefault() == "email")
+                    {
+                        //Send mail
+                    }
+                    else
+                    {
+                        //send whatsApp
+                    }
+                }
+
+                //var query = _context.MeetingVM
+                //    .Where(m => m.dtCreatedOn >= startDate && m.dtCreatedOn <= endDate);
+
+                //if (rfids != null && rfids.Length > 0)
+                //{
+                //    query = query.Where(m => rfids.Contains(m.IRFId));
+                //}
+
+                //var candidates = await query
+                //    .Select(m => new { 
+                //        m.candidateEmail, 
+                //        m.candidateName, 
+                //        m.IRFId, 
+                //        m.imid,
+                //        m.MobileNumber 
+                //    })
+                //    .ToListAsync();
+
+                //if (!candidates.Any())
+                //{
+                //    return Json(new { success = false, message = "No candidates found matching the criteria." });
+                //}
+
+                //int invitesSent = 0;
+                //var errors = new List<string>();
+
+                //foreach (var candidate in candidates)
+                //{
+                //    try
+                //    {
+                //        if (communicationMethods.Contains("email"))
+                //        {
+                //            // Send email invite
+                //            await _emailService.SendInvitationEmail(
+                //                candidate.candidateEmail,
+                //                candidate.candidateName,
+                //                candidate.IRFId
+                //            );
+                //        }
+
+                //        if (communicationMethods.Contains("whatsapp") && !string.IsNullOrEmpty(candidate.MobileNumber))
+                //        {
+                //            // Send WhatsApp invite
+                //            var endDate = DateTime.Now.AddDays(5);
+                //            await SendWhatsAppInvite(
+                //                candidate.IRFId,
+                //                candidate.imid,
+                //                candidate.candidateEmail,
+                //                endDate,
+                //                "https://portal.risebird.io/Client/NotScheduledMeetings"
+                //            );
+                //        }
+
+                //        invitesSent++;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        var errorMessage = $"Error sending invite to {candidate.candidateName} ({candidate.candidateEmail}): {ex.Message}";
+                //        _logger.LogError(errorMessage);
+                //        errors.Add(errorMessage);
+                //    }
+                //}
+
+                //var message = $"Successfully sent {invitesSent} invites out of {candidates.Count} candidates.";
+                //if (errors.Any())
+                //{
+                //    message += $"\nFailed for {errors.Count} candidates.";
+                //}
+
+                //return Json(new { 
+                //    success = true, 
+                //    message = message,
+                //    details = errors
+                //});
+                return Json(new { success = true, message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"Error in ShareBulkInvites: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while processing bulk invites." });
+            }
+        }
+        private async Task SendNotSchdeuledMailInvite(int irfId, string CandidateemailId, string loggedInUserEmail)
+        {
+            var linkurl = "https://" + Request.Host.ToString();
+            if (await _irfService.SendInvite(Convert.ToInt32(irfId), CandidateemailId, loggedInUserEmail, linkurl))
+            {
+                //return Json("Invitation has been sent Successfully!");
+            }
+        }
+        private async Task SendWhatsAppInvite(string irfName, int irfId, string emailId, DateTime endDate, string pageUrl)
+        {
+            try
+            {
+                // Implement your WhatsApp invite sending logic here
+                // This should match your existing WhatsApp invitation implementation
+                //await _whatsAppService.SendInvite(new WhatsAppInviteModel
+                //{
+                //    IRFName = irfName,
+                //    IRFId = irfId,
+                //    EmailId = emailId,
+                //    EndDate = endDate,
+                //    PageUrl = pageUrl
+                //});
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"WhatsApp invite failed for {emailId}: {ex.Message}");
+                throw; // Rethrow to be handled by the calling method
+            }
+        }
     }
 }
