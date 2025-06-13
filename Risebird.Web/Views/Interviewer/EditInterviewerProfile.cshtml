@@ -52,6 +52,7 @@
                             }
                             @Html.HiddenFor(m => m.IsEdit)
                             @Html.HiddenFor(m => m.ShowAddToSkillChannelOption)
+                            @Html.HiddenFor(m => m.uniqueid)
                             <div class="form-group" style="display:none">
                                 @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId" })
                             </div>

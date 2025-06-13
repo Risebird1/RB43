@@ -19,7 +19,7 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerProfileByUserId]
 AS    
 Begin    
    
-select Ipr.id as [id], Ipr.UserId, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,     
+select Ipr.id as [id], Ipr.UserId, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,  ul.uniqueid,   
 Ipr.NickName,Ipr.AltEmailID,Ipr.DOB , Ipr.Gender, Ipr.AnnualSalary, Ipr.Country,     
 Ipr.City, Ipr.AltMobileNumber, Ipr.CurrentRole, Ipr.Experience, Ipr.PreferredDomain, Ipr.GitHubLink,    
 Ipr.ResumeLink, Ipr.CodedResumeLink, Ipr.StackOverflowLink, Ipr.LinkedinLink, Ipr.Blog, Ipr.IsLeadInterviewer,    

@@ -10,7 +10,7 @@ namespace Risebird.Repository.Interface
     {
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewers();
         //Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
-        bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId);
+        bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid);
 
         Task<bool> DeleteInterviewerProfile(int UserId);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);

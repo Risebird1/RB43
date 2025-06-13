@@ -225,9 +225,10 @@ namespace Risebird.Repository
         //    }
         //}
 
-        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId)
+        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid)
         {
             assessmentGroupList = string.Empty;
+            uniqueid = string.Empty;
             try
             {
                 int ProfileId;
@@ -245,6 +246,7 @@ namespace Risebird.Repository
                     ProfileId = profileOut.HasValue ? profileOut.Value : 0;
                     assessmentGroupList = parameters.Get<string>("@assessmentGroupList");
                     userId = parameters.Get<int>("@outputUserId");
+                    uniqueid = parameters.Get<string>("@uniqueid");
                     if (!string.IsNullOrEmpty(assessmentGroupList))
                     {
                         return false;
@@ -465,6 +467,7 @@ namespace Risebird.Repository
             //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@outputUserId", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
+            parameters.Add("@uniqueid", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
             return parameters;
         }
