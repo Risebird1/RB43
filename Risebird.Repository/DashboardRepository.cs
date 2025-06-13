@@ -2300,12 +2300,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName)
+        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName,string actionstatus)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@emailid", emailid);
+                parameters.Add("@actionstatus", actionstatus);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_propableRedoInterview", parameters,
