@@ -40,20 +40,28 @@ namespace Risebird.MicroService
                     foreach (var irf in distinctIRF)
                     {
                         var irfName = unassignedInterviewMeetings.Where(x => x.irfIntId == irf)?.FirstOrDefault().IRFId;
-                        var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(irfName);
+                        //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(irfName);
                         var unassignedMeetingsByIRF = unassignedInterviewMeetings?.Where(x => x.irfIntId == irf);
 
                         foreach (var meeting in unassignedMeetingsByIRF)
                         {
+
                             //get all the active interviewers for the IRF
+                            var irfInterviewers = await _meetingRespository.GetEmergencyInterviewersForIRF(meeting.irfIntId);
+
                             //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
-
-
-                            if (irfInterviewers != null && irfInterviewers.Count() > 0)
+                            foreach (var item in irfInterviewers)
                             {
-                                //send mails to the active irf interviewers
-                                await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
+                                //await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.uniqueId, meeting.irfIntId, meeting.imid);
+                                await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(), item.uniqueid, meeting.irfIntId, meeting.imid);
+
                             }
+
+                            //if (irfInterviewers != null && irfInterviewers.Count() > 0)
+                            //{
+                            //    //send mails to the active irf interviewers
+                            //    await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(),meeting.uniqueId, meeting.irfIntId, meeting.imid);
+                            //}
 
                         }
 
