@@ -1894,7 +1894,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer,string uniqueId)
+        public async Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer)
         {
             try
             {
@@ -1906,7 +1906,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { JdTitle, PrimarySkill, interviewer, uniqueId };
+                object[] parameters = new object[] { JdTitle, PrimarySkill, interviewer };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestAssignationNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestAssignationNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);

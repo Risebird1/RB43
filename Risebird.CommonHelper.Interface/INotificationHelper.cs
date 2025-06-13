@@ -72,7 +72,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendPublicUrlToClient(Mail model, string UrlDetails, string logoink);
         Task<string> InterviewRequestAddNotification(Mail model, string JdTitle, string PrimarySkill, string Client);
         Task<string> InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill, string RequestedBy);
-        Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer, string uniqueId);
+        Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer);
         Task<string> InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole, string CalendlyLink, string IRFID);
         Task<string> InterviewRequestAddClientNotification(Mail model, string JdTitle, string PrimarySkill);
         Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null, string CancellationSource = null);

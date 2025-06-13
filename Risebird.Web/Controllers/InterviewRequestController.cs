@@ -481,7 +481,7 @@ namespace Risebird.Web.Controllers
                     TO = model.Assignto,
                     Subject = "New Interview Request Assigned: " + model.JdTitle
                 };
-                var emailsend = await _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername,model.uniqueid);
+                var emailsend = await _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername);
                 return Json("Successfully assigned.");
             }
             else
