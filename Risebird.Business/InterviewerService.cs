@@ -432,7 +432,10 @@ namespace Risebird.Business
                     var interviewerAvailabilityDetails = await _interviewerRepository.GetAvailabilityList(profileModel.id);
                     profileModel.InterviewerAvailabilityDetails = interviewerAvailabilityDetails.ToList();
                     profileModel.InterviewerAccDetails = await _interviewerRepository.GetAccDetailsList(profileModel.id);
-                    profileModel.InterviewerAccDetails.AccountNumber = string.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
+                    if (profileModel.InterviewerAccDetails != null)
+                    {
+                        profileModel.InterviewerAccDetails.AccountNumber = string.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
+                    }
                     return profileModel;
                 }
                 else return new InterviewerProfileVM { EmailId = emailId };
@@ -1777,7 +1780,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink =null)
+        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink = null)
         {
             try
             {
