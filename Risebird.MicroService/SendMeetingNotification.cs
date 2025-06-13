@@ -91,7 +91,7 @@ namespace Risebird.MicroService
                             string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.candidateUniqueId + "?IRFId=" + item.irfId;
 
                             //var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId, item.uniqueid);
 
                         }
                         else
@@ -104,7 +104,7 @@ namespace Risebird.MicroService
                             };
                             string dashboardLink = "https://portal.risebird.io/Interview/InterviewDetails?id=" + item.irfId + "&interviewId=" + item.interviewMeetingId;
                             //var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "", item.interviewMeetingId);
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Candidate", item.candidateName, "", item.interviewMeetingId);
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Candidate", item.candidateName, "", item.interviewMeetingId, item.uniqueid);
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.interviewer + ";" + CCEmails;
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";

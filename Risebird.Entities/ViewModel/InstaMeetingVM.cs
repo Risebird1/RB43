@@ -84,6 +84,7 @@ namespace Risebird.Entities.ViewModel
         public string AssessmentGroupName { get; set; }
         public string[] PrimarySkills { get; set; }
         public string PrimarySkillsid { get; set; }
+        public string uniqueid { get; set; }
     }
     public class InstaTechSkill
     {
