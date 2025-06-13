@@ -22,7 +22,7 @@ declare @irfIntId int
  set @irfIntId = (select id from IRF where IRFId =@IRFId)  
     
  Begin  
-  select distinct ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId 
+  select distinct ul.EmailId,ul.uniqueid from TransInterviewer ti join UserList ul on ul.id = ti.UserId 
   where IRFId = @irfIntId and ti.IsActive=1  and ul.IsActive=1
  End  
   

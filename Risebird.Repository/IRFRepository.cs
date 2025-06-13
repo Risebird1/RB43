@@ -3681,7 +3681,32 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(string irfId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFID", irfId); // Normal parametersmeters 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_EmergencyInterviwersForIRF", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
 
+        }
 
         public IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix()
         {

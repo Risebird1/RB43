@@ -95,10 +95,11 @@ namespace Risebird.Business
         //    }
         //}
 
-        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, bool? isApplicant = false)
+        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, bool? isApplicant = false)
         {
             assessmentGroupList = string.Empty;
             userId = 0;
+            uniqueid = string.Empty;
             try
             {
                 if (interviewerProfile.AssessmentGroupArray != null)
@@ -138,7 +139,8 @@ namespace Risebird.Business
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 //int userId;
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid);
+                interviewerProfile.uniqueid = uniqueid;
                 if (result)
                 {
                     if (isApplicant.HasValue && isApplicant.Value)
@@ -150,7 +152,7 @@ namespace Risebird.Business
 
                         string dropProfileButton = "";
                         //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement,interviewerProfile.uniqueid).Result;
 
                     }
 
@@ -171,7 +173,6 @@ namespace Risebird.Business
                 return false;
             }
         }
-
         //public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
         //{
         //    try
@@ -190,9 +191,10 @@ namespace Risebird.Business
         //        return false;
         //    }
         //}
-        public bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
+        public bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out string uniqueid)
         {
             assessmentGroupList = string.Empty;
+            uniqueid = string.Empty;
             try
             {
                 List<string> assessmentGroupDiffArray = new List<string>();
@@ -232,7 +234,7 @@ namespace Risebird.Business
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 int userId;
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId);
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -251,7 +253,6 @@ namespace Risebird.Business
                 return false;
             }
         }
-
         public async Task<bool> DeleteInterviewerProfile(int UserId)
         {
             try
@@ -1664,7 +1665,7 @@ namespace Risebird.Business
 
                     string dropProfileButton = "";
                     //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement, interviewerProfile.uniqueid).Result;
                     return true;
                 }
                 return false;

@@ -463,8 +463,9 @@ namespace Risebird.Web.Controllers
                         }
                         string assessmentGroupList;
                         int userId;
+                        string uniqueid;
                         interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out userId))
+                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out userId, out uniqueid))
                         {
                             TempData["MessageInterviewerOnboarding"] = "Assessment Groups mapped successfully. Kindly select the target Skill Channel from the drop-down to finish onboarding!";
                             return RedirectToAction("EditInterviewerProfile", new { userId = userId, showAddToSkillChannelOption = true });
@@ -649,8 +650,9 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                             string assessmentGroupList;
+                            string uniqueid;
                             interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                            if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
+                            if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out uniqueid))
                             {
                                 TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
                                 return RedirectToAction("Index");

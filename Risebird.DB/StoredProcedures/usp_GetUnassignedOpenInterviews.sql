@@ -28,8 +28,9 @@ set @threeHoursFromNow = (SELECT DATEADD(MINUTE, 180, @nearestThirtyMinute))
 if(@irfId is not null and @irfId>0)
 Begin
 
-select im.interviewDate, irf.JDTiltle, irf.id as irfIntId, im.id as imid, im.IRFId from InterviewMeetings im 
+select im.interviewDate, irf.JDTiltle, irf.id as irfIntId, im.id as imid, im.IRFId,ulc.uniqueid from InterviewMeetings im 
 join IRF on IRF.IRFId  = im.IRFId
+left join UserList ulc on ulc.EmailId = im.candidateEmail
 where (im.interviewDate = @threeHoursFromNow  or im.interviewDate = DATEADD(MINUTE, 30, @threeHoursFromNow)
 or im.interviewDate = DATEADD(MINUTE, 60, @threeHoursFromNow) or im.interviewDate = DATEADD(MINUTE, 90, @threeHoursFromNow)
 or im.interviewDate = DATEADD(MINUTE, 120, @threeHoursFromNow) or im.interviewDate = DATEADD(MINUTE, 150, @threeHoursFromNow)
@@ -41,8 +42,9 @@ End
 Else
 Begin
 
-select im.interviewDate, irf.JDTiltle, irf.id as irfIntId, im.id as imid, im.IRFId from InterviewMeetings im 
+select im.interviewDate, irf.JDTiltle, irf.id as irfIntId, im.id as imid, im.IRFId,ulc.uniqueid from InterviewMeetings im 
 join IRF on IRF.IRFId  = im.IRFId
+left join UserList ulc on ulc.EmailId = im.candidateEmail
 where im.interviewDate = DATEADD(MINUTE, 60, @threeHoursFromNow)-- 4 hours left for interview
 or im.interviewDate = DATEADD(MINUTE, -60, @threeHoursFromNow) -- 2 hours left for interview
 and im.interviewer is null
