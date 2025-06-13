@@ -631,7 +631,8 @@ namespace Risebird.Web.Controllers
                                                     obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
                                                     int userId;
                                                     string agList;
-                                                    _interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId, true);
+                                                    string uniqueid;
+                                                    _interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId, out uniqueid, true);
                                                 }
                                                 return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
@@ -810,7 +811,8 @@ namespace Risebird.Web.Controllers
                                                 obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
                                                 int userId;
                                                 string agList;
-                                                _interviewerService.AddInterviewerProfile(obj, aiEvaluation.EmailId, out agList, out userId, true);
+                                                string uniqueid;
+                                                _interviewerService.AddInterviewerProfile(obj, aiEvaluation.EmailId, out agList, out userId, out uniqueid, true);
                                             }
                                             return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 

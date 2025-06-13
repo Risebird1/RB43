@@ -56,7 +56,8 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @assessmentGroupList varchar(max) out,  
 @RemovedAssessmentGroups varchar(max)=null,
 @TargetIrfId int,
-@outputUserId int out
+@outputUserId int out,
+@uniqueid varchar(50) out
 AS              
 Begin
 
@@ -137,7 +138,8 @@ Begin
    
    select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;  
    
-    select @outputUserId= @UserId     
+    select @outputUserId= @UserId 
+	select @uniqueid = uniqueid from [dbo].[UserList] where id = @UserId;
    --delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId              
               
    --delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId              
@@ -281,6 +283,8 @@ Declare @v_User_Id int;
  declare @skillId int = (select top 1 id from Skill where [Name] like '%' + @primaryAgSkill + '%')
  
  select @outputUserId=@v_User_Id 
+ select @uniqueid = uniqueid from [dbo].[UserList] where id = @v_User_Id;
+
  if(@TargetIrfId > 0)
  Begin
 	declare @rate int

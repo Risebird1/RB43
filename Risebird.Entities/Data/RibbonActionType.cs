@@ -22,5 +22,6 @@
         public static readonly string PotentialRiskByClient = "PotentialRiskByClient";
         public static readonly string InterviewerChurn = "InterviewerChurn";
         public static readonly string PropableRedo = "PropableRedo";
+        public static readonly string QCUnderReview = "QCUnderReview";
     }
 }
