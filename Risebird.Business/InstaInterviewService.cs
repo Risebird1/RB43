@@ -104,13 +104,19 @@ namespace Risebird.Business
                     var emailsend = _notificationHelper.InstaClientNotification(_mail, RequiredSkill, logolink);
                     //meeting.RequestedBy
                     //Send mail to Interviewers
-                    var Interviewers = _instaInterviewRepository.FetchInstaIntervieweByAssessmentGroup(model.Result.AssessmentGroup);
-                    Mail _mail1 = new Mail
-                    {
-                        TO = string.Join(";", Interviewers),
-                        Subject = "Risebird: Insta interview request for " + meeting.CandidateName
-                    };
-                    var emailsent = _notificationHelper.InstaInterviewerNotification(_mail1, meeting.RequiredSkill,meeting.uniqueid);
+                    var Interviewers = _instaInterviewRepository.FetchInstaInterviewer(model.Result.AssessmentGroup).Result;
+                    
+                        Mail _mail1 = new Mail
+                        {
+                            TO = string.Join(";", Interviewers.Select(x => x.EmailId)),
+                            Subject = "Risebird: Insta interview request for " + meeting.CandidateName
+                        };
+
+                        foreach (var item in Interviewers)
+                        {
+                            var emailsent = _notificationHelper.InstaInterviewerNotification(_mail1, meeting.RequiredSkill, item.uniqueid);
+                        }
+                    
                     return true;
                 }
                 return false;

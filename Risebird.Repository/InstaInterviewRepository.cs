@@ -348,6 +348,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+
+        public async Task<IEnumerable<InterviewerProfileVM>> FetchInstaInterviewer(string Assessmentgroupid)
+        {
+            try
+            {
+                var query = ";With CTE AS(Select  * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where Isinstaavailable=1) Select Distinct ul.Emailid,ul.uniqueid From CTE join Userlist ul on CTE.Userid=ul.id where CTE.value=@Assessmentgroupid";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@Assessmentgroupid", Assessmentgroupid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<InterviewerProfileVM>(query, dp);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<InstaMeetingVM> GetInstaInteviewReport(int interviewid)
         {
             try
