@@ -15,6 +15,7 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> MakeIVRCall(string userPhoneNumber, string recipientName, string interviewDate, string ivrType = null);
         Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string uniqueId, int irfId, string jdTitle, int assessmentGroupId);
         Task<bool> MakeIVRCallForCandidateMeetingReminder(string userPhoneNumber, string uniqueId, int irfId, int interviewId, int candidateId);
+        Task<bool> MakeIVRCallForInterviewerMeetingReminder(string userPhoneNumber, int interviewId);
 
     }
 }

@@ -350,97 +350,6 @@ namespace Risebird.CommonHelper
             }
         }
 
-        //public async Task<bool> MakeIVRCallForCandidateMeetingReminder(string userPhoneNumber, string candidateFirstName,string uniqueId,  int irfId, string jdTitle, int interviewId, int candidateId, DateTime interviewDate, string timeZoneValue)
-        //{
-        //    try
-        //    {
-        //        TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-        //        var uniqueId = "5DF6F746-A820-4129-BE42-34970C6679E7";
-        //        var irfId = 10681;
-        //        int assessmentGroupId = 0;
-        //        string jdTitle = "Python Developer";
-        //        jdTitle = jdTitle?.Trim()?.Replace(" ", "_")?.Replace("/", "_");
-
-        //        var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
-
-        //        //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&irfId={1}", recipientName, interviewDate);
-        //        //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&interviewDate={1}", recipientName, interviewDate);
-
-        //        //var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", "FirstName", "interviewdate");
-        //        var url = new Uri(link);
-
-        //        var call = await CallResource.CreateAsync(
-        //            to: new PhoneNumber(userPhoneNumber),
-        //            from: new PhoneNumber(_twilioCallerNumber),
-        //            url: url // Replace with your public endpoint
-        //        );
-
-        //        if (call.Status != null)
-        //        {
-        //            var result = call.Status.ToString();
-        //            if (result != CallResource.StatusEnum.Failed.ToString())
-        //            {
-        //                return true;
-        //            }
-        //            else
-        //            {
-        //                return false;
-        //            }
-        //        }
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return false;
-        //    }
-        //}
-
-        //public async Task<bool> MakeIVRCallToInterviewerForAvailability(string userPhoneNumber, string uniqueId, int irfId, string jdTitle, int assessmentGroupId)
-        //{
-        //    try
-        //    {
-        //        await _activityTrackerService.DebugLogger($"MakeIVRCallToInterviewerForAvailability twilio function invked succesfully", "ivr", string.Empty);
-
-        //        TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-        //        jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
-
-        //        var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
-
-        //        var url = new Uri(link);
-
-        //            var call = await CallResource.CreateAsync(
-        //                to: new PhoneNumber(userPhoneNumber),
-        //                from: new PhoneNumber(_twilioCallerNumber),
-        //                url: url // Replace with your public endpoint
-        //            );
-
-        //            if (call.Status != null)
-        //            {
-        //                var result = call.Status.ToString();
-        //                if (result != CallResource.StatusEnum.Failed.ToString())
-        //                {
-        //                    return true;
-        //                }
-        //                else
-        //                {
-        //                    return false;
-        //                }
-        //            }
-
-        //        return true;
-                
-                
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _activityTrackerService.DebugLogger($"MakeIVRCallToInterviewerForAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
-
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return false;
-        //    }
-        //}
-
         public async Task<bool> MakeIVRCallForCandidateMeetingReminder(string userPhoneNumber,string uniqueId,  int irfId, int interviewId, int candidateId)
         {
             try
@@ -485,6 +394,50 @@ namespace Risebird.CommonHelper
             }
         }
 
+
+        public async Task<bool> MakeIVRCallForInterviewerMeetingReminder(string userPhoneNumber, int interviewId)
+        {
+            try
+            {
+                await _activityTrackerService.DebugLogger($"IVRCall to Interviewer for their Interview Availability Reminder", "IVR", string.Empty);
+
+                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+
+                var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerMeetingReminder?interviewId={interviewId}";
+
+                var url = new Uri(link);
+
+                var call = await CallResource.CreateAsync(
+                    to: new PhoneNumber(userPhoneNumber),
+                    from: new PhoneNumber(_twilioCallerNumber),
+                    url: url // Replace with your public endpoint
+                );
+
+                if (call.Status != null)
+                {
+                    var result = call.Status.ToString();
+                    if (result != CallResource.StatusEnum.Failed.ToString())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+
+
+            }
+            catch (Exception ex)
+            {
+                await _activityTrackerService.DebugLogger($"MakeIVRCallForInterviewerMeetingReminder function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
     }
 }

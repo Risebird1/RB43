@@ -4472,6 +4472,11 @@ namespace Risebird.Business
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);
         }
+
+        public async Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId)
+        {
+            return await _meetingRespository.GetInterviewerInterviewDetails(interviewId);
+        }
     }
 }
 

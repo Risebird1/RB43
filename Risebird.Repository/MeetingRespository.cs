@@ -7611,5 +7611,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchInterviewerMeetingsDetails", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

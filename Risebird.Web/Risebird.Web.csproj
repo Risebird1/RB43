@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.HTML" Version="24.10.0" />
+    <PackageReference Include="Aspose.HTML" Version="25.5.0" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="ExcelDataReader" Version="3.7.0" />
     <PackageReference Include="HtmlToPdfConverter.Core" Version="2.0.0" />
