@@ -763,7 +763,7 @@
                                                                         {
                                                                             @* <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>*@                                                                    
 
-                                                                                                                                                                                                                                                                                              <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+                                                                                                                                                                                                                                                                                                              <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
                                                                         }
 
                                                                         @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
@@ -3158,14 +3158,18 @@
                        modal.style.display = "block";
                         var drpPrimarySkills = $("#interviewerList");
                         $("#interviewerList option").remove();
-                         if (data.length > 0) {
-                    $(data).each(function () {
-                        var option = $("<option />");
-                        option.html(this);
-                        option.val(this);
-                        drpPrimarySkills.append(option);
-                    });
-                }
+                        if (data.length > 0) {
+                            var option = $("<option />");
+                            option.html('Select Interviewer');
+                            option.val('');
+                            drpPrimarySkills.append(option);
+                            $(data).each(function () {
+                            option = $("<option />");
+                            option.html(this);
+                            option.val(this);
+                            drpPrimarySkills.append(option);
+                            });
+                        }
                 }
         });
     }
@@ -3174,7 +3178,11 @@
         var interviewId = $('#selectedInterviewId').val();
         var Meetingid = $('#selectedMeetingid').val();
         var interviewer = $('#interviewerList').val();
-
+        if(interviewer=='')
+        {
+            Swal.fire("Please select interviewer");
+            return;
+        }
         Swal.fire({
             title: 'Confirm Assignment',
             text: 'Are you sure you want to assign this interview?',

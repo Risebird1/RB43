@@ -30,6 +30,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
         Task<bool> AddSkillComments(TechSkillComments obj);
         Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
+        Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(string irfId);
         Task<bool> ArchiveIRF(int IRFId);
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
@@ -288,5 +289,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetAssessmentGroupFromIRFId(int irfId);
         Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG();
         Task<string> GetAssessmentGroupById(int assessmentGroupId);
+        
     }
 }

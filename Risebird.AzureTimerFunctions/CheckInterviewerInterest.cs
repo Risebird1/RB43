@@ -39,7 +39,7 @@ namespace Risebird.AzureTimerFunctions
                         Subject = "Risebird Interviewer Interest Request Details"
                     };
                     var ReviewURL = "https://portal.risebird.io/Interviewer/ShowInterest?uniqueid=" + item.uniqueid;
-                    var emailsend = await _notificationHelper.SendInterviewerIntrest(_mail, item.FirstName, ReviewURL);
+                    var emailsend = await _notificationHelper.SendInterviewerIntrest(_mail, item.FirstName, ReviewURL,item.uniqueid);
                 }
                 catch (Exception ex)
                 {

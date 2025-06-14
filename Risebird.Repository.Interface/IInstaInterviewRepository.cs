@@ -19,6 +19,7 @@ namespace Risebird.Repository.Interface
         string InstaAssignYourself(int meetingid, string interviewerMail);
         Task<IEnumerable<InstaMeetingVM>> GetAllInstaAssignedInterviews(string emailID);
         List<string> FetchInstaIntervieweByAssessmentGroup(string Assessmentgroupid);
+        Task<IEnumerable<InterviewerProfileVM>>FetchInstaInterviewer(string Assessmentgroupid);
         Task<InstaMeetingVM> GetInstaInteviewReport(int interviewid);
         Task<bool> AddInstaInterviewReport(InstaMeetingVM reportDetails);
         string UpdateInstaZoomLink(int meetingid, string Zoomlink, string accountEmail);
