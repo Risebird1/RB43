@@ -289,6 +289,8 @@ namespace Risebird.Repository.Interface
         Task<string> GetAssessmentGroupFromIRFId(int irfId);
         Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG();
         Task<string> GetAssessmentGroupById(int assessmentGroupId);
-        
+        Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy);
+
+
     }
 }
