@@ -9966,6 +9966,27 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@agId", agId);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@MAGLinkEmailTriggeredBy", sentBy);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateMagLinkEmailTriggeredTime", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

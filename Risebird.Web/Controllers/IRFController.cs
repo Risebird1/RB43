@@ -1,4 +1,5 @@
-﻿using iTextSharp.text.pdf.qrcode;
+﻿using ExcelDataReader.Log;
+using iTextSharp.text.pdf.qrcode;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ using System.Web;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList.Extensions;
+using static iTextSharp.text.pdf.AcroFields;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using Method = RestSharp.Method;
 
@@ -11264,6 +11266,66 @@ namespace Risebird.Web.Controllers
         {
             var result = await _irfService.UpdateNewPriority(irfid, PriorityLevel);
             return Json("Successfully");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendMagApplicationLinks(int agId, string agName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+
+                        var interviewers = await _irfRepository.GetAssessmentGroupInterviewerMembers(agId, true, false); //item.id here is the id of the assessment group and not a mag table primary id
+
+                        if (interviewers != null && interviewers.Count() > 0)
+                        {
+                            //create mag link
+                            var encryptedId = await _encryptionHelper.EncryptStringValue(agId.ToString());
+                            var magLink = "https://portal.risebird.io/Interviewer/MAGApply?id=" + HttpUtility.UrlEncode(encryptedId);
+
+                            //send the mag link to all the interviewers, will have to create a template
+                            //foreach (var interviewer in interviewers)
+                            //{
+                            //    await _notificationHelper.SendMAGApplicationLinkToInterviewers(interviewer.EmailId, interviewer.uniqueid, magLink, agId);
+
+                            //}
+                            await Parallel.ForEachAsync(interviewers, async (interviewer, cancellationToken) =>
+                            {
+                                _ = await _notificationHelper.SendMAGApplicationLinkToInterviewers(interviewer.EmailId, interviewer.uniqueid, magLink, agId);
+
+                            });
+                            await _irfService.UpdateMagLinkEmailTriggeredTime(agId, emailid);
+                            return Json("Successful.");
+                        }
+                        else
+                        {
+                            return Json("No applicable interviewers found!");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+
+            }
         }
     }
 }

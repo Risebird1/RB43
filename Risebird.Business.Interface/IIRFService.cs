@@ -197,6 +197,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<int>> GetIRFList(int ClientId);
         Task<bool> SaveInterviewerBillingRate(int billingrate, int Userid, int IRFid);
         Task<IEnumerable<AssignmentVM>> GetAllMAGs();
+        Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG();
         Task<IEnumerable<string>> GetIRFTechSkills(int irfId);
         Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate();
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
@@ -208,5 +209,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateNewPriority(int irfid, int PriorityLevel);
         Task<string> GetAssessmentGroupFromIRFId(int irfId);
         Task<string> GetAssessmentGroupById(int assessmentGroupId);
+        Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy);
     }
 }
