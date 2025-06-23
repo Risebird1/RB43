@@ -2149,7 +2149,20 @@ namespace Risebird.CommonHelper
                 //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
                 //}
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
-                object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName, jdLink, clientLogoLink, companyLink };
+
+                // Format email addresses to prevent mailto: links while showing full addresses
+                object[] parameters = new object[] { 
+                    interviewdate, 
+                    join_url, 
+                    Email?.Replace("@", "&#64;"), 
+                    HRCoordinator?.Replace("@", "&#64;"), 
+                    StaffingAgiencies?.Replace("@", "&#64;"), 
+                    Name, 
+                    ClientName, 
+                    jdLink, 
+                    clientLogoLink, 
+                    companyLink 
+                };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -3470,7 +3483,7 @@ namespace Risebird.CommonHelper
             {
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = "Risebird : New Interviews have come up!";
+                msg.Subject = "Risebird : New Interviews Available!";
                 //foreach (var emailId in interviewerEmailIds.Select(x=>x.Trim()).Distinct())
                 //{
                 //    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, null));

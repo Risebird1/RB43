@@ -120,15 +120,13 @@
                                 <div class="mdc-button__ripple"></div>
                             </button>
                         </span>
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
+                       @*  @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
                             </button>
-                            @* <button style="width:250px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa-regular fa-person-circle-question" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("ProbableNoShowCandidates", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Probable No Show Candidates</font></span>
-                        </button>*@
-                        }
+                           
+                        } *@
 
 
 
@@ -724,7 +722,7 @@
                                                                                 </button>
                                                                             </span>
                                                                         }
-                                                                        @if (item.interviewDate.AddHours(1) >= DateTime.Now && ViewBag.profile == "Admin")
+                                                                        @if (item.interviewDate.AddHours(1) >= DateTime.Now && (ViewBag.profile == "Admin" || ViewBag.emailid == "vivek_garg@risebird.io"))
                                                                         {
                                                                             <span class="interview_7">
                                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit" onclick="captureInterviewerRelatedclick('Interview', 'Edit',@item.imid,0)">
