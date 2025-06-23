@@ -82,6 +82,8 @@ namespace Risebird.Entities.ViewModel
         public int TemplateCount { get; set; }
         public string MAGLinkEmailTriggeredBy { get; set; }
         public DateTime? MAGLinkEmailTriggeredOn { get; set; }
+        public int NoOfUnassigned { get; set; }
+
 
     }
     public class Assessment
