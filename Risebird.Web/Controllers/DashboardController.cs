@@ -50,6 +50,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IIRFRepository _irfRepository;
+        private readonly IIRFService _irfService;
         private readonly ITwilioHelper _twilioHelper;
         private readonly IEncryptionHelper _encryptionHelper;
         //private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
@@ -63,7 +64,7 @@ namespace Risebird.Web.Controllers
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService,
             IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository,
-            ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper, IIRFService irfService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -82,10 +83,10 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _twilioHelper = twilioHelper;
             _encryptionHelper = encryptionHelper;
+            _irfService = irfService;
             //_affIndaResumeParserHelper = affIndaResumeParserHelper;
             //_candidateRepository = candidateRepository;
             //_validationHelper = validationHelper;
-            //_irfService = irfService;
         }
 
         [Authorize]
@@ -4873,6 +4874,42 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "An error occurred while inactivating the interviewer." });
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of all the mags that have unassigned interviews upcoming
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> UnassignedMags()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        var magList = await _irfService.GetUnassignedInterviewsMAG();
+                        return View(magList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

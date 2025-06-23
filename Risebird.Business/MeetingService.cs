@@ -351,10 +351,17 @@ namespace Risebird.Business
             {
                 if (await _meetingRespository.AddMeeting(meeting))
                 {
-                    var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
+                    //var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
+                    var interviwers = await _meetingRespository.GetEmergencyInterviewersForIRF(meeting.irfIntId);
+
                     if (interviwers != null && string.IsNullOrEmpty(meeting.interviewer))
                     {
-                        await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                        foreach (var item in interviwers)
+                        {
+                            await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(),item.uniqueid);
+
+                        }
+                        //await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
                         return true;
                     }
                     else if (!string.IsNullOrEmpty(meeting.interviewer))
@@ -905,12 +912,23 @@ namespace Risebird.Business
                     }
                     else
                     {
-                        var interviewers = new List<string>();
-                        interviewers = (await _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId)).ToList();
+                        //var interviewers = new List<string>();
+                        //interviewers = (await _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId)).ToList();
+                        var interviewers = await _meetingRespository.GetEmergencyInterviewersForIRF(meeting.irfIntId);
+
                         if (interviewers != null)
                         {
-                            interviewers.Remove(email);
-                            await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(), meeting.irfIntId, meetingid);
+                            var filteredInterviewers = interviewers.Where(x => x.EmailId != email).ToList();
+
+                            //interviewers.Remove(email);
+
+                            //.Remove(x => x.emailId == email)
+                            foreach (var item in filteredInterviewers)
+                            {
+                                await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(), item.uniqueid, meeting.irfIntId, meetingid);
+
+                            }
+                            //await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(),meeting.uniqueId, meeting.irfIntId, meetingid);
                         }
                         //var hrs = _userService.GetAllHrsEmailld()?.ToList();
                         //if (hrs != null)

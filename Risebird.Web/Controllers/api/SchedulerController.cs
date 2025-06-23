@@ -21,13 +21,18 @@ namespace Risebird.Web.Controllers.api
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> IRFBasedInterviewerMail(string IRFID, string interviewDate)
+        public async Task<HttpResponseMessage> IRFBasedInterviewerMail(string IRFID, string interviewDate, string uniqueId)
         {
-            var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(IRFID);
-            if (interviwers != null)
+            //var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(IRFID);
+            var interviwers = await _irfService.EmergencyInterviwersForIRF(IRFID);
+            foreach (var item in interviwers)
             {
-                await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, interviewDate);
+                await _notificationHelper.EmergencyInterviewerMail(item.EmailId, interviewDate, item.uniqueid);
             }
+            //if (interviwers != null)
+            //{
+            //    await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, interviewDate, uniqueId);
+            //}
 
             return new HttpResponseMessage(HttpStatusCode.OK);
         }

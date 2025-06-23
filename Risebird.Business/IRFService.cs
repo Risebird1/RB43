@@ -961,6 +961,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(string irfId)
+        {
+            try
+            {
+                return (await _irfRepository.EmergencyInterviwersForIRF(irfId)).ToList();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public bool CheckUniqueness(string value, bool isCloneTemplate = false)
         {
             try
@@ -4549,6 +4562,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG()
+        {
+            try
+            {
+                return await _irfRepository.GetUnassignedInterviewsMAG();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate()
         {
             try
@@ -4658,6 +4684,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy)
+        {
+            try
+            {
+                return await _irfRepository.UpdateMagLinkEmailTriggeredTime(agId, sentBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

@@ -955,13 +955,13 @@ namespace Risebird.Web.Controllers
         {
             //=========Availability============
 
-            //var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
-            //              select new { ID = (int)s, Name = s.GetDescription() };
-            //model.WeekDayList = new SelectList(Weekday, "ID", "Name");
+            var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            model.WeekDayList = new SelectList(Weekday, "ID", "Name");
 
-            //var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
-            //              select new { ID = (int)s, Name = s.GetDescription() };
-            //model.WeekEndList = new SelectList(Weekend, "ID", "Name");
+            var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            model.WeekEndList = new SelectList(Weekend, "ID", "Name");
 
             ////=========Project============
 

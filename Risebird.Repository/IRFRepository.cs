@@ -3681,7 +3681,32 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<IEnumerable<InterviewerProfileVM>> EmergencyInterviwersForIRF(string irfId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFID", irfId); // Normal parametersmeters 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_EmergencyInterviwersForIRF", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
 
+        }
 
         public IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix()
         {
@@ -9940,6 +9965,27 @@ namespace Risebird.Repository
                 return null;
             }
 
+        }
+        public async Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@agId", agId);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@MAGLinkEmailTriggeredBy", sentBy);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateMagLinkEmailTriggeredTime", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

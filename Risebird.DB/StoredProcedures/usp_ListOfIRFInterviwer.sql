@@ -23,14 +23,14 @@ Begin
   
 IF EXISTS (Select 1 from IRF where IRFId =@IRFId)  
  BEGIN  
-  select distinct userlist.EmailId from [dbo].[TransInterviewer] tr  
+  select distinct userlist.EmailId,userlist.uniqueid from [dbo].[TransInterviewer] tr  
   join [dbo].[IRF] irf on tr.IRFId = irf.id  
   join [dbo].[UserList] userlist on tr.UserId = userlist.id  
   where irf.IRFId like @IRFID and tr.IsActive=1 and tr.IsAvailable=1 
  END  
 Else  
  BEGIN  
-  select distinct userlist.EmailId from [dbo].[TransInterviewerSkillsLeadInterviewer] tr  
+  select distinct userlist.EmailId,userlist.uniqueid from [dbo].[TransInterviewerSkillsLeadInterviewer] tr  
   join [dbo].[InterviewerSkillsChannel] ISC on tr.InterviewerSkillId = ISC.id  
   join [dbo].[UserList] userlist on tr.UserId = userlist.id  
   where ISC.InterviewerSkillId like @IRFID  

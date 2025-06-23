@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -79,6 +80,10 @@ namespace Risebird.Entities.ViewModel
         public string ParentAG { get; set; }
         public string USTJobTitle { get; set; }
         public int TemplateCount { get; set; }
+        public string MAGLinkEmailTriggeredBy { get; set; }
+        public DateTime? MAGLinkEmailTriggeredOn { get; set; }
+        public int NoOfUnassigned { get; set; }
+
 
     }
     public class Assessment

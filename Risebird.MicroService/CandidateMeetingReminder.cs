@@ -82,7 +82,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, dashboardLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, dashboardLink,item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
                         if (candidateDashboard == "1")
                         {
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();

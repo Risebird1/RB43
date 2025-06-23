@@ -12,7 +12,9 @@ namespace Risebird.CommonHelper.Interface
     public interface INotificationHelper
     {
         Task<string> SendHelpsupportMail(Mail model);
-        Task<string> SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate, int? irfId = null, int? interviewId = null);
+        Task<string> SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate, string uniqueId, int? irfId = null, int? interviewId = null);
+        Task<string> EmergencyInterviewerMail(string emailId, string meetingDate, string uniqueId, int? irfId = null, int? interviewId = null);
+
         Task<string> SendInterviewerMailOnAssinment(string interviwers, string meetingDate);
         //string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer, string Skillchannelid, string Client);
         //string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
@@ -57,13 +59,13 @@ namespace Risebird.CommonHelper.Interface
 
         //Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null);
         Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
-        Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId);
+        Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId, string uniqueId);
         Task<string> CandidateWaitingEINotification(Mail model, string reassignmentLink, string zoomLink, int interviewId, string jdLink, string uniqueId);
         Task<string> AppologyNotificationToCandidate(Mail model, string candidateName, int interviewId);
         Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName, string clientlogo, int interviewId);
         Task<string> AppologyNotificationToCandidateSecond(Mail model, string candidateName, int interviewId);
         Task<string> InstaClientNotification(Mail model, string RequiredSkill, string logolink);
-        Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill);
+        Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill, string uniqueId);
         Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
         Task<string> InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName, string logolink);
         Task<string> InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate, string logolink);
@@ -105,7 +107,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null, bool isStaging = false);
         Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo);
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
-        Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl);
+        Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl, string uniqueId);
         Task<string> SendSkillChannelFeedbackNotification(Mail model, string Name, DataTable dt, string JDTitle, string ReviewURL, string clientlogo = null);
         Task<string> SendAssignedNotificationToSME(IEnumerable<string> smeEmails, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner);
         //Task<string> SendEmailCheckingInterviewerAvailability(List<string> interviewers, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner, string availabilityLink, string notAvailableLink, int irfId);
@@ -120,7 +122,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate, int irfid);
         Task<string> SendTechSupportMail(string Comment, DateTime RequestedOn, string RequestBy);
         Task<string> SendCheckIntervieweravailbilitywithVideo(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill, int? irfId = null, string companyTypeDesc = null, string countryTypeDesc = null, string planTypeDesc = null, int? selectedDuration = null, int? rejectedDuration = null);
-        Task<string> SendAcknowledgementEmailToInterviewer(string interviewerEmailId, string interviewerName, string yesButton, string dropButton, string asessmentGroups, string primarySpecialization);
+        Task<string> SendAcknowledgementEmailToInterviewer(string interviewerEmailId, string interviewerName, string yesButton, string dropButton, string asessmentGroups, string primarySpecialization, string uniqueId);
         Task<string> SendWelcomeEmailToInterviewer(string interviewerEmailId, string password, string HMVideoForTargetIRFUrl);
         Task<string> SendNotificationToClientForSelectedCandidatewithReport(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string reportlink, string clientlogo = null);
         Task<string> SendAsssessmentGroupNotMappedToJobTitleMail(string requestedBy, string ccEmail, string jobTitle);

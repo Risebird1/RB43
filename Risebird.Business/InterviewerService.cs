@@ -152,7 +152,7 @@ namespace Risebird.Business
 
                         string dropProfileButton = "";
                         //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement,interviewerProfile.uniqueid).Result;
 
                     }
 
@@ -432,7 +432,10 @@ namespace Risebird.Business
                     var interviewerAvailabilityDetails = await _interviewerRepository.GetAvailabilityList(profileModel.id);
                     profileModel.InterviewerAvailabilityDetails = interviewerAvailabilityDetails.ToList();
                     profileModel.InterviewerAccDetails = await _interviewerRepository.GetAccDetailsList(profileModel.id);
-                    profileModel.InterviewerAccDetails.AccountNumber = string.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
+                    if (profileModel.InterviewerAccDetails != null)
+                    {
+                        profileModel.InterviewerAccDetails.AccountNumber = string.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
+                    }
                     return profileModel;
                 }
                 else return new InterviewerProfileVM { EmailId = emailId };
@@ -1665,7 +1668,7 @@ namespace Risebird.Business
 
                     string dropProfileButton = "";
                     //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement).Result;
+                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement, interviewerProfile.uniqueid).Result;
                     return true;
                 }
                 return false;
@@ -1777,7 +1780,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink =null)
+        public async Task<bool> SaveApplicantInterviewerAIVerdictV2(int id, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser, string resumeLink = null)
         {
             try
             {
