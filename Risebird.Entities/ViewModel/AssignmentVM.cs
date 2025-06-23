@@ -84,6 +84,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? MAGLinkEmailTriggeredOn { get; set; }
         public int NoOfUnassigned { get; set; }
 
+
     }
     public class Assessment
     {
