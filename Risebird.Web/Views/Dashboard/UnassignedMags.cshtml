@@ -162,6 +162,16 @@
 
                                                                     </span>
                                                                 </button>
+                                                                <div>_____</div>
+                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #7e97bab3!important; border: 1px #7e97bab3!important;">
+                                                                    <span onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.id', '@item.AssessmentGroup');" title="Interviewers' List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
+                                                                </button>
+
+                                                                <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Internal Interviewers' Application Url for MAG" style="width:25px!important;height:25px!important; background:#9f809cb8 !important; border-color:#9f809cb8!important">
+                                                                    <span onclick="javascript:CopyInternalInterviewerMAGApplicationLink('@item.id', '@item.AssessmentGroup');" title="Generate Internal Interviewers' Application Url for MAG">
+                                                                        <i class="fa fa-user" style="color: white;font-size: 13px;position: relative;left: -3px;"></i><img style="position:relative;top: -25px;width: 11px;left: 6px;" src="/img/generate-icon.png">
+                                                                    </span>
+                                                                </button>
 
                                                             </td>
 
@@ -205,6 +215,10 @@
 
 
 </div>
+@await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_GenerateInternalInterviewerMAGApplicationUrl.cshtml")
+
+<script src="~/js/assessmentgroupfunctionalities.js"></script>
 
 @if (ViewBag.Message != null)
 {
