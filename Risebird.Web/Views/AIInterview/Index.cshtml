@@ -5,24 +5,450 @@
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 }
 
-<h2>AI Interview Assistant</h2>
+<div class="rb-aiinterview-container">
+    <!-- Header -->
+    <div class="rb-header">
+        <div class="rb-logo-title">
 
-<div class="mt-4 mb-4">
-    <form asp-action="Index" method="post">
-        <input type="hidden" asp-for="SessionId" />
-        <div class="form-group">
-            <textarea asp-for="Message" class="form-control" placeholder="Type your answer..." rows="3"></textarea>
+            <span class="rb-title">AI Interview</span>
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Send</button>
-    </form>
-</div>
+        <div class="rb-header-controls">
 
-<div class="chat-log border rounded p-3 bg-light">
-    @foreach (var line in Model.ChatLog)
-    {
-        <div class="mb-2">
-            <strong>@line.Role:</strong>
-            <p>@line.Message</p>
+            <span class="rb-timer">
+                <i class="fa fa-clock-o"></i> Interview Time Left <b>05:13</b>
+                <div class="rb-timer-bar"><div class="rb-timer-bar-fill"></div></div>
+            </span>
+            <button class="rb-extend-time">Extend Time</button>
         </div>
-    }
-</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="rb-main">
+        <!-- Left: Video -->
+        <div class="rb-video-section">
+            <div class="rb-video-feed">
+                @* Replace with your actual video element if available *@
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Candidate" class="rb-video-placeholder" />
+                <span class="rb-candidate-name">Andrews (You)</span>
+                <span class="rb-recording-indicator">● Rec</span>
+            </div>
+            <!-- Footer -->
+            <div class="rb-footer">
+                <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button>
+                <button class="rb-footer-btn" title="Video"><i class="fa fa-video-camera"></i></button>
+                <button class="rb-footer-btn" title="Mic"><i class="fa fa-microphone"></i></button>
+                <button class="rb-footer-btn" title="Upload"><i class="fa fa-upload"></i></button>
+            </div>
+        </div>
+        <!-- Right: Chat and Interviewer Info -->
+        <div class="rb-question-section">
+            <!-- Chat Section (now in place of question box) -->
+            <div class="rb-chat-section mt-3">
+                <div class="rb-chatbox-container">
+                    <div class="rb-chatgpt-welcome">
+                        Let's start the interview
+                    </div>
+                    <form asp-action="Index" method="post" class="rb-chatbox-form" autocomplete="off">
+                        <input type="hidden" asp-for="SessionId" />
+                        <div class="rb-chatbox-inputrow">
+                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
+                            <button type="button" class="rb-chatbox-micbtn" title="Voice Input">
+                                <i class="fa fa-microphone"></i>
+                            </button>
+                            <button type="submit" class="rb-chatbox-sendbtn" title="Send">
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="chat-log border rounded p-3 bg-light mt-3">
+                        @foreach (var line in Model.ChatLog)
+                        {
+                            <div class="mb-2">
+                                <strong>@line.Role:</strong>
+                                <p>@line.Message</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="rb-interviewer-info">
+                <span>AI Interviewer</span>
+                <div class="rb-interviewer-avatar">
+                    <span>H</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const textarea = document.querySelector('.rb-chatbox-textarea');
+            const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+            const form = document.querySelector('.rb-chatbox-form');
+
+            // Enable/disable send button
+            if (textarea && sendBtn) {
+                function toggleSendBtn() {
+                    sendBtn.disabled = textarea.value.trim().length === 0;
+                }
+                textarea.addEventListener('input', toggleSendBtn);
+                toggleSendBtn();
+            }
+
+            // Submit on Enter, new line on Shift+Enter
+            if (textarea && form) {
+                textarea.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    }
+                });
+
+                // Clear textarea after submit
+                form.addEventListener('submit', function () {
+                    setTimeout(function () {
+                        textarea.value = '';
+                        if (sendBtn) sendBtn.disabled = true;
+                    }, 10); // Let the form post, then clear
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .rb-chatgpt-welcome {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #222;
+            margin-bottom: 36px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            transition: color 0.2s;
+        }
+
+        .rb-chatgpt-username {
+            font-weight: 600;
+            color: #4eda92; /* Or #222 for all-black, or your accent color */
+        }
+
+        .rb-aiinterview-container {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 4px 32px #4eda9220;
+        }
+
+        .rb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .rb-logo-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .rb-logo {
+            height: 44px;
+            margin-right: 14px;
+        }
+
+        .rb-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -1.5px;
+        }
+
+        .rb-header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        .rb-timer {
+            font-size: 1rem;
+            color: #333;
+          
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .rb-timer-bar {
+            width: 180px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 2px;
+            margin-left: 21px;
+        }
+
+        .rb-timer-bar-fill {
+            width: 90%;
+            height: 100%;
+            background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
+            border-radius: 4px;
+        }
+
+        .rb-extend-time {
+            background: none;
+            border: 1px solid #4eda92;
+            color: #4eda92;
+            border-radius: 16px;
+            padding: 4px 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+
+            .rb-extend-time:hover {
+                background: #4eda92;
+                color: #fff;
+            }
+
+        .rb-main {
+            display: flex;
+            gap: 32px;
+        }
+
+        .rb-video-section {
+            flex: 2;
+            position: relative;
+        }
+
+        .rb-video-feed {
+            position: relative;
+            background: #f6fefb;
+            border-radius: 16px;
+            overflow: hidden;
+            min-height: 370px;
+            box-shadow: 0 2px 16px #4eda9220;
+        }
+
+        .rb-video-placeholder {
+            width: 100%;
+            height: 370px;
+            object-fit: cover;
+        }
+
+        .rb-candidate-name {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(34,197,94,0.85);
+            color: #fff;
+            padding: 5px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .rb-recording-indicator {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #fff;
+            color: #ff516b;
+            padding: 5px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            border: 1.5px solid #ff516b;
+        }
+
+        .rb-question-section {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ChatGPT-like chat input styles */
+        .rb-chatbox-container {
+            background: #fafbfc;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px #4eda9210;
+            padding: 24px 0px 12px 0px;
+            margin-bottom: 12px;
+        }
+
+        .rb-chatbox-form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .rb-chatbox-inputrow {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 24px;
+            border: 1.5px solid #eee;
+            padding: 6px 12px;
+            gap: 8px;
+        }
+
+        .rb-chatbox-textarea {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 10px 0;
+            resize: none;
+            min-height: 36px;
+            max-height: 120px;
+            color: #222;
+        }
+
+            .rb-chatbox-textarea:focus {
+                outline: none !important;
+                border:0px!important;
+                box-shadow: none !important; /* Optional: removes any box-shadow highlight */
+            }
+            .rb-chatbox-textarea::placeholder {
+                color: #bdbdbd;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 500;
+                opacity: 1;
+                letter-spacing: 0.1px;
+                transition: color 0.2s;
+            }
+
+            .rb-chatbox-textarea:focus::placeholder {
+                color: #e0e0e0;
+            }
+
+        .rb-chatbox-micbtn {
+            background: none;
+            border: none;
+            color: #c9bfbf;
+            font-size: 1.3rem;
+            padding: 6px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, color 0.15s;
+        }
+
+            .rb-chatbox-micbtn:hover,
+            .rb-chatbox-micbtn:focus {
+                background: #f6f8fa;
+                color: #000;
+            }
+
+        .rb-chatbox-sendbtn {
+            background: #111;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 4px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+            .rb-chatbox-sendbtn:disabled {
+                opacity: 0.2;
+                cursor: not-allowed;
+                background: #272525;
+            }
+
+            .rb-chatbox-sendbtn i {
+                font-weight: bold;
+                font-size: 15px;
+            }
+
+        .rb-chat-section {
+            max-width: 520px;
+            margin: 0 auto 0 auto;
+        }
+
+        .rb-interviewer-info {
+            background: linear-gradient(135deg, #e8f5e9 60%, #f9f9f9 100%);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 18px;
+            box-shadow: 0 2px 8px #4eda9210;
+        }
+
+        .rb-interviewer-avatar {
+            width: 54px;
+            height: 54px;
+            background: linear-gradient(135deg, #4eda92 60%, #56e0cb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.1rem;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 2px 8px #4eda9210;
+        }
+
+        .rb-footer {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .rb-footer-btn {
+            background: #f5f5f5;
+            border: none;
+            border-radius: 50%;
+            width: 54px;
+            height: 54px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #4eda9210;
+            transition: background 0.2s;
+        }
+
+            .rb-footer-btn:hover {
+                background: #e6f9f2;
+            }
+
+        .rb-btn-primary {
+            background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 28px;
+        }
+
+            .rb-btn-primary:hover {
+                background: linear-gradient(90deg, #56e0cb 0%, #4eda92 100%);
+            }
+
+        @@media (max-width: 600px) {
+            .rb-chatbox-container {
+                padding: 12px 4px 8px 4px;
+            }
+
+            .rb-chatbox-inputrow {
+                padding: 4px 6px;
+            }
+        }
+    </style>
