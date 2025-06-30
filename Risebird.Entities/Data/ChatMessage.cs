@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIInterview.Data.Models
+namespace Risebird.Entities.Data
 {
     public class ChatMessage
     {

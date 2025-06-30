@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIInterview.Data.ViewModels
+namespace Risebird.Entities.ViewModel
 {
     public class EvaluationResultVM
     {
