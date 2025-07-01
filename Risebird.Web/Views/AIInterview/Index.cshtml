@@ -97,6 +97,13 @@
                             <i class="fa fa-chevron-down"></i>
                         </button>
                     </div>
+               <div class="rb-interview-actions">
+       
+        
+        <a target="_blank" href="/AIInterview/Report" class="rb-action-btn rb-back-btn">
+             Generate AIInterview Report <i class="fa fa-arrow-right"></i>
+        </a>
+    </div>
                 </div>
             </div>
            
@@ -550,7 +557,12 @@
             font-weight: 500;
             font-size: 1.1rem;
         }
-
+        .rb-interview-actions{
+        display: flex;
+        gap: 16px;
+        justify-content: right;
+        margin-right: 5px;
+    }
         /* Old recording indicator - keeping for reference but not used */
         .rb-video-section #btnStart.rb-recording-indicator {
             position: absolute;
@@ -687,7 +699,8 @@
 
         /* Chat Log Container with Professional Scrolling */
         .chat-log-container {
-            max-height: 400px;
+            max-height: 401px;
+            margin-bottom: 20px;
             overflow: hidden;
             position: relative;
             border-radius: 12px;
@@ -935,7 +948,28 @@
                 transform: scale(1);
             }
         }
-
+    .rb-action-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.rb-back-btn {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #dee2e6;
+        background: #e9ecef;
+}
+.rb-secondary-btn {
+    background: #6c757d;
+    color: white;
+}
         @@media (max-width: 600px) {
             .rb-chatbox-container {
                 padding: 12px 4px 8px 4px;
