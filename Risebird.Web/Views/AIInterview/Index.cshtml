@@ -60,7 +60,8 @@
                     </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off">
                         <input type="hidden" asp-for="SessionId" />
-                        <div class="rb-chatbox-inputrow">
+                     @*  chat box start -- textarea for coding---  
+                         <div class="rb-chatbox-inputrow">
                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
                            
                             <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
@@ -69,11 +70,18 @@
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
                                 <i class="fa fa-arrow-up"></i>
                             </button>
-                        </div>
-                         <div class="rb-interviewer-info">
+                        </div> chat box end -- textarea for coding---  *@
+                         <div class="rb-interviewer-info" style="margin-top:0px;">
                 <span>AI Interviewer</span>
                 <div class="rb-interviewer-avatar">
                     <span>H</span>
+                </div>
+                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
                 </div>
             </div>
                         <audio id="assistantAudio" controls hidden></audio>
@@ -113,16 +121,39 @@
         function playAssistantAudio(blob) {
             debugger;
             const audioElement = document.getElementById("assistantAudio");
+            const audioWaves = document.getElementById("audioWaves");
             const audioUrl = URL.createObjectURL(blob);
             audioElement.src = audioUrl;
             audioElement.hidden = false;
             audioElement.play();
+            
+            // Show audio waves when playing starts
+            if (audioWaves) {
+                audioWaves.style.display = 'flex';
+            }
         }
 
         // Chat Log Scrolling Functionality
         document.addEventListener('DOMContentLoaded', function() {
             const chatLog = document.getElementById('chatLog');
             const scrollToBottomBtn = document.getElementById('scrollToBottom');
+            const audioElement = document.getElementById('assistantAudio');
+            const audioWaves = document.getElementById('audioWaves');
+            
+            // Audio event listeners for wave animation
+            if (audioElement && audioWaves) {
+                audioElement.addEventListener('play', function() {
+                    audioWaves.style.display = 'flex';
+                });
+                
+                audioElement.addEventListener('pause', function() {
+                    audioWaves.style.display = 'none';
+                });
+                
+                audioElement.addEventListener('ended', function() {
+                    audioWaves.style.display = 'none';
+                });
+            }
             
             if (chatLog && scrollToBottomBtn) {
                 // Function to scroll to bottom
@@ -470,7 +501,7 @@
         }
 
         .rb-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: #000;
             letter-spacing: -1.5px;
@@ -836,6 +867,43 @@
             font-weight: bold;
             color: #fff;
             box-shadow: 0 2px 8px #4eda9210;
+        }
+
+        /* Audio Waves Animation */
+        .rb-audio-waves {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-left: 12px;
+        }
+
+        .wave-bar {
+            width: 3px;
+            height: 20px;
+            background: #4eda92;
+            border-radius: 2px;
+            animation: waveAnimation 1.2s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @@keyframes waveAnimation {
+            0%, 40%, 100% {
+                transform: scaleY(0.4);
+                opacity: 0.6;
+            }
+            20% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .rb-audio-waves.playing {
+            display: flex;
         }
 
         .rb-footer {
