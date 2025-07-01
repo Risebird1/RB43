@@ -12,5 +12,6 @@ namespace Risebird.Business.Interface
     {
         Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId);
         Task<string> GetThreadId(Guid sessionId);
+        Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
     }
 }

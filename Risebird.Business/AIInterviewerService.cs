@@ -1,6 +1,7 @@
 ﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,18 @@ namespace Risebird.Business
             try
             {
                 return await _aiInterviewerRepository.GetThreadId(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetBotInterviewVideoDetails(sessionId);
             }
             catch (Exception e)
             {

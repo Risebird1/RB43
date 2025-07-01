@@ -127,13 +127,17 @@ namespace Risebird.Web.Controllers
             string candidatePrompt = "Consider the interview finished. I want you to generate report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
             var result = await _api.GenerateReport(seId, candidatePrompt);
 
-            var model = new ChatMessageViewModel
+            var chatMessageModel = new ChatMessageViewModel
             {
                 SessionId = result.SessionId,
                 ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = r }).ToList()
             };
 
-            return View(model);
+            AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
+            reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+            reportModel.chatMessageViewModel = chatMessageModel;
+
+            return View(reportModel);
         }
     }
 }

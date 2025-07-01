@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetThreadId(Guid sessionId);
         Task LogTranscript(Guid sessionId, string role, string message);
         Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId);
+        Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
     }
 }
