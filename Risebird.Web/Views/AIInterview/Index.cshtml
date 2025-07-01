@@ -58,9 +58,16 @@
                         <input type="hidden" asp-for="SessionId" />
                         <div class="rb-chatbox-inputrow">
                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
-                            <button type="button" class="rb-chatbox-micbtn" id="recordBtn" title="Voice Input">
-                                <i class="fa fa-microphone"></i>
-                            </button>
+                                                         <button type="button" class="rb-chatbox-micbtn" id="recordBtn" title="Voice Input">
+                                 <i class="fa fa-microphone" id="micIcon"></i>
+                                 <div class="audio-wave" id="audioWave" style="display: none;">
+                                     <span></span>
+                                     <span></span>
+                                     <span></span>
+                                     <span></span>
+                                     <span></span>
+                                 </div>
+                             </button>
                             <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
                             
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
@@ -88,46 +95,68 @@
         </div>
     </div>
 
-    <script>
-        let mediaRecorderAudio;
-        let audioChunks = [];
-        const recordBtn = document.getElementById("recordBtn");
-        const audioInput = document.getElementById("audioInput");
-        const form = document.querySelector("form"); // 🔥 grabs the first form on the page
+         <script>
+         let mediaRecorderAudio;
+         let audioChunks = [];
+         const recordBtn = document.getElementById("recordBtn");
+         const audioInput = document.getElementById("audioInput");
+         const micIcon = document.getElementById("micIcon");
+         const audioWave = document.getElementById("audioWave");
+         const form = document.querySelector("form");
 
-        recordBtn.addEventListener("click", async () => {
-            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorderAudio = new MediaRecorder(stream);
+         function startRecordingUI() {
+             micIcon.className = "fa fa-stop-circle";
+             micIcon.style.color = "#ff516b";
+             audioWave.style.display = "flex";
+             recordBtn.classList.add("recording");
+             recordBtn.title = "Stop Recording";
+         }
 
-                mediaRecorderAudio.ondataavailable = e => {
-                    audioChunks.push(e.data);
-                };
+         function stopRecordingUI() {
+             micIcon.className = "fa fa-microphone";
+             micIcon.style.color = "#111";
+             audioWave.style.display = "none";
+             recordBtn.classList.remove("recording");
+             recordBtn.title = "Voice Input";
+         }
 
-                mediaRecorderAudio.onstop = async () => {
-                    debugger;
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+         recordBtn.addEventListener("click", async () => {
+             if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+                 try {
+                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                     mediaRecorderAudio = new MediaRecorder(stream);
 
-                    // populate the file input with blob data
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    audioInput.files = dataTransfer.files;
+                     mediaRecorderAudio.ondataavailable = e => {
+                         audioChunks.push(e.data);
+                     };
 
-                    audioChunks = [];
-                    recordBtn.textContent = "🎙️ Record";
+                     mediaRecorderAudio.onstop = async () => {
+                         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                         const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
 
-                    // 🔥 Submit the form automatically
-                    form.submit();
-                };
+                         // populate the file input with blob data
+                         const dataTransfer = new DataTransfer();
+                         dataTransfer.items.add(file);
+                         audioInput.files = dataTransfer.files;
 
-                mediaRecorderAudio.start();
-                recordBtn.textContent = "🛑 Stop Recording";
-            } else if (mediaRecorderAudio.state === "recording") {
-                mediaRecorderAudio.stop(); // triggers onstop, which submits
-            }
-        });
-    </script>
+                         audioChunks = [];
+                         stopRecordingUI();
+
+                         // Submit the form automatically
+                         form.submit();
+                     };
+
+                     mediaRecorderAudio.start();
+                     startRecordingUI();
+                 } catch (error) {
+                     console.error('Error accessing microphone:', error);
+                     alert('Could not access microphone. Please check permissions.');
+                 }
+             } else if (mediaRecorderAudio.state === "recording") {
+                 mediaRecorderAudio.stop(); // triggers onstop, which submits
+             }
+         });
+     </script>
 
 
     <script>
@@ -585,13 +614,55 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.15s, color 0.15s;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .rb-chatbox-micbtn:hover,
         .rb-chatbox-micbtn:focus {
-            background: #f6f8fa;
+        
             color: #000;
+            transform: scale(1.05);
+        }
+
+        .rb-chatbox-micbtn.recording {
+            color: #ff516b;
+            animation: pulse 1.5s infinite;
+        }
+
+     
+
+        /* Audio Wave Animation */
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: 8px;
+        }
+
+        .audio-wave span {
+            width: 3px;
+            height: 15px;
+            background: #c1acbb;
+            border-radius: 2px;
+            animation: audioWave 1.2s ease-in-out infinite;
+        }
+
+        .audio-wave span:nth-child(1) { animation-delay: 0s; }
+        .audio-wave span:nth-child(2) { animation-delay: 0.1s; }
+        .audio-wave span:nth-child(3) { animation-delay: 0.2s; }
+        .audio-wave span:nth-child(4) { animation-delay: 0.3s; }
+        .audio-wave span:nth-child(5) { animation-delay: 0.4s; }
+
+        @@keyframes audioWave {
+            0%, 100% {
+                height: 8px;
+                opacity: 0.5;
+            }
+            50% {
+                height: 20px;
+                opacity: 1;
+            }
         }
 
         .rb-chatbox-sendbtn {
