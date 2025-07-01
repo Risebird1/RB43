@@ -111,11 +111,33 @@
                 toggleSendBtn();
             }
 
+            // Function to clear the form
+            function clearForm() {
+                if (textarea) {
+                    textarea.value = '';
+                    textarea.style.height = 'auto';
+                    console.log('Form cleared');
+                }
+                if (sendBtn) {
+                    sendBtn.disabled = true;
+                }
+            }
+
+            // Clear form on page load (in case of page refresh)
+            clearForm();
+
             // Function to submit the form
             function submitForm() {
                 if (textarea && textarea.value.trim().length > 0) {
                     console.log('Submitting form with message:', textarea.value);
+                    
+                    // Submit the form first
                     form.submit();
+                    
+                    // Clear the form after submission
+                    setTimeout(function() {
+                        clearForm();
+                    }, 100);
                 }
             }
 
@@ -137,13 +159,16 @@
                 });
             }
 
-            // Clear textarea after submit
+            // Clear textarea after submit (fallback)
             if (form) {
                 form.addEventListener('submit', function () {
+                    // Clear the form immediately when submit event fires
+                    clearForm();
+                    
+                    // Additional clearing with delay to ensure it works
                     setTimeout(function () {
-                        textarea.value = '';
-                        if (sendBtn) sendBtn.disabled = true;
-                    }, 10); // Let the form post, then clear
+                        clearForm();
+                    }, 200);
                 });
             }
         });
@@ -481,7 +506,7 @@
             font-size: 1.1rem;
             padding: 10px 0;
             resize: none;
-            min-height: 36px;
+            min-height: 60px;
             max-height: 120px;
             color: #222;
         }
@@ -647,6 +672,7 @@
             align-items: center;
             gap: 8px;
             border: 1.5px solid #ff516b;
+                animation: pulse 1.3s infinite;
         }
         
 
@@ -657,7 +683,7 @@
 
         .rb-record-btn.rb-recording {
                 background: #ff516b !important;
-                animation: pulse 1.5s infinite;
+                animation: pulse 0s infinite;
                 color: #fff;
         }
 
@@ -689,7 +715,7 @@
             }
             50% {
                 opacity: 0.7;
-                transform: scale(1.05);
+                transform: scale(1.02);
             }
             100% {
                 opacity: 1;
