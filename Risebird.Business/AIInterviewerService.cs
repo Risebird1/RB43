@@ -31,5 +31,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<string> GetThreadId(Guid sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetThreadId(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewMessage(Guid sessionId, string message);
         Task<InterviewStartResult> StartConversation(string prompt);
         Task<List<string>> SendReply(Guid sessionId, string message);
+        Task<InterviewReportResult> GenerateReport(Guid sessionId, string prompt);
     }
 }

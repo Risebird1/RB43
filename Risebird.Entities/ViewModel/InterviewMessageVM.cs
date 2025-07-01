@@ -11,4 +11,10 @@ namespace Risebird.Entities.ViewModel
         public Guid SessionId { get; set; }
         public string Message { get; set; }
     }
+
+    public class AIReportVM
+    {
+        public Guid SessionId { get; set; }
+        public string Message { get; set; }
+    }
 }

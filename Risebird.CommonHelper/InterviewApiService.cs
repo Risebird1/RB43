@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -86,5 +87,24 @@ public class InterviewApiService : IInterviewApiService
 
         var result = await response.Content.ReadFromJsonAsync<AskResponse>();
         return result?.Replies ?? new List<string>();
+    }
+
+    public async Task<InterviewReportResult> GenerateReport(Guid sessionId, string prompt)
+    {
+        var payload = new AIReportVM
+        {
+            SessionId = sessionId,
+            Message = prompt
+        };
+
+        var response = await _http.PostAsJsonAsync("api/OpenAIApi/report", payload);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Failed to generate report: {response.StatusCode}");
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<InterviewReportResult>();
+        return result;
     }
 }

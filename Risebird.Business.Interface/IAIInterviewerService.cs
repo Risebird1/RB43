@@ -11,5 +11,6 @@ namespace Risebird.Business.Interface
     public interface IAIInterviewerService
     {
         Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId);
+        Task<string> GetThreadId(Guid sessionId);
     }
 }

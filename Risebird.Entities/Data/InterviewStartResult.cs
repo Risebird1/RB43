@@ -16,4 +16,11 @@ namespace Risebird.Entities.Data
     {
         public List<string> Replies { get; set; }
     }
+
+    public class InterviewReportResult
+    {
+        public Guid SessionId { get; set; }
+        public string ThreadId { get; set; }
+        public List<string> Replies { get; set; }
+    }
 }
