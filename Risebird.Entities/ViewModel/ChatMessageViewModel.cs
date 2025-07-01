@@ -11,6 +11,7 @@ namespace Risebird.Entities.ViewModel
         //public string BotReply { get; set; }
         public List<ChatLine> ChatLog { get; set; } = new();
         public IFormFile AudioFile { get; set; }  
+        public IFormFile VideoFile { get; set; }  
 
     }
 

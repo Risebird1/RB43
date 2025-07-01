@@ -33,16 +33,19 @@ namespace Risebird.Web.Controllers
         private static readonly Guid SessionId; //= Guid.NewGuid();
         private readonly IInterviewApiService _api;
         private readonly IOpenAISpeechToTextService _speechToTextService;
-
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
-            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api, IOpenAISpeechToTextService speechToTextService)
+            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api, IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper, ISASUrlHelper sasUrlHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
             _applicationErrorLogger = applicationErrorLogger;
             _api = api;
             _speechToTextService = speechToTextService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
 
         [HttpGet]
@@ -72,15 +75,47 @@ namespace Risebird.Web.Controllers
                 userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
             }
             var replies = await _api.SendReply(model.SessionId, userMessage);
-
+            var question = replies?.Skip(1)?.Take(1);
             model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
             foreach (var reply in replies)
             {
                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = reply });
             }
+            UploadBotInterviewVideo(model, question.FirstOrDefault());
+            var latestReply = replies.FirstOrDefault();
+            if (!string.IsNullOrEmpty(latestReply))
+            {
+                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                var base64Audio = Convert.ToBase64String(audioBytes);
+                ViewData["AssistantAudioBase64"] = base64Audio;
+            }
 
             model.Message = "";
             return View(model);
+        }
+        private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question)
+        {
+            if (model.VideoFile != null && model.VideoFile.Length > 0)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska")
+                {
+                    var file = Request.Form.Files[0];
+                    var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToLongTimeString().Replace(" ", "").Replace(".", "_") + ".mp4";
+                    await _azureStorageHelper.InsertBlob(filename, "BotInterviewvideo", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("BotInterviewvideo");
+                    var blob = containerRef.GetBlockBlobReference(filename);
+                    string uploadedvideoFileURL = blob.Uri.ToString();
+                    var sas = _sasUrlHelper.CreateSasUrl("BotInterviewvideo");
+                    var VideoLink = string.Empty;
+                    if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                    {
+                        VideoLink = uploadedvideoFileURL + "?" + sas;
+                    }
+                    //Save in db with question.sessionid,videoLink,Datetime
+                    //var result = await _interviewerService.UpdateVideoKYCDetails(VideoLink, emailId);
+                }
+            }
         }
     }
 }
