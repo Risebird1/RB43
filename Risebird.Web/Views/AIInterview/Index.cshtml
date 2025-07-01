@@ -60,8 +60,7 @@
                     </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off">
                         <input type="hidden" asp-for="SessionId" />
-                     @*  chat box start -- textarea for coding---  
-                         <div class="rb-chatbox-inputrow">
+                    @*     <div class="rb-chatbox-inputrow">
                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
                            
                             <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
@@ -70,8 +69,11 @@
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
                                 <i class="fa fa-arrow-up"></i>
                             </button>
-                        </div> chat box end -- textarea for coding---  *@
-                         <div class="rb-interviewer-info" style="margin-top:0px;">
+                        </div> *@
+                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
+                         <div class="rb-interviewer-info" style="margin-top:0px">
                 <span>AI Interviewer</span>
                 <div class="rb-interviewer-avatar">
                     <span>H</span>
@@ -501,7 +503,7 @@
         }
 
         .rb-title {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #000;
             letter-spacing: -1.5px;
