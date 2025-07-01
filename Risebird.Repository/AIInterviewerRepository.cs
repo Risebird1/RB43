@@ -79,5 +79,31 @@ namespace Risebird.Repository
             using var conn = new SqlConnection(connectionString);
             await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = message, Timestamp = DateTime.UtcNow });
         }
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@VideoLink", VideoLink);
+                    parameters.Add("@question", question);
+                    parameters.Add("@SessionId", SessionId);
+                    parameters.Add("@CreatedAt", DateTime.Now);
+                    await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

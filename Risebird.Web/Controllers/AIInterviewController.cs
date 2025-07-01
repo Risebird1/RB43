@@ -35,9 +35,10 @@ namespace Risebird.Web.Controllers
         private readonly IOpenAISpeechToTextService _speechToTextService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IAIInterviewerService _aiinterviewerService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
-            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api, IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper, ISASUrlHelper sasUrlHelper)
+            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api, IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper, ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -46,6 +47,7 @@ namespace Risebird.Web.Controllers
             _speechToTextService = speechToTextService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _sasUrlHelper = sasUrlHelper;
+            _aiinterviewerService = aiinterviewerService;
         }
 
         [HttpGet]
@@ -113,7 +115,7 @@ namespace Risebird.Web.Controllers
                         VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     //Save in db with question.sessionid,videoLink,Datetime
-                    //var result = await _interviewerService.UpdateVideoKYCDetails(VideoLink, emailId);
+                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString());
                 }
             }
         }
