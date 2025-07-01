@@ -32,15 +32,17 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private static readonly Guid SessionId; //= Guid.NewGuid();
         private readonly IInterviewApiService _api;
+        private readonly IOpenAISpeechToTextService _speechToTextService;
 
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
-            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api)
+            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api, IOpenAISpeechToTextService speechToTextService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
             _applicationErrorLogger = applicationErrorLogger;
             _api = api;
+            _speechToTextService = speechToTextService;
         }
 
         [HttpGet]
@@ -58,12 +60,20 @@ namespace Risebird.Web.Controllers
 
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> Index(ChatMessageViewModel model)
         {
-            var replies = await _api.SendReply(model.SessionId, model.Message);
 
-            model.ChatLog.Add(new ChatLine { Role = "User", Message = model.Message });
+            string userMessage = model.Message;
+            if (model.AudioFile != null && model.AudioFile.Length > 0)
+            {
+                using var stream = model.AudioFile.OpenReadStream();
+                userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+            }
+            var replies = await _api.SendReply(model.SessionId, userMessage);
+
+            model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
             foreach (var reply in replies)
             {
                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = reply });

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace Risebird.Entities.ViewModel
         public string Message { get; set; }
         //public string BotReply { get; set; }
         public List<ChatLine> ChatLog { get; set; } = new();
-        //public bool ConversationStarted { get; set; } = false;
+        public IFormFile AudioFile { get; set; }  
 
     }
 

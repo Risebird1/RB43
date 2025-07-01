@@ -200,6 +200,7 @@ builder.Services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
 builder.Services.AddScoped<IInterviewApiService, InterviewApiService>();
 builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
 builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
+builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
 
 
 var app = builder.Build();
