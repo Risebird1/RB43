@@ -1,4 +1,5 @@
 ﻿@using Risebird.Entities.ViewModel
+@using System.Text.Json
 @model ChatMessageViewModel
 @{
     ViewData["Title"] = "AI Interview";
@@ -67,6 +68,7 @@
                                 <i class="fa fa-arrow-up"></i>
                             </button>
                         </div>
+                        <audio id="assistantAudio" controls hidden></audio>
                     </form>
                     <div class="chat-log border rounded p-3 bg-light mt-3">
                         @foreach (var line in Model.ChatLog)
@@ -87,6 +89,29 @@
             </div>
         </div>
     </div>
+    <script>
+        function playAssistantAudio(blob) {
+            debugger;
+            const audioElement = document.getElementById("assistantAudio");
+            const audioUrl = URL.createObjectURL(blob);
+            audioElement.src = audioUrl;
+            audioElement.hidden = false;
+            audioElement.play();
+        }
+    </script>
+    @if (ViewData["AssistantAudioBase64"] is string base64Audio)
+    {
+        <script>
+            const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+            const audioBlob = new Blob([
+                Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+            ], { type: 'audio/mp3' });
+
+            playAssistantAudio(audioBlob);
+        </script>
+    }
+
+    
 
     <script>
         let mediaRecorderAudio;

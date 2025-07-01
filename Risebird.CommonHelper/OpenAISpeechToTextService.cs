@@ -20,7 +20,8 @@ using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
-    public class OpenAISpeechToTextService : IOpenAISpeechToTextService
+    public class OpenAISpeechToTextService : IOpenAISpeechToTextService /// irrespective of the name, this service also contains the other function (text to speech)
+
     {
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
@@ -64,6 +65,34 @@ namespace Risebird.CommonHelper
 
             var json = JsonDocument.Parse(content);
             return json.RootElement.GetProperty("text").GetString();
+        }
+
+        public async Task<byte[]> ConvertTextToSpeechAsync(string text)
+        {
+            var payload = new
+            {
+                model = "tts-1",
+                input = text,
+                voice = "alloy",
+                response_format = "mp3"
+            };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/audio/speech")
+            {
+                Content = JsonContent.Create(payload)
+            };
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _openAiKey);
+
+            var response = await _http.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"TTS failed: {error}");
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
         }
     }
 

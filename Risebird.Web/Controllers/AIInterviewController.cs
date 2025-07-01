@@ -32,7 +32,7 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private static readonly Guid SessionId; //= Guid.NewGuid();
         private readonly IInterviewApiService _api;
-        private readonly IOpenAISpeechToTextService _speechToTextService;
+        private readonly IOpenAISpeechToTextService _speechToTextService; // irrespective of the name, this service also contains the other function (text to speech)
 
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
@@ -77,6 +77,13 @@ namespace Risebird.Web.Controllers
             foreach (var reply in replies)
             {
                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = reply });
+            }
+            var latestReply = replies.FirstOrDefault();
+            if (!string.IsNullOrEmpty(latestReply))
+            {
+                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                var base64Audio = Convert.ToBase64String(audioBytes);
+                ViewData["AssistantAudioBase64"] = base64Audio;
             }
 
             model.Message = "";
