@@ -82,6 +82,14 @@ namespace Risebird.Web.Controllers
                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = reply });
             }
             UploadBotInterviewVideo(model, question.FirstOrDefault());
+            var latestReply = replies.FirstOrDefault();
+            if (!string.IsNullOrEmpty(latestReply))
+            {
+                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                var base64Audio = Convert.ToBase64String(audioBytes);
+                ViewData["AssistantAudioBase64"] = base64Audio;
+            }
+
             model.Message = "";
             return View(model);
         }
