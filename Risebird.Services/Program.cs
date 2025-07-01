@@ -105,6 +105,12 @@ builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
 builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
 builder.Services.AddScoped<IEncryptionHelper, EncryptionHelper>();
 builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
+builder.Services.AddScoped<IInterviewApiService, InterviewApiService>();
+builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
+builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
+builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
+builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
+
 
 
 var app = builder.Build();

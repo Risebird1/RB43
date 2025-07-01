@@ -777,7 +777,7 @@ namespace Risebird.Web.Controllers
 
 
                             }
-                            if(model.MAGIdArray != null)
+                            if (model.MAGIdArray != null)
                             {
                                 var result = await _interviewerService.UpdateApplicantById(model, emailId);//, irf
                                 if (result)
@@ -825,8 +825,8 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                
-                
+
+
 
             }
             catch (Exception ex)
@@ -870,7 +870,7 @@ namespace Risebird.Web.Controllers
                     InterviewerDirectApplicationVM model = new InterviewerDirectApplicationVM();
                     model.IRFId = irfId.Value;
                     model.EncryptedAssessmentGroupId = decodedEncryptedId;
-                    
+
                     //if (TempData["MessageApplicantUpdate"] != null)
                     //{
                     //    ViewBag.Message = TempData["MessageApplicantUpdate"].ToString();
@@ -948,8 +948,8 @@ namespace Risebird.Web.Controllers
         //    }
 
         //}
-        
-        
+
+
         [HttpGet]
         private async Task GetAllSelectList(InterviewerProfileVM model)
         {
@@ -1066,7 +1066,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task GetApplicantSpecificSelectList(InterviewerDirectApplicationVM model)
         {
-            
+
             //var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
             var Assessmentgroup = await _irfService.GetAllMAGs();
 
@@ -1084,7 +1084,7 @@ namespace Risebird.Web.Controllers
                 AssessmentselectList.Add(selectItem);
             }
             model.MAGList = AssessmentselectList;
-            if(model.ShowAddToSkillChannelOption)
+            if (model.ShowAddToSkillChannelOption)
             {
                 model.SkillChannelList = new SelectList(await _interviewerService.GetApplicableSkillChannelsForApplicantUponEdit(model.id), "id", "IRFId");
 
@@ -4687,7 +4687,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                
+
                 if (model.ResumeFile != null)
                 {
                     string uploadedFileURL = string.Empty;
@@ -5264,6 +5264,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
     }
 }
 
