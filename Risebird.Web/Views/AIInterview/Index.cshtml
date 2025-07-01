@@ -78,14 +78,24 @@
             </div>
                         <audio id="assistantAudio" controls hidden></audio>
                     </form>
-                    <div class="chat-log border rounded p-3 bg-light mt-3">
-                        @foreach (var line in Model.ChatLog)
-                        {
-                            <div class="mb-2">
-                                <strong>@line.Role:</strong>
-                                <p>@line.Message</p>
-                            </div>
-                        }
+                    <div class="chat-log-container">
+                        <div class="chat-log border rounded mt-3" id="chatLog">
+                            @foreach (var line in Model.ChatLog)
+                            {
+                                <div class="chat-message mb-3">
+                                    <div class="message-header">
+                                        <strong class="message-role">@line.Role:</strong>
+                                        <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
+                                    </div>
+                                    <div class="message-content">
+                                        <p>@line.Message</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button class="scroll-to-bottom" id="scrollToBottom" title="Scroll to Bottom">
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -101,6 +111,63 @@
             audioElement.hidden = false;
             audioElement.play();
         }
+
+        // Chat Log Scrolling Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatLog = document.getElementById('chatLog');
+            const scrollToBottomBtn = document.getElementById('scrollToBottom');
+            
+            if (chatLog && scrollToBottomBtn) {
+                // Function to scroll to bottom
+                function scrollToBottom() {
+                    chatLog.scrollTo({
+                        top: chatLog.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+
+                // Function to check if scroll to bottom button should be shown
+                function checkScrollPosition() {
+                    const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 100;
+                    
+                    if (!isNearBottom && chatLog.scrollHeight > chatLog.clientHeight) {
+                        scrollToBottomBtn.classList.add('show');
+                    } else {
+                        scrollToBottomBtn.classList.remove('show');
+                    }
+                }
+
+                // Scroll to bottom button click handler
+                scrollToBottomBtn.addEventListener('click', scrollToBottom);
+
+                // Check scroll position on scroll
+                chatLog.addEventListener('scroll', checkScrollPosition);
+
+                // Check scroll position on window resize
+                window.addEventListener('resize', checkScrollPosition);
+
+                // Initial check
+                checkScrollPosition();
+
+                // Auto-scroll to bottom when new messages are added
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                            // Check if we're near the bottom before auto-scrolling
+                            const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 150;
+                            if (isNearBottom) {
+                                setTimeout(scrollToBottom, 100);
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(chatLog, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
     </script>
     @if (ViewData["AssistantAudioBase64"] is string base64Audio)
     {
@@ -618,6 +685,120 @@
             margin: 0 auto 0 auto;
         }
 
+        /* Chat Log Container with Professional Scrolling */
+        .chat-log-container {
+            max-height: 400px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 12px;
+            background: #fafbfc;
+            
+        }
+
+        .chat-log {
+       max-height: 400px;
+       overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      border: none !important;
+        }
+
+        /* Custom Scrollbar Styling */
+        .chat-log::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-log::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        .chat-log::-webkit-scrollbar-thumb {
+            background: rgba(78, 218, 146, 0.3);
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .chat-log::-webkit-scrollbar-thumb:hover {
+            background: rgba(78, 218, 146, 0.5);
+        }
+
+        /* Chat Message Styling */
+        .chat-message {
+              padding: 12px 16px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* border-left: 3px solid #4eda92; */
+    transition: all 0.3s ease;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 10px;
+        }
+
+        .chat-message:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .message-role {
+            color: #000;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .message-time {
+            color: #999;
+            font-size: 0.8rem;
+            font-weight: 400;
+        }
+
+        .message-content {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .message-content p {
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        /* Scroll to Bottom Button */
+        .scroll-to-bottom {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: #4eda92;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(78, 218, 146, 0.3);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .scroll-to-bottom:hover {
+            background: #45c085;
+            transform: scale(1.1);
+        }
+
+        .scroll-to-bottom.show {
+            display: flex;
+        }
+
         .rb-interviewer-info {
             background: linear-gradient(135deg, #e8f5e9 60%, #f9f9f9 100%);
             border-radius: 16px;
@@ -626,6 +807,7 @@
             align-items: center;
             gap: 18px;
             margin-top: 18px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 8px #4eda9210;
         }
 
