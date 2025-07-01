@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
 using System.Data.SqlClient;
@@ -13,16 +14,18 @@ namespace Risebird.AzureTimerFunctions
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
+        private readonly ITwilioHelper _twilioHelper;
         private readonly ILogger log;
 
         private readonly string connectionString;
         //private readonly string SASConnectionString;
 
-        public EmailtoInterviewer(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        public EmailtoInterviewer(ILoggerFactory loggerFactory, ITwilioHelper twilioHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
+            _twilioHelper = twilioHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             log = loggerFactory.CreateLogger<EmailtoInterviewer>();
         }
@@ -36,7 +39,7 @@ namespace Risebird.AzureTimerFunctions
             try
             {
                 var mails = new List<Meeting>();
-                var query = "select distinct im.interviewer,ul.uniqueid from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
+                var query = "select distinct im.id, im.interviewer,ul.uniqueid, ul.MobileNumber from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.Date.AddDays(1));
@@ -60,6 +63,7 @@ namespace Risebird.AzureTimerFunctions
                                 };
                                 var InterviewerUrl = "https://portal.risebird.io/Interview/PublicMyInterviewInvite?id=" + mail.uniqueid;
                                 var emailsend = await _notificationHelper.SendInerviewerMeetingReminder(_mail, InterviewerUrl, mail.uniqueid);
+                                await _twilioHelper.MakeIVRCallForInterviewerMeetingReminder(mail.MobileNumber,mail.id);
                             }
                             catch (Exception ex)
                             {
@@ -128,6 +132,6 @@ namespace Risebird.AzureTimerFunctions
         public int id { get; set; }
         public string interviewer { get; set; }
         public string uniqueid { get; set; }
-
+        public string MobileNumber { get; set; }
     }
 }

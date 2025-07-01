@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
@@ -424,6 +425,116 @@ namespace Risebird.Web.Controllers
 
         }
 
+
+        [HttpPost]
+        public TwiMLResult IvrInterviewerMeetingReminder(int interviewId, int retryCount = 0)
+        {
+            var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerMeetingReminder function invked succesfully", "ivr", string.Empty).Result;
+
+            var interviewerInterviewDetails = _meetingService.GetInterviewerInterviewDetails(interviewId).Result;
+            var response = new VoiceResponse();
+            try
+            {
+                 var link = $"https://portal.risebird.io/TwilioVoice/InterviewerInterviewAvailabilityShow?emailId={interviewerInterviewDetails.interviewer}&interviewId={interviewId}";
+                var actionUri = new Uri(link);
+                var gather = new Gather(action: actionUri, numDigits: 1, timeout: 5);
+
+                gather.Say($"Dear {interviewerInterviewDetails.FirstName}, Greetings from Risebird.This is to remind you that you have assinged interview at {interviewerInterviewDetails.interviewDate} {interviewerInterviewDetails.TimeZonesValue} for requirement of {interviewerInterviewDetails.PrimarySkillInvite}. Kindly confirm your availability by clicking on the appropriate response Press 1 if Available to take interview. Press 2 if Not Available to take interview.");
+                response.Append(gather);
+
+                if (retryCount < 2)
+                {
+
+                    response.Say("You did not press any key. Let me repeat the options.");
+                    response.Redirect(new Uri($"https://portal.risebird.io/TwilioVoice/IvrInterviewerMeetingReminder?interviewId={interviewId}&retryCount={retryCount + 1}"));
+                }
+                else
+                {
+                    response.Say("No input received. Goodbye.");
+                    response.Hangup();
+                }
+
+                return TwiML(response);
+            }
+            catch (Exception ex)
+            {
+                var resultDe = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerMeetingReminder function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                return TwiML(response);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult InterviewerInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string emailId, [FromQuery] int interviewId)
+        {
+            try
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/InterviewerInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty).Result;
+
+                var selectedOption = digits;
+                if (selectedOption == "1")
+                {
+                    return UpdateInterviewerInterviewAvailbilityStatus(1, emailId, interviewId);
+                }
+                else if (selectedOption == "2")
+                {
+                    return UpdateInterviewerInterviewAvailbilityStatus(2, emailId, interviewId);
+                }               
+
+                return RedirectToAction("IvrInterviewerMeetingReminder", new { interviewId = interviewId});
+
+
+            }
+            catch (Exception ex)
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/InterviewerInterviewAvailabilityShow function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+
+                //_applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var response = new VoiceResponse();
+                //response.Say($"Error in Show Menu with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
+                return TwiML(response);
+            }
+
+        }
+
+        private TwiMLResult UpdateInterviewerInterviewAvailbilityStatus(int status, string emailId, int id)
+        {
+            //check link expiry befire hitting db
+            try
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerInterviewAvailbilityStatus function invked succesfully", "ivr", string.Empty).Result;
+                string type = string.Empty;
+                var response = new VoiceResponse();
+                if (status == 1)
+                {
+                    response.Say("You have chosen that you will be available to take the interview.",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                    type = "Yes";
+                }
+                else if (status == 2)
+                {
+                    response.Say("You have chosen that you will not available to take this interview.",
+                             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
+                    type = "No";
+                }
+                
+                
+                _meetingService.ConfirmInterviewavailability(emailId, id, type);
+            
+
+                response.Say("Thank you for submitting your response. Good bye and have nice rest of the day.");
+
+                response.Hangup();
+
+                return TwiML(response);
+            }
+            catch (Exception ex)
+            {
+                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerInterviewAvailbilityStatus function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var response = new VoiceResponse();
+                return TwiML(response);
+            }
+
+        }
 
 
     }
