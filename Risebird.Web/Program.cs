@@ -197,6 +197,11 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
 builder.Services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
 builder.Services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
+builder.Services.AddScoped<IInterviewApiService, InterviewApiService>();
+builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
+builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
+builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
+builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
 
 
 var app = builder.Build();
