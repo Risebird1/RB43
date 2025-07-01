@@ -54,13 +54,15 @@
                     <div class="rb-chatgpt-welcome">
                         Let's start the interview
                     </div>
-                    <form asp-action="Index" method="post" class="rb-chatbox-form" autocomplete="off">
+                    <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off">
                         <input type="hidden" asp-for="SessionId" />
                         <div class="rb-chatbox-inputrow">
                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
-                            <button type="button" class="rb-chatbox-micbtn" title="Voice Input">
+                            <button type="button" class="rb-chatbox-micbtn" id="recordBtn" title="Voice Input">
                                 <i class="fa fa-microphone"></i>
                             </button>
+                            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                            
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
                                 <i class="fa fa-arrow-up"></i>
                             </button>
@@ -85,6 +87,48 @@
             </div>
         </div>
     </div>
+
+    <script>
+        let mediaRecorderAudio;
+        let audioChunks = [];
+        const recordBtn = document.getElementById("recordBtn");
+        const audioInput = document.getElementById("audioInput");
+        const form = document.querySelector("form"); // 🔥 grabs the first form on the page
+
+        recordBtn.addEventListener("click", async () => {
+            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorderAudio = new MediaRecorder(stream);
+
+                mediaRecorderAudio.ondataavailable = e => {
+                    audioChunks.push(e.data);
+                };
+
+                mediaRecorderAudio.onstop = async () => {
+                    debugger;
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+
+                    // populate the file input with blob data
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    audioInput.files = dataTransfer.files;
+
+                    audioChunks = [];
+                    recordBtn.textContent = "🎙️ Record";
+
+                    // 🔥 Submit the form automatically
+                    form.submit();
+                };
+
+                mediaRecorderAudio.start();
+                recordBtn.textContent = "🛑 Stop Recording";
+            } else if (mediaRecorderAudio.state === "recording") {
+                mediaRecorderAudio.stop(); // triggers onstop, which submits
+            }
+        });
+    </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

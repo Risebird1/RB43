@@ -62,7 +62,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ChatMessageViewModel model)
+        public async Task<IActionResult> Index([FromForm] ChatMessageViewModel model)
         {
 
             string userMessage = model.Message;
