@@ -103,7 +103,7 @@ namespace Risebird.Web.Controllers
                 if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
                 {
                     var file = model.VideoFile;
-                    var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff").Replace(" ", "").Replace(".", "_") + ".mp4";
+                    var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".mp4";
                     await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
                     var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
                     var blob = containerRef.GetBlockBlobReference(filename);
