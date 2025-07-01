@@ -121,12 +121,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Report(Guid seId)
+        public async Task<IActionResult> Report(Guid seId)//Guid seId
         {
             // For demo: tech stack prompt
+            seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
             string candidatePrompt = "Consider the interview finished. I want you to generate report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
             var result = await _api.GenerateReport(seId, candidatePrompt);
-
+            result.Replies.Take(0);
             var chatMessageModel = new ChatMessageViewModel
             {
                 SessionId = result.SessionId,
