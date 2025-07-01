@@ -29,7 +29,7 @@
                     <video id="video" autoplay muted style="width:100%;height:370px;object-fit:cover;border-radius:16px;background:#000;"></video>
                 </div>
                 <span class="rb-candidate-name">Andrews (You)</span>
-                
+
                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
                     <button id="btnRecordToggle" type="button" title="Toggle Recording" class="rb-record-btn">
                         <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
@@ -38,11 +38,11 @@
             </div>
             <!-- Footer -->
             <div class="rb-footer">
-@*                 <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button>
+                @*                 <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button>
  *@                <button id="footerVideoToggle" class="rb-footer-btn" title="Toggle Video">
                     <i id="footerVideoIcon" class="fa fa-video-camera"></i>
                 </button>
-@*                 <button class="rb-footer-btn" title="Mic"><i class="fa fa-microphone"></i></button>
+                @*                 <button class="rb-footer-btn" title="Mic"><i class="fa fa-microphone"></i></button>
  *@                <button class="rb-footer-btn" title="Upload"><i class="fa fa-upload"></i></button>
             </div>
         </div>
@@ -62,7 +62,8 @@
                                 <i class="fa fa-microphone"></i>
                             </button>
                             <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                            
+                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
                                 <i class="fa fa-arrow-up"></i>
                             </button>
@@ -93,6 +94,7 @@
         let audioChunks = [];
         const recordBtn = document.getElementById("recordBtn");
         const audioInput = document.getElementById("audioInput");
+        const videoInput = document.getElementById("videoInput");
         const form = document.querySelector("form"); // 🔥 grabs the first form on the page
 
         recordBtn.addEventListener("click", async () => {
@@ -105,7 +107,6 @@
                 };
 
                 mediaRecorderAudio.onstop = async () => {
-                    debugger;
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
 
@@ -116,12 +117,13 @@
 
                     audioChunks = [];
                     recordBtn.textContent = "🎙️ Record";
-
+                    stopRecording();
                     // 🔥 Submit the form automatically
-                    form.submit();
+
                 };
 
                 mediaRecorderAudio.start();
+                startRecording();
                 recordBtn.textContent = "🛑 Stop Recording";
             } else if (mediaRecorderAudio.state === "recording") {
                 mediaRecorderAudio.stop(); // triggers onstop, which submits
@@ -170,7 +172,7 @@
         const video = document.getElementById('video');
         const btnRecord = document.getElementById('btnRecord');
         const btnRecordToggle = document.getElementById('btnRecordToggle');
-
+        let blobtransfer;
         if (navigator.mediaDevices && video) {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                 .then(function(stream) {
@@ -194,30 +196,42 @@
             };
 
             function startRecording() {
-                recordedBlobs = [];
-                let options = { mimeType: 'video/webm;codecs=vp9,opus' };
+                chunks = [];
+                let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
                 try {
                     mediaRecorder = new MediaRecorder(window.stream, options);
                 } catch (e) {
                     alert('MediaRecorder not supported: ' + e);
                     return;
                 }
-                
+
                 mediaRecorder.ondataavailable = function(event) {
                     if (event.data && event.data.size > 0) {
-                        recordedBlobs.push(event.data);
+                        chunks.push(event.data);
                     }
                 };
-                
-                mediaRecorder.onstop = function() {
-                    // Recording stopped - you can now upload or preview the video
-                    console.log('Recording stopped. Blobs:', recordedBlobs);
-                    // Example: let superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-                };
-                
+                mediaRecorder.onstop = (ev) => {
+                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+                    let videoURL = window.URL.createObjectURL(blob);
+                    console.log(videoURL);
+                    const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
+                    const dataTransfervideo = new DataTransfer();
+                    dataTransfervideo.items.add(filevideo);
+                    videoInput.files = dataTransfervideo.files;
+                    chunks = [];
+
+                    form.submit();
+                    //blobtransfer = blob;
+                }
+                // mediaRecorder.onstop = function() {
+                //     // Recording stopped - you can now upload or preview the video
+                //     console.log('Recording stopped. Blobs:', chunks);
+                //     // Example: let superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+                // };
+
                 mediaRecorder.start();
                 isRecording = true;
-                
+
                 // Update UI
                 btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
                 btnRecordToggle.className = 'rb-record-btn rb-recording';
@@ -229,9 +243,8 @@
                 if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                     mediaRecorder.stop();
                 }
-                
+
                 isRecording = false;
-                
                 // Update UI
                 btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
                 btnRecordToggle.className = 'rb-record-btn';
@@ -308,10 +321,11 @@
             transition: color 0.2s;
         }
 
-        .rb-video-section .videoContainer{
-            width:100%;
-            height:100%;
+        .rb-video-section .videoContainer {
+            width: 100%;
+            height: 100%;
         }
+
         .rb-chatgpt-username {
             font-weight: 600;
             color: #4eda92; /* Or #222 for all-black, or your accent color */
@@ -339,15 +353,16 @@
             align-items: center;
         }
 
-        .rb-video-feed .videoButtons{
+        .rb-video-feed .videoButtons {
             float: right;
-            width:81px;
+            width: 81px;
             height: auto;
             position: relative;
             top: 6px;
             left: -20px;
             top: 6px;
         }
+
         .rb-logo {
             height: 44px;
             margin-right: 14px;
@@ -400,10 +415,10 @@
             transition: background 0.2s, color 0.2s;
         }
 
-        .rb-extend-time:hover {
-            background: #4eda92;
-            color: #fff;
-        }
+            .rb-extend-time:hover {
+                background: #4eda92;
+                color: #fff;
+            }
 
         .rb-main {
             display: flex;
@@ -502,24 +517,25 @@
             color: #222;
         }
 
-        .rb-chatbox-textarea:focus {
-            outline: none !important;
-            border:0px!important;
-            box-shadow: none !important; /* Optional: removes any box-shadow highlight */
-        }
-        .rb-chatbox-textarea::placeholder {
-            color: #bdbdbd;
-            font-size: 16px;
-            font-style: normal;
-            font-weight: 500;
-            opacity: 1;
-            letter-spacing: 0.1px;
-            transition: color 0.2s;
-        }
+            .rb-chatbox-textarea:focus {
+                outline: none !important;
+                border: 0px !important;
+                box-shadow: none !important; /* Optional: removes any box-shadow highlight */
+            }
 
-        .rb-chatbox-textarea:focus::placeholder {
-            color: #e0e0e0;
-        }
+            .rb-chatbox-textarea::placeholder {
+                color: #bdbdbd;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 500;
+                opacity: 1;
+                letter-spacing: 0.1px;
+                transition: color 0.2s;
+            }
+
+            .rb-chatbox-textarea:focus::placeholder {
+                color: #e0e0e0;
+            }
 
         .rb-chatbox-micbtn {
             background: none;
@@ -535,11 +551,11 @@
             transition: background 0.15s, color 0.15s;
         }
 
-        .rb-chatbox-micbtn:hover,
-        .rb-chatbox-micbtn:focus {
-            background: #f6f8fa;
-            color: #000;
-        }
+            .rb-chatbox-micbtn:hover,
+            .rb-chatbox-micbtn:focus {
+                background: #f6f8fa;
+                color: #000;
+            }
 
         .rb-chatbox-sendbtn {
             background: #111;
@@ -557,16 +573,16 @@
             transition: background 0.15s, color 0.15s;
         }
 
-        .rb-chatbox-sendbtn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #272525;
-        }
+            .rb-chatbox-sendbtn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                background: #272525;
+            }
 
-        .rb-chatbox-sendbtn i {
-            font-weight: bold;
-            font-size: 15px;
-        }
+            .rb-chatbox-sendbtn i {
+                font-weight: bold;
+                font-size: 15px;
+            }
 
         .rb-chat-section {
             max-width: 520px;
@@ -620,9 +636,9 @@
             transition: background 0.2s;
         }
 
-        .rb-footer-btn:hover {
-            background: #e6f9f2;
-        }
+            .rb-footer-btn:hover {
+                background: #e6f9f2;
+            }
 
         .rb-btn-primary {
             background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
@@ -633,18 +649,18 @@
             padding: 8px 28px;
         }
 
-        .rb-btn-primary:hover {
-            background: linear-gradient(90deg, #56e0cb 0%, #4eda92 100%);
-        }
+            .rb-btn-primary:hover {
+                background: linear-gradient(90deg, #56e0cb 0%, #4eda92 100%);
+            }
 
         .rb-video-feed .videoContainer video {
-            border-radius:30px!important;
-            top:0px!important;
+            border-radius: 30px !important;
+            top: 0px !important;
         }
 
         /* Recording button styles */
-      
-            .rb-record-btn {
+
+        .rb-record-btn {
             background: #FFF !IMPORTANT;
             border: none;
             color: #ff516b;
@@ -658,22 +674,22 @@
             gap: 8px;
             border: 1.5px solid #ff516b;
         }
-        
 
-        .rb-record-btn:hover {
-            background: #45c085;
-            transform: translateY(-1px);
-        }
 
-        .rb-record-btn.rb-recording {
+            .rb-record-btn:hover {
+                background: #45c085;
+                transform: translateY(-1px);
+            }
+
+            .rb-record-btn.rb-recording {
                 background: #ff516b !important;
                 animation: pulse 1.5s infinite;
                 color: #fff;
-        }
+            }
 
-        .rb-record-btn.rb-recording:hover {
-            background: #e6455a;
-        }
+                .rb-record-btn.rb-recording:hover {
+                    background: #e6455a;
+                }
 
         /* Recording indicator styles */
         .rb-recording-indicator {
@@ -697,10 +713,12 @@
                 opacity: 1;
                 transform: scale(1);
             }
+
             50% {
                 opacity: 0.7;
                 transform: scale(1.05);
             }
+
             100% {
                 opacity: 1;
                 transform: scale(1);
