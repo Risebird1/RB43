@@ -99,16 +99,16 @@ namespace Risebird.Web.Controllers
         {
             if (model.VideoFile != null && model.VideoFile.Length > 0)
             {
-                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
-                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska")
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
                 {
-                    var file = Request.Form.Files[0];
-                    var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToLongTimeString().Replace(" ", "").Replace(".", "_") + ".mp4";
-                    await _azureStorageHelper.InsertBlob(filename, "BotInterviewvideo", file);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("BotInterviewvideo");
+                    var file = model.VideoFile;
+                    var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff").Replace(" ", "").Replace(".", "_") + ".mp4";
+                    await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
                     var blob = containerRef.GetBlockBlobReference(filename);
                     string uploadedvideoFileURL = blob.Uri.ToString();
-                    var sas = _sasUrlHelper.CreateSasUrl("BotInterviewvideo");
+                    var sas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
                     var VideoLink = string.Empty;
                     if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
                     {
