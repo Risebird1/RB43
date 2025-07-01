@@ -202,11 +202,11 @@
             let footerVideoToggle = document.getElementById('footerVideoToggle');
             let footerVideoIcon = document.getElementById('footerVideoIcon');
             let mediaStreamObj = null;
-           // let videoOn = false;
+           let videoOn = true;
 
             // Set initial state to OFF
-           // if (footerVideoIcon) footerVideoIcon.className = 'fas fa-video-slash';
-          //  if (video) video.style.opacity = 0;
+            if (footerVideoIcon) footerVideoIcon.className = 'fa fa-video-camera';
+            if (video) video.style.opacity = 1;
 
             if (footerVideoToggle && video) {
                 footerVideoToggle.addEventListener('click', function () {
@@ -246,7 +246,7 @@
                         }
                         videoOn = false;
                         footerVideoIcon.className = 'fas fa-video-slash';
-                       if (video) video.style.opacity = 0.2;
+                       if (video) video.style.opacity = 0;
                     }
                 });
             }
