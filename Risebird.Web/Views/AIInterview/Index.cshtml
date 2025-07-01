@@ -92,25 +92,53 @@
             const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
             const form = document.querySelector('.rb-chatbox-form');
 
-            // Enable/disable send button
+            // Enable/disable send button and auto-resize textarea
             if (textarea && sendBtn) {
                 function toggleSendBtn() {
                     sendBtn.disabled = textarea.value.trim().length === 0;
                 }
-                textarea.addEventListener('input', toggleSendBtn);
+                
+                function autoResize() {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+                }
+                
+                textarea.addEventListener('input', function() {
+                    toggleSendBtn();
+                    autoResize();
+                });
+                
                 toggleSendBtn();
             }
 
+            // Function to submit the form
+            function submitForm() {
+                if (textarea && textarea.value.trim().length > 0) {
+                    console.log('Submitting form with message:', textarea.value);
+                    form.submit();
+                }
+            }
+
             // Submit on Enter, new line on Shift+Enter
-            if (textarea && form) {
+            if (textarea) {
                 textarea.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                        submitForm();
                     }
                 });
+            }
 
-                // Clear textarea after submit
+            // Handle Send button click
+            if (sendBtn) {
+                sendBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    submitForm();
+                });
+            }
+
+            // Clear textarea after submit
+            if (form) {
                 form.addEventListener('submit', function () {
                     setTimeout(function () {
                         textarea.value = '';
@@ -510,13 +538,19 @@
             align-items: center;
             justify-content: center;
             margin-left: 4px;
-            transition: background 0.15s, color 0.15s;
+            transition: all 0.3s ease;
+        }
+
+        .rb-chatbox-sendbtn:hover:not(:disabled) {
+            background: #333;
+            transform: scale(1.05);
         }
 
         .rb-chatbox-sendbtn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            background: #272525;
+            background: #ccc;
+            transform: none;
         }
 
         .rb-chatbox-sendbtn i {
@@ -673,4 +707,5 @@
             }
         }
     </style>
+</div>
 </div>
