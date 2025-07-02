@@ -104,7 +104,8 @@ namespace Risebird.Web.Controllers
                 {
                     var file = model.VideoFile;
                     var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".mp4";
-                    await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
+                    //await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
+                    await _azureStorageHelper.InsertImageBlob(filename, "botinterviewvideo", file, "video/mp4");
                     var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
                     var blob = containerRef.GetBlockBlobReference(filename);
                     string uploadedvideoFileURL = blob.Uri.ToString();
