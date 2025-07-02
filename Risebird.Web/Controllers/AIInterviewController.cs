@@ -60,7 +60,7 @@ namespace Risebird.Web.Controllers
             var model = new ChatMessageViewModel
             {
                 SessionId = result.SessionId,
-                ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = r }).ToList()
+                ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
             };
 
             return View(model);
@@ -81,7 +81,7 @@ namespace Risebird.Web.Controllers
             model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
             foreach (var reply in replies)
             {
-                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = reply });
+                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
             }
             UploadBotInterviewVideo(model, question.FirstOrDefault());
             var latestReply = replies.FirstOrDefault();
@@ -124,21 +124,45 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> Report(Guid seId)//Guid seId
         {
             // For demo: tech stack prompt
-            seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
+            //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
             string candidatePrompt = "Consider the interview finished. I want you to generate report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
             var result = await _api.GenerateReport(seId, candidatePrompt);
-            result.Replies.Take(0);
+
+            //var chatMessageModel = new ChatMessageViewModel
+            //{
+            //    SessionId = result.SessionId,
+            //    ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
+            //};
+
             var chatMessageModel = new ChatMessageViewModel
             {
                 SessionId = result.SessionId,
-                ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = r }).ToList()
+                ChatLog = new List<ChatLine>
+                {
+                    new ChatLine
+                    {
+                        Role = "Bot",
+                        Message = CleanMessage(result.Replies.FirstOrDefault())
+                    }
+                }
             };
 
             AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
             reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
             reportModel.chatMessageViewModel = chatMessageModel;
-
+            //reportModel.TotalQuestions = result.Replies.Count() - 1;
             return View(reportModel);
         }
+
+        private string CleanMessage(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return "";
+
+            return input
+                .Replace("#", "")        // Remove Markdown headers
+                .Replace("**", "")       // Remove bold formatting if present
+                .Trim();                 // Trim whitespace
+        }
+
     }
 }
