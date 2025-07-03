@@ -197,16 +197,20 @@
         #recordBtn .fa-circle:before{
                 color: #fff;
         }
-        .rb-chatbox-inputrow {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 24px;
-            border: 1.5px solid #eee;
-            padding: 6px 12px;
-            gap: 8px;
-            margin:20px;
-        }
+
+    .rb-chatbox-inputrow {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 24px;
+        border: 1.5px solid #eee;
+        padding: 6px 12px;
+        gap: 8px;
+        margin: 350px 20px 20px 20px;
+        position: absolute;
+        left: 89px;
+        width: 550px;
+    }
 
         .rb-chatbox-textarea {
             flex: 1;
@@ -484,7 +488,7 @@
             display: flex;
             justify-content: center;
             gap: 32px;
-            margin-top: 32px;
+            margin-top:18px;
         }
 
         .rb-footer-btn {
@@ -750,14 +754,14 @@
                   
                  <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>
              </div>
-                                      <div class="rb-chatbox-inputrow">
+@*                                       <div class="rb-chatbox-inputrow">
                              <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
                              
                              <button type="submit" class="rb-chatbox-sendbtn" title="Send Message">
                                  <i class="fa fa-arrow-up"></i>
                              </button>
                          </div>
-        </div>
+ *@        </div>
         <!-- Right: Chat and Interviewer Info -->
         <div class="rb-question-section">
             <!-- Chat Section (now in place of question box) -->
@@ -768,7 +772,7 @@
                     </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
-                    @*     <div class="rb-chatbox-inputrow">
+                         <div class="rb-chatbox-inputrow">
                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
                            
                             <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
@@ -777,10 +781,8 @@
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
                                 <i class="fa fa-arrow-up"></i>
                             </button>
-                        </div> *@
-                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
-
+                        </div>
+                          
                          <div class="rb-interviewer-info" style="margin-top:0px">
                 <span style="font-size:16px;font-weight:600">AI Interviewer</span>
                 <div class="rb-interviewer-avatar">
