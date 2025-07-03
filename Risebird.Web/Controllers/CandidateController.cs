@@ -5221,7 +5221,7 @@ namespace Risebird.Web.Controllers
             var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);
             if (_result.Contains("Mail sent successfully."))
             {
-                var results = await _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true,"");
+                var results = await _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true, "");
                 return Json("Information shared to contact person, HR will Connect you soon.");
             }
             return Json("Fail");
@@ -6616,6 +6616,12 @@ namespace Risebird.Web.Controllers
             var ProjectUniqueid = formCollection["IRFName"].ToString();
             var emailid = formCollection["clientEmailId"].ToString();
             var result = new CandidateExportStatus();
+            var loginEmail = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                loginEmail = HttpContext.Session.GetString("email")?.Trim();
+                loginEmail = loginEmail.Replace("\"", "");
+            }
             try
             {
                 var _list = new List<CandidateExportStatusList>();
@@ -6700,7 +6706,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 if (candidateList != null && candidateList.Any())
                                 {
-                                    var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, ProjectUniqueid);
+                                    var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, loginEmail, true, ProjectUniqueid);
                                     foreach (var item in resultset.list)
                                     {
                                         _list.Add(new CandidateExportStatusList { emailId = item.emailId, onboardingStatus = item.onboardingStatus });
