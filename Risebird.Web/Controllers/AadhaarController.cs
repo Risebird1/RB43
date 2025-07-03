@@ -76,78 +76,47 @@ namespace Risebird.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<JsonResult> GenerateAadhaarCaptcha(string datenow)
+        public async Task<JsonResult> FetchAadhaarDetails(string MCQID, string candidateEmail)
         {
-            var model = new AadhaarVM();
-            SetHeaderValue(model.headers, datenow);
-            model.request.api_key = api_key;
-            model.request.request_id = Guid.NewGuid().ToString();
-            var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
-            model.request.hash = getHashSha256(hashstring);
-            //var client = new RestClient(apiendpoint + "getCaptcha");
-            //var request = new RestRequest(apiendpoint + "getCaptcha", Method.Post);
-            //request.AddHeader("content-type", "application/json");
-            //request.AddJsonBody(model);
-            //RestResponse response = await client.ExecuteAsync(request);
-
-            Dictionary<string, string> headers = new Dictionary<string, string>
+            var model = await _aadhaarService.FetchAadhaarDetails(MCQID, candidateEmail);
+            if (model == null)
             {
-                { "Content-Type", "application/json" }
-            };
-
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
-
-
-            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
-            if (convertedResponse.response_status.status.ToLower() == "fail")
-            {
-
+                model = new AadhaarData();
             }
-            return Json(new { image = convertedResponse.response_data.captcha, uuid = convertedResponse.response_data.uuid });
+            return Json(model);
         }
         [HttpPost]
-        public async Task<JsonResult> SendAadhaarNumber(string uuid, string aadharnumber, string aadharcaptcha, string datenow)
+        public async Task<JsonResult> SendAadhaarNumber(string aadharnumber)
         {
             var model = new AadhaarVM();
-            SetHeaderValue(model.headers, datenow);
-            model.request.uuid = uuid;
+            var hashstring = client_code + "|" + api_key + "|" + salt;
             model.request.aadhaar = aadharnumber;
-            model.request.captcha = aadharcaptcha;
-            model.request.verification_type = "OTP";
-            model.request.consent = "YES";
-            //var client = new RestClient(apiendpoint + "enterAadhaar");
-            //var request = new RestRequest(apiendpoint + "enterAadhaar", Method.Post);
-            //request.AddHeader("content-type", "application/json");
-            //request.AddJsonBody(model);
-            //RestResponse response = await client.ExecuteAsync(request);
+            model.request.hash = getHashSha256(hashstring);
+            model.headers.client_code = client_code;
+            model.headers.sub_client_code = client_code;
+            model.headers.function_code = "DEFAULT";
+            model.headers.function_sub_code = "DEFAULT";
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
                 { "Content-Type", "application/json" }
             };
-
             var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "enterAadhaar", Method.Post, model, headers);
-
 
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
             {
-                return Json(convertedResponse.response_status.message);
+                return Json(new { message = convertedResponse.response_status.message });
             }
-            return Json(convertedResponse.response_data.message);
+            return Json(new { message = convertedResponse.response_data.message, uuid = convertedResponse.response_data.uuid });
         }
         [HttpPost]
         public async Task<JsonResult> SubmitOTPNumber(string uuid, string otp, string datenow)
         {
             var model = new AadhaarVM();
-            SetHeaderValue(model.headers, datenow);
             model.request.uuid = uuid;
             model.request.otp = otp;
-            model.request.share_code = "1234";
-            //var client = new RestClient(apiendpoint + "enterOtp");
-            //var request = new RestRequest(apiendpoint + "enterOtp", Method.Post);
-            //request.AddHeader("content-type", "application/json");
-            //request.AddJsonBody(model);
-            //RestResponse response = await client.ExecuteAsync(request);
+            model.headers.client_code = client_code;
+            model.headers.function_code = "DEFAULT";
 
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
@@ -155,42 +124,36 @@ namespace Risebird.Web.Controllers
             };
 
             var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "enterOtp", Method.Post, model, headers);
-
-
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
-            return Json("");
-        }
-        [HttpPost]
-        public async Task<JsonResult> FetchAadhaarKYC(string uuid, string datenow)
-        {
-            var model = new AadhaarVM();
-            SetHeaderValue(model.headers, datenow);
-            model.request.uuid = uuid;
-            model.request.api_key = api_key;
-            var hashstring = model.headers.client_code + "|" + model.request.uuid + "|" + api_key + "|" + salt;
-            model.request.hash = getHashSha256(hashstring);
-            //var client = new RestClient(apiendpoint + "fetchKYCData");
-            //var request = new RestRequest(apiendpoint + "fetchKYCData", Method.Post);
-            //request.AddHeader("content-type", "application/json");
-            //request.AddJsonBody(model);
-            //RestResponse response = await client.ExecuteAsync(request);
-
-            Dictionary<string, string> headers = new Dictionary<string, string>
-            {
-                { "Content-Type", "application/json" }
-            };
-
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "fetchKYCData", Method.Post, model, headers);
-
-
-            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
-            if (convertedResponse.response_status.status.ToLower() == "fail")
-            {
-
-            }
             return Json(convertedResponse.response_data);
         }
-
+        public string getHashSha256(string rawData)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+        public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
+        {
+            var aadhaarKYCmodel = new AadhaarData();
+            aadhaarKYCmodel.Name = Name;
+            aadhaarKYCmodel.Address = Address;
+            aadhaarKYCmodel.gender = gender;
+            aadhaarKYCmodel.dob = dob;
+            aadhaarKYCmodel.doc_face = doc_face;
+            aadhaarKYCmodel.email = email;
+            aadhaarKYCmodel.reference_id = "0";
+            aadhaarKYCmodel.verified_using = "Interview";
+            await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+            return Json("Aadhaar Details are verified successfully.");
+        }
         public void SetHeaderValue(AadhaarHeader _header, string datenow)
         {
             _header.client_code = client_code;
@@ -208,121 +171,6 @@ namespace Risebird.Web.Controllers
             _header.location = "";
             _header.function_code = "DEFAULT";
             _header.function_sub_code = "DEFAULT";
-        }
-        public string getHashSha256(string rawData)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-        [HttpPost]
-        public async Task<JsonResult> FetchAadhaarDetails(string MCQID, string candidateEmail)
-        {
-            var model = await _aadhaarService.FetchAadhaarDetails(MCQID, candidateEmail);
-            if (model == null)
-            {
-                model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
-                if (model == null)
-                {
-                    model = new AadhaarData();
-                }
-                else
-                {
-                    model.type = 1;
-                }
-            }
-            return Json(model);
-        }
-        public async Task<IActionResult> AadhaarVerification(string uniqueid)
-        {
-            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
-            var model = new AadhaarData();
-            if (candidateEmailid == null)
-            {
-
-                model.status = "InvalidEmail";
-            }
-
-            else if (candidateEmailid.AadhaarVerified == true)
-            {
-                model.status = "Unauthorized";
-            }
-            else
-            {
-                model.email = candidateEmailid.EmailId;
-            }
-
-            return View(model);
-        }
-        public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
-        {
-            var aadhaarKYCmodel = new AadhaarData();
-            aadhaarKYCmodel.Name = Name;
-            aadhaarKYCmodel.Address = Address;
-            aadhaarKYCmodel.gender = gender;
-            aadhaarKYCmodel.dob = dob;
-            aadhaarKYCmodel.doc_face = doc_face;
-            aadhaarKYCmodel.email = email;
-            aadhaarKYCmodel.reference_id = "0";
-            aadhaarKYCmodel.verified_using = "Interview";
-            await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
-            return Json("Aadhaar Details are verified successfully.");
-        }
-        [HttpPost]
-        public async Task<JsonResult> FetchInterviewAadhaarDetails(string candidateEmail)
-        {
-            var model = await _aadhaarService.FetchInterviewAadhaarDetails(candidateEmail);
-            if (model == null)
-            {
-                model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
-                if (model == null)
-                {
-                    model = new AadhaarData();
-                }
-                else
-                {
-                    model.type = 1;
-                }
-            }
-            return Json(model);
-        }
-        [HttpPost]
-        public async Task<JsonResult> ReGenerateAadhaarCaptcha(string datenow, string uuid)
-        {
-            var model = new AadhaarVM();
-            SetHeaderValue(model.headers, datenow);
-            model.request.uuid = uuid;
-            //var client = new RestClient(apiendpoint + "getNewCaptcha");
-            //var request = new RestRequest(apiendpoint + "getNewCaptcha", Method.Post);
-            //request.AddHeader("content-type", "application/json");
-            //request.AddJsonBody(model);
-            //RestResponse response = await client.ExecuteAsync(request);
-
-            Dictionary<string, string> headers = new Dictionary<string, string>
-                {
-                    { "Content-Type", "application/json" }
-                };
-
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getNewCaptcha", Method.Post, model, headers);
-
-
-            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
-            if (convertedResponse != null)
-            {
-                if (convertedResponse.response_status.status.ToLower() == "fail")
-                {
-
-                }
-                return Json(new { image = convertedResponse.response_data.captcha, uuid = model.request.uuid });
-            }
-            return Json(new { image = "", uuid = model.request.uuid });
         }
         #region US Candidate Verification
         public async Task<IActionResult> CandidateVerification(string uniqueid)
