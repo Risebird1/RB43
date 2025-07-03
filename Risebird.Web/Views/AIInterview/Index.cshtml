@@ -5,471 +5,7 @@
     ViewData["Title"] = "AI Interview";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 }
-
-<div class="rb-aiinterview-container">
-    <!-- Header -->
-    <div class="rb-header">
-        <div class="rb-logo-title">
-            <span class="rb-title">AI Interview</span>
-        </div>
-        <div class="rb-header-controls">
-            <span class="rb-timer">
-                <i class="fa fa-clock-o"></i> Interview Time Left <b>05:13</b>
-                <div class="rb-timer-bar"><div class="rb-timer-bar-fill"></div></div>
-            </span>
-            <button class="rb-extend-time">Extend Time</button>
-        </div>
-    </div>
-     
-    <!-- Main Content -->
-    <div class="rb-main">
-        <!-- Left: Video -->
-        <div class="rb-video-section">
-            <div class="rb-video-feed">
-                <div class="videoContainer">
-                    <video id="video" autoplay muted style="width:100%;height:370px;object-fit:cover;border-radius:16px;background:#000;"></video>
-                </div>
-                <span class="rb-candidate-name">Priya (You)</span>
-
-                <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
-                    <button id="btnRecordToggle" type="button" title="Toggle Recording" class="rb-record-btn">
-                        <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
-                    </button>
-                </div>
-            </div>
-            <!-- Footer -->
-            <div class="rb-footer">
-                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
-                <button id="footerVideoToggle" class="rb-footer-btn" title="Toggle Video">
-                  <i id="footerVideoIcon" class="fa fa-video-camera"></i>
-                </button>
-                 <button id="recordBtn" class="rb-footer-btn" title="Record" style="background:#e57c7c30">
-                     <i class="fa fa-circle"></i>
-                     </button>
-                 
-                <button class="rb-footer-btn" title="Upload"><i class="fa fa-upload"></i></button>
-            </div>
-        </div>
-        <!-- Right: Chat and Interviewer Info -->
-        <div class="rb-question-section">
-            <!-- Chat Section (now in place of question box) -->
-            <div class="rb-chat-section mt-3">
-                <div class="rb-chatbox-container">
-                    <div class="rb-chatgpt-welcome">
-                        Let's start the interview
-                    </div>
-                    <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
-                        <input type="hidden" asp-for="SessionId" />
-                    @*     <div class="rb-chatbox-inputrow">
-                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
-                           
-                            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
-
-                            <button type="submit" class="rb-chatbox-sendbtn" title="Send">
-                                <i class="fa fa-arrow-up"></i>
-                            </button>
-                        </div> *@
-                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
-
-                         <div class="rb-interviewer-info" style="margin-top:0px">
-                <span>AI Interviewer</span>
-                <div class="rb-interviewer-avatar">
-                    <span>H</span>
-                </div>
-                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                </div>
-            </div>
-                        <audio id="assistantAudio" controls hidden></audio>
-                    </form>
-                    
-                    <div class="chat-log-container">
-                        <div class="chat-log border rounded mt-3" id="chatLog">
-                            @foreach (var line in Model.ChatLog)
-                            {
-                                <div class="chat-message mb-3">
-                                    <div class="message-header">
-                                        <strong class="message-role">@line.Role:</strong>
-                                        <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
-                                    </div>
-                                    <div class="message-content">
-                                        <p>@line.Message</p>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        <button class="scroll-to-bottom" id="scrollToBottom" title="Scroll to Bottom">
-                            <i class="fa fa-chevron-down"></i>
-                        </button>
-                    </div>
-               <div class="rb-interview-actions">
-
-
-                        <a target="_blank" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId})" class="rb-action-btn rb-back-btn">
-             Generate AIInterview Report <i class="fa fa-arrow-right"></i>
-        </a>
-    </div>
-                </div>
-            </div>
-           
-        </div>
-    </div>
-
-    @* <div id="waitOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-     background-color:rgba(0,0,0,0.6); z-index:1000; color:white; font-size:1.5rem; align-items:center;
-    justify-content:center;">
-        <div>Please wait while the assistant prepares the next question...</div>
-    </div> *@
-
-    @* <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            debugger;
-            //const form = document.querySelector("form");
-            const form = document.getElementById("chatForm");
-
-            const overlay = document.getElementById("waitOverlay");
-
-            if (form && overlay) {
-                console.log("Overlay script loaded");
-                form.addEventListener("submit", () => {
-                    console.log("Form is submitting...");
-                    overlay.style.display = "flex";
-                });
-            }
-        });
-    </script> *@
-
-    <script>
-        function playAssistantAudio(blob) {
-            debugger;
-            const audioElement = document.getElementById("assistantAudio");
-            const audioWaves = document.getElementById("audioWaves");
-            const audioUrl = URL.createObjectURL(blob);
-            audioElement.src = audioUrl;
-            audioElement.hidden = false;
-            audioElement.play();
-            
-            // Show audio waves when playing starts
-            if (audioWaves) {
-                audioWaves.style.display = 'flex';
-            }
-        }
-
-        // Chat Log Scrolling Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const chatLog = document.getElementById('chatLog');
-            const scrollToBottomBtn = document.getElementById('scrollToBottom');
-            const audioElement = document.getElementById('assistantAudio');
-            const audioWaves = document.getElementById('audioWaves');
-            
-            // Audio event listeners for wave animation
-            if (audioElement && audioWaves) {
-                audioElement.addEventListener('play', function() {
-                    audioWaves.style.display = 'flex';
-                });
-                
-                audioElement.addEventListener('pause', function() {
-                    audioWaves.style.display = 'none';
-                });
-                
-                audioElement.addEventListener('ended', function() {
-                    audioWaves.style.display = 'none';
-                });
-            }
-            
-            if (chatLog && scrollToBottomBtn) {
-                // Function to scroll to bottom
-                function scrollToBottom() {
-                    chatLog.scrollTo({
-                        top: chatLog.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }
-
-                // Function to check if scroll to bottom button should be shown
-                function checkScrollPosition() {
-                    const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 100;
-                    
-                    if (!isNearBottom && chatLog.scrollHeight > chatLog.clientHeight) {
-                        scrollToBottomBtn.classList.add('show');
-                    } else {
-                        scrollToBottomBtn.classList.remove('show');
-                    }
-                }
-
-                // Scroll to bottom button click handler
-                scrollToBottomBtn.addEventListener('click', scrollToBottom);
-
-                // Check scroll position on scroll
-                chatLog.addEventListener('scroll', checkScrollPosition);
-
-                // Check scroll position on window resize
-                window.addEventListener('resize', checkScrollPosition);
-
-                // Initial check
-                checkScrollPosition();
-
-                // Auto-scroll to bottom when new messages are added
-                const observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                            // Check if we're near the bottom before auto-scrolling
-                            const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 150;
-                            if (isNearBottom) {
-                                setTimeout(scrollToBottom, 100);
-                            }
-                        }
-                    });
-                });
-
-                observer.observe(chatLog, {
-                    childList: true,
-                    subtree: true
-                });
-            }
-        });
-    </script>
-    @if (ViewData["AssistantAudioBase64"] is string base64Audio)
-    {
-        <script>
-            const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
-            const audioBlob = new Blob([
-                Uint8Array.from(atob(base64), c => c.charCodeAt(0))
-            ], { type: 'audio/mp3' });
-
-            playAssistantAudio(audioBlob);
-        </script>
-    }
-
-    
-
-    <script>
-        let mediaRecorderAudio;
-        let audioChunks = [];
-        const recordBtn = document.getElementById("recordBtn");
-        const audioInput = document.getElementById("audioInput");
-        const videoInput = document.getElementById("videoInput");
-        const form = document.querySelector("form"); // 🔥 grabs the first form on the page
-
-        recordBtn.addEventListener("click", async () => {
-            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorderAudio = new MediaRecorder(stream);
-
-                mediaRecorderAudio.ondataavailable = e => {
-                    audioChunks.push(e.data);
-                };
-
-                mediaRecorderAudio.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
-
-                    // populate the file input with blob data
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    audioInput.files = dataTransfer.files;
-
-                    audioChunks = [];
-                    recordBtn.textContent = "⭕";
-                    stopRecording();
-                    // 🔥 Submit the form automatically
-
-                };
-
-                mediaRecorderAudio.start();
-                startRecording();
-                recordBtn.textContent = "🟥";
-            } else if (mediaRecorderAudio.state === "recording") {
-                mediaRecorderAudio.stop(); // triggers onstop, which submits
-            }
-        });
-    </script>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const textarea = document.querySelector('.rb-chatbox-textarea');
-            const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
-            const form = document.querySelector('.rb-chatbox-form');
-
-            // Enable/disable send button
-            if (textarea && sendBtn) {
-                function toggleSendBtn() {
-                    sendBtn.disabled = textarea.value.trim().length === 0;
-                }
-                textarea.addEventListener('input', toggleSendBtn);
-                toggleSendBtn();
-            }
-
-            // Submit on Enter, new line on Shift+Enter
-            if (textarea && form) {
-                textarea.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-                    }
-                });
-
-                // Clear textarea after submit
-                form.addEventListener('submit', function () {
-                    setTimeout(function () {
-                        textarea.value = '';
-                        if (sendBtn) sendBtn.disabled = true;
-                    }, 10); // Let the form post, then clear
-                });
-            }
-        });
-    </script>
-    <script>
-        let mediaRecorder, recordedBlobs;
-        let isRecording = false;
-        const video = document.getElementById('video');
-        const btnRecord = document.getElementById('btnRecord');
-        const btnRecordToggle = document.getElementById('btnRecordToggle');
-        let blobtransfer;
-        if (navigator.mediaDevices && video) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(function(stream) {
-                    video.srcObject = stream;
-                    window.stream = stream;
-                })
-                .catch(function(err) {
-                    alert('Could not access camera/microphone: ' + err);
-                });
-        }
-
-        if (btnRecordToggle) {
-            btnRecordToggle.onclick = function() {
-                if (!isRecording) {
-                    // Start Recording
-                    startRecording();
-                } else {
-                    // Stop Recording
-                    stopRecording();
-                }
-            };
-
-            function startRecording() {
-                chunks = [];
-                let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
-                try {
-                    mediaRecorder = new MediaRecorder(window.stream, options);
-                } catch (e) {
-                    alert('MediaRecorder not supported: ' + e);
-                    return;
-                }
-
-                mediaRecorder.ondataavailable = function(event) {
-                    if (event.data && event.data.size > 0) {
-                        chunks.push(event.data);
-                    }
-                };
-                mediaRecorder.onstop = (ev) => {
-                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
-                    let videoURL = window.URL.createObjectURL(blob);
-                    console.log(videoURL);
-                    const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
-                    const dataTransfervideo = new DataTransfer();
-                    dataTransfervideo.items.add(filevideo);
-                    videoInput.files = dataTransfervideo.files;
-                    chunks = [];
-
-                    form.submit();
-                    //blobtransfer = blob;
-                }
-                // mediaRecorder.onstop = function() {
-                //     // Recording stopped - you can now upload or preview the video
-                //     console.log('Recording stopped. Blobs:', chunks);
-                //     // Example: let superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-                // };
-
-                mediaRecorder.start();
-                isRecording = true;
-
-                // Update UI
-                btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
-                btnRecordToggle.className = 'rb-record-btn rb-recording';
-                btnRecord.style.display = 'block';
-                btnRecord.style.animation = 'pulse 1.5s infinite';
-            }
-
-            function stopRecording() {
-                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                    mediaRecorder.stop();
-                }
-
-                isRecording = false;
-                // Update UI
-                btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
-                btnRecordToggle.className = 'rb-record-btn';
-                btnRecord.style.display = 'none';
-                btnRecord.style.animation = 'none';
-            }
-        }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let video = document.getElementById('video');
-            let footerVideoToggle = document.getElementById('footerVideoToggle');
-            let footerVideoIcon = document.getElementById('footerVideoIcon');
-            let mediaStreamObj = null;
-           let videoOn = true;
-
-            // Set initial state to OFF
-            if (footerVideoIcon) footerVideoIcon.className = 'fa fa-video-camera';
-            if (video) video.style.opacity = 1;
-
-            if (footerVideoToggle && video) {
-                footerVideoToggle.addEventListener('click', function () {
-                    if (!videoOn) {
-                        // Turn video ON
-                        if (!mediaStreamObj) {
-                            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                                .then(function(stream) {
-                                    mediaStreamObj = stream;
-                                    if (video) {
-                                        video.srcObject = stream;
-                                        mediaStreamObj.getTracks().forEach(track => {
-                                            if (track.kind === 'video') track.enabled = true;
-                                        });
-                                        videoOn = true;
-                                        footerVideoIcon.className = 'fa fa-video-camera';
-                                        video.style.opacity = 1;
-                                    }
-                                })
-                                .catch(function(err) {
-                                    alert('Could not access camera/microphone: ' + err);
-                                });
-                        } else {
-                            mediaStreamObj.getTracks().forEach(track => {
-                                if (track.kind === 'video') track.enabled = true;
-                            });
-                            videoOn = true;
-                            footerVideoIcon.className = 'fa fa-video-camera';
-                            if (video) video.style.opacity = 1;
-                        }
-                    } else {
-                        // Turn video OFF
-                        if (mediaStreamObj) {
-                            mediaStreamObj.getTracks().forEach(track => {
-                                if (track.kind === 'video') track.enabled = false;
-                            });
-                        }
-                        videoOn = false;
-                        footerVideoIcon.className = 'fas fa-video-slash';
-                       if (video) video.style.opacity = 0;
-                    }
-                });
-            }
-        });
-    </script>
-    <style>
+  <style>
         .rb-chatgpt-welcome {
             text-align: center;
             font-size: 1.8rem;
@@ -669,6 +205,7 @@
             border: 1.5px solid #eee;
             padding: 6px 12px;
             gap: 8px;
+            margin:20px;
         }
 
         .rb-chatbox-textarea {
@@ -738,6 +275,15 @@
             justify-content: center;
             margin-left: 4px;
             transition: background 0.15s, color 0.15s;
+            position: relative;
+        }
+
+        
+
+        .rb-chatbox-sendbtn:hover::before,
+        .rb-chatbox-sendbtn:hover::after {
+            opacity: 1;
+            visibility: visible;
         }
 
             .rb-chatbox-sendbtn:disabled {
@@ -954,11 +500,54 @@
             cursor: pointer;
             box-shadow: 0 2px 8px #4eda9210;
             transition: background 0.2s;
+            position: relative;
         }
 
             .rb-footer-btn:hover {
                 background: #e6f9f2;
             }
+
+        /* Tooltip Styles */
+        .rb-footer-btn::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    right: 0%;
+    left: 100px;
+    max-width: 120px !important;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    margin-bottom: 8px;
+    border: 0px !important;
+    box-shadow: none !important;
+}
+
+        .rb-footer-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 3px;
+        }
+
+        .rb-footer-btn:hover::before,
+        .rb-footer-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
 
         .rb-btn-primary {
             background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
@@ -993,6 +582,48 @@
             align-items: center;
             gap: 8px;
             border: 1.5px solid #ff516b;
+            position: relative;
+        }
+
+        /* Tooltip for record button */
+        .rb-record-btn::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-bottom: 8px;
+        }
+
+        .rb-record-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 3px;
+        }
+
+        .rb-record-btn:hover::before,
+        .rb-record-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
         }
 
 
@@ -1076,4 +707,477 @@
             }
         }
     </style>
+<div class="rb-aiinterview-container">
+    <!-- Header -->
+    <div class="rb-header">
+        <div class="rb-logo-title">
+            <span class="rb-title">AI Interview</span>
+        </div>
+        <div class="rb-header-controls">
+            <span class="rb-timer">
+                <i class="fa fa-clock-o"></i> Interview Time Left <b>05:13</b>
+                <div class="rb-timer-bar"><div class="rb-timer-bar-fill"></div></div>
+            </span>
+            <button class="rb-extend-time">Extend Time</button>
+        </div>
+    </div>
+     
+    <!-- Main Content -->
+    <div class="rb-main">
+        <!-- Left: Video -->
+        <div class="rb-video-section">
+            <div class="rb-video-feed">
+                <div class="videoContainer">
+                    <video id="video" autoplay muted style="width:100%;height:370px;object-fit:cover;border-radius:16px;background:#000;"></video>
+                </div>
+                <span class="rb-candidate-name">Priya (You)</span>
+
+                                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                     <button id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
+                         <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
+                     </button>
+                 </div>
+            </div>
+                         <!-- Footer -->
+             <div class="rb-footer">
+                 @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
+                 <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
+                   <i id="footerVideoIcon" class="fa fa-video-camera"></i>
+                 </button>
+                  <button id="recordBtn" class="rb-footer-btn" data-tooltip="Record Audio" style="background:#ee4343de;color:#fff;">
+                      <i class="fa fa-circle"></i>
+                      </button>
+                  
+                 <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>
+             </div>
+                                      <div class="rb-chatbox-inputrow">
+                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
+                             
+                             <button type="submit" class="rb-chatbox-sendbtn" title="Send Message">
+                                 <i class="fa fa-arrow-up"></i>
+                             </button>
+                         </div>
+        </div>
+        <!-- Right: Chat and Interviewer Info -->
+        <div class="rb-question-section">
+            <!-- Chat Section (now in place of question box) -->
+            <div class="rb-chat-section mt-3">
+                <div class="rb-chatbox-container">
+                    <div class="rb-chatgpt-welcome">
+                        Let's start the interview
+                    </div>
+                    <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
+                        <input type="hidden" asp-for="SessionId" />
+                    @*     <div class="rb-chatbox-inputrow">
+                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
+                           
+                            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
+                            <button type="submit" class="rb-chatbox-sendbtn" title="Send">
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                        </div> *@
+                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
+                         <div class="rb-interviewer-info" style="margin-top:0px">
+                <span style="font-size:16px;font-weight:600">AI Interviewer</span>
+                <div class="rb-interviewer-avatar">
+                    <span>H</span>
+                </div>
+                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+                        <audio id="assistantAudio" controls hidden></audio>
+                    </form>
+                    
+                    <div class="chat-log-container">
+                        <div class="chat-log border rounded mt-3" id="chatLog">
+                            @foreach (var line in Model.ChatLog)
+                            {
+                                <div class="chat-message mb-3">
+                                    <div class="message-header">
+                                        <strong class="message-role">@line.Role:</strong>
+                                        <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
+                                    </div>
+                                    <div class="message-content">
+                                        <p>@line.Message</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button class="scroll-to-bottom" id="scrollToBottom" title="Scroll to Bottom">
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                    </div>
+               <div class="rb-interview-actions">
+
+
+                        <a target="_blank" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId})" class="rb-action-btn rb-back-btn">
+             Generate AIInterview Report <i class="fa fa-arrow-right"></i>
+        </a>
+    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+    @* <div id="waitOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background-color:rgba(0,0,0,0.6); z-index:1000; color:white; font-size:1.5rem; align-items:center;
+    justify-content:center;">
+        <div>Please wait while the assistant prepares the next question...</div>
+    </div> *@
+
+    @* <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            debugger;
+            //const form = document.querySelector("form");
+            const form = document.getElementById("chatForm");
+
+            const overlay = document.getElementById("waitOverlay");
+
+            if (form && overlay) {
+                console.log("Overlay script loaded");
+                form.addEventListener("submit", () => {
+                    console.log("Form is submitting...");
+                    overlay.style.display = "flex";
+                });
+            }
+        });
+    </script> *@
+
+    <script>
+        function playAssistantAudio(blob) {
+            debugger;
+            const audioElement = document.getElementById("assistantAudio");
+            const audioWaves = document.getElementById("audioWaves");
+            const audioUrl = URL.createObjectURL(blob);
+            audioElement.src = audioUrl;
+            audioElement.hidden = false;
+            audioElement.play();
+            
+            // Show audio waves when playing starts
+            if (audioWaves) {
+                audioWaves.style.display = 'flex';
+            }
+        }
+
+        // Chat Log Scrolling Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatLog = document.getElementById('chatLog');
+            const scrollToBottomBtn = document.getElementById('scrollToBottom');
+            const audioElement = document.getElementById('assistantAudio');
+            const audioWaves = document.getElementById('audioWaves');
+            
+            // Audio event listeners for wave animation
+            if (audioElement && audioWaves) {
+                audioElement.addEventListener('play', function() {
+                    audioWaves.style.display = 'flex';
+                });
+                
+                audioElement.addEventListener('pause', function() {
+                    audioWaves.style.display = 'none';
+                });
+                
+                audioElement.addEventListener('ended', function() {
+                    audioWaves.style.display = 'none';
+                });
+            }
+            
+            if (chatLog && scrollToBottomBtn) {
+                // Function to scroll to bottom
+                function scrollToBottom() {
+                    chatLog.scrollTo({
+                        top: chatLog.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+
+                // Function to check if scroll to bottom button should be shown
+                function checkScrollPosition() {
+                    const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 100;
+                    
+                    if (!isNearBottom && chatLog.scrollHeight > chatLog.clientHeight) {
+                        scrollToBottomBtn.classList.add('show');
+                    } else {
+                        scrollToBottomBtn.classList.remove('show');
+                    }
+                }
+
+                // Scroll to bottom button click handler
+                scrollToBottomBtn.addEventListener('click', scrollToBottom);
+
+                // Check scroll position on scroll
+                chatLog.addEventListener('scroll', checkScrollPosition);
+
+                // Check scroll position on window resize
+                window.addEventListener('resize', checkScrollPosition);
+
+                // Initial check
+                checkScrollPosition();
+
+                // Auto-scroll to bottom when new messages are added
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                            // Check if we're near the bottom before auto-scrolling
+                            const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 150;
+                            if (isNearBottom) {
+                                setTimeout(scrollToBottom, 100);
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(chatLog, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
+    </script>
+    @if (ViewData["AssistantAudioBase64"] is string base64Audio)
+    {
+        <script>
+            const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+            const audioBlob = new Blob([
+                Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+            ], { type: 'audio/mp3' });
+
+            playAssistantAudio(audioBlob);
+        </script>
+    }
+
+    
+
+    <script>
+        let mediaRecorderAudio;
+        let audioChunks = [];
+        const recordBtn = document.getElementById("recordBtn");
+        const audioInput = document.getElementById("audioInput");
+        const videoInput = document.getElementById("videoInput");
+        const form = document.querySelector("form"); // 🔥 grabs the first form on the page
+
+        recordBtn.addEventListener("click", async () => {
+            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorderAudio = new MediaRecorder(stream);
+
+                mediaRecorderAudio.ondataavailable = e => {
+                    audioChunks.push(e.data);
+                };
+
+                mediaRecorderAudio.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+
+                    // populate the file input with blob data
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    audioInput.files = dataTransfer.files;
+
+                    audioChunks = [];
+                    recordBtn.textContent = "⭕";
+                    recordBtn.setAttribute('data-tooltip', 'Record Audio');
+                    stopRecording();
+                    // 🔥 Submit the form automatically
+
+                };
+
+                mediaRecorderAudio.start();
+                startRecording();
+                recordBtn.textContent = "☐";
+                recordBtn.setAttribute('data-tooltip', 'Stop Recording');
+            } else if (mediaRecorderAudio.state === "recording") {
+                mediaRecorderAudio.stop(); // triggers onstop, which submits
+            }
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const textarea = document.querySelector('.rb-chatbox-textarea');
+            const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+            const form = document.querySelector('.rb-chatbox-form');
+
+            // Enable/disable send button
+            if (textarea && sendBtn) {
+                function toggleSendBtn() {
+                    sendBtn.disabled = textarea.value.trim().length === 0;
+                }
+                textarea.addEventListener('input', toggleSendBtn);
+                toggleSendBtn();
+            }
+
+            // Submit on Enter, new line on Shift+Enter
+            if (textarea && form) {
+                textarea.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    }
+                });
+
+                // Clear textarea after submit
+                form.addEventListener('submit', function () {
+                    setTimeout(function () {
+                        textarea.value = '';
+                        if (sendBtn) sendBtn.disabled = true;
+                    }, 10); // Let the form post, then clear
+                });
+            }
+        });
+    </script>
+    <script>
+        let mediaRecorder, recordedBlobs;
+        let isRecording = false;
+        const video = document.getElementById('video');
+        const btnRecord = document.getElementById('btnRecord');
+        const btnRecordToggle = document.getElementById('btnRecordToggle');
+        let blobtransfer;
+        if (navigator.mediaDevices && video) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    window.stream = stream;
+                })
+                .catch(function(err) {
+                    alert('Could not access camera/microphone: ' + err);
+                });
+        }
+
+        if (btnRecordToggle) {
+            btnRecordToggle.onclick = function() {
+                if (!isRecording) {
+                    // Start Recording
+                    startRecording();
+                } else {
+                    // Stop Recording
+                    stopRecording();
+                }
+            };
+
+            function startRecording() {
+                chunks = [];
+                let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
+                try {
+                    mediaRecorder = new MediaRecorder(window.stream, options);
+                } catch (e) {
+                    alert('MediaRecorder not supported: ' + e);
+                    return;
+                }
+
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data && event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                };
+                mediaRecorder.onstop = (ev) => {
+                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+                    let videoURL = window.URL.createObjectURL(blob);
+                    console.log(videoURL);
+                    const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
+                    const dataTransfervideo = new DataTransfer();
+                    dataTransfervideo.items.add(filevideo);
+                    videoInput.files = dataTransfervideo.files;
+                    chunks = [];
+
+                    form.submit();
+                    //blobtransfer = blob;
+                }
+                // mediaRecorder.onstop = function() {
+                //     // Recording stopped - you can now upload or preview the video
+                //     console.log('Recording stopped. Blobs:', chunks);
+                //     // Example: let superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+                // };
+
+                mediaRecorder.start();
+                isRecording = true;
+
+                // Update UI
+                btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
+                btnRecordToggle.className = 'rb-record-btn rb-recording';
+                btnRecord.style.display = 'block';
+                btnRecord.style.animation = 'pulse 1.5s infinite';
+            }
+
+            function stopRecording() {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+
+                isRecording = false;
+                // Update UI
+                btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
+                btnRecordToggle.className = 'rb-record-btn';
+                btnRecord.style.display = 'none';
+                btnRecord.style.animation = 'none';
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let video = document.getElementById('video');
+            let footerVideoToggle = document.getElementById('footerVideoToggle');
+            let footerVideoIcon = document.getElementById('footerVideoIcon');
+            let mediaStreamObj = null;
+           let videoOn = true;
+
+            // Set initial state to OFF
+            if (footerVideoIcon) footerVideoIcon.className = 'fa fa-video-camera';
+            if (video) video.style.opacity = 1;
+
+            if (footerVideoToggle && video) {
+                footerVideoToggle.addEventListener('click', function () {
+                    if (!videoOn) {
+                        // Turn video ON
+                        if (!mediaStreamObj) {
+                            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                                .then(function(stream) {
+                                    mediaStreamObj = stream;
+                                    if (video) {
+                                        video.srcObject = stream;
+                                        mediaStreamObj.getTracks().forEach(track => {
+                                            if (track.kind === 'video') track.enabled = true;
+                                        });
+                                        videoOn = true;
+                                        footerVideoIcon.className = 'fa fa-video-camera';
+                                        video.style.opacity = 1;
+                                    }
+                                })
+                                .catch(function(err) {
+                                    alert('Could not access camera/microphone: ' + err);
+                                });
+                        } else {
+                            mediaStreamObj.getTracks().forEach(track => {
+                                if (track.kind === 'video') track.enabled = true;
+                            });
+                            videoOn = true;
+                            footerVideoIcon.className = 'fa fa-video-camera';
+                            if (video) video.style.opacity = 1;
+                        }
+                    } else {
+                        // Turn video OFF
+                        if (mediaStreamObj) {
+                            mediaStreamObj.getTracks().forEach(track => {
+                                if (track.kind === 'video') track.enabled = false;
+                            });
+                        }
+                        videoOn = false;
+                        footerVideoIcon.className = 'fas fa-video-slash';
+                       if (video) video.style.opacity = 0;
+                    }
+                });
+            }
+        });
+    </script>
+  
 </div>
