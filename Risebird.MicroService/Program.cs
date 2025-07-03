@@ -163,6 +163,11 @@ namespace Risebird.MicroService
                     services.AddScoped<IExcelHelper, ExcelHelper>();
                     services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
                     services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
+                    services.AddScoped<IInterviewApiService, InterviewApiService>();
+                    services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
+                    services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
+                    services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
+                    services.AddScoped<IAIInterviewerService, AIInterviewerService>();
                 }).Build();
             host.Run();
         }
