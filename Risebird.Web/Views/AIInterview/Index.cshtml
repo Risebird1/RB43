@@ -34,6 +34,7 @@
             padding: 24px;
             max-width: 1200px;
             margin: 0 auto;
+            padding-bottom:50px;
             box-shadow: 0 4px 32px #4eda9220;
         }
 
@@ -518,9 +519,10 @@
     bottom: 100%;
     right: 0%;
     left: 100px;
-    max-width: 120px !important;
+    max-width: auto;
+    width:max-content;
     transform: translateX(-50%);
-    padding: 6px 12px;
+    padding: 6px 7px;
     border-radius: 6px;
     font-size: 0.8rem;
     font-weight: 500;
@@ -748,7 +750,7 @@
                  <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
                    <i id="footerVideoIcon" class="fa fa-video-camera"></i>
                  </button>
-                  <button id="recordBtn" class="rb-footer-btn" data-tooltip="Record Audio" style="background:#ee4343de;color:#fff;">
+                  <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
                       <i class="fa fa-circle"></i>
                       </button>
                   
@@ -996,7 +998,7 @@
                 mediaRecorderAudio.start();
                 startRecording();
                 recordBtn.textContent = "☐";
-                recordBtn.setAttribute('data-tooltip', 'Stop Recording');
+                recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
             } else if (mediaRecorderAudio.state === "recording") {
                 mediaRecorderAudio.stop(); // triggers onstop, which submits
             }
