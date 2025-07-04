@@ -211,6 +211,8 @@
         position: absolute;
         left: 89px;
         width: 550px;
+        min-height: 100px;
+        
     }
 
         .rb-chatbox-textarea {
@@ -224,6 +226,8 @@
             min-height: 36px;
             max-height: 120px;
             color: #222;
+            overflow-y: hidden;
+            transition: height 0.1s ease;
         }
 
             .rb-chatbox-textarea:focus {
@@ -279,7 +283,7 @@
             align-items: center;
             justify-content: center;
             margin-left: 4px;
-            transition: background 0.15s, color 0.15s;
+            transition: background 0.15s, color 0.15s, opacity 0.2s, transform 0.1s;
             position: relative;
         }
 
@@ -291,11 +295,46 @@
             visibility: visible;
         }
 
-            .rb-chatbox-sendbtn:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-                background: #272525;
-            }
+                    .rb-chatbox-sendbtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #272525;
+        }
+
+        /* Loading spinner styles */
+        .rb-loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .rb-chatbox-sendbtn.loading {
+            background: #4eda92;
+            cursor: not-allowed;
+        }
+
+        .rb-chatbox-sendbtn.loading .fa-arrow-up {
+            display: none;
+        }
+
+        .rb-chatbox-sendbtn.loading .rb-loading-spinner {
+            display: block;
+        }
+
+        /* Disable textarea during loading */
+        .rb-chatbox-textarea.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
 
             .rb-chatbox-sendbtn i {
                 font-weight: bold;
@@ -782,6 +821,7 @@
 
                             <button type="submit" class="rb-chatbox-sendbtn" title="Send">
                                 <i class="fa fa-arrow-up"></i>
+                                <div class="rb-loading-spinner"></div>
                             </button>
                         </div>
                           
@@ -1012,13 +1052,94 @@
             const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
             const form = document.querySelector('.rb-chatbox-form');
 
+            // Auto-resize textarea function
+            function autoResizeTextarea() {
+                if (textarea) {
+                    // Reset height to auto to get the correct scrollHeight
+                    textarea.style.height = 'auto';
+                    
+                    // Calculate new height based on content
+                    const newHeight = Math.min(Math.max(textarea.scrollHeight, 36), 120);
+                    
+                    // Apply the new height
+                    textarea.style.height = newHeight + 'px';
+                }
+            }
+
+            // Function to show loading state
+            function showLoading() {
+                if (sendBtn) {
+                    sendBtn.classList.add('loading');
+                    sendBtn.disabled = true;
+                }
+                if (textarea) {
+                    textarea.classList.add('loading');
+                    textarea.disabled = true;
+                }
+            }
+
+            // Function to hide loading state
+            function hideLoading() {
+                if (sendBtn) {
+                    sendBtn.classList.remove('loading');
+                    sendBtn.disabled = false;
+                }
+                if (textarea) {
+                    textarea.classList.remove('loading');
+                    textarea.disabled = false;
+                }
+            }
+
+            // Function to submit form
+            function submitForm() {
+                if (textarea && textarea.value.trim().length > 0 && form) {
+                    // Show loading state
+                    showLoading();
+                    
+                    // Add visual feedback
+                    if (sendBtn) {
+                        sendBtn.style.opacity = '0.7';
+                        sendBtn.style.transform = 'scale(0.95)';
+                    }
+                    
+                    // Submit the form
+                    form.submit();
+                }
+            }
+
             // Enable/disable send button
             if (textarea && sendBtn) {
                 function toggleSendBtn() {
-                    sendBtn.disabled = textarea.value.trim().length === 0;
+                    const hasContent = textarea.value.trim().length > 0;
+                    sendBtn.disabled = !hasContent;
+                    
+                    // Visual feedback for button state
+                    if (hasContent) {
+                        sendBtn.style.opacity = '1';
+                        sendBtn.style.transform = 'scale(1)';
+                    } else {
+                        sendBtn.style.opacity = '0.5';
+                        sendBtn.style.transform = 'scale(1)';
+                    }
                 }
+                
                 textarea.addEventListener('input', toggleSendBtn);
+                textarea.addEventListener('input', autoResizeTextarea);
                 toggleSendBtn();
+                
+                            // Initial resize
+            autoResizeTextarea();
+            
+            // Reset loading state on page load (in case of errors)
+            hideLoading();
+        }
+
+            // Send button click handler
+            if (sendBtn) {
+                sendBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    submitForm();
+                });
             }
 
             // Submit on Enter, new line on Shift+Enter
@@ -1026,16 +1147,19 @@
                 textarea.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                        submitForm();
                     }
                 });
 
                 // Clear textarea after submit
                 form.addEventListener('submit', function () {
-                    setTimeout(function () {
-                        textarea.value = '';
-                        if (sendBtn) sendBtn.disabled = true;
-                    }, 10); // Let the form post, then clear
+                    // Keep loading state active during form submission
+                    // The page will reload after submission, so we don't need to hide loading
+                });
+
+                // Handle form submission errors (if any)
+                form.addEventListener('error', function () {
+                    hideLoading();
                 });
             }
         });
