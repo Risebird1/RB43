@@ -1,36 +1,17 @@
 ﻿var Buttonclick = 1;
+//var isAadharVerified = false;
 function openAadhaarpopup() {
     document.getElementById("divSubmit").style.display = "none";
     document.getElementById("divValidate").style.display = "inline-block";
     document.getElementById("divotpvalidation").style.display = "none";
     var modal = document.getElementById("Aadhaarpopup");
     modal.style.display = "block";
-    generateCaptcha();
 }
 function closeAadhaarpopup() {
     var model = document.getElementById("Aadhaarpopup");
     model.style.display = "none";
     $("#aadhaarnumber").val('');
-    $("#aadhaarcaptcha").val('');
     $("#aadharimagecaptcha").attr("src", "");
-}
-function bindAadhaarData(data) {
-    $("#aadharimagecaptcha").attr("src", "data:image/png;base64," + data.image);
-    $("#aadhaaruuid").val(data.uuid);
-}
-function generateCaptcha() {
-    if (Buttonclick == 1) {
-        showloader();
-        $.ajax({
-            type: "POST",
-            url: "/Aadhaar/GenerateAadhaarCaptcha",
-            data: { datenow: Date.now() },
-            success: function (data) {
-                bindAadhaarData(data);
-                hideloader();
-            }
-        });
-    }
 }
 function validateAadhaarnumber() {
     if (Buttonclick == 1) {
@@ -38,17 +19,17 @@ function validateAadhaarnumber() {
         $.ajax({
             type: "POST",
             url: "/Aadhaar/SendAadhaarNumber",
-            data: { uuid: $("#aadhaaruuid").val(), aadharnumber: $("#aadhaarnumber").val().trim(), aadharcaptcha: $("#aadhaarcaptcha").val().trim(), datenow: Date.now() },
+            data: { aadharnumber: $("#aadhaarnumber").val().trim() },
             success: function (data) {
-                if (data.toLowerCase().includes("otp")) {
+                if (data.message.toLowerCase().includes("otp")) {
+                    $("#aadhaaruuid").val(data.uuid);
                     document.getElementById("divotpvalidation").style.display = "block";
                     document.getElementById("divSubmit").style.display = "inline-block";
                     document.getElementById("divValidate").style.display = "none";
-                } else {
-
                 }
                 hideloader();
-                alert(data);
+                alert(data.message);
+                bindaadhaarnumber();
             }
         });
     }
@@ -59,20 +40,13 @@ function submitOtpnumber() {
         $.ajax({
             type: "POST",
             url: "/Aadhaar/SubmitOTPNumber",
-            data: { uuid: $("#aadhaaruuid").val(), otp: $("#txtAadhaarOtp").val().trim(), datenow: Date.now() },
-            success: function (data) {
-                $.ajax({
-                    type: "POST",
-                    url: "/Aadhaar/FetchAadhaarKYC",
-                    data: { uuid: $("#aadhaaruuid").val(), datenow: Date.now() },
-                    success: function (dataKYC) {
-                        openAadhaarKYCpopup();
-                        closeAadhaarpopup();
-                        hideloader();
-                        BindData(dataKYC);
-                        BindKYCData(dataKYC);
-                    }
-                });
+            data: { uuid: $("#aadhaaruuid").val(), otp: $("#txtAadhaarOtp").val().trim() },
+            success: function (dataKYC) {
+                openAadhaarKYCpopup();
+                closeAadhaarpopup();
+                hideloader();
+                BindData(dataKYC);
+                BindKYCData(dataKYC);
             }
         });
     }
@@ -139,7 +113,7 @@ function BindAadhaarKYCData(data) {
         html += '</table>';
     }
     if (data.email == null) {
-        html = 'Not yet Candidate verified for this candidate';
+        html = 'Aadhaar not yet verified for this candidate';
     }
     $("#divAadhaarKYC").empty().html(html);
 }
@@ -157,20 +131,6 @@ function FetchInterviewAadhaarDetails(candidateEmail) {
             }
         }
     });
-}
-function NewgenerateCaptcha() {
-    if (Buttonclick == 1) {
-        showloader();
-        $.ajax({
-            type: "POST",
-            url: "/Aadhaar/ReGenerateAadhaarCaptcha",
-            data: { datenow: Date.now(), uuid: $("#aadhaaruuid").val() },
-            success: function (data) {
-                bindAadhaarData(data);
-                hideloader();
-            }
-        });
-    }
 }
 function BindCandidateKYCData(data) {
     var html = '';
