@@ -13676,6 +13676,10 @@ section {
         .filter-note.align-right{
             display:none!important;
         }
+    .feature-img span {
+        height: 160px !important;
+        width: 160px !important;
+    }
     .agreement-policy {
         width:100%;
     }
