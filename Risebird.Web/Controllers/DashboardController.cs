@@ -4912,5 +4912,39 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        /// <summary>
+        /// AI Recruiter Copilot page
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> AIRecruiterCopilot()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    
+                    ViewBag.ProfileName = profileName;
+                    ViewBag.EmailId = emailid;
+                    
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
