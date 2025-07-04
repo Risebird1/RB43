@@ -265,8 +265,19 @@
             position: relative;
             width: 215px;
             background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            vertical-align: middle;
         }
 
+            .feature-img span img{
+                display: inline;
+                text-align: center;
+                vertical-align: middle;
+                width: 90%;
+            }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -364,7 +375,12 @@
             padding: 1.5rem 1rem;
             margin-top: 4rem;
         }
-        @@media (max-width: 900px) {
+
+        input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="tel"]::placeholder {
+            color: #888;
+        }
+
+        @@media only screen and (max-width: 900px) {
             .features {
                 flex-direction: column;
                 align-items: center;
@@ -374,11 +390,139 @@
                 flex-direction: column !important;
                 align-items: flex-start;
                 width: 100%;
+                display:inline-block;
             }
 
             .feature-img {
                 margin: 0 0 16px 0;
+                width: 50%;
+                float: left;
+                height: 100%;
             }
+
+            .feature-content {
+                width: 50%;
+                float: left;
+            }
+            .hero h1,.hero h2 {
+                font-size: 35px;
+            }
+        }
+
+        @@media only screen and (max-width: 767px) {
+            .header nav a, .footer nav a {
+                margin: 0 30px;
+            }
+
+            feature-block {
+                display:flex!important;
+            }
+            .feature-content, .feature-img {
+                width:100%!important;float:none!important}
+
+
+        .feature-img {
+            width: 50% !important;
+            margin: 20px auto 0px auto;
+            height: 100%;
+        }
+
+            .stat .stat-value {
+            
+                font-size: 46px;
+            }
+
+            .stats{
+                gap:32px;
+            }
+          
+        }
+
+        @@media  (max-width: 480px) {
+            .feature-img span {
+                height: 160px !important;
+                width: 160px !important;
+            }
+        }
+        @@media only screen and (max-width: 480px) {
+            .header nav a, .footer nav a {
+                margin: 0 20px;
+            }
+
+           
+            .hero h1 {
+                font-size: 25px;
+            }
+
+            .hero h2 {
+                font-size: 25px;
+            }
+
+            .section li{
+                font-size: 19px;
+                margin-bottom: 20px;
+                line-height: 27px;
+            }
+
+            .section h2 {
+                font-size: 29px;
+            }
+
+            .feature-content h3 {
+                font-size: 25px;
+            }
+            .hero {
+                text-align: center;
+                margin: 30px 0 0px 0!important;
+            }
+
+            .stats {
+                gap: 0px;
+            }
+
+            .stat .stat-value {
+                font-size: 35px;
+            }
+
+            .stat .stat-label {
+                line-height: 23px;
+                font-size: 20px;
+            }
+           
+        }
+
+        @@media only screen and (max-width: 360px) {
+            .header nav a, .footer nav a {
+                margin: 0 4px;
+            
+            }
+            .stats{
+                gap: 12px;
+            }
+            .stat .stat-label {
+                line-height:23px;
+                font-size: 20px;
+            }
+            .stat .stat-value {
+                font-size: 32px;
+            }
+            .feature-img {
+                width: 65% !important;
+                margin: 20px auto 0px auto;
+            }
+            .feature-content h3 {
+                font-size: 25px!important;
+                width:330px!important;
+            }
+            
+
+                .hero h1 {
+                    font-size: 23px;
+                }
+
+                .hero h2 {
+                    font-size: 21px;
+                }
         }
     </style>
 </head>
@@ -396,7 +540,7 @@
     <div class="hero">
         <h1>
             Empower Your Recruiters with the Brain of a Hiring Manager<br /> — and the Speed of AI
-            Recruiter screening. AI-powered.
+           
         </h1>
         <h2>Smarter, consistent, instant results.</h2>
         <button class="cta-btn">Book a Demo</button>
@@ -420,7 +564,7 @@
             </div>
             <div class="feature-img">
                 <span>
-                    <img src="/img/ai-resume-screen.png" style="position: relative;top: 17px;left:15px;width: 190px;">
+                    <img src="/img/ai-resume-screen.png" >
                 </span>
             </div>
         </div>
@@ -431,7 +575,7 @@
             </div>
             <div class="feature-img">
                 <span>
-                    <img src="/img/ai-assistance.png" style="position: relative;top: 17px;left: 9px;width: 190px;">
+                    <img src="/img/ai-assistance.png">
                 </span>
             </div>
         </div>
@@ -443,7 +587,7 @@
             </div>
             <div class="feature-img">
                 <span>
-                    <img src="/img/risebird-platform.png" style= "position: relative;top: -10px;left: -10px;">
+                    <img src="/img/risebird-platform.png">
                     
                 </span>
             </div>
@@ -451,6 +595,7 @@
     </div>
     <section class="section">
         <h2>What TA Leaders Gain</h2>
+        <div class="table-responsive">
         <table>
             <tr><th>KPI</th><th>Traditional Hiring</th><th>With Recruiter Copilot</th></tr>
             <tr><td>Resume Review Time</td><td>5-10 mins</td><td>< 30 sec</td></tr>
@@ -464,10 +609,12 @@
             <tr><td>Candidate Experience</td><td>Inconsistent</td><td>Structured & Fair</td></tr>
             <tr><td>Hiring Yield</td><td>Unpredictable</td><td>Improved</td></tr>
         </table>
+        </div>
     </section>
 
     <section class="section">
         <h2>Pricing Plans</h2>
+        <div class="table-responsive">
         <table>
             <tr>
                 <th>Feature</th>
@@ -483,6 +630,7 @@
             <tr><td>Audit Logs</td><td>❌</td><td>✅</td><td>✅</td></tr>
             <tr><td>Custom Branding</td><td>❌</td><td>❌</td><td>✅</td></tr>
         </table>
+        </div>
     </section>
     <section class="cta">
         <h3>Enquire Now</h3>
@@ -509,10 +657,10 @@
         </div>
     </div>
 
-    <div class="section-center">
+    <div class="hero section-center">
         <div style="font-size:1.2rem; font-weight:600;">
-            AI transforms screening into a structured, consistent, and data-driven process.<br>
-            Human recruiters make final calls.
+            <h1 style="font-size:32px;">  AI transforms screening into a structured,<br/> consistent, and data-driven process.<br/></h1>
+            <h2 style="font-size:32px;"> Human recruiters make final calls.</h2>
         </div>
         
     </div>
