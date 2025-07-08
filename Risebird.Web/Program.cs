@@ -202,6 +202,7 @@ builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
 builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
 builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
 builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
+builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 
 
 var app = builder.Build();

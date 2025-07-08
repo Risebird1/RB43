@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Apis.Drive.v3.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -36,9 +38,13 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IAIInterviewerService _aiinterviewerService;
+        private readonly ISynthesiaTextToVideoService _synthesiaTextToVideoService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
-            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api, IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper, ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService)
+            IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
+            IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
+            ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
+            ISynthesiaTextToVideoService synthesiaTextToVideoService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -48,6 +54,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _sasUrlHelper = sasUrlHelper;
             _aiinterviewerService = aiinterviewerService;
+            _synthesiaTextToVideoService = synthesiaTextToVideoService;
         }
 
         [HttpGet]
@@ -62,6 +69,18 @@ namespace Risebird.Web.Controllers
                 SessionId = result.SessionId,
                 ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
             };
+
+            var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
+
+            // Wait/poll until video is ready (Synthesia usually takes 30–60s)
+            string videoUrl;
+            do
+            {
+                await Task.Delay(8000);
+                videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+            } while (string.IsNullOrWhiteSpace(videoUrl));
+
+            model.SynthesizedVideoUrl = videoUrl;
 
             return View(model);
         }
@@ -85,13 +104,24 @@ namespace Risebird.Web.Controllers
             }
             UploadBotInterviewVideo(model, question.FirstOrDefault());
             var latestReply = replies.FirstOrDefault();
-            if (!string.IsNullOrEmpty(latestReply))
-            {
-                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
-                var base64Audio = Convert.ToBase64String(audioBytes);
-                ViewData["AssistantAudioBase64"] = base64Audio;
-            }
+            //if (!string.IsNullOrEmpty(latestReply))
+            //{
+            //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+            //    var base64Audio = Convert.ToBase64String(audioBytes);
+            //    ViewData["AssistantAudioBase64"] = base64Audio;
+            //}
 
+
+            var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
+
+            // Wait/poll until video is ready (Synthesia usually takes 30–60s)
+            string videoUrl;
+            do
+            {
+                await Task.Delay(8000);
+                videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+            } while (string.IsNullOrWhiteSpace(videoUrl));
+            model.SynthesizedVideoUrl = videoUrl;
             model.Message = "";
             return View(model);
         }
@@ -116,7 +146,7 @@ namespace Risebird.Web.Controllers
                         VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     //Save in db with question.sessionid,videoLink,Datetime
-                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString());
+                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl);
                 }
             }
         }
@@ -126,7 +156,7 @@ namespace Risebird.Web.Controllers
         {
             // For demo: tech stack prompt
             //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
-            string candidatePrompt = "Consider the interview finished. I want you to generate report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
+            string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
             var result = await _api.GenerateReport(seId, candidatePrompt);
 
             //var chatMessageModel = new ChatMessageViewModel
