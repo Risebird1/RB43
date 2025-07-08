@@ -10,7 +10,7 @@ namespace Risebird.Business.Interface
 {
     public interface IAIInterviewerService
     {
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink);
         Task<string> GetThreadId(Guid sessionId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
     }
