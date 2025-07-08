@@ -776,13 +776,13 @@
                 <div class="videoContainer">
                     <video id="video" autoplay muted style="width:100%;height:370px;object-fit:cover;border-radius:16px;background:#000;"></video>
                 </div>
-                <span class="rb-candidate-name">Priya (You)</span>
+                
 
-                                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                                 @* <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
                      <button id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
                          <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
                      </button>
-                 </div>
+                 </div> *@
             </div>
                          <!-- Footer -->
              <div class="rb-footer">
@@ -815,7 +815,7 @@
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
                          <div class="rb-chatbox-inputrow">
-                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
+                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off"></textarea>
                            
                             <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
                             <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
