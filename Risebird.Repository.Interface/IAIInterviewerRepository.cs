@@ -13,7 +13,7 @@ namespace Risebird.Repository.Interface
         Task CreateSession(InterviewSession session);
         Task<string> GetThreadId(Guid sessionId);
         Task LogTranscript(Guid sessionId, string role, string message);
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
     }
 }
