@@ -14,6 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string question { get; set; }
         public DateTime CreatedAt { get; set; }
         public string BotSynthesizedVideoLink { get; set; }
+        public string CandidateAnswer { get; set; }
 
     }
 

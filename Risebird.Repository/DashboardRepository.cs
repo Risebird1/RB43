@@ -2300,7 +2300,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName,string actionstatus)
+        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName, string actionstatus)
         {
             try
             {
@@ -2324,6 +2324,33 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Name", Name);
+                parameters.Add("@Emailid", Emailid);
+                parameters.Add("@Designation", Designation);
+                parameters.Add("@Phone", Phone);
+                parameters.Add("@Company", Company);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveEnquiryDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
         }
     }
 }
