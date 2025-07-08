@@ -20,11 +20,11 @@ namespace Risebird.Business
             _aiInterviewerRepository = aiInterviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink)
         {
             try
             {
-                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId);
+                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink);
             }
             catch (Exception e)
             {

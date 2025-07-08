@@ -839,6 +839,16 @@
                 </div>
             </div>
                         <audio id="assistantAudio" controls hidden></audio>
+                        @if (Model.SynthesizedVideoUrl != null)
+                        {
+                            <video width="720" controls autoplay>
+                                <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        }
+
+                        <input type="hidden" asp-for="SynthesizedVideoUrl"/>
+
                     </form>
                     
                     <div class="chat-log-container">
@@ -871,6 +881,12 @@
             </div>
            
         </div>
+    </div>
+    
+    <div id="waitOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); z-index: 1000; color: white; font-size: 1.5rem;
+    align-items: center; justify-content: center;">
+        <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
 
     @* <div id="waitOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -1008,7 +1024,7 @@
         const audioInput = document.getElementById("audioInput");
         const videoInput = document.getElementById("videoInput");
         const form = document.querySelector("form"); // 🔥 grabs the first form on the page
-
+        const overlay = document.getElementById("waitOverlay");
         recordBtn.addEventListener("click", async () => {
             if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1019,6 +1035,7 @@
                 };
 
                 mediaRecorderAudio.onstop = async () => {
+
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
 
@@ -1030,6 +1047,7 @@
                     audioChunks = [];
                     recordBtn.textContent = "⭕";
                     recordBtn.setAttribute('data-tooltip', 'Record Audio');
+                    overlay.style.display = "flex";
                     stopRecording();
                     // 🔥 Submit the form automatically
 
@@ -1039,7 +1057,8 @@
                 startRecording();
                 recordBtn.textContent = "☐";
                 recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
-            } else if (mediaRecorderAudio.state === "recording") {
+            } 
+            else if (mediaRecorderAudio.state === "recording") {
                 mediaRecorderAudio.stop(); // triggers onstop, which submits
             }
         });
