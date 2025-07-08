@@ -1003,7 +1003,7 @@
             }
         });
     </script>
-    @if (ViewData["AssistantAudioBase64"] is string base64Audio)
+    @* @if (ViewData["AssistantAudioBase64"] is string base64Audio)
     {
         <script>
             const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
@@ -1013,7 +1013,7 @@
 
             playAssistantAudio(audioBlob);
         </script>
-    }
+    } *@
 
     
 
