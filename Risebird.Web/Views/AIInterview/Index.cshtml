@@ -15,6 +15,7 @@
             letter-spacing: -0.5px;
             line-height: 1.2;
             transition: color 0.2s;
+        margin-bottom: 20px;
         }
 
         .rb-video-section .videoContainer {
@@ -123,7 +124,7 @@
         }
 
         .rb-video-section {
-            flex: 2;
+            flex: 1.8;
             position: relative;
         }
 
@@ -186,7 +187,7 @@
             background: #fafbfc;
             border-radius: 24px;
             box-shadow: 0 2px 12px #4eda9210;
-            padding: 24px 0px 12px 0px;
+            padding: 0px 0px 12px 0px;
             margin-bottom: 12px;
         }
 
@@ -207,7 +208,7 @@
         border: 1.5px solid #eee;
         padding: 6px 12px;
         gap: 8px;
-        margin: 350px 20px 20px 20px;
+        margin: 390px 20px 20px 20px;
         position: absolute;
         left: 89px;
         width: 550px;
@@ -464,7 +465,7 @@
         .rb-interviewer-info {
             background: linear-gradient(135deg, #e8f5e9 60%, #f9f9f9 100%);
             border-radius: 16px;
-            padding: 18px;
+            padding: 12px;
             display: flex;
             align-items: center;
             gap: 18px;
@@ -824,7 +825,7 @@
                                 <div class="rb-loading-spinner"></div>
                             </button>
                         </div>
-                          
+                @*           
                          <div class="rb-interviewer-info" style="margin-top:0px">
                 <span style="font-size:16px;font-weight:600">AI Interviewer</span>
                 <div class="rb-interviewer-avatar">
@@ -837,18 +838,19 @@
                     <div class="wave-bar"></div>
                     <div class="wave-bar"></div>
                 </div>
-            </div>
+            </div> *@
+                        <div class="rb-interviewer-info" style="margin-top:0px">
                         <audio id="assistantAudio" controls hidden></audio>
                         @if (Model.SynthesizedVideoUrl != null)
                         {
-                            <video width="720" controls autoplay>
+                            <video width="100%" controls autoplay>
                                 <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>
                         }
 
                         <input type="hidden" asp-for="SynthesizedVideoUrl"/>
-
+                        </div>
                     </form>
                     
                     <div class="chat-log-container">
