@@ -1244,7 +1244,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName,string actionstatus)
+        public async Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName, string actionstatus)
         {
             try
             {
@@ -1254,6 +1254,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company)
+        {
+            try
+            {
+                return await _dashboardRespository.SubmitRecruiterCopilot(Name, Emailid, Designation, Phone, Company);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

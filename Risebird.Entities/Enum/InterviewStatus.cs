@@ -13,11 +13,11 @@ namespace Risebird.Entities.Enum
         //Rejected = 3,
         //[Description("Border Line")]
         //BorderLine = 4
-        [Display(Name = "Strongly Selected")]
-        [Description("Strongly Selected")]
+        [Display(Name = "Selected")]
+        [Description("Selected")]
         Selected = 2,
-        [Display(Name = "Strongly Rejected")]
-        [Description("Strongly Rejected")]
+        [Display(Name = "Rejected")]
+        [Description("Rejected")]
         Rejected = 3,
         [Display(Name = "Marginally Selected")]
         [Description("Marginally Selected")]

@@ -102,7 +102,7 @@ namespace Risebird.Web.Controllers
             {
                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
             }
-            UploadBotInterviewVideo(model, question.FirstOrDefault());
+            UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
             var latestReply = replies.FirstOrDefault();
             //if (!string.IsNullOrEmpty(latestReply))
             //{
@@ -125,7 +125,7 @@ namespace Risebird.Web.Controllers
             model.Message = "";
             return View(model);
         }
-        private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question)
+        private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
         {
             if (model.VideoFile != null && model.VideoFile.Length > 0)
             {
@@ -146,7 +146,7 @@ namespace Risebird.Web.Controllers
                         VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     //Save in db with question.sessionid,videoLink,Datetime
-                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl);
+                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse);
                 }
             }
         }
