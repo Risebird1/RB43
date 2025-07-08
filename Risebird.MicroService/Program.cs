@@ -168,6 +168,7 @@ namespace Risebird.MicroService
                     services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
                     services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
                     services.AddScoped<IAIInterviewerService, AIInterviewerService>();
+                    services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
                 }).Build();
             host.Run();
         }

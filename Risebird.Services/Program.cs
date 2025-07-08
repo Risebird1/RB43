@@ -110,6 +110,7 @@ builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerA
 builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
 builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
 builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
+builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 
 
 
