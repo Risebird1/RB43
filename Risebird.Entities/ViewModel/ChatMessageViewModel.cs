@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
@@ -11,8 +11,8 @@ namespace Risebird.Entities.ViewModel
         //public string BotReply { get; set; }
         public List<ChatLine> ChatLog { get; set; } = new();
         public IFormFile AudioFile { get; set; }  
-        public IFormFile VideoFile { get; set; }  
-
+        public IFormFile VideoFile { get; set; }
+        public string SynthesizedVideoUrl { get; set; } //synthesised by synthesia, this will be the video of the AI Interviewer speaking
     }
 
     public class ChatLine

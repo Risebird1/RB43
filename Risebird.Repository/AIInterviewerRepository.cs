@@ -83,7 +83,7 @@ namespace Risebird.Repository
             using var conn = new SqlConnection(connectionString);
             await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = message, Timestamp = DateTime.UtcNow });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink)
         {
             try
             {
@@ -93,6 +93,7 @@ namespace Risebird.Repository
                     parameters.Add("@VideoLink", VideoLink);
                     parameters.Add("@question", question);
                     parameters.Add("@SessionId", SessionId);
+                    parameters.Add("@BotSynthesizedVideoLink", botSynthesizedVideoLink);
                     parameters.Add("@CreatedAt", DateTime.Now);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);

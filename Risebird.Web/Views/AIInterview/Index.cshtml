@@ -15,6 +15,7 @@
             letter-spacing: -0.5px;
             line-height: 1.2;
             transition: color 0.2s;
+        margin-bottom: 20px;
         }
 
         .rb-video-section .videoContainer {
@@ -123,7 +124,7 @@
         }
 
         .rb-video-section {
-            flex: 2;
+            flex: 1.8;
             position: relative;
         }
 
@@ -186,7 +187,7 @@
             background: #fafbfc;
             border-radius: 24px;
             box-shadow: 0 2px 12px #4eda9210;
-            padding: 24px 0px 12px 0px;
+            padding: 0px 0px 12px 0px;
             margin-bottom: 12px;
         }
 
@@ -207,7 +208,7 @@
         border: 1.5px solid #eee;
         padding: 6px 12px;
         gap: 8px;
-        margin: 350px 20px 20px 20px;
+        margin: 390px 20px 20px 20px;
         position: absolute;
         left: 89px;
         width: 550px;
@@ -464,7 +465,7 @@
         .rb-interviewer-info {
             background: linear-gradient(135deg, #e8f5e9 60%, #f9f9f9 100%);
             border-radius: 16px;
-            padding: 18px;
+            padding: 12px;
             display: flex;
             align-items: center;
             gap: 18px;
@@ -824,7 +825,7 @@
                                 <div class="rb-loading-spinner"></div>
                             </button>
                         </div>
-                          
+                @*           
                          <div class="rb-interviewer-info" style="margin-top:0px">
                 <span style="font-size:16px;font-weight:600">AI Interviewer</span>
                 <div class="rb-interviewer-avatar">
@@ -837,8 +838,19 @@
                     <div class="wave-bar"></div>
                     <div class="wave-bar"></div>
                 </div>
-            </div>
+            </div> *@
+                        <div class="rb-interviewer-info" style="margin-top:0px">
                         <audio id="assistantAudio" controls hidden></audio>
+                        @if (Model.SynthesizedVideoUrl != null)
+                        {
+                            <video width="100%" controls autoplay>
+                                <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        }
+
+                        <input type="hidden" asp-for="SynthesizedVideoUrl"/>
+                        </div>
                     </form>
                     
                     <div class="chat-log-container">
@@ -871,6 +883,12 @@
             </div>
            
         </div>
+    </div>
+    
+    <div id="waitOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); z-index: 1000; color: white; font-size: 1.5rem;
+    align-items: center; justify-content: center;">
+        <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
 
     @* <div id="waitOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -987,7 +1005,7 @@
             }
         });
     </script>
-    @if (ViewData["AssistantAudioBase64"] is string base64Audio)
+    @* @if (ViewData["AssistantAudioBase64"] is string base64Audio)
     {
         <script>
             const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
@@ -997,7 +1015,7 @@
 
             playAssistantAudio(audioBlob);
         </script>
-    }
+    } *@
 
     
 
@@ -1008,7 +1026,7 @@
         const audioInput = document.getElementById("audioInput");
         const videoInput = document.getElementById("videoInput");
         const form = document.querySelector("form"); // 🔥 grabs the first form on the page
-
+        const overlay = document.getElementById("waitOverlay");
         recordBtn.addEventListener("click", async () => {
             if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1019,6 +1037,7 @@
                 };
 
                 mediaRecorderAudio.onstop = async () => {
+
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
 
@@ -1030,6 +1049,7 @@
                     audioChunks = [];
                     recordBtn.textContent = "⭕";
                     recordBtn.setAttribute('data-tooltip', 'Record Audio');
+                    overlay.style.display = "flex";
                     stopRecording();
                     // 🔥 Submit the form automatically
 
@@ -1039,7 +1059,8 @@
                 startRecording();
                 recordBtn.textContent = "☐";
                 recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
-            } else if (mediaRecorderAudio.state === "recording") {
+            } 
+            else if (mediaRecorderAudio.state === "recording") {
                 mediaRecorderAudio.stop(); // triggers onstop, which submits
             }
         });
