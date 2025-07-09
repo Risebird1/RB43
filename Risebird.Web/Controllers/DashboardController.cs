@@ -4922,8 +4922,6 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-               
-                
                 return View();
             }
             catch (Exception ex)
@@ -4931,6 +4929,23 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return View("Error"); // Return error view instead of redirecting to signout
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company)
+        {
+            try
+            {
+                var result = await _dashboardService.SubmitRecruiterCopilot(Name, Emailid, Designation, Phone, Company);
+                if (result)
+                {
+                    return Json("Thank you! Your request is registered successfully, We’ll contact you shortly.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Json("");
         }
     }
 }

@@ -493,10 +493,10 @@
                                                         <th>Type</th>
 
                                                         <th>JD Title</th>
-                                                        @if (ViewBag.profile != "Quality Controller")
+                                                        @* @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Meeting Link</th>
-                                                        }
+                                                        } *@
                                                         @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Interviewer Portal</th>
@@ -976,15 +976,15 @@
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
                                                             @* @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                @* @if (item.zoomLink != null && item.zoomLink != "")
                                                                 {
                                                                     <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
                                                                 }
                                                                 else
                                                                 {
                                                                     <td><span style="color:red">No Meeting Link</span></td>
-                                                                }
-                                                            } *@
+                                                                } 
+                                                            }*@
                                                             @if (ViewBag.profile != "Quality Controller")
                                                             {
                                                                 <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
