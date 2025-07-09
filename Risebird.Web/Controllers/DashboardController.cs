@@ -4947,5 +4947,21 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AITwinInterviewer()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("Error"); // Return error view instead of redirecting to signout
+            }
+        }
+
+
     }
 }
