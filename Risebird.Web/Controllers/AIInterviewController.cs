@@ -105,12 +105,12 @@ namespace Risebird.Web.Controllers
             UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
             var latestReply = replies.FirstOrDefault();
 
-            if (!string.IsNullOrEmpty(latestReply))
-            {
-                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
-                var base64Audio = Convert.ToBase64String(audioBytes);
-                ViewData["AssistantAudioBase64"] = base64Audio;
-            }
+            //if (!string.IsNullOrEmpty(latestReply))
+            //{
+            //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+            //    var base64Audio = Convert.ToBase64String(audioBytes);
+            //    ViewData["AssistantAudioBase64"] = base64Audio;
+            //}
 
 
             var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
