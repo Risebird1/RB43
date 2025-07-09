@@ -13,9 +13,11 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 @question varchar(1000),
 @SessionId varchar(50),
 @CreatedAt datetime,
-@BotSynthesizedVideoLink varchar(2000)
+@BotSynthesizedVideoLink varchar(2000),
+@CandidateResponse varchar(2000)
 AS
 BEGIN
-Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink) values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink)
+Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer) 
+values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse)
 END
 GO
