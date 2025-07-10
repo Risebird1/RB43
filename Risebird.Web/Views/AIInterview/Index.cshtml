@@ -785,11 +785,11 @@
                 </div>
                 
 
-                                 @* <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
                      <button id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
                          <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
                      </button>
-                 </div> *@
+                 </div>
             </div>
                          <!-- Footer -->
              <div class="rb-footer">
@@ -1221,7 +1221,9 @@
                 }
             };
 
-            function startRecording() {
+            
+        }
+        function startRecording() {
                 chunks = [];
                 let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
                 try {
@@ -1277,7 +1279,6 @@
                 btnRecord.style.display = 'none';
                 btnRecord.style.animation = 'none';
             }
-        }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
