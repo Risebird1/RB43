@@ -81,7 +81,7 @@ namespace Risebird.Repository
         {
             var sql = "INSERT INTO TransCriptsConv (SessionId, Role, Message, Timestamp) VALUES (@SessionId, @Role, @Message, @Timestamp)";
             using var conn = new SqlConnection(connectionString);
-            await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = message, Timestamp = DateTime.UtcNow });
+            await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow });
         }
         public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse)
         {
@@ -91,7 +91,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@VideoLink", VideoLink);
-                    parameters.Add("@question", question);
+                    parameters.Add("@question", CleanMessage(question));
                     parameters.Add("@SessionId", SessionId);
                     parameters.Add("@BotSynthesizedVideoLink", botSynthesizedVideoLink);
                     parameters.Add("@CandidateResponse", candidateResponse);
@@ -134,6 +134,16 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        private string CleanMessage(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return "";
+
+            return input
+                .Replace("#", "")        // Remove Markdown headers
+                .Replace("**", "")       // Remove bold formatting if present
+                .Trim();                 // Trim whitespace
         }
     }
 }

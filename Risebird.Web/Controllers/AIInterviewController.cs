@@ -82,6 +82,8 @@ namespace Risebird.Web.Controllers
 
             model.SynthesizedVideoUrl = videoUrl;
 
+
+            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
             return View(model);
         }
 
@@ -123,6 +125,8 @@ namespace Risebird.Web.Controllers
                 videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
             } while (string.IsNullOrWhiteSpace(videoUrl));
             model.SynthesizedVideoUrl = videoUrl;
+            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+
             model.Message = "";
             return View(model);
         }
