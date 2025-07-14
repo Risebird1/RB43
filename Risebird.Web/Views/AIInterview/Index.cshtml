@@ -121,10 +121,41 @@
         .rb-main {
             display: flex;
             gap: 32px;
+            position: relative;
         }
 
         .rb-video-section {
             flex: 1.8;
+            position: relative;
+        }
+        
+        /* Make the form container relative for absolute positioning of chat input */
+        .rb-chatbox-form {
+            position: relative;
+        }
+        
+        /* Position chat input below the report section but keep it in form structure */
+        .rb-chatbox-inputrow {
+            position: absolute;
+        top: calc(100% + 220px);
+        /* left: 50%; */
+        transform: translateX(-115%);
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 24px;
+            border: 1.5px solid #eee;
+            padding: 6px 12px;
+            gap: 8px;
+            width: 100%;
+            max-width: 550px;
+            min-height: 100px;
+            margin-top: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        
+        .rb-footer {
             position: relative;
         }
 
@@ -180,6 +211,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            position: relative;
         }
 
         /* ChatGPT-like chat input styles */
@@ -187,7 +219,7 @@
             background: #fafbfc;
             border-radius: 24px;
             box-shadow: 0 2px 12px #4eda9210;
-            padding: 0px 0px 12px 0px;
+        padding: 35px 0px 60px 0px;
             margin-bottom: 12px;
         }
 
@@ -195,26 +227,13 @@
             display: flex;
             flex-direction: column;
             align-items: stretch;
+            position: relative;
         }
         #recordBtn .fa-circle:before{
                 color: #fff;
         }
 
-    .rb-chatbox-inputrow {
-        display: flex;
-        align-items: center;
-        background: #fff;
-        border-radius: 24px;
-        border: 1.5px solid #eee;
-        padding: 6px 12px;
-        gap: 8px;
-        margin: 390px 20px 20px 20px;
-        position: absolute;
-        left: 89px;
-        width: 550px;
-        min-height: 100px;
-        
-    }
+
 
         .rb-chatbox-textarea {
             flex: 1;
@@ -529,7 +548,7 @@
             display: flex;
             justify-content: center;
             gap: 32px;
-            margin-top:18px;
+            margin-top:10px;
         }
 
         .rb-footer-btn {
@@ -745,20 +764,145 @@
 }
 
  
-    @@media only screen and (max-width: 1200px) {
+        @@media only screen and (max-width: 992px) {
         .rb-chatbox-inputrow {
-            left: 45px;
+            max-width: 420px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: calc(100% + 70px);
+        }
+        
+        .rb-main {
+            gap: 20px;
+        }
+        
+        .rb-video-section {
+            flex: 1.2;
+        }
+        
+        .rb-question-section {
+            flex: 1.8;
         }
     }
-        @@media (max-width: 600px) {
-            .rb-chatbox-container {
-                padding: 12px 4px 8px 4px;
-            }
-
-            .rb-chatbox-inputrow {
-                padding: 4px 6px;
-            }
+    
+    @@media only screen and (max-width: 768px) {
+        .rb-chatbox-inputrow {
+            max-width: 100%;
+            left: 10px;
+            right: 10px;
+            transform: none;
+            margin-top: 15px;
+            top: calc(100% + 60px);
         }
+        
+        .rb-main {
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .rb-video-section {
+            flex: none;
+            width: 100%;
+        }
+        
+        .rb-question-section {
+            flex: none;
+            width: 100%;
+        }
+        
+        .rb-chat-section {
+            max-width: 100%;
+        }
+        
+        .rb-aiinterview-container {
+            padding: 16px;
+            margin: 0 10px;
+        }
+        
+        .rb-header {
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .rb-header-controls {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .rb-timer {
+            font-size: 0.9rem;
+        }
+        
+        .rb-timer-bar {
+            width: 140px;
+        }
+    }
+    
+    @@media (max-width: 600px) {
+        .rb-chatbox-container {
+            padding: 12px 4px 8px 4px;
+        }
+
+        .rb-chatbox-inputrow {
+            padding: 4px 6px;
+            left: 5px;
+            right: 5px;
+            margin-top: 10px;
+            top: calc(100% + 50px);
+        }
+        
+        .rb-aiinterview-container {
+            padding: 12px;
+            margin: 0 5px;
+        }
+        
+        .rb-title {
+            font-size: 1.5rem;
+        }
+        
+        .rb-header-controls {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .rb-timer {
+            font-size: 0.8rem;
+        }
+        
+        .rb-timer-bar {
+            width: 120px;
+        }
+        
+        .rb-extend-time {
+            padding: 3px 10px;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @@media (max-width: 480px) {
+        .rb-chatbox-inputrow {
+            padding: 3px 8px;
+            left: 2px;
+            right: 2px;
+            margin-top: 8px;
+            top: calc(100% + 40px);
+        }
+        
+        .rb-chatbox-textarea {
+            font-size: 1rem;
+            padding: 8px 0;
+        }
+        
+        .rb-aiinterview-container {
+            padding: 8px;
+            margin: 0 2px;
+        }
+        
+        .rb-title {
+            font-size: 1.3rem;
+        }
+    }
     </style>
 <div class="rb-aiinterview-container">
     <!-- Header -->
@@ -785,11 +929,11 @@
                 </div>
                 
 
-                                 @* <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
-                     <button id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
+                                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                     <button style="visibility:hidden" id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
                          <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
                      </button>
-                 </div> *@
+                 </div>
             </div>
                          <!-- Footer -->
              <div class="rb-footer">
@@ -803,14 +947,9 @@
                   
                  <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>
              </div>
-@*                                       <div class="rb-chatbox-inputrow">
-                             <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Ask anything..." rows="1" autocomplete="off"></textarea>
-                             
-                             <button type="submit" class="rb-chatbox-sendbtn" title="Send Message">
-                                 <i class="fa fa-arrow-up"></i>
-                             </button>
-                         </div>
- *@        </div>
+             
+
+        </div>
         <!-- Right: Chat and Interviewer Info -->
         <div class="rb-question-section">
             <!-- Chat Section (now in place of question box) -->
@@ -821,43 +960,54 @@
                     </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
-                         <div class="rb-chatbox-inputrow">
-                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off"></textarea>
-                           
-                            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+                        
+                        <!-- Chat Input positioned below footer and aligned with video feed -->
+                        <div class="rb-chatbox-inputrow">
+                           <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off"></textarea>
+                          
+                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                           <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
 
-                            <button type="submit" class="rb-chatbox-sendbtn" title="Send">
-                                <i class="fa fa-arrow-up"></i>
-                                <div class="rb-loading-spinner"></div>
-                            </button>
-                        </div>
-                @*           
-                         <div class="rb-interviewer-info" style="margin-top:0px">
-                <span style="font-size:16px;font-weight:600">AI Interviewer</span>
-                <div class="rb-interviewer-avatar">
-                    <span>H</span>
-                </div>
-                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                </div>
-            </div> *@
-                        <div class="rb-interviewer-info" style="margin-top:0px">
-                        <audio id="assistantAudio" controls hidden></audio>
-                        @if (Model.SynthesizedVideoUrl != null)
+                           <button type="submit" class="rb-chatbox-sendbtn" title="Send">
+                               <i class="fa fa-arrow-up"></i>
+                               <div class="rb-loading-spinner"></div>
+                           </button>
+                       </div>
+                       
+                        @if (ViewBag.IsAdaptive == true)
                         {
-                            <video width="100%" controls autoplay>
-                                <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
+                            <!-- Audio Section -->
+                            <div class="rb-interviewer-info" style="margin-top:0px">
+                                <span style="font-size:16px;font-weight:600">AI Interviewer</span>
+                                <div class="rb-interviewer-avatar">
+                                    <span>H</span>
+                                </div>
+                                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                </div>
+                            </div>
+                            <audio id="assistantAudio" controls hidden></audio>
+                        }
+                        else
+                        {
+                            <!-- Video Section -->
+                            @if (Model.SynthesizedVideoUrl != null)
+                            {
+                                <div class="rb-interviewer-info" style="margin-top:0px">
+                                    <video width="100%" controls autoplay>
+                                        <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            }
                         }
 
                         <input type="hidden" asp-for="SynthesizedVideoUrl"/>
-                        </div>
+                        
                     </form>
                     
                     <div class="chat-log-container">
@@ -897,7 +1047,7 @@
     align-items: center; justify-content: center;">
         <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
-
+    </div>
     @* <div id="waitOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
      background-color:rgba(0,0,0,0.6); z-index:1000; color:white; font-size:1.5rem; align-items:center;
     justify-content:center;">
@@ -1012,17 +1162,17 @@
             }
         });
     </script>
-    @* @if (ViewData["AssistantAudioBase64"] is string base64Audio)
-    {
-        <script>
-            const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
-            const audioBlob = new Blob([
-                Uint8Array.from(atob(base64), c => c.charCodeAt(0))
-            ], { type: 'audio/mp3' });
+         @if (ViewData["AssistantAudioBase64"] is string base64Audio)
+     {
+         <script>
+             const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+             const audioBlob = new Blob([
+                 Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+             ], { type: 'audio/mp3' });
 
-            playAssistantAudio(audioBlob);
-        </script>
-    } *@
+             playAssistantAudio(audioBlob);
+         </script>
+     }
 
     
 
@@ -1221,7 +1371,9 @@
                 }
             };
 
-            function startRecording() {
+            
+        }
+        function startRecording() {
                 chunks = [];
                 let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
                 try {
@@ -1277,7 +1429,6 @@
                 btnRecord.style.display = 'none';
                 btnRecord.style.animation = 'none';
             }
-        }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
