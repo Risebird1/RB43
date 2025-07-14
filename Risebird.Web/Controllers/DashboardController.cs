@@ -4931,11 +4931,11 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company)
+        public async Task<JsonResult> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company, string Type)
         {
             try
             {
-                var result = await _dashboardService.SubmitRecruiterCopilot(Name, Emailid, Designation, Phone, Company);
+                var result = await _dashboardService.SubmitRecruiterCopilot(Name, Emailid, Designation, Phone, Company, Type);
                 if (result)
                 {
                     return Json("Thank you! Your request is registered successfully, We’ll contact you shortly.");

@@ -80,9 +80,10 @@
                 width: fit-content;
             }
 
-        .form-container{
-            width:345px;
+        .form-container {
+            width: 345px;
         }
+
         .features {
             margin: 50px 30px 0 30px;
             align-items: center;
@@ -395,10 +396,12 @@
         .form-container-block {
             float: left;
         }
+
         @@media only screen and (max-width: 900px) {
             .header-block {
                 margin: 30px 0px 0px 0px;
             }
+
             .features {
                 flex-direction: column;
                 align-items: center;
@@ -425,28 +428,29 @@
             }
 
             .hero h1, .hero h2 {
-                font-size: 33px!important;
+                font-size: 33px !important;
             }
-
-            
         }
 
         @@media only screen and (max-width: 767px) {
-            .header-block{
-                width:100%;
-                margin:0px;
+            .header-block {
+                width: 100%;
+                margin: 0px;
             }
-            .form-container-block{
-                float:none;
+
+            .form-container-block {
+                float: none;
             }
 
             .feature-content {
                 text-align: center
             }
+
             .form-container {
                 margin: 0px auto;
                 align-items: center;
             }
+
             .header nav a, .footer nav a {
                 margin: 0 30px;
             }
@@ -490,7 +494,7 @@
 
 
             .hero h1 {
-                font-size: 25px!important;
+                font-size: 25px !important;
             }
 
             .hero h2 {
@@ -602,7 +606,7 @@
                 </section>
             </div>
         </div>
-       
+
 
     </div>
     <div class="section">
@@ -685,7 +689,8 @@
                     <th>Pro Twin</th>
                     <th>Elite Twin</th>
                 </tr>
-                <tr><td><strong>Interviewer Pedigree</strong></td>
+                <tr>
+                    <td><strong>Interviewer Pedigree</strong></td>
                     <td>Service company-trained</td>
                     <td>Product company-trained	</td>
                     <td>Elite product & consulting firm logic</td>
@@ -708,7 +713,7 @@
 
                     </td>
                 </tr>
-              
+
             </table>
         </div>
     </section>
@@ -729,7 +734,7 @@
                  $.ajax({
                     type: "POST",
                     url: "/Dashboard/SubmitRecruiterCopilot",
-                    data: { 'Name': Name, 'Emailid':Emailid,'Designation':Designation,'Phone':Phone,'Company':Company },
+                    data: { 'Name': Name, 'Emailid':Emailid,'Designation':Designation,'Phone':Phone,'Company':Company,'Type':'AITwinInterviewer' },
                     success: function (data) {
                         alert(data);
                         ResetForm();
