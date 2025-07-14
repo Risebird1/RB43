@@ -98,6 +98,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateRedMarkeredInterviewerstatus(int interviewid, int IRFid, int status, string Comment, string CreatedBy, string type, string source);
         Task<IEnumerable<RedMarkerDetailsVM>> FetchRedMarkerCommentDetails(int interviewid, int IRFid, string type);
         Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName, string actionstatus);
-        Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company);
+        Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company,string Type);
     }
 }

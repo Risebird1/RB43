@@ -1,0 +1,765 @@
+﻿@{
+    ViewData["Title"] = "AI Twin Interviewer";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Twin Interviewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Inter+Placeholder&display=swap" rel="stylesheet">
+    <style>
+
+        body {
+            font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            margin: 0;
+            background: #fff !important;
+            color: #111;
+        }
+
+        .header, .footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 48px 0 48px;
+            font-size: 1rem;
+        }
+
+            .header nav a, .footer nav a {
+                color: #111;
+                text-decoration: none;
+                margin: 0 30px;
+                font-weight: 400;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+                font-size: 15px;
+            }
+
+            .header nav {
+                flex: 1;
+                text-align: center;
+            }
+
+            .header .logo {
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+        .hero {
+            text-align: center;
+            margin: 80px 0 40px 0;
+        }
+
+            .hero h1 {
+                font-size: 40px;
+                letter-spacing: -0.04em;
+                font-weight: 700;
+                margin-bottom: 0px;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            }
+
+            .hero h2 {
+                font-size: 40px;
+                letter-spacing: -0.04em;
+                font-weight: 600;
+                color: #999999;
+                margin-bottom: 32px;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            }
+
+            .hero .cta-btn {
+                background: #111;
+                color: #fff;
+                border: none;
+                border-radius: 24px;
+                padding: 12px 32px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 20px auto 0px auto;
+                width: fit-content;
+            }
+
+        .form-container {
+            width: 345px;
+        }
+
+        .features {
+            margin: 50px 30px 0 30px;
+            align-items: center;
+            display: flex;
+            flex: none;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 0px;
+            height: min-content;
+            justify-content: center;
+            border-bottom: 1px #eee solid;
+        }
+
+        .section ol {
+            margin: 20px 0px;
+        }
+
+        .section li {
+            margin: 0;
+            letter-spacing: -0.01em;
+            text-align: left;
+            line-height: 40px;
+            flex: none;
+            height: auto;
+            max-width: 100%;
+            position: relative;
+            white-space: pre-wrap;
+            font-size: 22px;
+            font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            color: rgb(153 153 153);
+        }
+
+        .features h1 {
+            font-size: 40px;
+            letter-spacing: -0.04em;
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+        }
+
+        .feature-block {
+            display: flex;
+            align-items: center;
+            width: 960px;
+            max-width: 90vw;
+            margin-bottom: 32px;
+            margin-top: 32px;
+        }
+
+            .feature-block.reverse {
+                flex-direction: row-reverse;
+            }
+
+        .feature-img {
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            background-color: var(--token-dbe12eec-d6ea-4e14-b331-3053c9d607dd, #f5f5f5);
+            border-radius: 20px;
+            display: flex;
+            flex: 1 0 0px;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 10px;
+            height: var(--framer-aspect-ratio-supported, 480px);
+            justify-content: center;
+            overflow: visible;
+            padding: 0;
+            position: relative;
+            width: 1px;
+        }
+
+        .feature-content h3 {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1em;
+            letter-spacing: -0.03em;
+            color: #000;
+            margin-bottom: 8px;
+            font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            white-space: pre-wrap;
+            width: 360px;
+            word-break: break-word;
+            word-wrap: break-word;
+        }
+
+        .feature-content p {
+            font-size: 22px;
+            font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            color: rgb(153 153 153);
+            margin: 0;
+            letter-spacing: -0.01em;
+            text-align: left;
+            line-height: 30px;
+            flex: none;
+            height: auto;
+            max-width: 100%;
+            position: relative;
+            white-space: pre-wrap;
+            width: 360px;
+            word-break: break-word;
+            word-wrap: break-word;
+        }
+
+
+
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 64px;
+            margin: 64px 0 32px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+            .stat .stat-value {
+                font-weight: 700;
+                font-size: 64px;
+                letter-spacing: -0.04em;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif
+            }
+
+            .stat .stat-label {
+                color: #999999;
+                font-weight: 700;
+                font-size: 22px;
+                letter-spacing: -0.02em;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif
+            }
+
+        .section-center {
+            text-align: center;
+            margin: 48px 0;
+        }
+
+            .section-center .cta-btn {
+                margin-top: 16px;
+            }
+
+        .testimonial {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 80px 0 16px 0;
+        }
+
+        .testimonial-author {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 48px;
+        }
+
+        .footer {
+            border-top: 1px solid #eee;
+            font-size: 0.95rem;
+            margin-top: 64px;
+            padding-bottom: 32px;
+        }
+
+            .footer .footer-left {
+                color: #bbb;
+                font-weight: 700;
+                letter-spacing: 2px;
+            }
+
+        .feature-content {
+            align-content: center;
+            align-items: center;
+            display: flex;
+            flex: 1 0 0px;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 15px;
+            height: min-content;
+            justify-content: center;
+            overflow: visible;
+            padding: 0;
+            position: relative;
+            width: 1px;
+        }
+
+        .feature-img span {
+            height: 215px;
+            position: relative;
+            width: 215px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+            .feature-img span img {
+                display: inline;
+                text-align: center;
+                vertical-align: middle;
+                width: 90%;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0 0 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 0.65rem 0.45rem;
+            text-align: left;
+            letter-spacing: -0.02em;
+            font-weight: 500;
+            font-size: 20px;
+            font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+            color: rgb(153 153 153) !important;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+
+        .section {
+            border-bottom: 1px solid #efefef;
+            margin-top: 10px;
+            align-items: center;
+            width: 1100px;
+            max-width: 90vw;
+            margin-bottom: 32px;
+            margin: 0px auto;
+            margin-bottom: 0px !important;
+            padding-bottom: 0px;
+            padding-top: 30px;
+        }
+
+            .section h2 {
+                font-size: 35px;
+                font-weight: 700;
+                line-height: 1em;
+                letter-spacing: -0.03em;
+                color: #000;
+                margin-bottom: 8px;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+                white-space: pre-wrap;
+            }
+
+        .cta {
+            background: #f9fafb;
+            padding: 2rem;
+            text-align: center;
+        }
+
+            .cta h3 {
+                font-size: 32px;
+                font-weight: 700;
+                line-height: 1em;
+                letter-spacing: -0.03em;
+                color: #000;
+                margin-bottom: 8px;
+                font-family: "Inter Variable", "Inter Placeholder", sans-serif;
+                white-space: pre-wrap;
+            }
+
+        form {
+            display: grid;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 2rem auto 0;
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"] {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #0f172a;
+            color: white;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin-top: 4rem;
+        }
+
+        input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="tel"]::placeholder {
+            color: #888;
+        }
+
+        .header-block {
+            width: 1100px;
+            margin: 0px auto;
+        }
+
+        .form-container-block {
+            float: left;
+        }
+
+        @@media only screen and (max-width: 900px) {
+            .header-block {
+                margin: 30px 0px 0px 0px;
+            }
+
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .feature-block {
+                flex-direction: column !important;
+                align-items: flex-start;
+                width: 100%;
+                display: inline-block;
+            }
+
+            .feature-img {
+                margin: 0 0 16px 0;
+                width: 50%;
+                float: left;
+                height: 100%;
+            }
+
+            .feature-content {
+                width: 50%;
+                float: left;
+                text-align: left;
+            }
+
+            .hero h1, .hero h2 {
+                font-size: 33px !important;
+            }
+        }
+
+        @@media only screen and (max-width: 767px) {
+            .header-block {
+                width: 100%;
+                margin: 0px;
+            }
+
+            .form-container-block {
+                float: none;
+            }
+
+            .feature-content {
+                text-align: center
+            }
+
+            .form-container {
+                margin: 0px auto;
+                align-items: center;
+            }
+
+            .header nav a, .footer nav a {
+                margin: 0 30px;
+            }
+
+            feature-block {
+                display: flex !important;
+            }
+
+            .feature-content, .feature-img {
+                width: 100% !important;
+                float: none !important
+            }
+
+
+            .feature-img {
+                width: 50% !important;
+                margin: 20px auto 0px auto;
+                height: 100%;
+            }
+
+            .stat .stat-value {
+                font-size: 46px;
+            }
+
+            .stats {
+                gap: 32px;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .feature-img span {
+                height: 160px !important;
+                width: 160px !important;
+            }
+        }
+
+        @@media only screen and (max-width: 480px) {
+            .header nav a, .footer nav a {
+                margin: 0 20px;
+            }
+
+
+            .hero h1 {
+                font-size: 25px !important;
+            }
+
+            .hero h2 {
+                font-size: 23px !important;
+                line-height: 31px !important;
+            }
+
+            .section li {
+                font-size: 19px;
+                margin-bottom: 20px;
+                line-height: 27px;
+            }
+
+            .section h2 {
+                font-size: 29px;
+            }
+
+            .feature-content h3 {
+                font-size: 25px;
+            }
+
+            .hero {
+                text-align: center;
+                margin: 30px 0 0px 0 !important;
+            }
+
+            .stats {
+                gap: 0px;
+            }
+
+            .stat .stat-value {
+                font-size: 35px;
+            }
+
+            .stat .stat-label {
+                line-height: 23px;
+                font-size: 20px;
+            }
+        }
+
+        @@media only screen and (max-width: 360px) {
+            .header nav a, .footer nav a {
+                margin: 0 4px;
+            }
+
+            .stats {
+                gap: 12px;
+            }
+
+            .stat .stat-label {
+                line-height: 23px;
+                font-size: 20px;
+            }
+
+            .stat .stat-value {
+                font-size: 32px;
+            }
+
+            .feature-img {
+                width: 65% !important;
+                margin: 20px auto 0px auto;
+            }
+
+            .feature-content h3 {
+                font-size: 25px !important;
+                width: 330px !important;
+            }
+
+
+            .hero h1 {
+                font-size: 23px;
+            }
+
+            .hero h2 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Risebird®</div>
+
+
+    </div>
+
+    <div class="hero" style="margin-top:0px;margin-bottom:0px;">
+        <div class="feature-block header-block">
+
+            <div class="feature-content" style="align-items:normal">
+                <h1>
+                    Meet Your AI Twin Interviewer
+
+                </h1>
+                <h2 style="font-size: 35px;line-height:45px;">— Risebird’s proven interview intelligence <br />— now scaled through AI</h2>
+
+            </div>
+            <div class="form-container-block">
+                <section class="cta form-container" style="background:#f5f5f5">
+                    <h2 style="font-size: 30px;">Request a Demo</h2>
+                    <form>
+                        <input type="text" name="Name" id="Name" placeholder="Name" required />
+                        <input type="email" name="Emailid" id="Emailid" placeholder="Official Email ID" required />
+                        <input type="text" name="Designation" id="Designation" placeholder="Designation" required />
+                        <input type="tel" name="Phone" id="Phone" placeholder="Phone Number" />
+                        <input type="text" name="Company" id="Company" placeholder="Company Name" required />
+                        <button type="button" onclick="SubmitEnquire()" class="cta-btn">Book My AI Twin Demo</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="section">
+        <h2>The Problem</h2>
+        <ol>
+            <li><strong>Limitations of Traditional and AI-Driven Interviews:</strong> Manual interviews don’t scale, and AI tools lack personalization.</li>
+            <li><strong>Poor Candidate Engagement:</strong>MCQs, chatbots, and generic workflows lose serious candidates.</li>
+            <li><strong>Lack of Fairness and Consistency:</strong>Human bias affects fairness and consistency.</li>
+        </ol>
+    </div>
+    <div class="section">
+        <h2>  The Recruiter Copilot Solution</h2>
+        <h3 style="font-size: 28px;line-height: 41px;color: rgb(153 153 153);margin: 0px 0px 0px 20px;letter-spacing: -0.03em;">
+            AI Twin Interviewer combines Risebird's expert interviewer intelligence with AI scalability:
+
+        </h3>
+        <div class="feature-block">
+
+            <div class="feature-content">
+                <h3>Smartviewing</h3>
+                <p style="margin-left:-15px;">Delivers interactive, scenario-driven, and proctored interviews</p>
+            </div>
+            <div class="feature-img">
+                <span>
+                    <img style="width:97%" src="/img/proctor.png">
+                </span>
+            </div>
+        </div>
+        <div class="feature-block reverse">
+            <div class="feature-content">
+                <h3>Customizable Interviews</h3>
+                <p>Customized with your prompts, tone, videos, and logic</p>
+            </div>
+            <div class="feature-img">
+                <span>
+                    <img src="/img/video-prompts.png">
+                </span>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-content">
+                <h3>Risebird SaaS Platform</h3>
+                <p>Runs on the trusted Risebird Interview SaaS platform</p>
+            </div>
+            <div class="feature-img">
+                <span>
+                    <img src="/img/risebird-platform.png">
+
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>How it Works</h2>
+        <ol>
+            <li style="list-style-type:disclosure-closed">Begins with a personalized video intro from your AI Twin</li>
+            <li style="list-style-type:disclosure-closed">Technical roles assessed via live Azure desktop coding scenarios</li>
+            <li style="list-style-type:disclosure-closed">Non-tech roles face business-relevant, conversational problem-solving</li>
+            <li style="list-style-type:disclosure-closed">AI evaluates accuracy, logic, and reasoning — not just answers</li>
+            <li style="list-style-type:disclosure-closed">Human proctors support and escalate as needed</li>
+        </ol>
+    </div>
+    <div class="section">
+        <h2>Why It Matters</h2>
+        <ol>
+            <li style="list-style-type:disc">Boosts completion rates with personalized interaction</li>
+            <li style="list-style-type:disc">Reduces false positives and false negatives</li>
+            <li style="list-style-type:disc">Removes human bias, but preserves expert logic</li>
+            <li style="list-style-type:disc">Scalable, secure, and explainable — powered by Risebird</li>
+        </ol>
+    </div>
+    <section class="section">
+        <h2>Choose Your AI Twin Plan</h2>
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Standard Twin</th>
+                    <th>Pro Twin</th>
+                    <th>Elite Twin</th>
+                </tr>
+                <tr>
+                    <td><strong>Interviewer Pedigree</strong></td>
+                    <td>Service company-trained</td>
+                    <td>Product company-trained	</td>
+                    <td>Elite product & consulting firm logic</td>
+                </tr>
+                <tr>
+                    <td><strong>Customization</strong></td>
+                    <td>Basic intro video & tone	</td>
+                    <td>Prompt tuning & scoring weights	</td>
+                    <td>
+                        Full logic flow + override rules + SLA
+                    </td>
+                </tr>
+                <tr><td><strong>Use Case</strong>	</td><td>Ops, support, delivery roles</td><td>Product/tech/IC roles</td><td>Exec hiring, strategic interviews</td></tr>
+                <tr>
+                    <td><strong>Proctoring & Escalation</strong></td>
+                    <td>Alerts only	</td>
+                    <td>Real-time flags	</td>
+                    <td>
+                        Dedicated experience manager
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </section>
+
+
+    <div style="font-size:1.2rem; font-weight:600; text-align:center;margin-top:50px;">
+        <h1 style="font-size:32px;letter-spacing: -0.03em;letter-spacing: -0.04em;font-weight: 700;margin-bottom: 0px;font-family: &quot;Inter Variable&quot;, &quot;Inter Placeholder&quot;, sans-serif;">AI-powered<br></h1>
+        <h2 style="font-size:32px;letter-spacing: -0.03em;letter-spacing: -0.04em;font-weight: 600;color: #999999;margin-bottom: 32px;font-family: &quot;Inter Variable&quot;, &quot;Inter Placeholder&quot;, sans-serif;">Human-centered. Fair By Design</h2>
+    </div>
+    <script>
+        function SubmitEnquire(){
+            var Name=$("#Name").val();
+            var Emailid=$("#Emailid").val();
+            var Designation=$("#Designation").val();
+            var Phone=$("#Phone").val();
+            var Company=$("#Company").val();
+            if(Name!='' && Emailid!='' && Designation!='' && Phone!='' && Company!=''){
+                 $.ajax({
+                    type: "POST",
+                    url: "/Dashboard/SubmitRecruiterCopilot",
+                    data: { 'Name': Name, 'Emailid':Emailid,'Designation':Designation,'Phone':Phone,'Company':Company,'Type':'AITwinInterviewer' },
+                    success: function (data) {
+                        alert(data);
+                        ResetForm();
+                    }
+                });
+            }
+            else{
+                alert("All Fields are required, Please fill all the fields");
+            }
+        }
+        function ResetForm(){
+            $("#Name").val('');
+            $("#Emailid").val('');
+            $("#Designation").val('');
+            $("#Phone").val('');
+            $("#Company").val('');
+        }
+    </script>
+
+
+    <footer>
+        <p>
+            © 2025 Recruiter Copilot — Powered by Risebird
+
+        </p>
+    </footer>
+</body>
+</html>
