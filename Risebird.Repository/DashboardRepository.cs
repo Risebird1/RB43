@@ -2325,7 +2325,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company)
+        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company,string Type)
         {
             try
             {
@@ -2335,6 +2335,7 @@ namespace Risebird.Repository
                 parameters.Add("@Designation", Designation);
                 parameters.Add("@Phone", Phone);
                 parameters.Add("@Company", Company);
+                parameters.Add("@RequestType", Type);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveEnquiryDetails", parameters,
