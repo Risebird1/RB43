@@ -7771,7 +7771,11 @@ namespace Risebird.Web.Controllers
                     {
                         var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
-                        FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+                        if(!model.IsAIInterview)
+                        {
+                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
+                        }
 
                         TempData["SuccessErrorPublicCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                         TempData["SuccessErrorPublicCloneTemplateMessage2"] = model.CalendlyLink;
@@ -7870,7 +7874,10 @@ namespace Risebird.Web.Controllers
                         {
                             var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
-                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+                            if(!model.IsAIInterview)
+                            {
+                                FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+                            }
 
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorCloneTemplateMessage2"] = model.CalendlyLink;

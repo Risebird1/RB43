@@ -598,6 +598,26 @@ BEGIN
     Add CandidateVideo varchar(1000)
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsAIInterview')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+	ADD IsAIInterview bit 
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIInterviewType')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+	ADD AIInterviewType int 
+END
+
 END
 
 
