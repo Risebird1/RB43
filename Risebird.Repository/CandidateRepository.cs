@@ -1912,7 +1912,7 @@ namespace Risebird.Repository
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connectionStringForMCQDb))
                 {
                     DataTable _candidateList = new DataTable();
                     _candidateList.Columns.Add("IRFId", typeof(int));
