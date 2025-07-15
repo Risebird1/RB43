@@ -32,6 +32,7 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 @zoomMeetingId varchar(200),   
 @TimeZoneoffset int,
 @TimeZonesValue varchar(200),
+@assistantId varchar(75) = null,  
 @interviewIdOutput int out        
 AS        
 Begin   
@@ -56,7 +57,16 @@ begin try
         
         
  IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)        
- Begin        
+ Begin  
+ 
+ declare @isAIInterview bit, @sessionId varchar(200)
+
+ set @isAIInterview = (select IsAIInterview from IRF where IRFId= @IRFId)
+
+ if(@isAIInterview = 1)
+ Begin
+	set @sessionId = (select NEWID())
+ End
         
  INSERT INTO [dbo].[InterviewMeetings]        
       ([IRFId]        
@@ -81,7 +91,9 @@ begin try
    ,[MobileNumber]        
    ,[ZoomMeetingId]        
    ,[TimeZoneoffset]
-   ,[TimeZonesValue])        
+   ,[TimeZonesValue]
+   ,[AssistantId]
+   ,[SessionId])        
    VALUES        
       (@IRFId,        
  @interviewDate,        
@@ -105,7 +117,9 @@ begin try
  @textreminder,        
  @zoomMeetingId,
  @TimeZoneoffset,
- @TimeZonesValue)        
+ @TimeZonesValue,
+ @assistantId,
+ @sessionId)        
         
  set @InterviewId=SCOPE_IDENTITY()        
  set @interviewIdOutput = @InterviewId        

@@ -11,6 +11,7 @@
         public string JDTitleTwo { get; set; }
         public int? Heuristicsscore { get; set; }
         public string TechRubricType { get; set; }
+        public bool IsAIInterview { get; set; }
     }
     public class IRFDetailsList
     {

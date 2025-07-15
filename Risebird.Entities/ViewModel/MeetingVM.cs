@@ -395,6 +395,9 @@ namespace Risebird.Entities.ViewModel
         public string Cancellationreason { get; set; }
         public string CandidateInterviewChecks { get; set; }
         public bool ConsentRequired { get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
+        public string AssistantId { get; set; }
        
     }
 

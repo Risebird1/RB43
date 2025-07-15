@@ -5,6 +5,7 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -129,6 +130,7 @@ namespace Risebird.Repository
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));//
                 cmd.Parameters.Add(new SqlParameter("@TimeZoneoffset", TimeZoneoffset));
                 cmd.Parameters.Add(new SqlParameter("@TimeZonesValue", TimeZonesValue));
+                cmd.Parameters.Add(new SqlParameter("@assistantId", OpenAIInterviewerAssistants.GetRandomValue()));
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(outPutVal);

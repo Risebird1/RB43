@@ -428,6 +428,28 @@ BEGIN
     Alter table InterviewMeetings 
     Add CancellationReason varchar(50)
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssistantId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add AssistantId VARCHAR(75)
+END
+
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SessionId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add SessionId VARCHAR(200)
+END
+
 END
 GO
 
