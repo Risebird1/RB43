@@ -1932,7 +1932,7 @@ namespace Risebird.Repository
                     cmd.Parameters.Add(new SqlParameter("@IRFCandidateList", SqlDbType.Structured));
                     cmd.Parameters["@IRFCandidateList"].Value = _candidateList;
                     con.Open();
-                    var _candidateresponse = new AddCandidatesResponse;
+                    var _candidateresponse = new AddCandidatesResponse();
                     var _listresponse = new List<CandidateOnboardingStatus>();
                     using (var reader = cmd.ExecuteReader())
                     {
