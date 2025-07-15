@@ -23,6 +23,7 @@ namespace Risebird.Repository
         private readonly IConfiguration _configuration;
         private string connectionString;
         private readonly string connectionStringForTesting;
+        private readonly string connectionStringForMCQDb;
         private IApplicationErrorLogger _applicationErrorLogger;
         public CandidateRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -30,6 +31,7 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             connectionStringForTesting = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            connectionStringForMCQDb = _configuration["ConnectionString:EmploymentVerificationConnection"];
         }
 
         public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
@@ -327,10 +329,14 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateCandidateResumeInBulk(List<CandidateResume> resumeList)
+        public async Task<bool> UpdateCandidateResumeInBulk(List<CandidateResume> resumeList, bool ismcqdb = false)
         {
             try
             {
+                if (ismcqdb)
+                {
+                    connectionString = connectionStringForMCQDb;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DataTable resumeListDt = new DataTable();
@@ -914,11 +920,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing()
+        public async Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing(bool ismcqdb = false)
         {
             try
             {
-
+                if (ismcqdb)
+                {
+                    connectionString = connectionStringForMCQDb;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,
@@ -1699,7 +1708,7 @@ namespace Risebird.Repository
                                     currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : null,
                                     jobId = dt.Rows[i]["jobId"] != null ? dt.Rows[i]["jobId"].ToString() : null,
                                     TranscriptLink = dt.Rows[i]["AudioTranscriptFileLink"] != null ? dt.Rows[i]["AudioTranscriptFileLink"].ToString() : string.Empty,
-                                    
+
                                     CodeSnippet = dt.Rows[i]["CodeSnippet"] != null ? dt.Rows[i]["CodeSnippet"].ToString() : string.Empty,
                                     CodeSnippetTwo = dt.Rows[i]["CodeSnippetTwo"] != null ? dt.Rows[i]["CodeSnippetTwo"].ToString() : string.Empty,
                                     ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
@@ -1898,6 +1907,56 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<AddCandidatesResponse> AddMCQSkillChannelCandidateList(List<CandidateQuickAddModel> candidateList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable _candidateList = new DataTable();
+                    _candidateList.Columns.Add("IRFId", typeof(int));
+                    _candidateList.Columns.Add("ResumeLink", typeof(string));
+                    _candidateList.Columns.Add("CandidateEmail", typeof(string));
+                    _candidateList.Columns.Add("AddedBy", typeof(string));
+                    _candidateList.Columns.Add("AddedOn", typeof(DateTime));
+                    _candidateList.Columns.Add("Location", typeof(string));
+                    _candidateList.Columns.Add("CurrentEmployer", typeof(string));
+                    _candidateList.Columns.Add("CandidateName", typeof(string));
+                    foreach (var item in candidateList)
+                    {
+                        _candidateList.Rows.Add(item.IRFId, item.ResumeLink, item.EmailId, item.ClientHREmail, DateTime.Now, "", "", item.Name);
+                    }
+                    SqlCommand cmd = new SqlCommand("usp_AddSkillChannelCandidateList", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@IRFCandidateList", SqlDbType.Structured));
+                    cmd.Parameters["@IRFCandidateList"].Value = _candidateList;
+                    con.Open();
+                    var _candidateresponse = new AddCandidatesResponse;
+                    var _listresponse = new List<CandidateOnboardingStatus>();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            _listresponse.Add(new CandidateOnboardingStatus
+                            {
+                                emailId = reader["CandidateEmail"]?.ToString(),
+                                onboardingStatus = reader["AddedStatus"]?.ToString()
+                            });
+                        }
+                    }
+                    _candidateresponse.list = _listresponse;
+                    //con.Close();
+                    return _candidateresponse;
+                }
+            }
+            catch (SqlException e)
+            {
+            }
+            catch (Exception e)
+            {
+            }
+            return null;
         }
     }
 }
