@@ -70,18 +70,20 @@ namespace Risebird.Web.Controllers
                 ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
             };
 
-            var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
+            //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
 
-            // Wait/poll until video is ready (Synthesia usually takes 30–60s)
-            string videoUrl;
-            do
-            {
-                await Task.Delay(8000);
-                videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-            } while (string.IsNullOrWhiteSpace(videoUrl));
+            //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+            //string videoUrl;
+            //do
+            //{
+            //    await Task.Delay(8000);
+            //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+            //} while (string.IsNullOrWhiteSpace(videoUrl));
 
-            model.SynthesizedVideoUrl = videoUrl;
+            //model.SynthesizedVideoUrl = videoUrl;
 
+            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+            ViewBag.IsAdaptive = true;
             return View(model);
         }
 
@@ -98,31 +100,39 @@ namespace Risebird.Web.Controllers
             var replies = await _api.SendReply(model.SessionId, userMessage);
             var question = replies?.Skip(1)?.Take(1);
             model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+
             foreach (var reply in replies)
             {
                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
             }
+
             UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
-            var latestReply = replies.FirstOrDefault();
-            //if (!string.IsNullOrEmpty(latestReply))
-            //{
-            //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
-            //    var base64Audio = Convert.ToBase64String(audioBytes);
-            //    ViewData["AssistantAudioBase64"] = base64Audio;
-            //}
 
+            var latestReply = CleanMessage(replies.FirstOrDefault());
 
-            var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
-
-            // Wait/poll until video is ready (Synthesia usually takes 30–60s)
-            string videoUrl;
-            do
+            if (!string.IsNullOrEmpty(latestReply))
             {
-                await Task.Delay(8000);
-                videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-            } while (string.IsNullOrWhiteSpace(videoUrl));
-            model.SynthesizedVideoUrl = videoUrl;
+                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                var base64Audio = Convert.ToBase64String(audioBytes);
+                ViewData["AssistantAudioBase64"] = base64Audio;
+            }
+
+
+            //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
+
+            //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+            //string videoUrl;
+            //do
+            //{
+            //    await Task.Delay(8000);
+            //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+            //} while (string.IsNullOrWhiteSpace(videoUrl));
+            //model.SynthesizedVideoUrl = videoUrl;
+            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+
             model.Message = "";
+
+            ViewBag.IsAdaptive = true;
             return View(model);
         }
         private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)

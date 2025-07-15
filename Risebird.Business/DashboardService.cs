@@ -1256,11 +1256,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company)
+        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company, string Type)
         {
             try
             {
-                return await _dashboardRespository.SubmitRecruiterCopilot(Name, Emailid, Designation, Phone, Company);
+                return await _dashboardRespository.SubmitRecruiterCopilot(Name, Emailid, Designation, Phone, Company, Type);
             }
             catch (Exception ex)
             {
