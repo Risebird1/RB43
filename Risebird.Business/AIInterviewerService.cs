@@ -20,11 +20,11 @@ namespace Risebird.Business
             _aiInterviewerRepository = aiInterviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId)
         {
             try
             {
-                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse);
+                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId);
             }
             catch (Exception e)
             {
@@ -55,6 +55,19 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public async Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.UpdateTimeLeft(sessionId, secondsLeft, interviewId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

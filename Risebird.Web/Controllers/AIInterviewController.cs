@@ -84,6 +84,7 @@ namespace Risebird.Web.Controllers
 
             //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
             ViewBag.IsAdaptive = true;
+            model.TimeLeftInSeconds = 3600; // only for testing purpose, comment this out later
             return View(model);
         }
 
@@ -156,7 +157,7 @@ namespace Risebird.Web.Controllers
                         VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     //Save in db with question.sessionid,videoLink,Datetime
-                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse);
+                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId);
                 }
             }
         }
@@ -205,5 +206,19 @@ namespace Risebird.Web.Controllers
                 .Trim();                 // Trim whitespace
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateTimeLeft([FromBody] TimeLeftUpdateVM model)
+        {
+            try
+            {
+                await _aiinterviewerService.UpdateTimeLeft(model.SessionId, model.TimeLeftInSeconds, model.interviewId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+                throw;
+            }
+        }
     }
 }

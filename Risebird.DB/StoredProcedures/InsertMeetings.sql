@@ -59,13 +59,17 @@ begin try
  IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)        
  Begin  
  
- declare @isAIInterview bit, @sessionId varchar(200)
+ declare @isAIInterview bit, @sessionId varchar(200), @timeLeftInSeconds int
 
  set @isAIInterview = (select IsAIInterview from IRF where IRFId= @IRFId)
 
  if(@isAIInterview = 1)
  Begin
 	set @sessionId = (select NEWID())
+	set @timeLeftInSeconds = (select DurationSelectedMin*60 from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @irfId) 
+	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfId)
+	and CompanyType = (select CompanyType from IRF where id = @irfId))
+
  End
         
  INSERT INTO [dbo].[InterviewMeetings]        
@@ -93,7 +97,8 @@ begin try
    ,[TimeZoneoffset]
    ,[TimeZonesValue]
    ,[AssistantId]
-   ,[SessionId])        
+   ,[SessionId]
+   ,[TimeLeftInSeconds])        
    VALUES        
       (@IRFId,        
  @interviewDate,        
@@ -119,7 +124,8 @@ begin try
  @TimeZoneoffset,
  @TimeZonesValue,
  @assistantId,
- @sessionId)        
+ @sessionId,
+ @timeLeftInSeconds)        
         
  set @InterviewId=SCOPE_IDENTITY()        
  set @interviewIdOutput = @InterviewId        

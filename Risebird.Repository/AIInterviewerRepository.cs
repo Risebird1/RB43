@@ -83,7 +83,7 @@ namespace Risebird.Repository
             using var conn = new SqlConnection(connectionString);
             await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId)
         {
             try
             {
@@ -95,6 +95,8 @@ namespace Risebird.Repository
                     parameters.Add("@SessionId", SessionId);
                     parameters.Add("@BotSynthesizedVideoLink", botSynthesizedVideoLink);
                     parameters.Add("@CandidateResponse", candidateResponse);
+                    parameters.Add("@secondsLeft", secondsLeft);
+                    parameters.Add("@interviewId", interviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -134,6 +136,33 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@secondsLeft", secondsLeft);
+                    parameters.Add("@UpdatedAt", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateTimeLeft", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
 
         private string CleanMessage(string input)
