@@ -134,15 +134,25 @@ namespace Risebird.AzureTimerFunctions
                     await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeList, ismcqdb: true);
                 }
                 // add the candidate to database and update IsProcessed and IsResumeParsed
+                var candidateResumeupdate = new List<CandidateResume>();
                 if (candidateList != null && candidateList.Count() > 0)
                 {
                     foreach (var irfId in candidateList.Select(x => x.IRFId).Distinct())
                     {
                         var candidateSubList = candidateList.Where(x => x.IRFId == irfId)?.ToList();
-                        await _candidateRepository.AddMCQSkillChannelCandidateList(candidateSubList);
+                        var result = await _candidateRepository.AddMCQSkillChannelCandidateList(candidateSubList);
+                        foreach (var item in result.list)
+                        {
+                            var id = candidateList.Where(x => x.EmailId == item.emailId && x.IRFId == irfId).Select(x => x.CandidateResumeId).FirstOrDefault();
+                            candidateResumeupdate.Add(new CandidateResume { id = id, IsResumeParsed = true, IsProcessed = true, IsResumeParsingFailed = false });
+                        }
                     }
                 }
-                log.LogInformation($" MCQResumeParserJob : Timer trigger function started finished execution at: {DateTime.Now}");
+                if (candidateResumeupdate != null)
+                {
+                    await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeupdate);
+                }
+                log.LogInformation($" MCQResumeParserJob : Timer trigger function started finished execution at {candidateResumeupdate?.Count()}: {DateTime.Now}");
             }
             catch (Exception ex)
             {
