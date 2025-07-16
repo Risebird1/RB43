@@ -16,5 +16,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
+        Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId);
     }
 }

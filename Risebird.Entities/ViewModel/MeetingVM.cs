@@ -398,6 +398,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
         public string AssistantId { get; set; }
+        public string ThreadId { get; set; } // id of the open ai thread created by the assistant that conducts the interview
+        public int TimeLeftInSeconds { get; set; } //applicable only for AI interviews conducted using assistants through sessions/openai-threads
        
     }
 

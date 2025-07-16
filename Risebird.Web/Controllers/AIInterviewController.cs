@@ -56,36 +56,100 @@ namespace Risebird.Web.Controllers
             _aiinterviewerService = aiinterviewerService;
             _synthesiaTextToVideoService = synthesiaTextToVideoService;
         }
-
+        /// <summary>
+        /// access an interview (and start it) with the session id (sid)
+        /// </summary>
+        /// <param name="sid"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid sid)
         {
-            // For demo: tech stack prompt
-            string candidatePrompt = "You will now interview the candidate. Proceed as per the instructions fed to you.";
-            var result = await _api.StartConversation(candidatePrompt);
+            //get all the data relevant interview data for that sid
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
 
-            var model = new ChatMessageViewModel
+            //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
+            if(meetingDetails != null)
             {
-                SessionId = result.SessionId,
-                ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
-            };
+                //not started yet
+                if(string.IsNullOrEmpty(meetingDetails.ThreadId))
+                {
+                    // For demo: tech stack prompt
+                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle}. Proceed as per the instructions fed to you.";
+                    var result = await _api.StartConversation(sid, candidatePrompt);
 
-            //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
+                    var model = new ChatMessageViewModel
+                    {
+                        SessionId = sid,
+                        ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
+                    };
 
-            //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
-            //string videoUrl;
-            //do
-            //{
-            //    await Task.Delay(8000);
-            //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-            //} while (string.IsNullOrWhiteSpace(videoUrl));
+                    //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
 
-            //model.SynthesizedVideoUrl = videoUrl;
+                    //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                    //string videoUrl;
+                    //do
+                    //{
+                    //    await Task.Delay(8000);
+                    //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                    //} while (string.IsNullOrWhiteSpace(videoUrl));
 
-            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-            ViewBag.IsAdaptive = true;
-            model.TimeLeftInSeconds = 3600; // only for testing purpose, comment this out later
-            return View(model);
+                    //model.SynthesizedVideoUrl = videoUrl;
+
+                    //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+                    ViewBag.IsAdaptive = true;
+                    model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                    //model.TimeLeftInSeconds = 3600; // only for testing purpose, comment this out later
+                    return View(model);
+                }
+                else
+                {
+                    var model = new ChatMessageViewModel();
+                    model.SessionId = sid;
+                    //var replies = await _api.SendReply(model.SessionId, userMessage);
+
+                    //get all the questions asked already from the database in descending order by time
+                    var questions = new List<string>();
+                    var latestQuestion = questions.FirstOrDefault();//replies?.Skip(1)?.Take(1);
+                    //model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+
+                    foreach (var reply in questions)
+                    {
+                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                    }
+
+                    //UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
+
+                    //var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                    if (!string.IsNullOrEmpty(latestQuestion))
+                    {
+                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                        var base64Audio = Convert.ToBase64String(audioBytes);
+                        ViewData["AssistantAudioBase64"] = base64Audio;
+                    }
+
+
+                    //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
+
+                    //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                    //string videoUrl;
+                    //do
+                    //{
+                    //    await Task.Delay(8000);
+                    //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                    //} while (string.IsNullOrWhiteSpace(videoUrl));
+                    //model.SynthesizedVideoUrl = videoUrl;
+                    //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+
+                    model.Message = "";
+
+                    ViewBag.IsAdaptive = true;
+                    return View(model);
+
+                }
+            }
+
+            return View(null);
         }
 
         [HttpPost]

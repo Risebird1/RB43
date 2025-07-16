@@ -14,5 +14,6 @@ namespace Risebird.Business.Interface
         Task<string> GetThreadId(Guid sessionId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
+        Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId);
     }
 }
