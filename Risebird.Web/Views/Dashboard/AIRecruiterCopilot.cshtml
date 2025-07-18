@@ -80,6 +80,10 @@
                 width: fit-content;
             }
 
+        .form-container {
+            width: 345px;
+        }
+
         .features {
             margin: 50px 30px 0 30px;
             align-items: center;
@@ -385,7 +389,20 @@
             color: #888;
         }
 
+        .header-block {
+            width: 1100px;
+            margin: 0px auto;
+        }
+
+        .form-container-block {
+            float: left;
+        }
+
         @@media only screen and (max-width: 900px) {
+            .header-block {
+                margin: 30px 0px 0px 0px;
+            }
+
             .features {
                 flex-direction: column;
                 align-items: center;
@@ -408,14 +425,37 @@
             .feature-content {
                 width: 50%;
                 float: left;
+                text-align: left;
             }
 
             .hero h1, .hero h2 {
-                font-size: 35px;
+                font-size: 33px !important;
+            }
+
+            .form-container {
+                margin: 30px 0px 0px 0px
             }
         }
 
         @@media only screen and (max-width: 767px) {
+            .header-block {
+                width: 100%;
+                margin: 0px;
+            }
+
+            .feature-content {
+                text-align: center
+            }
+
+            .form-container-block {
+                float: none;
+            }
+
+            .form-container {
+                margin: 0px auto;
+                align-items: center;
+            }
+
             .header nav a, .footer nav a {
                 margin: 0 30px;
             }
@@ -459,11 +499,12 @@
 
 
             .hero h1 {
-                font-size: 25px;
+                font-size: 25px !important;
             }
 
             .hero h2 {
-                font-size: 25px;
+                font-size: 23px !important;
+                line-height: 31px !important;
             }
 
             .section li {
@@ -545,22 +586,33 @@
 
     </div>
 
-    <div class="hero">
-        <h1>
-            Empower Your Recruiters with the Brain of a Hiring Manager<br /> — and the Speed of AI
+    <div class="hero" style="margin-top:0px;margin-bottom:0px;">
+        <div class="feature-block" style="width: 1100px;margin: 0px auto;">
 
-        </h1>
-        <section class="cta">
-            <h2>Enquire Now</h2>
-            <form>
-                <input type="text" name="Name" id="Name" placeholder="Name" required />
-                <input type="email" name="Emailid" id="Emailid" placeholder="Official Email ID" required />
-                <input type="text" name="Designation" id="Designation" placeholder="Designation" required />
-                <input type="tel" name="Phone" id="Phone" placeholder="Phone Number" required />
-                <input type="text" name="Company" id="Company" placeholder="Company Name" required />
-                <button type="button" onclick="SubmitEnquire()" class="cta-btn">Book a Demo</button>
-            </form>
-        </section>
+            <div class="feature-content header-block" style="align-items:normal">
+                <h1>
+                    Empower Your Recruiters<br /> with the Brain of a Hiring Manager
+                </h1> <h2 style="font-size: 35px;line-height:45px;">— and the Speed of AI</h2>
+
+
+            </div>
+            <div class="form-container-block">
+                <section class="cta form-container" style="background:#f5f5f5">
+                    <h2 style="font-size: 30px;">Enquire Now</h2>
+                    <form>
+                        <input type="text" name="Name" id="Name" placeholder="Name" required />
+                        <input type="email" name="Emailid" id="Emailid" placeholder="Official Email ID" required />
+                        <input type="text" name="Designation" id="Designation" placeholder="Designation" required />
+                        <input type="tel" name="Phone" id="Phone" placeholder="Phone Number" required />
+                        <input type="text" name="Company" id="Company" placeholder="Company Name" required />
+                        <button type="button" onclick="SubmitEnquire()" class="cta-btn">Book a Demo</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+
+
+
 
     </div>
     <div class="section">
@@ -684,7 +736,7 @@
                  $.ajax({
                     type: "POST",
                     url: "/Dashboard/SubmitRecruiterCopilot",
-                    data: { 'Name': Name, 'Emailid':Emailid,'Designation':Designation,'Phone':Phone,'Company':Company },
+                    data: { 'Name': Name, 'Emailid':Emailid,'Designation':Designation,'Phone':Phone,'Company':Company,'Type':'AIRecruiterCopilot' },
                     success: function (data) {
                         alert(data);
                         ResetForm();
