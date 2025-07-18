@@ -4621,17 +4621,19 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 if (model != null)
                 {
-                    if (TempData["SuccessErrorMessageMarketPlace1"] != null)
+                    if (type == "SkillChannel")
                     {
-                        ViewBag.Message = TempData["SuccessErrorMessageMarketPlace1"].ToString();
-                        if (TempData["SuccessErrorMessageMarketPlace2"] != null)
+                        if (TempData["SuccessErrorMessageMarketPlace1"] != null)
                         {
-                            ViewBag.Message2 = TempData["SuccessErrorMessageMarketPlace2"].ToString();
-                            TempData.Remove("SuccessErrorMessageMarketPlace2");
+                            ViewBag.Message = TempData["SuccessErrorMessageMarketPlace1"].ToString();
+                            if (TempData["SuccessErrorMessageMarketPlace2"] != null)
+                            {
+                                ViewBag.Message2 = TempData["SuccessErrorMessageMarketPlace2"].ToString();
+                                TempData.Remove("SuccessErrorMessageMarketPlace2");
+                            }
+                            TempData.Remove("SuccessErrorMessageMarketPlace1");
                         }
-                        TempData.Remove("SuccessErrorMessageMarketPlace1");
                     }
-
                     return View(model);
                 }
                 return View(model);
@@ -6616,7 +6618,7 @@ namespace Risebird.Web.Controllers
             var ProjectUniqueid = formCollection["IRFName"].ToString();
             var emailid = formCollection["clientEmailId"].ToString();
             var result = new CandidateExportStatus();
-            
+
             try
             {
                 var _list = new List<CandidateExportStatusList>();
