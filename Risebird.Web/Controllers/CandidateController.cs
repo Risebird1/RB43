@@ -4621,8 +4621,6 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 if (model != null)
                 {
-                    if (type == "SkillChannel")
-                    {
                         if (TempData["SuccessErrorMessageMarketPlace1"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageMarketPlace1"].ToString();
@@ -4633,7 +4631,6 @@ namespace Risebird.Web.Controllers
                             }
                             TempData.Remove("SuccessErrorMessageMarketPlace1");
                         }
-                    }
                     return View(model);
                 }
                 return View(model);
