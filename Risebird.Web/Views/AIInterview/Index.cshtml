@@ -914,8 +914,12 @@
             <span class="rb-timer">
                 <i class="fa fa-clock-o"></i> Interview Time Left <b>05:13</b>
                 <div class="rb-timer-bar"><div class="rb-timer-bar-fill"></div></div>
+
+                <div style="position: fixed; top: 10px; right: 20px; background: #222; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 1.2rem;">
+                    ⏳ Time Left: <span id="timer">--:--</span>
+                </div>
             </span>
-            <button class="rb-extend-time">Extend Time</button>
+            @* <button class="rb-extend-time">Extend Time</button> *@
         </div>
     </div>
      
@@ -929,7 +933,7 @@
                 </div>
                 
 
-                                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
                      <button style="visibility:hidden" id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
                          <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
                      </button>
@@ -960,6 +964,7 @@
                     </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
+                        <input type="hidden" asp-for="InterviewId" />
                         
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         <div class="rb-chatbox-inputrow">
@@ -1007,7 +1012,8 @@
                         }
 
                         <input type="hidden" asp-for="SynthesizedVideoUrl"/>
-                        
+                        <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
+
                     </form>
                     
                     <div class="chat-log-container">
@@ -1071,6 +1077,61 @@
             }
         });
     </script> *@
+
+<script>
+    @* let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
+    let interviewId = parseInt("@Model.InterviewId");
+    const timerDisplay = document.getElementById("timer");
+    const timeField = document.getElementById("timeLeftField");
+
+    function updateTimerUI() {
+        const minutes = Math.floor(totalSecondsLeft / 60);
+        const seconds = totalSecondsLeft % 60;
+        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeField.value = totalSecondsLeft; // ✅ save raw seconds
+    } *@
+
+
+    let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
+    let interviewId = parseInt("@Model.InterviewId");
+
+    const timerDisplay = document.getElementById("timer");
+    const timeField = document.getElementById("timeLeftField");
+    let timerStopped = false;
+
+    function updateTimerUI() {
+        const minutes = Math.floor(totalSecondsLeft / 60);
+        const seconds = totalSecondsLeft % 60;
+        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeField.value = totalSecondsLeft;
+    }
+
+    async function postTimeLeftToServer(seconds) {
+        await fetch("/AIInterview/UpdateTimeLeft", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                sessionId: "@Model.SessionId",
+                timeLeftInSeconds: seconds,
+                interviewId: interviewId
+            })
+        });
+    }
+
+    let countdownInterval = setInterval(() => {
+        if (!timerStopped && totalSecondsLeft > 0) {
+            totalSecondsLeft--;
+            updateTimerUI();
+
+            if (totalSecondsLeft % 60 === 0) {
+                postTimeLeftToServer(totalSecondsLeft);
+            }
+        }
+    }, 1000);
+
+    updateTimerUI();
+</script>
+
 
     <script>
         function playAssistantAudio(blob) {
@@ -1194,6 +1255,8 @@
                 };
 
                 mediaRecorderAudio.onstop = async () => {
+                    timerStopped = true;
+                    clearInterval(countdownInterval);
 
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });

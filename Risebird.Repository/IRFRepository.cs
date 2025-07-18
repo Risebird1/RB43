@@ -6970,6 +6970,12 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RequestId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@RequestId"].Value = irfDetails.RequestId;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAIInterview", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAIInterview"].Value = irfDetails.IsAIInterview;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
+
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
                     flatRateParam.DbType = DbType.Int16;
