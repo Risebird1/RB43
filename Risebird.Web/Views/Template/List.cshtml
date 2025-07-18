@@ -562,6 +562,24 @@
                             <label id="error_ClientName" class="text-danger"></label>
                         </div> *@
 
+
+                        <div class="mb-0">
+
+                            @* <input type="hidden" name="IsAIInterview" value="false" />
+                            <input type="checkbox" id="IsAIInterview" name="IsAIInterview" value="true" onclick="toggleInterviewType()" />
+ *@
+                            @Html.CheckBox("IsAIInterview", new { @id = "IsAIInterview", @onclick = "toggleInterviewType()" })
+                            @* <input type="checkbox" id="IsAIInterview" name="IsAIInterview" onclick="toggleInterviewType()" /> *@
+                            <label for="IsAIInterview" class="form-label">Is AI Interview</label>
+                        </div>
+
+                        <div class="mb-0" id="InterviewTypeContainer" style="display:none;">
+                            <label for="InterviewType" class="form-label">AI Interview Type:</label>
+                            @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType" })
+                            <label id="error_AIInterviewType" class="text-danger"></label>
+                        </div>
+
+
                         <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
                         <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
                         <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
@@ -900,6 +918,9 @@ else if (Model.Message != null)
         var jdFile = $('#JDFile').val();
         var billingOwner = $('#BillingOwner').val();
 
+        var isAIInterview = document.getElementById("IsAIInterview").checked;
+        var aiInterviewType = document.getElementById("AIInterviewType").value;
+
         var profile = '@Model.Profile';
 
         var flag = true;
@@ -956,9 +977,20 @@ else if (Model.Message != null)
                 document.getElementById('error_ClientUserIdPopUp').innerHTML = "";
             }
         }
+        if (isAIInterview && (aiInterviewType === "" || aiInterviewType === "Select")) {
+            document.getElementById("error_AIInterviewType").innerHTML = "Interview Type is required for AI Interview.";
+            flag = false;
+        } else {
+            document.getElementById("error_AIInterviewType").innerHTML = "";
+        }
         
         return flag;
 
+    }
+
+    function toggleInterviewType() {
+        var isChecked = document.getElementById("IsAIInterview").checked;
+        document.getElementById("InterviewTypeContainer").style.display = isChecked ? "block" : "none";
     }
 
     function PopulateBillingOwner() {

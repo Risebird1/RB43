@@ -273,6 +273,8 @@ namespace Risebird.Entities.ViewModel
         public string CandidateVideo { get; set; }
         public bool CandidateIdverification { get; set; }
         public bool CodeSnippetRequired { get; set; }
+        public bool IsAIInterview { get; set; }
+        public int AIInterviewType { get; set; }
     }
     public class InterviewerIds
     {

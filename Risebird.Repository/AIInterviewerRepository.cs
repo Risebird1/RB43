@@ -83,7 +83,7 @@ namespace Risebird.Repository
             using var conn = new SqlConnection(connectionString);
             await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId)
         {
             try
             {
@@ -95,6 +95,8 @@ namespace Risebird.Repository
                     parameters.Add("@SessionId", SessionId);
                     parameters.Add("@BotSynthesizedVideoLink", botSynthesizedVideoLink);
                     parameters.Add("@CandidateResponse", candidateResponse);
+                    parameters.Add("@secondsLeft", secondsLeft);
+                    parameters.Add("@interviewId", interviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -136,6 +138,129 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@secondsLeft", secondsLeft);
+                    parameters.Add("@UpdatedAt", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateTimeLeft", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetAIInterviewDetailsBySessionId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<TranscriptConv>> GetAIInterviewTranscriptBySessionId(Guid sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<TranscriptConv>(con, "usp_GetAIInterviewTranscriptBySessionId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    parameters.Add("@SerializedReportOfAIInterviewByAssistant", serializedReportOfAIInterviewByAssistant);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveReportOfAIInterviewByAssistant", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetReportOfAIInterviewByAssistant", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         private string CleanMessage(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "";

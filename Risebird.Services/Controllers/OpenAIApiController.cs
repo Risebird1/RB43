@@ -43,22 +43,22 @@ namespace Risebird.Services.Controllers
         }
 
         [HttpPost("start")]
-        public async Task<IActionResult> Start([FromBody] string candidateContext)
+        public async Task<IActionResult> Start([FromBody] InterviewMessageVM input) //string candidateContext
         {
             try
             {
-                var sessionId = Guid.NewGuid();
+                //var sessionId = Guid.NewGuid();
                 var threadId = await _ai.CreateThreadAsync();
 
                 await _aiInterviewerRepository.CreateSession(new InterviewSession
                 {
-                    SessionId = sessionId,
+                    SessionId = input.SessionId,
                     ThreadId = threadId,
                     AssistantId = _assistantId,
                     CandidateEmail = ""
                 });
 
-                await _ai.AddMessageAsync(threadId, "user", candidateContext);
+                await _ai.AddMessageAsync(threadId, "user", input.Message);
 
                 var runId = await _ai.CreateRunAsync(threadId);
                 await _ai.WaitForRunAsync(threadId, runId);
@@ -66,10 +66,10 @@ namespace Risebird.Services.Controllers
                 var replies = await _ai.GetMessagesAsync(threadId);
                 foreach (var reply in replies)
                 {
-                    await _aiInterviewerRepository.LogTranscript(sessionId, "assistant", reply);
+                    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
                 }
 
-                return Ok(new { sessionId, threadId, replies });
+                return Ok(new { input.SessionId, threadId, replies });
             }
             catch (Exception ex)
             {
@@ -110,7 +110,6 @@ namespace Risebird.Services.Controllers
         {
             var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
             await _ai.AddMessageAsync(threadId, "user", input.Message);
-            //await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
 
             var runId = await _ai.CreateRunAsync(threadId);
             await _ai.WaitForRunAsync(threadId, runId);
@@ -119,11 +118,6 @@ namespace Risebird.Services.Controllers
 
             //save the report in the database.
 
-
-            //foreach (var reply in replies)
-            //{
-            //    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
-            //}
 
             return Ok(new { input.SessionId, threadId, replies });
         }
