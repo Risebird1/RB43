@@ -1,5 +1,6 @@
 ﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -75,6 +76,43 @@ namespace Risebird.Business
             try
             {
                 return await _aiInterviewerRepository.GetAIInterviewDetailsBySessionId(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<TranscriptConv>> GetAIInterviewTranscriptBySessionId(Guid sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetAIInterviewTranscriptBySessionId(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.SaveReportOfAIInterviewByAssistant(sessionId, serializedReportOfAIInterviewByAssistant);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetReportOfAIInterviewByAssistant(sessionId);
             }
             catch (Exception e)
             {

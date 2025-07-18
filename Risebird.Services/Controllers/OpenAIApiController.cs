@@ -110,7 +110,6 @@ namespace Risebird.Services.Controllers
         {
             var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
             await _ai.AddMessageAsync(threadId, "user", input.Message);
-            //await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
 
             var runId = await _ai.CreateRunAsync(threadId);
             await _ai.WaitForRunAsync(threadId, runId);
@@ -119,11 +118,6 @@ namespace Risebird.Services.Controllers
 
             //save the report in the database.
 
-
-            //foreach (var reply in replies)
-            //{
-            //    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
-            //}
 
             return Ok(new { input.SessionId, threadId, replies });
         }

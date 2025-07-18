@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Rest;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -105,28 +106,85 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new ChatMessageViewModel();
                     model.SessionId = sid;
+                    //get the entire transcript by session Id(in descending order by time). By entire, it means the responses of both the candidate and the assistant/aiinterviewer
+                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
+
+                    //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
+
+                    var latestEntry = transcript?.FirstOrDefault();
+
+                    if (latestEntry != null) 
+                    {
+                        var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
+
+                        if (latestEntry.Role.ToLower() == "assistant")
+                        {
+                            var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
+
+                            if(candidateLatestEntry != null)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
+
+                            }
+                            foreach (var question in allQuestions)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message) });
+                            }
+                            var latestQuestion = latestEntry.Message;
+                            if (!string.IsNullOrEmpty(latestQuestion))
+                            {
+                                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                                var base64Audio = Convert.ToBase64String(audioBytes);
+                                ViewData["AssistantAudioBase64"] = base64Audio;
+                            }
+                        }
+                        else if (latestEntry.Role.ToLower() == "user")
+                        {
+                            model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
+                            var replies = await _api.SendReply(sid, latestEntry.Message);
+                            //var question = allQuestions.FirstOrDefault().Message;
+
+                            foreach (var reply in replies)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                            }
+                            var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                            if (!string.IsNullOrEmpty(latestReply))
+                            {
+                                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                                var base64Audio = Convert.ToBase64String(audioBytes);
+                                ViewData["AssistantAudioBase64"] = base64Audio;
+                            }
+                        }
+                    }
+                    
+
+
+
+
                     //var replies = await _api.SendReply(model.SessionId, userMessage);
 
                     //get all the questions asked already from the database in descending order by time
-                    var questions = new List<string>();
-                    var latestQuestion = questions.FirstOrDefault();//replies?.Skip(1)?.Take(1);
-                    //model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+                    //var questions = new List<string>();
+                    //var latestQuestion = questions.FirstOrDefault();//replies?.Skip(1)?.Take(1);
+                    ////model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
-                    foreach (var reply in questions)
-                    {
-                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
-                    }
+                    //foreach (var reply in questions)
+                    //{
+                    //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                    //}
 
-                    //UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
+                    ////UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
 
-                    //var latestReply = CleanMessage(replies.FirstOrDefault());
+                    ////var latestReply = CleanMessage(replies.FirstOrDefault());
 
-                    if (!string.IsNullOrEmpty(latestQuestion))
-                    {
-                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
-                        var base64Audio = Convert.ToBase64String(audioBytes);
-                        ViewData["AssistantAudioBase64"] = base64Audio;
-                    }
+                    //if (!string.IsNullOrEmpty(latestQuestion))
+                    //{
+                    //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                    //    var base64Audio = Convert.ToBase64String(audioBytes);
+                    //    ViewData["AssistantAudioBase64"] = base64Audio;
+                    //}
 
 
                     //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
@@ -227,28 +285,57 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Report(Guid seId)//Guid seId
+        public async Task<IActionResult> Report(Guid seId, bool redo = false)//Guid seId
         {
             // For demo: tech stack prompt
             //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
             string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-            var result = await _api.GenerateReport(seId, candidatePrompt);
+            var aiReport = new InterviewReportResult();
 
-            //var chatMessageModel = new ChatMessageViewModel
-            //{
-            //    SessionId = result.SessionId,
-            //    ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
-            //};
+            if(redo)
+            {
+                aiReport = await _api.GenerateReport(seId, candidatePrompt);
+
+                //save the report in db
+                if (aiReport != null)
+                {
+                    await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+
+                }
+            }
+            else
+            {
+                //check if the report already exists and fetch if exists
+
+                var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
+                if (!string.IsNullOrEmpty(aiReportJson))
+                {
+                    aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
+                }
+                if (aiReport == null)
+                {
+                    aiReport = await _api.GenerateReport(seId, candidatePrompt);
+
+                    //save the report in db
+                    if (aiReport != null)
+                    {
+                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+
+                    }
+                }
+                
+            }
+                
 
             var chatMessageModel = new ChatMessageViewModel
             {
-                SessionId = result.SessionId,
+                SessionId = aiReport.SessionId,
                 ChatLog = new List<ChatLine>
                 {
                     new ChatLine
                     {
                         Role = "Bot",
-                        Message = CleanMessage(result.Replies.FirstOrDefault())
+                        Message = CleanMessage(aiReport.Replies.FirstOrDefault())
                     }
                 }
             };
