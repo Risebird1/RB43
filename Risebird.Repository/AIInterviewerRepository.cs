@@ -223,7 +223,7 @@ namespace Risebird.Repository
                     parameters.Add("@SessionId", sessionId);
                     parameters.Add("@SerializedReportOfAIInterviewByAssistant", serializedReportOfAIInterviewByAssistant);
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveReportOfAIInterviewByAssistant", parameters,
-                         commandType: CommandType.StoredProcedure);
+                         commandType: CommandType.StoredProcedure, commandTimeout:150);
                     return true;
                 }
             }

@@ -84,6 +84,15 @@ namespace Risebird.Web.Controllers
                         ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
                     };
 
+
+                    var latestReply = CleanMessage(result.Replies.FirstOrDefault());
+
+                    if (!string.IsNullOrEmpty(latestReply))
+                    {
+                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                        var base64Audio = Convert.ToBase64String(audioBytes);
+                        ViewData["AssistantAudioBase64"] = base64Audio;
+                    }
                     //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
 
                     //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
@@ -290,9 +299,9 @@ namespace Risebird.Web.Controllers
             // For demo: tech stack prompt
             //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
             string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-            var aiReport = new InterviewReportResult();
-
-            if(redo)
+            //var aiReport = new InterviewReportResult();
+            InterviewReportResult aiReport = null;
+            if (redo)
             {
                 aiReport = await _api.GenerateReport(seId, candidatePrompt);
 
@@ -316,6 +325,10 @@ namespace Risebird.Web.Controllers
                 {
                     aiReport = await _api.GenerateReport(seId, candidatePrompt);
 
+                    //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
+                    var list = new List<string>();
+                    list.Add(aiReport.Replies.FirstOrDefault());
+                    aiReport.Replies = list;
                     //save the report in db
                     if (aiReport != null)
                     {
