@@ -64,10 +64,16 @@ namespace Risebird.Services.Controllers
                 await _ai.WaitForRunAsync(threadId, runId);
 
                 var replies = await _ai.GetMessagesAsync(threadId);
-                foreach (var reply in replies)
+
+                if (replies != null && replies.Count() > 0)
                 {
-                    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
+                    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", replies.FirstOrDefault());
+
                 }
+                //foreach (var reply in replies)
+                //{
+                //    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
+                //}
 
                 return Ok(new { input.SessionId, threadId, replies });
             }
@@ -89,10 +95,16 @@ namespace Risebird.Services.Controllers
             await _ai.WaitForRunAsync(threadId, runId);
 
             var replies = await _ai.GetMessagesAsync(threadId);
-            foreach (var reply in replies)
+
+            if(replies != null && replies.Count()>0)
             {
-                await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
+                await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", replies.FirstOrDefault());
+
             }
+            //foreach (var reply in replies)
+            //{
+            //    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
+            //}
 
             return Ok(new { replies });
         }
