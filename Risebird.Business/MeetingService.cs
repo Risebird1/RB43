@@ -1288,6 +1288,9 @@ namespace Risebird.Business
                 {
                     reportModel.Candidateconsent = interviewDetails.CandidateInterviewChecks.ToLower().Contains("candidateconsent") ? true : false;
                 }
+                reportModel.IsAIInterview = interviewDetails.IsAIInterview;
+                reportModel.SessionId = interviewDetails.SessionId;
+                reportModel.AssistantId = interviewDetails.AssistantId;
                 return reportModel;
             }
             catch (Exception e)

@@ -66,6 +66,8 @@ CREATE TABLE [dbo].[IRF](
             [CandidateIdverification] [bit] null,
             [CodeSnippetRequired] [bit] null,
             [CandidateVideo] [VARCHAR](1000) null,
+            [IsAIInterview] [bit] null,
+            [AIInterviewType] [int] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -596,6 +598,26 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add CandidateVideo varchar(1000)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsAIInterview')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+	ADD IsAIInterview bit 
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIInterviewType')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+	ADD AIInterviewType int 
 END
 
 END

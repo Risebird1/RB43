@@ -400,6 +400,9 @@ namespace Risebird.Entities.ViewModel
         public bool ModifiedInterviewStatus { get; set; }
         public bool Candidateconsent { get; set; }
         public bool ConsentRequired { get; set; }
+        public string AssistantId { get; set; }//id of the assistant that conducted the interview
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; } //applicable only if the interview is conducted by AI interviewer, i.e.: IsAIInterview is true
     }
     public class RBInterviewDetails
     {

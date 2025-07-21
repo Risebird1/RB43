@@ -57,9 +57,17 @@ public class InterviewApiService : IInterviewApiService
     //    var parsed = JsonConvert.DeserializeObject<dynamic>(content);
     //    return parsed?.reply ?? "[No reply]";
     //}
-    public async Task<InterviewStartResult> StartConversation(string prompt)
+    public async Task<InterviewStartResult> StartConversation(Guid sessionId, string prompt)
     {
-        var response = await _http.PostAsJsonAsync("api/OpenAIApi/start", prompt);
+        var payload = new InterviewMessageVM
+        {
+            SessionId = sessionId,
+            Message = prompt
+        };
+
+        var response = await _http.PostAsJsonAsync("api/OpenAIApi/start", payload);
+
+        //var response = await _http.PostAsJsonAsync("api/OpenAIApi/start", prompt);
 
         if (!response.IsSuccessStatusCode)
         {

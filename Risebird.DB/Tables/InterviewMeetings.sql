@@ -57,6 +57,9 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [CodeSnippetTwo][varchar] (200),
     [CandidateInterviewChecks][varchar] (300),
     [CancellationReason][varchar] (50),
+    [AssistantId][varchar] (75),
+    [SessionId][varchar] (200),
+    [TimeLeftInSeconds][int] NULL,
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -428,6 +431,38 @@ BEGIN
     Alter table InterviewMeetings 
     Add CancellationReason varchar(50)
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssistantId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add AssistantId VARCHAR(75)
+END
+
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SessionId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add SessionId VARCHAR(200)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TimeLeftInSeconds')--indicates the time left for the AI interview
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add TimeLeftInSeconds int
+END
+
 END
 GO
 

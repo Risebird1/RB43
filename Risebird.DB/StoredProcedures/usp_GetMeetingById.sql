@@ -57,7 +57,8 @@ SELECT [InterviewMeetings].id as imid
   ,InterviewComments.JoiningComments        
   ,InterviewComments.MoveToCP        
   ,IRF.id as irfIntId            
-  ,IRF.IsBiometricEnabled            
+  ,IRF.IsBiometricEnabled   
+  ,IRF.IsAIInterview
   ,HRCoordinatorEmailId            
   ,QCInterviewer            
   ,InterviewComments.ThumbnailTimeSeconds            
@@ -91,6 +92,8 @@ SELECT [InterviewMeetings].id as imid
   ,cl.IsReportwhitelabel    
   ,cl.ModifiedInterviewStatus  
   ,[InterviewMeetings].CandidateInterviewChecks 
+  ,[InterviewMeetings].AssistantId
+  ,[InterviewMeetings].SessionId
   ,Case When ISNULL(cf.FormURL,'')!=''  or ISNULL(IRF.CandidateVideo,'')!='' then 1 else 0 end as ConsentRequired
 FROM [dbo].[InterviewMeetings]            
 inner join             
