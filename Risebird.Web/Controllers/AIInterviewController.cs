@@ -371,6 +371,7 @@ namespace Risebird.Web.Controllers
             reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
             reportModel.chatMessageViewModel = chatMessageModel;
             //reportModel.TotalQuestions = result.Replies.Count() - 1;
+            ViewBag.IsAdaptive = true;
             return View(reportModel);
         }
 
