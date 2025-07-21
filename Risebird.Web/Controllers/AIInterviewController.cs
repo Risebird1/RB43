@@ -40,12 +40,13 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IAIInterviewerService _aiinterviewerService;
         private readonly ISynthesiaTextToVideoService _synthesiaTextToVideoService;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
-            ISynthesiaTextToVideoService synthesiaTextToVideoService)
+            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -56,6 +57,7 @@ namespace Risebird.Web.Controllers
             _sasUrlHelper = sasUrlHelper;
             _aiinterviewerService = aiinterviewerService;
             _synthesiaTextToVideoService = synthesiaTextToVideoService;
+            _pdfReaderHelper = pdfReaderHelper;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -74,8 +76,20 @@ namespace Risebird.Web.Controllers
                 //not started yet
                 if(string.IsNullOrEmpty(meetingDetails.ThreadId))
                 {
+
+                    string resumeStringContent = string.Empty;
+                    string techSkillsJson = string.Empty;
+
+                    if(!string.IsNullOrEmpty(meetingDetails.resumeLink))
+                    {
+                        resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
+                    }
+                    if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
+                    {
+                        techSkillsJson = meetingDetails.TechSkillsInJson;
+                    }
                     // For demo: tech stack prompt
-                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle}. Proceed as per the instructions fed to you.";
+                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent}. Proceed as per the instructions fed to you.";
                     var result = await _api.StartConversation(sid, candidatePrompt);
 
                     var model = new ChatMessageViewModel
