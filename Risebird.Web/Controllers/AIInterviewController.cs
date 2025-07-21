@@ -95,7 +95,10 @@ namespace Risebird.Web.Controllers
                     var model = new ChatMessageViewModel
                     {
                         SessionId = sid,
-                        ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
+                        ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                        candidateName = meetingDetails.candidateName, // ✅ Add this line
+                        InterviewId = meetingDetails.InterviewId, // ✅ Also add InterviewId
+                        TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds
                     };
 
 
@@ -121,7 +124,7 @@ namespace Risebird.Web.Controllers
 
                     //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
                     ViewBag.IsAdaptive = true;
-                    model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                    //model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
                     //model.TimeLeftInSeconds = 3600; // only for testing purpose, comment this out later
                     return View(model);
                 }
@@ -129,6 +132,9 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new ChatMessageViewModel();
                     model.SessionId = sid;
+                    model.candidateName = meetingDetails.candidateName; // ✅ Add this line
+                    model.InterviewId = meetingDetails.InterviewId; // ✅ Also add InterviewId
+                    model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
                     //get the entire transcript by session Id(in descending order by time). By entire, it means the responses of both the candidate and the assistant/aiinterviewer
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
 
@@ -275,6 +281,15 @@ namespace Risebird.Web.Controllers
             //} while (string.IsNullOrWhiteSpace(videoUrl));
             //model.SynthesizedVideoUrl = videoUrl;
             //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+
+            // Make sure to preserve the candidateName in the POST action as well
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
+            if (meetingDetails != null)
+            {
+                model.candidateName = meetingDetails.candidateName; // ✅ Add this line
+                model.InterviewId = meetingDetails.InterviewId; // ✅ Also add InterviewId
+                model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+            }
 
             model.Message = "";
 

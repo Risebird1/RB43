@@ -960,9 +960,11 @@
         <div class="rb-question-section">
             <!-- Chat Section (now in place of question box) -->
             <div class="rb-chat-section mt-3">
+           
                 <div class="rb-chatbox-container">
-                    <div class="rb-chatgpt-welcome">
-                        Let's start the interview
+                         <div class="rb-chatgpt-welcome">
+                    <span style="font-size: 27px;"> Welcome!</span> <span style="color: #47bc80;">@Model.candidateName</span><br> <span style="padding-top: 5px;display: inline-block;font-size: 25px;
+">Let's start the interview </span>
                     </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
