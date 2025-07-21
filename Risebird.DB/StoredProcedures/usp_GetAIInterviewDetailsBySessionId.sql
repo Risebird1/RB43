@@ -13,14 +13,23 @@ Create Procedure usp_GetAIInterviewDetailsBySessionId
 AS
 BEGIN
 
+declare @irfId int 
+set @irfId  = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where SessionId =@SessionId))
+
 select im.id as InterviewId, im.interviewDate, im.AssistantId, im.candidateEmail, ulc.MobileNumber, im.interviewer,
-im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId
+im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink, ulc.FirstName as candidateName
 from InterviewMeetings im
 join IRF on IRF.irfId = im.irfid
 join UserList ulc on ulc.EmailId = im.candidateEmail
+join CandidatesMaster cm on cm.id = ulc.id
+join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
 outer apply (select ThreadId from InterviewSessions where SessionId = @SessionId) iss
 where im.SessionId = @SessionId
 
 
+select * from TransTechSkill where IRFId = @irfId
+
 END
 GO
+
+

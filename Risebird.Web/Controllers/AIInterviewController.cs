@@ -40,12 +40,13 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IAIInterviewerService _aiinterviewerService;
         private readonly ISynthesiaTextToVideoService _synthesiaTextToVideoService;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
-            ISynthesiaTextToVideoService synthesiaTextToVideoService)
+            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -56,6 +57,7 @@ namespace Risebird.Web.Controllers
             _sasUrlHelper = sasUrlHelper;
             _aiinterviewerService = aiinterviewerService;
             _synthesiaTextToVideoService = synthesiaTextToVideoService;
+            _pdfReaderHelper = pdfReaderHelper;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -74,8 +76,20 @@ namespace Risebird.Web.Controllers
                 //not started yet
                 if(string.IsNullOrEmpty(meetingDetails.ThreadId))
                 {
+
+                    string resumeStringContent = string.Empty;
+                    string techSkillsJson = string.Empty;
+
+                    if(!string.IsNullOrEmpty(meetingDetails.resumeLink))
+                    {
+                        resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
+                    }
+                    if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
+                    {
+                        techSkillsJson = meetingDetails.TechSkillsInJson;
+                    }
                     // For demo: tech stack prompt
-                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle}. Proceed as per the instructions fed to you.";
+                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent}. Proceed as per the instructions fed to you.";
                     var result = await _api.StartConversation(sid, candidatePrompt);
 
                     var model = new ChatMessageViewModel
@@ -84,6 +98,15 @@ namespace Risebird.Web.Controllers
                         ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
                     };
 
+
+                    var latestReply = CleanMessage(result.Replies.FirstOrDefault());
+
+                    if (!string.IsNullOrEmpty(latestReply))
+                    {
+                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                        var base64Audio = Convert.ToBase64String(audioBytes);
+                        ViewData["AssistantAudioBase64"] = base64Audio;
+                    }
                     //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
 
                     //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
@@ -290,9 +313,9 @@ namespace Risebird.Web.Controllers
             // For demo: tech stack prompt
             //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
             string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-            var aiReport = new InterviewReportResult();
-
-            if(redo)
+            //var aiReport = new InterviewReportResult();
+            InterviewReportResult aiReport = null;
+            if (redo)
             {
                 aiReport = await _api.GenerateReport(seId, candidatePrompt);
 
@@ -316,6 +339,10 @@ namespace Risebird.Web.Controllers
                 {
                     aiReport = await _api.GenerateReport(seId, candidatePrompt);
 
+                    //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
+                    var list = new List<string>();
+                    list.Add(aiReport.Replies.FirstOrDefault());
+                    aiReport.Replies = list;
                     //save the report in db
                     if (aiReport != null)
                     {
