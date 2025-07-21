@@ -66,6 +66,8 @@ CREATE TABLE [dbo].[IRF](
             [CandidateIdverification] [bit] null,
             [CodeSnippetRequired] [bit] null,
             [CandidateVideo] [VARCHAR](1000) null,
+            [IsAIInterview] [bit] null,
+            [AIInterviewType] [int] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					

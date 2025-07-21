@@ -544,6 +544,7 @@
                                                         <th>Expected Salary</th>
                                                         <th>Current Employer</th>
                                                         <th>Emergency Interview</th>
+                                                        <th>AI Interview Link</th>
                                                     }
                                                     @if (ViewBag.Type == CancelInterviews)
                                                     {
@@ -627,6 +628,7 @@
                                                         <th>Expected Salary</th>
                                                         <th>Current Employer</th>
                                                         <th>Emergency Interview</th>
+                                                        <th>AI Interview Link</th>
                                                     }
                                                     @if (ViewBag.Type == CancelInterviews)
                                                     {
@@ -1355,7 +1357,9 @@
                                                             <td>
                                                                 @item.IsEmergency
                                                             </td>
-
+                                                            <td>
+                                                                <a target="_blank" href='@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})'>AI Meeting Link</a>
+                                                            </td>
                                                         }
                                                         @if (ViewBag.Type == CancelInterviews)
                                                         {

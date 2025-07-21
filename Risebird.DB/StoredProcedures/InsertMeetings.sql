@@ -59,16 +59,18 @@ begin try
  IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)        
  Begin  
  
- declare @isAIInterview bit, @sessionId varchar(200), @timeLeftInSeconds int
+ declare @isAIInterview bit, @sessionId varchar(200), @timeLeftInSeconds int, @irfIntIdVal int
 
  set @isAIInterview = (select IsAIInterview from IRF where IRFId= @IRFId)
+
+ set @irfIntIdVal = (select id from IRF where IRFId= @IRFId)
 
  if(@isAIInterview = 1)
  Begin
 	set @sessionId = (select NEWID())
-	set @timeLeftInSeconds = (select DurationSelectedMin*60 from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @irfId) 
-	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfId)
-	and CompanyType = (select CompanyType from IRF where id = @irfId))
+	set @timeLeftInSeconds = (select DurationSelectedMin*60 from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @irfIntIdVal) 
+	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfIntIdVal)
+	and CompanyType = (select CompanyType from IRF where id = @irfIntIdVal))
 
  End
         

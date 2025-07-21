@@ -18,7 +18,7 @@ namespace Risebird.Repository.Interface
         Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid);
         Task<Candidate> GetCandidatesDetails(int irfId, int candidateId);
         Task<bool> AddResume(List<CandidateResume> resumeList);
-        Task<bool> UpdateCandidateResumeInBulk(List<CandidateResume> resumeList);
+        Task<bool> UpdateCandidateResumeInBulk(List<CandidateResume> resumeList, bool ismcqdb = false);
         Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, string emailid = null);
         Task<bool> DeleteCandidateResume(int id);
         Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId);
@@ -35,7 +35,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetuniqueCandidateByEmailId(string emailId, string id);
         Task<string> GetCandidateUniqueId(string emailId);
         Task<Candidate> GetCandidateIRFMailDetails(string EmailId, int IRFid);
-        Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing();
+        Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing(bool ismcqdb = false);
         Task<IEnumerable<IRFCandidateReport>> FetchSkillChannelCandidateReprots(int irfId);
         Task<bool> SaveCandidateCodedResume(Candidate model);
         Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email);
@@ -52,5 +52,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithColdDate(DateTime startDate, DateTime endDate, int clientId);
         Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithoutColdDate(DateTime startDate, DateTime endDate, int clientId);
         Task<bool> UpdateCandidateAcknowledge(int interviewid, string interviewchecks);
+        Task<AddCandidatesResponse> AddMCQSkillChannelCandidateList(List<CandidateQuickAddModel> candidateList);
     }
 }
