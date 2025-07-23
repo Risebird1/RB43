@@ -17,7 +17,9 @@ declare @irfId int
 set @irfId  = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where SessionId =@SessionId))
 
 select im.id as InterviewId, im.interviewDate, im.AssistantId, im.candidateEmail, ulc.MobileNumber, im.interviewer,
-im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink, ulc.FirstName as candidateName
+im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink, 
+ulc.FirstName as candidateName,
+case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive
 from InterviewMeetings im
 join IRF on IRF.irfId = im.irfid
 join UserList ulc on ulc.EmailId = im.candidateEmail
