@@ -120,9 +120,11 @@ namespace Risebird.Web.Controllers
                     //model.SynthesizedVideoUrl = videoUrl;
 
                     //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-                    ViewBag.IsAdaptive = true;
+                    //ViewBag.IsAdaptive = true;
+                    model.IsAdaptive = meetingDetails.IsAdaptive;
+                    model.InterviewId = meetingDetails.InterviewId;
                     model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
-                    //model.TimeLeftInSeconds = 3600; // only for testing purpose, comment this out later
+                    model.candidateName = meetingDetails.candidateName;
                     return View(model);
                 }
                 else
@@ -223,8 +225,11 @@ namespace Risebird.Web.Controllers
                     //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
 
                     model.Message = "";
-
-                    ViewBag.IsAdaptive = true;
+                    model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                    model.InterviewId = meetingDetails.InterviewId;
+                    model.candidateName = meetingDetails.candidateName;
+                    //ViewBag.IsAdaptive = true;
+                    model.IsAdaptive = meetingDetails.IsAdaptive;
                     return View(model);
 
                 }
@@ -278,7 +283,7 @@ namespace Risebird.Web.Controllers
 
             model.Message = "";
 
-            ViewBag.IsAdaptive = true;
+            model.IsAdaptive = true;
             return View(model);
         }
         private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
