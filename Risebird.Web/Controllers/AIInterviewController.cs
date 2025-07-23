@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Rest;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -39,12 +40,13 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IAIInterviewerService _aiinterviewerService;
         private readonly ISynthesiaTextToVideoService _synthesiaTextToVideoService;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
-            ISynthesiaTextToVideoService synthesiaTextToVideoService)
+            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -55,36 +57,185 @@ namespace Risebird.Web.Controllers
             _sasUrlHelper = sasUrlHelper;
             _aiinterviewerService = aiinterviewerService;
             _synthesiaTextToVideoService = synthesiaTextToVideoService;
+            _pdfReaderHelper = pdfReaderHelper;
         }
-
+        /// <summary>
+        /// access an interview (and start it) with the session id (sid)
+        /// </summary>
+        /// <param name="sid"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid sid)
         {
-            // For demo: tech stack prompt
-            string candidatePrompt = "You will now interview the candidate. Proceed as per the instructions fed to you.";
-            var result = await _api.StartConversation(candidatePrompt);
+            //get all the data relevant interview data for that sid
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
 
-            var model = new ChatMessageViewModel
+            //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
+            if(meetingDetails != null)
             {
-                SessionId = result.SessionId,
-                ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
-            };
+                //not started yet
+                if(string.IsNullOrEmpty(meetingDetails.ThreadId))
+                {
 
-            //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
+                    string resumeStringContent = string.Empty;
+                    string techSkillsJson = string.Empty;
 
-            //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
-            //string videoUrl;
-            //do
-            //{
-            //    await Task.Delay(8000);
-            //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-            //} while (string.IsNullOrWhiteSpace(videoUrl));
+                    if(!string.IsNullOrEmpty(meetingDetails.resumeLink))
+                    {
+                        resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
+                    }
+                    if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
+                    {
+                        techSkillsJson = meetingDetails.TechSkillsInJson;
+                    }
+                    // For demo: tech stack prompt
+                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent}. Proceed as per the instructions fed to you.";
+                    var result = await _api.StartConversation(sid, candidatePrompt);
 
-            //model.SynthesizedVideoUrl = videoUrl;
+                    var model = new ChatMessageViewModel
+                    {
+                        SessionId = sid,
+                        ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
+                    };
 
-            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-            ViewBag.IsAdaptive = true;
-            return View(model);
+
+                    var latestReply = CleanMessage(result.Replies.FirstOrDefault());
+
+                    if (!string.IsNullOrEmpty(latestReply))
+                    {
+                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                        var base64Audio = Convert.ToBase64String(audioBytes);
+                        ViewData["AssistantAudioBase64"] = base64Audio;
+                    }
+                    //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
+
+                    //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                    //string videoUrl;
+                    //do
+                    //{
+                    //    await Task.Delay(8000);
+                    //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                    //} while (string.IsNullOrWhiteSpace(videoUrl));
+
+                    //model.SynthesizedVideoUrl = videoUrl;
+
+                    //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+                    //ViewBag.IsAdaptive = true;
+                    model.IsAdaptive = meetingDetails.IsAdaptive;
+                    model.InterviewId = meetingDetails.InterviewId;
+                    model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                    model.candidateName = meetingDetails.candidateName;
+                    return View(model);
+                }
+                else
+                {
+                    var model = new ChatMessageViewModel();
+                    model.SessionId = sid;
+                    //get the entire transcript by session Id(in descending order by time). By entire, it means the responses of both the candidate and the assistant/aiinterviewer
+                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
+
+                    //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
+
+                    var latestEntry = transcript?.FirstOrDefault();
+
+                    if (latestEntry != null) 
+                    {
+                        var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
+
+                        if (latestEntry.Role.ToLower() == "assistant")
+                        {
+                            var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
+
+                            if(candidateLatestEntry != null)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
+
+                            }
+                            foreach (var question in allQuestions)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message) });
+                            }
+                            var latestQuestion = latestEntry.Message;
+                            if (!string.IsNullOrEmpty(latestQuestion))
+                            {
+                                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                                var base64Audio = Convert.ToBase64String(audioBytes);
+                                ViewData["AssistantAudioBase64"] = base64Audio;
+                            }
+                        }
+                        else if (latestEntry.Role.ToLower() == "user")
+                        {
+                            model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
+                            var replies = await _api.SendReply(sid, latestEntry.Message);
+                            //var question = allQuestions.FirstOrDefault().Message;
+
+                            foreach (var reply in replies)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                            }
+                            var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                            if (!string.IsNullOrEmpty(latestReply))
+                            {
+                                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                                var base64Audio = Convert.ToBase64String(audioBytes);
+                                ViewData["AssistantAudioBase64"] = base64Audio;
+                            }
+                        }
+                    }
+                    
+
+
+
+
+                    //var replies = await _api.SendReply(model.SessionId, userMessage);
+
+                    //get all the questions asked already from the database in descending order by time
+                    //var questions = new List<string>();
+                    //var latestQuestion = questions.FirstOrDefault();//replies?.Skip(1)?.Take(1);
+                    ////model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+
+                    //foreach (var reply in questions)
+                    //{
+                    //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                    //}
+
+                    ////UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
+
+                    ////var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                    //if (!string.IsNullOrEmpty(latestQuestion))
+                    //{
+                    //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                    //    var base64Audio = Convert.ToBase64String(audioBytes);
+                    //    ViewData["AssistantAudioBase64"] = base64Audio;
+                    //}
+
+
+                    //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
+
+                    //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                    //string videoUrl;
+                    //do
+                    //{
+                    //    await Task.Delay(8000);
+                    //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                    //} while (string.IsNullOrWhiteSpace(videoUrl));
+                    //model.SynthesizedVideoUrl = videoUrl;
+                    //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+
+                    model.Message = "";
+                    model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                    model.InterviewId = meetingDetails.InterviewId;
+                    model.candidateName = meetingDetails.candidateName;
+                    //ViewBag.IsAdaptive = true;
+                    model.IsAdaptive = meetingDetails.IsAdaptive;
+                    return View(model);
+
+                }
+            }
+
+            return View(null);
         }
 
         [HttpPost]
@@ -132,7 +283,7 @@ namespace Risebird.Web.Controllers
 
             model.Message = "";
 
-            ViewBag.IsAdaptive = true;
+            model.IsAdaptive = true;
             return View(model);
         }
         private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
@@ -156,34 +307,67 @@ namespace Risebird.Web.Controllers
                         VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     //Save in db with question.sessionid,videoLink,Datetime
-                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse);
+                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId);
                 }
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Report(Guid seId)//Guid seId
+        public async Task<IActionResult> Report(Guid seId, bool redo = false)//Guid seId
         {
             // For demo: tech stack prompt
             //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
             string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-            var result = await _api.GenerateReport(seId, candidatePrompt);
+            //var aiReport = new InterviewReportResult();
+            InterviewReportResult aiReport = null;
+            if (redo)
+            {
+                aiReport = await _api.GenerateReport(seId, candidatePrompt);
 
-            //var chatMessageModel = new ChatMessageViewModel
-            //{
-            //    SessionId = result.SessionId,
-            //    ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
-            //};
+                //save the report in db
+                if (aiReport != null)
+                {
+                    await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+
+                }
+            }
+            else
+            {
+                //check if the report already exists and fetch if exists
+
+                var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
+                if (!string.IsNullOrEmpty(aiReportJson))
+                {
+                    aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
+                }
+                if (aiReport == null)
+                {
+                    aiReport = await _api.GenerateReport(seId, candidatePrompt);
+
+                    //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
+                    var list = new List<string>();
+                    list.Add(aiReport.Replies.FirstOrDefault());
+                    aiReport.Replies = list;
+                    //save the report in db
+                    if (aiReport != null)
+                    {
+                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+
+                    }
+                }
+                
+            }
+                
 
             var chatMessageModel = new ChatMessageViewModel
             {
-                SessionId = result.SessionId,
+                SessionId = aiReport.SessionId,
                 ChatLog = new List<ChatLine>
                 {
                     new ChatLine
                     {
                         Role = "Bot",
-                        Message = CleanMessage(result.Replies.FirstOrDefault())
+                        Message = CleanMessage(aiReport.Replies.FirstOrDefault())
                     }
                 }
             };
@@ -192,6 +376,7 @@ namespace Risebird.Web.Controllers
             reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
             reportModel.chatMessageViewModel = chatMessageModel;
             //reportModel.TotalQuestions = result.Replies.Count() - 1;
+            ViewBag.IsAdaptive = true;
             return View(reportModel);
         }
 
@@ -205,5 +390,19 @@ namespace Risebird.Web.Controllers
                 .Trim();                 // Trim whitespace
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateTimeLeft([FromBody] TimeLeftUpdateVM model)
+        {
+            try
+            {
+                await _aiinterviewerService.UpdateTimeLeft(model.SessionId, model.TimeLeftInSeconds, model.interviewId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+                throw;
+            }
+        }
     }
 }

@@ -7771,7 +7771,11 @@ namespace Risebird.Web.Controllers
                     {
                         var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
-                        FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+                        if(!model.IsAIInterview)
+                        {
+                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
+                        }
 
                         TempData["SuccessErrorPublicCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                         TempData["SuccessErrorPublicCloneTemplateMessage2"] = model.CalendlyLink;
@@ -7870,9 +7874,16 @@ namespace Risebird.Web.Controllers
                         {
                             var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
-                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+                            if(!model.IsAIInterview)
+                            {
+                                FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+                            }
+                            //else
+                            //{
+                            //    //proctor: same mail only to interviewers with IsProctor set to true
+                            //}
 
-                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                                TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorCloneTemplateMessage2"] = model.CalendlyLink;
                             //TempData["SuccessErrorCloneTemplateMessage3"] = "https://portal.risebird.io/IRF/Index";
                             //return RedirectToAction("List", "Template");

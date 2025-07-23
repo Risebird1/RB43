@@ -1,4 +1,5 @@
-﻿using Risebird.Entities.ViewModel;
+﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,13 @@ namespace Risebird.Business.Interface
 {
     public interface IAIInterviewerService
     {
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId);
         Task<string> GetThreadId(Guid sessionId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
+        Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
+        Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId);
+        Task<IEnumerable<TranscriptConv>> GetAIInterviewTranscriptBySessionId(Guid sessionId);
+        Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant);
+        Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId);
     }
 }
