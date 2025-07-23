@@ -724,7 +724,7 @@
                                                                                 </button>
                                                                             </span>
                                                                         }
-                                                                        @if (item.interviewDate.AddHours(1) >= DateTime.Now || (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin"))
+                                                                        @if (item.interviewDate.AddHours(4) >= DateTime.Now && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin"))
                                                                         {
                                                                             <span class="interview_7">
                                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit" onclick="captureInterviewerRelatedclick('Interview', 'Edit',@item.imid,0)">
