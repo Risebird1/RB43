@@ -409,6 +409,7 @@ namespace Risebird.Entities.ViewModel
         public int RejectSelectedMeetings { get; set; }
         public int SkillSetsevaluate { get; set; }
         public int Concurrency { get; set; }
+        public bool IsAIInterview { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

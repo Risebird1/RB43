@@ -40,7 +40,7 @@ IF (@Profile = 'Client')
   if(@roleId=1)    
   begin    
       
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -70,7 +70,7 @@ IF (@Profile = 'Client')
   else if(@roleId=9)    
   begin    
       
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
  CASE 
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -98,7 +98,7 @@ IF (@Profile = 'Client')
   else    
   begin   
     
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,   
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,   
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -129,7 +129,7 @@ IF (@Profile = 'Client')
 Else if(@Profile='Recruiter')          
  Begin     
    
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -157,7 +157,7 @@ Else if(@Profile='Recruiter')
 Else if(@Profile='CuratedUser')          
  Begin    
   
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -184,7 +184,7 @@ Else if(@Profile='CuratedUser')
 Else if(@Profile='HR')          
  Begin   
   
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,   
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,   
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -210,7 +210,7 @@ Else if(@Profile='HR')
  or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')  
  union  
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -241,7 +241,7 @@ Else if(@Profile='HR')
 Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')          
  Begin          
        
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
@@ -271,7 +271,7 @@ Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')
 Else          
 begin  
   
- select irf.IRFId, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
+ select irf.IRFId,irf.IsAIInterview, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  
  CASE  
  when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
  else irf.JDTiltle  
