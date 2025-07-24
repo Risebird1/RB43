@@ -969,6 +969,7 @@
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
                         <input type="hidden" asp-for="InterviewId" />
+                        <input type="hidden" asp-for="IsAdaptive" />
                         
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         <div class="rb-chatbox-inputrow">
@@ -983,7 +984,7 @@
                            </button>
                        </div>
                        
-                        @if (ViewBag.IsAdaptive == true)
+                        @if (Model.IsAdaptive == true)
                         {
                             <!-- Audio Section -->
                             <div class="rb-interviewer-info" style="margin-top:0px">
