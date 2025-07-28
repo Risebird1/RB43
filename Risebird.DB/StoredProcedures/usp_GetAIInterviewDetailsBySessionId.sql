@@ -23,7 +23,7 @@ case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive
 from InterviewMeetings im
 join IRF on IRF.irfId = im.irfid
 join UserList ulc on ulc.EmailId = im.candidateEmail
-join CandidatesMaster cm on cm.id = ulc.id
+join CandidatesMaster cm on cm.UserId = ulc.id
 join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
 outer apply (select ThreadId from InterviewSessions where SessionId = @SessionId) iss
 where im.SessionId = @SessionId
