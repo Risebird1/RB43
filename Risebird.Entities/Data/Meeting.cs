@@ -138,6 +138,8 @@ namespace Risebird.Entities.Data
         public string AudioTranscriptFileLink { get; set; }
         public string AITranscriptVerdict { get; set; }
         public string AIVerdict { get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
 
     }
 }
