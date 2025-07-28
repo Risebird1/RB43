@@ -6895,7 +6895,7 @@ namespace Risebird.Web.Controllers
                     candidateList.Add(candidate);
                     if (type == "Project")
                     {
-                        var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, model.IRFName);
+                        var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, emailids, true, model.IRFName);
                         result = resultset.list?.FirstOrDefault().onboardingStatus;
                     }
                     else
