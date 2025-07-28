@@ -96,9 +96,7 @@ namespace Risebird.Web.Controllers
                     {
                         SessionId = sid,
                         ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
-                         candidateName = meetingDetails.candidateName,
-                        InterviewId = meetingDetails.InterviewId, 
-                        TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds
+                        
                     };
 
 
