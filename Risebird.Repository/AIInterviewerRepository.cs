@@ -227,6 +227,7 @@ namespace Risebird.Repository
                             _resultVM.ThreadId = !string.IsNullOrEmpty(dt.Rows[0]["ThreadId"].ToString()) ? dt.Rows[0]["ThreadId"].ToString() : null;
                             _resultVM.resumeLink = !string.IsNullOrEmpty(dt.Rows[0]["resumeLink"].ToString()) ? dt.Rows[0]["resumeLink"].ToString() : null;
                             _resultVM.candidateName = !string.IsNullOrEmpty(dt.Rows[0]["candidateName"].ToString()) ? dt.Rows[0]["candidateName"].ToString() : null;
+                            _resultVM.IsAdaptive = !string.IsNullOrEmpty(dt.Rows[0]["IsAdaptive"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAdaptive"]) : true;
                         }
                     }
                     if (dataset.Tables.Count > 1)

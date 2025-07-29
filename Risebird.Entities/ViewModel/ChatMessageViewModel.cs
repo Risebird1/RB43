@@ -15,6 +15,8 @@ namespace Risebird.Entities.ViewModel
         public string SynthesizedVideoUrl { get; set; } //synthesised by synthesia, this will be the video of the AI Interviewer speaking
         public int TimeLeftInSeconds { get; set; }
         public int InterviewId { get; set; }
+        public string candidateName { get; set; }
+        public bool IsAdaptive { get; set; }
 
     }
 
