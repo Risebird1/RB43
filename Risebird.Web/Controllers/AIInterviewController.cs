@@ -80,17 +80,16 @@ namespace Risebird.Web.Controllers
                     string resumeStringContent = string.Empty;
                     string techSkillsJson = string.Empty;
 
-                    //if(!string.IsNullOrEmpty(meetingDetails.resumeLink))
-                    //{
-                    //    resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
-                    //}
+                    if(!string.IsNullOrEmpty(meetingDetails.resumeLink))
+                    {
+                        resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
+                    }
                     if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
                     {
                         techSkillsJson = meetingDetails.TechSkillsInJson;
                     }
                     // For demo: tech stack prompt
-                    //string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent}. Proceed as per the instructions fed to you.";
-                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. Proceed as per the instructions fed to you.";
+                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent}. Proceed as per the instructions fed to you.";
                     var result = await _api.StartConversation(sid, candidatePrompt);
 
                     var model = new ChatMessageViewModel
@@ -139,7 +138,7 @@ namespace Risebird.Web.Controllers
 
                     var latestEntry = transcript?.FirstOrDefault();
 
-                    if (latestEntry != null) 
+                    if (latestEntry != null)
                     {
                         var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
 
@@ -184,7 +183,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
-                    
+
 
 
 
