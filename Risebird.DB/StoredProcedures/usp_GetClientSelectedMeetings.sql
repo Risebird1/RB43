@@ -27,7 +27,7 @@ if(@roleId=1)
         
  if(@timeNow is not null)        
   Begin        
-   select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+   select distinct im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview,  im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
    --@EmailId as ClientHrContact,    
    ca.ClientHRAttemptContact as ClientHrContact,  
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -64,7 +64,7 @@ if(@roleId=1)
   End        
  else if((@startDate is not null) and (@endDate is not null))        
   Begin        
-   select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+   select distinct im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
    --@EmailId as ClientHrContact,   
    ca.ClientHRAttemptContact as ClientHrContact,  
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -104,7 +104,7 @@ if(@roleId=1)
         
  else        
   Begin        
-   select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+   select distinct im.id as imid, im.IRFId, im.SessionId,IRF.IsAIInterview,im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
    --@EmailId as ClientHrContact,   
    ca.ClientHRAttemptContact as ClientHrContact,  
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -147,7 +147,7 @@ else if(@roleId=4)
  Begin        
   if(@timeNow is not null)        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  --ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,        
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -185,7 +185,7 @@ else if(@roleId=4)
    End        
   else if((@startDate is not null) and (@endDate is not null))        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  --ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,     
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -267,7 +267,7 @@ else if(@roleId=9)
  Begin        
   if(@timeNow is not null)        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId, im.SessionId,IRF.IsAIInterview,im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,       
@@ -302,7 +302,7 @@ else if(@roleId=9)
    End        
   else if((@startDate is not null) and (@endDate is not null))        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId, im.SessionId,IRF.IsAIInterview,im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,       
@@ -337,7 +337,7 @@ else if(@roleId=9)
    End        
   else        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,       
@@ -374,7 +374,7 @@ else
  Begin        
   if(@timeNow is not null)        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId, im.SessionId,IRF.IsAIInterview,im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  --ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,        
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -414,7 +414,7 @@ else
    End        
   else if((@startDate is not null) and (@endDate is not null))        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  --ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
@@ -453,7 +453,7 @@ else
    End        
   else        
    Begin        
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+    select im.id as imid, im.IRFId,im.SessionId,IRF.IsAIInterview, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
  --ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,   
  ca.ClientHRAttemptContact as ClientHrContact,  
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
