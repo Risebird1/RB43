@@ -23,13 +23,13 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
  Begin                          
                        
                       
- select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                           
+ select distinct im.id imid,im.IRFId,im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                           
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry, IRF.CalendlyLink,                                    
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,                         
   case when ulc.LastName is null then ulc.FirstName                        
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                        
   end as candidateName,                        
-  im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                      
+  im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,im.SessionId,IRF.IsAIInterview,                                      
   IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.CalendlyLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                                
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                     
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                            
@@ -75,7 +75,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                        
   end as candidateName,                        
   im.currentEmployerName,                                       
-  im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                      
+  im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, im.SessionId,IRF.IsAIInterview,                                      
   IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.CalendlyLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                                
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                     
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                            
@@ -122,7 +122,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                        
   end as candidateName,                        
   im.currentEmployerName,                                       
-  im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                      
+  im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, im.SessionId,IRF.IsAIInterview,                                      
   IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.CalendlyLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                                
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                     
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                            
@@ -169,9 +169,8 @@ else
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                        
   end as candidateName,                        
   im.currentEmployerName,                                       
-  im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                                      
-  IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerCom
-ment,                                
+  im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, im.SessionId,IRF.IsAIInterview,                                      
+  IRF.id as irfIntId,IRF.JDLink as JDLink,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,                                
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                                     
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,                            
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                            
