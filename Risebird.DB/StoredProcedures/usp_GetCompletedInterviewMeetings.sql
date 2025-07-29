@@ -13,11 +13,11 @@ Create PROCEDURE [dbo].[usp_GetCompletedInterviewMeetings]
 @endDate datetime            
 AS                 
 Begin  
-select distinct im.id imid,im.IRFId, im.interviewDate,im.candidateEmail,im.ClientHrContact, im.interviewer, ulin.mobilenumber,                 
+select distinct im.id as imid,im.IRFId, im.interviewDate,im.candidateEmail,im.ClientHrContact, im.interviewer, ulin.mobilenumber,                 
 im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,pm.DurationSelectedMin as interviewDuration,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,IRF.ClientName,IRF.IsVideoRequired,ic.VideoLink,ic.InterviewerComment,            
 ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus,ul.EmailId as risebirdHR,ulin.FirstName as InterviewerName,    
 im.HRCoordinatorEmailId,cl.[Name] as Client,tqc.id as QCPresent,  
-imjt.Joinedon,im.IsEmergency,im.EIAssigned
+imjt.Joinedon,im.IsEmergency,im.EIAssigned,im.SessionId,IRF.IsAIInterview
 from InterviewMeetings im                  
 inner join IRF on im.IRFId = IRF.IRFId     
 join USerList uli on uli.EmailId=im.candidateEmail  

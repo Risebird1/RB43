@@ -16,7 +16,7 @@ Declare @Profile varchar(150)
 Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile where EmailId=@EmailId  
 if (@Profile = 'SeniorHR' or @Profile = 'HR')  
 Begin  
-Select im.*,case when ulc.LastName is null then ulc.FirstName                    
+Select im.*, im.SessionId,IRF.IsAIInterview,case when ulc.LastName is null then ulc.FirstName                    
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                    
   end as candidateName ,    
   ulc.EmailId as candidateEmailId,IRF.id as irfIntId, ri.CreatedBy, ri.Createdon,ulco.EmailId as ChannelOwner    
@@ -28,7 +28,7 @@ where ISNULL(Approved,0)=0 and  ISNULL(Rejected,0)=0 and Isnull(IRF.IsPaused,0)=
 End  
 Else  
 Begin  
-Select im.*,case when ulc.LastName is null then ulc.FirstName                    
+Select im.*,im.SessionId,IRF.IsAIInterview,case when ulc.LastName is null then ulc.FirstName                    
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                    
   end as candidateName ,    
   ulc.EmailId as candidateEmailId,IRF.id as irfIntId, ri.CreatedBy, ri.Createdon,ulco.EmailId as ChannelOwner    

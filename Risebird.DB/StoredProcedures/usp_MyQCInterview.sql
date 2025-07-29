@@ -12,7 +12,7 @@ Create Procedure usp_MyQCInterview
 @emailId varchar(100)
 As
 Begin
-select distinct im.interviewDate,irf.JDLink,irf.id as irfIntId,irf.IRFId,im.interviewer,im.candidateEmail,im.candidateName,im.id as imid,ip.NickName,tqoi.IsCompleted as IsQC,irf.CompanyDetails as FeedbackAudioLink
+select distinct im.interviewDate,irf.JDLink,irf.id as irfIntId,irf.IRFId,im.interviewer,im.candidateEmail,im.candidateName,im.id as imid,ip.NickName,tqoi.IsCompleted as IsQC,irf.CompanyDetails as FeedbackAudioLink,im.SessionId,irf.IsAIInterview
 from TechQualityDetails tqoi
 Join InterviewMeetings im on tqoi.Interviewid=im.id
 join IRF irf on im.IRFId=irf.IRFId

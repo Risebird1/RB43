@@ -95,7 +95,8 @@ namespace Risebird.Web.Controllers
                     var model = new ChatMessageViewModel
                     {
                         SessionId = sid,
-                        ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList()
+                        ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                        
                     };
 
 

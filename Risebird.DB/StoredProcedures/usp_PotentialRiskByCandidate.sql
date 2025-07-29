@@ -34,7 +34,8 @@ Begin
 --END  
 --ELSE  
 --BEGIN  
-select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,cfd.Rating,cfd.CreatedOn as RatingAddedOn, itp.RedMarker,  
+select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,im.SessionId,
+IRF.IsAIInterview,  cfd.Rating,cfd.CreatedOn as RatingAddedOn, itp.RedMarker,  
 cl.Name as Name, cfd.interviewid,ic.InterviewStatus,ps.IsApproved,cm.id as CandidateMasterId  
 from CandidateFeedbackDetails cfd  
 inner join InterviewMeetings im  on cfd.interviewid=im.id  

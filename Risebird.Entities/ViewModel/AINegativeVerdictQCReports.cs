@@ -32,5 +32,7 @@ namespace Risebird.Entities.ViewModel
         public int AIReportQCAnalysisScore { get; set; }
         //public intg AudioTranscriptFileLink { get; set; }
         //public int QCPresent { get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
     }
 }

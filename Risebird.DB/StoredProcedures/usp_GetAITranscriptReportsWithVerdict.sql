@@ -16,7 +16,7 @@ As
 Begin
 
  
-	Select distinct im.id as InterviewId, IRF.id as irfIntId, im.interviewDate,IRF.IRFId,
+	Select distinct im.id as InterviewId, IRF.id as irfIntId, im.interviewDate,IRF.IRFId,im.SessionId,IRF.IsAIInterview,
 	im.candidateName, im.candidateEmail, im.interviewer, ul.MobileNumber as InterviewerMobileNumber,
 	uli.EmailId as ChannelOwner, ic.InterviewStatus,
 	im.confirmationStatus, ic.MeetingStatus, ic.AudioTranscriptFileLink, 
