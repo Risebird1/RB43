@@ -4621,16 +4621,16 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 if (model != null)
                 {
-                        if (TempData["SuccessErrorMessageMarketPlace1"] != null)
+                    if (TempData["SuccessErrorMessageMarketPlace1"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageMarketPlace1"].ToString();
+                        if (TempData["SuccessErrorMessageMarketPlace2"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessageMarketPlace1"].ToString();
-                            if (TempData["SuccessErrorMessageMarketPlace2"] != null)
-                            {
-                                ViewBag.Message2 = TempData["SuccessErrorMessageMarketPlace2"].ToString();
-                                TempData.Remove("SuccessErrorMessageMarketPlace2");
-                            }
-                            TempData.Remove("SuccessErrorMessageMarketPlace1");
+                            ViewBag.Message2 = TempData["SuccessErrorMessageMarketPlace2"].ToString();
+                            TempData.Remove("SuccessErrorMessageMarketPlace2");
                         }
+                        TempData.Remove("SuccessErrorMessageMarketPlace1");
+                    }
                     return View(model);
                 }
                 return View(model);
@@ -6700,7 +6700,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 if (candidateList != null && candidateList.Any())
                                 {
-                                    var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, ProjectUniqueid);
+                                    var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, emailid, true, ProjectUniqueid);
                                     foreach (var item in resultset.list)
                                     {
                                         _list.Add(new CandidateExportStatusList { emailId = item.emailId, onboardingStatus = item.onboardingStatus });
@@ -6895,7 +6895,7 @@ namespace Risebird.Web.Controllers
                     candidateList.Add(candidate);
                     if (type == "Project")
                     {
-                        var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, "", true, model.IRFName);
+                        var resultset = await _irfService.AddMultipleCandidatesViaApi(candidateList, emailids, true, model.IRFName);
                         result = resultset.list?.FirstOrDefault().onboardingStatus;
                     }
                     else
