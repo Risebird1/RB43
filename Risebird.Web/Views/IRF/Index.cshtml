@@ -45,6 +45,51 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 
+    .card-ai-interview {
+        border-radius: 4px;
+        background-color: #e8f4fd !important; /* Light blue background for AI interviews */
+        background-color: var(--mdc-theme-surface, #e8f4fd) !important;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        border-right: 1px solid #2196f3a3 !important;\
+        border-bottom: 1px solid #2196f3a3 !important;
+        border-top: 1px solid #2196f3a3 !important;
+        border-left: 4px solid #2196F3 !important; /* Blue left border to indicate AI interview */
+    }
+
+    .card-ai-interview  .card-body .client-field {
+        display: block;
+        float: left;
+        font-weight: bold;
+        padding-right: 4px;
+        margin-bottom: 10px;
+        line-height: 18px;
+    }
+
+        .card-ai-interview .card-header h6 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            line-height: 20px;
+            color: #0c2642;
+            padding: 0;
+            margin: 0;
+        }
+
+        .card-ai-interview .card-body {
+            margin: 0px;
+            padding: 12px 5px 10px 5px;
+            background-color: #e2f1fd94 !important;
+               border-top: 2px #2196f3a3 solid !important;
+            border-bottom: 2px #2196f3a3 solid !important;
+        }
+
+        .card-ai-interview .card-footer {
+            background-color: #e2eff9;
+            border-top: 1px solid #d1e7f0;
+        }
 </style>
 
 
@@ -332,7 +377,7 @@
                                         @foreach (var item in Model.IRFList)
                                         {
                                             <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
-                                                <div class="card-content-holder border card-blue">
+                                                <div class="card-content-holder border @(item.IsAIInterview ? "card-ai-interview" : "card-blue")">
                                                     <div class="card-header">
                                                         <div class="w-full">
                                                             <div class="w60">
