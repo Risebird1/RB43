@@ -89,7 +89,7 @@ namespace Risebird.Web.Controllers
                         techSkillsJson = meetingDetails.TechSkillsInJson;
                     }
                     // For demo: tech stack prompt
-                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent}. Proceed as per the instructions fed to you.";
+                    string candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
                     var result = await _api.StartConversation(sid, candidatePrompt);
 
                     var model = new ChatMessageViewModel
