@@ -13,7 +13,7 @@
             color: #222;
             margin-bottom: 36px;
             letter-spacing: -0.5px;
-            line-height: 1.2;
+            line-height: 1.3;
             transition: color 0.2s;
         margin-bottom: 20px;
         }
@@ -962,8 +962,8 @@
             <div class="rb-chat-section mt-3">
                 <div class="rb-chatbox-container">
                     <div class="rb-chatgpt-welcome">
-                        Let's start the interview
-                    </div>
+                        <span style="font-size: 27px;"> Welcome!</span> <span style="color: #47bc80;">@Model.candidateName</span><br> <span style="padding-top: 5px;display: inline-block;font-size: 25px;font-weight:300;">Let's start the interview </span>
+                      </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
                         <input type="hidden" asp-for="InterviewId" />

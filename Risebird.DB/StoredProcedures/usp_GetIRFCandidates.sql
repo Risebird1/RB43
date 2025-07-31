@@ -31,7 +31,7 @@ end
   
 if(@roleId = 1) --client HR  
 begin  
-select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.InterviewStatus, ims.VideoLink, ims.imid from       
+select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.InterviewStatus, ims.VideoLink, ims.imid,ims.SessionId from       
 (select ca.id, ca.IRFId, ca.ResumeLink,ca.TotalInvites, ca.[Type], ca.[Location], ca.Skill, ca.WorkAuth, ca.CurrentLocation, ca.CurrentEmployer,      
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,      
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,      
@@ -41,7 +41,7 @@ case
   when ul.LastName is null then ul.FirstName  
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))  
 end as [Name],  
-IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,      
+IRF.EndDate, IRF.IRFId as IRFName,IRF.IsAIInterview,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,      
 tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor, ca.CodedResumeLink, ca.IsResumeRedactAttempted,  
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
@@ -58,7 +58,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus  
 where ca.IRFId = @IRFId and (ca.ClientHRAttemptContact = @emailId or ca.AddedByUserId =(select id from UserList where EmailId =@emailId))) Cnd        
-left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
+left join (select im.id as imid,im.interviewDate, im.SessionId,im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
@@ -66,7 +66,7 @@ left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEm
 end  
 else if(@roleId = 4) --staffing agency
 begin  
-select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.InterviewStatus, ims.VideoLink, ims.imid from       
+select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.InterviewStatus, ims.VideoLink, ims.imid,ims.SessionId from       
 (select ca.id, ca.IRFId, ca.ResumeLink,ca.TotalInvites, ca.[Type], ca.[Location], ca.Skill, ca.WorkAuth, ca.CurrentLocation, ca.CurrentEmployer,      
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,      
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,      
@@ -76,7 +76,7 @@ case
   when ul.LastName is null then ul.FirstName  
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))  
 end as [Name],  
-IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,      
+IRF.EndDate, IRF.IRFId as IRFName,IRF.IsAIInterview,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,      
 tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor, ca.CodedResumeLink, ca.IsResumeRedactAttempted,  
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
@@ -93,7 +93,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus  
 where ca.IRFId = @IRFId and (ca.ProfileSource = @emailId or ca.AddedByUserId =(select id from UserList where EmailId =@emailId))) Cnd        
-left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
+left join (select im.id as imid,im.interviewDate,im.SessionId, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
@@ -102,7 +102,7 @@ end
   
 else  
 begin  
-select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.InterviewStatus, ims.VideoLink, ims.imid from       
+select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.InterviewStatus, ims.VideoLink, ims.imid,ims.SessionId from       
 (select ca.id, ca.IRFId, ca.ResumeLink,ca.TotalInvites, ca.[Type], ca.[Location], ca.Skill, ca.WorkAuth, ca.CurrentLocation, ca.CurrentEmployer,      
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,      
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,      
@@ -112,7 +112,7 @@ case
   when ul.LastName is null then ul.FirstName  
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))  
 end as [Name],  
-IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,      
+IRF.EndDate, IRF.IRFId as IRFName,IRF.IsAIInterview,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,      
 tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor, ca.CodedResumeLink, ca.IsResumeRedactAttempted,  
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
@@ -129,7 +129,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus  
 where ca.IRFId = @IRFId) Cnd        
-left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
+left join (select im.id as imid,im.interviewDate,im.SessionId, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
