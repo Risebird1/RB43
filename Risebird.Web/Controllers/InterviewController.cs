@@ -37,7 +37,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 
 namespace Risebird.Web.Controllers
@@ -3200,239 +3199,281 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.PageStatus = "Mainurl";
-                ViewBag.ClientDetails = "";
-                string OrginalProfileName = string.Empty;
-                if (HttpContext.Session.GetString("email") != null &&
-                    HttpContext.Session.GetString("profileName") != null)
+                if(model.IsAIInterview)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-
-                    emailid = emailid.Replace("\"", "");
-                    model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
+                    if (HttpContext.Session.GetString("email") != null &&
+                        HttpContext.Session.GetString("profileName") != null)
                     {
-                        if (model.AudioFile != null)
+                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                        profileName = profileName.Replace("\"", "");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+
+                        emailid = emailid.Replace("\"", "");
+                        if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
                         {
-                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
+                            var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
+                            if(result)
                             {
-                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                                string uploadedaudioFileURL = blob.Uri.ToString();
-                                if (uploadedaudioFileURL == null)
-                                {
-                                    ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    await GetStatusList(model);
-                                    return View("AddReport", model);
-                                }
-                                else
-                                {
-                                    model.ThumbnailImage = uploadedaudioFileURL;
-                                }
+                                TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
+
                             }
-                        }
-                        string uploadedvideoFileURL = string.Empty;
-
-                        if (model.VideoFile != null)
-                        {
-                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
-                            if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
-                                || fileMimeType == "video/quicktime")
+                            else
                             {
-                                AzureCall _call = new AzureCall(_configuration);
-                                //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
-                                var resulttype = _call.CallApiUpload(model.VideoFile);
-                                resulttype = resulttype.Replace("\"", "");
-                                uploadedvideoFileURL = resulttype;
+                                TempData["SuccessErrorMessage"] = "Failed to save the report!";
 
-                                if (uploadedvideoFileURL == null)
-                                {
-                                    ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    await GetStatusList(model);
-                                    return View("AddReport", model);
-                                }
-                                else
-                                {
-                                    model.VideoLink = uploadedvideoFileURL;
-                                }
-                            }
-                        }
-                        else if (model.PageVideoLink != null)
-                        {
-                            model.VideoLink = model.PageVideoLink;
-                        }
-                        else if (model.VideoFile != null)
-                        {
-
-                            //Start:Generate Thumbnail from Vedio
-                            //string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
-                            //using (var stream = new FileStream(path, FileMode.Create))
-                            //{
-                            //    await model.VideoFile.CopyToAsync(stream);
-                            //}
-
-                            //var inputFile = new MediaFile { Filename = path };
-                            //string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
-                            //var outputFile = new MediaFile { Filename = @outputFileName };
-                            //for (int i = 0; i < 1000; i++)
-                            //{
-                            //    using (var engine = new Engine())
-                            //    {
-                            //        engine.GetMetadata(inputFile);
-                            //        var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(i) };
-                            //        if (System.IO.File.Exists(outputFileName))
-                            //        {
-                            //            System.IO.File.Delete(outputFileName);
-                            //            engine.GetThumbnail(inputFile, outputFile, options);
-                            //        }
-                            //        else
-                            //        {
-                            //            engine.GetThumbnail(inputFile, outputFile, options);
-                            //        }
-                            //    }
-                            //    var resultset = _azureFaceApi.FaceDetectionResult(outputFileName);
-                            //    if (resultset.Contains("faceId"))
-                            //    {
-                            //        break;
-                            //    }
-                            //}
-                            ////End:Generate Thumbnail from Vedio
-                            //using (var stream = System.IO.File.OpenRead(outputFileName))
-                            //{
-                            //    var imagefile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
-                            //    {
-                            //        Headers = new HeaderDictionary(),
-                            //        ContentType = "application/jpg"
-                            //    };
-                            //    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", imagefile);
-                            //    var containerImageRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                            //    var imageblob = containerImageRef.GetBlockBlobReference(outputFileName);
-                            //    string uploadedImageFileURL = imageblob.Uri.ToString();
-                            //    model.ThumbnailImage = uploadedImageFileURL;
-                            //    System.IO.File.Delete(path);
-                            //    System.IO.File.Delete(outputFileName);
-                            //}
-                        }
-                        if (model.CandidateFile != null)
-                        {
-                            Guid _guid = Guid.NewGuid();
-                            string outputFileName = model.CandidateFile.FileName.Replace(" ", "_");
-                            outputFileName = _guid.ToString() + outputFileName;
-                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFile);
-                            FileInfo fi = new FileInfo(outputFileName);
-                            if (fi.Extension.ToLower() == ".txt")
-                            {
-                                await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model.CandidateFile, fi.Extension.ToLower());
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
-                                var blob = containerRef.GetBlockBlobReference(outputFileName);
-                                var uploadedFileURL = blob.Uri.ToString();
-                                if (!string.IsNullOrEmpty(uploadedFileURL))
-                                {
-                                    model.CodeSnippet = uploadedFileURL;
-                                }
-                            }
-                        }
-                        if (model.CandidateFileTwo != null)
-                        {
-                            Guid _guid = Guid.NewGuid();
-                            string outputFileName = model.CandidateFileTwo.FileName.Replace(" ", "_");
-                            outputFileName = _guid.ToString() + outputFileName;
-                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFileTwo);
-                            FileInfo fi = new FileInfo(outputFileName);
-                            if (fi.Extension.ToLower() == ".txt")
-                            {
-                                await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model.CandidateFileTwo, fi.Extension.ToLower());
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
-                                var blob = containerRef.GetBlockBlobReference(outputFileName);
-                                var uploadedFileURL = blob.Uri.ToString();
-                                if (!string.IsNullOrEmpty(uploadedFileURL))
-                                {
-                                    model.CodeSnippetTwo = uploadedFileURL;
-                                }
-                            }
-                        }
-                        model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
-                        await ReportSkillSetandCombine(model);
-                        if (await _meetingService.AddInterviewReport(model, emailid))
-                        {
-                            await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
-                            if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
-                            {
-                                //Send mail to client for report
-
-                                //find all IRFowner and Users
-                                var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
-
-                                //var maillist = string.Join(";", clientlist);
-                                //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
-                                //Mail _mail1 = new Mail
-                                //{
-                                //    TO = maillist,
-                                //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
-                                //};
-                                if (model.SkillSetsevaluate > 1)
-                                {
-                                    model.JDTiltle = model.JDTiltle + " and " + model.JDTitleTwo;
-                                }
-                                //UST US
-                                if ((model.InterviewStatus == 3 || model.InterviewStatus == 5 || model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId == 67)
-                                {
-                                    var portallink = "https://" + Request.Host.ToString();
-                                    var reportlink = await GenerateExecutiveReportURl(portallink, model.InterviewId, model.IRFId);
-                                    await _notificationHelper.SendNotificationToClientForSelectedCandidatewithReport(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId, reportlink);
-                                }
-                                else if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
-                                {
-                                    await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
-                                }
-
-                                //var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
-                                //send mail to candiate or interviewer
-                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
-                                Mail _mail = new Mail
-                                {
-                                    TO = model.CandidateEmail,
-                                    Subject = "Risebird: Interview Feedback"
-                                };
-                                var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
-                                WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                                _whatsAppVM.Emailid = model.CandidateEmail;
-                                _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
-                                _whatsAppVM.Event = "Risebird: Interview Feedback";
-                                _whatsAppVM.irfId = model.IRFId;
-                                _whatsAppVM.InterviewId = model.InterviewId;
-                                await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
-                            }
-                            TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
-                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
-                            {
-                                return RedirectToAction("Index");
                             }
                             return RedirectToAction("MyInterview");
+
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                            {
-                                return RedirectToAction("Index");
-                            }
-                            return RedirectToAction("MyInterview");
+                            return RedirectToAction("SignOut", "Session");
+
                         }
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Interview");
+                        return RedirectToAction("SignOut", "Session");
+
                     }
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    ViewBag.PageStatus = "Mainurl";
+                    ViewBag.ClientDetails = "";
+                    string OrginalProfileName = string.Empty;
+                    if (HttpContext.Session.GetString("email") != null &&
+                        HttpContext.Session.GetString("profileName") != null)
+                    {
+                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                        profileName = profileName.Replace("\"", "");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+
+                        emailid = emailid.Replace("\"", "");
+                        model.UserDetails = emailid;
+                        if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
+                        {
+                            if (model.AudioFile != null)
+                            {
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
+                                {
+                                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                    string uploadedaudioFileURL = blob.Uri.ToString();
+                                    if (uploadedaudioFileURL == null)
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
+                                        await GetStatusList(model);
+                                        return View("AddReport", model);
+                                    }
+                                    else
+                                    {
+                                        model.ThumbnailImage = uploadedaudioFileURL;
+                                    }
+                                }
+                            }
+                            string uploadedvideoFileURL = string.Empty;
+
+                            if (model.VideoFile != null)
+                            {
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                                    || fileMimeType == "video/quicktime")
+                                {
+                                    AzureCall _call = new AzureCall(_configuration);
+                                    //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                                    var resulttype = _call.CallApiUpload(model.VideoFile);
+                                    resulttype = resulttype.Replace("\"", "");
+                                    uploadedvideoFileURL = resulttype;
+
+                                    if (uploadedvideoFileURL == null)
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Video Upload is failed.");
+                                        await GetStatusList(model);
+                                        return View("AddReport", model);
+                                    }
+                                    else
+                                    {
+                                        model.VideoLink = uploadedvideoFileURL;
+                                    }
+                                }
+                            }
+                            else if (model.PageVideoLink != null)
+                            {
+                                model.VideoLink = model.PageVideoLink;
+                            }
+                            else if (model.VideoFile != null)
+                            {
+
+                                //Start:Generate Thumbnail from Vedio
+                                //string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
+                                //using (var stream = new FileStream(path, FileMode.Create))
+                                //{
+                                //    await model.VideoFile.CopyToAsync(stream);
+                                //}
+
+                                //var inputFile = new MediaFile { Filename = path };
+                                //string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
+                                //var outputFile = new MediaFile { Filename = @outputFileName };
+                                //for (int i = 0; i < 1000; i++)
+                                //{
+                                //    using (var engine = new Engine())
+                                //    {
+                                //        engine.GetMetadata(inputFile);
+                                //        var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(i) };
+                                //        if (System.IO.File.Exists(outputFileName))
+                                //        {
+                                //            System.IO.File.Delete(outputFileName);
+                                //            engine.GetThumbnail(inputFile, outputFile, options);
+                                //        }
+                                //        else
+                                //        {
+                                //            engine.GetThumbnail(inputFile, outputFile, options);
+                                //        }
+                                //    }
+                                //    var resultset = _azureFaceApi.FaceDetectionResult(outputFileName);
+                                //    if (resultset.Contains("faceId"))
+                                //    {
+                                //        break;
+                                //    }
+                                //}
+                                ////End:Generate Thumbnail from Vedio
+                                //using (var stream = System.IO.File.OpenRead(outputFileName))
+                                //{
+                                //    var imagefile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
+                                //    {
+                                //        Headers = new HeaderDictionary(),
+                                //        ContentType = "application/jpg"
+                                //    };
+                                //    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", imagefile);
+                                //    var containerImageRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                                //    var imageblob = containerImageRef.GetBlockBlobReference(outputFileName);
+                                //    string uploadedImageFileURL = imageblob.Uri.ToString();
+                                //    model.ThumbnailImage = uploadedImageFileURL;
+                                //    System.IO.File.Delete(path);
+                                //    System.IO.File.Delete(outputFileName);
+                                //}
+                            }
+                            if (model.CandidateFile != null)
+                            {
+                                Guid _guid = Guid.NewGuid();
+                                string outputFileName = model.CandidateFile.FileName.Replace(" ", "_");
+                                outputFileName = _guid.ToString() + outputFileName;
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFile);
+                                FileInfo fi = new FileInfo(outputFileName);
+                                if (fi.Extension.ToLower() == ".txt")
+                                {
+                                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model.CandidateFile, fi.Extension.ToLower());
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
+                                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                                    var uploadedFileURL = blob.Uri.ToString();
+                                    if (!string.IsNullOrEmpty(uploadedFileURL))
+                                    {
+                                        model.CodeSnippet = uploadedFileURL;
+                                    }
+                                }
+                            }
+                            if (model.CandidateFileTwo != null)
+                            {
+                                Guid _guid = Guid.NewGuid();
+                                string outputFileName = model.CandidateFileTwo.FileName.Replace(" ", "_");
+                                outputFileName = _guid.ToString() + outputFileName;
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFileTwo);
+                                FileInfo fi = new FileInfo(outputFileName);
+                                if (fi.Extension.ToLower() == ".txt")
+                                {
+                                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model.CandidateFileTwo, fi.Extension.ToLower());
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
+                                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                                    var uploadedFileURL = blob.Uri.ToString();
+                                    if (!string.IsNullOrEmpty(uploadedFileURL))
+                                    {
+                                        model.CodeSnippetTwo = uploadedFileURL;
+                                    }
+                                }
+                            }
+                            model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
+                            await ReportSkillSetandCombine(model);
+                            if (await _meetingService.AddInterviewReport(model, emailid))
+                            {
+                                await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
+                                if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
+                                {
+                                    //Send mail to client for report
+
+                                    //find all IRFowner and Users
+                                    var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+
+                                    //var maillist = string.Join(";", clientlist);
+                                    //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
+                                    //Mail _mail1 = new Mail
+                                    //{
+                                    //    TO = maillist,
+                                    //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
+                                    //};
+                                    if (model.SkillSetsevaluate > 1)
+                                    {
+                                        model.JDTiltle = model.JDTiltle + " and " + model.JDTitleTwo;
+                                    }
+                                    //UST US
+                                    if ((model.InterviewStatus == 3 || model.InterviewStatus == 5 || model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId == 67)
+                                    {
+                                        var portallink = "https://" + Request.Host.ToString();
+                                        var reportlink = await GenerateExecutiveReportURl(portallink, model.InterviewId, model.IRFId);
+                                        await _notificationHelper.SendNotificationToClientForSelectedCandidatewithReport(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId, reportlink);
+                                    }
+                                    else if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
+                                    {
+                                        await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
+                                    }
+
+                                    //var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                                    //send mail to candiate or interviewer
+                                    string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
+                                    Mail _mail = new Mail
+                                    {
+                                        TO = model.CandidateEmail,
+                                        Subject = "Risebird: Interview Feedback"
+                                    };
+                                    var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
+                                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                    _whatsAppVM.Emailid = model.CandidateEmail;
+                                    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                                    _whatsAppVM.Event = "Risebird: Interview Feedback";
+                                    _whatsAppVM.irfId = model.IRFId;
+                                    _whatsAppVM.InterviewId = model.InterviewId;
+                                    await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                                }
+                                TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
+                                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                                return RedirectToAction("MyInterview");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
+                                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                                return RedirectToAction("MyInterview");
+                            }
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Interview");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
+                
             }
             catch (Exception ex)
             {
@@ -9229,5 +9270,54 @@ namespace Risebird.Web.Controllers
             model.Interviewerid = interviewerid;
             await _activityTrackerService.SaveCaptureInterviewerRelatedPageClick(model);
         }
+
+        //[Authorize]
+        //[ValidateAntiForgeryToken]
+        //[HttpPost]
+        //public async Task<IActionResult> SubmitProctorEvaluation(Meeting model)
+        //{
+        //    string emailId = string.Empty;
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            emailId = HttpContext.Session.GetString("email")?.Trim();
+        //            emailId = emailId.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "Interviewer"/*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
+        //            {
+        //                var meetingDetails = await _meetingService.GetMeetingbyid(model.id, emailId);
+
+        //                var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
+        //                if (result)
+        //                {
+        //                    TempData["SuccessErrorProctorEvaluationMessage"] = $"Report for candidate: '{meetingDetails.candidateEmailId}' for interview dated {meetingDetails.interviewDate.ToString()} saved Successfully!";
+                            
+        //                    return RedirectToAction("MyInterview");
+        //                }
+        //                else
+        //                {
+        //                    TempData["SuccessErrorProctorEvaluationMessage"] = $"Failed to save report for candidate: '{meetingDetails.candidateEmailId}' for interview dated {meetingDetails.interviewDate.ToString()}!";
+        //                    return RedirectToAction("MyInterview");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {emailId}");
+        //        TempData["SuccessErrorProctorEvaluationMessage"] = "Failed to create Skills Channel!";
+        //        return RedirectToAction("MyInterview");
+        //    }
+        //}
     }
 }

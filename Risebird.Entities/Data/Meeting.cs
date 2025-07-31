@@ -140,6 +140,7 @@ namespace Risebird.Entities.Data
         public string AIVerdict { get; set; }
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
+        public int Score { get; set; }
 
     }
 }
