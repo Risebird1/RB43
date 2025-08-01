@@ -41,7 +41,7 @@ if(@roleId=1)
   IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          
   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid        
+  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid ,im.SessionId,IRF.IsAIInterview       
   from InterviewMeetings im           
   inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -76,7 +76,7 @@ else if(@roleId=4)
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
   IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments, ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid         
+  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid,im.SessionId,IRF.IsAIInterview         
   from InterviewMeetings im           
  inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -109,7 +109,7 @@ else if(@roleId=9)
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
   IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments, ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid       
+  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid,im.SessionId,IRF.IsAIInterview       
   from InterviewMeetings im           
  inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -142,7 +142,7 @@ else
   IRF.ClientId,IRF.ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          
   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,          
-  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid            
+  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,ca.IsProctor,ipr.NickName,im.RedoInterview,pr.ProjectUniqueid,im.SessionId,IRF.IsAIInterview            
   from InterviewMeetings im           
   inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           

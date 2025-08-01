@@ -63,6 +63,8 @@ namespace Risebird.Entities.ViewModel
         public int irfIntId { get; set; }
         public int InterviewId { get; set; }
         public bool RedoInterview { get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
     }
     public class SurveyCandidateInterviewer
     {

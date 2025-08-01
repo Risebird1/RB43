@@ -81,6 +81,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Correct Interview flow followed")]
         public string CorrectInterview{ get; set; }
         public string FeedBackComment{ get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
     }
     public class PaymentSlabsVM
     {
