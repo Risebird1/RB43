@@ -405,5 +405,21 @@ namespace Risebird.Web.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GetAIInterviewUrl(Guid sid)
+        {
+            try
+            {
+                // Construct the AI interview URL
+                string aiInterviewUrl = "https://" + Request.Host.ToString() + "/AIInterview/Index?sid=" + sid;
+                return Json(aiInterviewUrl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
     }
 }
