@@ -549,6 +549,7 @@
             justify-content: center;
             gap: 32px;
             margin-top:15px;
+            z-index:10000;
         }
 
         .rb-footer-btn {
@@ -995,7 +996,6 @@
                                     <div class="wave-bar"></div>
                                     <div class="wave-bar"></div>
                                     <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
                                 </div>
                             </div>
                             <audio id="assistantAudio" controls hidden></audio>
@@ -1041,46 +1041,41 @@
                         @* <a target="_blank" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId})" class="rb-action-btn rb-back-btn">
                                 Generate AIInterview Report <i class="fa fa-arrow-right"></i>
                         </a> *@
-
-
                         @* option to the candidate to exit the interview here *@
                     </div>
                 </div>
             </div>
-           
         </div>
     </div>
-    
     <div id="waitOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); z-index: 1000; color: white; font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.6); z-index: 100000; color: white; font-size: 1.5rem;
     align-items: center; justify-content: center;">
         <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
+    <!-- Recording Indicator Overlay -->
+    <div id="recordingOverlay" style="display: none; position: fixed; top: 0; left: 0px; width: 100%; height: 100%; 
+    background-color: rgba(255, 81, 107, 0.1); z-index: 999; align-items: center; justify-content: center; pointer-events: none;">
+        <div style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:10px; 
+        text-align: center; box-shadow: 0 8px 32px rgba(255, 81, 107, 0.3); animation: recordingPulse 2s infinite; ">
+            <div style="font-size:2rem;">
+                <i class="fa fa-circle" style="color: #fff; animation: recordingBlink 1s infinite;"></i>
+            </div>
+            <div style="font-size: 1.5rem; font-weight: 600;">Recording in Progress</div>
+            <div style="font-size: 1rem; opacity: 0.9;">Your answer is being recorded...</div>
+        </div>
     </div>
-    @* <div id="waitOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-     background-color:rgba(0,0,0,0.6); z-index:1000; color:white; font-size:1.5rem; align-items:center;
-    justify-content:center;">
-        <div>Please wait while the assistant prepares the next question...</div>
-    </div> *@
-
-    @* <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            debugger;
-            //const form = document.querySelector("form");
-            const form = document.getElementById("chatForm");
-
-            const overlay = document.getElementById("waitOverlay");
-
-            if (form && overlay) {
-                console.log("Overlay script loaded");
-                form.addEventListener("submit", () => {
-                    console.log("Form is submitting...");
-                    overlay.style.display = "flex";
-                });
-            }
-        });
-    </script> *@
-
+    <style>
+        @@keyframes recordingPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @@keyframes recordingBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+    </style>
+</div>
 <script>
     @* let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
     let interviewId = parseInt("@Model.InterviewId");
@@ -1246,71 +1241,62 @@
         const recordBtn = document.getElementById("recordBtn");
         const audioInput = document.getElementById("audioInput");
         const videoInput = document.getElementById("videoInput");
-        const form = document.querySelector("form"); // 🔥 grabs the first form on the page
+        const form = document.querySelector("form");
         const overlay = document.getElementById("waitOverlay");
+        const recordingOverlay = document.getElementById("recordingOverlay");
+        function showRecordingOverlay() {
+            if (recordingOverlay) recordingOverlay.style.display = "flex";
+        }
+        function hideRecordingOverlay() {
+            if (recordingOverlay) recordingOverlay.style.display = "none";
+        }
         recordBtn.addEventListener("click", async () => {
             if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorderAudio = new MediaRecorder(stream);
-
-                mediaRecorderAudio.ondataavailable = e => {
-                    audioChunks.push(e.data);
-                };
-
+                mediaRecorderAudio.ondataavailable = e => { audioChunks.push(e.data); };
                 mediaRecorderAudio.onstop = async () => {
                     timerStopped = true;
                     clearInterval(countdownInterval);
-
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
-
-                    // populate the file input with blob data
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     audioInput.files = dataTransfer.files;
-
                     audioChunks = [];
                     recordBtn.textContent = "⭕";
                     recordBtn.setAttribute('data-tooltip', 'Record Audio');
+                    hideRecordingOverlay();
                     overlay.style.display = "flex";
                     stopRecording();
-                    // 🔥 Submit the form automatically
-
                 };
-
                 mediaRecorderAudio.start();
                 startRecording();
+                showRecordingOverlay();
                 recordBtn.textContent = "☐";
                 recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
-            } 
-            else if (mediaRecorderAudio.state === "recording") {
-                mediaRecorderAudio.stop(); // triggers onstop, which submits
+            } else if (mediaRecorderAudio.state === "recording") {
+                mediaRecorderAudio.stop();
             }
         });
     </script>
 
 
     <script>
+        // Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
         document.addEventListener('DOMContentLoaded', function () {
             const textarea = document.querySelector('.rb-chatbox-textarea');
             const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
             const form = document.querySelector('.rb-chatbox-form');
 
-            // Auto-resize textarea function
             function autoResizeTextarea() {
                 if (textarea) {
-                    // Reset height to auto to get the correct scrollHeight
                     textarea.style.height = 'auto';
-                    
-                    // Calculate new height based on content
                     const newHeight = Math.min(Math.max(textarea.scrollHeight, 36), 120);
-                    
-                    // Apply the new height
                     textarea.style.height = newHeight + 'px';
                 }
             }
 
-            // Function to show loading state
             function showLoading() {
                 if (sendBtn) {
                     sendBtn.classList.add('loading');
@@ -1322,7 +1308,6 @@
                 }
             }
 
-            // Function to hide loading state
             function hideLoading() {
                 if (sendBtn) {
                     sendBtn.classList.remove('loading');
@@ -1334,30 +1319,21 @@
                 }
             }
 
-            // Function to submit form
             function submitForm() {
                 if (textarea && textarea.value.trim().length > 0 && form) {
-                    // Show loading state
                     showLoading();
-                    
-                    // Add visual feedback
                     if (sendBtn) {
                         sendBtn.style.opacity = '0.7';
                         sendBtn.style.transform = 'scale(0.95)';
                     }
-                    
-                    // Submit the form
                     form.submit();
                 }
             }
 
-            // Enable/disable send button
             if (textarea && sendBtn) {
                 function toggleSendBtn() {
                     const hasContent = textarea.value.trim().length > 0;
                     sendBtn.disabled = !hasContent;
-                    
-                    // Visual feedback for button state
                     if (hasContent) {
                         sendBtn.style.opacity = '1';
                         sendBtn.style.transform = 'scale(1)';
@@ -1366,19 +1342,13 @@
                         sendBtn.style.transform = 'scale(1)';
                     }
                 }
-                
                 textarea.addEventListener('input', toggleSendBtn);
                 textarea.addEventListener('input', autoResizeTextarea);
                 toggleSendBtn();
-                
-                            // Initial resize
-            autoResizeTextarea();
-            
-            // Reset loading state on page load (in case of errors)
-            hideLoading();
-        }
+                autoResizeTextarea();
+                hideLoading();
+            }
 
-            // Send button click handler
             if (sendBtn) {
                 sendBtn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1386,7 +1356,6 @@
                 });
             }
 
-            // Submit on Enter, new line on Shift+Enter
             if (textarea && form) {
                 textarea.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -1394,163 +1363,139 @@
                         submitForm();
                     }
                 });
-
-                // Clear textarea after submit
                 form.addEventListener('submit', function () {
                     // Keep loading state active during form submission
-                    // The page will reload after submission, so we don't need to hide loading
                 });
-
-                // Handle form submission errors (if any)
                 form.addEventListener('error', function () {
                     hideLoading();
                 });
             }
         });
     </script>
-    <script>
-        let mediaRecorder, recordedBlobs;
-        let isRecording = false;
-        const video = document.getElementById('video');
-        const btnRecord = document.getElementById('btnRecord');
-        const btnRecordToggle = document.getElementById('btnRecordToggle');
-        let blobtransfer;
-        if (navigator.mediaDevices && video) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(function(stream) {
-                    video.srcObject = stream;
-                    window.stream = stream;
-                })
-                .catch(function(err) {
-                    alert('Could not access camera/microphone: ' + err);
-                });
-        }
-
-        if (btnRecordToggle) {
-            btnRecordToggle.onclick = function() {
-                if (!isRecording) {
-                    // Start Recording
-                    startRecording();
-                } else {
-                    // Stop Recording
-                    stopRecording();
-                }
-            };
-
-            
-        }
-        function startRecording() {
-                chunks = [];
-                let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
-                try {
-                    mediaRecorder = new MediaRecorder(window.stream, options);
-                } catch (e) {
-                    alert('MediaRecorder not supported: ' + e);
-                    return;
-                }
-
-                mediaRecorder.ondataavailable = function(event) {
-                    if (event.data && event.data.size > 0) {
-                        chunks.push(event.data);
-                    }
-                };
-                mediaRecorder.onstop = (ev) => {
-                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
-                    let videoURL = window.URL.createObjectURL(blob);
-                    console.log(videoURL);
-                    const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
-                    const dataTransfervideo = new DataTransfer();
-                    dataTransfervideo.items.add(filevideo);
-                    videoInput.files = dataTransfervideo.files;
-                    chunks = [];
-
-                    form.submit();
-                    //blobtransfer = blob;
-                }
-                // mediaRecorder.onstop = function() {
-                //     // Recording stopped - you can now upload or preview the video
-                //     console.log('Recording stopped. Blobs:', chunks);
-                //     // Example: let superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-                // };
-
-                mediaRecorder.start();
-                isRecording = true;
-
-                // Update UI
-                btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
-                btnRecordToggle.className = 'rb-record-btn rb-recording';
-                btnRecord.style.display = 'block';
-                btnRecord.style.animation = 'pulse 1.5s infinite';
+<script>
+    let mediaRecorder, recordedBlobs;
+    let isRecording = false;
+    const video = document.getElementById('video');
+    const btnRecord = document.getElementById('btnRecord');
+    const btnRecordToggle = document.getElementById('btnRecordToggle');
+    let blobtransfer;
+    if (navigator.mediaDevices && video) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+                window.stream = stream;
+            })
+            .catch(function(err) {
+                alert('Could not access camera/microphone: ' + err);
+            });
+    }
+    if (btnRecordToggle) {
+        btnRecordToggle.onclick = function() {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
             }
-
-            function stopRecording() {
-                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                    mediaRecorder.stop();
-                }
-
-                isRecording = false;
-                // Update UI
-                btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
-                btnRecordToggle.className = 'rb-record-btn';
-                btnRecord.style.display = 'none';
-                btnRecord.style.animation = 'none';
+        };
+    }
+    function startRecording() {
+        chunks = [];
+        let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
+        try {
+            mediaRecorder = new MediaRecorder(window.stream, options);
+        } catch (e) {
+            alert('MediaRecorder not supported: ' + e);
+            return;
+        }
+        mediaRecorder.ondataavailable = function(event) {
+            if (event.data && event.data.size > 0) {
+                chunks.push(event.data);
             }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let video = document.getElementById('video');
-            let footerVideoToggle = document.getElementById('footerVideoToggle');
-            let footerVideoIcon = document.getElementById('footerVideoIcon');
-            let mediaStreamObj = null;
-           let videoOn = true;
+        };
+        mediaRecorder.onstop = (ev) => {
+            let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+            let videoURL = window.URL.createObjectURL(blob);
+            const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
+            const dataTransfervideo = new DataTransfer();
+            dataTransfervideo.items.add(filevideo);
+            videoInput.files = dataTransfervideo.files;
+            chunks = [];
+            hideRecordingOverlay();
+            form.submit();
+        }
+        mediaRecorder.start();
+        isRecording = true;
+        showRecordingOverlay();
+        btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
+        btnRecordToggle.className = 'rb-record-btn rb-recording';
+        btnRecord.style.display = 'block';
+        btnRecord.style.animation = 'pulse 1.5s infinite';
+    }
+    function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+        isRecording = false;
+        hideRecordingOverlay();
+        btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
+        btnRecordToggle.className = 'rb-record-btn';
+        btnRecord.style.display = 'none';
+        btnRecord.style.animation = 'none';
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let video = document.getElementById('video');
+        let footerVideoToggle = document.getElementById('footerVideoToggle');
+        let footerVideoIcon = document.getElementById('footerVideoIcon');
+        let mediaStreamObj = null;
+        let videoOn = true;
 
-            // Set initial state to OFF
-            if (footerVideoIcon) footerVideoIcon.className = 'fa fa-video-camera';
-            if (video) video.style.opacity = 1;
+        // Set initial state to OFF
+        if (footerVideoIcon) footerVideoIcon.className = 'fa fa-video-camera';
+        if (video) video.style.opacity = 1;
 
-            if (footerVideoToggle && video) {
-                footerVideoToggle.addEventListener('click', function () {
-                    if (!videoOn) {
-                        // Turn video ON
-                        if (!mediaStreamObj) {
-                            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                                .then(function(stream) {
-                                    mediaStreamObj = stream;
-                                    if (video) {
-                                        video.srcObject = stream;
-                                        mediaStreamObj.getTracks().forEach(track => {
-                                            if (track.kind === 'video') track.enabled = true;
-                                        });
-                                        videoOn = true;
-                                        footerVideoIcon.className = 'fa fa-video-camera';
-                                        video.style.opacity = 1;
-                                    }
-                                })
-                                .catch(function(err) {
-                                    alert('Could not access camera/microphone: ' + err);
-                                });
-                        } else {
-                            mediaStreamObj.getTracks().forEach(track => {
-                                if (track.kind === 'video') track.enabled = true;
+        if (footerVideoToggle && video) {
+            footerVideoToggle.addEventListener('click', function () {
+                if (!videoOn) {
+                    // Turn video ON
+                    if (!mediaStreamObj) {
+                        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                            .then(function(stream) {
+                                mediaStreamObj = stream;
+                                if (video) {
+                                    video.srcObject = stream;
+                                    mediaStreamObj.getTracks().forEach(track => {
+                                        if (track.kind === 'video') track.enabled = true;
+                                    });
+                                    videoOn = true;
+                                    footerVideoIcon.className = 'fa fa-video-camera';
+                                    video.style.opacity = 1;
+                                }
+                            })
+                            .catch(function(err) {
+                                alert('Could not access camera/microphone: ' + err);
                             });
-                            videoOn = true;
-                            footerVideoIcon.className = 'fa fa-video-camera';
-                            if (video) video.style.opacity = 1;
-                        }
                     } else {
-                        // Turn video OFF
-                        if (mediaStreamObj) {
-                            mediaStreamObj.getTracks().forEach(track => {
-                                if (track.kind === 'video') track.enabled = false;
-                            });
-                        }
-                        videoOn = false;
-                        footerVideoIcon.className = 'fas fa-video-slash';
-                       if (video) video.style.opacity = 0;
+                        mediaStreamObj.getTracks().forEach(track => {
+                            if (track.kind === 'video') track.enabled = true;
+                        });
+                        videoOn = true;
+                        footerVideoIcon.className = 'fa fa-video-camera';
+                        if (video) video.style.opacity = 1;
                     }
-                });
-            }
-        });
-    </script>
-  
-</div>
+                } else {
+                    // Turn video OFF
+                    if (mediaStreamObj) {
+                        mediaStreamObj.getTracks().forEach(track => {
+                            if (track.kind === 'video') track.enabled = false;
+                        });
+                    }
+                    videoOn = false;
+                    footerVideoIcon.className = 'fas fa-video-slash';
+                    if (video) video.style.opacity = 0;
+                }
+            });
+        }
+    });
+</script>
