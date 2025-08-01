@@ -63,7 +63,8 @@ namespace Risebird.Entities.ViewModel
         public string MeetingPlatform { get; set; }
         public string zoomLink { get; set; }
         public string StatusValue { get; set; }
-
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
         public string LatestComment { get; set; }
         public string SchedulerUniqueid { get; set; }
         public DateTime EndDate { get; set; }

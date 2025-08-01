@@ -7654,5 +7654,30 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", model.InterviewId);
+                    parameters.Add("@InterviewerComment", model.InterviewerComment);
+                    parameters.Add("@MeetingStatus", model.MeetingStatus);
+                    parameters.Add("@InterviewStatus", model.InterviewStatus);
+                    parameters.Add("@TotalTechScore", model.TotalTechScore);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveAIInterviewProctorEvaluation", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
     }
 }

@@ -298,5 +298,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId);
+        Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
     }
 }
