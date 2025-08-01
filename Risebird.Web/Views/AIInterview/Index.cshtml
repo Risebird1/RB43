@@ -1044,7 +1044,7 @@
                         @* option to the candidate to exit the interview here *@
 
 
-                        <a target="_blank" href="#" class="rb-action-btn rb-back-btn">
+                        <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
                             Exit Interview <i class="fa fa-sign-out" "></i>
                         </a>
                     </div>
