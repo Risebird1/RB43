@@ -4493,6 +4493,18 @@ namespace Risebird.Business
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);
         }
+        public async Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model)
+        {
+            try
+            {
+                return await _meetingRespository.SaveAIInterviewProctorEvaluation(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

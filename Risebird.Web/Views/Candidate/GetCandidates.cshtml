@@ -822,9 +822,9 @@
                                                                         {
                                                                             <span class="interview_9">
                                                                                 <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Report" style="position:relative;top: 0px;width: 23px;height: 23px;background: #42a5f5;">
                                                                                             <span>
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                                <svg style="position:relative;top:-2px;left:-2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                                                                                     <!-- Report/document shape -->
                                                                                                     <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
                                                                                                     <path d="M15 2v5h5"></path>
@@ -859,9 +859,9 @@
                                                                     @if (!item.IsColdCandidate)
                                                                     {
                                                                         <div style="float:left">
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:22px!important;height:22px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;left:-3px;margin: 0px 0px 0px 3px;">
+                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:22px!important;height:22px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:2px;left:0px;margin: 0px 0px 0px 3px;">
                                                                                 <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                    <img src="~/img/approve-blk.png"  style="position: relative;top: -1.5px;left:-3px;max-width:17px;" />
+                                                                                   <img src="~/img/approve-blk.png" style="position: relative;top: -1.5px;left:-3px;max-width: 16px;" />
                                                                                 </span>
                                                                             </button>
                                                                         </div>
