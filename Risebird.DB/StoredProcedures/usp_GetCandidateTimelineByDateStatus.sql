@@ -26,7 +26,9 @@ set @clientRole =(select top 1 cu.RoleId from UserList ul join ClientUser cu on 
   if(@clientRole = 4) -- staffing agency                  
 begin   
 ;with CTE as (Select ca.id as CandidateId,IRF.id as imid,IRF.id as IRFId,ul.Emailid,IRF.IRFId as IRFname,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as Name,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ul.MobileNumber,ca.resumeLink,
-ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging   
+ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,
+ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,
+IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging, irf.IsAIInterview, im.SessionId   
 From IRF join 
 Candidate ca on ca.IRFId=IRF.id
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId
@@ -39,7 +41,8 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where tcul.EmailId=@Emailid and ca.ProfileSource=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId
+From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
 where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct  
         
@@ -47,7 +50,9 @@ end
   else if(@clientRole = 1)              
 begin 
 ;with CTE as (Select ca.id as CandidateId,IRF.id as imid,IRF.id as IRFId,ul.Emailid,IRF.IRFId as IRFname,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as Name,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ul.MobileNumber,ca.resumeLink,
-ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging      
+ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,
+ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,
+IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging, irf.IsAIInterview, im.SessionId        
 From IRF join 
 Candidate ca on ca.IRFId=IRF.id
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId
@@ -60,14 +65,16 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where tcul.EmailId=@Emailid and ca.ClientHRAttemptContact=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
 where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct
 end       
   else if(@clientRole = 9)              
 begin     
 ;with CTE as (Select ca.id as CandidateId,IRF.id as imid,IRF.id as IRFId,ul.Emailid,IRF.IRFId as IRFname,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as Name,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ul.MobileNumber,ca.resumeLink,
-ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging      
+ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,ca.ProfileSource,
+SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,
+IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging, irf.IsAIInterview, im.SessionId        
 From IRF join 
 Candidate ca on ca.IRFId=IRF.id
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId
@@ -78,7 +85,7 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
 where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct    
         
@@ -86,7 +93,9 @@ end
 else          
 begin      
 ;with CTE as (Select ca.id as CandidateId,IRF.id as imid,IRF.id as IRFId,ul.Emailid,IRF.IRFId as IRFname,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as Name,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ul.MobileNumber,ca.resumeLink,
-ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging      
+ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,ca.ProfileSource,
+SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,
+IRF.EndDate,DATEDIFF(Day,cs.Date,Getdate()) as CandidateAging, irf.IsAIInterview, im.SessionId        
 From IRF join 
 Candidate ca on ca.IRFId=IRF.id
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId
@@ -99,7 +108,7 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where tcul.EmailId=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.SessionId, cte.IsAIInterview From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
 where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct     
 end          
@@ -125,7 +134,7 @@ if @EmailId is not null
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,IRF.id as IRFId,                                 
     irf.IRFId as IRFname, MAX(im.interviewDate) interviewDate,                              
     Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,      
- ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate
+ ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate, irf.IsAIInterview
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId          
 join UserList ul on ul.EmailId=im.candidateEmail           
 join CandidatesMaster cm on cm.UserId=ul.id          
@@ -139,11 +148,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                                
     ca.ClientHRAttemptContact, ca.ProfileSource,IRF.id,  irf.IRFId,
  Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,ul.MobileNumber,      
- IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate)
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
-ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging
+ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
@@ -160,7 +171,7 @@ From CTE
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,IRF.id as IRFId,                                 
     irf.IRFId as IRFname, MAX(im.interviewDate) interviewDate,                              
     Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,      
- ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate
+ ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate, irf.IsAIInterview
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId          
 join UserList ul on ul.EmailId=im.candidateEmail           
 join CandidatesMaster cm on cm.UserId=ul.id          
@@ -174,11 +185,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                                
     ca.ClientHRAttemptContact, ca.ProfileSource,IRF.id,  irf.IRFId,
  Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,ul.MobileNumber,      
- IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate)
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
-ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging
+ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
@@ -194,7 +207,7 @@ From CTE
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,IRF.id as IRFId,                                 
     irf.IRFId as IRFname, MAX(im.interviewDate) interviewDate,                              
     Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,      
- ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate
+ ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate, irf.IsAIInterview
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId          
 join UserList ul on ul.EmailId=im.candidateEmail           
 join CandidatesMaster cm on cm.UserId=ul.id          
@@ -208,11 +221,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                                
     ca.ClientHRAttemptContact, ca.ProfileSource,IRF.id,  irf.IRFId,
  Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,ul.MobileNumber,      
- IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate)
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
-ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging
+ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
@@ -228,7 +243,7 @@ From CTE
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,IRF.id as IRFId,                                 
     irf.IRFId as IRFname, MAX(im.interviewDate) interviewDate,                              
     Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,      
- ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate
+ ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate, irf.IsAIInterview
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId          
 join UserList ul on ul.EmailId=im.candidateEmail           
 join CandidatesMaster cm on cm.UserId=ul.id          
@@ -240,11 +255,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                                
     ca.ClientHRAttemptContact, ca.ProfileSource,IRF.id,  irf.IRFId,
  Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,ul.MobileNumber,      
- IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate)
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
-ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging
+ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
@@ -260,7 +277,7 @@ From CTE
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,IRF.id as IRFId,                                 
     irf.IRFId as IRFname, MAX(im.interviewDate) interviewDate,                              
     Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,      
- ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate
+ ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate, irf.IsAIInterview
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId          
 join UserList ul on ul.EmailId=im.candidateEmail           
 join CandidatesMaster cm on cm.UserId=ul.id          
@@ -274,11 +291,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                                
     ca.ClientHRAttemptContact, ca.ProfileSource,IRF.id,  irf.IRFId,
  Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,ul.MobileNumber,      
- IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate)
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
-ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging
+ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
@@ -294,7 +313,7 @@ Else
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,IRF.id as IRFId,                                 
     irf.IRFId as IRFname, MAX(im.interviewDate) interviewDate,                              
     Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,      
- ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate
+ ul.MobileNumber as Phone,IRF.id as imid,IRF.CalendlyLink,Count(im.id) as reportcount,cci.IsColdCandidate, irf.IsAIInterview
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId          
 join UserList ul on ul.EmailId=im.candidateEmail           
 join CandidatesMaster cm on cm.UserId=ul.id          
@@ -306,11 +325,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                                
     ca.ClientHRAttemptContact, ca.ProfileSource,IRF.id,  irf.IRFId,
  Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,ul.MobileNumber,      
- IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate)
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
-ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging
+ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
