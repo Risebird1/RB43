@@ -25,6 +25,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+//using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.Web.Controllers
 {
@@ -314,7 +315,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Report(Guid seId, bool redo = false)//Guid seId
+        public async Task<IActionResult> Report(Guid seId, bool redo = false, bool isExit = false)//Guid seId
         {
             // For demo: tech stack prompt
             //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
@@ -352,14 +353,29 @@ namespace Risebird.Web.Controllers
                     //save the report in db
                     if (aiReport != null)
                     {
-                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                        var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                        if(isExit)
+                        {
+                            if (result)
+                            {
+                                return Json("Meeting closed successfully. Thankyou for your time!");
 
+                            }
+                            else
+                            {
+                                return Json("Error while exiting the interview. Please contact support.");
+
+                            }
+                        }
+                        
                     }
                 }
                 
             }
-                
-
+            if (isExit)
+            {
+                return Json("Meeting closed successfully. Thankyou for your time!");
+            }
             var chatMessageModel = new ChatMessageViewModel
             {
                 SessionId = aiReport.SessionId,
@@ -403,6 +419,22 @@ namespace Risebird.Web.Controllers
             {
                 return BadRequest();
                 throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetAIInterviewUrl(Guid sid)
+        {
+            try
+            {
+                // Construct the AI interview URL
+                string aiInterviewUrl = "https://" + Request.Host.ToString() + "/AIInterview/Index?sid=" + sid;
+                return Json(aiInterviewUrl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
             }
         }
     }
