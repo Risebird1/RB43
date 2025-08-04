@@ -4466,6 +4466,31 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<PendingVideoMeetingsData>> GetPendingTranscriptMeetings()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeEnd", DateTime.Now.AddMinutes(-30));
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
+                    var result = await SqlMapper.QueryAsync<PendingVideoMeetingsData>(con, "usp_GetPendingTranscriptMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<PendingVideoMeetingsData>> GetZoomMeetingsToBeDeletedOnceUploadedOnBlob()
         {
             try
@@ -4530,6 +4555,32 @@ namespace Risebird.Repository
                     parameters.Add("@clientExternalVideoUploadedUrl", clientExternalVideoUploadedUrl);
                     parameters.Add("@clientExternalTranscriptUploadedUrl", clientExternalTranscriptUploadedUrl);
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateUploadedVideoLinkAndTranscriptLink", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateTranscriptLink(int interviewId, string transcriptLink = null, string clientExternalTranscriptUploadedUrl = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@transcriptLink", transcriptLink);
+                    parameters.Add("@clientExternalTranscriptUploadedUrl", clientExternalTranscriptUploadedUrl);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateTranscriptLink", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
