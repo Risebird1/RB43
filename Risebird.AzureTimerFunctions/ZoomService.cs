@@ -382,6 +382,177 @@ namespace Risebird.AzureTimerFunctions
                         return;
                     }
                 });
+
+
+                #region Addressing the case when videolink is saved but transcript link is missing (in db)
+                var solelyTranscriptsPendingMeetings = await _meetingRespository.GetPendingTranscriptMeetings();
+
+                var solelyTranscriptPendingRBMeetings = solelyTranscriptsPendingMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, "[a-zA-Z]")).ToList();
+
+                var solelyTranscriptsPendingTeamsMeetings = solelyTranscriptsPendingMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, @"^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$")).ToList();
+
+                var solelyTranscriptsPendingZoomMeetings = solelyTranscriptsPendingMeetings.Except(solelyTranscriptPendingRBMeetings).ToList();
+                solelyTranscriptsPendingZoomMeetings = solelyTranscriptsPendingMeetings.Except(solelyTranscriptsPendingTeamsMeetings).ToList();
+
+
+                //get oauth token
+                string tokenTranscript = await _zoomHelper.GenerateAccessToken();
+
+                Parallel.ForEach(solelyTranscriptsPendingZoomMeetings, meeting =>
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(meeting.zoomLink))
+                        {
+                            //long zoommeetingId = 0;
+                            string zoommeetingId;
+                            try
+                            {
+                                //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                                zoommeetingId = (meeting.zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
+                            }
+                            catch (Exception)
+                            {
+                                try
+                                {
+                                    var link = meeting.zoomLink.Split('?').First();
+                                    //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                    zoommeetingId = link.Split('/').Last();
+                                }
+                                catch (Exception)
+                                {
+                                    //zoommeetingId = 0;
+                                    zoommeetingId = null;
+                                }
+                            }
+                            //meeting.ZoomMeetingId = zoommeetingId.ToString();
+                            meeting.ZoomMeetingId = zoommeetingId;
+                        }
+
+                        //create HTTP Rest Client
+                        //var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
+                        var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"));
+
+                        //create HTTP Request 
+                        var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"), Method.Get);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddHeader("authorization", "Bearer " + token);
+                        RestResponse response = client.Execute(request);
+                        var content = response.Content;
+
+                        var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);
+
+                        //get the download url from the response
+                        if (convertedResponse != null && convertedResponse.recording_files != null && convertedResponse.recording_files.Count() > 0)
+                        {
+                            
+                            var audioTranscriptFiles = convertedResponse.recording_files.Where(x => x.file_type == "TRANSCRIPT" && x.status.ToLower() == "completed");
+                            string transcriptSasUrl = string.Empty;
+                            string uploadedTranscriptClientExternalLink = string.Empty;
+                            if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink) && (audioTranscriptFiles != null || audioTranscriptFiles?.Count() == 1))
+                            {
+                                var transcriptFile = audioTranscriptFiles?.FirstOrDefault();
+                                var downloadUrl = transcriptFile?.download_url;
+
+                                //upload the video to azure blob using the download_Url
+                                if (downloadUrl != null)
+                                {
+                                    HttpClient myWebClient = new HttpClient();
+                                    string uploadedTranscriptUrl = string.Empty;
+                                    using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                    {
+                                        var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+                                        var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
+                                        long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                        fileName = fileName + "_" + unixTime.ToString();
+                                        try
+                                        {
+                                            uploadedTranscriptUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream).Result;
+
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                            log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                            return;
+                                        }
+
+                                        log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                        //if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        //{
+                                        //    try
+                                        //    {
+                                        //        string fileNameExternal ="transcript.json"; // meeting.imid.ToString() + 
+                                        //        myStream.Position = 0;
+                                        //        // Replace Azure logic with Google Cloud Storage upload
+                                        //        uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                        //    }
+                                        //    catch (Exception ex)
+                                        //    {
+                                        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        //        log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                        //        return;
+                                        //    }
+
+                                        //    log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                        //}
+                                        //generate SAS URL from the uploaded video url
+                                        var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+
+                                        if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                        {
+                                            transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                        }
+
+                                    }
+                                    if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                    {
+                                        using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                        {
+                                            try
+                                            {
+                                                string fileNameExternal = "transcript.json"; // meeting.imid.ToString() + 
+                                                uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                return;
+                                            }
+                                        }
+
+
+                                        log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+                                    }
+                                }
+
+                            }
+
+                            if ( !string.IsNullOrEmpty(transcriptSasUrl))
+                            {
+
+                                //insert the SAS URL of the video, transcript and video duration in the database table
+                                _ = _meetingRespository.UpdateTranscriptLink(meeting.imid, transcriptSasUrl, uploadedTranscriptClientExternalLink).Result;
+
+                                log.LogInformation($"Zoom : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                        return;
+                    }
+                });
+
+                #endregion
                 log.LogInformation($"C# Zoom Service function(Video Upload) executed at: {DateTime.Now}");
             }
             catch (Exception ex)
