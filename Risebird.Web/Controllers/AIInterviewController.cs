@@ -241,6 +241,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Index([FromForm] ChatMessageViewModel model)
         {
 
