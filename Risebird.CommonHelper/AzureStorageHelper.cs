@@ -451,6 +451,20 @@ namespace Risebird.CommonHelper
             return blob.Uri.ToString();
         }
 
+
+        public async Task<string> InsertBlobAIInterviewerAudio(string filename, string containerName, MemoryStream blobFile = null, string contentType = null)
+        {
+            CloudBlockBlob blob;
+            blob = GetCloudBlockBlobClient(containerName, filename);
+            blob.Properties.ContentType = contentType;
+            if (blobFile != null)
+            {
+                await blob.UploadFromStreamAsync(blobFile);
+            }
+           
+            return blob.Uri.ToString();
+        }
+
         public bool DeleteBlob(string fileName, string containerName)
         {
             try
