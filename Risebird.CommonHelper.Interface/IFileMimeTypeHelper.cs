@@ -5,5 +5,6 @@ namespace Risebird.CommonHelper.Interface
     public interface IFileMimeTypeHelper
     {
         string GetFileMimeType(IFormFile file);
+        string GetFileMimeTypeFromByteArray(byte[] fileBytes);
     }
 }
