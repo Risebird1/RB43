@@ -969,7 +969,9 @@
                         <input type="hidden" asp-for="SessionId" />
                         <input type="hidden" asp-for="InterviewId" />
                         <input type="hidden" asp-for="IsAdaptive" />
-                        
+                        <input type="hidden" asp-for="CurrentQuestion" value="@Model.CurrentQuestion" />
+                        <input type="hidden" asp-for="AIInterviewerAudioLink" value="@Model.AIInterviewerAudioLink" />
+
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         <div class="rb-chatbox-inputrow">
                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste = "return false;"></textarea>
@@ -999,6 +1001,7 @@
                                 </div>
                             </div>
                             <audio id="assistantAudio" controls hidden></audio>
+                            @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
                         }
                         else
                         {

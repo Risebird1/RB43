@@ -16,12 +16,13 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 @secondsLeft int,
 @interviewId int,
 @BotSynthesizedVideoLink varchar(2000) = null,
-@CandidateResponse varchar(2000)
+@CandidateResponse varchar(2000),
+@BotAudioLink varchar(2000) = null
 AS
 BEGIN
 
-Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer) 
-values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse)
+Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink) 
+values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink)
 
 update InterviewMeetings set TimeLeftInSeconds = @secondsLeft where id = @interviewId
 
