@@ -1,6 +1,7 @@
 ﻿using FileTypeInterrogator;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper.Interface;
+using System;
 using System.IO;
 
 namespace Risebird.CommonHelper
@@ -22,6 +23,17 @@ namespace Risebird.CommonHelper
             }
 
             FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
+            return fileTypeInfo.MimeType.ToLower();
+        }
+
+        public string GetFileMimeTypeFromByteArray(byte[] fileBytes)
+        {
+            if (fileBytes == null || fileBytes.Length == 0)
+                throw new ArgumentException("File bytes are null or empty.", nameof(fileBytes));
+
+            IFileTypeInterrogator interrogator = new FileTypeInterrogator.FileTypeInterrogator();
+            FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
+
             return fileTypeInfo.MimeType.ToLower();
         }
     }
