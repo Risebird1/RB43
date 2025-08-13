@@ -42,6 +42,7 @@ namespace Risebird.Entities.ViewModel
         public int VideoConfirmation { get; set; }
         public int RedMarkerStatus { get; set; }
         public string RedMarkerReviewComment { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
     public class ToalInterviewerInterviewDetails
     {
