@@ -24,7 +24,7 @@ namespace Risebird.CommonHelper
         private readonly IConfiguration _config;
 
         private readonly string _openAiKey;
-        private readonly string _assistantId;
+        //private readonly string _assistantId;
 
         public OpenAIInterviewerAssistantHelper(IConfiguration config)//HttpClient http, 
         {
@@ -32,7 +32,7 @@ namespace Risebird.CommonHelper
             _http = new HttpClient();
             _config = config;
             _openAiKey = _config["OpenAI:ApiKey"];
-            _assistantId = _config["OpenAI:AIInterviewerAssistantId"];
+            //_assistantId = _config["OpenAI:AIInterviewerAssistantId"];
 
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _openAiKey);
             _http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
@@ -65,10 +65,11 @@ namespace Risebird.CommonHelper
             await _http.PostAsJsonAsync(url, payload);
         }
 
-        public async Task<string> CreateRunAsync(string threadId)
+        public async Task<string> CreateRunAsync(string threadId, string assistantId)
         {
             var url = $"https://api.openai.com/v1/threads/{threadId}/runs";
-            var payload = new { assistant_id = _assistantId };
+            //var payload = new { assistant_id = _assistantId };
+            var payload = new { assistant_id = assistantId };
             var response = await _http.PostAsJsonAsync(url, payload);
 
             var content = await response.Content.ReadAsStringAsync();

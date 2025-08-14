@@ -29,7 +29,7 @@ namespace Risebird.Services.Controllers
         private readonly IAIInterviewerRepository _aiInterviewerRepository;
         private readonly IAIInterviewerService _aIInterviewerService;
         private readonly IConfiguration _config;
-        private readonly string _assistantId;
+        private string _assistantId;
 
         public OpenAIApiController(IApplicationErrorLogger applicationErrorLogger, IOpenAIInterviewerAssistantHelper ai,
             IAIInterviewerRepository aiInterviewerRepository, IConfiguration config, IAIInterviewerService aIInterviewerService)
@@ -38,7 +38,7 @@ namespace Risebird.Services.Controllers
             _aiInterviewerRepository = aiInterviewerRepository;
             _ai = ai;
             _config = config;
-            _assistantId = _config["OpenAI:AIInterviewerAssistantId"];
+            //_assistantId = _config["OpenAI:AIInterviewerAssistantId"];
             _aIInterviewerService = aIInterviewerService;
         }
 
@@ -47,6 +47,7 @@ namespace Risebird.Services.Controllers
         {
             try
             {
+                _assistantId = input.AssistantId;
                 //var sessionId = Guid.NewGuid();
                 var threadId = await _ai.CreateThreadAsync();
 
@@ -60,7 +61,7 @@ namespace Risebird.Services.Controllers
 
                 await _ai.AddMessageAsync(threadId, "user", input.Message);
 
-                var runId = await _ai.CreateRunAsync(threadId);
+                var runId = await _ai.CreateRunAsync(threadId, _assistantId);
                 await _ai.WaitForRunAsync(threadId, runId);
 
                 var replies = await _ai.GetMessagesAsync(threadId);
@@ -91,7 +92,7 @@ namespace Risebird.Services.Controllers
             await _ai.AddMessageAsync(threadId, "user", input.Message);
             await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
 
-            var runId = await _ai.CreateRunAsync(threadId);
+            var runId = await _ai.CreateRunAsync(threadId, input.AssistantId);
             await _ai.WaitForRunAsync(threadId, runId);
 
             var replies = await _ai.GetMessagesAsync(threadId);
@@ -120,10 +121,12 @@ namespace Risebird.Services.Controllers
         [HttpPost("report")]
         public async Task<IActionResult> Report([FromBody] AIReportVM input)
         {
-            var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
+            //var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
+            var aiInterviewDetails = await _aIInterviewerService.GetAIInterviewSpecificDetails(input.SessionId);
+            var threadId = aiInterviewDetails?.ThreadId;
             await _ai.AddMessageAsync(threadId, "user", input.Message);
 
-            var runId = await _ai.CreateRunAsync(threadId);
+            var runId = await _ai.CreateRunAsync(threadId, aiInterviewDetails?.AssistantId);
             await _ai.WaitForRunAsync(threadId, runId);
 
             var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
