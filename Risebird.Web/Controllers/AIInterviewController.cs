@@ -102,7 +102,7 @@ namespace Risebird.Web.Controllers
                         candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
 
                     }
-                    var result = await _api.StartConversation(sid, candidatePrompt);
+                    var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
 
                     var model = new ChatMessageViewModel
                     {
@@ -141,6 +141,7 @@ namespace Risebird.Web.Controllers
                     model.InterviewId = meetingDetails.InterviewId;
                     model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
                     model.candidateName = meetingDetails.candidateName;
+                    model.AssistantId = meetingDetails.AssistantId;
                     return View(model);
                 }
                 else
@@ -188,7 +189,7 @@ namespace Risebird.Web.Controllers
                             //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
                             {
                                 model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
-                                var replies = await _api.SendReply(sid, latestEntry.Message);
+                                var replies = await _api.SendReply(sid, latestEntry.Message, meetingDetails.AssistantId);
                                 //var question = allQuestions.FirstOrDefault().Message;
 
                                 foreach (var reply in replies)
@@ -245,7 +246,7 @@ namespace Risebird.Web.Controllers
                             candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
 
                         }
-                        var replies = await _api.SendReply(sid, candidatePrompt);
+                        var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
 
                         model = new ChatMessageViewModel
                         {
@@ -325,6 +326,7 @@ namespace Risebird.Web.Controllers
                     model.InterviewId = meetingDetails.InterviewId;
                     model.candidateName = meetingDetails.candidateName;
                     model.IsAdaptive = meetingDetails.IsAdaptive;
+                    model.AssistantId = meetingDetails.AssistantId;
                     return View(model);
 
                 }
@@ -359,7 +361,7 @@ namespace Risebird.Web.Controllers
                 var replies = new List<string>();
                 try
                 {
-                    replies = await _api.SendReply(model.SessionId, userMessage);
+                    replies = await _api.SendReply(model.SessionId, userMessage, model.AssistantId);
                 }
                 catch (Exception ex)
                 {
