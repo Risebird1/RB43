@@ -22,7 +22,7 @@ begin
 	declare @profile int
 	set @profile = (select idProfile from UserList where EmailId like @emailId)
 
-	if(@profile=1)--Admin
+	if(@profile=1 or @profile=32)--Admin
 	begin
 		Select tsc.* from TechSkillComments tsc where IRFId = @IRFId
 	end
