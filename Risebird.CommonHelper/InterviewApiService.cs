@@ -57,12 +57,13 @@ public class InterviewApiService : IInterviewApiService
     //    var parsed = JsonConvert.DeserializeObject<dynamic>(content);
     //    return parsed?.reply ?? "[No reply]";
     //}
-    public async Task<InterviewStartResult> StartConversation(Guid sessionId, string prompt)
+    public async Task<InterviewStartResult> StartConversation(Guid sessionId, string prompt, string assistantId)
     {
         var payload = new InterviewMessageVM
         {
             SessionId = sessionId,
-            Message = prompt
+            Message = prompt,
+            AssistantId = assistantId
         };
 
         var response = await _http.PostAsJsonAsync("api/OpenAIApi/start", payload);
@@ -78,12 +79,13 @@ public class InterviewApiService : IInterviewApiService
         return result;
     }
 
-    public async Task<List<string>> SendReply(Guid sessionId, string message)
+    public async Task<List<string>> SendReply(Guid sessionId, string message, string assistantId)
     {
         var payload = new InterviewMessageVM
         {
             SessionId = sessionId,
-            Message = message
+            Message = message,
+            AssistantId = assistantId
         };
 
         var response = await _http.PostAsJsonAsync("api/OpenAIApi/ask", payload);

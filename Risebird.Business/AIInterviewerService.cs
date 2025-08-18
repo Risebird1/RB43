@@ -134,5 +134,17 @@ namespace Risebird.Business
                 return;
             }
         }
+        public async Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetAIInterviewSpecificDetails(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -372,5 +372,30 @@ namespace Risebird.Repository
                 .Replace("**", "")       // Remove bold formatting if present
                 .Trim();                 // Trim whitespace
         }
+
+        public async Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<AddUpdateMeetingVM>(con, "usp_GetAIInterviewSpecificDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

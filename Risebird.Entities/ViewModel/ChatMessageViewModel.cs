@@ -19,6 +19,7 @@ namespace Risebird.Entities.ViewModel
         public string candidateName { get; set; }
         public bool IsAdaptive { get; set; }
         public string CurrentQuestion { get; set; }
+        public string AssistantId { get; set; }
 
     }
 
