@@ -13,12 +13,13 @@ namespace Risebird.Repository.Interface
         Task CreateSession(InterviewSession session);
         Task<string> GetThreadId(Guid sessionId);
         Task LogTranscript(Guid sessionId, string role, string message);
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
         Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId);
         Task<IEnumerable<TranscriptConv>> GetAIInterviewTranscriptBySessionId(Guid sessionId);
         Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant);
         Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId);
+        Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId);
     }
 }

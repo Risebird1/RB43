@@ -10,13 +10,16 @@ namespace Risebird.Entities.ViewModel
         public string Message { get; set; }
         //public string BotReply { get; set; }
         public List<ChatLine> ChatLog { get; set; } = new();
-        public IFormFile AudioFile { get; set; }  
+        public IFormFile AudioFile { get; set; }
+        public string AIInterviewerAudioLink { get; set; }//points to a url that is the audio recieved from text to speech api, for the ai interviewer
         public IFormFile VideoFile { get; set; }
         public string SynthesizedVideoUrl { get; set; } //synthesised by synthesia, this will be the video of the AI Interviewer speaking
         public int TimeLeftInSeconds { get; set; }
         public int InterviewId { get; set; }
         public string candidateName { get; set; }
         public bool IsAdaptive { get; set; }
+        public string CurrentQuestion { get; set; }
+        public string AssistantId { get; set; }
 
     }
 

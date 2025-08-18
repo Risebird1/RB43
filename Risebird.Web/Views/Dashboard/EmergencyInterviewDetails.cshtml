@@ -387,6 +387,34 @@
                                                             }
                                                         }
                                                         <td>
+                                                            @if (item.IsAIInterview)
+                                                                        {
+                                                                            <span class="interview_9">
+                                                                                <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                        <span>
+                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                                <!-- Report/document shape -->
+                                                                                                <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                                                                                <path d="M15 2v5h5"></path>
+
+                                                                                                <!-- Brain-like AI/circuit element -->
+                                                                                                <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
+                                                                                                <line x1="12" y1="10" x2="12" y2="8"></line>
+                                                                                                <line x1="12" y1="14" x2="12" y2="16"></line>
+                                                                                                <line x1="10" y1="12" x2="8" y2="12"></line>
+                                                                                                <line x1="14" y1="12" x2="16" y2="12"></line>
+
+                                                                                                <!-- Text lines on report -->
+                                                                                                <line x1="7" y1="18" x2="17" y2="18"></line>
+                                                                                            </svg>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </a>
+                                                                            </span>
+                                                                            //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                        }
+                                                                        else{
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
 
                                                                 <div class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="width:25px!important;height:25px!important;">
@@ -394,7 +422,7 @@
                                                                 </div>
 
                                                             </a>
-
+                                                                        }
                                                             @*  <span class="icon-field">
                                                         <a class="icon-link" href="#!_@item.id" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.id, communicationMedium = (int)CommunicationMedium.Email })">
                                                         <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 10px;"></i>

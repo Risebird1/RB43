@@ -1160,11 +1160,41 @@
                                                                                         <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                                         </span>
                                                                                         </a> *@
-                                                                                                                <a style="text-decoration:none;" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
-                                                                                                                    <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report" style="background:#53a5f5 !important;">
-                                                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                                                @if (item.IsAIInterview)
+                                                                                                                {
+                                                                                                                    <span class="interview_9">
+                                                                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                                                                <span>
+                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                                                                        <!-- Report/document shape -->
+                                                                                                                                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                                                                                                                        <path d="M15 2v5h5"></path>
+
+                                                                                                                                        <!-- Brain-like AI/circuit element -->
+                                                                                                                                        <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
+                                                                                                                                        <line x1="12" y1="10" x2="12" y2="8"></line>
+                                                                                                                                        <line x1="12" y1="14" x2="12" y2="16"></line>
+                                                                                                                                        <line x1="10" y1="12" x2="8" y2="12"></line>
+                                                                                                                                        <line x1="14" y1="12" x2="16" y2="12"></line>
+
+                                                                                                                                        <!-- Text lines on report -->
+                                                                                                                                        <line x1="7" y1="18" x2="17" y2="18"></line>
+                                                                                                                                    </svg>
+                                                                                                                                </span>
+                                                                                                                            </button>
+                                                                                                                        </a>
                                                                                                                     </span>
-                                                                                                                </a>
+                                                                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                                                                }
+                                                                                                                else
+                                                                                                                {
+                                                                                                                    <a style="text-decoration:none;" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
+                                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report" style="background:#53a5f5 !important;">
+                                                                                                                            <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                                                        </span>
+                                                                                                                    </a>
+                                                                                                                }
                                                                                                             </div>
                                                                                                         }
                                                                                                         else

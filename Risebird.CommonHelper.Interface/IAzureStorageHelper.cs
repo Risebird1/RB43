@@ -44,5 +44,6 @@ namespace Risebird.CommonHelper.Interface
         string InsertBlobVMFile(string filename, string containerName, string blobFile);
         Task<bool> IsDocFileAsync(string url);
         Task<string> DownloadAndConvertFromDocToPdfAsync(string url);
+        Task<string> InsertBlobAIInterviewerAudio(string filename, string containerName, MemoryStream blobFile = null, string contentType = null);
     }
 }

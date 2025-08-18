@@ -85,7 +85,7 @@ namespace Risebird.Repository
             using var conn = new SqlConnection(connectionString);
             await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null)
         {
             try
             {
@@ -100,8 +100,11 @@ namespace Risebird.Repository
                     parameters.Add("@secondsLeft", secondsLeft);
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
+                    parameters.Add("@BotAudioLink", BotAudioLink);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
+                    //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,
+                    //     commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -369,5 +372,30 @@ namespace Risebird.Repository
                 .Replace("**", "")       // Remove bold formatting if present
                 .Trim();                 // Trim whitespace
         }
+
+        public async Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<AddUpdateMeetingVM>(con, "usp_GetAIInterviewSpecificDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

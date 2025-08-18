@@ -69,5 +69,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerMobileNumber { get; set; }
         public string ChannelOwner { get; set; }
         public int QCPresent { get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
     }
 }

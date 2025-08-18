@@ -21,11 +21,11 @@ namespace Risebird.Business
             _aiInterviewerRepository = aiInterviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null)
         {
             try
             {
-                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId);
+                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId, BotAudioLink);
             }
             catch (Exception e)
             {
@@ -113,6 +113,32 @@ namespace Risebird.Business
             try
             {
                 return await _aiInterviewerRepository.GetReportOfAIInterviewByAssistant(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task LogTranscript(Guid sessionId, string role, string message)
+        {
+            try
+            {
+                await _aiInterviewerRepository.LogTranscript(sessionId, role, message);
+                return;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return;
+            }
+        }
+        public async Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetAIInterviewSpecificDetails(sessionId);
             }
             catch (Exception e)
             {

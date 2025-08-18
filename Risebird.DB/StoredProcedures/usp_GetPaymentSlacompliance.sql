@@ -15,7 +15,7 @@ BEGIN
 if(@actionstatus='SLACompleted')    
 begin    
 Select ps.*,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.interviewer,im.interviewDate,ul.EmailId as ChannelOwner,ip.CompanyName, ip.ResumeLink, ip.RedMarker, uli.MobileNumber,RTRIM(LTRIM((ISNULL(uli.FirstName,'')+' '+ISNULL(uli.LastName,'')))) as InterviewerName,tq.Redflags,Case when tq.id>0 then 1 else 0 end as QCStatus,ps.IsApproved,    
-imj.Joinedon,im.candidateName,psh.TotalPaymentComplianceCount        
+imj.Joinedon,im.candidateName,psh.TotalPaymentComplianceCount,im.SessionId,IRF.IsAIInterview        
 From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id     
 left join IRF on IRF.IRFId=im.IRFId     
 left join UserList ul on ul.id=IRF.RisebirdHr    
@@ -29,7 +29,7 @@ end
 else    
 begin    
 Select ps.*,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.interviewer,im.interviewDate,ul.EmailId as ChannelOwner,ip.CompanyName, ip.ResumeLink, ip.RedMarker, uli.MobileNumber,RTRIM(LTRIM((ISNULL(uli.FirstName,'')+' '+ISNULL(uli.LastName,'')))) as InterviewerName,tq.Redflags,Case when tq.id>0 then 1 else 0 end as QCStatus,    
-imj.Joinedon,im.candidateName,psh.TotalPaymentComplianceCount    
+imj.Joinedon,im.candidateName,psh.TotalPaymentComplianceCount,im.SessionId,IRF.IsAIInterview     
 From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id     
 left join IRF on IRF.IRFId=im.IRFId     
 left join UserList ul on ul.id=IRF.RisebirdHr    

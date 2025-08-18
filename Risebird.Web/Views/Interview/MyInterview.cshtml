@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Data
+@using Risebird.Entities.Enum
 @using System.Text.RegularExpressions
 @inject IHttpContextAccessor HttpContextAccessor
 @{
@@ -543,7 +544,6 @@
                                                                         @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
                                                                         {
 
-
                                                                             <div class="btn btn-unassign shadow btn-xs sharp me-1" style="background:#a1b6d1;border-color:#a1b6d1">
                                                                                 <a target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })">
                                                                                     <span id="myinterview_10" class="feedbackreportbtn" aria-label="Feedback Report">
@@ -551,7 +551,16 @@
                                                                                     </span>
                                                                                 </a>
                                                                             </div>
-
+                                                                            @if (item.IsAIInterview)
+                                                                            {
+                                                                                <span class="interview_9">
+                                                                                    <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                        </button>
+                                                                                    </a>
+                                                                                </span>
+                                                                            }
 
                                                                             @* <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
                                                                     <button class="btn btn-newreport shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="margin: 0px 3px;background: #4499b5">
@@ -1038,7 +1047,27 @@
                                                                     @if(item.IsAIInterview)
                                                                     {
                                                                         <td>
-                                                                            <a target="_blank" href='@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})'>AI Meeting Link</a>
+@* <a target="_blank" href='@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})'>AI Meeting Link</a>*@
+
+                                                                            <div aria-label="Copy AI Interview Meeting Url">
+                                                                                @if (item.IsAIInterview && !string.IsNullOrEmpty(item.SessionId))
+                                                                                {
+                                                                                    <span onclick="javascript:CopyAIInterviewUrl('@item.SessionId');">AI Meeting Link <i style="color: #338bd3" class='fa fa-clone'></i></span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span style="color: #ccc;">AI Meeting Link <i class='fa fa-clone'></i></span>
+                                                                                }
+
+
+
+
+                                                                            </div>
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
                                                                         </td>
                                                                     }
                                                                     else
@@ -1186,6 +1215,54 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div id="evaluationModal" class="modal modal-bg">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <h5 class="modal-title pull-left">Evaluate Interview</h5>
+                <button type="button" class="close" onclick="CloseEvaluationModal()">
+                    <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("SubmitProctorEvaluation", "Interview")" method="post" id="formEvaluation" onsubmit="return ValidateEvaluationForm()">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="id" id="EvaluationInterviewId" />
+
+                    <div class="mb-3">
+                        <label for="MeetingStatus" class="form-label">Meeting Status</label>
+                        @Html.DropDownList("MeetingStatus", Html.GetEnumSelectList<MeetingStatus>(), "Select", new { @class = "form-control", @id = "MeetingStatus" })
+                        <label id="error_MeetingStatus" class="text-danger"></label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="InterviewStatus" class="form-label">Interview Status</label>
+                        @Html.DropDownList("InterviewStatus", Html.GetEnumSelectList<InterviewStatus>(), "Select", new { @class = "form-control", @id = "InterviewStatus" })
+                        <label id="error_InterviewStatus" class="text-danger"></label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Comment" class="form-label">Comment</label>
+                        <textarea class="form-control" id="interviewerComment" name="interviewerComment" rows="4"></textarea>
+                        <label id="error_Comment" class="text-danger"></label>
+                    </div>
+
+                    @* <div class="mb-3">
+                        <label for="Score" class="form-label">Score</label>
+                        <input type="number" class="form-control" id="Score" name="Score" min="0" max="100" />
+                        <label id="error_Score" class="text-danger"></label>
+                    </div> *@
+
+                    <button type="submit" class="btn btn-primary" style="border-radius: 3px; background: #42a5f5!important;">Save Evaluation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" style="height:1000px" id="clientInstructions" tabindex="-1" role="dialog" aria-labelledby="clientInstructionsLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1430,6 +1507,41 @@
             </div>
 
 
+        </div>
+    </div>
+</div>
+<div id="AIInterviewModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">AI Interview Meeting Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAIInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> AI Interview Meeting Url:  <b id="txtinterviewUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtinterviewUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1714,6 +1826,70 @@
     }
 
 </script>
+
+<script>
+    function OpenEvaluationModal(interviewId, interviewStatus, meetingStatus, comment, score) {
+        var modal = document.getElementById("evaluationModal");
+        modal.style.display = "block";
+
+        // Reset validation
+        $('#error_InterviewStatus').text('');
+        $('#error_MeetingStatus').text('');
+        $('#error_Comment').text('');
+        $('#error_Score').text('');
+
+        // Populate fields
+        $('#EvaluationInterviewId').val(interviewId || '');
+        $('#InterviewStatus').val(interviewStatus || '');
+        $('#MeetingStatus').val(meetingStatus || '');
+        $('#interviewerComment').val(comment || '');
+        //$('#Score').val(score || '');
+    }
+
+    function CloseEvaluationModal() {
+        document.getElementById("evaluationModal").style.display = "none";
+    }
+
+    function ValidateEvaluationForm() {
+        var valid = true;
+
+        var interviewStatus = $('#InterviewStatus').val();
+        var meetingStatus = $('#MeetingStatus').val();
+        var comment = $('#interviewerComment').val();
+        //var score = $('#Score').val();
+
+        if (!interviewStatus) {
+            $('#error_InterviewStatus').text('Interview status is required.');
+            valid = false;
+        } else {
+            $('#error_InterviewStatus').text('');
+        }
+
+        if (!meetingStatus) {
+            $('#error_MeetingStatus').text('Meeting status is required.');
+            valid = false;
+        } else {
+            $('#error_MeetingStatus').text('');
+        }
+
+        if (!comment.trim()) {
+            $('#error_Comment').text('Comment is required.');
+            valid = false;
+        } else {
+            $('#error_Comment').text('');
+        }
+
+        // if (score === '' || isNaN(score) || score < 0 || score > 100) {
+        //     $('#error_Score').text('Score must be a number between 0 and 100.');
+        //     valid = false;
+        // } else {
+        //     $('#error_Score').text('');
+        // }
+
+        return valid;
+    }
+</script>
+
 <script>
 
 </script>
@@ -2615,5 +2791,32 @@
                 }
             });
         }
+    }
+</script>
+
+<script>
+    function CopyAIInterviewUrl(SessionId) {
+        $.ajax({
+            url: '/AIInterview/GetAIInterviewUrl',
+            data: { 'sid': SessionId },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("AIInterviewModel");
+                modal.style.display = "block";
+                $("#txtinterviewUrls").text(result);
+            }
+        });
+    }
+    function closeAIInterviewModel() {
+        var modal = document.getElementById("AIInterviewModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
     }
 </script>
