@@ -34,8 +34,8 @@ Create PROCEDURE [dbo].[usp_UpdateMeeting]
 --@QCInterviewer varchar(200),
 @zoomMeetingId varchar(200),
 @IsEmergency bit,
-@HasDistinctParticipants bit
-
+@HasDistinctParticipants bit,
+@AssistantId varchar(75)
 AS
 Begin
    declare 
@@ -73,6 +73,7 @@ Begin
 					   ,[ZoomMeetingId]=@zoomMeetingId
 					   ,[IsEmergency]=@IsEmergency
 					   ,[HasDistinctParticipants]=@HasDistinctParticipants
+					   ,[AssistantId] = @AssistantId
 			WHERE id = @interviewId        
     
 		End

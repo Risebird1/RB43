@@ -149,5 +149,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Has Distinct Participants")]
         public bool HasDistinctParticipants { get; set; }
         public string MeetingPlatform { get; set; }
+        public string AssistantId { get; set; }
+        public string SessionId { get; set; }
+        public string ThreadId { get; set; }
     }
 }

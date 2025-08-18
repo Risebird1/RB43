@@ -750,6 +750,7 @@ namespace Risebird.Repository
             parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
             //parameters.Add("@QCInterviewer", entity.QCInterviewer);
             parameters.Add("@zoomMeetingId", entity.ZoomMeetingId);
+            parameters.Add("@AssistantId", entity.AssistantId);
 
             return parameters;
         }
