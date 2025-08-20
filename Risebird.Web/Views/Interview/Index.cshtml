@@ -717,7 +717,7 @@
                                                                         @if (item.interviewDate.AddHours(1) >= DateTime.Now || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Quality Controller")
                                                                         {
                                                                             <span class="interview_emergency">
-                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Emergency Assign">
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Emergency Assign" onclick="captureInterviewerRelatedclick('Interview', 'EmergencyAssign',@item.imid,0)">
                                                                                     <span onclick="openEmergencyAssignModal(@item.imid, '@item.ZoomMeetingId','@item.irfIntId')" title="Emergency Interview Assignment" class="mdc-fab__icon material-icons">
                                                                                         <i class="fa fa-exclamation-triangle" style="font-size: 14px;"></i>
                                                                                     </span>

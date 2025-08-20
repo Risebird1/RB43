@@ -2505,7 +2505,12 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
-
+                    
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAIInterview", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAIInterview"].Value = irfDetails.IsAIInterview;
+                    
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;

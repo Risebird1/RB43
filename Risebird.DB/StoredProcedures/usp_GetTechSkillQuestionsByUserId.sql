@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_GetTechSkillQuestionsByUserId]
+Create PROCEDURE [dbo].[usp_GetTechSkillQuestionsByUserId]
 @IRFId int,
 @UserId int
 
@@ -23,7 +23,7 @@ Begin
 
 	select @profile = pl.Name from UserList ul join Profile pl on pl.id = ul.idProfile where ul.id= @UserId
 
-	if(@profile = 'Admin')
+	if(@profile = 'Admin' or @profile='SupportAdmin')
 	begin
 		select distinct Comment, SkillName from TechSkillComments tsc where IRFId = @IRFId
 	end
