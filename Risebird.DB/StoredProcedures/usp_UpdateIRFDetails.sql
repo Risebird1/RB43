@@ -50,6 +50,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @timeNow datetime,  
  --@isSMEChanged bit output,  
  @IsLocked bit,  
+ @IsAIInterview bit,
+ @AIInterviewType int,
  --@InterviewDuration int,  
  --@IsFixedInterviewduration bit,  
  @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,  
@@ -127,7 +129,9 @@ BEGIN
  ,[IsLocked]=@IsLocked  
  ,[JDTitleTwo]=@JDTitleTwo  
  ,[IsVideoRequired]=@IsVideoRequired  
- ,[TechRubricType] =@TechRubricType  
+ ,[TechRubricType] =@TechRubricType
+ ,[IsAIInterview]=@IsAIInterview
+ ,[AIInterviewType]=@AIInterviewType
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  

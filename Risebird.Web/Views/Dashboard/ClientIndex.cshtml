@@ -70,13 +70,15 @@
                 </div>
                 <!-- PAGE CONTENT WRAPPER -->
                 <div class="page-content-wrap dashboard">
-                        <div class="row">
-              <div class="col-md-12"><div class="dashboard-view" style="top:-8px;"><a target=""  href='@Url.Action("RecruiterReport", "Client")'"><span class="report-iconcolor"></span><span class="pull-left report-txt">Recruiter Report</span></a></div>
-                </div></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="dashboard-view" style="top:-8px;"><a target="" href='@Url.Action("RecruiterReport", "Client")' "><span class="report-iconcolor"></span><span class="pull-left report-txt">Recruiter Report</span></a></div>
+                        </div>
+                    </div>
                     <!-- START DASHBOARD CHART -->
                     <div class="row">
                         <div class="col-md-12">
-                            @*<img style="visibility:hidden" src="img/chardin.png" data-position="right" />*@
+                                @*<img style="visibility:hidden" src="img/chardin.png" data-position="right" />*@
                             <a style="visibility: hidden; position: absolute;top: -1px;" data-toggle="chardinjs" data-position="left">See it in action</a>
 
                             <div class="panel panel-default">
@@ -149,7 +151,7 @@
                                         </ul>
                                     </div>
                                     <div id="slotsId">
-                                        @*<div class="panel-body panel-body-table">
+                                    @*<div class="panel-body panel-body-table">
                     <div class="min-h">
                         @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
                         {
@@ -249,48 +251,48 @@
                                         </div>
                                     </div>
                                 </div>
-                               
-                                
-                                    <div id="ClientwhatsappModel" class="modal modal-bg" style="z-index:5">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="filheader">
-                                                    <div class="filavatar">
-                                                        <span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
-                                                        </span>
-                                                    </div>
-                                                    <h5 class="modal-title pull-left">Add whatsapp number <span class="popup-text" id="skill_id_pop"></span></h5>
-                                                </div>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span onclick="closeClientwhatsappModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-                                                </button>
 
-                                                <input type="text" hidden id="txtinterviewid" />
-                                                <div class="modal-body" style="color:black">
-                                                    <div class="form-group whatsapp col-md-12 pull-left p15">
-                                                        <span class="intrqtext">To recieve candidate Report update. Please add whatsapp number, without country code. Ex: 9999999999</span>
-                                                        <input type="text" class="form-control  text-box single-line" maxlength="10" minlength="10" id="clttxtwhatsappnumber" />
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12 mc-button-area">
-                                                            <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SubmitWhatsapp()" value="Save">Save</button>
-                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                    
-                                                
 
+                                <div id="ClientwhatsappModel" class="modal modal-bg" style="z-index:5">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                                                    </span>
+                                                </div>
+                                                <h5 class="modal-title pull-left">Add whatsapp number <span class="popup-text" id="skill_id_pop"></span></h5>
                                             </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span onclick="closeClientwhatsappModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+                                            </button>
+
+                                            <input type="text" hidden id="txtinterviewid" />
+                                            <div class="modal-body" style="color:black">
+                                                <div class="form-group whatsapp col-md-12 pull-left p15">
+                                                    <span class="intrqtext">To recieve candidate Report update. Please add whatsapp number, without country code. Ex: 9999999999</span>
+                                                    <input type="text" class="form-control  text-box single-line" maxlength="10" minlength="10" id="clttxtwhatsappnumber" />
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12 mc-button-area">
+                                                        <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SubmitWhatsapp()" value="Save">Save</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
                                         </div>
                                     </div>
-                                
-                                    <div class="row">
+                                </div>
+
+                                <div class="row">
 
 
-                                        @*<div class="col-md-6 col-lg-6 col-sm-6">
+                                @*<div class="col-md-6 col-lg-6 col-sm-6">
                     <div class="card">
                         <div class="card-body">
                             <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
@@ -301,7 +303,7 @@
                     </div>
 
                 </div>*@
-                                        @*<div class="col-md-6 col-lg-6 col-sm-6">
+                                @*<div class="col-md-6 col-lg-6 col-sm-6">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
@@ -316,10 +318,10 @@
 
 
 
-                                    </div>
-
-
                                 </div>
+
+
+                            </div>
 
                         </div>
                     </div>
@@ -708,16 +710,16 @@
 </script>
 <script>
     $(document).ready(function () {
-        @*var meetingsData = '@Model.MeetingsData';
+    @*var meetingsData = '@Model.MeetingsData';
         meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
         var meetingsDataLabels = '@Model.MeetingsDataLabels';
         meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
         UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);*@
         //candidatesPieId
-        @*if (@Model.CandidatesCountObj.TotalCount!= 0) {
+    @*if (@Model.CandidatesCountObj.TotalCount!= 0) {
 
         }*@
-        @*var candidateCountObj = [{ y: @Model.CandidatesCountObj.Selected, label: "Selected" },
+    @*var candidateCountObj = [{ y: @Model.CandidatesCountObj.Selected, label: "Selected" },
         { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
         { y: @Model.CandidatesCountObj.BorderLine, label: "BorderLine" },
         { y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
@@ -912,7 +914,7 @@
             });
         }
     }
-    
+
     function closeClientwhatsappModel() {
         var model = document.getElementById("ClientwhatsappModel");
         model.style.display = "none";
