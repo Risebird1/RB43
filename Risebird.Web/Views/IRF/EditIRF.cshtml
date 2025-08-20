@@ -309,6 +309,22 @@
                                                         @Html.DropDownListFor(model => model.SkillSetsevaluate, skillsetsevaluated, new { @class = "select-css form-control text-box single-line", @disabled = "disabled"/*"TechSkillChanged()"*/ })
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="mb-0">
+
+                           
+                            @Html.CheckBox("IsAIInterview", new { @id = "IsAIInterview", @onclick = "toggleInterviewType()" })
+                            <label for="IsAIInterview" class="form-label">Is AI Interview</label>
+                        </div>
+                                                  
+                       <div class="mb-0" id="InterviewTypeContainer" style="display:none;">
+                            <label for="InterviewType" class="form-label">AI Interview Type:</label>
+                            @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType" })
+                            <label id="error_AIInterviewType" class="text-danger"></label>
+                        </div>
+                                                </div>
+
+
                                                 @* End: Multiple Skill sets*@
                                                 @*<div class="col-md-3 col-sm-3 pull-left">
 
@@ -2181,6 +2197,12 @@
 
          $('#id_rubricsDiv').html('');
          GenerateTechRubricUsingOpenAI(value);
+    }
+</script>
+<script>
+    function toggleInterviewType() {
+        var isChecked = document.getElementById("IsAIInterview").checked;
+        document.getElementById("InterviewTypeContainer").style.display = isChecked ? "block" : "none";
     }
 </script>
 <script>
