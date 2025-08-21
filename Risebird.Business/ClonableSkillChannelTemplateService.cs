@@ -756,6 +756,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IList<SkillComment>> GetDeliveryHeadSampleQuestions(int id, string emailId = null)
+        {
+            try
+            {
+                var result =  (IList<SkillComment>)(await _clonableSkillChannelTemplateRepository.GetDeliveryHeadSampleQuestions(id, emailId));
+                return result;
+            }
 
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

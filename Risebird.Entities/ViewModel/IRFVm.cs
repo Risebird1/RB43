@@ -275,6 +275,8 @@ namespace Risebird.Entities.ViewModel
         public bool CodeSnippetRequired { get; set; }
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
+        public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
+
     }
     public class InterviewerIds
     {

@@ -8670,6 +8670,8 @@ namespace Risebird.Web.Controllers
                     return View(model);
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
+                
+                model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfid);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
                 model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
@@ -8824,6 +8826,11 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// these questions are for the interviewers to refer to while taking an interview. This is not the same as the sample questions that the interviewer adds to the skill channel. Names are same and hence confusing. These samples questions are saved in a different table altogerther and are not visible in the Report drop-down. Purely for reference purposes.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> SkillChannelSampleQuestions(int id)
         {

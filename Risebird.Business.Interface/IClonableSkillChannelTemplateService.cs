@@ -19,5 +19,6 @@ namespace Risebird.Business.Interface
         Task<ClonableSkillChannelVM> GetClonableSkillChannelMeetingPlatformById(int id);
         IEnumerable<ClonableSkillChannelVM> GetClonableTempStatsbyId(int id);
         Task<bool> CreateClonableSkillChannelFromMAG(int assessmentGroupId, string assessmentGroupName, string loggedInUser);
+        Task<IList<SkillComment>> GetDeliveryHeadSampleQuestions(int id, string emailId = null);
     }
 }
