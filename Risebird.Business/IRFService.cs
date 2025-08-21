@@ -4698,5 +4698,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<SkillComment> GetDeliveryHeadSampleQuestionById(int id)
+        {
+            try
+            {
+                return await _irfRepository.GetDeliveryHeadSampleQuestionById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink)
+        {
+            try
+            {
+                return await _irfRepository.SaveSampleQuestionAIVideoLink(id, videoLink);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

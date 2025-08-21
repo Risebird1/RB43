@@ -644,6 +644,9 @@ namespace Risebird.Repository
                             _resultVM.TechRubricType = !string.IsNullOrEmpty(dt.Rows[0]["TechRubricType"].ToString()) ? dt.Rows[0]["TechRubricType"].ToString() : null;
                             _resultVM.CandidateIdverification = !string.IsNullOrEmpty(dt.Rows[0]["CandidateIdverification"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CandidateIdverification"]) : false;
                             _resultVM.CodeSnippetRequired = !string.IsNullOrEmpty(dt.Rows[0]["CodeSnippetRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CodeSnippetRequired"]) : false;
+                            _resultVM.IsAIInterview = !string.IsNullOrEmpty(dt.Rows[0]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAIInterview"]) : false;
+                            _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIInterviewType"]) : 0;
+
                         }
                     }
                     if (dataset.Tables.Count > 1)
@@ -8166,9 +8169,10 @@ namespace Risebird.Repository
                     techSkillCommentsDt.Columns.Add("Comment", typeof(string));
                     techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
                     techSkillCommentsDt.Columns.Add("SkillName", typeof(string));
+                    techSkillCommentsDt.Columns.Add("ExpectedAnswer", typeof(string));
                     foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
-                        techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName);
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName, item.ExpectedAnswer);
                     }
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
                     cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
@@ -9992,6 +9996,49 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<SkillComment> GetDeliveryHeadSampleQuestionById(int id)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<SkillComment>(con, "usp_GetDeliveryHeadSampleQuestionById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@aiVideoLink", videoLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query(con, "usp_SaveSampleQuestionAIVideoLink", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

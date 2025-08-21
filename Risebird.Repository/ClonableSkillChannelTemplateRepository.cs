@@ -736,5 +736,28 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<SkillComment>> GetDeliveryHeadSampleQuestions(int id, string emailId = null)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                dynamicParameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<SkillComment>(con, "usp_GetDeliveryHeadSampleQuestions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }
