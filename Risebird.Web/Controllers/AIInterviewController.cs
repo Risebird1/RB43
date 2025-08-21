@@ -1,4 +1,5 @@
-﻿using Google.Apis.Drive.v3.Data;
+﻿using ExcelDataReader.Log;
+using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Rest;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -26,6 +28,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Twilio.Types;
 using static SkiaSharp.HarfBuzz.SKShaper;
 //using static SkiaSharp.HarfBuzz.SKShaper;
 
@@ -44,12 +47,14 @@ namespace Risebird.Web.Controllers
         private readonly IAIInterviewerService _aiinterviewerService;
         private readonly ISynthesiaTextToVideoService _synthesiaTextToVideoService;
         private readonly IPdfReaderHelper _pdfReaderHelper;
+        private readonly IIRFService _iRFService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
-            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper)
+            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper, 
+            IIRFService iRFService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -61,6 +66,7 @@ namespace Risebird.Web.Controllers
             _aiinterviewerService = aiinterviewerService;
             _synthesiaTextToVideoService = synthesiaTextToVideoService;
             _pdfReaderHelper = pdfReaderHelper;
+            _iRFService = iRFService;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -609,6 +615,98 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Failed");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAIQuestionVideo(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
+
+                        //now call the synthesia api to generate the video
+                        var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, "your_template_id_here");
+
+                        // Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                        string videoUrl;
+                        do
+                        {
+                            await Task.Delay(8000);
+                            videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                        } while (string.IsNullOrWhiteSpace(videoUrl));
+
+
+                        //save the video in our blob
+                        string uploadedVideoUrl = string.Empty;
+
+                        if (videoUrl != null)
+                        {
+                            HttpClient myWebClient = new HttpClient();
+                            using (Stream myStream = myWebClient.GetStreamAsync(videoUrl).Result)
+                            {
+                                var fileName = $"aiVideo_{id.ToString()}_{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+                                //long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                //fileName = fileName + "_" + unixTime.ToString();
+                                try
+                                {
+                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "videos", null, myStream).Result;
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                    
+                                }
+
+                                //generate SAS URL from the uploaded video url
+                                //var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+
+                                //if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                //{
+                                //    videoSasUrl = uploadedVideoUrl + "?" + sas;
+                                //}
+                            }
+                        }
+
+                        //save the video link in our db against the above id
+
+                        var result = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
+                        if (result)
+                        {
+                            return Json($"Successfully created an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
+                        }
+                        else
+                        {
+                            return Json($"Failed to create an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //return Json($"Failed to create an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
+
+                return Json(false);
+
             }
         }
     }

@@ -15,5 +15,7 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public int? UserId { get; set; }
         public string CreatedBy { get; set; }
+        public string AIQuestionVideoLink { get; set; }
+        public string ExpectedAnswer { get; set; }
     }
 }

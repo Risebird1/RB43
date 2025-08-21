@@ -12161,6 +12161,11 @@ section {
 .align-right{
     padding-right:140px!important;
 }
+#vidvideoinstruction {
+    width: 600px;
+    height: 300px;
+    margin: 10px auto 15px auto; display: block;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -13683,8 +13688,11 @@ section {
             width: 100% !important;
             left: 0px !important;
         }
-
-        #clientduser li {
+        #vidvideoinstruction {
+            width: 100%;
+            height: 300px;
+        }
+            #clientduser li {
             width: 100%;
             float: left;
         }
