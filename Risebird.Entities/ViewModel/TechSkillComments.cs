@@ -20,5 +20,7 @@ namespace Risebird.Entities.ViewModel
         public string IrfName { get; set; }
         public string CreatedBy { get; set; }
         public int interviewid { get; set; }
+        public bool IsAIInterview { get; set; }
+        public int AIInterviewType { get; set; }
     }
 }

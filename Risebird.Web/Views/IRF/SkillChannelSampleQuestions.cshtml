@@ -15,6 +15,7 @@
                                                 <tr>
                                                     <th class="table_heading b-right">Skill Name</th>
                                                     <th class="table_heading b-right">Questions</th>
+                                                    <th class="table_heading b-right">Expected Answer</th>
                                                     <th colspan="2" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -31,9 +32,17 @@
                                                                 <label id="questionError_0" class="text-danger"></label>
                                                             </div>
                                                         </td>
+                                                        <td class="b-right">
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__ExpectedAnswer" style="width:100%" name="SkillCollection[0].ExpectedAnswer" class="valid" aria-invalid="false" @* onblur="checkQuestionLength(this.id)" *@></textarea>
+                                                                </div>
+                                                                <label id="expectedAnswerError_0" class="text-danger"></label>
+                                                            </div>
+                                                        </td>       
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
-                                                                <span style="float:right;" id="btnMinus_0" onclick="DeleteQuestionRow(this, 'SkillCollection','Skill','Comment', 'CreatedBy')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                <span style="float:right;" id="btnMinus_0" onclick="DeleteQuestionRow(this, 'SkillCollection','Skill','Comment', 'CreatedBy', 'ExpectedAnswer')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                             </div>
                                                         </td>
                                                         @* @Html.Hidden("SkillCollection[0].CreatedBy") *@
@@ -116,11 +125,21 @@
         $ttlast.find("textarea").val("");
         $ttlast.find("textarea").removeAttr("readonly");
         
-        $ttlast.find("textarea").blur(function () {
+        // $ttlast.find("textarea").blur(function () {
+        //     checkQuestionLength('SkillCollection_' + finalIndex + '__Comment');
+        // });
+        $ttlast.find("textarea#SkillCollection_" + finalIndex + "__Comment").blur(function () {
             checkQuestionLength('SkillCollection_' + finalIndex + '__Comment');
         });
-        var errorLabelIdValue = "questionError_" + finalIndex;
-        $ttlast.find("label").attr("id", errorLabelIdValue);
+        // var errorLabelIdValue = "questionError_" + finalIndex;
+        // $ttlast.find("label").attr("id", errorLabelIdValue);
+
+        var errorLabelIdValue1 = "questionError_" + finalIndex;
+        var errorLabelIdValue2 = "expectedAnswerError_" + finalIndex;
+
+        $ttlast.find("label").eq(0).attr("id", errorLabelIdValue1);
+        $ttlast.find("label").eq(1).attr("id", errorLabelIdValue2);
+        
         //$ttlast.find("label").removeAttr("name");
         // Find the affected form
         var $form = $tr.closest("FORM");
@@ -143,7 +162,7 @@
     }
 
 
-    function DeleteQuestionRow(element, collectionName, tdOne, tdTwo, tdThree) {
+    function DeleteQuestionRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
         if ($(element).parents('tbody').find('tr').length === 1) {
             alert('Must have atleast one Row');
             return false;
@@ -166,13 +185,17 @@
                     elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
                     //name="ClientCollection[3].ClientUserId"
                     elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
                     elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                     elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
                     elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
                     elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
                 }
             }
         }
