@@ -1437,7 +1437,6 @@
 </script>
 <script>
     function CreateAIQuestionVideo(id) {
-        debugger;
         swal.fire({
             title: 'Are you sure?',
             text: "Do you want to create an AI Video that asks the question?",  /* : '" + agName + "'?", */
@@ -1454,6 +1453,7 @@
                         data: { 'id': id},
                         success: function (data) {
                             swal.fire(data);
+                            location.reload();
                         }
                     });
                 })
