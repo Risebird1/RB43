@@ -10,6 +10,7 @@ namespace Risebird.Entities.ViewModel
             SkillCollection = (IList<SkillComment>)(new List<SkillComment>());
             IrfName = string.Empty;
         }
+        public int id { get; set; }
         public IList<SkillComment> SkillCollection { get; set; }
         public int IRFId { get; set; }
         public string Message { get; set; }
@@ -22,5 +23,6 @@ namespace Risebird.Entities.ViewModel
         public int interviewid { get; set; }
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
+        public string AIQuestionVideoLink { get; set; }
     }
 }

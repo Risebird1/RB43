@@ -402,6 +402,7 @@ namespace Risebird.Entities.ViewModel
         public int TimeLeftInSeconds { get; set; } //applicable only for AI interviews conducted using assistants through sessions/openai-threads
         public string TechSkillsInJson { get; set; }
         public bool IsAdaptive { get; set; }//refers to the type of ai interview a skill channel is created for (adaptive or preset); applicable only in case of an ai interview skill channel
+        public int AIInterviewType { get; set; }
 
     }
 
