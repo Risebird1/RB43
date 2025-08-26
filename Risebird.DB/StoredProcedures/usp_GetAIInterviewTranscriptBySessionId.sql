@@ -13,7 +13,10 @@ Create Procedure usp_GetAIInterviewTranscriptBySessionId
 AS
 BEGIN
 
-select SessionId, [Role], [Message], [Timestamp] from TranscriptsConv where SessionId = @SessionId order by [Timestamp] desc
+select SessionId, [Role], [Message], [Timestamp], DeliveryHeadQuestionId, sq.AIQuestionVideoLink 
+from TranscriptsConv tc
+left join SkillChannelSampleQuestions sq on tc.DeliveryHeadQuestionId = sq.id
+where SessionId = @SessionId order by [Timestamp] desc
 
 END
 GO
