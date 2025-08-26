@@ -130,8 +130,8 @@ namespace Risebird.Web.Controllers
                             if (allQuestions != null && allQuestions.Count() <= 10)
                             //if(allQuestions != null && allQuestions.Count() <= 3)
                             {
-                                //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
-                                if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
+                                if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
+                                //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                 {
                                     var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
 
@@ -171,7 +171,6 @@ namespace Risebird.Web.Controllers
                                     model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
 
                                     //var latestReply = CleanMessage(sampleQuestion.Message);
-                                    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
 
                                     if (!string.IsNullOrEmpty(sampleQuestion.Message))
                                     {
