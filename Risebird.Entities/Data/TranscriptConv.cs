@@ -13,5 +13,7 @@ namespace Risebird.Entities.Data
         public string Role { get; set; }
         public string Message { get; set; }
         public DateTime Timestamp { get; set; }
+        public int DeliveryHeadQuestionId { get; set; }
+        public string AIQuestionVideoLink { get; set; }
     }
 }

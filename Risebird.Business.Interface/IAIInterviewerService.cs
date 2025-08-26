@@ -19,7 +19,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<TranscriptConv>> GetAIInterviewTranscriptBySessionId(Guid sessionId);
         Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant);
         Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId);
-        Task LogTranscript(Guid sessionId, string role, string message);
+        Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null);
         Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId);
+        Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId);
     }
 }

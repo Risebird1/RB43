@@ -121,11 +121,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task LogTranscript(Guid sessionId, string role, string message)
+        public async Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null)
         {
             try
             {
-                await _aiInterviewerRepository.LogTranscript(sessionId, role, message);
+                await _aiInterviewerRepository.LogTranscript(sessionId, role, message, deliveryHeadQuestionId);
                 return;
             }
             catch (Exception e)
@@ -139,6 +139,18 @@ namespace Risebird.Business
             try
             {
                 return await _aiInterviewerRepository.GetAIInterviewSpecificDetails(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetRandomQuestionForSession(interviewId, irfId);
             }
             catch (Exception e)
             {
