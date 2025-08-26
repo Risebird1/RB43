@@ -20,6 +20,10 @@ namespace Risebird.Entities.ViewModel
         public bool IsAdaptive { get; set; }
         public string CurrentQuestion { get; set; }
         public string AssistantId { get; set; }
+        public int AIInterviewType { get; set; }
+        public int CurrentQuestionId { get; set; }
+        public int IRFId { get; set; }
+
 
     }
 
@@ -27,5 +31,6 @@ namespace Risebird.Entities.ViewModel
     {
         public string Role { get; set; }
         public string Message { get; set; }
+        public int sampleQuestionId { get; set; } // application only in case of preset interviews which require video
     }
 }
