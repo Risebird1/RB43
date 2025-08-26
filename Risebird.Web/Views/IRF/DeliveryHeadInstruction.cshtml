@@ -723,15 +723,22 @@
                                                                                                     <td><a target="_blank" href="@sampleQuestion.AIQuestionVideoLink">Click Here</a></td>
                                                                                                 }
 
-                                                                                                <td>
+                                                                                                <td style="text-align:center">
                                                                                                     @if (string.IsNullOrEmpty(sampleQuestion.AIQuestionVideoLink) && !string.IsNullOrEmpty(sampleQuestion.Comment))
                                                                                                     {
-                                                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Create AI Video that asks the question" style="width:25px!important;height:25px!important;position:relative; background:#62c6c2bf!important; border: 1px #62c6c2bf!important;">
+                                                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Create AI Video that asks the question" style="width:30px!important;height:30px!important;position:relative; background:#42a5f5!important; border: 1px #42a5f5!important;border-radius:20px;">
                                                                                                             <span onclick="javascript:CreateAIQuestionVideo('@sampleQuestion.id');" title="Create AI Video that asks the question" class="mdc-fab__icon material-icons">
-                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                                                                                                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                                                                                                                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                                                                                </svg>
+                                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:relative;top:-2px;left:0px;">
+                                                                                                            <!-- Video frame -->
+                                                                                                            <rect x="2" y="4" width="20" height="14" rx="2" ry="2"></rect>
+
+                                                                                                            <!-- Play button -->
+                                                                                                            <polygon points="10 9 15 12 10 15 10 9" fill="currentColor"></polygon>
+
+                                                                                                            <!-- AI badge -->
+                                                                                                            <rect x="16" y="2" width="6" height="6" rx="1" fill="currentColor"></rect>
+                                                                                                            <text x="19" y="6" text-anchor="middle" font-size="3.5" font-family="Arial" fill="white">AI</text>
+                                                                                                        </svg>
                                                                                                             </span>
                                                                                                         </button>
                                                                                                     }
@@ -1430,7 +1437,6 @@
 </script>
 <script>
     function CreateAIQuestionVideo(id) {
-        debugger;
         swal.fire({
             title: 'Are you sure?',
             text: "Do you want to create an AI Video that asks the question?",  /* : '" + agName + "'?", */
@@ -1447,6 +1453,7 @@
                         data: { 'id': id},
                         success: function (data) {
                             swal.fire(data);
+                            location.reload();
                         }
                     });
                 })
