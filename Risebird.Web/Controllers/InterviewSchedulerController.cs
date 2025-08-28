@@ -1357,9 +1357,9 @@ namespace Risebird.Web.Controllers
                         var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime, loginEmailid);
                         if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
                         {
+                            //cancel interview meeting over portal
                             if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                             {
-                                //cancel interviewmmeting over portal
                                 await _zoho.DeleteMeetingAsync(candidateuniqueid.ZoomMeetingId);
                             }
                             else
@@ -1367,8 +1367,8 @@ namespace Risebird.Web.Controllers
                                 DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
                             }
                             //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
-                            //End: Cancel the previous meetings
                         }
+                        //End: Cancel the previous meetings
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         await _interviewSchedulerservice.CheckFutureCancelInterview(model.InterviewChannelId, indianTime, model.Email);
                         string timezonevalue = string.Empty;
