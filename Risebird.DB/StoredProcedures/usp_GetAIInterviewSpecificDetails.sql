@@ -13,7 +13,9 @@ Create Procedure usp_GetAIInterviewSpecificDetails
 AS
 BEGIN
 
-select im.AssistantId, ThreadId  from InterviewMeetings im join InterviewSessions ise on ise.SessionId =  im.SessionId
+select im.id as imid, im.AssistantId, ThreadId, irf.IsAIInterview, AIInterviewType, irf.id as irfIntId from InterviewMeetings im 
+join InterviewSessions ise on ise.SessionId =  im.SessionId
+join irf on irf.IRFId = im.irfId
 where im.SessionId = @SessionId 
 
 END
