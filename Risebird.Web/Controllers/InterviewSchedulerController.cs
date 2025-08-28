@@ -157,7 +157,8 @@ namespace Risebird.Web.Controllers
                 await SetDropDownTime(model);
                 return View(model);
             }
-        }        public async Task<IActionResult> DeactivateEvent(int eventid)
+        }
+        public async Task<IActionResult> DeactivateEvent(int eventid)
         {
             if (await _interviewSchedulerservice.DeactivateEventById(eventid, 0))
             {
@@ -1356,8 +1357,15 @@ namespace Risebird.Web.Controllers
                         var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime, loginEmailid);
                         if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
                         {
-                            //cancel interviewmmeting over portal
-                            DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
+                            if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                            {
+                                //cancel interviewmmeting over portal
+                                await _zoho.DeleteMeetingAsync(candidateuniqueid.ZoomMeetingId);
+                            }
+                            else
+                            {
+                                DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
+                            }
                             //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
                             //End: Cancel the previous meetings
                         }
