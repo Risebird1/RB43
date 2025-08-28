@@ -85,7 +85,7 @@ namespace Risebird.Repository
             using var conn = new SqlConnection(connectionString);
             await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow, DeliveryHeadQuestionId = deliveryHeadQuestionId });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null)
         {
             try
             {
@@ -101,6 +101,7 @@ namespace Risebird.Repository
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
                     parameters.Add("@BotAudioLink", BotAudioLink);
+                    parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
                     //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,
@@ -283,7 +284,31 @@ namespace Risebird.Repository
                             _resultVM.TechSkillsInJson = jsonOutput;
                         }
                     }
-                    
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            
+                            var qaSet = new List<ExpandoObject>();
+
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                dynamic obj = new ExpandoObject();
+
+                                obj.question = !string.IsNullOrEmpty(dt.Rows[i]["question"].ToString()) ? dt.Rows[i]["question"].ToString() : null;
+                                obj.CandidateAnswer = !string.IsNullOrEmpty(dt.Rows[i]["CandidateAnswer"].ToString()) ? dt.Rows[i]["CandidateAnswer"].ToString() : null;
+                                obj.ExpectedAnswer = !string.IsNullOrEmpty(dt.Rows[i]["ExpectedAnswer"].ToString()) ? dt.Rows[i]["ExpectedAnswer"].ToString() : null;
+
+                                qaSet.Add(obj);
+                            }
+
+                            // Serialize to JSON
+                            string jsonOutput = JsonConvert.SerializeObject(qaSet, Formatting.Indented);
+                            _resultVM.QuestionAnswerSetInJson = jsonOutput;
+                        }
+                    }
+
                     return _resultVM;
                 }
             }

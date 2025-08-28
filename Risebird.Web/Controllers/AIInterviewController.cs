@@ -135,6 +135,9 @@ namespace Risebird.Web.Controllers
                                 {
                                     var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
 
+                                    var latestQuestion = latestEntry.Message;
+                                    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(latestEntry.Message), sampleQuestionId = latestEntry.DeliveryHeadQuestionId });
+
                                     if (candidateLatestEntry != null)
                                     {
                                         model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
@@ -144,9 +147,7 @@ namespace Risebird.Web.Controllers
                                     //{
                                     //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message), sampleQuestionId = question.DeliveryHeadQuestionId });
                                     //}
-                                    var latestQuestion = latestEntry.Message;
-                                    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(latestEntry.Message), sampleQuestionId = latestEntry.DeliveryHeadQuestionId });
-
+                                    
                                     if (!string.IsNullOrEmpty(latestQuestion))
                                     {
                                         model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
@@ -301,16 +302,16 @@ namespace Risebird.Web.Controllers
                                 //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                 {
                                     var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
-
+                                    foreach (var question in allQuestions)
+                                    {
+                                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message) });
+                                    }
                                     if (candidateLatestEntry != null)
                                     {
                                         model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
 
                                     }
-                                    foreach (var question in allQuestions)
-                                    {
-                                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message) });
-                                    }
+                                    
                                     var latestQuestion = latestEntry.Message;
                                     if (!string.IsNullOrEmpty(latestQuestion))
                                     {
@@ -523,11 +524,11 @@ namespace Risebird.Web.Controllers
                     //}
                     await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
-                    model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
                     var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
 
                     model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
+                    model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
                     await UploadBotInterviewVideo(model, question, userMessage);
 
@@ -638,7 +639,7 @@ namespace Risebird.Web.Controllers
                         VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     //Save in db with question.sessionid,videoLink,Datetime
-                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink);
+                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
                 }
             }
         }
@@ -687,69 +688,72 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Report(Guid seId, bool redo = false, bool isExit = false)//Guid seId
         {
-            // For demo: tech stack prompt
-            //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
-            string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-            //var aiReport = new InterviewReportResult();
-            InterviewReportResult aiReport = null;
-            if (redo)
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+            if (meetingDetails?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
             {
-                aiReport = await _api.GenerateReport(seId, candidatePrompt);
-
-                //save the report in db
-                if (aiReport != null)
+                // For demo: tech stack prompt
+                //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
+                //string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
+                //var aiReport = new InterviewReportResult();
+                InterviewReportResult aiReport = null;
+                if (redo)
                 {
-                    await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                    aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
 
-                }
-            }
-            else
-            {
-                //check if the report already exists and fetch if exists
-
-                var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
-                if (!string.IsNullOrEmpty(aiReportJson))
-                {
-                    aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
-                }
-                if (aiReport == null)
-                {
-                    aiReport = await _api.GenerateReport(seId, candidatePrompt);
-
-                    //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
-                    var list = new List<string>();
-                    list.Add(aiReport.Replies.FirstOrDefault());
-                    aiReport.Replies = list;
                     //save the report in db
                     if (aiReport != null)
                     {
-                        var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
-                        if(isExit)
-                        {
-                            if (result)
-                            {
-                                return Json("Meeting closed successfully. Thankyou for your time!");
+                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
 
-                            }
-                            else
-                            {
-                                return Json("Error while exiting the interview. Please contact support.");
-
-                            }
-                        }
-                        
                     }
                 }
-                
-            }
-            if (isExit)
-            {
-                return Json("Meeting closed successfully. Thankyou for your time!");
-            }
-            var chatMessageModel = new ChatMessageViewModel
-            {
-                SessionId = aiReport.SessionId,
-                ChatLog = new List<ChatLine>
+                else
+                {
+                    //check if the report already exists and fetch if exists
+
+                    var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
+                    if (!string.IsNullOrEmpty(aiReportJson))
+                    {
+                        aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
+                    }
+                    if (aiReport == null)
+                    {
+                        aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
+
+                        //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
+                        var list = new List<string>();
+                        list.Add(aiReport.Replies.FirstOrDefault());
+                        aiReport.Replies = list;
+                        //save the report in db
+                        if (aiReport != null)
+                        {
+                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                            if (isExit)
+                            {
+                                if (result)
+                                {
+                                    return Json("Meeting closed successfully. Thankyou for your time!");
+
+                                }
+                                else
+                                {
+                                    return Json("Error while exiting the interview. Please contact support.");
+
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+                if (isExit)
+                {
+                    return Json("Meeting closed successfully. Thankyou for your time!");
+                }
+                var chatMessageModel = new ChatMessageViewModel
+                {
+                    SessionId = aiReport.SessionId,
+                    ChatLog = new List<ChatLine>
                 {
                     new ChatLine
                     {
@@ -757,14 +761,97 @@ namespace Risebird.Web.Controllers
                         Message = CleanMessage(aiReport.Replies.FirstOrDefault())
                     }
                 }
-            };
+                };
 
-            AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
-            reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
-            reportModel.chatMessageViewModel = chatMessageModel;
-            //reportModel.TotalQuestions = result.Replies.Count() - 1;
-            ViewBag.IsAdaptive = true;
-            return View(reportModel);
+                AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
+                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.chatMessageViewModel = chatMessageModel;
+                //reportModel.TotalQuestions = result.Replies.Count() - 1;
+                ViewBag.IsAdaptive = true;
+                return View(reportModel);
+            }
+            else
+            {
+                // For demo: tech stack prompt
+                //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
+                string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
+                //var aiReport = new InterviewReportResult();
+                InterviewReportResult aiReport = null;
+                if (redo)
+                {
+                    aiReport = await _api.GenerateReport(seId, candidatePrompt);
+
+                    //save the report in db
+                    if (aiReport != null)
+                    {
+                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+
+                    }
+                }
+                else
+                {
+                    //check if the report already exists and fetch if exists
+
+                    var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
+                    if (!string.IsNullOrEmpty(aiReportJson))
+                    {
+                        aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
+                    }
+                    if (aiReport == null)
+                    {
+                        aiReport = await _api.GenerateReport(seId, candidatePrompt);
+
+                        //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
+                        var list = new List<string>();
+                        list.Add(aiReport.Replies.FirstOrDefault());
+                        aiReport.Replies = list;
+                        //save the report in db
+                        if (aiReport != null)
+                        {
+                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                            if (isExit)
+                            {
+                                if (result)
+                                {
+                                    return Json("Meeting closed successfully. Thankyou for your time!");
+
+                                }
+                                else
+                                {
+                                    return Json("Error while exiting the interview. Please contact support.");
+
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+                if (isExit)
+                {
+                    return Json("Meeting closed successfully. Thankyou for your time!");
+                }
+                var chatMessageModel = new ChatMessageViewModel
+                {
+                    SessionId = aiReport.SessionId,
+                    ChatLog = new List<ChatLine>
+                {
+                    new ChatLine
+                    {
+                        Role = "Bot",
+                        Message = CleanMessage(aiReport.Replies.FirstOrDefault())
+                    }
+                }
+                };
+
+                AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
+                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.chatMessageViewModel = chatMessageModel;
+                //reportModel.TotalQuestions = result.Replies.Count() - 1;
+                ViewBag.IsAdaptive = true;
+                return View(reportModel);
+            }
+            
         }
 
         private string CleanMessage(string input)
