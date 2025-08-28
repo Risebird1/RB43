@@ -11,7 +11,7 @@ namespace Risebird.Entities.ViewModel
     }
 
     public record ZohoCreateMeetingRequest(string Topic, string? Agenda, DateTimeOffset StartTime, int DurationMinutes, bool IsRecurring = false);
-    
+
     public class ZohoMeetingResponse
     {
         public string meetingKey { get; set; } = string.Empty;
@@ -26,5 +26,12 @@ namespace Risebird.Entities.ViewModel
         public int duration { get; set; }
         public string? transcriptionDownloadUrl { get; set; }
         public string? erecordingId { get; set; }
+    }
+    public class ZohoParticipantReportItem
+    {
+        public string? participantId { get; set; }
+        public string? email { get; set; }
+        public string? inAndOutTime { get; set; }
+        public int totalDurationMinutes { get; set; }
     }
 }

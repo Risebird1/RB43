@@ -214,5 +214,42 @@ namespace Risebird.CommonHelper
                 throw new InvalidOperationException($"Failed to delete recording: {resp.StatusCode} {resp.ErrorMessage}");
             }
         }
+        public async Task<IReadOnlyList<ZohoParticipantReportItem>> GetParticipantReportAsync(string meetingKey)
+        {
+            var token = await GetAccessTokenAsync();
+            var client = CreateMeetingApiClient();
+            // Endpoint may vary by Zoho API version; this targets participant report for a meeting/session
+            var path = $"/{_options.OrganizationId}/participant/{meetingKey}.json?index=1&count=10";
+            var req = new RestRequest(path, Method.Get);
+            req.AddHeader("Authorization", $"Zoho-oauthtoken {token}");
+            req.AddHeader("Accept", "application/json");
+            var resp = await client.ExecuteAsync(req);
+            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return Array.Empty<ZohoParticipantReportItem>();
+            }
+            if (!resp.IsSuccessful || string.IsNullOrEmpty(resp.Content))
+            {
+                throw new InvalidOperationException($"Failed to get participant report: {resp.StatusCode} {resp.ErrorMessage}");
+            }
+            using var doc = JsonDocument.Parse(resp.Content);
+            var root = doc.RootElement;
+            var results = new List<ZohoParticipantReportItem>();
+            JsonElement participants;
+            if (root.TryGetProperty("participants", out participants) && participants.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var p in participants.EnumerateArray())
+                {
+                    results.Add(new ZohoParticipantReportItem
+                    {
+                        participantId = p.TryGetProperty("memberId", out var pid) ? pid.GetString() : null,
+                        email = p.TryGetProperty("email", out var e) ? e.GetString() : null,
+                        inAndOutTime = p.TryGetProperty("inAndOutTime", out var ia) ? ia.GetString() : null,
+                        totalDurationMinutes = p.TryGetProperty("duration", out var td) ? td.GetInt32() / 60000 : 0
+                    });
+                }
+            }
+            return results;
+        }
     }
 }

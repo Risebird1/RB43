@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Graph.Me.RemoveAllDevicesFromManagement;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business;
@@ -4628,11 +4629,13 @@ namespace Risebird.Web.Controllers
                         }
                         else if (type == "Removed")
                         {
-                            model = model.Where(x => x.RedMarkerStatus == 3).ToList();
+                            model = model.Where(x => x.RedMarkerStatus == 3 && !x.Isactive).ToList();
                         }
                         else if (type == "Pending")
                         {
+                            var removedmodel = model.Where(x => x.RedMarkerStatus == 3 && !x.Isactive).ToList();
                             model = model.Where(x => x.RedMarkerStatus != 1 && x.RedMarkerStatus != 2).ToList();
+                            model = model.Except(removedmodel);
                         }
                         ViewBag.Type = type;
                         return View(model);
