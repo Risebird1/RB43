@@ -238,7 +238,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization, int invoicesubmit);
         Task<bool> UpdateSingleParticipantFlagForMeeting();
         Task<IEnumerable<CommonInterviewDetailsVM>> GetUpcomingInterviewsCandidates();
-        Task<List<string>> FetchCandidateZoomMeetingsIdForCancel();
+        Task<List<string>> FetchCandidateZoomMeetingsIdForCancel(string MeetingPlatForm);
         Task<RedoInterviewVM> GetInterviewDetailsById(int id);
         Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model);
         Task<bool> StoreClientBroadcastMessage(BroadcastModel model);

@@ -26,6 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "Authentication:AzureAdB2C");
 builder.Services.Configure<ConfigurationOptions>(options => builder.Configuration.Bind(options));
+builder.Services.Configure<Risebird.Entities.Data.ZohoOptions>(builder.Configuration.GetSection("Zoho"));
 
 var configOptions = new ConfigurationOptions();
 builder.Configuration.Bind(configOptions);
@@ -203,6 +204,7 @@ builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerA
 builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
 builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
+builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
 
 
 var app = builder.Build();

@@ -32,8 +32,9 @@ namespace Risebird.Business
         private readonly ICandidateRepository _candidateRepository;
         private readonly ICandidateService _candidateService;
         private readonly IZoomHelper _zoomHelper;
+        private readonly IZohoMeetingHelper _zoho;
 
-        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -50,6 +51,7 @@ namespace Risebird.Business
             _candidateRepository = candidateRepository;
             _candidateService = candidateService;
             _zoomHelper = zoomHelper;
+            _zoho = zoho;
         }
 
         public async Task<List<MeetingVM>> GetMeetingList()
@@ -358,7 +360,7 @@ namespace Risebird.Business
                     {
                         foreach (var item in interviwers)
                         {
-                            await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(),item.uniqueid);
+                            await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(), item.uniqueid);
 
                         }
                         //await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
@@ -3369,7 +3371,14 @@ namespace Risebird.Business
                         var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
                         var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
-
+                        if (result.MeetingPlatForm == MeetingPlatforms.Zoho)
+                        {
+                            await _zoho.DeleteMeetingAsync(result.ZoomMeetingId);
+                        }
+                        else
+                        {
+                            DeleteMeetingLink(result.ZoomMeetingId);
+                        }
                         return "Successfully status updated, " + value;
                     }
 
@@ -3786,11 +3795,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel()
+        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel(string MeetingPlatForm)
         {
             try
             {
-                return await _meetingRespository.FetchCandidateZoomMeetingsIdForCancel();
+                return await _meetingRespository.FetchCandidateZoomMeetingsIdForCancel(MeetingPlatForm);
             }
             catch (Exception ex)
             {

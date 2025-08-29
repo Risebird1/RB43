@@ -195,7 +195,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration, string CandidateEmail, string emailId);
         Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid);
         Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization, int invoicesubmit);
-        Task<List<string>> FetchCandidateZoomMeetingsIdForCancel();
+        Task<List<string>> FetchCandidateZoomMeetingsIdForCancel(string MeetingPlatForm);
         Task<RedoInterviewVM> GetInterviewDetailsById(int id);
         Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model);
         Task<RedoInterviewVM> GetRedoInterviewDetailsById(int id);

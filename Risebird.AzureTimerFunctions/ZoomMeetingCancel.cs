@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 
 namespace Risebird.AzureTimerFunctions
@@ -15,21 +16,24 @@ namespace Risebird.AzureTimerFunctions
         private readonly IMeetingService _meetingService;
         private readonly IZoomHelper _zoomHelper;
         private readonly ILogger log;
+        private readonly IZohoMeetingHelper _zoho;
 
         public ZoomMeetingCancel(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
-            IMeetingService meetingService, IZoomHelper zoomHelper)
+            IMeetingService meetingService, IZoomHelper zoomHelper, IZohoMeetingHelper zoho)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingService = meetingService;
             _zoomHelper = zoomHelper;
             log = loggerFactory.CreateLogger<ZoomMeetingCancel>();
+            _zoho = zoho;
         }
         [Function("ZoomMeetingCancel")]
         public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            var candidatemeetinglist = await _meetingService.FetchCandidateZoomMeetingsIdForCancel();
+            var candidatemeetinglist = await _meetingService.FetchCandidateZoomMeetingsIdForCancel(MeetingPlatforms.Zoom);
+            var Zohocandidatemeetinglist = await _meetingService.FetchCandidateZoomMeetingsIdForCancel(MeetingPlatforms.Zoho);
             foreach (var item in candidatemeetinglist)
             {
                 try
@@ -37,6 +41,20 @@ namespace Risebird.AzureTimerFunctions
                     if (!string.IsNullOrEmpty(item))
                     {
                         await DeleteMeetingLink(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            foreach (var item in Zohocandidatemeetinglist)
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        await _zoho.DeleteMeetingAsync(item);
                     }
                 }
                 catch (Exception ex)
