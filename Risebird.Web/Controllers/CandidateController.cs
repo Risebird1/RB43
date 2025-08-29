@@ -71,7 +71,7 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
             IAadhaarService aadhaarService, IZoomHelper zoomHelper,
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env, IEncryptionHelper encryptionHelper, ZohoMeetingHelper zoho)
+            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env, IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
