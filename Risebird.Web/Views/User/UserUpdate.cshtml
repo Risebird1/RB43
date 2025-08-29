@@ -39,7 +39,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.UserProfiles, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @if (ViewBag.profileName == "Admin")
+                                            @if (ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin")
                                             {
                                                 @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "ClientblockActive()" })
                                                 @Html.HiddenFor(m => m.IdProfile)

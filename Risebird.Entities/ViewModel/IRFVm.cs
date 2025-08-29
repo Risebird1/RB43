@@ -207,7 +207,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Auto cancel candidate interview")]
         public bool IsMeetingAutoCancelled { get; set; }
 
-        public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
+        public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.Zoho };
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
         public string SMEAudioCommentLink { get; set; }
