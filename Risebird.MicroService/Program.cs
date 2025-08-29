@@ -169,6 +169,7 @@ namespace Risebird.MicroService
                     services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
                     services.AddScoped<IAIInterviewerService, AIInterviewerService>();
                     services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
+                    services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
                 }).Build();
             host.Run();
         }

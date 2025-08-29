@@ -60,6 +60,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [AssistantId][varchar] (75),
     [SessionId][varchar] (200),
     [TimeLeftInSeconds][int] NULL,
+    [MeetingPlatForm][varchar](25),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -461,6 +462,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add TimeLeftInSeconds int
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MeetingPlatForm')--indicates the time left for the AI interview
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add MeetingPlatForm varchar(25)
 END
 
 END

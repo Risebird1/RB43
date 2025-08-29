@@ -62,6 +62,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IWebHostEnvironment _env;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly IZohoMeetingHelper _zoho;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
@@ -70,7 +71,7 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
             IAadhaarService aadhaarService, IZoomHelper zoomHelper,
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env, IEncryptionHelper encryptionHelper)
+            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env, IEncryptionHelper encryptionHelper, ZohoMeetingHelper zoho)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -97,6 +98,7 @@ namespace Risebird.Web.Controllers
             _interviewSchedulerservice = interviewSchedulerservice;
             _env = env;
             _encryptionHelper = encryptionHelper;
+            _zoho = zoho;
         }
 
         [HttpGet]
@@ -4479,7 +4481,14 @@ namespace Risebird.Web.Controllers
 
                     if (!string.IsNullOrEmpty(zoomMeetingId))
                     {
-                        await DeleteMeetingLink(zoomMeetingId);
+                        if (result.MeetingPlatForm == MeetingPlatforms.Zoho)
+                        {
+                            await _zoho.DeleteMeetingAsync(zoomMeetingId);
+                        }
+                        else
+                        {
+                            await DeleteMeetingLink(zoomMeetingId);
+                        }
                     }
 
                     return Json("Invitation has been cancelled Successfully!");
@@ -4541,9 +4550,15 @@ namespace Risebird.Web.Controllers
 
                         if (!string.IsNullOrEmpty(zoomMeetingId))
                         {
-                            await DeleteMeetingLink(zoomMeetingId);
+                            if (result.MeetingPlatForm == MeetingPlatforms.Zoho)
+                            {
+                                await _zoho.DeleteMeetingAsync(zoomMeetingId);
+                            }
+                            else
+                            {
+                                await DeleteMeetingLink(zoomMeetingId);
+                            }
                         }
-
                         return Json($"Invitation for candidate {candidateEmail} has been cancelled Successfully!");
                     }
                     else

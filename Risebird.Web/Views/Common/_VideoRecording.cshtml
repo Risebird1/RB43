@@ -13,7 +13,7 @@
                 <h5 class="modal-title pull-left">Video KYC </h5>
             </div>
 
-             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
                 <span onclick="closeVideoKYCModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" id="divVideoKycmodel" style="padding:20px;">
@@ -79,11 +79,11 @@
                 </div>
 
                 <div class="col-md-12 pull-left" style="padding-bottom:35px;">
-                                     <div id="saveLoader" class="saveloader" style="display:none;">Please Wait...Video is uploading <img width="20" src="/img/saveloader.gif"></div>
- 
+                    <div id="saveLoader" class="saveloader" style="display:none;">Please Wait...Video is uploading <img width="20" src="/img/saveloader.gif"></div>
+
                     <div style="text-align:center;display:block;text-align:center;display:block;margin: 10px auto;width: 250px;">
-                    <button id="btnSave" style="width:200px;">SAVE</button>
-                   </div>
+                        <button id="btnSave" style="width:200px;">SAVE</button>
+                    </div>
                 </div>
 
             </div>
@@ -95,6 +95,7 @@
     function closeVideoKYCModel() {
         var model = document.getElementById("VideoKYCModel");
         model.style.display = "none";
+        document.getElementById('btnSave').disabled = true;
     }
     function openVideoKYCModel() {
         var model = document.getElementById("VideoKYCModel");
@@ -349,8 +350,8 @@
                 });
                 save.addEventListener('click', (ev) => {
                     var form_data = new FormData();
-                    var vidalert = $('#VideoKYCAlert').css('display', 'none')
-                    var saveloader = $('#saveLoader').css('display', 'block')
+                    var vidalert = $('#VideoKYCAlert').css('display', 'none');
+                    var saveloader = $('#saveLoader').css('display', 'block');
                     form_data.append("file", blobtransfer);
                     $.ajax({
                         type: "POST",
@@ -361,7 +362,7 @@
                         processData: false,
 
                         success: function (data) {
-                            saveloader
+                            $('#saveLoader').css('display', 'none');
                             swal.fire(data);
                             closeVideoKYCModel();
                             vidalert;
@@ -379,6 +380,7 @@
                     vidSave.src = videoURL;
                     console.log(videoURL);
                     blobtransfer = blob;
+                    document.getElementById('btnSave').disabled = false;
                 }
             })
             .catch(function (err) {
