@@ -14,6 +14,7 @@ using Risebird.Repository.Interface;
 using System.Reflection;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using static System.Reflection.Metadata.BlobBuilder;
+using static UglyToad.PdfPig.Core.PdfSubpath;
 
 namespace Risebird.Services.Controllers
 {
@@ -262,7 +263,7 @@ namespace Risebird.Services.Controllers
                                             string textreminder = string.Empty;
                                             textreminder = item.Phone;
                                             int interviewId = 0;
-                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, out interviewId, zoomLink.accountemail);
+                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoom", out interviewId, zoomLink.accountemail);
                                             if (result)
                                             {
                                                 _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);

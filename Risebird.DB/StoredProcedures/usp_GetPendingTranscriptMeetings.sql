@@ -18,7 +18,7 @@ AS
 Begin 
 
 select distinct im.id as imid, im.ZoomMeetingId, im.interviewDate, im.zoomLink, irf.MeetingPlatform, 
-ic.VideoDuration, irf.ClientId, cl.[Name] as ClientCompanyName
+ic.VideoDuration, irf.ClientId, cl.[Name] as ClientCompanyName,im.MeetingPlatForm as InterviewMeetingPlatForm
 from InterviewMeetings im 
 join IRF on IRF.IRFId = im.IRFId
 join Client cl on cl.id = irf.ClientId
@@ -29,7 +29,7 @@ left join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = IRF.id)
 where im.interviewDate<=@timeEnd and im.interviewDate>=@timeStart and (ic.VideoLink is not null and (ic.AudioTranscriptFileLink is null or ic.AudioTranscriptFileLink ='')) and im.ZoomMeetingId is not null and ISNULL(ca.IsProctor,0) != 1 --or (ic.AudioTranscriptFileLink is null or ic.AudioTranscriptFileLink = '')
 UNION
 select distinct im.id as imid, im.ZoomMeetingId, im.interviewDate, im.zoomLink, irf.MeetingPlatform, 
-ic.VideoDuration, irf.ClientId, cl.[Name] as ClientCompanyName
+ic.VideoDuration, irf.ClientId, cl.[Name] as ClientCompanyName,im.MeetingPlatForm as InterviewMeetingPlatForm
 from InterviewMeetings im 
 join IRF on IRF.IRFId = im.IRFId
 join Client cl on cl.id = irf.ClientId

@@ -67,6 +67,7 @@ namespace Risebird.Entities.ViewModel
         public string VideoKYC { get; set; }
         public int RedMarkerStatus { get; set; }
         public string RedMarkerReviewComment { get; set; }
+        public bool Isactive { get; set; }
     }
     public class RedMarkerDetailsVM
     {

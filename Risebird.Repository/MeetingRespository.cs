@@ -6281,13 +6281,15 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel()
+        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel(string MeetingPlatForm)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_FetchCandidateMeetingsIdForCancellation", null,
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MeetingPlatForm", MeetingPlatForm);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_FetchCandidateMeetingsIdForCancellation", parameters,
                        commandType: CommandType.StoredProcedure);
                     return (List<string>)result;
                 }
