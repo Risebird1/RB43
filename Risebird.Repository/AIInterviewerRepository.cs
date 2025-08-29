@@ -79,13 +79,13 @@ namespace Risebird.Repository
             return await conn.ExecuteScalarAsync<string>(sql, new { SessionId = sessionId });
         }
 
-        public async Task LogTranscript(Guid sessionId, string role, string message)
+        public async Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null)
         {
-            var sql = "INSERT INTO TransCriptsConv (SessionId, Role, Message, Timestamp) VALUES (@SessionId, @Role, @Message, @Timestamp)";
+            var sql = "INSERT INTO TransCriptsConv (SessionId, Role, Message, Timestamp, DeliveryHeadQuestionId) VALUES (@SessionId, @Role, @Message, @Timestamp, @DeliveryHeadQuestionId)";
             using var conn = new SqlConnection(connectionString);
-            await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow });
+            await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow, DeliveryHeadQuestionId = deliveryHeadQuestionId });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null)
         {
             try
             {
@@ -101,6 +101,7 @@ namespace Risebird.Repository
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
                     parameters.Add("@BotAudioLink", BotAudioLink);
+                    parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
                     //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,
@@ -231,6 +232,8 @@ namespace Risebird.Repository
                             _resultVM.resumeLink = !string.IsNullOrEmpty(dt.Rows[0]["resumeLink"].ToString()) ? dt.Rows[0]["resumeLink"].ToString() : null;
                             _resultVM.candidateName = !string.IsNullOrEmpty(dt.Rows[0]["candidateName"].ToString()) ? dt.Rows[0]["candidateName"].ToString() : null;
                             _resultVM.IsAdaptive = !string.IsNullOrEmpty(dt.Rows[0]["IsAdaptive"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAdaptive"]) : true;
+                            _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt16(dt.Rows[0]["AIInterviewType"]) : 0;
+                            _resultVM.irfIntId = !string.IsNullOrEmpty(dt.Rows[0]["irfIntId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["irfIntId"]) : 0;
                         }
                     }
                     if (dataset.Tables.Count > 1)
@@ -281,7 +284,31 @@ namespace Risebird.Repository
                             _resultVM.TechSkillsInJson = jsonOutput;
                         }
                     }
-                    
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            
+                            var qaSet = new List<ExpandoObject>();
+
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                dynamic obj = new ExpandoObject();
+
+                                obj.question = !string.IsNullOrEmpty(dt.Rows[i]["question"].ToString()) ? dt.Rows[i]["question"].ToString() : null;
+                                obj.CandidateAnswer = !string.IsNullOrEmpty(dt.Rows[i]["CandidateAnswer"].ToString()) ? dt.Rows[i]["CandidateAnswer"].ToString() : null;
+                                obj.ExpectedAnswer = !string.IsNullOrEmpty(dt.Rows[i]["ExpectedAnswer"].ToString()) ? dt.Rows[i]["ExpectedAnswer"].ToString() : null;
+
+                                qaSet.Add(obj);
+                            }
+
+                            // Serialize to JSON
+                            string jsonOutput = JsonConvert.SerializeObject(qaSet, Formatting.Indented);
+                            _resultVM.QuestionAnswerSetInJson = jsonOutput;
+                        }
+                    }
+
                     return _resultVM;
                 }
             }
@@ -384,6 +411,39 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<AddUpdateMeetingVM>(con, "usp_GetAIInterviewSpecificDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<TechSkillComments>(con, "usp_GetRandomQuestionForSession", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    if(result != null)
+                    {
+                        return result?.FirstOrDefault();
+
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
             catch (SqlException ex)

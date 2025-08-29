@@ -968,10 +968,15 @@
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
                         <input type="hidden" asp-for="InterviewId" />
+                        <input type="hidden" asp-for="IRFId" />
                         <input type="hidden" asp-for="IsAdaptive" />
                         <input type="hidden" asp-for="CurrentQuestion" value="@Model.CurrentQuestion" />
+                        <input type="hidden" asp-for="CurrentQuestionId" value="@Model.CurrentQuestionId" />
                         <input type="hidden" asp-for="AIInterviewerAudioLink" value="@Model.AIInterviewerAudioLink" />
                         <input type="hidden" asp-for="AssistantId"/>
+                        <input type="hidden" asp-for="AIInterviewType" value="@Model.AIInterviewType" />
+                        <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
+
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         <div class="rb-chatbox-inputrow">
@@ -1017,7 +1022,6 @@
                             }
                         }
 
-                        <input type="hidden" asp-for="SynthesizedVideoUrl"/>
                         <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
 
                     </form>

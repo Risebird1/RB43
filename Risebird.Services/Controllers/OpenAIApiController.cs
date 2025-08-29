@@ -122,19 +122,43 @@ namespace Risebird.Services.Controllers
         public async Task<IActionResult> Report([FromBody] AIReportVM input)
         {
             //var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
-            var aiInterviewDetails = await _aIInterviewerService.GetAIInterviewSpecificDetails(input.SessionId);
-            var threadId = aiInterviewDetails?.ThreadId;
-            await _ai.AddMessageAsync(threadId, "user", input.Message);
+            if(input?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+            {
+                var meetingDetails = await _aIInterviewerService.GetAIInterviewDetailsBySessionId(input.SessionId);
 
-            var runId = await _ai.CreateRunAsync(threadId, aiInterviewDetails?.AssistantId);
-            await _ai.WaitForRunAsync(threadId, runId);
+                var threadId = await _ai.CreateThreadAsync();
+                //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
+                input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
+                await _ai.AddMessageAsync(threadId, "user", input.Message);
 
-            var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
+                var runId = await _ai.CreateRunAsync(threadId, "asst_6aHX1TyH0XKKZ14SxDqhi424"); //assistant id of the assistant named "Candidate Answer Evaluator"
+                await _ai.WaitForRunAsync(threadId, runId);
 
-            //save the report in the database.
+                var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
+
+                //save the report in the database.
 
 
-            return Ok(new { input.SessionId, threadId, replies });
+                return Ok(new { input.SessionId, threadId, replies });
+            }
+            else
+            {
+                var aiInterviewDetails = await _aIInterviewerService.GetAIInterviewSpecificDetails(input.SessionId);
+
+                var threadId = aiInterviewDetails?.ThreadId;
+                await _ai.AddMessageAsync(threadId, "user", input.Message);
+
+                var runId = await _ai.CreateRunAsync(threadId, aiInterviewDetails?.AssistantId);
+                await _ai.WaitForRunAsync(threadId, runId);
+
+                var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
+
+                //save the report in the database.
+
+
+                return Ok(new { input.SessionId, threadId, replies });
+            }
+            
         }
 
     }

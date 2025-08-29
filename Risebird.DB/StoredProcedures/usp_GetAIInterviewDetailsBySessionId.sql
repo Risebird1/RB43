@@ -18,7 +18,7 @@ set @irfId  = (select id from IRF where IRFId = (select IRFId from InterviewMeet
 
 select im.id as InterviewId, im.interviewDate, im.AssistantId, im.candidateEmail, ulc.MobileNumber, im.interviewer,
 im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink, 
-ulc.FirstName as candidateName,
+ulc.FirstName as candidateName, irf.id as irfIntId, irf.AIInterviewType, IRF.IsAIInterview,
 case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive
 from InterviewMeetings im
 join IRF on IRF.irfId = im.irfid

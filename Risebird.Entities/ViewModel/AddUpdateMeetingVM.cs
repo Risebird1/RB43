@@ -152,5 +152,7 @@ namespace Risebird.Entities.ViewModel
         public string AssistantId { get; set; }
         public string SessionId { get; set; }
         public string ThreadId { get; set; }
+        public bool IsAIInterview { get; set; }
+        public int AIInterviewType { get; set; }
     }
 }

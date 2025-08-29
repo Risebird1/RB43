@@ -20,7 +20,7 @@
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-    @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
     <div class="container-fluid">
     <div class="navbar-wrapper">
     <div class="navbar-toggle">
@@ -36,7 +36,7 @@
 
 
     </div>
-    </nav>*@
+    </nav>
     <!-- End Navbar -->
 
     <div class="content client">
@@ -2338,6 +2338,10 @@
         if (isLockedElement.checked) {
             isLockedElement.disabled = true;
         }
+        
+        // Initialize InterviewTypeContainer based on IsAIInterview checkbox state
+        toggleInterviewType();
+        
         $(".selectpicker").select2();
         $("#btnPrev").click(function () {
             var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
