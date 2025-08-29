@@ -58,7 +58,7 @@ namespace Risebird.AzureTimerFunctions
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
 
                 //var pendingRBMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, "[a-zA-Z]")).ToList();
-                var pendingRBMeetings = pendingVideoMeetings.Where(x => x.InterviewMeetingPlatForm == MeetingPlatforms.RisebirdMeet).ToList();
+                var pendingRBMeetings = pendingVideoMeetings.Where(x => x.InterviewMeetingPlatForm == MeetingPlatforms.Zoho).ToList();
 
                 var pendingTeamsMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, @"^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$")).ToList();
 
@@ -367,7 +367,7 @@ namespace Risebird.AzureTimerFunctions
                 var solelyTranscriptsPendingMeetings = await _meetingRespository.GetPendingTranscriptMeetings();
 
                 //var solelyTranscriptPendingRBMeetings = solelyTranscriptsPendingMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, "[a-zA-Z]")).ToList();
-                var solelyTranscriptPendingRBMeetings = solelyTranscriptsPendingMeetings.Where(x => x.InterviewMeetingPlatForm == MeetingPlatforms.RisebirdMeet).ToList();
+                var solelyTranscriptPendingRBMeetings = solelyTranscriptsPendingMeetings.Where(x => x.InterviewMeetingPlatForm == MeetingPlatforms.Zoho).ToList();
 
                 var solelyTranscriptsPendingTeamsMeetings = solelyTranscriptsPendingMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, @"^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$")).ToList();
 

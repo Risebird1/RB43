@@ -504,7 +504,7 @@ namespace Risebird.Web.Controllers
                         }
                         zoomLink.meetingid = zoomLink.id.ToString();
                     }
-                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
@@ -1328,7 +1328,7 @@ namespace Risebird.Web.Controllers
                             return View(model);
                         }
                     }
-                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         //var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
@@ -1358,7 +1358,7 @@ namespace Risebird.Web.Controllers
                         if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
                         {
                             //cancel interview meeting over portal
-                            if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                            if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                             {
                                 await _zoho.DeleteMeetingAsync(candidateuniqueid.ZoomMeetingId);
                             }
@@ -1736,7 +1736,7 @@ namespace Risebird.Web.Controllers
                             return View(model);
                         }
                     }
-                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
