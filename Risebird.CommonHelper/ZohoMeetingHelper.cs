@@ -115,7 +115,7 @@ namespace Risebird.CommonHelper
         public async Task<ZohoMeetingResponse> CreateMeetingAsync(ZohoCreateMeetingRequest request)
         {
             // Per Zoho docs, schedule via sessions.json with wrapper { session: { ... } }
-            var friendlyStart = request.StartTime.ToUniversalTime().ToString("MMM dd, yyyy hh:mm tt", CultureInfo.InvariantCulture);
+            var friendlyStart = request.StartTime.ToString("MMM dd, yyyy hh:mm tt", CultureInfo.InvariantCulture);
             var userid = "60005813892";
             var payload = new
             {
