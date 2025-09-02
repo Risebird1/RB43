@@ -150,7 +150,7 @@ namespace Risebird.AzureTimerFunctions
                 }
                 if (candidateResumeupdate != null)
                 {
-                    await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeupdate);
+                    await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeupdate, ismcqdb: true);
                 }
                 log.LogInformation($" MCQResumeParserJob : Timer trigger function started finished execution at {candidateResumeupdate?.Count()}: {DateTime.Now}");
             }
