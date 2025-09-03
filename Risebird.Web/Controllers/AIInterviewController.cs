@@ -811,10 +811,23 @@ namespace Risebird.Web.Controllers
                     return Json("Meeting closed successfully. Thankyou for your time!");
                 }
 
-                var reportModel = new AIInterviewReportWrapperClass();
+                AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
-                reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
-                ViewBag.IsAdaptive = reportModel.AIInterviewEvaluation != null;
+                //reportModel.chatMessageViewModel = chatMessageModel;
+                string cleaned = aiReport?.Replies?.FirstOrDefault().Trim();
+
+                // Handle "```json" at the start
+                if (cleaned != null && cleaned.StartsWith("```json"))
+                    cleaned = cleaned.Substring(6).TrimStart(); // remove first 6 chars
+
+                // Handle ending ```
+                if (cleaned != null && cleaned.EndsWith("```"))
+                    cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+                cleaned = cleaned.TrimStart('n');
+                reportModel.AIInterviewEvaluation = JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
+                //reportModel.TotalQuestions = result.Replies.Count() - 1;
+                ViewBag.IsAdaptive = true;
+
                 return View(reportModel);
             }
         }
