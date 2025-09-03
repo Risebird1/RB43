@@ -33,4 +33,18 @@ namespace Risebird.Entities.Data
         public string emailId { get; set; }
         public string onboardingStatus { get; set; }
     }
+    public class CancelCandidatesResponse
+    {
+        public CancelCandidatesResponse()
+        {
+            CandidateList = new List<CandidateCancelStatus>();
+        }
+        public string performedAt { get; set; }
+        public List<CandidateCancelStatus> CandidateList { get; set; }
+    }
+    public class CandidateCancelStatus
+    {
+        public string candidateemailId { get; set; }
+        public string candidatestatus { get; set; }
+    }
 }

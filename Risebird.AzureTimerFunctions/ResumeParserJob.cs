@@ -3,12 +3,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.AzureTimerFunctions
 {
@@ -25,6 +28,9 @@ namespace Risebird.AzureTimerFunctions
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IValidationHelper _validationHelper;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
+        private readonly IOpenAIInterviewerAssistantHelper _ai;
+
 
         private readonly ILogger log;
 
@@ -32,7 +38,8 @@ namespace Risebird.AzureTimerFunctions
             IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
             ISASUrlHelper sasUrlHelper, IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
-            IAssistantServiceHelper assistantServiceHelper)
+            IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
+            IOpenAIInterviewerAssistantHelper ai)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -46,6 +53,8 @@ namespace Risebird.AzureTimerFunctions
             _validationHelper = validationHelper;
             _assistantServiceHelper = assistantServiceHelper;
             log = loggerFactory.CreateLogger<ResumeParserJob>();
+            _pdfReaderHelper = pdfReaderHelper;
+            _ai = ai;
         }
 
         [Function("ResumeParserJob")]
@@ -63,100 +72,199 @@ namespace Risebird.AzureTimerFunctions
 
                 foreach (var resume in resumeList)
                 {
-                    //string resumeLinkToParse = string.Empty;
-                    //if(!resume.ResumeLink.Contains(".pdf"))
-                    //{
-                    //    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
-                    //}
-                    //else
-                    //{
-                    //    resumeLinkToParse = resume.ResumeLink;
-                    //}
-                    //var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { ResumeLink = resumeLinkToParse, Type = ProfileNames.ResumeParserAIAssistant });
-
-                    // call the api for each of those resumes, return a candidate
-                    var candidateData = await _affIndaResumeParserHelper.UploadAndParseResume(resume.ResumeLink, resume.SkillChannelName, resume.IsAffindaIndexCreated);
-
-
-
-                    try
+                    
+                    string resumeLinkToParse = string.Empty;
+                    if (!resume.ResumeLink.Contains(".pdf"))
                     {
-                        if (!string.IsNullOrEmpty(candidateData.Item1))
+                        resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
+                    }
+                    else
+                    {
+                        resumeLinkToParse = resume.ResumeLink;
+                    }
+                    //convert resume into string
+                    var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+                    if (!string.IsNullOrEmpty(resumeStringContent))
+                    {
+                        var threadId = await _ai.CreateThreadAsync();
+                        //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
+                        await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+
+                        var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named "Candidate Answer Evaluator"
+                        await _ai.WaitForRunAsync(threadId, runId);
+
+                        var replies = await _ai.GetMessagesAsync(threadId);
+
+                        CandidateResumeParsedDataOpenAI candidateParsedData = null;
+
+                        try
                         {
-                            var documentData = JsonConvert.DeserializeObject<Document>(candidateData.Item1);
-                            var candidate = new CandidateQuickAddModel();
-                            candidate.Name = documentData.data?.name?.raw;
-                            if (!string.IsNullOrEmpty(candidateData.Item2))
+                            candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replies?.FirstOrDefault());
+
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                        }
+
+
+                        //call the api for each of those resumes, return a candidate
+
+                        try
+                        {
+                            if (candidateParsedData == null)
                             {
-                                candidate.AffindaResumeIdentifier = candidateData.Item2;
+                                var candidateData = await _affIndaResumeParserHelper.UploadAndParseResume(resume.ResumeLink, resume.SkillChannelName, resume.IsAffindaIndexCreated);
+                                if (!string.IsNullOrEmpty(candidateData.Item1))
+                                {
+                                    var documentData = JsonConvert.DeserializeObject<Document>(candidateData.Item1);
+                                    var candidate = new CandidateQuickAddModel();
+                                    candidate.Name = documentData.data?.name?.raw;
+                                    if (!string.IsNullOrEmpty(candidateData.Item2))
+                                    {
+                                        candidate.AffindaResumeIdentifier = candidateData.Item2;
+                                    }
+                                    if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
+                                    {
+                                        candidate.EmailId = documentData.data.emails[0].Trim();
+                                        candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
+
+                                        if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
+                                        {
+                                            candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
+                                        }
+                                        if (candidate.EmailId.StartsWith("%20"))
+                                        {
+                                            candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                                                                                //candidate.EmailId.Replace("%20", "");
+
+                                        }
+                                        if (candidate.EmailId.StartsWith("?:"))
+                                        {
+                                            candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                                                                                //candidate.EmailId.Replace("?:", "");
+
+                                        }
+                                        if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
+                                        {
+                                            candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
+                                                                                                //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
+                                        }
+                                        if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
+                                        {
+                                            //mark it as cant be processed in the database
+                                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                            continue;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        //mark it as cant be processed in the database
+                                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
+                                        continue;
+                                    }
+                                    if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
+                                    {
+                                        //candidate.Phone = !string.IsNullOrEmpty(documentData.data.phoneNumberDetails[0].internationalCountryCode) ? documentData.data.phoneNumberDetails[0].rawText : null;
+                                        candidate.Phone = documentData.data.phoneNumberDetails[0].rawText;
+                                        if (candidate.Phone == "911" || candidate.Phone == "+911")
+                                        {
+                                            candidate.Phone = null;
+                                        }
+                                    }
+                                    candidate.ResumeLink = resume.ResumeLink;
+                                    candidate.CandidateResumeId = resume.id;
+                                    candidate.IRFId = resume.IRFId;
+                                    candidate.AddedByUserId = resume.AddedBy;
+                                    candidate.ClientHREmail = resume.ClientHREmailId;
+                                    candidateList.Add(candidate);
+                                }
+                                else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
+                                {
+                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+
+                                }
                             }
-                            if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
+
+                            else if(candidateParsedData != null)
                             {
-                                candidate.EmailId = documentData.data.emails[0].Trim();
-                                candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
+                                var candidate = new CandidateQuickAddModel();
+                                candidate.Name = candidateParsedData.name;
 
-                                if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
+                                if (!string.IsNullOrEmpty(candidateParsedData.emailId))
                                 {
-                                    candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
-                                }
-                                if (candidate.EmailId.StartsWith("%20"))
-                                {
-                                    candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                    //candidate.EmailId.Replace("%20", "");
+                                    candidate.EmailId = candidateParsedData.emailId.Trim();
+                                    candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
+
+                                    if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
+                                    {
+                                        candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
+                                    }
+                                    if (candidate.EmailId.StartsWith("%20"))
+                                    {
+                                        candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                                                                            //candidate.EmailId.Replace("%20", "");
+
+                                    }
+                                    if (candidate.EmailId.StartsWith("?:"))
+                                    {
+                                        candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                                                                            //candidate.EmailId.Replace("?:", "");
+
+                                    }
+                                    if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
+                                    {
+                                        candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
+                                                                                            //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
+                                    }
+                                    if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
+                                    {
+                                        //mark it as cant be processed in the database
+                                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                        continue;
+                                    }
 
                                 }
-                                if (candidate.EmailId.StartsWith("?:"))
-                                {
-                                    candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                    //candidate.EmailId.Replace("?:", "");
-
-                                }
-                                if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
-                                {
-                                    candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
-                                    //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
-                                }
-                                if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
+                                else
                                 {
                                     //mark it as cant be processed in the database
-                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
                                     continue;
                                 }
-
-                            }
-                            else
-                            {
-                                //mark it as cant be processed in the database
-                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
-                                continue;
-                            }
-                            if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
-                            {
-                                //candidate.Phone = !string.IsNullOrEmpty(documentData.data.phoneNumberDetails[0].internationalCountryCode) ? documentData.data.phoneNumberDetails[0].rawText : null;
-                                candidate.Phone = documentData.data.phoneNumberDetails[0].rawText;
-                                if (candidate.Phone == "911" || candidate.Phone == "+911")
+                                if (!string.IsNullOrEmpty(candidateParsedData.phoneNumber))
                                 {
-                                    candidate.Phone = null;
+                                    candidate.Phone = candidateParsedData.phoneNumber.Replace(" ", string.Empty);
+                                    if (candidate.Phone == "911" || candidate.Phone == "+911")
+                                    {
+                                        candidate.Phone = null;
+                                    }
                                 }
+                                candidate.ResumeLink = resume.ResumeLink;
+                                candidate.CandidateResumeId = resume.id;
+                                candidate.IRFId = resume.IRFId;
+                                candidate.AddedByUserId = resume.AddedBy;
+                                candidate.ClientHREmail = resume.ClientHREmailId;
+                                candidateList.Add(candidate);
                             }
-                            candidate.ResumeLink = resume.ResumeLink;
-                            candidate.CandidateResumeId = resume.id;
-                            candidate.IRFId = resume.IRFId;
-                            candidate.AddedByUserId = resume.AddedBy;
-                            candidate.ClientHREmail = resume.ClientHREmailId;
-                            candidateList.Add(candidate);
-                        }
-                        else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
-                        {
-                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+                            else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
+                            {
+                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
 
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                            continue;
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
 
-                        continue;
                     }
 
                 }
@@ -175,7 +283,6 @@ namespace Risebird.AzureTimerFunctions
                         await _irfService.AddCandidateUsingResumeParserJob(candidateSubList, irfId);
                     }
                 }
-
 
                 log.LogInformation($" ResumeParserJob : Timer trigger function started finished execution at: {DateTime.Now}");
             }

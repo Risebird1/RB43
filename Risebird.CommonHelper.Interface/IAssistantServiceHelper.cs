@@ -14,5 +14,6 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> GenerateTranscriptAnalysis(string transcriptData);
         Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle);
         Task<RunResult> GenerateReportQCAnalysis(string reportStringData);
+        Task<RunResult> ParseResume(string resumeData);
     }
 }

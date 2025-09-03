@@ -2508,10 +2508,10 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAIInterview", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAIInterview"].Value = irfDetails.IsAIInterview;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
 
@@ -10044,6 +10044,65 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<List<CancelCandidateListResponse>> CancelInterviewViaApi(List<string> candidateList, string requestedBy, string jobId, string SkillChannelId)
+        {
+            try
+            {
+                var _listresponse = new List<CancelCandidateListResponse>();
+                if (string.IsNullOrEmpty(jobId))
+                {
+                    jobId = "";
+                }
+                if (string.IsNullOrEmpty(SkillChannelId))
+                {
+                    SkillChannelId = "";
+                }
+                if (candidateList.Count() > 0)
+                {
+                    foreach (var item in candidateList)
+                    {
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            var dynamicParameters = new DynamicParameters();
+                            dynamicParameters.Add("@CandidateEmail", item);
+                            dynamicParameters.Add("@IRFId", SkillChannelId);
+                            dynamicParameters.Add("@JobId", jobId);
+                            dynamicParameters.Add("@CurrentDate", DateTime.Now);
+                            dynamicParameters.Add("@RequestedBy", requestedBy);
+                            dynamicParameters.Add("@Type", "Candidate");
+                            using (SqlConnection con = new SqlConnection(connectionString))
+                            {
+                                var result = SqlMapper.Query<CancelCandidateListResponse>(con, "usp_UpdateCandidateCancelOrCold", dynamicParameters,
+                                    commandType: CommandType.StoredProcedure);
+                                _listresponse.Add(result.FirstOrDefault());
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@CandidateEmail", "");
+                    dynamicParameters.Add("@IRFId", SkillChannelId);
+                    dynamicParameters.Add("@JobId", jobId);
+                    dynamicParameters.Add("@CurrentDate", DateTime.Now);
+                    dynamicParameters.Add("@RequestedBy", requestedBy);
+                    dynamicParameters.Add("@Type", "AllData");
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var result = SqlMapper.Query<CancelCandidateListResponse>(con, "usp_UpdateCandidateCancelOrCold", dynamicParameters,
+                            commandType: CommandType.StoredProcedure);
+                        _listresponse = result?.ToList();
+                    }
+                }
+                return _listresponse;
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -432,7 +432,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle =null)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle =null, string resumeStringDataForParsing = null)
         {
             try
             {
@@ -482,6 +482,11 @@ namespace Risebird.CommonHelper
                 else if (!string.IsNullOrEmpty(reportStringData))
                 {
                     queryContent = $"Generate an output as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
+
+                }
+                else if (!string.IsNullOrEmpty(resumeStringDataForParsing))
+                {
+                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
 
                 }
                 var threadRequest = new Thread();
@@ -855,6 +860,54 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<RunResult> ParseResume(string resumeData)
+        {
+            try
+            {
+
+                string threadId = string.Empty;
+                threadId = await CreateThreadAsync(resumeStringDataForParsing: resumeData);
+                
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, ProfileNames.ResumeParserAIAssistant);
+                }
+                else
+                {
+                    return null;
+                }
+                await Task.Delay(10000);
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle)
         {
             try
@@ -947,9 +1000,6 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-
-
-        
 
     }
 

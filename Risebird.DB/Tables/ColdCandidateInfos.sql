@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[ColdCandidateInfos](
 	[FKCandidateId] [int] NULL,
     [ModifyBy] [varchar](150) NULL,
 	[ModifyOn] [datetime] NULL,
+	[ColdInfo] [varchar](100) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -39,6 +40,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE ColdCandidateInfos
     Add [ModifyOn] [datetime] NULL		
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ColdInfo')
+      AND Object_ID = Object_ID(N'ColdCandidateInfos'))
+BEGIN
+    ALTER TABLE ColdCandidateInfos
+    Add ColdInfo varchar(100) null
 END
 END
 GO

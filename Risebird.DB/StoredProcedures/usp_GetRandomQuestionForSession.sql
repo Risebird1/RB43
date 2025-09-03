@@ -17,25 +17,53 @@ BEGIN
     SET NOCOUNT ON;
 	declare @SessionId UNIQUEIDENTIFIER = (select SessionId from InterviewMeetings where id = @interviewId)
     -- Count how many have been asked already
-    IF (
+ --   IF (
+ --       SELECT COUNT(*) 
+ --       FROM TranscriptsConv 
+ --       WHERE SessionId = @SessionId and [Role] = 'assistant'
+ --   ) >= 25--10
+ --   BEGIN
+ --       --SELECT 'No more questions available.' AS Question;
+	--	SELECT null;
+ --       RETURN;
+ --   END;
+
+ --   ;WITH Unasked AS (
+ --       SELECT q.id, q.Comment, q.AIQuestionVideoLink
+ --       FROM SkillChannelSampleQuestions q
+ --       WHERE q.Comment NOT IN (
+ --           SELECT [Message] FROM TranscriptsConv WHERE SessionId = @SessionId and [Role] = 'assistant'
+ --       ) and q.IRFId = @irfId
+ --   )
+ --   SELECT TOP 1 u.Comment as [Message], u.AIQuestionVideoLink, u.id
+ --   FROM Unasked u
+	--order by u.id --sequential pick
+ --   --ORDER BY NEWID(); -- Random pick
+
+ DECLARE @AskedCount INT = (
         SELECT COUNT(*) 
         FROM TranscriptsConv 
-        WHERE SessionId = @SessionId and [Role] = 'assistant'
-    ) >= 10
+        WHERE SessionId = @SessionId AND [Role] = 'assistant'
+    );
+
+    -- If already asked 25 questions, stop
+    IF (@AskedCount >= 25) -- change back to 10 if needed
     BEGIN
-        --SELECT 'No more questions available.' AS Question;
-		SELECT null;
+        SELECT NULL AS [Message], NULL AS AIQuestionVideoLink, NULL AS Id;
         RETURN;
     END;
 
-    ;WITH Unasked AS (
-        SELECT q.id, q.Comment, q.AIQuestionVideoLink
+    ;WITH OrderedQuestions AS (
+        SELECT q.id, q.Comment, q.AIQuestionVideoLink,
+               ROW_NUMBER() OVER (ORDER BY q.Id) AS RowNum
         FROM SkillChannelSampleQuestions q
-        WHERE q.Comment NOT IN (
-            SELECT [Message] FROM TranscriptsConv WHERE SessionId = @SessionId and [Role] = 'assistant'
-        ) and q.IRFId = @irfId
+        WHERE q.IRFId = @irfId
     )
-    SELECT TOP 1 u.Comment as [Message], u.AIQuestionVideoLink, u.id
-    FROM Unasked u
-    ORDER BY NEWID(); -- Random pick
+    SELECT Comment AS [Message], AIQuestionVideoLink, id
+    FROM OrderedQuestions
+    WHERE RowNum = @AskedCount + 1; -- ? pick the next question
+
+
+
+
 END;
