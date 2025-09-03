@@ -12,7 +12,7 @@ namespace Risebird.Entities.Data
         public string requestedBy { get; set; }
         public string jobId { get; set; } // this is primarily being used for Turing
         public string jobTitle { get; set; } // these jobtitles will be mapped against MAGs in our system as a preceding step/prerequisite
-        public string jdLink { get; set; } 
+        public string jdLink { get; set; }
         public string requestId { get; set; }
         //public List<CandidateQuickAddModel> CandidateList { get; set; }
         public List<CandidateQuickAddModelAPIVersion> CandidateList { get; set; }
@@ -81,6 +81,25 @@ namespace Risebird.Entities.Data
         public string onboardingStatus { get; set; }//successful/ duplicate/ User exists with different profile/failed
         public DateTime Interviewdate { get; set; }
         public string meetingLink { get; set; }//; NA
+    }
+    public class CancelCandidatesRequest
+    {
+        public string skillChannelId { get; set; }
+        public string jobId { get; set; }
+        public string requestedBy { get; set; }
+        public string RequestId { get; set; }
+        public List<CancelCandidateList> CandidateList { get; set; }
+    }
+    public class CancelCandidateList
+    {
+        //public DateTime Interviewdate { get; set; }
+        public string EmailId { get; set; }
+    }
+    public class CancelCandidateListResponse
+    {
+        public int Interviewid { get; set; }
+        public string candidateemailId { get; set; }
+        public string candidatestatus { get; set; }
     }
 }
 

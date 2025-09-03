@@ -537,5 +537,106 @@ namespace Risebird.Services.Controllers
             return interviewdatevalidate;
         }
         #endregion
+        #region Cancel Interview Meeting
+        [HttpPost]
+        [Route("Cancel")]
+        public async Task<IActionResult> Cancel(CancelCandidatesRequest reqData)
+        {
+            try
+            {
+                var functionkey = Request.Headers["x-functions-key"].ToString();
+                var tenantId = Request.Headers["tenant-id"].ToString();
+                if (functionkey != "KPkB1gowT4ZRhAE7UV3eDISVO7cQ8BOGthxuZ9PzUX5XAzFuM_Hl5A==")
+                {
+                    return new UnauthorizedResult();
+                }
+                if (!string.IsNullOrEmpty(tenantId))
+                {
+                    //check if the tenant Id belongs to the client
+                    bool isAuthorizedTenant = false;
+                    var clientDetails = await _clientService.GetClientByTalentId(tenantId);
+                    if (clientDetails != null)
+                    {
+                        if (clientDetails.id > 0)
+                        {
+                            isAuthorizedTenant = true;
+                        }
+                    }
+                    if (isAuthorizedTenant)
+                    {
+                        var details = new Dictionary<string, string>();
+                        if (reqData != null)
+                        {
+                            if (string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.requestedBy) || string.IsNullOrEmpty(reqData.jobId))
+                            {
+                                var detailsError = new Dictionary<string, string>();
+
+                                if (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId))
+                                {
+                                    details.Add("skillChannelId or jobId", "This field is required.");
+                                }
+                                if (string.IsNullOrEmpty(reqData.requestedBy))
+                                {
+                                    detailsError.Add("requestedBy", "This field is required.");
+                                }
+                                var errorResponse = new ErrorResponse
+                                {
+                                    Error = "Invalid request parameters.",
+                                    Details = detailsError
+                                };
+                                return new BadRequestObjectResult(errorResponse);
+                            }
+                            var irfid = 0;
+                            if (!string.IsNullOrEmpty(reqData.skillChannelId))
+                            {
+                                irfid = _irfRepository.GetIRFIdByIRFNametenantId(reqData.skillChannelId.Trim(), tenantId);
+                                if (irfid == 0)
+                                {
+                                    details.Add("skillChannelId", "skillChannelId is invalid");
+                                    var errorResponse = new ErrorResponse
+                                    {
+                                        Error = "Invalid request parameters",
+                                        Details = details
+                                    };
+                                    return new BadRequestObjectResult(errorResponse);
+                                }
+                            }
+                            var candidateListToBeProcessed = new List<string>();
+                            //Cancel Interviews or Mark Cold 'Drop by Client'
+                            if (reqData.CandidateList != null)
+                            {
+                                foreach (var item in reqData.CandidateList)
+                                {
+                                    candidateListToBeProcessed.Add(item.EmailId);
+                                }
+                            }
+                            var resultset = new CancelCandidatesResponse();
+                            var result = await _irfService.CancelInterviewViaApi(candidateListToBeProcessed, reqData.requestedBy, reqData.jobId, reqData.skillChannelId);
+                            resultset.performedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                            resultset.CandidateList = result;
+                            return new OkObjectResult(resultset);
+                        }
+                        else
+                        {
+                            details.Add("body", "Request Body is null.");
+                        }
+                        var errorResponserequest = new ErrorResponse
+                        {
+                            Error = "Invalid request.",
+                            Details = details
+                        };
+                        return new BadRequestObjectResult(errorResponserequest);
+                    }
+                    return new UnauthorizedResult();
+                }
+                return new UnauthorizedResult();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        #endregion
     }
 }

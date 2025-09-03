@@ -212,5 +212,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy);
         Task<SkillComment> GetDeliveryHeadSampleQuestionById(int id);
         Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink);
+        Task<List<CandidateCancelStatus>> CancelInterviewViaApi(List<string> candidateList, string requestedBy, string jobId, string SkillChannelId);
     }
 }
