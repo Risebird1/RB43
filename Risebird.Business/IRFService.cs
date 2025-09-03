@@ -4722,5 +4722,24 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<CandidateCancelStatus>> CancelInterviewViaApi(List<string> candidateList, string requestedBy, string jobId, string SkillChannelId)
+        {
+            try
+            {
+                var _list = new List<CandidateCancelStatus>();
+                var result = await _irfRepository.CancelInterviewViaApi(candidateList, requestedBy, jobId, SkillChannelId);
+                foreach (var item in result)
+                {
+                    //Send Mail to Cancellation Mail
+                    _list.Add(new CandidateCancelStatus { candidateemailId = item.candidateemailId, candidatestatus = item.candidatestatus });
+                }
+                return _list;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
