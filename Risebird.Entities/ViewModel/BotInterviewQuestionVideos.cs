@@ -24,6 +24,8 @@ namespace Risebird.Entities.ViewModel
     {
         public List<BotInterviewQuestionVideos> videoQuestionDetails { get; set; }
         public ChatMessageViewModel chatMessageViewModel { get; set; }
+        public AIInterviewEvaluation AIInterviewEvaluation { get; set; }
+
         public int TotalQuestions { get; set; }
     }
 

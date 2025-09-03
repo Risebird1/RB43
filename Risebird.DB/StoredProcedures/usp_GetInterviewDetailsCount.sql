@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewDetailsCount]
 AS                
 BEGIN          
         
-select Count(im.id) as MyInterviewCount from InterviewMeetings im                 
+select Count(distinct im.id) as MyInterviewCount from InterviewMeetings im                 
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId                  
 left join UserList ul on ul.EmailId = im.candidateEmail              
 join  CandidatesMaster cm on ul.id=cm.UserId              
