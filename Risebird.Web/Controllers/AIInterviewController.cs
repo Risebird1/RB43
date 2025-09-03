@@ -53,7 +53,7 @@ namespace Risebird.Web.Controllers
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
-            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper, 
+            ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService)
         {
             _configuration = configuration;
@@ -80,9 +80,9 @@ namespace Risebird.Web.Controllers
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
 
             //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
-            if(meetingDetails != null)
+            if (meetingDetails != null)
             {
-                if(meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+                if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                 {
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
 
@@ -119,7 +119,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new ChatMessageViewModel();
                         model.SessionId = sid;
-                        
+
                         //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
 
                         var latestEntry = transcript?.FirstOrDefault();
@@ -127,7 +127,8 @@ namespace Risebird.Web.Controllers
                         if (latestEntry != null)
                         {
                             var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                            if (allQuestions != null && allQuestions.Count() <= 10)
+                            //if (allQuestions != null && allQuestions.Count() <= 10)
+                            if (allQuestions != null && allQuestions.Count() <= 25)
                             //if(allQuestions != null && allQuestions.Count() <= 3)
                             {
                                 if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
@@ -147,7 +148,7 @@ namespace Risebird.Web.Controllers
                                     //{
                                     //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message), sampleQuestionId = question.DeliveryHeadQuestionId });
                                     //}
-                                    
+
                                     if (!string.IsNullOrEmpty(latestQuestion))
                                     {
                                         model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
@@ -155,7 +156,8 @@ namespace Risebird.Web.Controllers
                                         model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
                                     }
                                 }
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
+                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
+                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
                                 {
                                     model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
@@ -168,7 +170,7 @@ namespace Risebird.Web.Controllers
                                     //var latestReply = CleanMessage(replies.FirstOrDefault());
 
                                     var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
-                                    
+
                                     model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
 
                                     //var latestReply = CleanMessage(sampleQuestion.Message);
@@ -183,7 +185,8 @@ namespace Risebird.Web.Controllers
                                     }
 
                                 }
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
+                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
+                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                 {
                                     return Json("The interviewer is through with all the questions. This interview is now closed.");
@@ -295,10 +298,12 @@ namespace Risebird.Web.Controllers
                         if (latestEntry != null)
                         {
                             var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                            if (allQuestions != null && allQuestions.Count() <= 10)
+                            //if (allQuestions != null && allQuestions.Count() <= 10)
+                            if (allQuestions != null && allQuestions.Count() <= 25)
                             //if(allQuestions != null && allQuestions.Count() <= 3)
                             {
-                                if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
+                                //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
+                                if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 25)
                                 //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                 {
                                     var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
@@ -311,7 +316,7 @@ namespace Risebird.Web.Controllers
                                         model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
 
                                     }
-                                    
+
                                     var latestQuestion = latestEntry.Message;
                                     if (!string.IsNullOrEmpty(latestQuestion))
                                     {
@@ -322,7 +327,8 @@ namespace Risebird.Web.Controllers
                                         model.CurrentQuestion = latestQuestion;
                                     }
                                 }
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
+                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
+                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
                                 {
                                     model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
@@ -345,7 +351,8 @@ namespace Risebird.Web.Controllers
 
                                     }
                                 }
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
+                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
+                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                 {
                                     return Json("The interviewer is through with all the questions. This interview is now closed.");
@@ -457,7 +464,6 @@ namespace Risebird.Web.Controllers
                         //} while (string.IsNullOrWhiteSpace(videoUrl));
                         //model.SynthesizedVideoUrl = videoUrl;
                         //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-
                         model.Message = "";
                         model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
                         model.InterviewId = meetingDetails.InterviewId;
@@ -470,8 +476,8 @@ namespace Risebird.Web.Controllers
 
                     }
                 }
-                
-                
+
+
             }
 
             return View(null);
@@ -494,7 +500,8 @@ namespace Risebird.Web.Controllers
 
                 var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
                 var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                if (allQuestions?.Count() == 25)
                 //if (allQuestions?.Count() == 3)                                 
                 {
                     await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
@@ -565,7 +572,8 @@ namespace Risebird.Web.Controllers
 
                 var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
                 var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                if (allQuestions?.Count() == 25) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
                                                  //if (allQuestions?.Count() == 3)//&& !string.IsNullOrEmpty(model.CurrentQuestion)
                 {
                     await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
@@ -616,7 +624,7 @@ namespace Risebird.Web.Controllers
                     return View(model);
                 }
             }
-            
+
         }
         private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
         {
@@ -663,7 +671,7 @@ namespace Risebird.Web.Controllers
                     using (var stream = new MemoryStream(audioBytes))
                     {
                         //await _azureStorageHelper.InsertImageBlob(filename, "botintervieweraudio", stream, fileMimeType);
-                        uploadedAudioUrl = await _azureStorageHelper.InsertBlobAIInterviewerAudio(filename, "botintervieweraudio", stream, contentType:fileMimeType);
+                        uploadedAudioUrl = await _azureStorageHelper.InsertBlobAIInterviewerAudio(filename, "botintervieweraudio", stream, contentType: fileMimeType);
                     }
 
                     var sas = _sasUrlHelper.CreateSasUrl("botintervieweraudio");
@@ -691,26 +699,17 @@ namespace Risebird.Web.Controllers
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
             if (meetingDetails?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
             {
-                // For demo: tech stack prompt
-                //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
-                //string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-                //var aiReport = new InterviewReportResult();
                 InterviewReportResult aiReport = null;
                 if (redo)
                 {
                     aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
-
-                    //save the report in db
                     if (aiReport != null)
                     {
                         await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
-
                     }
                 }
                 else
                 {
-                    //check if the report already exists and fetch if exists
-
                     var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
                     if (!string.IsNullOrEmpty(aiReportJson))
                     {
@@ -719,12 +718,9 @@ namespace Risebird.Web.Controllers
                     if (aiReport == null)
                     {
                         aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
-
-                        //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
                         var list = new List<string>();
                         list.Add(aiReport.Replies.FirstOrDefault());
                         aiReport.Replies = list;
-                        //save the report in db
                         if (aiReport != null)
                         {
                             var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
@@ -733,65 +729,43 @@ namespace Risebird.Web.Controllers
                                 if (result)
                                 {
                                     return Json("Meeting closed successfully. Thankyou for your time!");
-
                                 }
                                 else
                                 {
                                     return Json("Error while exiting the interview. Please contact support.");
-
                                 }
                             }
-
                         }
                     }
-
                 }
+
                 if (isExit)
                 {
                     return Json("Meeting closed successfully. Thankyou for your time!");
                 }
-                var chatMessageModel = new ChatMessageViewModel
-                {
-                    SessionId = aiReport.SessionId,
-                    ChatLog = new List<ChatLine>
-                {
-                    new ChatLine
-                    {
-                        Role = "Bot",
-                        Message = CleanMessage(aiReport.Replies.FirstOrDefault())
-                    }
-                }
-                };
 
-                AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
+                var reportModel = new AIInterviewReportWrapperClass();
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
-                reportModel.chatMessageViewModel = chatMessageModel;
+                //reportModel.chatMessageViewModel = chatMessageModel; 
+                reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = false;
                 return View(reportModel);
             }
             else
             {
-                // For demo: tech stack prompt
-                //seId = Guid.Parse("85e5b7f6-a443-4a76-814b-f7c1c1e5aaf5");
                 string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-                //var aiReport = new InterviewReportResult();
                 InterviewReportResult aiReport = null;
                 if (redo)
                 {
                     aiReport = await _api.GenerateReport(seId, candidatePrompt);
-
-                    //save the report in db
                     if (aiReport != null)
                     {
                         await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
-
                     }
                 }
                 else
                 {
-                    //check if the report already exists and fetch if exists
-
                     var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
                     if (!string.IsNullOrEmpty(aiReportJson))
                     {
@@ -800,12 +774,9 @@ namespace Risebird.Web.Controllers
                     if (aiReport == null)
                     {
                         aiReport = await _api.GenerateReport(seId, candidatePrompt);
-
-                        //aiReport.Replies = aiReport.Replies.FirstOrDefault().ToList();
                         var list = new List<string>();
                         list.Add(aiReport.Replies.FirstOrDefault());
                         aiReport.Replies = list;
-                        //save the report in db
                         if (aiReport != null)
                         {
                             var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
@@ -814,46 +785,31 @@ namespace Risebird.Web.Controllers
                                 if (result)
                                 {
                                     return Json("Meeting closed successfully. Thankyou for your time!");
-
                                 }
                                 else
                                 {
                                     return Json("Error while exiting the interview. Please contact support.");
-
                                 }
                             }
-
                         }
                     }
-
                 }
                 if (isExit)
                 {
                     return Json("Meeting closed successfully. Thankyou for your time!");
                 }
-                var chatMessageModel = new ChatMessageViewModel
-                {
-                    SessionId = aiReport.SessionId,
-                    ChatLog = new List<ChatLine>
-                {
-                    new ChatLine
-                    {
-                        Role = "Bot",
-                        Message = CleanMessage(aiReport.Replies.FirstOrDefault())
-                    }
-                }
-                };
 
                 AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
-                reportModel.chatMessageViewModel = chatMessageModel;
+                //reportModel.chatMessageViewModel = chatMessageModel;
+                
+                reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
+
                 return View(reportModel);
             }
-            
         }
-
         private string CleanMessage(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "";
@@ -941,7 +897,7 @@ namespace Risebird.Web.Controllers
                                 catch (Exception ex)
                                 {
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                    
+
                                 }
 
                                 //generate SAS URL from the uploaded video url
@@ -985,6 +941,84 @@ namespace Risebird.Web.Controllers
                 return Json(false);
 
             }
+        }
+
+        private AIInterviewEvaluation TryParseEvaluation(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            var cleaned = raw.Trim();
+            if (cleaned.StartsWith("```json")) cleaned = cleaned.Substring(6).TrimStart();
+            if (cleaned.EndsWith("```")) cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+            cleaned = cleaned.TrimStart('n');
+
+            try
+            {
+                var strict = JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
+                if (strict != null &&
+                    (strict.QuestionRatings != null || strict.RubricScoreSummary != null || strict.LlmDetection != null ||
+                     !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
+                     strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
+                {
+                    return strict;
+                }
+            }
+            catch { }
+
+            try
+            {
+                var root = JsonConvert.DeserializeObject<JObject>(cleaned);
+                if (root == null) return null;
+
+                var eval = new AIInterviewEvaluation
+                {
+                    OverallTechnicalScore = root.Value<int?>("overall_technical_score") ?? root.Value<int?>("overall_score") ?? 0,
+                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict"),
+                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment"),
+                    OverallCommunicationScore = root.Value<int?>("overall_communication_score") ?? root.Value<int?>("communication_score") ?? 0,
+                    OverallCommunicationScoreReasoning = root.Value<string>("overall_communication_score reasoning") ?? root.Value<string>("overall_communication_score_reasoning")
+                };
+
+                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"]);
+                if (qNode != null)
+                {
+                    eval.QuestionRatings = qNode.Select(q => new QuestionRating
+                    {
+                        Question = q.Value<string>("question") ?? q.Value<string>("text"),
+                        Verdict = q.Value<string>("verdict"),
+                        Score = q.Value<int?>("score") ?? 0,
+                        Comment = q.Value<string>("comment"),
+                        CommunicationScore = q.Value<int?>("communication_score") ?? 0,
+                        CommunicationComment = q.Value<string>("communication_comment")
+                    }).ToList();
+                }
+
+                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"]);
+                if (rNode != null)
+                {
+                    eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
+                    {
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("item"),
+                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected"),
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed"),
+                        Score = r.Value<int?>("score") ?? 0
+                    }).ToList();
+                }
+
+                var lNode = (JObject)(root["llm_detection"] ?? root["llmDetection"]);
+                if (lNode != null)
+                {
+                    eval.LlmDetection = new LlmDetection
+                    {
+                        LlmResponseSuspected = lNode.Value<bool?>("llm_response_suspected") ?? lNode.Value<bool?>("suspected") ?? false,
+                        EvidenceComment = lNode.Value<string>("evidence_comment") ?? lNode.Value<string>("evidence"),
+                        SuspiciousInstances = lNode["suspicious_instances"] is JArray arr ? arr.Select(x => x.ToString()).ToList() : null
+                    };
+                }
+
+                return eval;
+            }
+            catch { return null; }
         }
     }
 }
