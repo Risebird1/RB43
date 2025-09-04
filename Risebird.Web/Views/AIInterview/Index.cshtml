@@ -136,23 +136,24 @@
         
         /* Position chat input below the report section but keep it in form structure */
         .rb-chatbox-inputrow {
-            position: absolute;
-        top: calc(100% + 220px);
-        /* left: 50%; */
-        transform: translateX(-115%);
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 24px;
-            border: 1.5px solid #eee;
-            padding: 6px 12px;
-            gap: 8px;
-            width: 100%;
-            max-width: 550px;
-            min-height: 100px;
-            margin-top: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+        position: absolute;
+        top: calc(100% + 20px);
+       /* left: 50%; */
+       transform: translateX(-115%);
+       display: flex;
+       align-items: center;
+       background: #fff;
+      border-radius: 24px;
+      border: 1.5px solid #eee;
+      padding: 6px 12px;
+      gap: 8px;
+      width: 100%;
+     max-width: 550px;
+     min-height: 100px;
+     margin-top: 20px;
+     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+     z-index: 10;
+
         }
         
         .rb-footer {
@@ -785,16 +786,17 @@
     background: #6c757d;
     color: white;
 }
-
+.min-vh{
+    min-height:300px;
+}
  
         @@media only screen and (max-width: 992px) {
         .rb-chatbox-inputrow {
-            max-width: 420px;
-            left: 50%;
-            transform: translateX(-50%);
-            top: calc(100% + 70px);
-        }
-        
+        max-width: 370px;
+        left: 50%;
+        transform: translateX(-110%);
+        top: calc(100% + 5px);
+    }
         .rb-main {
             gap: 20px;
         }
@@ -815,9 +817,15 @@
             right: 10px;
             transform: none;
             margin-top: 15px;
-            top: calc(100% + 60px);
+            top: calc(100% + -535px);
         }
-        
+         
+          .rb-footer{
+        margin-top:-145px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
         .rb-main {
             flex-direction: column;
             gap: 20px;
@@ -872,9 +880,14 @@
             left: 5px;
             right: 5px;
             margin-top: 10px;
-            top: calc(100% + 50px);
+            top: calc(100% + -220px);
         }
-        
+          .rb-footer{
+        margin-top:-145px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
         .rb-aiinterview-container {
             padding: 12px;
             margin: 0 5px;
@@ -901,6 +914,9 @@
             padding: 3px 10px;
             font-size: 0.9rem;
         }
+        .min-vh{
+    min-height:0px!important;
+}
     }
     
     @@media (max-width: 480px) {
@@ -909,9 +925,15 @@
             left: 2px;
             right: 2px;
             margin-top: 8px;
-            top: calc(100% + 40px);
+            top: calc(100% + -220px);
         }
-        
+       
+    .rb-footer{
+        margin-top:-50px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
         .rb-chatbox-textarea {
             font-size: 1rem;
             padding: 8px 0;
@@ -926,6 +948,17 @@
             font-size: 1.3rem;
         }
     }
+       @@media (max-width: 360px) {
+    .rb-chatbox-inputrow{
+        top: calc(100% + -220px)!important;
+    }
+    .rb-footer{
+        margin-top:-130px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
+       }
     </style>
 <div class="rb-aiinterview-container">
     <!-- Header -->
@@ -1012,7 +1045,7 @@
                                <div class="rb-loading-spinner"></div>
                            </button>
                        </div>
-                       
+                       <div class="min-vh">
                         @if (Model.IsAdaptive == true)
                         {
                             <!-- Audio Section -->
@@ -1043,7 +1076,7 @@
                                 </div>
                             }
                         }
-
+                        </div>
                         <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
 
                     </form>
