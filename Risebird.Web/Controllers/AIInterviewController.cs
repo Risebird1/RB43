@@ -694,6 +694,28 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ExitModalPartial(Guid seId)
+        {
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+            
+            var exitModel = new AIInterviewExitModalViewModel
+            {
+                Title = "Interview Session Complete",
+                Message = "Meeting closed successfully. Thank you for your time!",
+                IconClass = "fa-check-circle",
+                IconColor = "#28a745",
+                ButtonText = "Close",
+                ButtonClass = "btn-success",
+                IsSuccess = true,
+                CandidateName = meetingDetails?.candidateName ?? "Unknown",
+                SessionId = seId.ToString(),
+                ExitTime = DateTime.Now
+            };
+            
+            return PartialView(exitModel);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Report(Guid seId, bool redo = false, bool isExit = false)//Guid seId
         {
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
@@ -728,11 +750,37 @@ namespace Risebird.Web.Controllers
                             {
                                 if (result)
                                 {
-                                    return Json("Meeting closed successfully. Thankyou for your time!");
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Interview Session Complete",
+                                        Message = "Meeting closed successfully. Thank you for your time!",
+                                        IconClass = "fa-check-circle",
+                                        IconColor = "#28a745",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-success",
+                                        IsSuccess = true,
+                                        CandidateName = meetingDetails.candidateName,
+                                        SessionId = seId.ToString(),
+                                        ExitTime = DateTime.Now
+                                    };
+                                    return PartialView("ExitModalPartial", exitModel);
                                 }
                                 else
                                 {
-                                    return Json("Error while exiting the interview. Please contact support.");
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Error",
+                                        Message = "Error while exiting the interview. Please contact support.",
+                                        IconClass = "fa-exclamation-triangle",
+                                        IconColor = "#dc3545",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-danger",
+                                        IsSuccess = false,
+                                        CandidateName = meetingDetails.candidateName,
+                                        SessionId = seId.ToString(),
+                                        ExitTime = DateTime.Now
+                                    };
+                                    return PartialView("ExitModalPartial", exitModel);
                                 }
                             }
                         }
@@ -741,7 +789,20 @@ namespace Risebird.Web.Controllers
 
                 if (isExit)
                 {
-                    return Json("Meeting closed successfully. Thankyou for your time!");
+                    var exitModel = new AIInterviewExitModalViewModel
+                    {
+                        Title = "Interview Session Complete",
+                        Message = "Meeting closed successfully. Thank you for your time!",
+                        IconClass = "fa-check-circle",
+                        IconColor = "#28a745",
+                        ButtonText = "Close",
+                        ButtonClass = "btn-success",
+                        IsSuccess = true,
+                        CandidateName = meetingDetails.candidateName,
+                        SessionId = seId.ToString(),
+                        ExitTime = DateTime.Now
+                    };
+                    return PartialView("ExitModalPartial", exitModel);
                 }
 
                 var reportModel = new AIInterviewReportWrapperClass();
@@ -787,11 +848,37 @@ namespace Risebird.Web.Controllers
                             {
                                 if (result)
                                 {
-                                    return Json("Meeting closed successfully. Thankyou for your time!");
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Interview Session Complete",
+                                        Message = "Meeting closed successfully. Thank you for your time!",
+                                        IconClass = "fa-check-circle",
+                                        IconColor = "#28a745",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-success",
+                                        IsSuccess = true,
+                                        CandidateName = meetingDetails.candidateName,
+                                        SessionId = seId.ToString(),
+                                        ExitTime = DateTime.Now
+                                    };
+                                    return PartialView("ExitModalPartial", exitModel);;
                                 }
                                 else
                                 {
-                                    return Json("Error while exiting the interview. Please contact support.");
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Error",
+                                        Message = "Error while exiting the interview. Please contact support.",
+                                        IconClass = "fa-exclamation-triangle",
+                                        IconColor = "#dc3545",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-danger",
+                                        IsSuccess = false,
+                                        CandidateName = meetingDetails.candidateName,
+                                        SessionId = seId.ToString(),
+                                        ExitTime = DateTime.Now
+                                    };
+                                    return PartialView("ExitModalPartial", exitModel);
                                 }
                             }
                         }
@@ -799,7 +886,20 @@ namespace Risebird.Web.Controllers
                 }
                 if (isExit)
                 {
-                    return Json("Meeting closed successfully. Thankyou for your time!");
+                    var exitModel = new AIInterviewExitModalViewModel
+                    {
+                        Title = "Interview Session Complete",
+                        Message = "Meeting closed successfully. Thank you for your time!",
+                        IconClass = "fa-check-circle",
+                        IconColor = "#28a745",
+                        ButtonText = "Close",
+                        ButtonClass = "btn-success",
+                        IsSuccess = true,
+                        CandidateName = meetingDetails.candidateName,
+                        SessionId = seId.ToString(),
+                        ExitTime = DateTime.Now
+                    };
+                    return PartialView("ExitModalPartial", exitModel);
                 }
 
                 AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
