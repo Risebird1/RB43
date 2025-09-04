@@ -188,8 +188,8 @@ namespace Risebird.Web.Controllers
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
                                 else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
-                                {
-                                    return Json("The interviewer is through with all the questions. This interview is now closed.");
+                               {
+                                 return Json("The interviewer is through with all the questions. This interview is now closed.");
 
                                 }
                             }
