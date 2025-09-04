@@ -750,6 +750,9 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = false;
+                reportModel.CandidateEmail = meetingDetails.candidateEmail;
+                reportModel.CandidateName = meetingDetails.candidateName;
+                reportModel.InterviewDate = meetingDetails.interviewDate;
                 return View(reportModel);
             }
             else
@@ -806,7 +809,9 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
-
+                reportModel.CandidateEmail = meetingDetails.candidateEmail;
+                reportModel.CandidateName = meetingDetails.candidateName;
+                reportModel.InterviewDate = meetingDetails.interviewDate;
                 return View(reportModel);
             }
         }
