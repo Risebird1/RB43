@@ -2,23 +2,25 @@
 
 <div id="AIInterviewExitModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exitModalLabel" aria-hidden="true" style="z-index:10000">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #97caf4 0%, #5a9bd4 100%); color: white; border-bottom: none;">
-                <h5 class="modal-title" id="exitModalLabel" style="color:#fff">
+       <div class="exit-modal-page">
+
+        <div class="exit-modal-content">
+              <div class="exit-modal-header">
+                <h5 class="modal-title" id="exitModalLabel" style="color:#fff;    text-align: left;padding:0px;">
                     @Model.Title
                 </h5>
-                <button style="posiiton:relative;top:15px;right:15px;" type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                <button style="position:absolute;top:45px;right:45px;" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span style="color:#fff" aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body text-center">
+            <div class="exit-modal-body text-center">
                 <div class="mb-3">
                     <i class="fa @Model.IconClass" style="font-size: 48px; color: @Model.IconColor;"></i>
                 </div>
                 
-                <h5 class="mb-4" style="font-size:17px;">@Model.Message</h5>
+                <h5 class="exit-message" style="font-size:17px;">@Model.Message</h5>
                 
-                <div class="card" style="background: #f8f9fa; border-left: 4px solid @Model.IconColor;">
+                <div class="card candidate-info" style="background: #f8f9fa; border-left: 4px solid @Model.IconColor;">
                     <div class="card-body" style="font-size:16px;">
                         <p class="mb-2"><strong>Candidate:</strong> @Model.CandidateName</p>
                         <p class="mb-2"><strong>Session ID:</strong> @Model.SessionId</p>
@@ -26,15 +28,20 @@
                     </div>
                 </div>
             </div>
-           
+              <div class="exit-modal-footer">
+            <button class="btn-exit-close" data-dismiss="modal" aria-label="Close">
+                @Model.ButtonText
+            </button>
         </div>
+        </div>
+    </div>
     </div>
 </div>
 
 <script>
     function closeExitModal() {
         $('#AIInterviewExitModal').modal('hide');
-        // Redirect to the report page
+       
         window.location.href = '@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })';
     }
     
@@ -44,7 +51,144 @@
     });
     
     // Auto-redirect after 10 seconds if user doesn't click the button
-    setTimeout(function() {
-        closeExitModal();
-    }, 10000);
+
 </script> 
+
+<style>
+    .exit-modal-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+       
+    }
+
+    .exit-modal-content {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .exit-modal-header {
+        background: linear-gradient(135deg, #97caf4 0%, #5a9bd4 100%);
+        color: white;
+        padding: 15px 20px;
+        position: relative;
+    }
+
+    .exit-modal-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .exit-modal-body {
+        padding: 30px 30px 0px 30px;
+    }
+
+    .exit-icon-wrapper {
+        margin-bottom: 25px;
+    }
+
+    .exit-icon-wrapper i {
+        font-size: 64px;
+        color: #28a745;
+        animation: bounceIn 0.8s ease-out;
+    }
+
+    .exit-message {
+        color: #333;
+        margin-bottom: 25px;
+        font-weight: 500;
+        font-size: 1.2rem;
+        line-height: 1.5;
+    }
+
+    .candidate-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 25px 0;
+        border-left: 4px solid #28a745;
+    }
+
+    .candidate-info p {
+        margin: 8px 0;
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .candidate-info strong {
+        color: #333;
+    }
+
+    .exit-modal-footer {
+        padding: 0 30px 30px;
+    }
+
+    .btn-exit-close {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-exit-close:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @@keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .exit-modal-content {
+            max-width: 90%;
+        }
+        
+        .exit-modal-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .exit-message {
+            font-size: 1.1rem;
+        }
+    }
+</style>
