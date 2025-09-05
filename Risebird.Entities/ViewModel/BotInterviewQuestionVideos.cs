@@ -27,6 +27,9 @@ namespace Risebird.Entities.ViewModel
         public AIInterviewEvaluation AIInterviewEvaluation { get; set; }
 
         public int TotalQuestions { get; set; }
+        public string CandidateName { get; set; }
+        public string CandidateEmail { get; set; }
+        public DateTime InterviewDate { get; set; }
     }
 
 }

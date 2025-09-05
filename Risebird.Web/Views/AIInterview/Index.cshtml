@@ -136,23 +136,24 @@
         
         /* Position chat input below the report section but keep it in form structure */
         .rb-chatbox-inputrow {
-            position: absolute;
-        top: calc(100% + 220px);
-        /* left: 50%; */
-        transform: translateX(-115%);
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 24px;
-            border: 1.5px solid #eee;
-            padding: 6px 12px;
-            gap: 8px;
-            width: 100%;
-            max-width: 550px;
-            min-height: 100px;
-            margin-top: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+        position: absolute;
+        top: calc(100% + 20px);
+       /* left: 50%; */
+       transform: translateX(-115%);
+       display: flex;
+       align-items: center;
+       background: #fff;
+      border-radius: 24px;
+      border: 1.5px solid #eee;
+      padding: 6px 12px;
+      gap: 8px;
+      width: 100%;
+     max-width: 550px;
+     min-height: 100px;
+     margin-top: 20px;
+     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+     z-index: 10;
+
         }
         
         .rb-footer {
@@ -331,7 +332,29 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
+         .swal2-icon {
+        position: relative;
+        justify-content: center;
+        width:3em;
+        height:3em;
+        margin: 0em auto 0.3em !important;
+        border: .25em solid transparent;
+        border-radius: 50%;
+        line-height: 5em;
+        cursor: default;
+        box-sizing: content-box;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        zoom: normal;
+        border-color: #facea8;
+        color: #f8bb86;
+    }
+    .swal2-icon-text {
+        font-size: 2.75em;
+        line-height: 36px;
+    }
         @@keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -763,16 +786,17 @@
     background: #6c757d;
     color: white;
 }
-
+.min-vh{
+    min-height:300px;
+}
  
         @@media only screen and (max-width: 992px) {
         .rb-chatbox-inputrow {
-            max-width: 420px;
+            max-width: 370px;
             left: 50%;
-            transform: translateX(-50%);
-            top: calc(100% + 70px);
+            transform: translateX(-110%);
+            top: calc(100% + 5px);
         }
-        
         .rb-main {
             gap: 20px;
         }
@@ -793,9 +817,15 @@
             right: 10px;
             transform: none;
             margin-top: 15px;
-            top: calc(100% + 60px);
+            top: calc(100% + -535px);
         }
-        
+         
+          .rb-footer{
+        margin-top:-145px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
         .rb-main {
             flex-direction: column;
             gap: 20px;
@@ -850,9 +880,14 @@
             left: 5px;
             right: 5px;
             margin-top: 10px;
-            top: calc(100% + 50px);
+            top: calc(100% + -220px);
         }
-        
+          .rb-footer{
+        margin-top:-145px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
         .rb-aiinterview-container {
             padding: 12px;
             margin: 0 5px;
@@ -879,6 +914,9 @@
             padding: 3px 10px;
             font-size: 0.9rem;
         }
+        .min-vh{
+    min-height:0px!important;
+}
     }
     
     @@media (max-width: 480px) {
@@ -887,9 +925,15 @@
             left: 2px;
             right: 2px;
             margin-top: 8px;
-            top: calc(100% + 40px);
+            top: calc(100% + -220px);
         }
-        
+       
+    .rb-footer{
+        margin-top:-50px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
         .rb-chatbox-textarea {
             font-size: 1rem;
             padding: 8px 0;
@@ -904,6 +948,17 @@
             font-size: 1.3rem;
         }
     }
+       @@media (max-width: 360px) {
+    .rb-chatbox-inputrow{
+        top: calc(100% + -220px)!important;
+    }
+    .rb-footer{
+        margin-top:-130px!important;
+    }
+    .rb-chat-section{
+        margin-top:100px!important;
+    }
+       }
     </style>
 <div class="rb-aiinterview-container">
     <!-- Header -->
@@ -990,7 +1045,7 @@
                                <div class="rb-loading-spinner"></div>
                            </button>
                        </div>
-                       
+                       <div class="min-vh">
                         @if (Model.IsAdaptive == true)
                         {
                             <!-- Audio Section -->
@@ -1021,7 +1076,7 @@
                                 </div>
                             }
                         }
-
+                        </div>
                         <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
 
                     </form>
@@ -1051,10 +1106,12 @@
                         </a> *@
                         @* option to the candidate to exit the interview here *@
 
-
-                        <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
-                            Exit Interview <i class="fa fa-sign-out" "></i>
+                         <a id="exitInterviewBtn" href="#" class="rb-action-btn rb-back-btn">
+                            Exit Interview <i class="fa fa-sign-out"></i>
                         </a>
+                        @* <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
+                            Exit Interview <i class="fa fa-sign-out" "></i>
+                        </a> *@
                     </div>
                 </div>
             </div>
@@ -1510,5 +1567,229 @@
                 }
             });
         }
+    });
+</script>
+
+<!-- Custom Modal HTML -->
+<div id="customModal" class="custom-modal" style="display: none;">
+    <div class="custom-modal-content">
+        
+        <div class="custom-modal-body">
+            <div id="warningIcon" class="swal2-icon" style="display: flex; margin-bottom: 15px;">
+                <span class="swal2-icon-text">!</span>
+            </div>
+            <div id="successIcon" class="swal2-icon success-icon" style="display: none; margin-bottom: 15px;">
+                <span class="swal2-icon-text">✓</span>
+            </div>
+            <p id="modalMessage">Are you sure</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button id="modalCancel" class="custom-modal-btn custom-modal-btn-cancel">No, Cancel</button>
+            <button id="modalConfirm" class="custom-modal-btn custom-modal-btn-confirm">Yes, Exit</button>
+        </div>
+    </div>
+</div>
+<style>
+    .custom-modal {
+        position: fixed;
+        z-index: 1000000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    .custom-modal-content {
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 90%;
+        animation: slideIn 0.3s ease-out;
+        overflow: hidden;
+    }
+    .custom-modal-header {
+        background: linear-gradient(135deg, #4eda92, #3bc78a);
+        color: white;
+        padding: 20px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .custom-modal-header h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+    .custom-modal-close {
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    .custom-modal-close:hover {
+        opacity: 1;
+    }
+    .custom-modal-body {
+        padding: 24px;
+        text-align: center;
+    }
+    .custom-modal-body p {
+        margin: 0;
+        font-size: 1.1rem;
+         color: #595959;
+        line-height: 1.5;
+    }
+    #warningIcon.swal2-icon {
+        border: 3px solid #facea8!important;
+        background-color: #FFF;
+        color: #facea8;
+    }
+    .swal2-icon {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #f27474;
+        border-radius: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f27474;
+        color: white;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    #successIcon .swal2-icon-text{
+        font-size: 2rem!important;
+        font-weight: normal !important;
+    }
+    .swal2-icon-text {
+        font-size: 2.5rem;
+        font-weight:normal;
+       
+    }
+    .success-icon {
+        border-color: #28a745 !important;
+        background-color: #FFF !important;
+        COLOR: #28a745;
+    }
+    .custom-modal-footer {
+        padding: 0 24px 24px;
+        display: flex;
+        gap: 12px;
+        justify-content:center;
+    }
+    .custom-modal-btn {
+    font-size: 14px !important;
+    min-width: 105px;
+    height: 40px;
+    padding: 0px 20px !important;
+    border: 0px !important;
+        border-radius: .25em;
+    }
+    .custom-modal-btn-cancel {
+        background-color: rgb(221, 51, 51) !important;
+        color: #fff;
+       
+    }
+    .custom-modal-btn-cancel:hover {
+       background-color: rgb(202 23 23) !important;
+       
+    }
+    .custom-modal-btn-confirm {
+        background: #8ec9f9 !important;
+        color: white;
+    }
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @@keyframes slideIn {
+        from { 
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    /* Success modal specific styles */
+    .custom-modal.success .custom-modal-header {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    .custom-modal.success .custom-modal-btn-confirm {
+        background-color: #28a745;
+    }
+    .custom-modal.success .custom-modal-btn-confirm:hover {
+        background-color: #218838;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+</style>
+<script>
+    // Custom Modal Functions
+    function showCustomModal(title, message, isSuccess = false) {
+        const modal = document.getElementById('customModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const warningIcon = document.getElementById('warningIcon');
+        const successIcon = document.getElementById('successIcon');
+        modalMessage.innerHTML = message;
+        if (isSuccess) {
+            modal.classList.add('success');
+            warningIcon.style.display = 'none';
+            successIcon.style.display = 'flex';
+        } else {
+            modal.classList.remove('success');
+            warningIcon.style.display = 'flex';
+            successIcon.style.display = 'none';
+        }
+        
+        modal.style.display = 'flex';
+    }
+    function hideCustomModal() {
+        const modal = document.getElementById('customModal');
+        modal.style.display = 'none';
+    }
+    // Exit Interview Confirmation
+    document.addEventListener('DOMContentLoaded', function() {
+        const exitBtn = document.getElementById('exitInterviewBtn');
+        const modal = document.getElementById('customModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+        
+        if (exitBtn) {
+                            exitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                showCustomModal('Exit Interview?', 'Are you sure? <span style="display:block;font-size: 17px !important;color: #a79f9f !important;padding-top: 5px;">you want to exit the interview?</span>');
+                });
+        }
+     
+        // Cancel button
+        modalCancel.addEventListener('click', hideCustomModal);
+        // Confirm button
+        modalConfirm.addEventListener('click', function() {
+            hideCustomModal();
+            
+            // Load the ExitModalPartial via AJAX
+            $.ajax({
+                url: '@Url.Action("ExitModalPartial", "AIInterview", new { seId = Model.SessionId })',
+                type: 'GET',
+                success: function(data) {
+                    // Append the modal HTML to the body
+                    $('body').append(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading exit modal:', error);
+                    // Fallback: redirect to report page
+                    window.location.href = '@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })';
+                }
+            });
+        });
     });
 </script>
