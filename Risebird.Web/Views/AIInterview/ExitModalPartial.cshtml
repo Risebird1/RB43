@@ -1,0 +1,50 @@
+@model Risebird.Entities.ViewModel.AIInterviewExitModalViewModel
+
+<div id="AIInterviewExitModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exitModalLabel" aria-hidden="true" style="z-index:10000">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #97caf4 0%, #5a9bd4 100%); color: white; border-bottom: none;">
+                <h5 class="modal-title" id="exitModalLabel" style="color:#fff">
+                    @Model.Title
+                </h5>
+                <button style="posiiton:relative;top:15px;right:15px;" type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                    <span style="color:#fff" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fa @Model.IconClass" style="font-size: 48px; color: @Model.IconColor;"></i>
+                </div>
+                
+                <h5 class="mb-4" style="font-size:17px;">@Model.Message</h5>
+                
+                <div class="card" style="background: #f8f9fa; border-left: 4px solid @Model.IconColor;">
+                    <div class="card-body" style="font-size:16px;">
+                        <p class="mb-2"><strong>Candidate:</strong> @Model.CandidateName</p>
+                        <p class="mb-2"><strong>Session ID:</strong> @Model.SessionId</p>
+                        <p class="mb-0"><strong>Exit Time:</strong> @Model.ExitTime.ToString("MMM dd, yyyy HH:mm")</p>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeExitModal() {
+        $('#AIInterviewExitModal').modal('hide');
+        // Redirect to the report page
+        window.location.href = '@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })';
+    }
+    
+    // Show the modal immediately
+    $(document).ready(function() {
+        $('#AIInterviewExitModal').modal('show');
+    });
+    
+    // Auto-redirect after 10 seconds if user doesn't click the button
+    setTimeout(function() {
+        closeExitModal();
+    }, 10000);
+</script> 
