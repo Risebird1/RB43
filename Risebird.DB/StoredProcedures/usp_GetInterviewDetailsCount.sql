@@ -62,7 +62,7 @@ Select Avg(ic.VideoDuration) VideoDuration from InterviewMeetings im join Interv
 where interviewer=@emailID and im.Confirmationstatus=1 and ic.MeetingStatus in(4,6,7,8) 
 and ic.VideoDuration is not null
 
-Select ip.FirstTimePopupDisplayed,ip.VideoConfirmation,ip.PaymentSLAConfirmation,ip.RedmarkerAcknowledge,ip.VideoLink from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
+Select ip.FirstTimePopupDisplayed,ip.VideoConfirmation,ip.PaymentSLAConfirmation,ip.RedmarkerAcknowledge,ip.VideoLink, ip.AcknowledgementStatus  from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
 
 update ip set ip.FirstTimePopupDisplayed=1 from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID and Isnull(ip.FirstTimePopupDisplayed,0)=0
 
