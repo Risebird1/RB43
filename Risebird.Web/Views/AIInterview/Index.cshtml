@@ -1787,7 +1787,7 @@
                 error: function(xhr, status, error) {
                     console.error('Error loading exit modal:', error);
                     // Fallback: redirect to report page
-                    window.location.href = '@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })';
+                    window.location.href = '@Url.Action("Index", "AIInterview", new { seId = Model.SessionId })';
                 }
             });
         });
