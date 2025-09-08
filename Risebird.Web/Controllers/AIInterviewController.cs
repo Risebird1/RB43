@@ -716,7 +716,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Report(Guid seId, bool redo = false, bool isExit = false)//Guid seId
+        public async Task<IActionResult> Report(Guid seId, bool redo = false, bool? isExit = null)//Guid seId
         {
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
             if (meetingDetails?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
@@ -727,7 +727,7 @@ namespace Risebird.Web.Controllers
                     aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
                     if (aiReport != null)
                     {
-                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
                     }
                 }
                 else
@@ -745,8 +745,8 @@ namespace Risebird.Web.Controllers
                         aiReport.Replies = list;
                         if (aiReport != null)
                         {
-                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
-                            if (isExit)
+                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
+                            if (isExit.HasValue && isExit.Value)
                             {
                                 if (result)
                                 {
@@ -787,7 +787,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                if (isExit)
+                if (isExit.HasValue && isExit.Value)
                 {
                     var exitModel = new AIInterviewExitModalViewModel
                     {
@@ -825,7 +825,7 @@ namespace Risebird.Web.Controllers
                     aiReport = await _api.GenerateReport(seId, candidatePrompt);
                     if (aiReport != null)
                     {
-                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
+                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
                     }
                 }
                 else
@@ -843,8 +843,8 @@ namespace Risebird.Web.Controllers
                         aiReport.Replies = list;
                         if (aiReport != null)
                         {
-                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport));
-                            if (isExit)
+                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
+                            if (isExit.HasValue && isExit.Value)
                             {
                                 if (result)
                                 {
@@ -884,7 +884,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                if (isExit)
+                if (isExit.HasValue && isExit.Value)
                 {
                     var exitModel = new AIInterviewExitModalViewModel
                     {
