@@ -128,7 +128,7 @@ namespace Risebird.Services.Controllers
 
                 var threadId = await _ai.CreateThreadAsync();
                 //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The skillname, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
+                input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
                 await _ai.AddMessageAsync(threadId, "user", input.Message);
 
                 var runId = await _ai.CreateRunAsync(threadId, "asst_6aHX1TyH0XKKZ14SxDqhi424"); //assistant id of the assistant named "Candidate Answer Evaluator"
