@@ -1,3 +1,4 @@
+using Azure.Core;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -567,6 +568,9 @@ namespace Risebird.AzureTimerFunctions
                     {
                         HttpClient myWebClient = new HttpClient();
                         string uploadedVideoUrl = string.Empty;
+                        var accessToken = await _zoho.GetRecordingAccessTokenAsync();
+                        myWebClient.DefaultRequestHeaders.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
                         //url of the video uploaded to the client's storage exclusively in cases where the client has requested for such a service. 
                         using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                         {
@@ -623,6 +627,9 @@ namespace Risebird.AzureTimerFunctions
                     {
                         HttpClient myWebClient = new HttpClient();
                         string uploadedTranscriptUrl = string.Empty;
+                        var accessToken = await _zoho.GetRecordingAccessTokenAsync();
+                        myWebClient.DefaultRequestHeaders.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
                         using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
                         {
                             var topic = _recordingupload.erecordingId;

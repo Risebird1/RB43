@@ -68,7 +68,7 @@ namespace Risebird.CommonHelper
             _accessTokenExpiry = DateTimeOffset.UtcNow.AddSeconds(expiresInSeconds);
             return accessToken!;
         }
-        private async Task<string> GetRecordingAccessTokenAsync()
+        public async Task<string> GetRecordingAccessTokenAsync()
         {
             if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTimeOffset.UtcNow.AddMinutes(1))
             {
