@@ -299,6 +299,7 @@ namespace Risebird.Repository
                                 obj.question = !string.IsNullOrEmpty(dt.Rows[i]["question"].ToString()) ? dt.Rows[i]["question"].ToString() : null;
                                 obj.CandidateAnswer = !string.IsNullOrEmpty(dt.Rows[i]["CandidateAnswer"].ToString()) ? dt.Rows[i]["CandidateAnswer"].ToString() : null;
                                 obj.ExpectedAnswer = !string.IsNullOrEmpty(dt.Rows[i]["ExpectedAnswer"].ToString()) ? dt.Rows[i]["ExpectedAnswer"].ToString() : null;
+                                obj.SkillName = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null;
 
                                 qaSet.Add(obj);
                             }
@@ -342,7 +343,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant)
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null)
         {
             try
             {
@@ -351,6 +352,8 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@SessionId", sessionId);
                     parameters.Add("@SerializedReportOfAIInterviewByAssistant", serializedReportOfAIInterviewByAssistant);
+                    parameters.Add("@isExit", isExit);
+                    parameters.Add("@timeNow", (isExit.HasValue && isExit.Value == true) ? DateTime.Now : null);
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveReportOfAIInterviewByAssistant", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout:150);
                     return true;
