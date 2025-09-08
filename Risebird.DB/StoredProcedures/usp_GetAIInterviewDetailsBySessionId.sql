@@ -35,7 +35,8 @@ select * from TransTechSkill where IRFId = @irfId
   
 if(@aiInterviewType = 2) -- 2 means preset  
 Begin  
-select bq.question, bq.CandidateAnswer, sq.ExpectedAnswer from BotInterviewQuestionVideos bq   
+
+select bq.question, bq.CandidateAnswer, sq.ExpectedAnswer, sq.SkillName from BotInterviewQuestionVideos bq   
 join SkillChannelSampleQuestions sq on bq.DeliveryHeadQuestionId = sq.id  
 where irfid = @irfId  
   
