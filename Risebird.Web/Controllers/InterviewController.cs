@@ -1285,7 +1285,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting is cancelled already, you can't edit this meeting!";
                             return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                         }
-                        if (!string.IsNullOrEmpty(meetingUpdated.zoomLink))
+                        if (!string.IsNullOrEmpty(meetingUpdated.zoomLink) && meetingUpdated.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
                             try
                             {
@@ -3199,7 +3199,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(model.IsAIInterview)
+                if (model.IsAIInterview)
                 {
                     if (HttpContext.Session.GetString("email") != null &&
                         HttpContext.Session.GetString("profileName") != null)
@@ -3212,7 +3212,7 @@ namespace Risebird.Web.Controllers
                         if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
                         {
                             var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
-                            if(result)
+                            if (result)
                             {
                                 TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
 
@@ -3473,7 +3473,7 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("SignOut", "Session");
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -9293,7 +9293,7 @@ namespace Risebird.Web.Controllers
         //                if (result)
         //                {
         //                    TempData["SuccessErrorProctorEvaluationMessage"] = $"Report for candidate: '{meetingDetails.candidateEmailId}' for interview dated {meetingDetails.interviewDate.ToString()} saved Successfully!";
-                            
+
         //                    return RedirectToAction("MyInterview");
         //                }
         //                else
