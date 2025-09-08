@@ -10,14 +10,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_SaveReportOfAIInterviewByAssistant
 @SessionId varchar(200),
-@SerializedReportOfAIInterviewByAssistant varchar(max)
+@SerializedReportOfAIInterviewByAssistant varchar(max),
+@isExit bit = null,
+@timeNow datetime = null
 AS
 BEGIN
 declare @interviewId int
 
 set @interviewId = (select id from InterviewMeetings where SessionId = @SessionId)
 
-update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant where InterviewId  = @interviewId
+update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
+HasCandidateExited = @isExit, CandidateExitedAt = @timeNow  where InterviewId  = @interviewId
 
 END
 GO

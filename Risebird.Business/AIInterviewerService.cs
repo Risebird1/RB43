@@ -96,11 +96,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant)
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null)
         {
             try
             {
-                return await _aiInterviewerRepository.SaveReportOfAIInterviewByAssistant(sessionId, serializedReportOfAIInterviewByAssistant);
+                return await _aiInterviewerRepository.SaveReportOfAIInterviewByAssistant(sessionId, serializedReportOfAIInterviewByAssistant, isExit);
             }
             catch (Exception e)
             {
