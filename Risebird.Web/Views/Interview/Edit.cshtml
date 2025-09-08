@@ -18,7 +18,7 @@
 <div class="main-panel" id="main-panel">
     <div class="content client">
         <div class="row bg-white">
-            <div class="col-md-12">               
+            <div class="col-md-12">
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("Edit", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
@@ -126,9 +126,13 @@
                                         <div class="form-group">
                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Zoom Login Details</label>
 
-                                            @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control",@required ="required" } })
+                                            @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
                                             @Html.ValidationMessageFor(model => model.risebirdHR, "", new { @class = "text-danger" })
                                         </div>
+                                    }
+                                    else
+                                    {
+                                        @Html.HiddenFor(model => model.risebirdHR)
                                     }
                                     <div class="form-group">
                                         @Html.LabelFor(Model => Model.ConfirmationStatusList, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -155,7 +159,9 @@
                                         }
                                         else
                                         {
-                                            @Html.EditorFor(model => model.interviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
+                                            @Html.EditorFor(model => model.interviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "position: relative;margin-bottom: 8px!important;" } })
+
+                                            <span class="inactive">Inactive</span>
                                             @Html.DropDownListFor(x => Model.NewActiveInterviewer, Model.InterviewingMembersList, "Select Interviewer", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
                                         }

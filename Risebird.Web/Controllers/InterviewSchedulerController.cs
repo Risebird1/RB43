@@ -1327,6 +1327,7 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
                             return View(model);
                         }
+                        zoomLink.meetingid = zoomLink.id.ToString();
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
@@ -1349,7 +1350,7 @@ namespace Risebird.Web.Controllers
                     bool result = false;
                     int interviewId = 0;
 
-                    result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, model.MeetingPlatform, out interviewId, zoomLink.accountemail);
+                    result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, model.MeetingPlatform, out interviewId, zoomLink.accountemail);
 
                     if (result)
                     {
@@ -1735,6 +1736,7 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "Apologies, The selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.");
                             return View(model);
                         }
+                        zoomLink.meetingid = zoomLink.id.ToString();
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
@@ -1756,7 +1758,7 @@ namespace Risebird.Web.Controllers
                     bool result = false;
                     int interviewId = 0;
 
-                    result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, model.MeetingPlatform, out interviewId, zoomLink.accountemail);
+                    result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, model.MeetingPlatform, out interviewId, zoomLink.accountemail);
 
                     if (result)
                     {
