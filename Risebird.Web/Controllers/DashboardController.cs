@@ -112,8 +112,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        //for (int i = 0; i < 30; i++)
+                        //{
+                        //    await ParseOpenAIResume();
 
-                        //await ParseOpenAIResume();
+                        //}
                         var model = new DashboardVM();
                         //await _assistantServiceHelper.DeleteFiles();
                         //daily interview tracking first chart
@@ -274,7 +277,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 if (!string.IsNullOrEmpty(candidateParsedData.phoneNumber))
                                 {
-                                    candidate.Phone = candidateParsedData.phoneNumber;
+                                    candidate.Phone = candidateParsedData.phoneNumber.Replace(" ", string.Empty);
                                     if (candidate.Phone == "911" || candidate.Phone == "+911")
                                     {
                                         candidate.Phone = null;
