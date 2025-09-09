@@ -299,7 +299,7 @@ namespace Risebird.Repository
                                 obj.question = !string.IsNullOrEmpty(dt.Rows[i]["question"].ToString()) ? dt.Rows[i]["question"].ToString() : null;
                                 obj.CandidateAnswer = !string.IsNullOrEmpty(dt.Rows[i]["CandidateAnswer"].ToString()) ? dt.Rows[i]["CandidateAnswer"].ToString() : null;
                                 obj.ExpectedAnswer = !string.IsNullOrEmpty(dt.Rows[i]["ExpectedAnswer"].ToString()) ? dt.Rows[i]["ExpectedAnswer"].ToString() : null;
-                                obj.SkillName = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null;
+                                obj.mapped_rubric_parameters = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null;
 
                                 qaSet.Add(obj);
                             }
