@@ -30,7 +30,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Twilio.Types;
 using static SkiaSharp.HarfBuzz.SKShaper;
-//using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.Web.Controllers
 {
@@ -189,13 +188,42 @@ namespace Risebird.Web.Controllers
                                 else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                {
-                                 return Json("The interviewer is through with all the questions. This interview is now closed.");
-
+                                 // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                var exitModel = new AIInterviewExitModalViewModel
+                                {
+                                    Title = "Interview Complete",
+                                    Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                    IconClass = "fa-check-circle",
+                                    IconColor = "#28a745",
+                                    ButtonText = "Close",
+                                    ButtonClass = "btn-success",
+                                    CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                    InterviewDate = meetingDetails.interviewDate,
+                                    SessionId = sid.ToString(),
+                                    ExitTime = DateTime.Now,
+                                    IsFromIndex = true // Add this flag to identify the source
+                                };
+                                return View("ExitModalPartial", exitModel);
                                 }
                             }
                             else
                             {
-                                return Json("The interviewer is through with all the questions. This interview is now closed.");
+                                // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                var exitModel = new AIInterviewExitModalViewModel
+                                {
+                                    Title = "Interview Complete",
+                                    Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                    IconClass = "fa-check-circle",
+                                    IconColor = "#28a745",
+                                    ButtonText = "Close",
+                                    ButtonClass = "btn-success",
+                                    CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                    InterviewDate = meetingDetails.interviewDate,
+                                    SessionId = sid.ToString(),
+                                    ExitTime = DateTime.Now,
+                                    IsFromIndex = true // Add this flag to identify the source
+                                };
+                                return View("ExitModalPartial", exitModel);
                             }
 
 
@@ -355,13 +383,43 @@ namespace Risebird.Web.Controllers
                                 else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
                                 //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                 {
-                                    return Json("The interviewer is through with all the questions. This interview is now closed.");
+                                    // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Interview Complete",
+                                        Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                        IconClass = "fa-check-circle",
+                                        IconColor = "#28a745",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-success",
+                                        CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                        InterviewDate = meetingDetails.interviewDate,
+                                        SessionId = sid.ToString(),
+                                        ExitTime = DateTime.Now,
+                                        IsFromIndex = true // Add this flag to identify the source
+                                    };
+                                    return View("ExitModalPartial", exitModel);
 
                                 }
                             }
                             else
                             {
-                                return Json("The interviewer is through with all the questions. This interview is now closed.");
+                                // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                var exitModel = new AIInterviewExitModalViewModel
+                                {
+                                    Title = "Interview Complete",
+                                    Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                    IconClass = "fa-check-circle",
+                                    IconColor = "#28a745",
+                                    ButtonText = "Close",
+                                    ButtonClass = "btn-success",
+                                    CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                    InterviewDate = meetingDetails.interviewDate,
+                                    SessionId = sid.ToString(),
+                                    ExitTime = DateTime.Now,
+                                    IsFromIndex = true // Add this flag to identify the source
+                                };
+                                return View("ExitModalPartial", exitModel);
                             }
 
 
@@ -480,7 +538,18 @@ namespace Risebird.Web.Controllers
 
             }
 
-            return View(null);
+            // Handle null meetingDetails case
+            var exitModelError = new AIInterviewExitModalViewModel
+            {
+                Title = "Interview Not Found",
+                Message = "The interview session could not be found. Please check the session ID and try again.",
+                IconClass = "fa-exclamation-triangle",
+                IconColor = "#dc3545",
+                ButtonText = "Close",
+                ButtonClass = "btn-danger",
+                SessionId = sid.ToString()
+            };
+            return View("ExitModalPartial", exitModelError);
         }
 
         [HttpPost]
@@ -506,7 +575,22 @@ namespace Risebird.Web.Controllers
                 {
                     await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
                     await UploadBotInterviewVideo(model, question, userMessage);
-                    return Json("The interviewer is through with all the questions. This interview is now closed.");
+                    
+                    // INTERVIEW COMPLETE - Return ExitModalPartial view
+                    var exitModel = new AIInterviewExitModalViewModel
+                    {
+                        Title = "Interview Complete",
+                        Message = "The interviewer is through with all the questions. This interview is now closed.",
+                        IconClass = "fa-check-circle",
+                        IconColor = "#28a745",
+                        ButtonText = "Close",
+                        ButtonClass = "btn-success",
+                        CandidateName = model.candidateName ?? "Candidate",
+                        InterviewDate = DateTime.Now,
+                        SessionId = model.SessionId.ToString(),
+                        IsFromIndex = true
+                    };
+                    return View("ExitModalPartial", exitModel);
                 }
                 else
                 {
@@ -578,7 +662,22 @@ namespace Risebird.Web.Controllers
                 {
                     await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
                     await UploadBotInterviewVideo(model, question, userMessage);
-                    return Json("The interviewer is through with all the questions. This interview is now closed.");
+                    
+                    // INTERVIEW COMPLETE - Return ExitModalPartial view
+                    var exitModel = new AIInterviewExitModalViewModel
+                    {
+                        Title = "Interview Complete",
+                        Message = "The interviewer is through with all the questions. This interview is now closed.",
+                        IconClass = "fa-check-circle",
+                        IconColor = "#28a745",
+                        ButtonText = "Close",
+                        ButtonClass = "btn-success",
+                        CandidateName = model.candidateName ?? "Candidate",
+                        InterviewDate = DateTime.Now,
+                        SessionId = model.SessionId.ToString(),
+                        IsFromIndex = true
+                    };
+                    return View("ExitModalPartial", exitModel);
                 }
                 else
                 {
@@ -700,8 +799,8 @@ namespace Risebird.Web.Controllers
             
             var exitModel = new AIInterviewExitModalViewModel
             {
-                Title = "Interview Session Complete",
-                Message = "Meeting closed successfully. Thank you for your time!",
+                Title = "Interview Complete",
+                Message = "The interviewer is through with all the questions. This interview is now closed.",
                 IconClass = "fa-check-circle",
                 IconColor = "#28a745",
                 ButtonText = "Close",
@@ -709,10 +808,12 @@ namespace Risebird.Web.Controllers
                 IsSuccess = true,
                 CandidateName = meetingDetails?.candidateName ?? "Unknown",
                 SessionId = seId.ToString(),
-                ExitTime = DateTime.Now
+                ExitTime = DateTime.Now,
+                InterviewDate = meetingDetails?.interviewDate,
+                IsFromIndex = true
             };
             
-            return PartialView(exitModel);
+            return View(exitModel);
         }
 
         [HttpGet]
@@ -761,9 +862,11 @@ namespace Risebird.Web.Controllers
                                         IsSuccess = true,
                                         CandidateName = meetingDetails.candidateName,
                                         SessionId = seId.ToString(),
-                                        ExitTime = DateTime.Now
+                                        ExitTime = DateTime.Now,
+                                        InterviewDate = meetingDetails.interviewDate,
+                                        IsFromIndex = false // Add this flag to identify the source
                                     };
-                                    return PartialView("ExitModalPartial", exitModel);
+                                    return View("ExitModalPartial", exitModel);
                                 }
                                 else
                                 {
@@ -780,7 +883,7 @@ namespace Risebird.Web.Controllers
                                         SessionId = seId.ToString(),
                                         ExitTime = DateTime.Now
                                     };
-                                    return PartialView("ExitModalPartial", exitModel);
+                                    return View("ExitModalPartial", exitModel);
                                 }
                             }
                         }
@@ -802,7 +905,7 @@ namespace Risebird.Web.Controllers
                         SessionId = seId.ToString(),
                         ExitTime = DateTime.Now
                     };
-                    return PartialView("ExitModalPartial", exitModel);
+                    return View("ExitModalPartial", exitModel);
                 }
 
                 var reportModel = new AIInterviewReportWrapperClass();
@@ -859,9 +962,11 @@ namespace Risebird.Web.Controllers
                                         IsSuccess = true,
                                         CandidateName = meetingDetails.candidateName,
                                         SessionId = seId.ToString(),
-                                        ExitTime = DateTime.Now
+                                        ExitTime = DateTime.Now,
+                                        InterviewDate = meetingDetails.interviewDate,
+                                        IsFromIndex = false // Add this flag to identify the source
                                     };
-                                    return PartialView("ExitModalPartial", exitModel);;
+                                    return View("ExitModalPartial", exitModel);;
                                 }
                                 else
                                 {
@@ -878,7 +983,7 @@ namespace Risebird.Web.Controllers
                                         SessionId = seId.ToString(),
                                         ExitTime = DateTime.Now
                                     };
-                                    return PartialView("ExitModalPartial", exitModel);
+                                    return View("ExitModalPartial", exitModel);
                                 }
                             }
                         }
@@ -899,7 +1004,7 @@ namespace Risebird.Web.Controllers
                         SessionId = seId.ToString(),
                         ExitTime = DateTime.Now
                     };
-                    return PartialView("ExitModalPartial", exitModel);
+                    return View("ExitModalPartial", exitModel);
                 }
 
                 AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
