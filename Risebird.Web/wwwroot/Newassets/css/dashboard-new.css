@@ -10389,16 +10389,21 @@ option {
 
 .addreport .int-form-group-status {
     position: relative;
-    margin: 0px 5px 0px 5px;
-    width: 28.2%;
-    float: left
+    /*margin: 0px 5px 0px 5px;*/
+    margin: 0px 0px 0px 0px;
+    /*width: 28.2%;*/
+    width: 100%;
+    float: left;
+    padding:0px 15px;
 }
 
 .addreport .int-form-group-comment {
     position: relative;
     margin: 0px;
-    width: 69.5%;
-    float: left
+    /*width: 69.5%;*/
+    width: 100%;
+    float: left;
+    padding: 0px 15px;
 }
 
 .addreport .int-form-group input {
