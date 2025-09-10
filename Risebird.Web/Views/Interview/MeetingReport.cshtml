@@ -8,7 +8,7 @@
 
 @{
     ViewData["Title"] = "Interview Report";
-    ViewBag.PageHeader = "Interview Report";
+    ViewBag.PageHeader = "Meeting Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var meetingStatusList = new List<SelectListItem>
@@ -496,7 +496,7 @@
 
                         @if (!Model.IsAIInterview)
                         {
-                            <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+                            <form action="/Interview/MeetingReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                                 @Html.AntiForgeryToken()
                                 <div class="canvas_div_pdf">
                                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -1628,7 +1628,7 @@
                         else
                         {
                             <!-- AI Interview form remains the same -->
-                            <form action="@Url.Action(" AddReport", "Interview" )" enctype="multipart/form-data" method="post" id="reportForm" onsubmit="return SubmitProctorFormForAIInterview()">
+                            <form action="@Url.Action(" MeetingReport", "Interview" )" enctype="multipart/form-data" method="post" id="reportForm" onsubmit="return SubmitProctorFormForAIInterview()">
                                 @Html.AntiForgeryToken()
 
                                 <input type="hidden" asp-for="InterviewId" id="InterviewId" value="@Model.InterviewId" />
