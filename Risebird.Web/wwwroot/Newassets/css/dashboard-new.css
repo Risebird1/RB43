@@ -10386,26 +10386,38 @@ option {
     width: 32.2%;
     float: left;
 }
-
-.addreport .int-form-group-status {
-    position: relative;
-    /*margin: 0px 5px 0px 5px;*/
-    margin: 0px 0px 0px 0px;
-    /*width: 28.2%;*/
+.meetingReport .addreport .int-form-group-status {
     width: 100%;
-    float: left;
-    padding:0px 15px;
+    margin: 0px 0px 0px 0px;
 }
-
-.addreport .int-form-group-comment {
+    .addreport .int-form-group-status {
+    position: relative;
+    margin: 0px 5px 0px 5px;
+    width: 28.2%;
+    float: left;
+    /*padding:0px 15px;*/
+}
+.meetingReport .addreport .int-form-group-comment {
+    width: 100%;
+}
+    .addreport .int-form-group-comment {
     position: relative;
     margin: 0px;
-    /*width: 69.5%;*/
-    width: 100%;
+    width: 69.5%;
+    float: left;
+    padding: 0px 15px;
+}
+.meetingReport .addreport .status-info {
+    width: 50%;
     float: left;
     padding: 0px 15px;
 }
 
+.meetingReport .addreport .answer-div {
+    background: rgb(214 209 209 / 17%);
+    border-top: 1px solid rgb(236, 235, 235);
+   
+}
 .addreport .int-form-group input {
     width: 100%;
     padding: 10px;
