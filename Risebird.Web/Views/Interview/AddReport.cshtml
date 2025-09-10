@@ -159,6 +159,7 @@
         display: flex;
         gap: 0px;
         margin-top: 20px;
+        position: relative;
     }
 
     .add-report .interviewWrapper {
@@ -166,13 +167,26 @@
     }
 
     .video-section {
-        flex: 0 0 40%;
+        position: fixed;
+        top: 80px;
+        left:95px;
+        width: 40%;
+        max-width: 500px;
         min-width: 400px;
+        z-index: 1000;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-height: calc(100vh - 10px);
+        overflow-y: auto;
     }
 
     .content-section {
         flex: 1;
         min-width: 0;
+        margin-left: calc(40% + 40px);
+        max-width: calc(60% - 40px);
     }
 
     .video-placeholder {
@@ -232,13 +246,196 @@
     }
 
     @@media (max-width: 1200px) {
+        .video-section {
+            position: relative;
+            top: auto;
+            left: auto;
+            width: 100%;
+            max-width: none;
+            min-width: auto;
+            margin-bottom: 20px;
+            z-index: auto;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            max-height: none;
+            overflow-y: visible;
+        }
+        
+        .content-section {
+            margin-left: 0;
+            max-width: none;
+        }
+        
         .interview-layout {
             flex-direction: column;
         }
+    }
 
-        .video-section {
-            flex: none;
-            min-width: auto;
+    /* Observation Button Styles */
+    .observation-btn {
+        background-color: #17a2b8 !important;
+        color: white !important;
+        margin-left: 5px !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 50% !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .observation-btn:hover {
+        background-color: #138496 !important;
+        transform: scale(1.1) !important;
+    }
+
+    .observation-btn i {
+        font-size: 14px !important;
+    }
+
+    /* Observation Modal Styles */
+    .observation-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .observation-modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 0;
+        border: none;
+        border-radius: 8px;
+        width: 60%;
+        max-width: 600px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .observation-modal-header {
+        background:#53a5f5;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .observation-modal-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .observation-close {
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+    }
+
+    .observation-close:hover {
+        opacity: 0.7;
+    }
+
+    .observation-modal-body {
+        padding:20px;
+    }
+
+    .observation-question {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #007bff;
+    }
+
+    .observation-question strong {
+        color: #495057;
+        font-size: 14px;
+    }
+
+    .observation-textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 5px;
+        font-size: 14px;
+        line-height: 1.5;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+    }
+
+    .observation-textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .observation-modal-footer {
+            padding: 0px 30px 20px 30px;
+        background-color: #f8f9fa;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .observation-btn-save {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .observation-btn-save:hover {
+        background-color: #218838;
+    }
+
+    .observation-btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .observation-btn-cancel:hover {
+        background-color: #5a6268;
+    }
+
+    @@media (max-width: 768px) {
+        .observation-modal-content {
+            width: 90%;
+            margin: 10% auto;
+        }
+        
+        .observation-modal-body {
+            padding: 20px;
+        }
+        
+        .observation-modal-footer {
+            padding: 15px 20px;
         }
     }
 </style>
@@ -295,9 +492,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section" style="padding: 15px 0px 15px 15px;">
-                        <div class="heading-txt text-center">
-                            <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Candidate's Interview Feedback</span>
-                        </div>
+                       
 
                         @if (!Model.IsAIInterview)
                         {
@@ -321,140 +516,12 @@
                                                 <div class="zoho-logo">Zoho Meeting</div>
                                             </div>
 
-                                            <!-- Video Action Controls -->
-                                            <div class="video-controls">
-                                                <button type="button" class="video-control-btn btn-select" onclick="handleVideoAction('select')">Select</button>
-                                                <button type="button" class="video-control-btn btn-reject" onclick="handleVideoAction('reject')">Reject</button>
-                                                <button type="button" class="video-control-btn btn-shortlist" onclick="handleVideoAction('shortlist')">Shortlist</button>
-                                                <button type="button" class="video-control-btn btn-feedback" onclick="handleVideoAction('feedback')">Feedback</button>
-                                            </div>
-                                            <!--report start-->
-                                            <div class="addreport" style="margin-top:20px;">
-                                                <h1 style="font-size:16px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;"> Primary Skill Evaluation:<strong style="font-weight:500;"> @Model.JDTiltle</strong></h1>
-                                                <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the primary skill evaluation process</div>
-
-                                                <div class="card" style="margin-bottom:10px;">
-                                                    <label class="question" for="checkbox_two">
-                                                        <label for="checkbox_two" style="margin-right:0px;margin-left:0px;">
-                                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                                            REPORT DETAILS
-                                                            <span class="report-tooltip" style="border:0px;margin-right:10px;">
-                                                                <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
-                                                                <span class="report-tooltiptext">
-                                                                    <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
-                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
-                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
-                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
-                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
-                                                                </span>
-                                                            </span>
-                                                            <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
-                                                        </label>
-                                                    </label>
-                                                  
-                                                        @if (ViewBag.PageStatus != "PublicExternal")
-                                                        {
-                                                            <div class="int-form-group-status">
-                                                                <div class="form-group">
-                                                                    @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "placeholder-label" })
-                                                                    @if (ViewBag.profile != "Interviewer")
-                                                                    {
-                                                                        <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
-                                                                    }
-                                                                    @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-                                                                </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
-                                                                    @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = "" })
-                                                                    @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
-                                                                </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="int-form-group-comment">
-                                                                <div class="InterviewerComent">
-                                                                   <!-- <div class="p15">-->
-                                                                    <div>
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "placeholder-label", @style = "z-index:1000" })</strong>
-                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                                <div class="talktext">
-                                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false;" })
-                                                                                    <span id='remainingC'></span>
-                                                                                    <div id="words"></div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group" style="margin:-15px  0px 25px 0px;">
-                                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-7px; font-size:12px"></label>
-                                                                        </div>
-                                                                        <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
-                                                                            Strictly avoid in Comments - grammatical errors, generic comments,
-                                                                            short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                         <!--proxy & communication start-->
-                                                        @if (ViewBag.PageStatus != "PublicExternal"){
-                                                              <div class="int-form-group-status" style="margin-top:15px;">
-                                                                <div class="form-group">
-                                                                <label class="placeholder-label">Proxy Candidate Reporting</label>
-                                                                        <span>
-                                                                         <select class="select-css" id='isProxy' name='isProxy' style="top:0px;">
-                        <option selected="selected">Select</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                                                                        
-                       </div>
-
-                       </div>
-                        <div>
-                        </div>
-                        @Html.HiddenFor(m => m.Proctoring.InterviewId)
-    @Html.HiddenFor(m => m.Proctoring.isProxyCandidate)
-    @Html.HiddenFor(m => m.Proctoring.EyeMovement)
-    @Html.HiddenFor(m => m.Proctoring.LipsMovement)
-    @Html.HiddenFor(m => m.Proctoring.CandidateDesktop)
-    @Html.HiddenFor(m => m.Proctoring.LinkedinPhoto)
-    @Html.HiddenFor(m => m.Proctoring.HeadMovement)
-    @Html.HiddenFor(m => m.Proctoring.LatencyCheck)
-    @Html.HiddenFor(m => m.Proctoring.VoiceImpostering)
-    @Html.HiddenFor(m => m.Proctoring.SusipicousDevices)
-    @Html.HiddenFor(m => m.Proctoring.SuspiciousVoice)
-    @Html.HiddenFor(m => m.Proctoring.SuspiciousEnvironment)
-    @Html.HiddenFor(m => m.Proctoring.IsQCdone)
-    @Html.HiddenFor(m => m.Proctoring.ProxyvotingCount)
-}
-<div class="int-form-group-status">
-  <div class="form-group">
-                                                                     <label class="placeholder-label">Candidate Verification Status:</label>
-                                                                        @Html.DropDownListFor(x => Model.CandidateIDVerificationStatus, Html.GetEnumSelectList<CandidateIDVerificationOptionEnum> (), "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = ""})
-                                                                        @Html.ValidationMessageFor(model => model.CandidateIDVerificationStatus, "", new { @class = "text-danger" })
-
-                                                                </div>
-</div>
- <!--proxy & communication end-->
-
-                                                </div>
-                                            </div>
-                                            <!--report end--->
+                                           
                                         </div>
 
                                         <!-- Right Section: Existing Content -->
                                         <div class="content-section add-report">
-                                            <div class="interviewWrapper" style="left:0px;">
+                                            <div class="interviewWrapper" style="left:0px;margin:0px;">
                                                 <div class="addreport">
                                                     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
 
@@ -488,7 +555,9 @@
                                                             </div>
                                                         }
 
-                                                    
+                                                     <div class="heading-txt text-center" style="margin:0px 0px 10px 0px;">
+                            <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Candidate's Interview Feedback</span>
+                        </div>
                                                         <!--question start--->
                                                         @if (ViewBag.PageReport != "Insta")
                                                         {
@@ -513,7 +582,7 @@
                                                                                     <th width="20%">Rating</th>
                                                                                     @*
                                                                             <th width="10%">Time(In Seconds)</th>*@
-                                                                                    <th width="10%" class="action text-center">Action</th>
+                                                                                    <th width="15%" class="action text-center">Action</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -549,9 +618,9 @@
                                                                             </td>*@
 
                                                                                         <td class="action text-center">
-                                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute" style="width:30px!important;height:30px!important"><i class="fas  fa fa-plus"></i></span>
                                                                                             <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
+                                                                                            <span onclick="openObservationModal(0)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
                                                                                         </td>
                                                                                     </tr>
                                                                                 }
@@ -595,6 +664,7 @@
                                                                                             <td class="action text-center">
                                                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                                <span onclick="openObservationModal(@i)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
                                                                                             </td>
                                                                                         </tr>
                                                                                     }
@@ -607,6 +677,9 @@
 
                                                                             </tbody>
                                                                         </table>
+                                                                       <!--<label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>-->
+                                                                    <label class="text-danger" id="QuestionsCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                    
                                                                         <!--candidate solution link start-->
                                                         <div class="card" style="margin-bottom:10px;">
                                                             <fieldset class="answer">
@@ -627,29 +700,8 @@
 
                                                         <!--candidate solution link end-->
 
-
-                                                                        <div class="int-form-group-comment" style="padding: 20px 10px;background:#fff">
-                                                                <div class="InterviewerComent">
-                                                                    <div>
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            <strong><label class="placeholder-label" for="InterviewerObservation" style="z-index:1000">Interviewer Observation</label></strong>
-                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                                <div class="talktext">
-                                                                                    <textarea htmlattributes="{ id = interviewerObservation, class = form-control text-box single-line  scrollbar }" id="InterviewerObservation" name="InterviewerObservation" onpaste="return false;" placeholder="Type here, minimum 250 characters" spellcheck="true" style="height: 160px;padding:20px; width:100%" disabled=""></textarea>
-                                                                                    
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                       
-                                                                        
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                                        
 </div>
-                                                                    <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
-                                                                    <label class="text-danger" id="QuestionsCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
-                                                                </fieldset>
+                                                                                                                                  </fieldset>
 
                                                             </div>
                                                         }
@@ -952,7 +1004,128 @@
                                                     </div>*@
                                                         <!--feedback record audio & upload video end-->
 
-                                                        
+                                                        <!--report start-->
+                                            <div class="addreport" style="margin-top:20px;">
+                                                <h1 style="font-size:16px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;"> Primary Skill Evaluation:<strong style="font-weight:500;"> @Model.JDTiltle</strong></h1>
+                                                <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the primary skill evaluation process</div>
+
+                                                <div class="card" style="margin-bottom:10px;">
+                                                    <label class="question" for="checkbox_two">
+                                                        <label for="checkbox_two" style="margin-right:0px;margin-left:0px;">
+                                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                                            REPORT DETAILS
+                                                            <span class="report-tooltip" style="border:0px;margin-right:10px;">
+                                                                <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
+                                                                <span class="report-tooltiptext">
+                                                                    <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
+                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
+                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
+                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
+                                                                    <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
+                                                                </span>
+                                                            </span>
+                                                            <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
+                                                        </label>
+                                                    </label>
+                                                  
+                                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                                        {
+                                                            <div class="int-form-group-status">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "placeholder-label" })
+                                                                    @if (ViewBag.profile != "Interviewer")
+                                                                    {
+                                                                        <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                                    }
+                                                                    @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
+                                                                    @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = "" })
+                                                                    @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="int-form-group-comment">
+                                                                <div class="InterviewerComent">
+                                                                   <!-- <div class="p15">-->
+                                                                    <div>
+                                                                        <div class="form-group" style="margin-bottom:0px;">
+                                                                            <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "placeholder-label", @style = "z-index:1000" })</strong>
+                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                <div class="talktext">
+                                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false;" })
+                                                                                    <span id='remainingC'></span>
+                                                                                    <div id="words"></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin:-15px  0px 25px 0px;">
+                                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-7px; font-size:12px"></label>
+                                                                        </div>
+                                                                        <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
+                                                                            Strictly avoid in Comments - grammatical errors, generic comments,
+                                                                            short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                         <!--proxy & communication start-->
+                                                        @if (ViewBag.PageStatus != "PublicExternal"){
+                                                              <div class="int-form-group-status" style="margin-top:15px;">
+                                                                <div class="form-group">
+                                                                <label class="placeholder-label">Proxy Candidate Reporting</label>
+                                                                        <span>
+                                                                         <select class="select-css" id='isProxy' name='isProxy' style="top:0px;">
+                        <option selected="selected">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                                                                        
+                       </div>
+
+                       </div>
+                        <div>
+                        </div>
+                        @Html.HiddenFor(m => m.Proctoring.InterviewId)
+    @Html.HiddenFor(m => m.Proctoring.isProxyCandidate)
+    @Html.HiddenFor(m => m.Proctoring.EyeMovement)
+    @Html.HiddenFor(m => m.Proctoring.LipsMovement)
+    @Html.HiddenFor(m => m.Proctoring.CandidateDesktop)
+    @Html.HiddenFor(m => m.Proctoring.LinkedinPhoto)
+    @Html.HiddenFor(m => m.Proctoring.HeadMovement)
+    @Html.HiddenFor(m => m.Proctoring.LatencyCheck)
+    @Html.HiddenFor(m => m.Proctoring.VoiceImpostering)
+    @Html.HiddenFor(m => m.Proctoring.SusipicousDevices)
+    @Html.HiddenFor(m => m.Proctoring.SuspiciousVoice)
+    @Html.HiddenFor(m => m.Proctoring.SuspiciousEnvironment)
+    @Html.HiddenFor(m => m.Proctoring.IsQCdone)
+    @Html.HiddenFor(m => m.Proctoring.ProxyvotingCount)
+}
+<div class="int-form-group-status">
+  <div class="form-group">
+                                                                     <label class="placeholder-label">Candidate Verification Status:</label>
+                                                                        @Html.DropDownListFor(x => Model.CandidateIDVerificationStatus, Html.GetEnumSelectList<CandidateIDVerificationOptionEnum> (), "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = ""})
+                                                                        @Html.ValidationMessageFor(model => model.CandidateIDVerificationStatus, "", new { @class = "text-danger" })
+
+                                                                </div>
+</div>
+ <!--proxy & communication end-->
+
+                                                </div>
+                                            </div>
+                                            <!--report end--->
                                                         <!--Other skill set start-->
                                                         @if (Model.SkillSetsevaluate > 0)
                                                         {
@@ -1280,7 +1453,7 @@
                                                                                             <th width="20%">Rating</th>
                                                                                             @*
                                                                                 <th width="10%">Time(In Seconds)</th>*@
-                                                                                            <th width="10%" class="action text-center">Action</th>
+                                                                                            <th width="15%" class="action text-center">Action</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -1359,6 +1532,7 @@
                                                                                                     <td class="action text-center ">
                                                                                                         <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                                         <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                                        <span onclick="openObservationModal(@i)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
                                                                                                     </td>
                                                                                                 </tr>
                                                                                             }
@@ -2094,6 +2268,22 @@
         //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
         // Check document for changes
         //$.validator.unobtrusive.parse(document);
+
+        // After creating the new row, add the observation button
+        setTimeout(() => {
+            const newRowIndex = document.querySelectorAll('#QuestionsTable tbody tr').length - 1;
+            const actionCell = document.querySelector(`#QuestionsTable tbody tr:nth-child(${newRowIndex + 1}) .action`);
+            
+            if (actionCell) {
+                const observationBtn = document.createElement('span');
+                observationBtn.className = 'mdc-fab app-fab--absolute observation-btn';
+                observationBtn.onclick = `openObservationModal(${newRowIndex})`;
+                observationBtn.title = 'Add Observation';
+                observationBtn.innerHTML = '<i class="fas fa-eye"></i>';
+                
+                actionCell.appendChild(observationBtn);
+            }
+        }, 100);
     }
     function AddRowTwo() {
 
@@ -3003,3 +3193,120 @@
     }
 </script>
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
+
+<!-- Observation Modal -->
+<div id="observationModal" class="observation-modal">
+    <div class="observation-modal-content">
+        <div class="observation-modal-header">
+            <h3>Interviewer Observation</h3>
+            <span class="observation-close" onclick="closeObservationModal()">&times;</span>
+        </div>
+        <div class="observation-modal-body">
+            <div class="observation-question">
+                <strong>Question:</strong> <span id="observationQuestionText"></span>
+            </div>
+            <div class="form-group">
+                <label for="interviewerObservation" style="font-weight: 500; margin-bottom: 10px; display: block;">Your Observation:</label>
+                <textarea id="interviewerObservation" class="observation-textarea" placeholder="Write your detailed observation about the candidate's response to this question..."></textarea>
+            </div>
+        </div>
+        <div class="observation-modal-footer">
+            <button type="button" class="observation-btn-cancel" onclick="closeObservationModal()">Cancel</button>
+            <button type="button" class="observation-btn-save" onclick="saveObservation()">Save Observation</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Observation Modal Functions
+let currentQuestionIndex = -1;
+let observations = {}; // Store observations by question index
+
+function openObservationModal(questionIndex) {
+    currentQuestionIndex = questionIndex;
+    
+    // Get the question text
+    let questionText = '';
+    if (questionIndex === 0) {
+        // For the first question (empty state)
+        const questionSelect = document.querySelector('select[name="QuestionsCollection[0].Comment"]');
+        if (questionSelect) {
+            questionText = questionSelect.options[questionSelect.selectedIndex].text;
+        }
+    } else {
+        // For existing questions
+        const questionSelect = document.querySelector(`select[name="QuestionsCollection[${questionIndex}].Comment"]`);
+        if (questionSelect) {
+            questionText = questionSelect.options[questionSelect.selectedIndex].text;
+        }
+    }
+    
+    // Set the question text in modal
+    document.getElementById('observationQuestionText').textContent = questionText || 'Question not selected';
+    
+    // Load existing observation if any
+    const existingObservation = observations[questionIndex] || '';
+    document.getElementById('interviewerObservation').value = existingObservation;
+    
+    // Show the modal
+    document.getElementById('observationModal').style.display = 'block';
+    
+    // Focus on textarea
+    setTimeout(() => {
+        document.getElementById('interviewerObservation').focus();
+    }, 100);
+}
+
+function closeObservationModal() {
+    document.getElementById('observationModal').style.display = 'none';
+    currentQuestionIndex = -1;
+}
+
+function saveObservation() {
+    const observationText = document.getElementById('interviewerObservation').value.trim();
+    
+    if (observationText === '') {
+        alert('Please enter an observation before saving.');
+        return;
+    }
+    
+    // Store the observation
+    observations[currentQuestionIndex] = observationText;
+    
+    // Create or update hidden field for form submission
+    let hiddenFieldId = `QuestionsCollection_${currentQuestionIndex}__InterviewerObservation`;
+    let hiddenField = document.getElementById(hiddenFieldId);
+    
+    if (!hiddenField) {
+        // Create hidden field if it doesn't exist
+        hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.id = hiddenFieldId;
+        hiddenField.name = `QuestionsCollection[${currentQuestionIndex}].InterviewerObservation`;
+        document.querySelector('form').appendChild(hiddenField);
+    }
+    
+    hiddenField.value = observationText;
+    
+    // Show success message
+    alert('Observation saved successfully!');
+    
+    // Close modal
+    closeObservationModal();
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('observationModal');
+    if (event.target === modal) {
+        closeObservationModal();
+    }
+}
+
+// Handle ESC key to close modal
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeObservationModal();
+    }
+});
+</script>
