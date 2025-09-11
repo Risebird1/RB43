@@ -14,5 +14,12 @@ namespace Risebird.Entities.ViewModel
         public string CandidateName { get; set; }
         public string SessionId { get; set; }
         public DateTime ExitTime { get; set; } = DateTime.Now;
+        
+        // Add missing properties
+        public DateTime? InterviewDate { get; set; }
+     
+        
+        // Add this new property
+        public bool IsFromIndex { get; set; } = false;
     }
 } 
