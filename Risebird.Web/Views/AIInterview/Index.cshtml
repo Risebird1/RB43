@@ -1776,20 +1776,31 @@
         modalConfirm.addEventListener('click', function() {
             hideCustomModal();
             
-            // Load the ExitModalPartial via AJAX
-            $.ajax({
-                url: '@Url.Action("ExitModalPartial", "AIInterview", new { seId = Model.SessionId })',
-                type: 'GET',
-                success: function(data) {
-                    // Append the modal HTML to the body
-                    $('body').append(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading exit modal:', error);
-                    // Fallback: redirect to report page
-                    window.location.href = '@Url.Action("Index", "AIInterview", new { seId = Model.SessionId })';
-                }
-            });
+            // Hide the entire AI interview section
+            const interviewContainer = document.querySelector('.rb-aiinterview-container');
+            if (interviewContainer) {
+                interviewContainer.style.display = 'none';
+            }
+            
+            // Load the ExitModalPartial dynamically
+            loadExitModal();
         });
     });
+
+    // Function to load ExitModalPartial dynamically
+    function loadExitModal() {
+        $.ajax({
+            url: '@Url.Action("ExitModalPartial", "AIInterview", new { seId = Model.SessionId })',
+            type: 'GET',
+            success: function(data) {
+                // Replace the body content with the ExitModalPartial
+                $('body').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading exit modal:', error);
+                // Fallback: show simple completion message
+                // showFallbackCompletionMessage(); // This function is no longer needed
+            }
+        });
+    }
 </script>
