@@ -4443,7 +4443,7 @@ namespace Risebird.Web.Controllers
                 if (Request.Form.Files.Count() > 0)
                 {
                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
-                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska")
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
                     {
                         var file = Request.Form.Files[0];
                         var filename = emailId.Replace(".", "_").Replace("@", "a").ToString() + ".mp4";

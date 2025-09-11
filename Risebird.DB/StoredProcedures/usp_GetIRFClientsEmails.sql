@@ -1,8 +1,6 @@
-/****** Object:  StoredProcedure [dbo].[usp_GetIRFMembersEmails]    Script Date: 10-11-2020 1.16.55 PM ******/
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('sp_GetIRFClientsEmails'))
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetIRFClientsEmails'))
 BEGIN
-    DROP PROCEDURE dbo.sp_GetIRFClientsEmails
+    DROP PROCEDURE dbo.usp_GetIRFClientsEmails
 END
 
 SET ANSI_NULLS ON
