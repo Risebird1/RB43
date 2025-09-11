@@ -1035,10 +1035,10 @@
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         <div class="rb-chatbox-inputrow" style="display:none">
-                           <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste = "return false;" hidden></textarea>
+                           <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste = "return false;"></textarea>
                           
-                           <input type="hidden" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                           <input type="hidden" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                           <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
 
                            <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
                                <i class="fa fa-arrow-up"></i>
