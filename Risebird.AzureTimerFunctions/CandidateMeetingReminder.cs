@@ -216,7 +216,7 @@ namespace Risebird.AzureTimerFunctions
                             cancellationsource = await _meetingService.GetInterviewCancellationSource(item.Interviewid);
 
                             var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), item.Irfid, item.Interviewid);
-                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), item.Irfid, item.Interviewid, cancellationsource);
+                            //var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), item.Irfid, item.Interviewid, cancellationsource);
                             var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, item.Irfid, item.Interviewid);
                         }
                     }

@@ -1548,13 +1548,13 @@ namespace Risebird.Business
                     {
                         await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
                         await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, null, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
-                        if (emailid != item.ClientHrContact)
-                        {
-                            List<string> ClientHrContact = new List<string>();
-                            ClientHrContact.Add(item.ClientHrContact);
-                            await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.candidateName, ClientHrContact, irfId, item.imid);
+                        //if (emailid != item.ClientHrContact)
+                        //{
+                        //    List<string> ClientHrContact = new List<string>();
+                        //    ClientHrContact.Add(item.ClientHrContact);
+                        //    await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.candidateName, ClientHrContact, irfId, item.imid);
 
-                        }
+                        //}
                         await _notificationHelper.SendInterviewCancelledMail(item.risebirdHR, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
                     }
 

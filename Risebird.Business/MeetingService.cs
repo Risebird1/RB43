@@ -3267,7 +3267,7 @@ namespace Risebird.Business
                 cancellationsource = await _meetingRespository.GetInterviewCancellationSource(meetingId);
 
                 _ = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId);
-                _ = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId, cancellationsource);
+                //_ = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId, cancellationsource);
                 _ = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, irfId, meetingId);
                 return true;
             }
@@ -3368,7 +3368,7 @@ namespace Risebird.Business
                         cancellationsource = await GetInterviewCancellationSource(meetingid);
 
                         var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
-                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
+                        //var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
                         var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
                         if (result.MeetingPlatForm == MeetingPlatforms.Zoho)
