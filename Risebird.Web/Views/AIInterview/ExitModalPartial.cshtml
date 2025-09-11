@@ -45,15 +45,16 @@
                 <div class="exit-actions text-center">
                     @if (Model.IsFromIndex)
                     {
-                        <a href="@Url.Action("Index", "AIInterview", new { sid = Model.SessionId })" class="btn @(Model?.ButtonClass ?? "btn-success") btn-lg" onclick="window.close();">
+                        <a href="#" class="btn @(Model?.ButtonClass ?? "btn-success") btn-lg" onclick="window.close();">
                             @(Model?.ButtonText ?? "Close")
                         </a>
                     }
                     else
                     {
-                        <a href="@Url.Action("Index", "AIInterview", new { sid = Model.SessionId })" class="btn @(Model?.ButtonClass ?? "btn-success") btn-lg">
+                        <a href="#" class="btn @(Model?.ButtonClass ?? "btn-success") btn-lg">
                             @(Model?.ButtonText ?? "Close")
                         </a>
+
                     }
                 </div>
             </div>

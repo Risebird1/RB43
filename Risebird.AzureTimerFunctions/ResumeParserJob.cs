@@ -104,6 +104,8 @@ namespace Risebird.AzureTimerFunctions
                         }
                         catch (Exception ex)
                         {
+                            log.LogInformation($" ResumeParserJob : Threw an exception Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 107");
+
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
                         }
@@ -257,6 +259,7 @@ namespace Risebird.AzureTimerFunctions
                         catch (Exception ex)
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            log.LogInformation($" ResumeParserJob : Threw an exception Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 260");
 
                             continue;
                         }
@@ -288,6 +291,8 @@ namespace Risebird.AzureTimerFunctions
             }
             catch (Exception ex)
             {
+                log.LogInformation($" ResumeParserJob : Threw an exception Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 292");
+
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
