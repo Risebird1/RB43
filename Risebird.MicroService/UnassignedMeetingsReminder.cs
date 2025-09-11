@@ -49,7 +49,7 @@ namespace Risebird.MicroService
                 var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
 
                 var meetings = new List<UnassignedMeeting>();
-                var query = "select im.id as imid, im.interviewDate, im.IRFId, im.candidateEmail, ul.MobileNumber as InterviewerPhone, ul.EmailId as InterviewerEmailId, irf.JDTiltle from InterviewMeetings im join irf on irf.IRFId=im.IRFId join TransInterviewer ti on ti.IRFId=irf.id join UserList ul on ti.UserId = ul.id where confirmationStatus = 1 and interviewer is null and interviewDate>@timeNow and ti.IsActive=1";
+                var query = "select im.id as imid, im.interviewDate, im.IRFId, im.candidateEmail, ul.MobileNumber as InterviewerPhone, ul.EmailId as InterviewerEmailId, irf.JDTiltle from InterviewMeetings im join irf on irf.IRFId=im.IRFId join TransInterviewer ti on ti.IRFId=irf.id join UserList ul on ti.UserId = ul.id where confirmationStatus = 1 and interviewer is null and interviewDate>@timeNow and ti.IsActive=1 and ul.IsActive=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))

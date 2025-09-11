@@ -5,310 +5,311 @@
     ViewData["Title"] = "AI Interview";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 }
-  <style>
-        .rb-chatgpt-welcome {
-            text-align: center;
-            font-size: 1.8rem;
-            font-weight: 500;
-            color: #222;
-            margin-bottom: 36px;
-            letter-spacing: -0.5px;
-            line-height: 1.3;
-            transition: color 0.2s;
+<style>
+    .rb-chatgpt-welcome {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 36px;
+        letter-spacing: -0.5px;
+        line-height: 1.3;
+        transition: color 0.2s;
         margin-bottom: 20px;
+    }
+
+    .rb-video-section .videoContainer {
+        width: 100%;
+        height: 100%;
+    }
+
+    .rb-chatgpt-username {
+        font-weight: 600;
+        color: #4eda92; /* Or #222 for all-black, or your accent color */
+    }
+
+    .rb-aiinterview-container {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+        box-shadow: 0 4px 32px #4eda9220;
+    }
+
+    .rb-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .rb-logo-title {
+        display: flex;
+        align-items: center;
+    }
+
+    .rb-video-feed .videoButtons {
+        float: right;
+        width: 81px;
+        height: auto;
+        position: relative;
+        top: 6px;
+        left: -20px;
+        top: 6px;
+    }
+
+    .rb-logo {
+        height: 44px;
+        margin-right: 14px;
+    }
+
+    .rb-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #000;
+        letter-spacing: -1.5px;
+    }
+
+    .rb-header-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .rb-timer {
+        font-size: 1rem;
+        color: #333;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rb-timer-bar {
+        width: 180px;
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        margin-top: 2px;
+        margin-left: 21px;
+    }
+
+    .rb-timer-bar-fill {
+        width: 90%;
+        height: 100%;
+        background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
+        border-radius: 4px;
+    }
+
+    .rb-extend-time {
+        background: none;
+        border: 1px solid #4eda92;
+        color: #4eda92;
+        border-radius: 16px;
+        padding: 4px 14px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s, color 0.2s;
+    }
+
+        .rb-extend-time:hover {
+            background: #4eda92;
+            color: #fff;
         }
 
-        .rb-video-section .videoContainer {
-            width: 100%;
-            height: 100%;
-        }
+    .rb-main {
+        display: flex;
+        gap: 32px;
+        position: relative;
+    }
 
-        .rb-chatgpt-username {
-            font-weight: 600;
-            color: #4eda92; /* Or #222 for all-black, or your accent color */
-        }
+    .rb-video-section {
+        flex: 1.8;
+        position: relative;
+    }
 
-        .rb-aiinterview-container {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-bottom:50px;
-            box-shadow: 0 4px 32px #4eda9220;
-        }
+    /* Make the form container relative for absolute positioning of chat input */
+    .rb-chatbox-form {
+        position: relative;
+    }
 
-        .rb-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .rb-logo-title {
-            display: flex;
-            align-items: center;
-        }
-
-        .rb-video-feed .videoButtons {
-            float: right;
-            width: 81px;
-            height: auto;
-            position: relative;
-            top: 6px;
-            left: -20px;
-            top: 6px;
-        }
-
-        .rb-logo {
-            height: 44px;
-            margin-right: 14px;
-        }
-
-        .rb-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #000;
-            letter-spacing: -1.5px;
-        }
-
-        .rb-header-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .rb-timer {
-            font-size: 1rem;
-            color: #333;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .rb-timer-bar {
-            width: 180px;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            margin-top: 2px;
-            margin-left: 21px;
-        }
-
-        .rb-timer-bar-fill {
-            width: 90%;
-            height: 100%;
-            background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
-            border-radius: 4px;
-        }
-
-        .rb-extend-time {
-            background: none;
-            border: 1px solid #4eda92;
-            color: #4eda92;
-            border-radius: 16px;
-            padding: 4px 14px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s, color 0.2s;
-        }
-
-            .rb-extend-time:hover {
-                background: #4eda92;
-                color: #fff;
-            }
-
-        .rb-main {
-            display: flex;
-            gap: 32px;
-            position: relative;
-        }
-
-        .rb-video-section {
-            flex: 1.8;
-            position: relative;
-        }
-        
-        /* Make the form container relative for absolute positioning of chat input */
-        .rb-chatbox-form {
-            position: relative;
-        }
-        
-        /* Position chat input below the report section but keep it in form structure */
-        .rb-chatbox-inputrow {
+    /* Position chat input below the report section but keep it in form structure */
+    .rb-chatbox-inputrow {
         position: absolute;
         top: calc(100% + 20px);
-       /* left: 50%; */
-       transform: translateX(-115%);
-       display: flex;
-       align-items: center;
-       background: #fff;
-      border-radius: 24px;
-      border: 1.5px solid #eee;
-      padding: 6px 12px;
-      gap: 8px;
-      width: 100%;
-     max-width: 550px;
-     min-height: 100px;
-     margin-top: 20px;
-     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-     z-index: 10;
+        /* left: 50%; */
+        transform: translateX(-115%);
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 24px;
+        border: 1.5px solid #eee;
+        padding: 6px 12px;
+        gap: 8px;
+        width: 100%;
+        max-width: 550px;
+        min-height: 100px;
+        margin-top: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
 
-        }
-        
-        .rb-footer {
-            position: relative;
-        }
+    .rb-footer {
+        position: relative;
+    }
 
-        .rb-video-feed {
-            position: relative;
-            background: #f6fefb;
-            border-radius: 16px;
-            overflow: hidden;
-            min-height: 370px;
-            box-shadow: 0 2px 16px #4eda9220;
-        }
+    .rb-video-feed {
+        position: relative;
+        background: #f6fefb;
+        border-radius: 16px;
+        overflow: hidden;
+        min-height: 370px;
+        box-shadow: 0 2px 16px #4eda9220;
+    }
 
-        .rb-video-placeholder {
-            width: 100%;
-            height: 370px;
-            object-fit: cover;
-        }
+    .rb-video-placeholder {
+        width: 100%;
+        height: 370px;
+        object-fit: cover;
+    }
 
-        .rb-candidate-name {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            background: rgba(34,197,94,0.85);
-            color: #fff;
-            padding: 5px 16px;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-        .rb-interview-actions{
+    .rb-candidate-name {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: rgba(34,197,94,0.85);
+        color: #fff;
+        padding: 5px 16px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+    .rb-interview-actions {
         display: flex;
         gap: 16px;
         justify-content: right;
         margin-right: 5px;
     }
-        /* Old recording indicator - keeping for reference but not used */
-        .rb-video-section #btnStart.rb-recording-indicator {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            background: #fff;
-            color: #ff516b;
-            padding: 5px 16px;
-            border-radius: 10px;
-            font-weight: bold;
-            border: 1.5px solid #ff516b;
-            width: fit-content;
-            left: auto;
-        }
+    /* Old recording indicator - keeping for reference but not used */
+    .rb-video-section #btnStart.rb-recording-indicator {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: #fff;
+        color: #ff516b;
+        padding: 5px 16px;
+        border-radius: 10px;
+        font-weight: bold;
+        border: 1.5px solid #ff516b;
+        width: fit-content;
+        left: auto;
+    }
 
-        .rb-question-section {
-            flex: 1.5;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            position: relative;
-        }
+    .rb-question-section {
+        flex: 1.5;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+    }
 
-        /* ChatGPT-like chat input styles */
-        .rb-chatbox-container {
-            background: #fafbfc;
-            border-radius: 24px;
-            box-shadow: 0 2px 12px #4eda9210;
+    /* ChatGPT-like chat input styles */
+    .rb-chatbox-container {
+        background: #fafbfc;
+        border-radius: 24px;
+        box-shadow: 0 2px 12px #4eda9210;
         padding: 35px 0px 60px 0px;
-            margin-bottom: 12px;
+        margin-bottom: 12px;
+    }
+
+    .rb-chatbox-form {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        position: relative;
+    }
+
+    #recordBtn .fa-circle:before {
+        color: #fff;
+    }
+
+
+
+    .rb-chatbox-textarea {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 1.1rem;
+        padding: 10px 0;
+        resize: none;
+        min-height: 36px;
+        max-height: 120px;
+        color: #222;
+        overflow-y: hidden;
+        transition: height 0.1s ease;
+    }
+
+        .rb-chatbox-textarea:focus {
+            outline: none !important;
+            border: 0px !important;
+            box-shadow: none !important; /* Optional: removes any box-shadow highlight */
         }
 
-        .rb-chatbox-form {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            position: relative;
-        }
-        #recordBtn .fa-circle:before{
-                color: #fff;
-        }
-
-
-
-        .rb-chatbox-textarea {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-size: 1.1rem;
-            padding: 10px 0;
-            resize: none;
-            min-height: 36px;
-            max-height: 120px;
-            color: #222;
-            overflow-y: hidden;
-            transition: height 0.1s ease;
+        .rb-chatbox-textarea::placeholder {
+            color: #bdbdbd;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 500;
+            opacity: 1;
+            letter-spacing: 0.1px;
+            transition: color 0.2s;
         }
 
-            .rb-chatbox-textarea:focus {
-                outline: none !important;
-                border: 0px !important;
-                box-shadow: none !important; /* Optional: removes any box-shadow highlight */
-            }
-
-            .rb-chatbox-textarea::placeholder {
-                color: #bdbdbd;
-                font-size: 16px;
-                font-style: normal;
-                font-weight: 500;
-                opacity: 1;
-                letter-spacing: 0.1px;
-                transition: color 0.2s;
-            }
-
-            .rb-chatbox-textarea:focus::placeholder {
-                color: #e0e0e0;
-            }
-
-        .rb-chatbox-micbtn {
-            background: none;
-            border: none;
-            color: #111;
-            font-size: 1.3rem;
-            padding: 6px 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s, color 0.15s;
+        .rb-chatbox-textarea:focus::placeholder {
+            color: #e0e0e0;
         }
 
-            .rb-chatbox-micbtn:hover,
-            .rb-chatbox-micbtn:focus {
-                background: #f6f8fa;
-                color: #000;
-            }
+    .rb-chatbox-micbtn {
+        background: none;
+        border: none;
+        color: #111;
+        font-size: 1.3rem;
+        padding: 6px 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s, color 0.15s;
+    }
 
-        .rb-chatbox-sendbtn {
-            background: #111;
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 4px;
-            transition: background 0.15s, color 0.15s, opacity 0.2s, transform 0.1s;
-            position: relative;
+        .rb-chatbox-micbtn:hover,
+        .rb-chatbox-micbtn:focus {
+            background: #f6f8fa;
+            color: #000;
         }
 
-        
+    .rb-chatbox-sendbtn {
+        background: #111;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 4px;
+        transition: background 0.15s, color 0.15s, opacity 0.2s, transform 0.1s;
+        position: relative;
+    }
+
+
 
         .rb-chatbox-sendbtn:hover::before,
         .rb-chatbox-sendbtn:hover::after {
@@ -316,27 +317,28 @@
             visibility: visible;
         }
 
-                    .rb-chatbox-sendbtn:disabled {
+        .rb-chatbox-sendbtn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             background: #272525;
         }
 
-        /* Loading spinner styles */
-        .rb-loading-spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ffffff;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-         .swal2-icon {
+    /* Loading spinner styles */
+    .rb-loading-spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ffffff;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .swal2-icon {
         position: relative;
         justify-content: center;
-        width:3em;
-        height:3em;
+        width: 3em;
+        height: 3em;
         margin: 0em auto 0.3em !important;
         border: .25em solid transparent;
         border-radius: 50%;
@@ -351,19 +353,26 @@
         border-color: #facea8;
         color: #f8bb86;
     }
+
     .swal2-icon-text {
         font-size: 2.75em;
         line-height: 36px;
     }
-        @@keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
         }
 
-        .rb-chatbox-sendbtn.loading {
-            background: #4eda92;
-            cursor: not-allowed;
+        100% {
+            transform: rotate(360deg);
         }
+    }
+
+    .rb-chatbox-sendbtn.loading {
+        background: #4eda92;
+        cursor: not-allowed;
+    }
 
         .rb-chatbox-sendbtn.loading .fa-arrow-up {
             display: none;
@@ -373,40 +382,39 @@
             display: block;
         }
 
-        /* Disable textarea during loading */
-        .rb-chatbox-textarea.loading {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
+    /* Disable textarea during loading */
+    .rb-chatbox-textarea.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
 
-            .rb-chatbox-sendbtn i {
-                font-weight: bold;
-                font-size: 15px;
-            }
+    .rb-chatbox-sendbtn i {
+        font-weight: bold;
+        font-size: 15px;
+    }
 
-        .rb-chat-section {
-            max-width: 520px;
-            margin: 0 auto 0 auto;
-        }
+    .rb-chat-section {
+        max-width: 520px;
+        margin: 0 auto 0 auto;
+    }
 
-        /* Chat Log Container with Professional Scrolling */
-        .chat-log-container {
-            max-height: 401px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            position: relative;
-            border-radius: 12px;
-            background: #fafbfc;
-            
-        }
+    /* Chat Log Container with Professional Scrolling */
+    .chat-log-container {
+        max-height: 401px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        position: relative;
+        border-radius: 12px;
+        background: #fafbfc;
+    }
 
-        .chat-log {
-       max-height: 400px;
-       overflow-y: auto;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-      border: none !important;
-        }
+    .chat-log {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        border: none !important;
+    }
 
         /* Custom Scrollbar Styling */
         .chat-log::-webkit-scrollbar {
@@ -424,76 +432,76 @@
             transition: background 0.3s ease;
         }
 
-        .chat-log::-webkit-scrollbar-thumb:hover {
-            background: rgba(78, 218, 146, 0.5);
-        }
+            .chat-log::-webkit-scrollbar-thumb:hover {
+                background: rgba(78, 218, 146, 0.5);
+            }
 
-        /* Chat Message Styling */
-        .chat-message {
-              padding: 12px 16px;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    /* border-left: 3px solid #4eda92; */
-    transition: all 0.3s ease;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-top: 10px;
-        }
+    /* Chat Message Styling */
+    .chat-message {
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        /* border-left: 3px solid #4eda92; */
+        transition: all 0.3s ease;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-top: 10px;
+    }
 
         .chat-message:hover {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transform: translateY(-1px);
         }
 
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
 
-        .message-role {
-            color: #000;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
+    .message-role {
+        color: #000;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
 
-        .message-time {
-            color: #999;
-            font-size: 0.8rem;
-            font-weight: 400;
-        }
+    .message-time {
+        color: #999;
+        font-size: 0.8rem;
+        font-weight: 400;
+    }
 
-        .message-content {
-            color: #333;
-            line-height: 1.5;
-        }
+    .message-content {
+        color: #333;
+        line-height: 1.5;
+    }
 
         .message-content p {
             margin: 0;
             word-wrap: break-word;
         }
 
-        /* Scroll to Bottom Button */
-        .scroll-to-bottom {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
-            width: 40px;
-            height: 40px;
-            background: #4eda92;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(78, 218, 146, 0.3);
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
+    /* Scroll to Bottom Button */
+    .scroll-to-bottom {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        background: #4eda92;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(78, 218, 146, 0.3);
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
 
         .scroll-to-bottom:hover {
             background: #45c085;
@@ -504,119 +512,134 @@
             display: flex;
         }
 
-        .rb-interviewer-info {
-            background: linear-gradient(135deg, #e8f5e9 60%, #f9f9f9 100%);
-            border-radius: 16px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-top: 18px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px #4eda9210;
+    .rb-interviewer-info {
+        background: linear-gradient(135deg, #e8f5e9 60%, #f9f9f9 100%);
+        border-radius: 16px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-top: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px #4eda9210;
+    }
+
+    .rb-interviewer-avatar {
+        width: 54px;
+        height: 54px;
+        background: linear-gradient(135deg, #4eda92 60%, #56e0cb 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.1rem;
+        font-weight: bold;
+        color: #fff;
+        box-shadow: 0 2px 8px #4eda9210;
+    }
+
+    /* Audio Waves Animation */
+    .rb-audio-waves {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-left: 12px;
+    }
+
+    .wave-bar {
+        width: 3px;
+        height: 20px;
+        background: #4eda92;
+        border-radius: 2px;
+        animation: waveAnimation 1.2s ease-in-out infinite;
+    }
+
+        .wave-bar:nth-child(1) {
+            animation-delay: 0s;
         }
 
-        .rb-interviewer-avatar {
-            width: 54px;
-            height: 54px;
-            background: linear-gradient(135deg, #4eda92 60%, #56e0cb 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.1rem;
-            font-weight: bold;
-            color: #fff;
-            box-shadow: 0 2px 8px #4eda9210;
+        .wave-bar:nth-child(2) {
+            animation-delay: 0.1s;
         }
 
-        /* Audio Waves Animation */
-        .rb-audio-waves {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            margin-left: 12px;
+        .wave-bar:nth-child(3) {
+            animation-delay: 0.2s;
         }
 
-        .wave-bar {
-            width: 3px;
-            height: 20px;
-            background: #4eda92;
-            border-radius: 2px;
-            animation: waveAnimation 1.2s ease-in-out infinite;
+        .wave-bar:nth-child(4) {
+            animation-delay: 0.3s;
         }
 
-        .wave-bar:nth-child(1) { animation-delay: 0s; }
-        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
-        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
-
-        @@keyframes waveAnimation {
-            0%, 40%, 100% {
-                transform: scaleY(0.4);
-                opacity: 0.6;
-            }
-            20% {
-                transform: scaleY(1);
-                opacity: 1;
-            }
+        .wave-bar:nth-child(5) {
+            animation-delay: 0.4s;
         }
 
-        .rb-audio-waves.playing {
-            display: flex;
+    @@keyframes waveAnimation {
+        0%, 40%, 100% {
+            transform: scaleY(0.4);
+            opacity: 0.6;
         }
 
-        .rb-footer {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin-top:15px;
-            z-index:10000;
+        20% {
+            transform: scaleY(1);
+            opacity: 1;
         }
+    }
 
-        .rb-footer-btn {
-            background: #f5f5f5;
-            border: none;
-            border-radius: 50%;
-            width: 54px;
-            height: 54px;
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px #4eda9210;
-            transition: background 0.2s;
-            position: relative;
+    .rb-audio-waves.playing {
+        display: flex;
+    }
+
+    .rb-footer {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        margin-top: 15px;
+        z-index: 10000;
+    }
+
+    .rb-footer-btn {
+        background: #f5f5f5;
+        border: none;
+        border-radius: 50%;
+        width: 54px;
+        height: 54px;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #4eda9210;
+        transition: background 0.2s;
+        position: relative;
+    }
+
+        .rb-footer-btn:hover {
+            background: #e6f9f2;
         }
-
-            .rb-footer-btn:hover {
-                background: #e6f9f2;
-            }
 
         /* Tooltip Styles */
         .rb-footer-btn::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    right: 0%;
-    left: 100px;
-    max-width: auto;
-    width:max-content;
-    transform: translateX(-50%);
-    padding: 6px 7px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    white-space: nowrap;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 1000;
-    margin-bottom: 8px;
-    border: 0px !important;
-    box-shadow: none !important;
-}
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            right: 0%;
+            left: 100px;
+            max-width: auto;
+            width: max-content;
+            transform: translateX(-50%);
+            padding: 6px 7px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-bottom: 8px;
+            border: 0px !important;
+            box-shadow: none !important;
+        }
 
         .rb-footer-btn::after {
             content: '';
@@ -638,41 +661,41 @@
             visibility: visible;
         }
 
-        .rb-btn-primary {
-            background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
-            border: none;
-            color: #fff;
-            font-weight: 600;
-            border-radius: 8px;
-            padding: 8px 28px;
+    .rb-btn-primary {
+        background: linear-gradient(90deg, #4eda92 0%, #56e0cb 100%);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 8px 28px;
+    }
+
+        .rb-btn-primary:hover {
+            background: linear-gradient(90deg, #56e0cb 0%, #4eda92 100%);
         }
 
-            .rb-btn-primary:hover {
-                background: linear-gradient(90deg, #56e0cb 0%, #4eda92 100%);
-            }
+    .rb-video-feed .videoContainer video {
+        border-radius: 30px !important;
+        top: 0px !important;
+    }
 
-        .rb-video-feed .videoContainer video {
-            border-radius: 30px !important;
-            top: 0px !important;
-        }
+    /* Recording button styles */
 
-        /* Recording button styles */
-
-        .rb-record-btn {
-            background: #FFF !IMPORTANT;
-            border: none;
-            color: #ff516b;
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1.5px solid #ff516b;
-            position: relative;
-        }
+    .rb-record-btn {
+        background: #FFF !IMPORTANT;
+        border: none;
+        color: #ff516b;
+        padding: 5px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1.5px solid #ff516b;
+        position: relative;
+    }
 
         /* Tooltip for record button */
         .rb-record-btn::before {
@@ -716,100 +739,105 @@
         }
 
 
-            .rb-record-btn:hover {
-                background: #45c085;
-                transform: translateY(-1px);
-            }
-
-            .rb-record-btn.rb-recording {
-                background: #ff516b !important;
-                animation: pulse 1.5s infinite;
-                color: #fff;
-            }
-
-                .rb-record-btn.rb-recording:hover {
-                    background: #e6455a;
-                }
-
-        /* Recording indicator styles */
-        .rb-recording-indicator {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            background: #fff;
-            color: #ff516b;
-            padding: 5px 16px;
-            border-radius: 10px;
-            font-weight: bold;
-            border: 1.5px solid #ff516b;
-            width: fit-content;
-            left: auto;
-            display: none; /* Hidden by default, shown when recording */
+        .rb-record-btn:hover {
+            background: #45c085;
+            transform: translateY(-1px);
         }
 
-        /* Pulse animation for recording indicator */
-        @@keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.7;
-                transform: scale(1.05);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .rb-record-btn.rb-recording {
+            background: #ff516b !important;
+            animation: pulse 1.5s infinite;
+            color: #fff;
         }
+
+            .rb-record-btn.rb-recording:hover {
+                background: #e6455a;
+            }
+
+    /* Recording indicator styles */
+    .rb-recording-indicator {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: #fff;
+        color: #ff516b;
+        padding: 5px 16px;
+        border-radius: 10px;
+        font-weight: bold;
+        border: 1.5px solid #ff516b;
+        width: fit-content;
+        left: auto;
+        display: none; /* Hidden by default, shown when recording */
+    }
+
+    /* Pulse animation for recording indicator */
+    @@keyframes pulse {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.7;
+            transform: scale(1.05);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
     .rb-action-btn {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-.rb-back-btn {
-    background: #f8f9fa;
-    color: #333;
-    border: 1px solid #dee2e6;
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .rb-back-btn {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
         background: #e9ecef;
-}
-.rb-secondary-btn {
-    background: #6c757d;
-    color: white;
-}
-.min-vh{
-    min-height:300px;
-}
- 
-        @@media only screen and (max-width: 992px) {
+    }
+
+    .rb-secondary-btn {
+        background: #6c757d;
+        color: white;
+    }
+
+    .min-vh {
+        min-height: 300px;
+    }
+
+    @@media only screen and (max-width: 992px) {
         .rb-chatbox-inputrow {
             max-width: 370px;
             left: 50%;
             transform: translateX(-110%);
             top: calc(100% + 5px);
         }
+
         .rb-main {
             gap: 20px;
         }
-        
+
         .rb-video-section {
             flex: 1.2;
         }
-        
+
         .rb-question-section {
             flex: 1.8;
         }
     }
-    
+
     @@media only screen and (max-width: 768px) {
         .rb-chatbox-inputrow {
             max-width: 100%;
@@ -819,57 +847,59 @@
             margin-top: 15px;
             top: calc(100% + -535px);
         }
-         
-          .rb-footer{
-        margin-top:-145px!important;
-    }
-    .rb-chat-section{
-        margin-top:100px!important;
-    }
+
+        .rb-footer {
+            margin-top: -145px !important;
+        }
+
+        .rb-chat-section {
+            /*  margin-top:100px!important; */
+        }
+
         .rb-main {
             flex-direction: column;
             gap: 20px;
         }
-        
+
         .rb-video-section {
             flex: none;
             width: 100%;
         }
-        
+
         .rb-question-section {
             flex: none;
             width: 100%;
         }
-        
+
         .rb-chat-section {
             max-width: 100%;
         }
-        
+
         .rb-aiinterview-container {
             padding: 16px;
             margin: 0 10px;
         }
-        
+
         .rb-header {
             flex-direction: column;
             gap: 16px;
             align-items: flex-start;
         }
-        
+
         .rb-header-controls {
             width: 100%;
             justify-content: space-between;
         }
-        
+
         .rb-timer {
             font-size: 0.9rem;
         }
-        
+
         .rb-timer-bar {
             width: 140px;
         }
     }
-    
+
     @@media (max-width: 600px) {
         .rb-chatbox-container {
             padding: 12px 4px 8px 4px;
@@ -882,43 +912,47 @@
             margin-top: 10px;
             top: calc(100% + -220px);
         }
-          .rb-footer{
-        margin-top:-145px!important;
-    }
-    .rb-chat-section{
-        margin-top:100px!important;
-    }
+
+        .rb-footer {
+            margin-top: -145px !important;
+        }
+
+        .rb-chat-section {
+            /*  margin-top:100px!important; */
+        }
+
         .rb-aiinterview-container {
             padding: 12px;
             margin: 0 5px;
         }
-        
+
         .rb-title {
             font-size: 1.5rem;
         }
-        
+
         .rb-header-controls {
             flex-direction: column;
             gap: 8px;
         }
-        
+
         .rb-timer {
             font-size: 0.8rem;
         }
-        
+
         .rb-timer-bar {
             width: 120px;
         }
-        
+
         .rb-extend-time {
             padding: 3px 10px;
             font-size: 0.9rem;
         }
-        .min-vh{
-    min-height:0px!important;
-}
+
+        .min-vh {
+            min-height: 0px !important;
+        }
     }
-    
+
     @@media (max-width: 480px) {
         .rb-chatbox-inputrow {
             padding: 3px 8px;
@@ -927,39 +961,44 @@
             margin-top: 8px;
             top: calc(100% + -220px);
         }
-       
-    .rb-footer{
-        margin-top:-50px!important;
-    }
-    .rb-chat-section{
-        margin-top:100px!important;
-    }
+
+        .rb-footer {
+            margin-top: -50px !important;
+        }
+
+        .rb-chat-section {
+            /*  margin-top:100px!important; */
+        }
+
         .rb-chatbox-textarea {
             font-size: 1rem;
             padding: 8px 0;
         }
-        
+
         .rb-aiinterview-container {
             padding: 8px;
             margin: 0 2px;
         }
-        
+
         .rb-title {
             font-size: 1.3rem;
         }
     }
-       @@media (max-width: 360px) {
-    .rb-chatbox-inputrow{
-        top: calc(100% + -220px)!important;
+
+    @@media (max-width: 360px) {
+        .rb-chatbox-inputrow {
+            top: calc(100% + -220px) !important;
+        }
+
+        .rb-footer {
+            margin-top: -130px !important;
+        }
+
+        .rb-chat-section {
+            /* margin-top:100px!important; */
+        }
     }
-    .rb-footer{
-        margin-top:-130px!important;
-    }
-    .rb-chat-section{
-        margin-top:100px!important;
-    }
-       }
-    </style>
+</style>
 <div class="rb-aiinterview-container">
     <!-- Header -->
     <div class="rb-header">
@@ -971,16 +1010,16 @@
                 <i class="fa fa-clock-o"></i> Interview Time Left <b><span id="timer">--:--</span></b>
                 <div class="rb-timer-bar">
                     <div class="rb-timer-bar-fill"></div>
-                    </div>
+                </div>
 
-             @*    <div style="position: fixed; top: 10px; right: 20px; background: #222; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 1.2rem;">
+                @*    <div style="position: fixed; top: 10px; right: 20px; background: #222; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 1.2rem;">
                     ⏳ Time Left: <span id="timer">--:--</span>
                 </div> *@
             </span>
             @* <button class="rb-extend-time">Extend Time</button> *@
         </div>
     </div>
-     
+
     <!-- Main Content -->
     <div class="rb-main">
         <!-- Left: Video -->
@@ -989,27 +1028,27 @@
                 <div class="videoContainer">
                     <video id="video" autoplay muted style="width:100%;height:370px;object-fit:cover;border-radius:16px;background:#000;"></video>
                 </div>
-                
 
-                 <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
-                     <button style="visibility:hidden" id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
-                         <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
-                     </button>
-                 </div>
+
+                <div class="videoButtons" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                    <button style="visibility:hidden" id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
+                        <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
+                    </button>
+                </div>
             </div>
-                         <!-- Footer -->
-             <div class="rb-footer">
-                 @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
+            <!-- Footer -->
+            <div class="rb-footer">
+                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
                  <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
-                   <i id="footerVideoIcon" class="fa fa-video-camera"></i>
-                 </button>
-                  <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
-                      <i class="fa fa-circle"></i>
-                      </button>
-                  
-                 <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>
-             </div>
-             
+                    <i id="footerVideoIcon" class="fa fa-video-camera"></i>
+                </button>
+                <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
+                    <i class="fa fa-circle"></i>
+                </button>
+
+                <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>
+            </div>
+
 
         </div>
         <!-- Right: Chat and Interviewer Info -->
@@ -1019,7 +1058,7 @@
                 <div class="rb-chatbox-container">
                     <div class="rb-chatgpt-welcome">
                         <span style="font-size: 27px;"> Welcome!</span> <span style="color: #47bc80;">@Model.candidateName</span><br> <span style="padding-top: 5px;display: inline-block;font-size: 25px;font-weight:300;">Let's start the interview </span>
-                      </div>
+                    </div>
                     <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm">
                         <input type="hidden" asp-for="SessionId" />
                         <input type="hidden" asp-for="InterviewId" />
@@ -1028,59 +1067,59 @@
                         <input type="hidden" asp-for="CurrentQuestion" value="@Model.CurrentQuestion" />
                         <input type="hidden" asp-for="CurrentQuestionId" value="@Model.CurrentQuestionId" />
                         <input type="hidden" asp-for="AIInterviewerAudioLink" value="@Model.AIInterviewerAudioLink" />
-                        <input type="hidden" asp-for="AssistantId"/>
+                        <input type="hidden" asp-for="AssistantId" />
                         <input type="hidden" asp-for="AIInterviewType" value="@Model.AIInterviewType" />
                         <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
 
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
-                        <div class="rb-chatbox-inputrow">
-                           <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste = "return false;"></textarea>
-                          
-                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                           <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+                        <div class="rb-chatbox-inputrow" style="display:none">
+                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste="return false;"></textarea>
 
-                           <button type="submit" class="rb-chatbox-sendbtn" title="Send">
-                               <i class="fa fa-arrow-up"></i>
-                               <div class="rb-loading-spinner"></div>
-                           </button>
-                       </div>
-                       <div class="min-vh">
-                        @if (Model.IsAdaptive == true)
-                        {
-                            <!-- Audio Section -->
-                            <div class="rb-interviewer-info" style="margin-top:0px">
-                                <span style="font-size:16px;font-weight:600">AI Interviewer</span>
-                                <div class="rb-interviewer-avatar">
-                                    <span>H</span>
-                                </div>
-                                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
-                                    <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
-                                </div>
-                            </div>
-                            <audio id="assistantAudio" controls hidden></audio>
-                            @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
-                        }
-                        else
-                        {
-                            <!-- Video Section -->
-                            @if (Model.SynthesizedVideoUrl != null)
+                            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
+                            <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
+                                <i class="fa fa-arrow-up"></i>
+                                <div class="rb-loading-spinner"></div>
+                            </button>
+                        </div>
+                        <div class="min-vh">
+                            @if (Model.IsAdaptive == true)
                             {
+                                <!-- Audio Section -->
                                 <div class="rb-interviewer-info" style="margin-top:0px">
-                                    <video width="100%" controls autoplay>
-                                        <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
-                                    </video>
+                                    <span style="font-size:16px;font-weight:600">AI Interviewer</span>
+                                    <div class="rb-interviewer-avatar">
+                                        <span>H</span>
+                                    </div>
+                                    <div class="rb-audio-waves" id="audioWaves" style="display: none;">
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                    </div>
                                 </div>
+                                <audio id="assistantAudio" controls hidden></audio>
+                                @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
                             }
-                        }
+                            else
+                            {
+                                <!-- Video Section -->
+                                @if (Model.SynthesizedVideoUrl != null)
+                                {
+                                    <div class="rb-interviewer-info" style="margin-top:0px">
+                                        <video width="100%" controls autoplay>
+                                            <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                                        </video>
+                                    </div>
+                                }
+                            }
                         </div>
                         <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
 
                     </form>
-                    
+
                     <div class="chat-log-container">
                         <div class="chat-log border rounded mt-3" id="chatLog">
                             @foreach (var line in Model.ChatLog)
@@ -1106,7 +1145,7 @@
                         </a> *@
                         @* option to the candidate to exit the interview here *@
 
-                         <a id="exitInterviewBtn" href="#" class="rb-action-btn rb-back-btn">
+                        <a id="exitInterviewBtn" href="#" class="rb-action-btn rb-back-btn">
                             Exit Interview <i class="fa fa-sign-out"></i>
                         </a>
                         @* <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
@@ -1123,9 +1162,9 @@
         <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
     <!-- Recording Indicator Overlay -->
-    <div id="recordingOverlay" style="display: none; position: fixed; top: 0; left: 0px; width: 100%; height: 100%; 
+    <div id="recordingOverlay" style="display: none; position: fixed; top: 0; left: 0px; width: 100%; height: 100%;
     background-color: rgba(255, 81, 107, 0.1); z-index: 999; align-items: center; justify-content: center; pointer-events: none;">
-        <div style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:10px; 
+        <div style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:10px;
         text-align: center; box-shadow: 0 8px 32px rgba(255, 81, 107, 0.3); animation: recordingPulse 2s infinite; ">
             <div style="font-size:2rem;">
                 <i class="fa fa-circle" style="color: #fff; animation: recordingBlink 1s infinite;"></i>
@@ -1136,13 +1175,27 @@
     </div>
     <style>
         @@keyframes recordingPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         @@keyframes recordingBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
+            0%, 50% {
+                opacity: 1;
+            }
+
+            51%, 100% {
+                opacity: 0.3;
+            }
         }
     </style>
 </div>
@@ -1201,247 +1254,247 @@
 </script>
 
 
-    <script>
-        function playAssistantAudio(blob) {
-            debugger;
-            const audioElement = document.getElementById("assistantAudio");
-            const audioWaves = document.getElementById("audioWaves");
-            const audioUrl = URL.createObjectURL(blob);
-            audioElement.src = audioUrl;
-            audioElement.hidden = false;
-            audioElement.play();
-            
-            // Show audio waves when playing starts
-            if (audioWaves) {
+<script>
+    function playAssistantAudio(blob) {
+        debugger;
+        const audioElement = document.getElementById("assistantAudio");
+        const audioWaves = document.getElementById("audioWaves");
+        const audioUrl = URL.createObjectURL(blob);
+        audioElement.src = audioUrl;
+        audioElement.hidden = false;
+        audioElement.play();
+
+        // Show audio waves when playing starts
+        if (audioWaves) {
+            audioWaves.style.display = 'flex';
+        }
+    }
+
+    // Chat Log Scrolling Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatLog = document.getElementById('chatLog');
+        const scrollToBottomBtn = document.getElementById('scrollToBottom');
+        const audioElement = document.getElementById('assistantAudio');
+        const audioWaves = document.getElementById('audioWaves');
+
+        // Audio event listeners for wave animation
+        if (audioElement && audioWaves) {
+            audioElement.addEventListener('play', function() {
                 audioWaves.style.display = 'flex';
-            }
+            });
+
+            audioElement.addEventListener('pause', function() {
+                audioWaves.style.display = 'none';
+            });
+
+            audioElement.addEventListener('ended', function() {
+                audioWaves.style.display = 'none';
+            });
         }
 
-        // Chat Log Scrolling Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const chatLog = document.getElementById('chatLog');
-            const scrollToBottomBtn = document.getElementById('scrollToBottom');
-            const audioElement = document.getElementById('assistantAudio');
-            const audioWaves = document.getElementById('audioWaves');
-            
-            // Audio event listeners for wave animation
-            if (audioElement && audioWaves) {
-                audioElement.addEventListener('play', function() {
-                    audioWaves.style.display = 'flex';
-                });
-                
-                audioElement.addEventListener('pause', function() {
-                    audioWaves.style.display = 'none';
-                });
-                
-                audioElement.addEventListener('ended', function() {
-                    audioWaves.style.display = 'none';
+        if (chatLog && scrollToBottomBtn) {
+            // Function to scroll to bottom
+            function scrollToBottom() {
+                chatLog.scrollTo({
+                    top: chatLog.scrollHeight,
+                    behavior: 'smooth'
                 });
             }
-            
-            if (chatLog && scrollToBottomBtn) {
-                // Function to scroll to bottom
-                function scrollToBottom() {
-                    chatLog.scrollTo({
-                        top: chatLog.scrollHeight,
-                        behavior: 'smooth'
-                    });
+
+            // Function to check if scroll to bottom button should be shown
+            function checkScrollPosition() {
+                const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 100;
+
+                if (!isNearBottom && chatLog.scrollHeight > chatLog.clientHeight) {
+                    scrollToBottomBtn.classList.add('show');
+                } else {
+                    scrollToBottomBtn.classList.remove('show');
                 }
+            }
 
-                // Function to check if scroll to bottom button should be shown
-                function checkScrollPosition() {
-                    const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 100;
-                    
-                    if (!isNearBottom && chatLog.scrollHeight > chatLog.clientHeight) {
-                        scrollToBottomBtn.classList.add('show');
-                    } else {
-                        scrollToBottomBtn.classList.remove('show');
-                    }
-                }
+            // Scroll to bottom button click handler
+            scrollToBottomBtn.addEventListener('click', scrollToBottom);
 
-                // Scroll to bottom button click handler
-                scrollToBottomBtn.addEventListener('click', scrollToBottom);
+            // Check scroll position on scroll
+            chatLog.addEventListener('scroll', checkScrollPosition);
 
-                // Check scroll position on scroll
-                chatLog.addEventListener('scroll', checkScrollPosition);
+            // Check scroll position on window resize
+            window.addEventListener('resize', checkScrollPosition);
 
-                // Check scroll position on window resize
-                window.addEventListener('resize', checkScrollPosition);
+            // Initial check
+            checkScrollPosition();
 
-                // Initial check
-                checkScrollPosition();
-
-                // Auto-scroll to bottom when new messages are added
-                const observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                            // Check if we're near the bottom before auto-scrolling
-                            const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 150;
-                            if (isNearBottom) {
-                                setTimeout(scrollToBottom, 100);
-                            }
+            // Auto-scroll to bottom when new messages are added
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        // Check if we're near the bottom before auto-scrolling
+                        const isNearBottom = chatLog.scrollTop + chatLog.clientHeight >= chatLog.scrollHeight - 150;
+                        if (isNearBottom) {
+                            setTimeout(scrollToBottom, 100);
                         }
-                    });
-                });
-
-                observer.observe(chatLog, {
-                    childList: true,
-                    subtree: true
-                });
-            }
-        });
-    </script>
-         @if (ViewData["AssistantAudioBase64"] is string base64Audio)
-     {
-         <script>
-             const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
-             const audioBlob = new Blob([
-                 Uint8Array.from(atob(base64), c => c.charCodeAt(0))
-             ], { type: 'audio/mp3' });
-
-             playAssistantAudio(audioBlob);
-         </script>
-     }
-
-    
-
-    <script>
-        let mediaRecorderAudio;
-        let audioChunks = [];
-        const recordBtn = document.getElementById("recordBtn");
-        const audioInput = document.getElementById("audioInput");
-        const videoInput = document.getElementById("videoInput");
-        const form = document.querySelector("form");
-        const overlay = document.getElementById("waitOverlay");
-        const recordingOverlay = document.getElementById("recordingOverlay");
-        function showRecordingOverlay() {
-            if (recordingOverlay) recordingOverlay.style.display = "flex";
-        }
-        function hideRecordingOverlay() {
-            if (recordingOverlay) recordingOverlay.style.display = "none";
-        }
-        recordBtn.addEventListener("click", async () => {
-            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorderAudio = new MediaRecorder(stream);
-                mediaRecorderAudio.ondataavailable = e => { audioChunks.push(e.data); };
-                mediaRecorderAudio.onstop = async () => {
-                    timerStopped = true;
-                    clearInterval(countdownInterval);
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    audioInput.files = dataTransfer.files;
-                    audioChunks = [];
-                    recordBtn.textContent = "⭕";
-                    recordBtn.setAttribute('data-tooltip', 'Record Audio');
-                    hideRecordingOverlay();
-                    overlay.style.display = "flex";
-                    stopRecording();
-                };
-                mediaRecorderAudio.start();
-                startRecording();
-                showRecordingOverlay();
-                recordBtn.textContent = "☐";
-                recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
-            } else if (mediaRecorderAudio.state === "recording") {
-                mediaRecorderAudio.stop();
-            }
-        });
-    </script>
-
-
-    <script>
-        // Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
-        document.addEventListener('DOMContentLoaded', function () {
-            const textarea = document.querySelector('.rb-chatbox-textarea');
-            const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
-            const form = document.querySelector('.rb-chatbox-form');
-
-            function autoResizeTextarea() {
-                if (textarea) {
-                    textarea.style.height = 'auto';
-                    const newHeight = Math.min(Math.max(textarea.scrollHeight, 36), 120);
-                    textarea.style.height = newHeight + 'px';
-                }
-            }
-
-            function showLoading() {
-                if (sendBtn) {
-                    sendBtn.classList.add('loading');
-                    sendBtn.disabled = true;
-                }
-                if (textarea) {
-                    textarea.classList.add('loading');
-                    textarea.disabled = true;
-                }
-            }
-
-            function hideLoading() {
-                if (sendBtn) {
-                    sendBtn.classList.remove('loading');
-                    sendBtn.disabled = false;
-                }
-                if (textarea) {
-                    textarea.classList.remove('loading');
-                    textarea.disabled = false;
-                }
-            }
-
-            function submitForm() {
-                if (textarea && textarea.value.trim().length > 0 && form) {
-                    showLoading();
-                    if (sendBtn) {
-                        sendBtn.style.opacity = '0.7';
-                        sendBtn.style.transform = 'scale(0.95)';
                     }
-                    form.submit();
-                }
-            }
+                });
+            });
 
-            if (textarea && sendBtn) {
-                function toggleSendBtn() {
-                    const hasContent = textarea.value.trim().length > 0;
-                    sendBtn.disabled = !hasContent;
-                    if (hasContent) {
-                        sendBtn.style.opacity = '1';
-                        sendBtn.style.transform = 'scale(1)';
-                    } else {
-                        sendBtn.style.opacity = '0.5';
-                        sendBtn.style.transform = 'scale(1)';
-                    }
-                }
-                textarea.addEventListener('input', toggleSendBtn);
-                textarea.addEventListener('input', autoResizeTextarea);
-                toggleSendBtn();
-                autoResizeTextarea();
-                hideLoading();
-            }
+            observer.observe(chatLog, {
+                childList: true,
+                subtree: true
+            });
+        }
+    });
+</script>
+@if (ViewData["AssistantAudioBase64"] is string base64Audio)
+{
+    <script>
+        const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+        const audioBlob = new Blob([
+            Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+        ], { type: 'audio/mp3' });
 
+        playAssistantAudio(audioBlob);
+    </script>
+}
+
+
+
+<script>
+    let mediaRecorderAudio;
+    let audioChunks = [];
+    const recordBtn = document.getElementById("recordBtn");
+    const audioInput = document.getElementById("audioInput");
+    const videoInput = document.getElementById("videoInput");
+    const form = document.querySelector("form");
+    const overlay = document.getElementById("waitOverlay");
+    const recordingOverlay = document.getElementById("recordingOverlay");
+    function showRecordingOverlay() {
+        if (recordingOverlay) recordingOverlay.style.display = "flex";
+    }
+    function hideRecordingOverlay() {
+        if (recordingOverlay) recordingOverlay.style.display = "none";
+    }
+    recordBtn.addEventListener("click", async () => {
+        if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderAudio = new MediaRecorder(stream);
+            mediaRecorderAudio.ondataavailable = e => { audioChunks.push(e.data); };
+            mediaRecorderAudio.onstop = async () => {
+                timerStopped = true;
+                clearInterval(countdownInterval);
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                audioInput.files = dataTransfer.files;
+                audioChunks = [];
+                recordBtn.textContent = "⭕";
+                recordBtn.setAttribute('data-tooltip', 'Record Audio');
+                hideRecordingOverlay();
+                overlay.style.display = "flex";
+                stopRecording();
+            };
+            mediaRecorderAudio.start();
+            startRecording();
+            showRecordingOverlay();
+            recordBtn.textContent = "☐";
+            recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
+        } else if (mediaRecorderAudio.state === "recording") {
+            mediaRecorderAudio.stop();
+        }
+    });
+</script>
+
+
+<script>
+    // Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.querySelector('.rb-chatbox-textarea');
+        const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+        const form = document.querySelector('.rb-chatbox-form');
+
+        function autoResizeTextarea() {
+            if (textarea) {
+                textarea.style.height = 'auto';
+                const newHeight = Math.min(Math.max(textarea.scrollHeight, 36), 120);
+                textarea.style.height = newHeight + 'px';
+            }
+        }
+
+        function showLoading() {
             if (sendBtn) {
-                sendBtn.addEventListener('click', function(e) {
+                sendBtn.classList.add('loading');
+                sendBtn.disabled = true;
+            }
+            if (textarea) {
+                textarea.classList.add('loading');
+                textarea.disabled = true;
+            }
+        }
+
+        function hideLoading() {
+            if (sendBtn) {
+                sendBtn.classList.remove('loading');
+                sendBtn.disabled = false;
+            }
+            if (textarea) {
+                textarea.classList.remove('loading');
+                textarea.disabled = false;
+            }
+        }
+
+        function submitForm() {
+            if (textarea && textarea.value.trim().length > 0 && form) {
+                showLoading();
+                if (sendBtn) {
+                    sendBtn.style.opacity = '0.7';
+                    sendBtn.style.transform = 'scale(0.95)';
+                }
+                form.submit();
+            }
+        }
+
+        if (textarea && sendBtn) {
+            function toggleSendBtn() {
+                const hasContent = textarea.value.trim().length > 0;
+                sendBtn.disabled = !hasContent;
+                if (hasContent) {
+                    sendBtn.style.opacity = '1';
+                    sendBtn.style.transform = 'scale(1)';
+                } else {
+                    sendBtn.style.opacity = '0.5';
+                    sendBtn.style.transform = 'scale(1)';
+                }
+            }
+            textarea.addEventListener('input', toggleSendBtn);
+            textarea.addEventListener('input', autoResizeTextarea);
+            toggleSendBtn();
+            autoResizeTextarea();
+            hideLoading();
+        }
+
+        if (sendBtn) {
+            sendBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                submitForm();
+            });
+        }
+
+        if (textarea && form) {
+            textarea.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     submitForm();
-                });
-            }
-
-            if (textarea && form) {
-                textarea.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        submitForm();
-                    }
-                });
-                form.addEventListener('submit', function () {
-                    // Keep loading state active during form submission
-                });
-                form.addEventListener('error', function () {
-                    hideLoading();
-                });
-            }
-        });
-    </script>
+                }
+            });
+            form.addEventListener('submit', function () {
+                // Keep loading state active during form submission
+            });
+            form.addEventListener('error', function () {
+                hideLoading();
+            });
+        }
+    });
+</script>
 <script>
     let mediaRecorder, recordedBlobs;
     let isRecording = false;
@@ -1573,7 +1626,7 @@
 <!-- Custom Modal HTML -->
 <div id="customModal" class="custom-modal" style="display: none;">
     <div class="custom-modal-content">
-        
+
         <div class="custom-modal-body">
             <div id="warningIcon" class="swal2-icon" style="display: flex; margin-bottom: 15px;">
                 <span class="swal2-icon-text">!</span>
@@ -1603,6 +1656,7 @@
         justify-content: center;
         animation: fadeIn 0.3s ease-in-out;
     }
+
     .custom-modal-content {
         background-color: #fff;
         border-radius: 16px;
@@ -1612,6 +1666,7 @@
         animation: slideIn 0.3s ease-out;
         overflow: hidden;
     }
+
     .custom-modal-header {
         background: linear-gradient(135deg, #4eda92, #3bc78a);
         color: white;
@@ -1620,11 +1675,13 @@
         justify-content: space-between;
         align-items: center;
     }
-    .custom-modal-header h3 {
-        margin: 0;
-        font-size: 1.4rem;
-        font-weight: 600;
-    }
+
+        .custom-modal-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
     .custom-modal-close {
         font-size: 24px;
         font-weight: bold;
@@ -1632,24 +1689,29 @@
         opacity: 0.8;
         transition: opacity 0.2s;
     }
-    .custom-modal-close:hover {
-        opacity: 1;
-    }
+
+        .custom-modal-close:hover {
+            opacity: 1;
+        }
+
     .custom-modal-body {
         padding: 24px;
         text-align: center;
     }
-    .custom-modal-body p {
-        margin: 0;
-        font-size: 1.1rem;
-         color: #595959;
-        line-height: 1.5;
-    }
+
+        .custom-modal-body p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #595959;
+            line-height: 1.5;
+        }
+
     #warningIcon.swal2-icon {
-        border: 3px solid #facea8!important;
+        border: 3px solid #facea8 !important;
         background-color: #FFF;
         color: #facea8;
     }
+
     .swal2-icon {
         width: 50px;
         height: 50px;
@@ -1664,57 +1726,70 @@
         font-size: 2.5rem;
         font-weight: bold;
     }
-    #successIcon .swal2-icon-text{
-        font-size: 2rem!important;
+
+    #successIcon .swal2-icon-text {
+        font-size: 2rem !important;
         font-weight: normal !important;
     }
+
     .swal2-icon-text {
         font-size: 2.5rem;
-        font-weight:normal;
-       
+        font-weight: normal;
     }
+
     .success-icon {
         border-color: #28a745 !important;
         background-color: #FFF !important;
         COLOR: #28a745;
     }
+
     .custom-modal-footer {
         padding: 0 24px 24px;
         display: flex;
         gap: 12px;
-        justify-content:center;
+        justify-content: center;
     }
+
     .custom-modal-btn {
-    font-size: 14px !important;
-    min-width: 105px;
-    height: 40px;
-    padding: 0px 20px !important;
-    border: 0px !important;
+        font-size: 14px !important;
+        min-width: 105px;
+        height: 40px;
+        padding: 0px 20px !important;
+        border: 0px !important;
         border-radius: .25em;
     }
+
     .custom-modal-btn-cancel {
         background-color: rgb(221, 51, 51) !important;
         color: #fff;
-       
     }
-    .custom-modal-btn-cancel:hover {
-       background-color: rgb(202 23 23) !important;
-       
-    }
+
+        .custom-modal-btn-cancel:hover {
+            background-color: rgb(202 23 23) !important;
+        }
+
     .custom-modal-btn-confirm {
         background: #8ec9f9 !important;
         color: white;
     }
+
     @@keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
     }
+
     @@keyframes slideIn {
-        from { 
+        from {
             opacity: 0;
             transform: translateY(-20px) scale(0.95);
         }
-        to { 
+
+        to {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
@@ -1723,13 +1798,15 @@
     .custom-modal.success .custom-modal-header {
         background: linear-gradient(135deg, #28a745, #20c997);
     }
+
     .custom-modal.success .custom-modal-btn-confirm {
         background-color: #28a745;
     }
-    .custom-modal.success .custom-modal-btn-confirm:hover {
-        background-color: #218838;
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-    }
+
+        .custom-modal.success .custom-modal-btn-confirm:hover {
+            background-color: #218838;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
 </style>
 <script>
     // Custom Modal Functions
@@ -1748,7 +1825,7 @@
             warningIcon.style.display = 'flex';
             successIcon.style.display = 'none';
         }
-        
+
         modal.style.display = 'flex';
     }
     function hideCustomModal() {
@@ -1762,26 +1839,26 @@
         const modalClose = document.getElementById('modalClose');
         const modalCancel = document.getElementById('modalCancel');
         const modalConfirm = document.getElementById('modalConfirm');
-        
+
         if (exitBtn) {
                             exitBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                 showCustomModal('Exit Interview?', 'Are you sure? <span style="display:block;font-size: 17px !important;color: #a79f9f !important;padding-top: 5px;">you want to exit the interview?</span>');
                 });
         }
-     
+
         // Cancel button
         modalCancel.addEventListener('click', hideCustomModal);
         // Confirm button
         modalConfirm.addEventListener('click', function() {
             hideCustomModal();
-            
+
             // Hide the entire AI interview section
             const interviewContainer = document.querySelector('.rb-aiinterview-container');
             if (interviewContainer) {
                 interviewContainer.style.display = 'none';
             }
-            
+
             // Load the ExitModalPartial dynamically
             loadExitModal();
         });

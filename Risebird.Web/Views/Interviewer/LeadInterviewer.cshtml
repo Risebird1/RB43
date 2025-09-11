@@ -69,7 +69,7 @@
                                                         <th>Resume Link</th>
                                                         <th>Coded Name</th>
                                                         <th>Coded Resume </th>
-                                                        <th>Password</th>
+                                                        @* <th>Password</th> *@
                                                         <th>Approved</th>
                                                         <th>City</th>
                                                     </tr>
@@ -85,7 +85,7 @@
                                                         <th>Resume Link</th>
                                                         <th>Coded Name</th>
                                                         <th>Coded Resume </th>
-                                                        <th>Password</th>
+                                                        @* <th>Password</th> *@
                                                         <th>Approved</th>
                                                         <th>City</th>
                                                     </tr>
@@ -193,7 +193,7 @@
                                                             {
                                                                 <td>No Coded Resume</td>
                                                             }
-                                                            <td>
+                                                           @*  <td>
                                                                 <div style="position:relative">
                                                                     <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
                                                                     @if (item.UserPassword != null && item.UserPassword != "")
@@ -203,7 +203,7 @@
                                                                     else
                                                                     { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
                                                                 </div>
-                                                            </td>
+                                                            </td> *@
                                                             @if (item.IsApproved == true)
                                                             {
                                                                 <td>Approved</td>

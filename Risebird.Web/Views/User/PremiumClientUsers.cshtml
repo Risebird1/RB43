@@ -50,7 +50,7 @@
                                             <th>Client name</th>
                                             <th>Role</th>
                                             <th>Mobile Number</th>
-                                            <th>Password</th>
+                                            @* <th>Password</th> *@
                                             <th class="disabled-sorting text-center">Actions</th>
                                             <th hidden></th>
                                             <th hidden></th>
@@ -65,7 +65,7 @@
                                             <th>Client name</th>
                                             <th>Role</th>
                                             <th>Mobile Number</th>
-                                            <th>Password</th>
+                                            @* <th>Password</th> *@
                                             <th class="disabled-sorting text-center">Actions</th>
                                             <th hidden></th>
                                             <th hidden></th>
@@ -81,11 +81,10 @@
                                                 <td>@item.ClientName</td>
                                                 <td>@item.Role</td>
                                                 <td>@item.MobileNumber</td>
-                                                <td>
+                                                @* <td>
                                                     <div class="mobile-view">
                                                         <div>
                                                             <span> @item.UserPassword</span>
-                                                            @*Password:   <input type='password' id='test-input' /> Show password <input type='checkbox' id='check'/>*@
                                                         </div>
 
                                                     </div>
@@ -105,7 +104,7 @@
                                                     </div>
 
 
-                                                </td>
+                                                </td> *@
                                                 <td class="text-center">
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
                                                         <span onclick="location.href = '@Url.Action("EditPremiumClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
