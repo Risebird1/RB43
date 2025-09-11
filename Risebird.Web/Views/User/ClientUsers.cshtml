@@ -52,9 +52,9 @@
                                             <th>Role</th>
                                             <th>Mobile Number</th>
                                             <th>Active</th>
-                                            @if (ViewBag.Profile != "SeniorHR")
+                                            @if (viewbag.profile != "seniorhr")
                                             {
-                                                <th>Password</th>
+                                                <th>password</th>
                                             }
                                             <th class="disabled-sorting text-center">Actions</th>
                                             <th hidden></th>
@@ -104,7 +104,6 @@
                                                         <div class="mobile-view">
                                                             <div>
                                                                 <span> @item.UserPassword</span>
-                                                                @*Password:   <input type='password' id='test-input' /> Show password <input type='checkbox' id='check'/>*@
                                                             </div>
 
                                                         </div>

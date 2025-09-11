@@ -648,7 +648,7 @@
                                                                 <tr>
                                                                     <th>Lead Interviewer</th>
                                                                     <th>Coded Resume </th>
-                                                                    <th>Password</th>
+                                                                    @* <th>Password</th> *@
                                                                     <th>Approved</th>
                                                                     <th>City</th>
                                                                     <th>Current Role</th>
@@ -683,7 +683,7 @@
                                                                         <td>No Coded Resume</td>
                                                                     }
 
-                                                                    <td>
+                                                                    @* <td>
                                                                         <div style="position:relative">
                                                                             <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
                                                                             @if (item.UserPassword != null && item.UserPassword != "")
@@ -699,7 +699,7 @@
 
 
                                                                     </td>
-
+ *@
 
 
 
