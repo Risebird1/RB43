@@ -75,144 +75,56 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid sid)
         {
-            //get all the data relevant interview data for that sid
-            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
-
-            //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
-            if (meetingDetails != null)
+            try
             {
-                if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+                //get all the data relevant interview data for that sid
+                var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
+
+                //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
+                if (meetingDetails != null)
                 {
-                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
-
-                    //not started yet
-                    if (transcript == null || transcript.Count() == 0)
+                    if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
-                        var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
-                        var model = new ChatMessageViewModel();
-                        model.SessionId = sid;
-                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
+                        var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
 
-                        //var latestReply = CleanMessage(sampleQuestion.Message);
-
-                        if (!string.IsNullOrEmpty(sampleQuestion.Message))
+                        //not started yet
+                        if (transcript == null || transcript.Count() == 0)
                         {
-                            model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
-                            model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
-                            model.CurrentQuestionId = sampleQuestion.id;
-                            await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
-
-                        }
-
-
-                        model.IsAdaptive = meetingDetails.IsAdaptive;
-                        model.InterviewId = meetingDetails.InterviewId;
-                        model.IRFId = meetingDetails.irfIntId;
-                        model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
-                        model.candidateName = meetingDetails.candidateName;
-                        model.AssistantId = meetingDetails.AssistantId;
-                        model.AIInterviewType = meetingDetails.AIInterviewType;
-                        return View(model);
-                    }
-                    else
-                    {
-                        var model = new ChatMessageViewModel();
-                        model.SessionId = sid;
-
-                        //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
-
-                        var latestEntry = transcript?.FirstOrDefault();
-
-                        if (latestEntry != null)
-                        {
-                            var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                            //if (allQuestions != null && allQuestions.Count() <= 10)
-                            if (allQuestions != null && allQuestions.Count() <= 25)
-                            //if(allQuestions != null && allQuestions.Count() <= 3)
+                            var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
+                            
+                            if(sampleQuestion != null)
                             {
-                                if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
-                                //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
+                                var model = new ChatMessageViewModel();
+                                model.SessionId = sid;
+                                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
+
+                                //var latestReply = CleanMessage(sampleQuestion.Message);
+
+                                if (!string.IsNullOrEmpty(sampleQuestion.Message))
                                 {
-                                    var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
-
-                                    var latestQuestion = latestEntry.Message;
-                                    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(latestEntry.Message), sampleQuestionId = latestEntry.DeliveryHeadQuestionId });
-
-                                    if (candidateLatestEntry != null)
-                                    {
-                                        model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
-
-                                    }
-                                    //foreach (var question in allQuestions)
-                                    //{
-                                    //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message), sampleQuestionId = question.DeliveryHeadQuestionId });
-                                    //}
-
-                                    if (!string.IsNullOrEmpty(latestQuestion))
-                                    {
-                                        model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
-                                        model.CurrentQuestion = latestQuestion;
-                                        model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
-                                    }
-                                }
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
-                                {
-                                    model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
-                                    //var replies = await _api.SendReply(sid, latestEntry.Message, meetingDetails.AssistantId);
-
-                                    //foreach (var reply in replies)
-                                    //{
-                                    //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
-                                    //}
-                                    //var latestReply = CleanMessage(replies.FirstOrDefault());
-
-                                    var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
-
-                                    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
-
-                                    //var latestReply = CleanMessage(sampleQuestion.Message);
-
-                                    if (!string.IsNullOrEmpty(sampleQuestion.Message))
-                                    {
-                                        model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
-                                        model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
-                                        model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
-                                        await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
-
-                                    }
+                                    model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
+                                    model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
+                                    model.CurrentQuestionId = sampleQuestion.id;
+                                    await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                 }
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
-                               {
-                                 // INTERVIEW COMPLETE - Return ExitModalPartial view
-                                var exitModel = new AIInterviewExitModalViewModel
-                                {
-                                    Title = "Interview Complete",
-                                    Message = "The interviewer is through with all the questions. This interview is now closed.",
-                                    IconClass = "fa-check-circle",
-                                    IconColor = "#28a745",
-                                    ButtonText = "Close",
-                                    ButtonClass = "btn-success",
-                                    CandidateName = meetingDetails.candidateName ?? "Candidate",
-                                    InterviewDate = meetingDetails.interviewDate,
-                                    SessionId = sid.ToString(),
-                                    ExitTime = DateTime.Now,
-                                    IsFromIndex = true // Add this flag to identify the source
-                                };
-                                return View("ExitModalPartial", exitModel);
-                                }
+
+
+                                model.IsAdaptive = meetingDetails.IsAdaptive;
+                                model.InterviewId = meetingDetails.InterviewId;
+                                model.IRFId = meetingDetails.irfIntId;
+                                model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                                model.candidateName = meetingDetails.candidateName;
+                                model.AssistantId = meetingDetails.AssistantId;
+                                model.AIInterviewType = meetingDetails.AIInterviewType;
+                                return View(model);
                             }
                             else
                             {
-                                // INTERVIEW COMPLETE - Return ExitModalPartial view
                                 var exitModel = new AIInterviewExitModalViewModel
                                 {
-                                    Title = "Interview Complete",
-                                    Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                    Title = "No Questions",
+                                    Message = "Error fetching questions.(NQ)",
                                     IconClass = "fa-check-circle",
                                     IconColor = "#28a745",
                                     ButtonText = "Close",
@@ -225,163 +137,124 @@ namespace Risebird.Web.Controllers
                                 };
                                 return View("ExitModalPartial", exitModel);
                             }
-
-
-                        }
-                        model.Message = "";
-                        model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
-                        model.InterviewId = meetingDetails.InterviewId;
-                        model.IRFId = meetingDetails.irfIntId;
-                        model.candidateName = meetingDetails.candidateName;
-                        model.IsAdaptive = meetingDetails.IsAdaptive;
-                        model.AssistantId = meetingDetails.AssistantId;
-                        model.AIInterviewType = meetingDetails.AIInterviewType;
-                        return View(model);
-
-                    }
-                }
-                else
-                {
-                    //not started yet
-                    if (string.IsNullOrEmpty(meetingDetails.ThreadId))
-                    {
-
-                        string resumeStringContent = string.Empty;
-                        string techSkillsJson = string.Empty;
-
-                        if (!string.IsNullOrEmpty(meetingDetails.resumeLink))
-                        {
-                            resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
-                        }
-                        if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
-                        {
-                            techSkillsJson = meetingDetails.TechSkillsInJson;
-                        }
-                        string candidatePrompt;
-                        if (!string.IsNullOrEmpty(resumeStringContent))
-                        {
-                            candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
-
+                            
                         }
                         else
                         {
-                            candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+                            var model = new ChatMessageViewModel();
+                            model.SessionId = sid;
 
-                        }
-                        var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
+                            //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
 
-                        var model = new ChatMessageViewModel
-                        {
-                            SessionId = sid,
-                            ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                            var latestEntry = transcript?.FirstOrDefault();
 
-                        };
-
-
-                        var latestReply = CleanMessage(result.Replies.FirstOrDefault());
-
-                        if (!string.IsNullOrEmpty(latestReply))
-                        {
-                            var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
-                            var base64Audio = Convert.ToBase64String(audioBytes);
-                            ViewData["AssistantAudioBase64"] = base64Audio;
-                            model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
-                            model.CurrentQuestion = latestReply;
-
-                        }
-                        //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
-
-                        //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
-                        //string videoUrl;
-                        //do
-                        //{
-                        //    await Task.Delay(8000);
-                        //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-                        //} while (string.IsNullOrWhiteSpace(videoUrl));
-
-                        //model.SynthesizedVideoUrl = videoUrl;
-
-                        //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-                        //ViewBag.IsAdaptive = true;
-                        model.IsAdaptive = meetingDetails.IsAdaptive;
-                        model.InterviewId = meetingDetails.InterviewId;
-                        model.IRFId = meetingDetails.irfIntId;
-                        model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
-                        model.candidateName = meetingDetails.candidateName;
-                        model.AssistantId = meetingDetails.AssistantId;
-                        model.AIInterviewType = meetingDetails.AIInterviewType;
-                        return View(model);
-                    }
-                    else
-                    {
-                        var model = new ChatMessageViewModel();
-                        model.SessionId = sid;
-                        //get the entire transcript by session Id(in descending order by time). By entire, it means the responses of both the candidate and the assistant/aiinterviewer
-                        var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
-
-                        //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
-
-                        var latestEntry = transcript?.FirstOrDefault();
-
-                        if (latestEntry != null)
-                        {
-                            var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                            //if (allQuestions != null && allQuestions.Count() <= 10)
-                            if (allQuestions != null && allQuestions.Count() <= 25)
-                            //if(allQuestions != null && allQuestions.Count() <= 3)
+                            if (latestEntry != null)
                             {
-                                //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
-                                if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 25)
-                                //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
+                                var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
+                                //if (allQuestions != null && allQuestions.Count() <= 10)
+                                if (allQuestions != null && allQuestions.Count() <= 25)
+                                //if(allQuestions != null && allQuestions.Count() <= 3)
                                 {
-                                    var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
-                                    foreach (var question in allQuestions)
+                                    //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
+                                    if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 25)
+                                    //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                     {
-                                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message) });
+                                        var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
+
+                                        var latestQuestion = latestEntry.Message;
+                                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(latestEntry.Message), sampleQuestionId = latestEntry.DeliveryHeadQuestionId });
+
+                                        if (candidateLatestEntry != null)
+                                        {
+                                            model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
+
+                                        }
+                                        //foreach (var question in allQuestions)
+                                        //{
+                                        //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message), sampleQuestionId = question.DeliveryHeadQuestionId });
+                                        //}
+
+                                        if (!string.IsNullOrEmpty(latestQuestion))
+                                        {
+                                            model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
+                                            model.CurrentQuestion = latestQuestion;
+                                            model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
+                                        }
                                     }
-                                    if (candidateLatestEntry != null)
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
                                     {
-                                        model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
+                                        model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
+                                        //var replies = await _api.SendReply(sid, latestEntry.Message, meetingDetails.AssistantId);
+
+                                        //foreach (var reply in replies)
+                                        //{
+                                        //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                                        //}
+                                        //var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                                        var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
+
+                                        if(sampleQuestion != null)
+                                        {
+                                            model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
+
+                                            //var latestReply = CleanMessage(sampleQuestion.Message);
+
+                                            if (!string.IsNullOrEmpty(sampleQuestion.Message))
+                                            {
+                                                model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
+                                                model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
+                                                model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
+                                                await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var exitModel = new AIInterviewExitModalViewModel
+                                            {
+                                                Title = "Interview Complete",
+                                                Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                                IconClass = "fa-check-circle",
+                                                IconColor = "#28a745",
+                                                ButtonText = "Close",
+                                                ButtonClass = "btn-success",
+                                                CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                                InterviewDate = meetingDetails.interviewDate,
+                                                SessionId = sid.ToString(),
+                                                ExitTime = DateTime.Now,
+                                                IsFromIndex = true // Add this flag to identify the source
+                                            };
+                                            return View("ExitModalPartial", exitModel);
+                                        }
+                                            
 
                                     }
-
-                                    var latestQuestion = latestEntry.Message;
-                                    if (!string.IsNullOrEmpty(latestQuestion))
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                     {
-                                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
-                                        var base64Audio = Convert.ToBase64String(audioBytes);
-                                        ViewData["AssistantAudioBase64"] = base64Audio;
-                                        model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
-                                        model.CurrentQuestion = latestQuestion;
+                                        // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                        var exitModel = new AIInterviewExitModalViewModel
+                                        {
+                                            Title = "Interview Complete",
+                                            Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                            IconClass = "fa-check-circle",
+                                            IconColor = "#28a745",
+                                            ButtonText = "Close",
+                                            ButtonClass = "btn-success",
+                                            CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                            InterviewDate = meetingDetails.interviewDate,
+                                            SessionId = sid.ToString(),
+                                            ExitTime = DateTime.Now,
+                                            IsFromIndex = true // Add this flag to identify the source
+                                        };
+                                        return View("ExitModalPartial", exitModel);
                                     }
                                 }
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
-                                {
-                                    model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
-                                    var replies = await _api.SendReply(sid, latestEntry.Message, meetingDetails.AssistantId);
-                                    //var question = allQuestions.FirstOrDefault().Message;
-
-                                    foreach (var reply in replies)
-                                    {
-                                        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
-                                    }
-                                    var latestReply = CleanMessage(replies.FirstOrDefault());
-
-                                    if (!string.IsNullOrEmpty(latestReply))
-                                    {
-                                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
-                                        var base64Audio = Convert.ToBase64String(audioBytes);
-                                        ViewData["AssistantAudioBase64"] = base64Audio;
-                                        model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
-                                        model.CurrentQuestion = latestReply;
-
-                                    }
-                                }
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
-                                else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
-                                //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
+                                else
                                 {
                                     // INTERVIEW COMPLETE - Return ExitModalPartial view
                                     var exitModel = new AIInterviewExitModalViewModel
@@ -399,33 +272,28 @@ namespace Risebird.Web.Controllers
                                         IsFromIndex = true // Add this flag to identify the source
                                     };
                                     return View("ExitModalPartial", exitModel);
-
                                 }
-                            }
-                            else
-                            {
-                                // INTERVIEW COMPLETE - Return ExitModalPartial view
-                                var exitModel = new AIInterviewExitModalViewModel
-                                {
-                                    Title = "Interview Complete",
-                                    Message = "The interviewer is through with all the questions. This interview is now closed.",
-                                    IconClass = "fa-check-circle",
-                                    IconColor = "#28a745",
-                                    ButtonText = "Close",
-                                    ButtonClass = "btn-success",
-                                    CandidateName = meetingDetails.candidateName ?? "Candidate",
-                                    InterviewDate = meetingDetails.interviewDate,
-                                    SessionId = sid.ToString(),
-                                    ExitTime = DateTime.Now,
-                                    IsFromIndex = true // Add this flag to identify the source
-                                };
-                                return View("ExitModalPartial", exitModel);
-                            }
 
+
+                            }
+                            model.Message = "";
+                            model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                            model.InterviewId = meetingDetails.InterviewId;
+                            model.IRFId = meetingDetails.irfIntId;
+                            model.candidateName = meetingDetails.candidateName;
+                            model.IsAdaptive = meetingDetails.IsAdaptive;
+                            model.AssistantId = meetingDetails.AssistantId;
+                            model.AIInterviewType = meetingDetails.AIInterviewType;
+                            return View(model);
 
                         }
-                        else if (transcript == null || latestEntry == null) // this would mean that the thread was created but an error occured before the first question could be saved, therefore, start from the first question
+                    }
+                    else
+                    {
+                        //not started yet
+                        if (string.IsNullOrEmpty(meetingDetails.ThreadId))
                         {
+
                             string resumeStringContent = string.Empty;
                             string techSkillsJson = string.Empty;
 
@@ -440,24 +308,25 @@ namespace Risebird.Web.Controllers
                             string candidatePrompt;
                             if (!string.IsNullOrEmpty(resumeStringContent))
                             {
-                                candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
+                                candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
 
                             }
                             else
                             {
-                                candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+                                candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
 
                             }
-                            var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
+                            var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
 
-                            model = new ChatMessageViewModel
+                            var model = new ChatMessageViewModel
                             {
                                 SessionId = sid,
-                                ChatLog = replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                                ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+
                             };
 
 
-                            var latestReply = CleanMessage(replies.FirstOrDefault());
+                            var latestReply = CleanMessage(result.Replies.FirstOrDefault());
 
                             if (!string.IsNullOrEmpty(latestReply))
                             {
@@ -481,75 +350,270 @@ namespace Risebird.Web.Controllers
                             //model.SynthesizedVideoUrl = videoUrl;
 
                             //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-
-                            //return View(model);
+                            //ViewBag.IsAdaptive = true;
+                            model.IsAdaptive = meetingDetails.IsAdaptive;
+                            model.InterviewId = meetingDetails.InterviewId;
+                            model.IRFId = meetingDetails.irfIntId;
+                            model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                            model.candidateName = meetingDetails.candidateName;
+                            model.AssistantId = meetingDetails.AssistantId;
+                            model.AIInterviewType = meetingDetails.AIInterviewType;
+                            return View(model);
                         }
+                        else
+                        {
+                            var model = new ChatMessageViewModel();
+                            model.SessionId = sid;
+                            //get the entire transcript by session Id(in descending order by time). By entire, it means the responses of both the candidate and the assistant/aiinterviewer
+                            var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
+
+                            //check the first entry in the transcript and check the role to determine who made that response. That is the lastest for that session.
+
+                            var latestEntry = transcript?.FirstOrDefault();
+
+                            if (latestEntry != null)
+                            {
+                                var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
+                                //if (allQuestions != null && allQuestions.Count() <= 10)
+                                if (allQuestions != null && allQuestions.Count() <= 25)
+                                //if(allQuestions != null && allQuestions.Count() <= 3)
+                                {
+                                    //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
+                                    if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 25)
+                                    //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
+                                    {
+                                        var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
+                                        foreach (var question in allQuestions)
+                                        {
+                                            model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(question.Message) });
+                                        }
+                                        if (candidateLatestEntry != null)
+                                        {
+                                            model.ChatLog.Add(new ChatLine { Role = "User", Message = candidateLatestEntry.Message });
+
+                                        }
+
+                                        var latestQuestion = latestEntry.Message;
+                                        if (!string.IsNullOrEmpty(latestQuestion))
+                                        {
+                                            var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                                            var base64Audio = Convert.ToBase64String(audioBytes);
+                                            ViewData["AssistantAudioBase64"] = base64Audio;
+                                            model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
+                                            model.CurrentQuestion = latestQuestion;
+                                        }
+                                    }
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
+                                    {
+                                        model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
+                                        var replies = await _api.SendReply(sid, latestEntry.Message, meetingDetails.AssistantId);
+                                        //var question = allQuestions.FirstOrDefault().Message;
+
+                                        foreach (var reply in replies)
+                                        {
+                                            model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                                        }
+                                        var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                                        if (!string.IsNullOrEmpty(latestReply))
+                                        {
+                                            var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                                            var base64Audio = Convert.ToBase64String(audioBytes);
+                                            ViewData["AssistantAudioBase64"] = base64Audio;
+                                            model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
+                                            model.CurrentQuestion = latestReply;
+
+                                        }
+                                    }
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
+                                    //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
+                                    {
+                                        // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                        var exitModel = new AIInterviewExitModalViewModel
+                                        {
+                                            Title = "Interview Complete",
+                                            Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                            IconClass = "fa-check-circle",
+                                            IconColor = "#28a745",
+                                            ButtonText = "Close",
+                                            ButtonClass = "btn-success",
+                                            CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                            InterviewDate = meetingDetails.interviewDate,
+                                            SessionId = sid.ToString(),
+                                            ExitTime = DateTime.Now,
+                                            IsFromIndex = true // Add this flag to identify the source
+                                        };
+                                        return View("ExitModalPartial", exitModel);
+
+                                    }
+                                }
+                                else
+                                {
+                                    // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Interview Complete",
+                                        Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                        IconClass = "fa-check-circle",
+                                        IconColor = "#28a745",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-success",
+                                        CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                        InterviewDate = meetingDetails.interviewDate,
+                                        SessionId = sid.ToString(),
+                                        ExitTime = DateTime.Now,
+                                        IsFromIndex = true // Add this flag to identify the source
+                                    };
+                                    return View("ExitModalPartial", exitModel);
+                                }
+
+
+                            }
+                            else if (transcript == null || latestEntry == null) // this would mean that the thread was created but an error occured before the first question could be saved, therefore, start from the first question
+                            {
+                                string resumeStringContent = string.Empty;
+                                string techSkillsJson = string.Empty;
+
+                                if (!string.IsNullOrEmpty(meetingDetails.resumeLink))
+                                {
+                                    resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.resumeLink);
+                                }
+                                if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
+                                {
+                                    techSkillsJson = meetingDetails.TechSkillsInJson;
+                                }
+                                string candidatePrompt;
+                                if (!string.IsNullOrEmpty(resumeStringContent))
+                                {
+                                    candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
+
+                                }
+                                else
+                                {
+                                    candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+
+                                }
+                                var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
+
+                                model = new ChatMessageViewModel
+                                {
+                                    SessionId = sid,
+                                    ChatLog = replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                                };
+
+
+                                var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                                if (!string.IsNullOrEmpty(latestReply))
+                                {
+                                    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestReply);
+                                    var base64Audio = Convert.ToBase64String(audioBytes);
+                                    ViewData["AssistantAudioBase64"] = base64Audio;
+                                    model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
+                                    model.CurrentQuestion = latestReply;
+
+                                }
+                                //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(result.Replies.FirstOrDefault(), "your_template_id_here");
+
+                                //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                                //string videoUrl;
+                                //do
+                                //{
+                                //    await Task.Delay(8000);
+                                //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                                //} while (string.IsNullOrWhiteSpace(videoUrl));
+
+                                //model.SynthesizedVideoUrl = videoUrl;
+
+                                //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+
+                                //return View(model);
+                            }
 
 
 
-                        //var replies = await _api.SendReply(model.SessionId, userMessage);
+                            //var replies = await _api.SendReply(model.SessionId, userMessage);
 
-                        //get all the questions asked already from the database in descending order by time
-                        //var questions = new List<string>();
-                        //var latestQuestion = questions.FirstOrDefault();//replies?.Skip(1)?.Take(1);
-                        ////model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+                            //get all the questions asked already from the database in descending order by time
+                            //var questions = new List<string>();
+                            //var latestQuestion = questions.FirstOrDefault();//replies?.Skip(1)?.Take(1);
+                            ////model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
-                        //foreach (var reply in questions)
-                        //{
-                        //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
-                        //}
+                            //foreach (var reply in questions)
+                            //{
+                            //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                            //}
 
-                        ////UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
+                            ////UploadBotInterviewVideo(model, question.FirstOrDefault(), userMessage);
 
-                        ////var latestReply = CleanMessage(replies.FirstOrDefault());
+                            ////var latestReply = CleanMessage(replies.FirstOrDefault());
 
-                        //if (!string.IsNullOrEmpty(latestQuestion))
-                        //{
-                        //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
-                        //    var base64Audio = Convert.ToBase64String(audioBytes);
-                        //    ViewData["AssistantAudioBase64"] = base64Audio;
-                        //}
+                            //if (!string.IsNullOrEmpty(latestQuestion))
+                            //{
+                            //    var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(latestQuestion);
+                            //    var base64Audio = Convert.ToBase64String(audioBytes);
+                            //    ViewData["AssistantAudioBase64"] = base64Audio;
+                            //}
 
 
-                        //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
+                            //var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(latestReply, "your_template_id_here");
 
-                        //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
-                        //string videoUrl;
-                        //do
-                        //{
-                        //    await Task.Delay(8000);
-                        //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-                        //} while (string.IsNullOrWhiteSpace(videoUrl));
-                        //model.SynthesizedVideoUrl = videoUrl;
-                        //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
-                        model.Message = "";
-                        model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
-                        model.InterviewId = meetingDetails.InterviewId;
-                        model.IRFId = meetingDetails.irfIntId;
-                        model.candidateName = meetingDetails.candidateName;
-                        model.IsAdaptive = meetingDetails.IsAdaptive;
-                        model.AssistantId = meetingDetails.AssistantId;
-                        model.AIInterviewType = meetingDetails.AIInterviewType;
-                        return View(model);
+                            //// Wait/poll until video is ready (Synthesia usually takes 30–60s)
+                            //string videoUrl;
+                            //do
+                            //{
+                            //    await Task.Delay(8000);
+                            //    videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
+                            //} while (string.IsNullOrWhiteSpace(videoUrl));
+                            //model.SynthesizedVideoUrl = videoUrl;
+                            //model.SynthesizedVideoUrl = "https://synthesia-ttv-data.s3.amazonaws.com/video_data/239be418-3e6d-4c92-916d-0a2054d81269/transfers/rendered_video.mp4?response-content-disposition=attachment%3Bfilename%3D%22AI%20Interviewer%20-%20Harsh.mp4%22&AWSAccessKeyId=AKIA32NGJ5TS3KPZZ23Z&Signature=cf9ZVjfK2wBH33gb7HsQDMGgeRM%3D&Expires=1752553930";
+                            model.Message = "";
+                            model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                            model.InterviewId = meetingDetails.InterviewId;
+                            model.IRFId = meetingDetails.irfIntId;
+                            model.candidateName = meetingDetails.candidateName;
+                            model.IsAdaptive = meetingDetails.IsAdaptive;
+                            model.AssistantId = meetingDetails.AssistantId;
+                            model.AIInterviewType = meetingDetails.AIInterviewType;
+                            return View(model);
 
+                        }
                     }
+
+
                 }
 
-
+                // Handle null meetingDetails case
+                var exitModelError = new AIInterviewExitModalViewModel
+                {
+                    Title = "Interview Not Found",
+                    Message = "The interview session could not be found. Please check the session ID and try again.",
+                    IconClass = "fa-exclamation-triangle",
+                    IconColor = "#dc3545",
+                    ButtonText = "Close",
+                    ButtonClass = "btn-danger",
+                    SessionId = sid.ToString()
+                };
+                return View("ExitModalPartial", exitModelError);
             }
-
-            // Handle null meetingDetails case
-            var exitModelError = new AIInterviewExitModalViewModel
+            catch (Exception ex)
             {
-                Title = "Interview Not Found",
-                Message = "The interview session could not be found. Please check the session ID and try again.",
-                IconClass = "fa-exclamation-triangle",
-                IconColor = "#dc3545",
-                ButtonText = "Close",
-                ButtonClass = "btn-danger",
-                SessionId = sid.ToString()
-            };
-            return View("ExitModalPartial", exitModelError);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var exitModelError = new AIInterviewExitModalViewModel
+                {
+                    Title = "Error",
+                    Message = "There seems to be an error. Please try again in a little while.",
+                    IconClass = "fa-exclamation-triangle",
+                    IconColor = "#dc3545",
+                    ButtonText = "Close",
+                    ButtonClass = "btn-danger",
+                    SessionId = sid.ToString()
+                };
+                return View("ExitModalPartial", exitModelError);
+            }
         }
 
         [HttpPost]
@@ -557,197 +621,247 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> Index([FromForm] ChatMessageViewModel model)
         {
 
-            if (model.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+            try
             {
-                string question = model.CurrentQuestion;
-                string userMessage = model.Message;
-                if (model.AudioFile != null && model.AudioFile.Length > 0)
+                if (model.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                 {
-                    using var stream = model.AudioFile.OpenReadStream();
-                    userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
-                }
-
-                var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
-                var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                if (allQuestions?.Count() == 25)
-                //if (allQuestions?.Count() == 3)                                 
-                {
-                    await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
-                    await UploadBotInterviewVideo(model, question, userMessage);
-                    
-                    // INTERVIEW COMPLETE - Return ExitModalPartial view
-                    var exitModel = new AIInterviewExitModalViewModel
+                    string question = model.CurrentQuestion;
+                    string userMessage = model.Message;
+                    if (model.AudioFile != null && model.AudioFile.Length > 0)
                     {
-                        Title = "Interview Complete",
-                        Message = "The interviewer is through with all the questions. This interview is now closed.",
-                        IconClass = "fa-check-circle",
-                        IconColor = "#28a745",
-                        ButtonText = "Close",
-                        ButtonClass = "btn-success",
-                        CandidateName = model.candidateName ?? "Candidate",
-                        InterviewDate = DateTime.Now,
-                        SessionId = model.SessionId.ToString(),
-                        IsFromIndex = true
-                    };
-                    return View("ExitModalPartial", exitModel);
+                        using var stream = model.AudioFile.OpenReadStream();
+                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                    }
+
+                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
+                    var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
+                    //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                    if (allQuestions?.Count() == 25)
+                    //if (allQuestions?.Count() == 3)                                 
+                    {
+                        await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
+                        await UploadBotInterviewVideo(model, question, userMessage);
+
+                        // INTERVIEW COMPLETE - Return ExitModalPartial view
+                        var exitModel = new AIInterviewExitModalViewModel
+                        {
+                            Title = "Interview Complete",
+                            Message = "The interviewer is through with all the questions. This interview is now closed.",
+                            IconClass = "fa-check-circle",
+                            IconColor = "#28a745",
+                            ButtonText = "Close",
+                            ButtonClass = "btn-success",
+                            CandidateName = model.candidateName ?? "Candidate",
+                            InterviewDate = DateTime.Now,
+                            SessionId = model.SessionId.ToString(),
+                            IsFromIndex = true
+                        };
+                        return View("ExitModalPartial", exitModel);
+                    }
+                    else
+                    {
+                        //var replies = new List<string>();
+                        //try
+                        //{
+                        //    replies = await _api.SendReply(model.SessionId, userMessage, model.AssistantId);
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //}
+
+                        //model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+
+                        //if (replies != null)
+                        //{
+                        //    foreach (var reply in replies)
+                        //    {
+                        //        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                        //    }
+                        //}
+                        await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
+
+                        await UploadBotInterviewVideo(model, question, userMessage);
+
+                        var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
+
+
+                        if (sampleQuestion != null)
+                        {
+                            model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
+                            model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+
+
+                            //var latestReply = CleanMessage(replies?.FirstOrDefault());
+
+                            //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
+                            model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
+                            model.CurrentQuestionId = sampleQuestion.id;
+
+                            if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
+                            {
+                                model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
+                                model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
+                                model.CurrentQuestionId = sampleQuestion.id;
+                                await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
+
+                            }
+
+                            model.Message = "";
+
+                            //model.IsAdaptive = true;
+                            return View(model);
+                        }
+                        else
+                        {
+                            var exitModel = new AIInterviewExitModalViewModel
+                            {
+                                Title = "Interview Complete",
+                                Message = "The interviewer is through with all the questions. This interview is now closed.",
+                                IconClass = "fa-check-circle",
+                                IconColor = "#28a745",
+                                ButtonText = "Close",
+                                ButtonClass = "btn-success",
+                                CandidateName = model.candidateName ?? "Candidate",
+                                InterviewDate = DateTime.Now.Date,
+                                SessionId = model.SessionId.ToString(),
+                                ExitTime = DateTime.Now,
+                                IsFromIndex = true // Add this flag to identify the source
+                            };
+                            return View("ExitModalPartial", exitModel);
+                        }
+                        
+                    }
                 }
                 else
                 {
-                    //var replies = new List<string>();
-                    //try
-                    //{
-                    //    replies = await _api.SendReply(model.SessionId, userMessage, model.AssistantId);
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //}
-
-                    //model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
-
-                    //if (replies != null)
-                    //{
-                    //    foreach (var reply in replies)
-                    //    {
-                    //        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
-                    //    }
-                    //}
-                    await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
-
-
-                    var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
-
-                    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
-                    model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
-
-                    await UploadBotInterviewVideo(model, question, userMessage);
-
-                    //var latestReply = CleanMessage(replies?.FirstOrDefault());
-
-                    //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
-                    model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
-                    model.CurrentQuestionId = sampleQuestion.id;
-
-                    if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
+                    string question = model.CurrentQuestion;
+                    string userMessage = model.Message;
+                    if (model.AudioFile != null && model.AudioFile.Length > 0)
                     {
-                        model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
-                        model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
-                        model.CurrentQuestionId = sampleQuestion.id;
-                        await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
-
+                        using var stream = model.AudioFile.OpenReadStream();
+                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
                     }
 
-                    model.Message = "";
+                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
+                    var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
+                    //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                    if (allQuestions?.Count() == 25) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                                                     //if (allQuestions?.Count() == 3)//&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                    {
+                        await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
+                        await UploadBotInterviewVideo(model, question, userMessage);
 
-                    //model.IsAdaptive = true;
-                    return View(model);
+                        // INTERVIEW COMPLETE - Return ExitModalPartial view
+                        var exitModel = new AIInterviewExitModalViewModel
+                        {
+                            Title = "Interview Complete",
+                            Message = "The interviewer is through with all the questions. This interview is now closed.",
+                            IconClass = "fa-check-circle",
+                            IconColor = "#28a745",
+                            ButtonText = "Close",
+                            ButtonClass = "btn-success",
+                            CandidateName = model.candidateName ?? "Candidate",
+                            InterviewDate = DateTime.Now,
+                            SessionId = model.SessionId.ToString(),
+                            IsFromIndex = true
+                        };
+                        return View("ExitModalPartial", exitModel);
+                    }
+                    else
+                    {
+                        var replies = new List<string>();
+                        try
+                        {
+                            replies = await _api.SendReply(model.SessionId, userMessage, model.AssistantId);
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+
+                        model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
+
+                        if (replies != null)
+                        {
+                            foreach (var reply in replies)
+                            {
+                                model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
+                            }
+                        }
+
+                        await UploadBotInterviewVideo(model, question, userMessage);
+
+                        var latestReply = CleanMessage(replies?.FirstOrDefault());
+
+                        //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
+                        model.CurrentQuestion = latestReply;
+
+                        if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
+                        {
+                            var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(model.CurrentQuestion);
+                            var base64Audio = Convert.ToBase64String(audioBytes);
+                            ViewData["AssistantAudioBase64"] = base64Audio;
+                            model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
+
+                        }
+
+                        model.Message = "";
+
+                        model.IsAdaptive = true;
+                        return View(model);
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                string question = model.CurrentQuestion;
-                string userMessage = model.Message;
-                if (model.AudioFile != null && model.AudioFile.Length > 0)
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var exitModelError = new AIInterviewExitModalViewModel
                 {
-                    using var stream = model.AudioFile.OpenReadStream();
-                    userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
-                }
-
-                var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
-                var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                if (allQuestions?.Count() == 25) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                                                 //if (allQuestions?.Count() == 3)//&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                {
-                    await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
-                    await UploadBotInterviewVideo(model, question, userMessage);
-                    
-                    // INTERVIEW COMPLETE - Return ExitModalPartial view
-                    var exitModel = new AIInterviewExitModalViewModel
-                    {
-                        Title = "Interview Complete",
-                        Message = "The interviewer is through with all the questions. This interview is now closed.",
-                        IconClass = "fa-check-circle",
-                        IconColor = "#28a745",
-                        ButtonText = "Close",
-                        ButtonClass = "btn-success",
-                        CandidateName = model.candidateName ?? "Candidate",
-                        InterviewDate = DateTime.Now,
-                        SessionId = model.SessionId.ToString(),
-                        IsFromIndex = true
-                    };
-                    return View("ExitModalPartial", exitModel);
-                }
-                else
-                {
-                    var replies = new List<string>();
-                    try
-                    {
-                        replies = await _api.SendReply(model.SessionId, userMessage, model.AssistantId);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    }
-
-                    model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
-
-                    if (replies != null)
-                    {
-                        foreach (var reply in replies)
-                        {
-                            model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
-                        }
-                    }
-
-                    await UploadBotInterviewVideo(model, question, userMessage);
-
-                    var latestReply = CleanMessage(replies?.FirstOrDefault());
-
-                    //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
-                    model.CurrentQuestion = latestReply;
-
-                    if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
-                    {
-                        var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(model.CurrentQuestion);
-                        var base64Audio = Convert.ToBase64String(audioBytes);
-                        ViewData["AssistantAudioBase64"] = base64Audio;
-                        model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
-
-                    }
-
-                    model.Message = "";
-
-                    model.IsAdaptive = true;
-                    return View(model);
-                }
+                    Title = "Interview Not Found",
+                    Message = "The interview session could not be found. Please check the session ID and try again.",
+                    IconClass = "fa-exclamation-triangle",
+                    IconColor = "#dc3545",
+                    ButtonText = "Close",
+                    ButtonClass = "btn-danger",
+                    SessionId = model.SessionId.ToString()
+                };
+                return View("ExitModalPartial", exitModelError);
             }
 
         }
         private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
         {
-            if (model.VideoFile != null && model.VideoFile.Length > 0)
+            try
             {
-                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
-                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
+                if (model.VideoFile != null && model.VideoFile.Length > 0)
                 {
-                    var file = model.VideoFile;
-                    var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".mp4";
-                    //await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
-                    await _azureStorageHelper.InsertImageBlob(filename, "botinterviewvideo", file, fileMimeType);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
-                    var blob = containerRef.GetBlockBlobReference(filename);
-                    string uploadedvideoFileURL = blob.Uri.ToString();
-                    var sas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
-                    var VideoLink = string.Empty;
-                    if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
                     {
-                        VideoLink = uploadedvideoFileURL + "?" + sas;
+                        var file = model.VideoFile;
+                        var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".mp4";
+                        //await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
+                        await _azureStorageHelper.InsertImageBlob(filename, "botinterviewvideo", file, fileMimeType);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        var sas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
+                        var VideoLink = string.Empty;
+                        if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        {
+                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                        }
+                        //Save in db with question.sessionid,videoLink,Datetime
+                        var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
                     }
-                    //Save in db with question.sessionid,videoLink,Datetime
-                    var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
             }
         }
 
