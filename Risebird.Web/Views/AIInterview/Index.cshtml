@@ -824,7 +824,7 @@
         margin-top:-145px!important;
     }
     .rb-chat-section{
-        margin-top:100px!important;
+       /*  margin-top:100px!important; */
     }
         .rb-main {
             flex-direction: column;
@@ -886,7 +886,7 @@
         margin-top:-145px!important;
     }
     .rb-chat-section{
-        margin-top:100px!important;
+       /*  margin-top:100px!important; */
     }
         .rb-aiinterview-container {
             padding: 12px;
@@ -932,7 +932,7 @@
         margin-top:-50px!important;
     }
     .rb-chat-section{
-        margin-top:100px!important;
+       /*  margin-top:100px!important; */
     }
         .rb-chatbox-textarea {
             font-size: 1rem;
@@ -956,7 +956,7 @@
         margin-top:-130px!important;
     }
     .rb-chat-section{
-        margin-top:100px!important;
+        /* margin-top:100px!important; */
     }
        }
     </style>
@@ -1034,13 +1034,13 @@
 
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
-                        <div class="rb-chatbox-inputrow">
-                           <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste = "return false;"></textarea>
+                        <div class="rb-chatbox-inputrow" style="display:none">
+                           <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste = "return false;" hidden></textarea>
                           
-                           <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                           <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+                           <input type="hidden" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                           <input type="hidden" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
 
-                           <button type="submit" class="rb-chatbox-sendbtn" title="Send">
+                           <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
                                <i class="fa fa-arrow-up"></i>
                                <div class="rb-loading-spinner"></div>
                            </button>
