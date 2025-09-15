@@ -135,7 +135,7 @@
                                         <th>Profile Name</th>
                                         <th>Mobile Number</th>
                                         <th>Status</th>
-                                        <th>Password</th>
+                                        @* <th>Password</th> *@
                                         <th class="disabled-sorting text-center">Actions</th>
                                         <th hidden></th>
                                         <th hidden></th>
@@ -150,7 +150,7 @@
                                         <th>Profile Name</th>
                                         <th>Mobile Number</th>
                                         <th>Status</th>
-                                        <th>Password</th>
+                                        @* <th>Password</th> *@
                                         <th class="disabled-sorting text-center">Actions</th>
                                         <th hidden></th>
                                         <th hidden></th>
@@ -173,7 +173,7 @@
                                             {
                                                 <td style="color:grey">Inactive</td>
                                             }
-                                            <td>
+                                            @* <td>
                                                 <div class="mobile-view">
                                                     <div>
                                                         <span> @item.UserPassword</span>
@@ -190,7 +190,7 @@
                                                         { <span toggle="#password-field_@item.Id" class="toggle-password" id="toggle-password_@item.Id"></span>}
                                                     </div>
                                                 </div>
-                                            </td>
+                                            </td> *@
                                             <td class="text-center action">
                                                 @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
                                                 {
