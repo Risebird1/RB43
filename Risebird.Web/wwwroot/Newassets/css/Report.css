@@ -22,12 +22,12 @@ a {
 .reportdropdown-content {
     display: none;
     position: absolute;
-    background-color: #fff;
+   /* background-color: #fff;*/
+    background: #dad5d5;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 10;
     margin-left: 30px;
-  
 }
     .reportdropdown-content::before {
         content: "";
@@ -37,7 +37,8 @@ a {
         height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-bottom: 10px solid #FFF;
+        /*border-bottom: 10px solid #FFF;*/
+        border-bottom: 10px solid #dad5d5;
         margin: -10px 0 0 30px;
     }
     .reportdropdown-content .dropdown-btn {

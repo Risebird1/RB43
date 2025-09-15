@@ -121,6 +121,24 @@
         .sidebar .navbar-minimize .btn {
         display: none !important
         }
+        @@media (max-width: 768px) {
+         .row.bl-bg .col-md-12 {
+          padding: 0px 0px!important;
+          }
+
+            .addreport .col-md-12.pull-left {
+                padding:0px!important;
+          }
+        }
+
+        @@media (max-width: 767px) {
+        .addreport .int-form-group {
+         position: relative;
+         margin: 0px 5px 12px 0px!important;
+         width: 100% !important;
+         float: left;
+        }
+        }
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
