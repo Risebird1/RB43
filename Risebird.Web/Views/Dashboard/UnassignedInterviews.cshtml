@@ -44,7 +44,7 @@
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCZohoReview")
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
@@ -52,6 +52,7 @@
                             <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
                             <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab"onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Review</strong></div>
                         }
                         else if (ViewBag.actionstatus == "QCReport")
                         {
@@ -59,6 +60,7 @@
                             <div class="feedback-tab-ac"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
                             <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Review</strong></div>
                         }
                         else if (ViewBag.actionstatus == "PropableRedo")
                         {
@@ -66,6 +68,15 @@
                             <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
                             <div class="feedback-tab-ac"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Review</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCZohoReview")
+                        {
+                            <div class="feedback-tab"onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab-ac"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Review</strong></div>
                         }
                         else
                         {
@@ -73,6 +84,7 @@
                             <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
                             <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Review</strong></div>
                         }
                     }
                 </div>
@@ -86,7 +98,7 @@
                         @if (ViewBag.Actiontype == 0)
                         {
                             @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" ||
-                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport"
+                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview"
                            || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount"
                            || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
                            || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "DeletedZoomMeetings"
@@ -96,7 +108,7 @@
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                                 </button>
                             }
-                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview"))
+                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview"))
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
@@ -115,7 +127,7 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                         {
                             <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
                         }
@@ -299,7 +311,7 @@
                                                         <th>Action</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
 
                                                         <th>
@@ -352,7 +364,7 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
@@ -372,11 +384,11 @@
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -402,7 +414,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -412,7 +424,7 @@
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -498,7 +510,7 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
@@ -563,7 +575,7 @@
                                                         <th>Action</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>
                                                             Action
@@ -607,7 +619,7 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
@@ -627,11 +639,11 @@
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport"  && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -657,7 +669,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -668,7 +680,7 @@
                                                     }
 
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -754,7 +766,7 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
@@ -1040,7 +1052,7 @@
                                                             </td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td>
                                                                 <span>
@@ -1281,7 +1293,7 @@
                                                             <td>
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
-                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                                 {
                                                                     <div>
 
@@ -1460,7 +1472,7 @@
                                                         {
                                                             <td>@item.Joinedon</td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td style="text-align:center">
 
@@ -1603,11 +1615,11 @@
                                                                 <td></td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -1676,7 +1688,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             <td>@item.Name</td>
                                                         }
@@ -1696,7 +1708,7 @@
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                             {
@@ -2114,7 +2126,7 @@
 
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td>@item.ChannelOwner</td>
                                                         }
