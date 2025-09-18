@@ -121,29 +121,83 @@
         .sidebar .navbar-minimize .btn {
         display: none !important
         }
-        @@media (max-width: 768px) {
-         .row.bl-bg .col-md-12 {
-          padding: 0px 0px!important;
-          }
-
-            .addreport .col-md-12.pull-left {
-                padding:0px!important;
-          }
-        }
-
-        @@media (max-width: 767px) {
-        .addreport .int-form-group {
-         position: relative;
-         margin: 0px 5px 12px 0px!important;
-         width: 100% !important;
-        float: left;
-        }
-        }
+        
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
+<style>
+
+    @@media (max-width: 768px) {
+        .require-fields{
+            display:none;
+        }
+        .addreport .int-form-group{
+            width: 31.5%;
+        }
+        .row.bl-bg .col-md-12 {
+            padding: 0px 0px !important;
+        }
+        .addreport .custom-select-dropdown select{
+        top:0px!important;
+        width:85px;
+        }
+
+        .addreport .wrap-padding {
+            padding: 0px 0px 0px 10px;
+            float: left;
+        }
+        .addreport .wrap-nopadding {
+         padding: 0px;
+         float: left;
+         }
+        .addreport .col-md-12.pull-left {
+          padding: 0px!important;
+        }
+
+         .content.client {
+          padding: 0px 10px 30px 10px!important;
+          clear: both;
+          margin: 0px 10px!important;
+        }
+        .addreport .int-form-group-status{
+            margin: 0px 0px!important;
+            width:30%!important;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .addreport .int-form-group {
+            position: relative;
+            margin: 0px 5px 12px 0px !important;
+            width: 100% !important;
+            float: left;
+        }
+        .addreport .int-form-group-comment{
+            width:70%;
+        }
+    }
+
+    @@media (max-width: 640px) {
+    .addreport .int-form-group-comment {
+        width: 100%!important;
+    }
+    .addreport .int-form-group-status{
+        width: 100% !important;
+    }
+    .addreport .custom-select-dropdown select {
+        top: 0px !important;
+        width: 185px !important;
+    }
+    }
+
+    @@media (max-width: 360px) {
+        .addreport .custom-select-dropdown select{
+          width: 125px!important;
+        }
+    }
+</style>
 @if (ViewBag.PageReport == "Insta")
 {
     <style>
@@ -370,7 +424,7 @@
                                                             <label class="question" for="checkbox_two">
                                                                 <label for="checkbox_two">
                                                                     <i class="fa fa-user" aria-hidden="true"></i>
-                                                                    PROXY CANDIDATE REPORTING <font style="color:#c94319;text-transform:lowercase;font-size:12px;">(this is mandatory field)</font>
+                                                                    PROXY CANDIDATE REPORTING <font class="require-fields" style="color:#c94319;text-transform:lowercase;font-size:12px;">(this is mandatory field)</font>
                                                                 </label>
 
                                                             </label>
