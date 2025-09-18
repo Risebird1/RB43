@@ -38,7 +38,7 @@ Begin
 
 select bq.question, bq.CandidateAnswer, sq.ExpectedAnswer, sq.SkillName from BotInterviewQuestionVideos bq   
 join SkillChannelSampleQuestions sq on bq.DeliveryHeadQuestionId = sq.id  
-where irfid = @irfId  
+where irfid = @irfId  and SessionId = @SessionId
   
 End  
   

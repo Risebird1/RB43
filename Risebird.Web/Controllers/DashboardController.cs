@@ -114,7 +114,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-                        //for (int i = 0; i < 30; i++)
+                        //for (int i = 0; i < 15; i++)
                         //{
                         //    //await ParseOpenAIResume();
                         //    await ParseOpenAIResumeTImerFunctionCopy();
