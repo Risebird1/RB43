@@ -939,11 +939,11 @@ namespace Risebird.Web.Controllers
                 InterviewReportResult aiReport = null;
                 if (redo)
                 {
-                    aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
-                    if (aiReport != null)
-                    {
-                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
-                    }
+                    aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType, isExit: isExit);
+                    //if (aiReport != null)
+                    //{
+                    //    await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
+                    //}
                 }
                 else
                 {
@@ -954,7 +954,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (aiReport == null)
                     {
-                        aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType);
+                        aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType, isExit: isExit);
                         var list = new List<string>();
                         list.Add(aiReport.Replies.FirstOrDefault());
                         aiReport.Replies = list;
@@ -1039,11 +1039,11 @@ namespace Risebird.Web.Controllers
                 InterviewReportResult aiReport = null;
                 if (redo)
                 {
-                    aiReport = await _api.GenerateReport(seId, candidatePrompt);
-                    if (aiReport != null)
-                    {
-                        await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
-                    }
+                    aiReport = await _api.GenerateReport(seId, candidatePrompt, isExit: isExit);
+                    //if (aiReport != null)
+                    //{
+                    //    await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
+                    //}
                 }
                 else
                 {
@@ -1054,7 +1054,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (aiReport == null)
                     {
-                        aiReport = await _api.GenerateReport(seId, candidatePrompt);
+                        aiReport = await _api.GenerateReport(seId, candidatePrompt, isExit:isExit);
                         var list = new List<string>();
                         list.Add(aiReport.Replies.FirstOrDefault());
                         aiReport.Replies = list;
