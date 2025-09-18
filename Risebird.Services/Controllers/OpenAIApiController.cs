@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
+using Microsoft.Graph.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business;
@@ -12,6 +13,7 @@ using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -131,12 +133,18 @@ namespace Risebird.Services.Controllers
                 input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
                 await _ai.AddMessageAsync(threadId, "user", input.Message);
 
-                var runId = await _ai.CreateRunAsync(threadId, "asst_6aHX1TyH0XKKZ14SxDqhi424"); //assistant id of the assistant named "Candidate Answer Evaluator"
+                var runId = await _ai.CreateRunAsync(threadId, meetingDetails.AssistantId);
                 await _ai.WaitForRunAsync(threadId, runId);
 
                 var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
 
-                //save the report in the database.
+                if(replies!= null)
+                {
+                    var reportObject = new InterviewReportResult { SessionId = input.SessionId, ThreadId = threadId, Replies = replies };
+                    //save the report in the database.
+                    await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(reportObject), input.isExit);
+
+                }
 
 
                 return Ok(new { input.SessionId, threadId, replies });

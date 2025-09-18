@@ -18,5 +18,6 @@ namespace Risebird.Entities.ViewModel
         public Guid SessionId { get; set; }
         public string Message { get; set; }
         public int? AIInterviewType { get; set; }
+        public bool isExit { get; set; }
     }
 }
