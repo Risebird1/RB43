@@ -191,7 +191,7 @@ namespace Risebird.Web.Controllers
 
                 foreach (var resume in resumeList)
                 {
-                    
+
                     string resumeLinkToParse = string.Empty;
                     if (!resume.ResumeLink.Contains(".pdf"))
                     {
@@ -205,7 +205,7 @@ namespace Risebird.Web.Controllers
                     var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
                     //var result = await _assistantServiceHelper.ParseResume(resumeStringContent);
 
-                    if(!string.IsNullOrEmpty(resumeStringContent))
+                    if (!string.IsNullOrEmpty(resumeStringContent))
                     {
                         var threadId = await _ai.CreateThreadAsync();
                         //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
@@ -311,7 +311,7 @@ namespace Risebird.Web.Controllers
                         candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
 
                     }
-                    
+
 
                 }
 
@@ -1608,7 +1608,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        else if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview)
+                        else if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCZohoReview)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
@@ -1709,6 +1709,10 @@ namespace Risebird.Web.Controllers
                         else if (actionstatus == RibbonActionType.QCUnderReview)
                         {
                             ViewBag.PageHeader = "Under Review Interviews";
+                        }
+                        else if (actionstatus == RibbonActionType.QCZohoReview)
+                        {
+                            ViewBag.PageHeader = "Zoho Review Interviews";
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();

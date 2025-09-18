@@ -493,10 +493,10 @@
                                                         <th>Type</th>
 
                                                         <th>JD Title</th>
-                                                        @* @if (ViewBag.profile != "Quality Controller")
+                                                        @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Meeting Link</th>
-                                                        } *@
+                                                        }
                                                         @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Interviewer Portal</th>
@@ -520,7 +520,7 @@
                                                         }
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
-
+                                                        <th>Meeting PlatForm</th>
                                                         @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Client HR</th>
@@ -580,10 +580,10 @@
                                                     {
                                                         <th>Type</th>
                                                         <th>JD Title</th>
-                                                        @* @if (ViewBag.profile != "Quality Controller")
+                                                        @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Meeting Link</th>
-                                                        } *@
+                                                        }
                                                         @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Interviewer Portal</th>
@@ -607,6 +607,7 @@
                                                         }
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
+                                                        <th>Meeting PlatForm</th>
                                                         @if (ViewBag.profile != "Quality Controller")
                                                         {
                                                             <th>Client HR</th>
@@ -763,7 +764,7 @@
                                                                         {
                                                                             @* <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>*@                                                                    
 
-                                                                            <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
+                                                                                                            <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="CancelInterviewwithreason(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','rbuser')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;width:29px!important;height:29px!important;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;animation: auto;"></span></span></span>
                                                                         }
 
                                                                         @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
@@ -814,7 +815,7 @@
                                                                 {
                                                                     @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin") @* || ViewBag.profile == "SupportAdmin" *@
                                                                     {
-                                                                        @if(item.IsAIInterview)
+                                                                        @if (item.IsAIInterview)
                                                                         {
                                                                             <span class="interview_9">
                                                                                 <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
@@ -838,7 +839,8 @@
                                                                                         </span>
                                                                                     </button>
                                                                                 </a>
-                                                                            </span> //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                            </span>
+                                                                            //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
                                                                         }
                                                                         else
                                                                         {
@@ -850,7 +852,7 @@
                                                                                 </a>
                                                                             </span>
                                                                         }
-                                                                        
+
 
                                                                     }
 
@@ -1006,17 +1008,24 @@
                                                             }
 
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
-                                                            @* @if (ViewBag.profile != "Quality Controller")
+                                                            @if (ViewBag.profile != "Quality Controller")
                                                             {
-                                                                @* @if (item.zoomLink != null && item.zoomLink != "")
+                                                                @if (item.MeetingPlatform != MeetingPlatforms.Zoom)
                                                                 {
-                                                                    <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
+                                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                                    {
+                                                                        <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td><span style="color:red">No Meeting Link</span></td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td><span style="color:red">No Meeting Link</span></td>
-                                                                } 
-                                                            }*@
+                                                                    <td></td>
+                                                                }
+                                                            }
                                                             @if (ViewBag.profile != "Quality Controller")
                                                             {
                                                                 <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
@@ -1268,7 +1277,7 @@
 
 
                                                             <td> @item.risebirdHR</td>
-
+                                                            <td>@item.MeetingPlatform</td>
                                                             @if (ViewBag.profile != "Quality Controller")
                                                             {
                                                                 @if (item.IsHrOnline == 1)
@@ -1358,10 +1367,10 @@
                                                                 @item.IsEmergency
                                                             </td>
                                                             <td>
-@* <a target="_blank" href='@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})'>AI Meeting Link</a>*@                                                           
-                                                            
-                                                            
-                                                            <div  aria-label="Copy AI Interview Meeting Url">
+                                                                @* <a target="_blank" href='@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})'>AI Meeting Link</a>*@                                                           
+
+
+                                                                                            <div aria-label="Copy AI Interview Meeting Url">
                                                                     @if (item.IsAIInterview && !string.IsNullOrEmpty(item.SessionId))
                                                                     {
                                                                         <span onclick="javascript:CopyAIInterviewUrl('@item.SessionId');">AI Meeting Link <i style="color: #338bd3" class='fa fa-clone'></i></span>
@@ -1370,11 +1379,11 @@
                                                                     {
                                                                         <span style="color: #ccc;">AI Meeting Link <i class='fa fa-clone'></i></span>
                                                                     }
-                                                                
-                                                                
-                                                                
-                                                                
-                                                            </div>
+
+
+
+
+                                                                </div>
 
 
                                                             </td>
@@ -1899,7 +1908,7 @@
                 <h5 class="modal-title pull-left">AI Interview Meeting Url</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeAIInterviewModel()"  style="cursor:pointer;" aria-hidden="true">&times;</span>
+                <span onclick="closeAIInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
                 <div class="col-md-12">
