@@ -70,10 +70,22 @@
                                                         </td>
 
                                                         <td class="text-center action-area">
-                                                            <div class="sample-btn">
-                                                                @*<span id="btnPlus_0" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
+
+                                                            
+                                                            @* <div class="sample-btn">
                                                                 <span style="float:right;" id="btnMinus_0" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </div>
+                                                            </div> *@
+
+
+                                                            @if (Model.Profile == "Admin")
+                                                            {
+                                                                <div class="sample-btn">
+                                                                    @*<span id="btnPlus_0" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
+                                                                    <span style="float:right;" id="btnMinus_0" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                </div>
+
+                                                            }
+                                                            
                                                         </td>
                                                         <td class="HiddenUserIdElement">
                                                         </td>
@@ -162,7 +174,7 @@ else
                                                                 <div class="sample-btn">
                                                                     @*<span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
 
-                                                                    @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
+                                                                    @* @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
                                                                     {
                                                                         isDeletetable = true;
 
@@ -170,11 +182,22 @@ else
                                                                     else
                                                                     {
                                                                         isDeletetable = false;
-                                                                    }
-                                                                    @{
+                                                                    } *@
+                                                                    @* @{
                                                                         string displayStatus = isDeletetable ? "block" : "none";
+                                                                    } *@
+@*                                                                     <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+ *@
+                                                                    @if (Model.Profile == "Admin")
+                                                                    {
+                                                                        <span id="btnMinus_@i" style="float:right;" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
                                                                     }
-                                                                    <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','SkillName','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                    @* else
+                                                                    {
+                                                                        isDeletetable = false;
+                                                                    } *@
+                                                                    
                                                                 </div>
 
                                                             </td>
