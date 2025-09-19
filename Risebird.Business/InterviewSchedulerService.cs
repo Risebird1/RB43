@@ -373,11 +373,11 @@ namespace Risebird.Business
         /// <param name="interviewid"></param>
         /// <param name="newinterviewdate"></param>
         /// <returns></returns>
-        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate,string loginemail)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail)
         {
             try
             {
-                var result = await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate,loginemail);
+                var result = await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate, loginemail);
                 if (result != null)
                 {
                     //return message if not cancelled and message is null in case of cancel interview
@@ -458,6 +458,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<string> GetAvailableZohoAccount(DateTime startTime, DateTime endTime, string currentZohoAccount = null)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.GetAvailableZohoAccount(startTime, endTime, currentZohoAccount);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

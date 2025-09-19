@@ -506,7 +506,6 @@ namespace Risebird.Web.Controllers
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
-                        //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
                         zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
                         zoomLink.join_url = rbMeetingLinkResponse.joinLink;

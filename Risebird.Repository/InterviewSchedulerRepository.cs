@@ -656,7 +656,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate,string loginemail)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail)
         {
             try
             {
@@ -793,6 +793,37 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<string> GetAvailableZohoAccount(DateTime startTime, DateTime endTime, string currentZohoAccount = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startTime", startTime);
+                    parameters.Add("@endTime", endTime);
+                    parameters.Add("@currentZohoAccount", currentZohoAccount != string.Empty ? currentZohoAccount : null);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAvailableZohoAccount", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    if (result != null && result.Count() > 0)
+                    {
+                        return (result.FirstOrDefault());
+                    }
+                    else
+                        return "";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
         }
     }
 }

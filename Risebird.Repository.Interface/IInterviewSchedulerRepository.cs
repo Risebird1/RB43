@@ -38,5 +38,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<RecommendedSlotsVM>> FetchrecommendedSlots(List<DateTime> _slotscheck);
         Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid);
         Task<bool> CheckFutureCancelInterview(string IRFId, DateTime interviewdate, string CandidateEmailid);
+        Task<string> GetAvailableZohoAccount(DateTime startTime, DateTime endTime, string currentZohoAccount = null);
     }
 }
