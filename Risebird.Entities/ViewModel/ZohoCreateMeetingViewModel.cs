@@ -10,7 +10,7 @@ namespace Risebird.Entities.ViewModel
     {
     }
 
-    public record ZohoCreateMeetingRequest(string Topic, string? Agenda, DateTimeOffset StartTime, int DurationMinutes, bool IsRecurring = false);
+    public record ZohoCreateMeetingRequest(string Topic, string? Agenda, DateTime StartTime, int DurationMinutes, bool IsRecurring = false);
 
     public class ZohoMeetingResponse
     {

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Risebird.Entities.ViewModel;
 using RestSharp;
 using System.Linq;
+using Risebird.Business.Interface;
 
 
 namespace Risebird.CommonHelper
@@ -19,12 +20,14 @@ namespace Risebird.CommonHelper
     public class ZohoMeetingHelper : IZohoMeetingHelper
     {
         private readonly ZohoOptions _options;
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private string? _cachedAccessToken;
         private DateTimeOffset _accessTokenExpiry;
 
-        public ZohoMeetingHelper(IOptions<ZohoOptions> options)
+        public ZohoMeetingHelper(IOptions<ZohoOptions> options, IInterviewSchedulerService interviewSchedulerservice)
         {
             _options = options.Value;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
         private async Task<string> GetAccessTokenAsync()
         {
@@ -116,7 +119,11 @@ namespace Risebird.CommonHelper
         {
             // Per Zoho docs, schedule via sessions.json with wrapper { session: { ... } }
             var friendlyStart = request.StartTime.ToString("MMM dd, yyyy hh:mm tt", CultureInfo.InvariantCulture);
-            var userid = "60005813892";
+            var userid = await _interviewSchedulerservice.GetAvailableZohoAccount(request.StartTime.AddMinutes(-30), request.StartTime.AddMinutes(30));
+            if (string.IsNullOrWhiteSpace(userid))
+            {
+                userid = "60005813892";
+            }
             var payload = new
             {
                 session = new
