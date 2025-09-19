@@ -99,13 +99,14 @@ public class InterviewApiService : IInterviewApiService
         return result?.Replies ?? new List<string>();
     }
 
-    public async Task<InterviewReportResult> GenerateReport(Guid sessionId, string prompt, int? aiInterviewType = null)
+    public async Task<InterviewReportResult> GenerateReport(Guid sessionId, string prompt, int? aiInterviewType = null, bool? isExit = null)
     {
         var payload = new AIReportVM
         {
             SessionId = sessionId,
             Message = prompt,
-            AIInterviewType = aiInterviewType
+            AIInterviewType = aiInterviewType,
+            isExit = isExit.HasValue ? isExit.Value : false
         };
 
         var response = await _http.PostAsJsonAsync("api/OpenAIApi/report", payload);
