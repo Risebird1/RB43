@@ -1,57 +1,45 @@
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
-using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.AzureTimerFunctions
 {
     public class ResumeParserJob
     {
-        private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        private readonly IMeetingRespository _meetingRespository;
         private readonly ICandidateRepository _candidateRepository;
         private readonly IAzureStorageHelper _azureStorageHelper;
         //private readonly IResumeParserHelper _resumeParserHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly IIRFService _irfService;
-        private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IValidationHelper _validationHelper;
-        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
 
 
         private readonly ILogger log;
 
-        public ResumeParserJob(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-            IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
-            ISASUrlHelper sasUrlHelper, IIRFService irfService,
+        public ResumeParserJob(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
+             ICandidateRepository candidateRepository,
+            IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
-            IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
+            IPdfReaderHelper pdfReaderHelper,
             IOpenAIInterviewerAssistantHelper ai)
-        {
-            _configuration = configuration;
+        {           
             _applicationErrorLogger = applicationErrorLogger;
-            _azureStorageHelper = azureStorageHelper;
-            _meetingRespository = meetingRespository;
-            _sasUrlHelper = sasUrlHelper;
+            _azureStorageHelper = azureStorageHelper; 
             //_resumeParserHelper = resumeParserHelper;
             _candidateRepository = candidateRepository;
             _irfService = irfService;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _validationHelper = validationHelper;
-            _assistantServiceHelper = assistantServiceHelper;
             log = loggerFactory.CreateLogger<ResumeParserJob>();
             _pdfReaderHelper = pdfReaderHelper;
             _ai = ai;
