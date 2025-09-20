@@ -154,6 +154,9 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
             services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
             services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
+            services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
+            services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
+            
             return services;
         }
     }
