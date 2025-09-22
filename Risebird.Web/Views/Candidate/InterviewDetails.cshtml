@@ -295,7 +295,7 @@
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
 
-                                                                <div style="margin: 18px 0px 8px 0px;;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                                <div style="margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
                                                                      onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
                                                                     Click here to join the meeting
                                                                     <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a>
@@ -303,7 +303,7 @@
                                                             }
                                                             else
                                                             {
-                                                                <div style="margin: 18px 0px 8px 0px;" class="meeting-link text-uppercase">
+                                                                <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
                                                                     Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#42a5f57a;position: relative;top:6px;">
                                                                         <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
                                                                     </a>
@@ -1546,7 +1546,7 @@
                             <i class="fa fa-times" style="margin-right: 5px;"></i>Cancel
                         </button>
                         <button type="button" class="btn btn-success" onclick="completeVerification()" id="completeVerificationBtn" disabled>
-                            <i class="fa fa-check" style="margin-right: 5px;"></i>Complete Verification
+                            <i class="fa fa-check" style="margin-right: 5px;"></i>Verify your details
                         </button>
                     </div>
                 </div>
@@ -1554,6 +1554,21 @@
         </div>
     </div>
 </div>
+<script src="~/js/Aadhaar.js?v=2024"></script>
+<script>
+        function BindData(data) {
+        console.log("BindData called with:", data);
+
+        // Set form field values if they exist
+        if (document.getElementById("Name")) $("#Name").val(data.name);
+        if (document.getElementById("Address")) $("#Address").val(data.address);
+        if (document.getElementById("gender")) $("#gender").val(data.gender);
+        if (document.getElementById("dob")) $("#dob").val(data.dob);
+        if (document.getElementById("doc_face")) $("#doc_face").val(data.doc_face);
+
+        console.log("BindData completed successfully");
+    }
+    </script>
 <script>
 // Biometric Verification Modal Functions
 let cameraStream = null;
@@ -1727,64 +1742,56 @@ function updateVerificationStatus() {
 }
 
 function completeVerification() {
+    console.log("=== completeVerification Debug ===");
+    console.log("capturedPhotoData:", capturedPhotoData ? "Present (Length: " + capturedPhotoData.length + ")" : "Missing");
+    console.log("isAadhaarVerified:", isAadhaarVerified);
+    console.log("typeof capturedPhotoData:", typeof capturedPhotoData);
+    console.log("typeof isAadhaarVerified:", typeof isAadhaarVerified);
+    
+    // Check if SweetAlert is available
+    console.log("SweetAlert available:", typeof swal !== 'undefined');
+    
     if (capturedPhotoData && isAadhaarVerified) {
-        // Here you can save the verification data
-        // For now, we'll just show a success message
-        swal.fire({
-            title: "Verification Complete!",
-            text: "Candidate verification has been completed successfully.",
-            type: "success",
-            confirmButtonText: "OK"
-        }).then(function() {
+        console.log("All conditions met - showing success message");
+                            closeBiometricVerificationModal();
+
+        // Test if SweetAlert works
+        try {
+            swal.fire({
+                title: "Verification Complete!",
+                text: "Candidate verification has been completed successfully.",
+                type: "success",
+                confirmButtonText: "OK",
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then(function(result) {
+                console.log("SweetAlert result:", result);
+                console.log("About to call closeBiometricVerificationModal...");
+                closeBiometricVerificationModal();
+                console.log("closeBiometricVerificationModal called successfully");
+            }).catch(function(error) {
+                console.error("SweetAlert error:", error);
+                console.log("Fallback: calling closeBiometricVerificationModal directly...");
+                closeBiometricVerificationModal();
+            });
+        } catch (error) {
+            console.error("Error showing SweetAlert:", error);
+            console.log("Fallback: calling closeBiometricVerificationModal directly...");
             closeBiometricVerificationModal();
-        });
+        }
+    } else {
+        console.log("Conditions NOT met:");
+        console.log("- capturedPhotoData:", capturedPhotoData ? "✓ Present" : "✗ Missing");
+        console.log("- isAadhaarVerified:", isAadhaarVerified ? "✓ True" : "✗ False");
         
-        // You can add AJAX call here to save the verification data
-        // Example:
-        /*
-        $.ajax({
-            type: "POST",
-            url: "/Candidate/SaveVerificationData",
-            data: {
-                candidateId: @Model.CandidateDetails.CandidateMasterId,
-                interviewId: @ViewBag.Interviewid,
-                photoData: capturedPhotoData,
-                aadhaarVerified: true
-            },
-            success: function(data) {
-                // Handle success
-            }
+        swal.fire({
+            title: "Incomplete Verification",
+            text: "Please complete both photo capture and Aadhaar verification.",
+            type: "warning",
+            confirmButtonText: "OK"
         });
-        */
     }
 }
-
-// Override the existing Aadhaar verification functions to update our status
-const originalSubmitOtpnumber = window.submitOtpnumber;
-window.submitOtpnumber = function() {
-    if (Buttonclick == 1) {
-        showloader();
-        $.ajax({
-            type: "POST",
-            url: "/Aadhaar/SubmitOTPNumber",
-            data: { uuid: $("#aadhaaruuid").val(), otp: $("#txtAadhaarOtp").val().trim() },
-            success: function (dataKYC) {
-                // Mark Aadhaar as verified
-                isAadhaarVerified = true;
-                
-                // Update verification status
-                updateVerificationStatus();
-                
-                // Call original function
-                if (originalSubmitOtpnumber) {
-                    originalSubmitOtpnumber();
-                }
-                
-                hideloader();
-            }
-        });
-    }
-};
 
 // Clean up camera when modal is closed
 document.addEventListener('DOMContentLoaded', function() {
@@ -1795,6 +1802,31 @@ document.addEventListener('DOMContentLoaded', function() {
             closeBiometricVerificationModal();
         }
     });
+});
+
+// AJAX interceptor for Aadhaar verification - preserves all original functionality
+$(document).ready(function() {
+    const originalAjax = $.ajax;
+    $.ajax = function(options) {
+        if (options.url === "/Aadhaar/SubmitOTPNumber" && options.type === "POST") {
+            const originalSuccess = options.success;
+            options.success = function(dataKYC) {
+                console.log("Intercepted Aadhaar verification response:", dataKYC);
+                
+                // Set our verification variables for biometric modal
+                isAadhaarVerified = true;
+                
+                // Update verification status for biometric modal
+                updateVerificationStatus();
+                
+                // IMPORTANT: Call the original success callback to preserve all Aadhaar.js functionality
+                if (originalSuccess) {
+                    originalSuccess(dataKYC);
+                }
+            };
+        }
+        return originalAjax.call(this, options);
+    };
 });
 </script>
 <style>
@@ -1905,3 +1937,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </style>
+
+<!-- Aadhaar KYC Popup Modal -->
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:9999;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Candidate Verification Details</h5>
+                <button type="button" class="close" onclick="closeAadhaarKYCpopup()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+                    <!-- Candidate verified data will be displayed here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAadhaarKYCpopup()">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmitDetails" onclick="closeAadhaarKYCpopup()" disabled>Submit Details</button>
+            </div>
+        </div>
+    </div>
+</div>
