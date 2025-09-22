@@ -569,22 +569,27 @@ namespace Risebird.Services.Controllers
                         {
                             if (string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.requestedBy) || string.IsNullOrEmpty(reqData.jobId))
                             {
+                                var returnFlag = false;
                                 var detailsError = new Dictionary<string, string>();
-
                                 if (string.IsNullOrEmpty(reqData.skillChannelId) && string.IsNullOrEmpty(reqData.jobId))
                                 {
                                     details.Add("skillChannelId or jobId", "This field is required.");
+                                    returnFlag = true;
                                 }
                                 if (string.IsNullOrEmpty(reqData.requestedBy))
                                 {
                                     detailsError.Add("requestedBy", "This field is required.");
+                                    returnFlag = true;
                                 }
-                                var errorResponse = new ErrorResponse
+                                if (returnFlag)
                                 {
-                                    Error = "Invalid request parameters.",
-                                    Details = detailsError
-                                };
-                                return new BadRequestObjectResult(errorResponse);
+                                    var errorResponse = new ErrorResponse
+                                    {
+                                        Error = "Invalid request parameters.",
+                                        Details = detailsError
+                                    };
+                                    return new BadRequestObjectResult(errorResponse);
+                                }
                             }
                             var irfid = 0;
                             if (!string.IsNullOrEmpty(reqData.skillChannelId))
