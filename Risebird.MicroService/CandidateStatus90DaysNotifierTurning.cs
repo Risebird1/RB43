@@ -57,7 +57,8 @@ namespace Risebird.MicroService
                     "harshit_jajoo@risebird.io",
                     "tanishka_gupta@risebird.io",
                     "bhawana@turing.com",
-                    "richard.m@turing.com"
+                    "richard.m@turing.com",
+                    "tamara.dokic@turing.com"
                 };
                 ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 ExcelPackage Ep = new ExcelPackage();
