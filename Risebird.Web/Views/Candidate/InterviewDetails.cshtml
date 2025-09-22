@@ -284,8 +284,13 @@
                                                             <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:0px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
-                                                            <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
-                                                            <div style="margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
+                                                            <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
+                                                            <div style="padding:0px;margin:0px 0px 25px 0px;">
+                                                                <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
+                                                                </button>
+                                                            </div>
+                                                            <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
@@ -1454,3 +1459,449 @@
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
+
+
+
+<!-- Biometric Verification Modal -->
+<div id="BiometricVerificationModal" class="modal modal-bg">
+    <div class="modal-dialog modal-xl" role="document" style="max-width: 1200px;">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <i class="fa fa-camera" style="color: white; font-size: 20px;"></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Verification</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeBiometricVerificationModal()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="row">
+                    <!-- Left Section - Camera Capture -->
+                    <div class="col-md-6">
+                        <h6 style="margin-bottom: 15px; color: #333; font-weight: 600;font-size:15px;">
+                            <i class="fa fa-camera" style="margin-right: 8px;"></i>Capture Candidate Photo
+                        </h6>
+                        <div class="camera-container" id="cameraContainer">
+                            <video id="cameraPreview" class="camera-preview" autoplay muted style="display: none;"></video>
+                            <canvas id="captureCanvas" style="display: none;"></canvas>
+                            <img id="capturedImage" class="captured-image" style="display: none;" />
+                            
+                            <div id="cameraPlaceholder" style="text-align: center;">
+                                <i class="fa fa-camera" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                                <p class="camera-status">Click "Start Camera" to begin photo capture</p>
+                                <button type="button" class="capture-btn" onclick="startCamera()" id="startCameraBtn">
+                                    <i class="fa fa-play" style="margin-right: 5px;"></i>Start Camera
+                                </button>
+                            </div>
+                            
+                            <div class="camera-controls" id="cameraControls" style="display: none;">
+                                <button type="button" class="capture-btn" onclick="capturePhoto()" id="captureBtn">
+                                    <i class="fa fa-camera" style="margin-right: 5px;"></i>Capture
+                                </button>
+                                <button type="button" class="retake-btn" onclick="retakePhoto()" id="retakeBtn" style="display: none;">
+                                    <i class="fa fa-refresh" style="margin-right: 5px;"></i>Retake
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <div class="alert alert-info" style="font-size: 12px; margin-bottom:0px;">
+                                <i class="fa fa-info-circle" style="margin-right: 5px;"></i>
+                                <strong>Instructions:</strong> Ensure good lighting and position the candidate's face clearly in the frame before capturing.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Section - Aadhaar Verification -->
+                    <div class="col-md-6 verification-section">
+                        <h6 style="margin-bottom: 15px; color: #333; font-weight: 600;font-size:15px;">
+                            <i class="fa fa-id-card" style="margin-right: 8px;"></i>Aadhaar Verification
+                        </h6>
+                        
+                        <!-- Include the Aadhaar verification partial view -->
+                        <div id="aadhaarVerificationSection">
+                            <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px">
+                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openAadhaarpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
+                            </button>
+                            @await Html.PartialAsync("~/Views/Aadhaar/_AadhaarVerify.cshtml")
+                        </div>
+                        
+                        <!-- Verification Status -->
+                        <div class="mt-3">
+                            <div id="verificationStatus" class="alert alert-warning" style="display: none;margin-top:20px;">
+@*                                 <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
+ *@                                <span id="verificationStatusText" style="font-size:14px;">Please complete both photo capture and Aadhaar verification</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="row">
+                    <div class="col-md-12 text-right" style="background: #ecf0f1;width: calc(100% - 30px);padding:0px 10px 10px 10px; margin:5px 15px 0px 15px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeBiometricVerificationModal()" style="margin-right: 10px;">
+                            <i class="fa fa-times" style="margin-right: 5px;"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="completeVerification()" id="completeVerificationBtn" disabled>
+                            <i class="fa fa-check" style="margin-right: 5px;"></i>Complete Verification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// Biometric Verification Modal Functions
+let cameraStream = null;
+let capturedPhotoData = null;
+let isAadhaarVerified = false;
+
+function openBiometricpopup() {
+    // Show the modal first
+    var modal = document.getElementById("BiometricVerificationModal");
+    if (modal) {
+        modal.style.display = "block";
+        
+        // Reset the modal state after a small delay to ensure DOM is ready
+        setTimeout(function() {
+            resetBiometricModal();
+            updateVerificationStatus();
+        }, 100);
+    } else {
+        console.error("BiometricVerificationModal not found!");
+        alert("Modal not found. Please refresh the page and try again.");
+    }
+}
+
+function closeBiometricVerificationModal() {
+    // Stop camera if running
+    stopCamera();
+    
+    // Close the modal
+    var modal = document.getElementById("BiometricVerificationModal");
+    modal.style.display = "none";
+    
+    // Reset state
+    resetBiometricModal();
+}
+
+function resetBiometricModal() {
+    // Reset camera state
+    capturedPhotoData = null;
+    isAadhaarVerified = false;
+    
+    // Reset UI elements
+    document.getElementById("cameraPlaceholder").style.display = "block";
+    document.getElementById("cameraPreview").style.display = "none";
+    document.getElementById("capturedImage").style.display = "none";
+    document.getElementById("cameraControls").style.display = "none";
+    document.getElementById("startCameraBtn").style.display = "inline-block";
+    document.getElementById("captureBtn").style.display = "inline-block";
+    document.getElementById("retakeBtn").style.display = "none";
+    
+    // Reset Aadhaar verification
+    document.getElementById("divSubmit").style.display = "none";
+    document.getElementById("divValidate").style.display = "inline-block";
+    document.getElementById("divotpvalidation").style.display = "none";
+    $("#aadhaarnumber").val('');
+    $("#txtAadhaarOtp").val('');
+    
+    // Reset verification button
+    document.getElementById("completeVerificationBtn").disabled = true;
+    
+    // Update status
+    updateVerificationStatus();
+}
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ 
+        video: { 
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: 'user' // Front camera
+        } 
+    })
+    .then(function(stream) {
+        cameraStream = stream;
+        const video = document.getElementById("cameraPreview");
+        video.srcObject = stream;
+        video.style.display = "block";
+        
+        // Hide placeholder and show controls
+        document.getElementById("cameraPlaceholder").style.display = "none";
+        document.getElementById("cameraControls").style.display = "flex";
+        document.getElementById("startCameraBtn").style.display = "none";
+        
+        // Update status
+        document.querySelector("#cameraContainer .camera-status").textContent = "Camera ready - Position candidate's face in frame";
+    })
+    .catch(function(error) {
+        console.error("Error accessing camera:", error);
+        alert("Unable to access camera. Please ensure camera permissions are granted and try again.");
+    });
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+}
+
+function capturePhoto() {
+    const video = document.getElementById("cameraPreview");
+    const canvas = document.getElementById("captureCanvas");
+    const context = canvas.getContext("2d");
+    
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Draw video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert to base64
+    capturedPhotoData = canvas.toDataURL("image/jpeg", 0.8);
+    
+    // Show captured image
+    const capturedImage = document.getElementById("capturedImage");
+    capturedImage.src = capturedPhotoData;
+    capturedImage.style.display = "block";
+    
+    // Hide video and show retake button
+    video.style.display = "none";
+    document.getElementById("captureBtn").style.display = "none";
+    document.getElementById("retakeBtn").style.display = "inline-block";
+    
+    // Update status
+    document.querySelector("#cameraContainer .camera-status").textContent = "Photo captured successfully";
+    
+    // Update verification status
+    updateVerificationStatus();
+    
+    // Stop camera
+    stopCamera();
+}
+
+function retakePhoto() {
+    // Reset captured photo
+    capturedPhotoData = null;
+    document.getElementById("capturedImage").style.display = "none";
+    document.getElementById("captureBtn").style.display = "inline-block";
+    document.getElementById("retakeBtn").style.display = "none";
+    
+    // Restart camera
+    startCamera();
+}
+
+function updateVerificationStatus() {
+    const photoCaptured = capturedPhotoData !== null;
+    const aadhaarVerified = isAadhaarVerified;
+    const statusDiv = document.getElementById("verificationStatus");
+    const statusText = document.getElementById("verificationStatusText");
+    const completeBtn = document.getElementById("completeVerificationBtn");
+    
+    if (photoCaptured && aadhaarVerified) {
+        statusDiv.className = "alert alert-success";
+        statusText.innerHTML = '<i class="fa fa-check-circle" style="margin-right: 5px;"></i>Verification complete! Both photo and Aadhaar verification are done.';
+        completeBtn.disabled = false;
+    } else if (photoCaptured && !aadhaarVerified) {
+        statusDiv.className = "alert alert-warning";
+        statusText.innerHTML = '<i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>Photo captured. Please complete Aadhaar verification.';
+        completeBtn.disabled = true;
+    } else if (!photoCaptured && aadhaarVerified) {
+        statusDiv.className = "alert alert-warning";
+        statusText.innerHTML = '<i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>Aadhaar verified. Please capture candidate photo.';
+        completeBtn.disabled = true;
+    } else {
+        statusDiv.className = "alert alert-info";
+        statusText.innerHTML = '<i class="fa fa-info-circle" style="margin-right: 5px;"></i>Please complete both photo capture and Aadhaar verification.';
+        completeBtn.disabled = true;
+    }
+    
+    statusDiv.style.display = "block";
+}
+
+function completeVerification() {
+    if (capturedPhotoData && isAadhaarVerified) {
+        // Here you can save the verification data
+        // For now, we'll just show a success message
+        swal.fire({
+            title: "Verification Complete!",
+            text: "Candidate verification has been completed successfully.",
+            type: "success",
+            confirmButtonText: "OK"
+        }).then(function() {
+            closeBiometricVerificationModal();
+        });
+        
+        // You can add AJAX call here to save the verification data
+        // Example:
+        /*
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/SaveVerificationData",
+            data: {
+                candidateId: @Model.CandidateDetails.CandidateMasterId,
+                interviewId: @ViewBag.Interviewid,
+                photoData: capturedPhotoData,
+                aadhaarVerified: true
+            },
+            success: function(data) {
+                // Handle success
+            }
+        });
+        */
+    }
+}
+
+// Override the existing Aadhaar verification functions to update our status
+const originalSubmitOtpnumber = window.submitOtpnumber;
+window.submitOtpnumber = function() {
+    if (Buttonclick == 1) {
+        showloader();
+        $.ajax({
+            type: "POST",
+            url: "/Aadhaar/SubmitOTPNumber",
+            data: { uuid: $("#aadhaaruuid").val(), otp: $("#txtAadhaarOtp").val().trim() },
+            success: function (dataKYC) {
+                // Mark Aadhaar as verified
+                isAadhaarVerified = true;
+                
+                // Update verification status
+                updateVerificationStatus();
+                
+                // Call original function
+                if (originalSubmitOtpnumber) {
+                    originalSubmitOtpnumber();
+                }
+                
+                hideloader();
+            }
+        });
+    }
+};
+
+// Clean up camera when modal is closed
+document.addEventListener('DOMContentLoaded', function() {
+    // Close camera when clicking outside modal
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById("BiometricVerificationModal");
+        if (event.target === modal) {
+            closeBiometricVerificationModal();
+        }
+    });
+});
+</script>
+<style>
+    /* Camera Capture Modal Styles */
+    #BiometricVerificationModal {
+        z-index: 9999;
+    }
+
+    .camera-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: #f5f5f5;
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .camera-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .camera-controls {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+    }
+
+    .capture-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .capture-btn:hover {
+            background: #0056b3;
+        }
+
+        .capture-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+    .retake-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .retake-btn:hover {
+            background: #c82333;
+        }
+
+    .captured-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .camera-status {
+        text-align: center;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .verification-section {
+        border-left: 1px solid #dee2e6;
+        padding-left: 20px;
+    }
+    #BiometricVerificationModal .modal-dialog{
+        width: 800px;
+    }
+    @@media (max-width: 768px) {
+        .modal-title{
+            font-size:16px!important;
+        }
+        #BiometricVerificationModal .modal-dialog{
+        width: 95%!important;
+    }
+       .verification-section {
+       padding-left: 10px;}
+    }
+    @@media (max-width: 767px) {
+     .verification-section {
+            border-left: none;
+            border-top: 1px solid #dee2e6;
+            padding-left: 0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+    }
+</style>
