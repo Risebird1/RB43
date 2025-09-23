@@ -46,6 +46,9 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService _interviewerService;
         private readonly string employementapikey;
         private readonly string employementendpoint;
+        private readonly string faceCompareApiendpoint;
+        private readonly string faceCompare_api_key;
+        private readonly string faceCompare_salt;
 
         public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
@@ -69,6 +72,9 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             employementapikey = _configuration["EmploymentVerfication:apikey"];
             employementendpoint = _configuration["EmploymentVerfication:endPoint"];
+            faceCompareApiendpoint = _configuration["AadhaarApiDetails:faceCompareEndPoint"];
+            faceCompare_api_key = _configuration["AadhaarApiDetails:faceCompareApiKey"];
+            faceCompare_salt = _configuration["AadhaarApiDetails:faceCompareSalt"];
         }
 
         public IActionResult Index()
@@ -499,23 +505,26 @@ namespace Risebird.Web.Controllers
             }
             return (buf);
         }
-        public async Task<int> Verification_FaceMatch_veri5(string imagefirst, string secondinamge)
+        public async Task<int> Verification_FaceMatch_veri5(string imagefirst, string secondinamge, bool imageinbase64 = false)
         {
             var model = new AadhaarVM();
             var datenow = GetCurrentUnixTimestampMillis();
             SetHeaderValue(model.headers, datenow);
-            model.request.api_key = api_key;
+            model.request.api_key = faceCompare_api_key;
             model.request.request_id = Guid.NewGuid().ToString();
             model.request.purpose = "VERIFY";
-            model.request.image_1 = ConvertImageURLToBase64(imagefirst);
-            model.request.image_2 = ConvertImageURLToBase64(secondinamge);
-            var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
+            if (!imageinbase64)
+            {
+                model.request.image_1 = ConvertImageURLToBase64(imagefirst);
+                model.request.image_2 = ConvertImageURLToBase64(secondinamge);
+            }
+            else
+            {
+                model.request.image_1 = imagefirst;
+                model.request.image_2 = secondinamge;
+            }
+            var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + faceCompare_api_key + "|" + faceCompare_salt;
             model.request.hash = getHashSha256(hashstring);
-            //var client = new RestClient(apiendpoint + "getCaptcha");
-            //var request = new RestRequest(apiendpoint + "getCaptcha", Method.Post);
-            //request.AddHeader("content-type", "application/json");
-            //request.AddJsonBody(model);
-            //RestResponse response = await client.ExecuteAsync(request);
 
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
@@ -523,7 +532,7 @@ namespace Risebird.Web.Controllers
                 { "Content-Type", "application/json" }
             };
 
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "faceCompare", Method.Post, model, headers);
+            var response = await _httpRequestHelper.MakeHttpRequest(faceCompareApiendpoint + "faceCompare", Method.Post, model, headers);
 
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
@@ -1167,21 +1176,24 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveVerificationData(int interviewId, string capturedPhotoData, string aadhaarPhotoData)
+        public async Task<IActionResult> SaveVerificationData(int interviewId, string capturedPhotoData, string aadhaarPhotoData, string Name, string Address, string gender, string dob, string email)
         {
             try
             {
                 capturedPhotoData = capturedPhotoData.Replace("data:image/jpeg;base64,", "");
-                var matchscore = await Verification_FaceMatch_veri5(capturedPhotoData, aadhaarPhotoData);
-                var verificationData = new
-                {
-                    InterviewId = interviewId,
-                    CapturedPhotoData = capturedPhotoData,
-                    AadhaarPhotoData = aadhaarPhotoData,
-                    VerificationTimestamp = DateTime.Now,
-                    Matchscore = matchscore
-                };
-
+                var matchscore = await Verification_FaceMatch_veri5(capturedPhotoData, aadhaarPhotoData, true);
+                var aadhaarKYCmodel = new AadhaarData();
+                aadhaarKYCmodel.Name = Name;
+                aadhaarKYCmodel.Address = Address;
+                aadhaarKYCmodel.gender = gender;
+                aadhaarKYCmodel.dob = dob;
+                aadhaarKYCmodel.doc_face = aadhaarPhotoData;
+                aadhaarKYCmodel.email = email;
+                aadhaarKYCmodel.reference_id = interviewId.ToString();
+                aadhaarKYCmodel.verified_using = "Interview";
+                aadhaarKYCmodel.passport_image = capturedPhotoData;
+                aadhaarKYCmodel.matchPercentage = matchscore.ToString();
+                await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
                 return Json(new { success = true, message = "Verification data saved successfully" });
             }
             catch (Exception ex)

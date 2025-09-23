@@ -104,8 +104,8 @@
 
 
     /*
-                                                            *  STYLE 1
-                                                            */
+                                                                                *  STYLE 1
+                                                                                */
 
 
     #style-4::-webkit-scrollbar {
@@ -1557,17 +1557,20 @@
 </div>
 @await Html.PartialAsync("~/Views/Aadhaar/_AadhaarVerify.cshtml")
 <script>
-        function BindData(data) {
-            aadhaarPhotoData=data.doc_face;
+    var aadhaarname="";
+    var aadhaaraddress="";
+    var aadhaargender="";
+    var aadhaardob="";
+    function BindData(data) {
         console.log("BindData called with:", data);
-
-        // Set form field values if they exist
-        if (document.getElementById("Name")) $("#Name").val(data.name);
-        if (document.getElementById("Address")) $("#Address").val(data.address);
-        if (document.getElementById("gender")) $("#gender").val(data.gender);
-        if (document.getElementById("dob")) $("#dob").val(data.dob);
-        if (document.getElementById("doc_face")) $("#doc_face").val(data.doc_face);
-
+        if(data!=null)
+        {
+            aadhaarname=data.name;
+            aadhaaraddress=data.address;
+            aadhaargender=data.gender;
+            aadhaardob=data.dob;
+            aadhaarPhotoData=data.doc_face;
+        }
         console.log("BindData completed successfully");
     }
 </script>
@@ -1808,7 +1811,7 @@
                      $.ajax({
                     type: "POST",
                     url: "/Aadhaar/SaveVerificationData",
-                    data: { id: $("#hidtxtid").val(), capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData},
+                    data: { id: $("#hidtxtid").val(), capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
                     success: function (data) {
                             closeBiometricVerificationModal();
                     }
