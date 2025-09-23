@@ -1172,7 +1172,6 @@ namespace Risebird.Web.Controllers
             try
             {
                 capturedPhotoData = capturedPhotoData.Replace("data:image/jpeg;base64,", "");
-
                 var matchscore = await Verification_FaceMatch_veri5(capturedPhotoData, aadhaarPhotoData);
                 var verificationData = new
                 {
