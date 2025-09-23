@@ -30,6 +30,8 @@ namespace Risebird.Entities.ViewModel
         public string CandidateName { get; set; }
         public string CandidateEmail { get; set; }
         public DateTime InterviewDate { get; set; }
+        public int InterviewId { get; set; }
+        public string SessionId { get; set; } //Guid
     }
 
 }

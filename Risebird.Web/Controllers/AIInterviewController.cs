@@ -221,7 +221,7 @@ namespace Risebird.Web.Controllers
                                                 IconColor = "#28a745",
                                                 ButtonText = "Close",
                                                 ButtonClass = "btn-success",
-                                                CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                                CandidateName = meetingDetails.candidateName ?? "",
                                                 InterviewDate = meetingDetails.interviewDate,
                                                 SessionId = sid.ToString(),
                                                 ExitTime = DateTime.Now,
@@ -245,7 +245,7 @@ namespace Risebird.Web.Controllers
                                             IconColor = "#28a745",
                                             ButtonText = "Close",
                                             ButtonClass = "btn-success",
-                                            CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                            CandidateName = meetingDetails.candidateName ?? "",
                                             InterviewDate = meetingDetails.interviewDate,
                                             SessionId = sid.ToString(),
                                             ExitTime = DateTime.Now,
@@ -265,7 +265,7 @@ namespace Risebird.Web.Controllers
                                         IconColor = "#28a745",
                                         ButtonText = "Close",
                                         ButtonClass = "btn-success",
-                                        CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                        CandidateName = meetingDetails.candidateName ?? "",
                                         InterviewDate = meetingDetails.interviewDate,
                                         SessionId = sid.ToString(),
                                         ExitTime = DateTime.Now,
@@ -440,7 +440,7 @@ namespace Risebird.Web.Controllers
                                             IconColor = "#28a745",
                                             ButtonText = "Close",
                                             ButtonClass = "btn-success",
-                                            CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                            CandidateName = meetingDetails.candidateName ?? "",
                                             InterviewDate = meetingDetails.interviewDate,
                                             SessionId = sid.ToString(),
                                             ExitTime = DateTime.Now,
@@ -461,7 +461,7 @@ namespace Risebird.Web.Controllers
                                         IconColor = "#28a745",
                                         ButtonText = "Close",
                                         ButtonClass = "btn-success",
-                                        CandidateName = meetingDetails.candidateName ?? "Candidate",
+                                        CandidateName = meetingDetails.candidateName ?? "",
                                         InterviewDate = meetingDetails.interviewDate,
                                         SessionId = sid.ToString(),
                                         ExitTime = DateTime.Now,
@@ -933,6 +933,11 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Report(Guid seId, bool redo = false, bool? isExit = null)//Guid seId
         {
+            string profileName = string.Empty;
+            profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName.Replace("\"", "");
+            ViewBag.ProfileName = profileName;
+
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
             if (meetingDetails?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
             {
@@ -1031,6 +1036,8 @@ namespace Risebird.Web.Controllers
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.InterviewDate = meetingDetails.interviewDate;
+                reportModel.SessionId = seId.ToString();
+                reportModel.InterviewId = meetingDetails.InterviewId;
                 return View(reportModel);
             }
             else
@@ -1131,6 +1138,8 @@ namespace Risebird.Web.Controllers
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.InterviewDate = meetingDetails.interviewDate;
+                reportModel.SessionId = seId.ToString();
+                reportModel.InterviewId = meetingDetails.InterviewId;
                 return View(reportModel);
             }
         }
@@ -1343,6 +1352,38 @@ namespace Risebird.Web.Controllers
                 return eval;
             }
             catch { return null; }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveCandidateAnswerById(int questionId, string candidateAnswer)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    var model = await _aiinterviewerService.UpdateCandidateAnswerById(questionId, candidateAnswer);
+                    if (model)
+                    {
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json(false);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }
