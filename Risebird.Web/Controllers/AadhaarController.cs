@@ -1181,8 +1181,6 @@ namespace Risebird.Web.Controllers
                     VerificationTimestamp = DateTime.Now,
                     Matchscore = matchscore
                 };
-                // TODO: Add your verification logic here
-                // For now, just return success
 
                 return Json(new { success = true, message = "Verification data saved successfully" });
             }
