@@ -22,5 +22,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId);
         Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId);
         Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId);
+        Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer);
     }
 }

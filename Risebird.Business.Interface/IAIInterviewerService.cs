@@ -22,5 +22,6 @@ namespace Risebird.Business.Interface
         Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null);
         Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId);
         Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId);
+        Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer);
     }
 }
