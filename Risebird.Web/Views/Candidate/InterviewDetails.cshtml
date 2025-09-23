@@ -285,13 +285,13 @@
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
                                                             <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
-                                                              @if (Model.CandidateDetails.IsAIInterview){
+                                                             @*  @if (Model.CandidateDetails.IsAIInterview){ *@
                                                             <div style="padding:0px;margin:0px 0px 25px 0px;">
                                                                 <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
                                                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
                                                                 </button>
                                                             </div>
-                                                              }
+                                                             @*  } *@
                                                             <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
@@ -307,7 +307,7 @@
                                                             else
                                                             {
                                                                 <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
-                                                                    Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#42a5f57a;position: relative;top:6px;">
+                                                                    Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#b6bdc37a;position: relative;top:6px;">
                                                                         <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
                                                                     </a>
                                                                 </div>
@@ -1525,7 +1525,7 @@
                         </h6>
                         
                         <div id="aadhaarVerificationSection">
-                            <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px">
+                            <button type="button" class="clickhere_btn callsubmit" style="float:left;width:180px">
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="openAadhaarpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Aadhar Details</font></span>
                             </button>
                             @await Html.PartialAsync("~/Views/Aadhaar/_AadhaarVerify.cshtml")
@@ -1743,6 +1743,36 @@ function updateVerificationStatus() {
     statusDiv.style.display = "block";
 }
 
+// Function to update meeting link styling based on verification status
+function updateMeetingLinkStyling() {
+    const meetingLinks = document.querySelectorAll('.meeting-link');
+    meetingLinks.forEach(function(link) {
+        if (isAadhaarVerified && capturedPhotoData) {
+            link.style.color = '#007bff';
+            link.style.fontWeight = '600';
+            const meetingButton = link.querySelector('.click_herebtn');
+            if (meetingButton) {
+                meetingButton.style.backgroundColor = '#87CEEB';
+                meetingButton.style.color = '#000';
+                meetingButton.style.fontWeight = '600';
+                meetingButton.style.border = '1px solid rgb(204 218 233)';
+            }
+        } else {
+            link.style.color = '';
+            link.style.fontWeight = '';
+            
+            const meetingButton = link.querySelector('.click_herebtn');
+            if (meetingButton) {
+                meetingButton.style.backgroundColor = '';
+                meetingButton.style.color = '';
+                meetingButton.style.fontWeight = '';
+                meetingButton.style.border = '';
+            }
+        }
+    });
+}
+
+// Update the completeVerification function to call updateMeetingLinkStyling
 function completeVerification() {
     console.log("=== completeVerification Debug ===");
     console.log("capturedPhotoData:", capturedPhotoData ? "Present (Length: " + capturedPhotoData.length + ")" : "Missing");
@@ -1755,7 +1785,11 @@ function completeVerification() {
     
     if (capturedPhotoData && isAadhaarVerified) {
         console.log("All conditions met - showing success message");
-                            closeBiometricVerificationModal();
+        
+        // Update meeting link styling to blue
+        updateMeetingLinkStyling();
+        
+        closeBiometricVerificationModal();
 
         // Test if SweetAlert works
         try {
@@ -1794,6 +1828,36 @@ function completeVerification() {
         });
     }
 }
+
+// Also update the AJAX interceptor to call updateMeetingLinkStyling when Aadhaar verification completes
+$(document).ready(function() {
+    const originalAjax = $.ajax;
+    $.ajax = function(options) {
+        if (options.url === "/Aadhaar/SubmitOTPNumber" && options.type === "POST") {
+            const originalSuccess = options.success;
+            options.success = function(dataKYC) {
+                console.log("Intercepted Aadhaar verification response:", dataKYC);
+                
+                // Set our verification variables for biometric modal
+                isAadhaarVerified = true;
+                
+                // Update verification status for biometric modal
+                updateVerificationStatus();
+                
+                // Update meeting link styling if photo is also captured
+                if (capturedPhotoData) {
+                    updateMeetingLinkStyling();
+                }
+                
+                // IMPORTANT: Call the original success callback to preserve all Aadhaar.js functionality
+                if (originalSuccess) {
+                    originalSuccess(dataKYC);
+                }
+            };
+        }
+        return originalAjax.call(this, options);
+    };
+});
 
 // Clean up camera when modal is closed
 document.addEventListener('DOMContentLoaded', function() {
