@@ -7290,30 +7290,6 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
         #endregion
-        [HttpPost]
-        public IActionResult SaveVerificationData(int candidateId, int interviewId, string capturedPhotoData, string aadhaarPhotoData)
-        {
-            try
-            {
-                var verificationData = new
-                {
-                    CandidateId = candidateId,
-                    InterviewId = interviewId,
-                    CapturedPhotoData = capturedPhotoData,
-                    AadhaarPhotoData = aadhaarPhotoData,
-                    VerificationTimestamp = DateTime.Now
-                };
-
-                // TODO: Add your verification logic here
-                // For now, just return success
-
-                return Json(new { success = true, message = "Verification data saved successfully" });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in SaveVerificationData: {ex.Message}");
-                return Json(new { success = false, message = "Error saving verification data: " + ex.Message });
-            }
-        }
+        
     }
 }

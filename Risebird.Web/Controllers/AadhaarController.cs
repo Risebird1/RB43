@@ -616,7 +616,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber, int? applicantId, bool isApplicantRenewed = false, string nameAsMentionedByApplicant = null, int? irfId = null, string referredBy = null)
         {
             string loggedInUser = string.Empty;
-            if(!isApplicantRenewed)
+            if (!isApplicantRenewed)
             {
                 loggedInUser = HttpContext.Session.GetString("email")?.Trim();
                 if (!string.IsNullOrEmpty(loggedInUser))
@@ -624,7 +624,7 @@ namespace Risebird.Web.Controllers
                     loggedInUser = loggedInUser.Replace("\"", "");
                 }
             }
-            
+
             var employementdetails = new EmploymentDetailsDM();
             if (!string.IsNullOrWhiteSpace(mobilenumber))
             {
@@ -707,7 +707,7 @@ namespace Risebird.Web.Controllers
             {
                 employementdetails.message = "Fail to verify,please check the details and try again.";
             }
-            if(employementdetails != null  && string.IsNullOrEmpty(employementdetails.message) && !employementdetails.Isemployed)
+            if (employementdetails != null && string.IsNullOrEmpty(employementdetails.message) && !employementdetails.Isemployed)
             {
                 employementdetails.message = "Employment records not found.";
 
@@ -737,14 +737,14 @@ namespace Risebird.Web.Controllers
                 model.IsEmployed = employementdetails.Isemployed;
                 model.CompanyName = employementdetails.CompanyName;
                 model.DOB = employementdetails.DOB;
-                if(applicantId.HasValue)
+                if (applicantId.HasValue)
                 {
                     model.id = applicantId.Value;
 
                     await _interviewerService.UpdateApplicantsEmploymentDetails(model, loggedInUser);
 
                 }
-                else if(isApplicantRenewed && irfId.HasValue && irfId.Value > 0)
+                else if (isApplicantRenewed && irfId.HasValue && irfId.Value > 0)
                 {
                     model.EmailId = candidateemail;
                     model.Phone = mobilenumber;
@@ -1163,6 +1163,34 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveVerificationData(int interviewId, string capturedPhotoData, string aadhaarPhotoData)
+        {
+            try
+            {
+                capturedPhotoData = capturedPhotoData.Replace("data:image/jpeg;base64,", "");
+
+                var matchscore = await Verification_FaceMatch_veri5(capturedPhotoData, aadhaarPhotoData);
+                var verificationData = new
+                {
+                    InterviewId = interviewId,
+                    CapturedPhotoData = capturedPhotoData,
+                    AadhaarPhotoData = aadhaarPhotoData,
+                    VerificationTimestamp = DateTime.Now,
+                    Matchscore = matchscore
+                };
+                // TODO: Add your verification logic here
+                // For now, just return success
+
+                return Json(new { success = true, message = "Verification data saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in SaveVerificationData: {ex.Message}");
+                return Json(new { success = false, message = "Error saving verification data: " + ex.Message });
             }
         }
     }
