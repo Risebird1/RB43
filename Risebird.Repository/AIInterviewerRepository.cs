@@ -460,5 +460,31 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@questionId", questionId);
+                    parameters.Add("@updatedAnswer", updatedAnswer);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateCandidateAnswerById", parameters,
+                         commandType: CommandType.StoredProcedure, commandTimeout: 150);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
     }
 }
