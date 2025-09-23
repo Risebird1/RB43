@@ -285,20 +285,19 @@
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
                                                             <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
-                                                             @*  @if (Model.CandidateDetails.IsAIInterview){ *@
-                                                            <div style="padding:0px;margin:0px 0px 25px 0px;">
+@*                                                              @if (Model.CandidateDetails.IsAIInterview){*@                                                            <div style="padding:0px;margin:0px 0px 25px 0px;">
                                                                 <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
                                                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
                                                                 </button>
                                                             </div>
-                                                             @*  } *@
+                                                            @*  }  *@
                                                             <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
 
-                                                                <div  style="margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                                <div  style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
                                                                      onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
                                                                     Click here to join the meeting
                                                                     <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
@@ -306,8 +305,8 @@
                                                             }
                                                             else
                                                             {
-                                                                <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
-                                                                    Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#b6bdc37a;position: relative;top:6px;">
+                                                                    <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
+                                                                    Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;position: relative;top:6px;background:#b6bdc37a;">
                                                                         <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
                                                                     </a>
                                                                 </div>
@@ -1750,6 +1749,7 @@ function updateMeetingLinkStyling() {
         if (isAadhaarVerified && capturedPhotoData) {
             link.style.color = '#007bff';
             link.style.fontWeight = '600';
+            
             const meetingButton = link.querySelector('.click_herebtn');
             if (meetingButton) {
                 meetingButton.style.backgroundColor = '#87CEEB';
@@ -1758,6 +1758,7 @@ function updateMeetingLinkStyling() {
                 meetingButton.style.border = '1px solid rgb(204 218 233)';
             }
         } else {
+            // Reset to default styling
             link.style.color = '';
             link.style.fontWeight = '';
             
