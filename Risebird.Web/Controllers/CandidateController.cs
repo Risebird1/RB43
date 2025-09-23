@@ -7295,10 +7295,6 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                Console.WriteLine($"Received verification data for candidate {candidateId}, interview {interviewId}");
-                Console.WriteLine($"Captured photo length: {capturedPhotoData?.Length ?? 0}");
-                Console.WriteLine($"Aadhaar photo length: {aadhaarPhotoData?.Length ?? 0}");
-
                 var verificationData = new
                 {
                     CandidateId = candidateId,

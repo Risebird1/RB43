@@ -285,32 +285,35 @@
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
                                                             <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
+                                                              @if (Model.CandidateDetails.IsAIInterview){
                                                             <div style="padding:0px;margin:0px 0px 25px 0px;">
                                                                 <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
                                                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
                                                                 </button>
                                                             </div>
+                                                              }
                                                             <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
+                                                            <div>
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
 
-                                                                <div style="margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                                <div  style="margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
                                                                      onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
                                                                     Click here to join the meeting
-                                                                    <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a>
+                                                                    <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
                                                                 </div>
                                                             }
                                                             else
                                                             {
                                                                 <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
                                                                     Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#42a5f57a;position: relative;top:6px;">
-                                                                        <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
+                                                                        <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
                                                                     </a>
                                                                 </div>
                                                                 <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
                                                             }
-
+                                                            </div>
 
                                                             @if (item.interviewDate >= DateTime.Now)
                                                             {
@@ -1521,10 +1524,9 @@
                             <i class="fa fa-id-card" style="margin-right: 8px;"></i>Aadhaar Verification
                         </h6>
                         
-                        <!-- Include the Aadhaar verification partial view -->
                         <div id="aadhaarVerificationSection">
                             <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px">
-                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openAadhaarpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
+                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openAadhaarpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Aadhar Details</font></span>
                             </button>
                             @await Html.PartialAsync("~/Views/Aadhaar/_AadhaarVerify.cshtml")
                         </div>
