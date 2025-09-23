@@ -104,8 +104,8 @@
 
 
     /*
-                                                                                *  STYLE 1
-                                                                                */
+                                                                                    *  STYLE 1
+                                                                                    */
 
 
     #style-4::-webkit-scrollbar {
@@ -287,7 +287,7 @@
                                                             <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
                                                             @* @if (Model.CandidateDetails.IsAIInterview){*@                                                            <div style="padding:0px;margin:0px 0px 25px 0px;">
                                                                 <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
-                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup(@item.Interviewid)" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
                                                                 </button>
                                                             </div>
                                                             @*  }  *@
@@ -1580,14 +1580,15 @@
     let capturedPhotoData = null;
     let aadhaarPhotoData = null;
     let isAadhaarVerified = false;
+    var aadhaarinterviewid = 0;
 
 
-    function openBiometricpopup() {
+    function openBiometricpopup(interviewid) {
         // Show the modal first
+        aadhaarinterviewid=interviewid;
         var modal = document.getElementById("BiometricVerificationModal");
         if (modal) {
             modal.style.display = "block";
-
             // Reset the modal state after a small delay to ensure DOM is ready
             setTimeout(function() {
                 resetBiometricModal();
@@ -1811,7 +1812,7 @@
                      $.ajax({
                     type: "POST",
                     url: "/Aadhaar/SaveVerificationData",
-                    data: { id: $("#hidtxtid").val(), capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
+                    data: { id: aadhaarinterviewid, capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
                     success: function (data) {
                             closeBiometricVerificationModal();
                     }
