@@ -158,5 +158,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.UpdateCandidateAnswerById(questionId, updatedAnswer);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
