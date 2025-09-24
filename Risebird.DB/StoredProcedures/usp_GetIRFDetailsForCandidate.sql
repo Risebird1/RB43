@@ -31,7 +31,8 @@ Begin
  end as [Name],ir.IRfId as IRFName,ul.EmailId, ul.MobileNumber, ul.uniqueid,    
  ir.JDTiltle, ir.JDLink, ir.ClientName, ir.CalendlyLink, ir.PrimarySkillInvite, cl.CompanyLink,     
  cl.CompanyVideoLink, ulr.EmailId as ChannelOwnerEmail,     
- ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact,ulcr.MobileNumber as ClientHRAttemptContactMobile,cl.LogoLink ,ca.CandidateMasterId as CandidateMasterId,
+ ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact,ulcr.MobileNumber as ClientHRAttemptContactMobile,
+ cl.LogoLink ,ca.CandidateMasterId as CandidateMasterId, ir.IsAIInterview,
  ir.CandidateIdverification,ir.CandidateVideo,cf.FormURL as ConsentForm
  from Candidate ca join irf ir on ca.IRFId=ir.id    
  join CandidatesMaster cm on cm.id=ca.CandidateMasterId    
@@ -43,8 +44,10 @@ Begin
  where ul.IsActive =1 and ul.emailid =@EmailParam and ir.Id = @irfIdParam    
     
  select im.id as Interviewid, im.resumeLink, im.zoomLink, im.interviewDate, im.candidateEmail, im.interviewSlot,    
- im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus, ulim.MobileNumber,im.TimeZoneoffset,im.TimeZonesValue    
+ im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus, ulim.MobileNumber,im.TimeZoneoffset,im.TimeZonesValue,
+ im.SessionId, ISNULL(aad.id, 0) as AadharVerificationId
  from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id  
+ left join AadhaarDetails aad on aad.reference_id = im.id
  left join UserList ulim on ulim.EmailId=im.interviewer  
  where IRFId = @IRFName and candidateEmail = @EmailParam    
     
