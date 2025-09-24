@@ -17,7 +17,8 @@ AS
 Begin
 DECLARE @TempCandidates TABLE
 (
-    Interviewid INT,
+    InterviewId INT,
+	CandidateId INT,
     candidateemailId VARCHAR(200),
 	candidatestatus varchar(50)
 );
@@ -33,7 +34,7 @@ begin
 
 	if(@CandidateId=0)
 	begin
-		Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(0,@CandidateEmail,'Candidate Not Found')
+		Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(0,0,@CandidateEmail,'Candidate Not Found')
 	end
 	if(@JobId!='')
 	begin
@@ -47,6 +48,7 @@ begin
 	if(@SkillChannelId='')
 	begin
 		Set @IRFIntid=(Select id From IRF where IRFId=@SkillChannelId)
+		Set @FKCandidateId=(Select id From Candidate where CandidateMasterId=@CandidateId and IRFId=@IRFIntid)
 		if(@RoleId!=9)
 		begin
 			Set @AccessCount =(Select Count(id) From TransClientUser where ClientUserId=@Userid and IRFId=@IRFIntid and isactive=1)
@@ -63,7 +65,7 @@ begin
 				update [dbo].[InterviewMeetings] set confirmationStatus=2,CancellationReason='Cancel By Client',Cancellationsource=@RequestedBy where id = @Interviewid
 				INSERT INTO CandidateStatus (IRFId, CandidateId,  Comments, [Date], [Status], [PerformedBy],[InterviewId])        
 				VALUES (@IRFIntid, @CandidateId,'Candidate Cancelled', @CurrentDate, 18, @RequestedBy,@Interviewid)   
-				Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(@Interviewid,@CandidateEmail,'Cancel the interview')
+				Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(@Interviewid,@FKCandidateId,@CandidateEmail,'Cancel the interview')
 			end
 			else
 			begin
@@ -71,11 +73,11 @@ begin
 				Set @Interviewid=(Select top(1) im.id from InterviewMeetings im where candidateEmail=@CandidateEmail and IRFId=@SkillChannelId and ISNULL(im.RedoInterview,0)=0 and confirmationStatus=1 order by Interviewdate desc)
 				if(@MeetingStatus=4 or @MeetingStatus=6 or @MeetingStatus=7 or @MeetingStatus=8)
 				begin
-					Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(@Interviewid,@CandidateEmail,'Already Completed')
+					Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(@Interviewid,@FKCandidateId,@CandidateEmail,'Already Completed')
 				end
 				else
 				begin
-					Set @FKCandidateId=(Select id From Candidate where CandidateMasterId=@CandidateId and IRFId=@IRFIntid)
+					
 					IF EXISTS(select 1 from ColdCandidateInfos where FKCandidateId=@FKCandidateId)
 					Begin
 						update ColdCandidateInfos set IsColdCandidate=1,ColdMarkedBY=@RequestedBy,ColdMarkedDate=@CurrentDate,ColdInfo='Drop By Client' where FKCandidateId=@FKCandidateId
@@ -86,18 +88,18 @@ begin
 					End
 					--update [dbo].[InterviewMeetings] set confirmationStatus=2,CancellationReason='Cold Candidate: Drop By Client',Cancellationsource=@RequestedBy where id = @Interviewid
 					Exec usp_AddCandidateStatusWebHookData @CandidateEmail, @SkillChannelId, 'coldcandidate' 
-					Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(0,@CandidateEmail,'Mark cold Candidate')
+					Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(0,@FKCandidateId,@CandidateEmail,'Mark cold Candidate')
 				end
 			end
 		end
 		else
 		begin
-			Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(0,@CandidateEmail,'You are not able to access this data')
+			Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(0,@FKCandidateId,@CandidateEmail,'You are not able to access this data')
 		end
 	end
 	else
 	begin
-		Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(0,@CandidateEmail,'Candidate Not Found')
+		Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(0,0,@CandidateEmail,'Candidate Not Found')
 	end
 end
 else if(@Type='AllData')
@@ -150,8 +152,10 @@ begin
 	(Select IRF.id as IRFId,cm.id as CandidateId,'Candidate Cancelled' as Comments, @CurrentDate as [Date], 18 as [Status], @RequestedBy as PerformedBy,im.id as InterviewId From InterviewMeetings im join @InterviewTable it on it.id=im.id join IRF on IRF.IRFId=im.IRFId
 	 join UserList ul on ul.Emailid=im.CandidateEmail join CandidatesMaster cm on cm.Userid=ul.id)
 
-	Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) 
-	(Select im.id as Interviewid,im.CandidateEmail as candidateemailId,'Cancel the interview' as candidatestatus From InterviewMeeting im join @InterviewTable it on it.id=im.id)
+	Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) 
+	(Select im.id as Interviewid,caa.id as CandidateId,im.CandidateEmail as candidateemailId,'Cancel the interview' as candidatestatus 
+	From InterviewMeetings im join @InterviewTable it on it.id=im.id join IRF on IRF.IRFId=im.IRFId 
+	Outer Apply (Select ca.id from UserList ul join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.IRFId=IRF.IRFId and ca.CandidateMasterId=cm.id where ul.EmailId=im.candidateEmail) caa)
 --End: Future Interviews
 
 --Start : Past Interviews
@@ -162,7 +166,7 @@ begin
 	MERGE ColdCandidateInfos AS target
 	USING (
 		SELECT ca.id as FKCandidateId,IRF.Id as IRFIntid
-		FROM @InterviewTable t join InterviewMeeting im on im.id=t.id
+		FROM @InterviewTable t join InterviewMeetings im on im.id=t.id
 		join IRF on IRF.IRFid=im.IRFId
 		JOIN UserList ul on ul.Emailid = im.CandidateEmail
 		join CandidatesMaster cm on cm.Userid=ul.id
@@ -216,7 +220,7 @@ begin
 		Set @ColdCandidateIRFId=(Select IRF.IRFId from Candidate ca join IRF on IRF.id=ca.IRFId where ca.id=@ColdCandidateId)
 		Set @ColdCandidateEmailId=(Select ul.Emailid from Candidate ca join CandidatesMaster cm on cm.id=ca.CandidateMasterId join UserList ul on ul.id=cm.Userid where ca.id=@ColdCandidateId)
 		Exec usp_AddCandidateStatusWebHookData @ColdCandidateEmailId, @ColdCandidateIRFId, 'coldcandidate' 
-		Insert into @TempCandidates(Interviewid,candidateemailId,candidatestatus) values(0,@ColdCandidateEmailId,'Mark cold Candidate')
+		Insert into @TempCandidates(InterviewId,CandidateId,candidateemailId,candidatestatus) values(0,@ColdCandidateId,@ColdCandidateEmailId,'Mark cold Candidate')
 		-- Remove the processed row so loop can move on
 		DELETE TOP (1)
 		FROM @CandidateColdTable
