@@ -7290,5 +7290,6 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
         #endregion
+        
     }
 }

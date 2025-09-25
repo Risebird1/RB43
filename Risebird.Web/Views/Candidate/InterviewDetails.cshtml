@@ -17,153 +17,153 @@
 <style>
 
     .vertical-mdl-tabs .mdl-tabs__tab-bar {
-        -webkit-flex-direction: column;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        margin-bottom: 35px;
-        height: inherit;
-        border-bottom: none;
-        /*    border-right: 1px solid rgba(10, 11, 49, 0.20);*/
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin-bottom: 35px;
+    height: inherit;
+    border-bottom: none;
+    /*    border-right: 1px solid rgba(10, 11, 49, 0.20);*/
     }
 
     .vertical-mdl-tabs .mdl-tabs__tab {
-        width: 100%;
-        height: 100px;
-        line-height: 27px;
-        box-sizing: border-box;
-        letter-spacing: 2px;
-        background: #f3f3f3;
+    width: 100%;
+    height: 100px;
+    line-height: 27px;
+    box-sizing: border-box;
+    letter-spacing: 2px;
+    background: #f3f3f3;
     }
 
     .none {
-        display: none;
+    display: none;
     }
 
     .vertical-mdl-tabs.mdl-tabs.is-upgraded a.mdl-tabs__tab.is-active {
-        border-left: 5px solid #ED462F;
-        background: #fff;
+    border-left: 5px solid #ED462F;
+    background: #fff;
     }
 
     .vertical-mdl-tabs.mdl-tabs.is-upgraded .mdl-tabs__tab.is-active:after {
-        content: inherit;
-        height: 0;
+    content: inherit;
+    height: 0;
     }
 
     .vertical-mdl-tabs.mdl-tabs.is-upgraded .mdl-tabs__panel.is-active, .mdl-tabs__panel {
-        padding: 0 0px;
+    padding: 0 0px;
     }
 
     .vertical-mdl-tabs.mdl-tabs .mdl-tabs__tab {
-        text-align: left;
+    text-align: left;
     }
 
     .small-txt {
-        font-size: 11px;
+    font-size: 11px;
     }
 
     .tab-div {
-        position: relative;
-        top: 19px;
+    position: relative;
+    top: 19px;
     }
 
     .tab-txt {
-        font-size: 14px;
+    font-size: 14px;
     }
 
     header {
-        font-family: 'Lobster', cursive;
-        text-align: center;
-        font-size: 25px;
+    font-family: 'Lobster', cursive;
+    text-align: center;
+    font-size: 25px;
     }
 
     #info {
-        font-size: 18px;
-        color: #555;
-        text-align: center;
-        margin-bottom: 25px;
+    font-size: 18px;
+    color: #555;
+    text-align: center;
+    margin-bottom: 25px;
     }
 
     a {
-        color: #074E8C;
+    color: #074E8C;
     }
 
     .scrollbar {
-        width: 100%;
-        float: left;
-        height: 300px;
-        /*background: #F5F5F5;*/
-        overflow-y: scroll;
-        margin-bottom: 25px;
+    width: 100%;
+    float: left;
+    height: 300px;
+    /*background: #F5F5F5;*/
+    overflow-y: scroll;
+    margin-bottom: 25px;
     }
 
     .force-overflow {
-        margin: 0px 10px 0px 0px;
-        /*min-height: 450px;*/
+    margin: 0px 10px 0px 0px;
+    /*min-height: 450px;*/
     }
 
 
 
     /*
-                                            *  STYLE 1
-                                            */
+    *  STYLE 1
+    */
 
 
     #style-4::-webkit-scrollbar {
-        width: 5px;
-        background-color: #F5F5F5;
+    width: 5px;
+    background-color: #F5F5F5;
     }
 
     #style-4::-webkit-scrollbar-thumb {
-        background-color: #000000;
-        border: 2px solid #555555;
+    background-color: #000000;
+    border: 2px solid #555555;
     }
 
 
 
     .mdl-tabs__panel h1 {
-        color: #000;
-        font-weight: 500;
-        font-size: 16px;
-        text-transform: uppercase;
-        float: left;
+    color: #000;
+    font-weight: 500;
+    font-size: 16px;
+    text-transform: uppercase;
+    float: left;
     }
 
     .panel-heading {
-        padding: 0;
-        border: 0;
+    padding: 0;
+    border: 0;
     }
 
     .panel .panel-title {
-        float: none !important;
-        display: inline;
+    float: none !important;
+    display: inline;
     }
 
     .panel-title > a, .panel-title > a:active {
-        display: block;
-        padding: 15px;
-        color: #998e8e !important;
-        font-size: 17px;
-        font-weight: 500;
-        padding: 0px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        word-spacing: 3px;
-        text-decoration: none !important;
+    display: block;
+    padding: 15px;
+    color: #998e8e !important;
+    font-size: 17px;
+    font-weight: 500;
+    padding: 0px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    text-decoration: none !important;
     }
 
     .panel-heading a:before {
-        font-family: 'Glyphicons Halflings';
-        content: "\e114";
-        float: right;
-        transition: all 0.5s;
-        position: relative;
-        right: 10px;
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: right;
+    transition: all 0.5s;
+    position: relative;
+    right: 10px;
     }
 
     .panel-heading.active a:before {
-        -webkit-transform: rotate(180deg);
-        -moz-transform: rotate(180deg);
-        transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    transform: rotate(180deg);
     }
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
@@ -172,15 +172,15 @@
 <script src="~/Newassets/js/tabs.js?v=2024" type="text/javascript"></script>
 <style>
     body {
-        font-size: 1.3vw !important;
-        /* background: url(../../img/interview.svg) -20px 5px no-repeat !important;*/
+    font-size: 1.3vw !important;
+    /* background: url(../../img/interview.svg) -20px 5px no-repeat !important;*/
     }
 
     @@media (max-width: 768px) {
-        body {
-            background-size: 30% !important;
-            background-position: -20px 20px !important;
-        }
+    body {
+    background-size: 30% !important;
+    background-position: -20px 20px !important;
+    }
     }
 
 </style>
@@ -284,28 +284,56 @@
                                                             <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:0px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
-                                                            <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
-                                                            <div style="margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
-                                                            <img class="schedule-img" src="../../img/int-img-2.png">
+                                                            <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
                                                             @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
-
-                                                                <div style="margin: 18px 0px 8px 0px;;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
-                                                                     onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
-                                                                    Click here to join the meeting
-                                                                    <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a>
-                                                                </div>
+                                                                @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId == 0)
+                                                                {
+                                                                    <div style="padding:0px;margin:0px 0px 25px 0px;">
+                                                                        <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
+                                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup(@item.Interviewid)" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
+                                                                        </button>
+                                                                    </div>
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                                <div style="margin: 18px 0px 8px 0px;" class="meeting-link text-uppercase">
-                                                                    Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#42a5f57a;position: relative;top:6px;">
-                                                                        <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
-                                                                    </a>
-                                                                </div>
-                                                                <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
-                                                            }
+                                                              
+                                                            <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
+                                                            <img class="schedule-img" src="../../img/int-img-2.png">
+                                                            <div>
+                                                                @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                {
+                                                                    @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
+                                                                    {
+                                                                        <a target="_blank" href="@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})">Click here to join the meeting</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                                        onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
+                                                                            Click here to join the meeting
+                                                                            <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
+                                                                        </div>
+                                                                    }
 
+                                                                }
+                                                                else
+                                                                {
+                                                                    @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
+                                                                    {
+                                                                        <a target="_blank" href="@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})">Click here to join the meeting</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
+                                                                            Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;position: relative;top:6px;background:#b6bdc37a;">
+                                                                                <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
+                                                                            </a>
+                                                                        </div>
+                                                                    }
+                                                                    
+                                                                    <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
+                                                                }
+                                                            </div>
 
                                                             @if (item.interviewDate >= DateTime.Now)
                                                             {
@@ -718,7 +746,7 @@
                             <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" checked id="agree" name="agree" /> <span style="font-weight:600;color: grey" ;> I hereby accept & acknowlege Risebird <a href="https://drive.google.com/file/d/1t9h7CLcwrbI7HzkJT5vs8pEWA5ySeiTY/view?usp=sharing" target="_blank" style="text-decoration:underline">Terms & Services</a></span>
                         </div>
                         <div class="col-md-12 pull-right">
-                        @*     <button type="button" class="mdc-button button-warning" data-bs-dismiss="modal" aria-label="Skip" style="z-index:100;margin-bottom: 10px;background: #a9a6a6;">
+                            @*     <button type="button" class="mdc-button button-warning" data-bs-dismiss="modal" aria-label="Skip" style="z-index:100;margin-bottom: 10px;background: #a9a6a6;">
                                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">Skip</span>
                             </button> *@
                             <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()">Continue to join interview with my consent for above checked points </button>
@@ -1234,14 +1262,14 @@
     var uncheckedCheckboxId = null;
     // Global variable to track where Need Clarity was called from
     var needClaritySource = null;
-    
+
     function openInterviewerAlert() {
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "block";
-        
+
         // Check all checkboxes by default
         $('input[name="InterviewCheckshow"]').prop('checked', true);
-        
+
         // Add change event handlers for checkboxes
         $('input[name="InterviewCheckshow"]').off('change').on('change', function() {
             if (!$(this).is(':checked')) {
@@ -1254,45 +1282,45 @@
             }
         });
     }
-    
+
     function closeInterviewerAlert() {
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "none";
     }
-    
+
     function openConsentConfirmationModal() {
         var modal = document.getElementById("ConsentConfirmationModal");
         modal.style.display = "block";
     }
-    
+
     function closeConsentConfirmationModal() {
         var modal = document.getElementById("ConsentConfirmationModal");
         modal.style.display = "none";
     }
-    
+
     function openFinalConfirmationModal() {
         var modal = document.getElementById("FinalConfirmationModal");
         modal.style.display = "block";
     }
-    
+
     function closeFinalConfirmationModal() {
         var modal = document.getElementById("FinalConfirmationModal");
         modal.style.display = "none";
     }
-    
+
     function proceedWithoutConsent() {
         closeConsentConfirmationModal();
         openFinalConfirmationModal();
     }
-    
+
     function undoConsentUncheck() {
         closeConsentConfirmationModal();
         // Keep the checkbox checked (it's already checked due to the change handler)
     }
-    
+
     function cancelInterview() {
         closeFinalConfirmationModal();
-        
+
         // Use the same cancel functionality as Interview Controller Index page
         swal.fire({
             title: 'Are you sure?',
@@ -1308,13 +1336,13 @@
                     $.ajax({
                         url: '/Candidate/PublicCancelInterview',
                         type: 'POST',
-                        data: { 
-                            'id': @ViewBag.Interviewid, 
-                            'interviewDate': '@Model.Meetings.FirstOrDefault()?.interviewDate', 
-                            'candidateEmail': '@Model.CandidateDetails.EmailId', 
-                            'emailId': '@Model.CandidateDetails.EmailId', 
-                            'IRFId': @Model.CandidateDetails.IRFId, 
-                            'zoomMeetingId': null 
+                        data: {
+                            'id': @ViewBag.Interviewid,
+                            'interviewDate': '@Model.Meetings.FirstOrDefault()?.interviewDate',
+                            'candidateEmail': '@Model.CandidateDetails.EmailId',
+                            'emailId': '@Model.CandidateDetails.EmailId',
+                            'IRFId': @Model.CandidateDetails.IRFId,
+                            'zoomMeetingId': null
                         },
                         success: function (data) {
                             if (data != null && data.toLowerCase().includes('success')) {
@@ -1360,26 +1388,26 @@
             }
         });
     }
-    
+
     function needClarity() {
         closeFinalConfirmationModal();
         closeInterviewerAlert();
-        
+
         // Set the source to indicate this came from the InterviewAlert popup
         needClaritySource = 'InterviewAlert';
-        
+
         // Use the existing Need Clarity functionality from the project
         // This opens the SendmailModal with pre-filled information for clarity request
         OpenSendmailModal(
-            @ViewBag.Interviewid, 
-            '@Model.CandidateDetails.ClientHRAttemptContact', 
-            '@Model.CandidateDetails.Name', 
-            '@Model.CandidateDetails.EmailId', 
-            @Model.CandidateDetails.IRFId, 
+    @ViewBag.Interviewid,
+            '@Model.CandidateDetails.ClientHRAttemptContact',
+            '@Model.CandidateDetails.Name',
+            '@Model.CandidateDetails.EmailId',
+    @Model.CandidateDetails.IRFId,
             '@Model.Uniqueid'
         );
     }
-    
+
     function AcceptInterviewerAlert(){
         var result = $('input[name="InterviewCheckshow"]:checked');
         var resultString = '';
@@ -1425,7 +1453,7 @@
                 }).then(function () {
                     // Close the SendmailModal
                     closeSendmailModal();
-                    
+
                     // Return to appropriate location based on source
                     if (needClaritySource === 'InterviewAlert') {
                         // Return to the original InterviewerAlert popup with checkboxes
@@ -1435,7 +1463,7 @@
                         // This happens when called from other Need Clarity buttons on the page
                         // The page stays as is, no redirection needed
                     }
-                    
+
                     // Reset the source tracking
                     needClaritySource = null;
                 });
@@ -1447,10 +1475,570 @@
     function openNeedClarityFromPage(interviewId, clienthr, candidateName, candidateEmail, irfId, uniqueid) {
         // Set the source to indicate this came from the main page (not InterviewAlert popup)
         needClaritySource = 'Page';
-        
+
         // Call the original OpenSendmailModal function
         OpenSendmailModal(interviewId, clienthr, candidateName, candidateEmail, irfId, uniqueid);
     }
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
+
+
+
+<!-- Biometric Verification Modal -->
+<div id="BiometricVerificationModal" class="modal modal-bg">
+    <div class="modal-dialog modal-xl" role="document" style="max-width: 1200px;">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <i class="fa fa-camera" style="color: white; font-size: 20px;"></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Verification</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeBiometricVerificationModal()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="row">
+                    <!-- Left Section - Camera Capture -->
+                    <div class="col-md-6">
+                        <h6 style="margin-bottom: 15px; color: #333; font-weight: 600;font-size:15px;">
+                            <i class="fa fa-camera" style="margin-right: 8px;"></i>Capture Candidate Photo
+                        </h6>
+                        <div class="camera-container" id="cameraContainer">
+                            <video id="cameraPreview" class="camera-preview" autoplay muted style="display: none;"></video>
+                            <canvas id="captureCanvas" style="display: none;"></canvas>
+                            <img id="capturedImage" class="captured-image" style="display: none;" />
+
+                            <div id="cameraPlaceholder" style="text-align: center;">
+                                <i class="fa fa-camera" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                                <p class="camera-status">Click "Start Camera" to begin photo capture</p>
+                                <button type="button" class="capture-btn" onclick="startCamera()" id="startCameraBtn">
+                                    <i class="fa fa-play" style="margin-right: 5px;"></i>Start Camera
+                                </button>
+                            </div>
+
+                            <div class="camera-controls" id="cameraControls" style="display: none;">
+                                <button type="button" class="capture-btn" onclick="capturePhoto()" id="captureBtn">
+                                    <i class="fa fa-camera" style="margin-right: 5px;"></i>Capture
+                                </button>
+                                <button type="button" class="retake-btn" onclick="retakePhoto()" id="retakeBtn" style="display: none;">
+                                    <i class="fa fa-refresh" style="margin-right: 5px;"></i>Retake
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <div class="alert alert-info" style="font-size: 12px; margin-bottom:0px;">
+                                <i class="fa fa-info-circle" style="margin-right: 5px;"></i>
+                                <strong>Instructions:</strong> Ensure good lighting and position the candidate's face clearly in the frame before capturing.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Section - Aadhaar Verification -->
+                    <div class="col-md-6 verification-section">
+                        <h6 style="margin-bottom: 15px; color: #333; font-weight: 600;font-size:15px;">
+                            <i class="fa fa-id-card" style="margin-right: 8px;"></i>Aadhaar Verification
+                        </h6>
+
+                        <div id="aadhaarVerificationSection">
+                            <button type="button" class="clickhere_btn callsubmit" style="float:left;width:180px">
+                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openAadhaarpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Aadhar Details</font></span>
+                            </button>
+
+                        </div>
+
+                        <!-- Verification Status -->
+                        <div class="mt-3">
+                            <div id="verificationStatus" class="alert alert-warning" style="display: none;margin-top:20px;">
+                                @*                                 <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
+ *@                                <span id="verificationStatusText" style="font-size:14px;">Please complete both photo capture and Aadhaar verification</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="row">
+                    <div class="col-md-12 text-right" style="background: #ecf0f1;width: calc(100% - 30px);padding:0px 10px 10px 10px; margin:5px 15px 0px 15px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeBiometricVerificationModal()" style="margin-right: 10px;">
+                            <i class="fa fa-times" style="margin-right: 5px;"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="completeVerification()" id="completeVerificationBtn" disabled>
+                            <i class="fa fa-check" style="margin-right: 5px;"></i>Verify your details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Aadhaar/_AadhaarVerify.cshtml")
+<script>
+    var aadhaarname="";
+    var aadhaaraddress="";
+    var aadhaargender="";
+    var aadhaardob="";
+    function BindData(data) {
+        console.log("BindData called with:", data);
+        if(data!=null)
+        {
+            aadhaarname=data.name;
+            aadhaaraddress=data.address;
+            aadhaargender=data.gender;
+            aadhaardob=data.dob;
+            aadhaarPhotoData=data.doc_face;
+        }
+        console.log("BindData completed successfully");
+    }
+</script>
+<script>
+    // Biometric Verification Modal Functions
+    let cameraStream = null;
+    let capturedPhotoData = null;
+    let aadhaarPhotoData = null;
+    let isAadhaarVerified = false;
+    var aadhaarinterviewid = 0;
+
+
+    function openBiometricpopup(interviewid) {
+        // Show the modal first
+        aadhaarinterviewid=interviewid;
+        var modal = document.getElementById("BiometricVerificationModal");
+        if (modal) {
+            modal.style.display = "block";
+            // Reset the modal state after a small delay to ensure DOM is ready
+            setTimeout(function() {
+                resetBiometricModal();
+                updateVerificationStatus();
+            }, 100);
+        } else {
+            console.error("BiometricVerificationModal not found!");
+            alert("Modal not found. Please refresh the page and try again.");
+        }
+    }
+
+    function closeBiometricVerificationModal() {
+        // Stop camera if running
+        stopCamera();
+
+        // Close the modal
+        var modal = document.getElementById("BiometricVerificationModal");
+        modal.style.display = "none";
+
+        // Reset state
+        resetBiometricModal();
+    }
+
+    function resetBiometricModal() {
+        // Reset camera state
+        capturedPhotoData = null;
+        isAadhaarVerified = false;
+
+        // Reset UI elements
+        document.getElementById("cameraPlaceholder").style.display = "block";
+        document.getElementById("cameraPreview").style.display = "none";
+        document.getElementById("capturedImage").style.display = "none";
+        document.getElementById("cameraControls").style.display = "none";
+        document.getElementById("startCameraBtn").style.display = "inline-block";
+        document.getElementById("captureBtn").style.display = "inline-block";
+        document.getElementById("retakeBtn").style.display = "none";
+
+        // Reset Aadhaar verification
+        document.getElementById("divSubmit").style.display = "none";
+        document.getElementById("divValidate").style.display = "inline-block";
+        document.getElementById("divotpvalidation").style.display = "none";
+        $("#aadhaarnumber").val('');
+        $("#txtAadhaarOtp").val('');
+
+        // Reset verification button
+        document.getElementById("completeVerificationBtn").disabled = true;
+
+        // Update status
+        updateVerificationStatus();
+    }
+
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: 'user' // Front camera
+            }
+        })
+        .then(function(stream) {
+            cameraStream = stream;
+            const video = document.getElementById("cameraPreview");
+            video.srcObject = stream;
+            video.style.display = "block";
+
+            // Hide placeholder and show controls
+            document.getElementById("cameraPlaceholder").style.display = "none";
+            document.getElementById("cameraControls").style.display = "flex";
+            document.getElementById("startCameraBtn").style.display = "none";
+
+            // Update status
+            document.querySelector("#cameraContainer .camera-status").textContent = "Camera ready - Position candidate's face in frame";
+        })
+        .catch(function(error) {
+            console.error("Error accessing camera:", error);
+            alert("Unable to access camera. Please ensure camera permissions are granted and try again.");
+        });
+    }
+
+    function stopCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+    }
+
+    function capturePhoto() {
+        const video = document.getElementById("cameraPreview");
+        const canvas = document.getElementById("captureCanvas");
+        const context = canvas.getContext("2d");
+
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw video frame to canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert to base64
+        capturedPhotoData = canvas.toDataURL("image/jpeg", 0.8);
+
+        // Show captured image
+        const capturedImage = document.getElementById("capturedImage");
+        capturedImage.src = capturedPhotoData;
+        capturedImage.style.display = "block";
+
+        // Hide video and show retake button
+        video.style.display = "none";
+        document.getElementById("captureBtn").style.display = "none";
+        document.getElementById("retakeBtn").style.display = "inline-block";
+
+        // Update status
+        document.querySelector("#cameraContainer .camera-status").textContent = "Photo captured successfully";
+
+        // Update verification status
+        updateVerificationStatus();
+
+        // Stop camera
+        stopCamera();
+    }
+
+    function retakePhoto() {
+        // Reset captured photo
+        capturedPhotoData = null;
+        document.getElementById("capturedImage").style.display = "none";
+        document.getElementById("captureBtn").style.display = "inline-block";
+        document.getElementById("retakeBtn").style.display = "none";
+
+        // Restart camera
+        startCamera();
+    }
+
+    function updateVerificationStatus() {
+        const photoCaptured = capturedPhotoData !== null;
+        const aadhaarVerified = isAadhaarVerified;
+        const statusDiv = document.getElementById("verificationStatus");
+        const statusText = document.getElementById("verificationStatusText");
+        const completeBtn = document.getElementById("completeVerificationBtn");
+
+        if (photoCaptured && aadhaarVerified) {
+            statusDiv.className = "alert alert-success";
+            statusText.innerHTML = '<i class="fa fa-check-circle" style="margin-right: 5px;"></i>Verification complete! Both photo and Aadhaar verification are done.';
+            completeBtn.disabled = false;
+        } else if (photoCaptured && !aadhaarVerified) {
+            statusDiv.className = "alert alert-warning";
+            statusText.innerHTML = '<i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>Photo captured. Please complete Aadhaar verification.';
+            completeBtn.disabled = true;
+        } else if (!photoCaptured && aadhaarVerified) {
+            statusDiv.className = "alert alert-warning";
+            statusText.innerHTML = '<i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>Aadhaar verified. Please capture candidate photo.';
+            completeBtn.disabled = true;
+        } else {
+            statusDiv.className = "alert alert-info";
+            statusText.innerHTML = '<i class="fa fa-info-circle" style="margin-right: 5px;"></i>Please complete both photo capture and Aadhaar verification.';
+            completeBtn.disabled = true;
+        }
+
+        statusDiv.style.display = "block";
+    }
+
+    // Function to update meeting link styling based on verification status
+    function updateMeetingLinkStyling() {
+        const meetingLinks = document.querySelectorAll('.meeting-link');
+        meetingLinks.forEach(function(link) {
+            if (isAadhaarVerified && capturedPhotoData) {
+                link.style.color = '#007bff';
+                link.style.fontWeight = '600';
+
+                const meetingButton = link.querySelector('.click_herebtn');
+                if (meetingButton) {
+                    meetingButton.style.backgroundColor = '#87CEEB';
+                    meetingButton.style.color = '#000';
+                    meetingButton.style.fontWeight = '600';
+                    meetingButton.style.border = '1px solid rgb(204 218 233)';
+                }
+            } else {
+                // Reset to default styling
+                link.style.color = '';
+                link.style.fontWeight = '';
+
+                const meetingButton = link.querySelector('.click_herebtn');
+                if (meetingButton) {
+                    meetingButton.style.backgroundColor = '';
+                    meetingButton.style.color = '';
+                    meetingButton.style.fontWeight = '';
+                    meetingButton.style.border = '';
+                }
+            }
+        });
+    }
+
+    // Update the completeVerification function to call updateMeetingLinkStyling
+    function completeVerification() {
+        console.log("=== completeVerification Debug ===");
+        console.log("capturedPhotoData:", capturedPhotoData ? "Present (Length: " + capturedPhotoData.length + ")" : "Missing");
+        console.log("isAadhaarVerified:", isAadhaarVerified);
+        console.log("typeof capturedPhotoData:", typeof capturedPhotoData);
+        console.log("typeof isAadhaarVerified:", typeof isAadhaarVerified);
+
+        // Check if SweetAlert is available
+        console.log("SweetAlert available:", typeof swal !== 'undefined');
+
+        if (capturedPhotoData && isAadhaarVerified) {
+            console.log("All conditions met - showing success message");
+
+            // Update meeting link styling to blue
+            updateMeetingLinkStyling();
+
+            //closeBiometricVerificationModal();
+
+            // Test if SweetAlert works
+            try {
+                swal.fire({
+                    title: "Verification Complete!",
+                    text: "Candidate verification has been completed successfully.",
+                    type: "success",
+                    confirmButtonText: "OK",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(function(result) {
+                     $.ajax({
+                    type: "POST",
+                    url: "/Aadhaar/SaveVerificationData",
+                    data: { id: aadhaarinterviewid, capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
+                    success: function (data) {
+                            closeBiometricVerificationModal();
+                    }
+                    });
+                }).catch(function(error) {
+                    console.error("SweetAlert error:", error);
+                    console.log("Fallback: calling closeBiometricVerificationModal directly...");
+                    closeBiometricVerificationModal();
+                });
+            } catch (error) {
+                console.error("Error showing SweetAlert:", error);
+                console.log("Fallback: calling closeBiometricVerificationModal directly...");
+                closeBiometricVerificationModal();
+            }
+        } else {
+            console.log("Conditions NOT met:");
+            console.log("- capturedPhotoData:", capturedPhotoData ? "✓ Present" : "✗ Missing");
+            console.log("- isAadhaarVerified:", isAadhaarVerified ? "✓ True" : "✗ False");
+
+            swal.fire({
+                title: "Incomplete Verification",
+                text: "Please complete both photo capture and Aadhaar verification.",
+                type: "warning",
+                confirmButtonText: "OK"
+            });
+        }
+    }
+
+    // Also update the AJAX interceptor to call updateMeetingLinkStyling when Aadhaar verification completes
+    $(document).ready(function() {
+        const originalAjax = $.ajax;
+        $.ajax = function(options) {
+            if (options.url === "/Aadhaar/SubmitOTPNumber" && options.type === "POST") {
+                const originalSuccess = options.success;
+                options.success = function(dataKYC) {
+                    console.log("Intercepted Aadhaar verification response:", dataKYC);
+
+                    // Set our verification variables for biometric modal
+                    isAadhaarVerified = true;
+
+                    // Update verification status for biometric modal
+                    updateVerificationStatus();
+
+                    // Update meeting link styling if photo is also captured
+                    if (capturedPhotoData) {
+                        updateMeetingLinkStyling();
+                    }
+
+                    // IMPORTANT: Call the original success callback to preserve all Aadhaar.js functionality
+                    if (originalSuccess) {
+                        originalSuccess(dataKYC);
+                    }
+                };
+            }
+            return originalAjax.call(this, options);
+        };
+    });
+
+    // Clean up camera when modal is closed
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close camera when clicking outside modal
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById("BiometricVerificationModal");
+            if (event.target === modal) {
+                closeBiometricVerificationModal();
+            }
+        });
+    });
+
+    // AJAX interceptor for Aadhaar verification - preserves all original functionality
+    $(document).ready(function() {
+        const originalAjax = $.ajax;
+        $.ajax = function(options) {
+            if (options.url === "/Aadhaar/SubmitOTPNumber" && options.type === "POST") {
+                const originalSuccess = options.success;
+                options.success = function(dataKYC) {
+                    console.log("Intercepted Aadhaar verification response:", dataKYC);
+
+                    // Set our verification variables for biometric modal
+                    isAadhaarVerified = true;
+
+                    // Update verification status for biometric modal
+                    updateVerificationStatus();
+
+                    // IMPORTANT: Call the original success callback to preserve all Aadhaar.js functionality
+                    if (originalSuccess) {
+                        originalSuccess(dataKYC);
+                    }
+                };
+            }
+            return originalAjax.call(this, options);
+        };
+    });
+</script>
+<style>
+    /* Camera Capture Modal Styles */
+    #BiometricVerificationModal {
+        z-index: 2;
+    }
+
+    .camera-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: #f5f5f5;
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .camera-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .camera-controls {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+    }
+
+    .capture-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .capture-btn:hover {
+            background: #0056b3;
+        }
+
+        .capture-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+    .retake-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .retake-btn:hover {
+            background: #c82333;
+        }
+
+    .captured-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .camera-status {
+        text-align: center;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .verification-section {
+        border-left: 1px solid #dee2e6;
+        padding-left: 20px;
+    }
+
+    #BiometricVerificationModal .modal-dialog {
+        width: 800px;
+    }
+
+    @@media (max-width: 768px) {
+        .modal-title {
+            font-size: 16px !important;
+        }
+
+        #BiometricVerificationModal .modal-dialog {
+            width: 95% !important;
+        }
+
+        .verification-section {
+            padding-left: 10px;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .verification-section {
+            border-left: none;
+            border-top: 1px solid #dee2e6;
+            padding-left: 0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+    }
+</style>
