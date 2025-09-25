@@ -863,6 +863,7 @@ namespace Risebird.Repository
                         _resultVM.CandidateDetails.CandidateIdverification = !string.IsNullOrEmpty(dt.Rows[0]["CandidateIdverification"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CandidateIdverification"]) : false;
                         _resultVM.CandidateDetails.CandidateVideo = !string.IsNullOrEmpty(dt.Rows[0]["CandidateVideo"].ToString()) ? dt.Rows[0]["CandidateVideo"].ToString() : null;
                         _resultVM.CandidateDetails.ConsentForm = !string.IsNullOrEmpty(dt.Rows[0]["ConsentForm"].ToString()) ? dt.Rows[0]["ConsentForm"].ToString() : null;
+                        _resultVM.CandidateDetails.IsAIInterview = !string.IsNullOrEmpty(dt.Rows[0]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAIInterview"]) : false;
                         //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)
@@ -887,7 +888,9 @@ namespace Risebird.Repository
                                     InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatus"]) : null : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     TimeZoneoffset = dt.Rows[i]["TimeZoneoffset"] != null ? Convert.ToInt32(dt.Rows[i]["TimeZoneoffset"]) : 0,
-                                    TimeZonesValue = dt.Rows[i]["TimeZonesValue"] != null ? dt.Rows[i]["TimeZonesValue"].ToString() : null
+                                    TimeZonesValue = dt.Rows[i]["TimeZonesValue"] != null ? dt.Rows[i]["TimeZonesValue"].ToString() : null,
+                                    SessionId = dt.Rows[i]["SessionId"] != null ? dt.Rows[i]["SessionId"].ToString() : null,
+                                    AadharVerificationId = dt.Rows[i]["AadharVerificationId"] != null ? Convert.ToInt32(dt.Rows[i]["AadharVerificationId"]) : 0
 
                                 });
                             }
