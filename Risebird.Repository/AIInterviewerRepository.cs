@@ -256,7 +256,7 @@ namespace Risebird.Repository
                             catch (Exception ex)
                             {
                                 _resultVM.MatchScorePercentage = 0;
-                                // Log the error if needed
+                              
                             }
                             _resultVM.AadharVerificationId = !string.IsNullOrEmpty(dt.Rows[0]["AadharVerificationId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AadharVerificationId"]) : 0;
                         }
