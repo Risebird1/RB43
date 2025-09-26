@@ -234,6 +234,31 @@ namespace Risebird.Repository
                             _resultVM.IsAdaptive = !string.IsNullOrEmpty(dt.Rows[0]["IsAdaptive"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAdaptive"]) : true;
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt16(dt.Rows[0]["AIInterviewType"]) : 0;
                             _resultVM.irfIntId = !string.IsNullOrEmpty(dt.Rows[0]["irfIntId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["irfIntId"]) : 0;
+                            try 
+                            {
+                                if (dt.Rows[0]["MatchScorePercentage"] != DBNull.Value)
+                                {
+                                    var matchPercentage = dt.Rows[0]["MatchScorePercentage"];
+                                    if (decimal.TryParse(matchPercentage.ToString(), out decimal result))
+                                    {
+                                        _resultVM.MatchScorePercentage = (int)Math.Round(result);
+                                    }
+                                    else
+                                    {
+                                        _resultVM.MatchScorePercentage = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    _resultVM.MatchScorePercentage = 0;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _resultVM.MatchScorePercentage = 0;
+                              
+                            }
+                            _resultVM.AadharVerificationId = !string.IsNullOrEmpty(dt.Rows[0]["AadharVerificationId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AadharVerificationId"]) : 0;
                         }
                     }
                     if (dataset.Tables.Count > 1)
