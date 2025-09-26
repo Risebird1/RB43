@@ -149,3 +149,12 @@ function BindCandidateKYCData(data) {
     }
     $("#divAadhaarKYC").empty().html(html);
 }
+
+// Add this function to the existing Aadhaar.js file
+function openBiometricVerificationModal() {
+    // This function is now defined in InterviewDetails.cshtml
+    // This is just a placeholder to maintain compatibility
+    if (typeof openBiometricpopup === 'function') {
+        openBiometricpopup();
+    }
+}
