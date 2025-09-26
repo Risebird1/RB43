@@ -296,15 +296,24 @@
                                                                     </div>
                                                                 }
                                                             }
-                                                              
+
                                                             <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
                                                                 @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                 {
-                                                                    @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
+                                                                    
+                                                                    
+                                                                    @if (Model.CandidateDetails.IsAIInterview)
                                                                     {
-                                                                        <a target="_blank" href="@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})">Click here to join the meeting</a>
+                                                                        @* <a target="_blank" @displayStatus href="@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})">Click here to join the meeting</a> *@
+                                                                        <button id="btn_ai_Interview" type="button"
+                                                                                class="btn btn-primary click_herebtn"
+                                                                                onclick="window.open('@Url.Action("Index", "AIInterview", new { sid = item.SessionId })', '_blank')"
+                                                                            @(item.AadharVerificationId > 0 ? "" : "disabled")>
+                                                                            Click here to join the meeting
+                                                                        </button>
+
                                                                     }
                                                                     else
                                                                     {
@@ -320,7 +329,7 @@
                                                                 {
                                                                     @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
                                                                     {
-                                                                        <a target="_blank" href="@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})">Click here to join the meeting</a>
+                                                                        <a target="_blank" href="#" style="cursor: not-allowed; color:grey">Click here to join the meeting</a>@*  @Url.Action("Index", "AIInterview", new { sid = item.SessionId }) *@
                                                                     }
                                                                     else
                                                                     {
@@ -1772,7 +1781,14 @@
 
     // Function to update meeting link styling based on verification status
     function updateMeetingLinkStyling() {
-        const meetingLinks = document.querySelectorAll('.meeting-link');
+        debugger;
+        var aiInterviewButton = document.getElementById('btn_ai_Interview');
+        if(aiInterviewButton != null)
+        {
+            aiInterviewButton.disabled = false;  // enable it
+            //aiInterviewButton.classList.remove("disabled-link"); // optional: remove custom disabled styling
+        }
+        @* const meetingLinks = document.querySelectorAll('.meeting-link');
         meetingLinks.forEach(function(link) {
             if (isAadhaarVerified && capturedPhotoData) {
                 link.style.color = '#007bff';
@@ -1798,7 +1814,7 @@
                     meetingButton.style.border = '';
                 }
             }
-        });
+        }); *@
     }
 
     // Update the completeVerification function to call updateMeetingLinkStyling
