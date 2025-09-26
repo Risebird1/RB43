@@ -16,6 +16,7 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("overall_technical_score")]
         public int OverallTechnicalScore { get; set; }
+        public int AadharVerificationId { get; set; }
 
         [JsonProperty("final_verdict")]
         public string FinalVerdict { get; set; }
