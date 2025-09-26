@@ -405,7 +405,8 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public string QuestionAnswerSetInJson { get; set; }
         public int AadharVerificationId { get; set; }
-
+        public int MatchScorePercentage { get; set; }
+  
     }
 
     public class VedioComments
@@ -472,6 +473,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public string sCreatedBy { get; set; }
         public bool IsEditable { get; set; }
+      
 
     }
     public class ZoomMeetingHistoryDetails

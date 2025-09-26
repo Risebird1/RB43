@@ -1038,6 +1038,9 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewDate = meetingDetails.interviewDate;
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;
+                reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
+                reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
+
                 return View(reportModel);
             }
             else
