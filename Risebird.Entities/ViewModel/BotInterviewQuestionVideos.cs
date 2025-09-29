@@ -29,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalQuestions { get; set; }
         public string CandidateName { get; set; }
         public string CandidateEmail { get; set; }
+        public int MatchScorePercentage { get; set; }
         public DateTime InterviewDate { get; set; }
         public int InterviewId { get; set; }
         public string SessionId { get; set; } //Guid

@@ -934,8 +934,8 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> Report(Guid seId, bool redo = false, bool? isExit = null)//Guid seId
         {
             string profileName = string.Empty;
-            profileName = HttpContext.Session.GetString("profileName")?.Trim();
-            profileName = profileName.Replace("\"", "");
+            profileName = HttpContext?.Session?.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
             ViewBag.ProfileName = profileName;
 
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
@@ -1038,6 +1038,9 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewDate = meetingDetails.interviewDate;
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;
+                reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
+                reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
+
                 return View(reportModel);
             }
             else
