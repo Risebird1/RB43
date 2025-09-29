@@ -326,20 +326,23 @@ namespace Risebird.AzureTimerFunctions
                 });
 
                 // RBMeet : fetch video link and dump in db
-                Parallel.ForEach(pendingRBMeetings, meeting =>
+                if (pendingRBMeetings.Count() > 0)
                 {
-                    try
+                    var accesstoken = await _zoho.GetRecordingAccessTokenAsync();
+                    Parallel.ForEach(pendingRBMeetings, meeting =>
                     {
-                        ZohoAzureuploadVideoandTranscript(meeting);
-                    }
-                    catch (Exception ex)
-                    {
-                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                        return;
-                    }
-                });
-
+                        try
+                        {
+                            ZohoAzureuploadVideoandTranscript(meeting);
+                        }
+                        catch (Exception ex)
+                        {
+                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                            return;
+                        }
+                    });
+                }
                 // Teams : fetch video link and dump in db
                 Parallel.ForEach(pendingTeamsMeetings, meeting =>
                 {
