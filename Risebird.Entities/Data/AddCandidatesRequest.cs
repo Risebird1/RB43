@@ -97,7 +97,8 @@ namespace Risebird.Entities.Data
     }
     public class CancelCandidateListResponse
     {
-        public int Interviewid { get; set; }
+        public int InterviewId { get; set; }
+        public int CandidateId { get; set; }
         public string candidateemailId { get; set; }
         public string candidatestatus { get; set; }
     }

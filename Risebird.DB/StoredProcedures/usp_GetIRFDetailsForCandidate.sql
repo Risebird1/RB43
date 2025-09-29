@@ -47,7 +47,7 @@ Begin
  im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus, ulim.MobileNumber,im.TimeZoneoffset,im.TimeZonesValue,
  im.SessionId, ISNULL(aad.id, 0) as AadharVerificationId
  from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id  
- left join AadhaarDetails aad on aad.reference_id = im.id
+ left join AadhaarDetails aad on aad.reference_id = CONVERT(VARCHAR(50), im.id) 
  left join UserList ulim on ulim.EmailId=im.interviewer  
  where IRFId = @IRFName and candidateEmail = @EmailParam    
     
