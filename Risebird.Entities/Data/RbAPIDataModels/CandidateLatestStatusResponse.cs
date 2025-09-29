@@ -37,6 +37,8 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         }
         public string skillChannelId { get; set; }
         public string jobId { get; set; }
+        public int CandidateId { get; set; }
+        public int InterviewId { get; set; }
         public string candidateEmailId { get; set; }
         public string interviewDate { get; set; }
         public string interviewer { get; set; }
@@ -124,6 +126,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string Cancellationsource { get; set; }
         public string Cancellationreason { get; set; }
         public string ClientHRAttemptContact { get; set; }
+        public int CandidateId { get; set; }
     }
     public class SkillsSetsDetails
     {
