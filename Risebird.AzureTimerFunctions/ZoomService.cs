@@ -329,6 +329,7 @@ namespace Risebird.AzureTimerFunctions
                 if (pendingRBMeetings.Count() > 0)
                 {
                     var accesstoken = await _zoho.GetRecordingAccessTokenAsync();
+                    log.LogInformation($"Zoho: AccessToken :{accesstoken}");
                     Parallel.ForEach(pendingRBMeetings, meeting =>
                     {
                         try
