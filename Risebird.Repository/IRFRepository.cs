@@ -5850,21 +5850,17 @@ namespace Risebird.Repository
                             if (isResumeParser)
                             {
                                 dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
-
                             }
                             else if (isApi)
                             {
                                 var resultArr = result.Split("|");
                                 var irfId = Convert.ToInt32(resultArr?.Last());
                                 dt.Rows.Add(obj.EmailId, resultArr[0], irfId);
-
                             }
                             else
                             {
                                 dt.Rows.Add(obj.EmailId, result);
-
                             }
-
                         }
                         return dt;
 
