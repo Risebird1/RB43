@@ -263,6 +263,8 @@ namespace Risebird.Services.Controllers
                                 {
                                     jobId = item.jobId,
                                     skillChannelId = item.IRFId,
+                                    CandidateId = item.CandidateId,
+                                    InterviewId = item.id,
                                     interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     candidateEmailId = item.candidateEmail,
                                     interviewer = item.InterviewerCodedName,
@@ -505,6 +507,8 @@ namespace Risebird.Services.Controllers
                                 {
                                     jobId = result.jobId,
                                     skillChannelId = result.IRFId,
+                                    CandidateId = result.CandidateId,
+                                    InterviewId = result.id,
                                     interviewDate = result.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                     candidateEmailId = result.candidateEmail,
                                     interviewer = result.InterviewerCodedName,

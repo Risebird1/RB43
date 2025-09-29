@@ -1849,7 +1849,7 @@
                      $.ajax({
                     type: "POST",
                     url: "/Aadhaar/SaveVerificationData",
-                    data: { id: aadhaarinterviewid, capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
+                    data: { interviewId: aadhaarinterviewid, capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
                     success: function (data) {
                             closeBiometricVerificationModal();
                     }
