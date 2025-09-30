@@ -22,7 +22,7 @@ namespace Risebird.CommonHelper
         private readonly ZohoOptions _options;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private string? _cachedAccessToken;
-        private DateTimeOffset _accessTokenExpiry;
+        private DateTime _accessTokenExpiry;
 
         public ZohoMeetingHelper(IOptions<ZohoOptions> options, IInterviewSchedulerService interviewSchedulerservice)
         {
@@ -31,7 +31,14 @@ namespace Risebird.CommonHelper
         }
         private async Task<string> GetAccessTokenAsync()
         {
-            if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTimeOffset.UtcNow.AddMinutes(1))
+            var zohodetails = await _interviewSchedulerservice.FetchZohoAccessToken(ZooTokenTypes.Meeting);
+            if (zohodetails == null)
+            {
+                zohodetails = new ZohoAccessToken();
+            }
+            _cachedAccessToken = zohodetails.AccessToken;
+            _accessTokenExpiry = zohodetails.TokenExpiry;
+            if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTime.Now.AddMinutes(1))
             {
                 return _cachedAccessToken!;
             }
@@ -68,12 +75,23 @@ namespace Risebird.CommonHelper
                 expiresInSeconds = exp > 10000 ? (int)(exp / 1000) : (int)exp;
             }
             _cachedAccessToken = accessToken;
-            _accessTokenExpiry = DateTimeOffset.UtcNow.AddSeconds(expiresInSeconds);
+            _accessTokenExpiry = DateTime.Now.AddSeconds(expiresInSeconds);
+            zohodetails.AccessToken = _cachedAccessToken;
+            zohodetails.TokenExpiry = _accessTokenExpiry;
+            zohodetails.TokenType = ZooTokenTypes.Meeting;
+            await _interviewSchedulerservice.SaveZohoAccessToken(zohodetails);
             return accessToken!;
         }
         public async Task<string> GetRecordingAccessTokenAsync()
         {
-            if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTimeOffset.UtcNow.AddMinutes(1))
+            var zohodetails = await _interviewSchedulerservice.FetchZohoAccessToken(ZooTokenTypes.Recording);
+            if (zohodetails == null)
+            {
+                zohodetails = new ZohoAccessToken();
+            }
+            _cachedAccessToken = zohodetails.AccessToken;
+            _accessTokenExpiry = zohodetails.TokenExpiry;
+            if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTime.Now.AddMinutes(1))
             {
                 return _cachedAccessToken!;
             }
@@ -110,7 +128,11 @@ namespace Risebird.CommonHelper
                 expiresInSeconds = exp > 10000 ? (int)(exp / 1000) : (int)exp;
             }
             _cachedAccessToken = accessToken;
-            _accessTokenExpiry = DateTimeOffset.UtcNow.AddSeconds(expiresInSeconds);
+            _accessTokenExpiry = DateTime.Now.AddSeconds(expiresInSeconds);
+            zohodetails.AccessToken = _cachedAccessToken;
+            zohodetails.TokenExpiry = _accessTokenExpiry;
+            zohodetails.TokenType = ZooTokenTypes.Recording;
+            await _interviewSchedulerservice.SaveZohoAccessToken(zohodetails);
             return accessToken!;
         }
         private RestClient CreateMeetingApiClient() => new RestClient(new RestClientOptions(_options.MeetingApiBaseUrl.TrimEnd('/')));

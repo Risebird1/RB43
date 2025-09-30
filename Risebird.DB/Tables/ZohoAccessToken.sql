@@ -1,0 +1,18 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'ZohoAccessToken')
+BEGIN 
+
+CREATE TABLE [dbo].[ZohoAccessToken](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[AccessToken] [varchar](100) NULL,
+	[TokenExpiry] [datetime] NULL,
+	[TokenType] [varchar](20) NULL,
+ CONSTRAINT [PK_ZohoAccessToken] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+
