@@ -893,7 +893,7 @@ namespace Risebird.Web.Controllers
 
                         if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
                         {
-                            irfDetails.MeetingPlatform = MeetingPlatforms.Zoom;
+                            irfDetails.MeetingPlatform = MeetingPlatforms.Zoho;
                         }
 
                         var domain = Request.Scheme + "://" + Request.Host.Value;
