@@ -34,4 +34,15 @@ namespace Risebird.Entities.ViewModel
         public string? inAndOutTime { get; set; }
         public int totalDurationMinutes { get; set; }
     }
+    public class ZohoAccessToken
+    {
+        public string AccessToken { get; set; }
+        public DateTime TokenExpiry { get; set; }
+        public string TokenType { get; set; }
+    }
+    public static class ZooTokenTypes
+    {
+        public static readonly string Meeting = "Meeting";
+        public static readonly string Recording = "Recording";
+    }
 }
