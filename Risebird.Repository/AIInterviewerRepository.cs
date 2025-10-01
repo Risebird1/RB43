@@ -234,6 +234,10 @@ namespace Risebird.Repository
                             _resultVM.IsAdaptive = !string.IsNullOrEmpty(dt.Rows[0]["IsAdaptive"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAdaptive"]) : true;
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt16(dt.Rows[0]["AIInterviewType"]) : 0;
                             _resultVM.irfIntId = !string.IsNullOrEmpty(dt.Rows[0]["irfIntId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["irfIntId"]) : 0;
+                            
+                            _resultVM.MeetingStatus = !string.IsNullOrEmpty(dt.Rows[0]["MeetingStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["MeetingStatus"]) : 0;
+                            _resultVM.InterviewStatus = !string.IsNullOrEmpty(dt.Rows[0]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["InterviewStatus"]) : 0;
+                            
                             try 
                             {
                                 if (dt.Rows[0]["MatchScorePercentage"] != DBNull.Value)
@@ -368,7 +372,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null)
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null, int? interviewStatus = null, string interviewerComment = null)
         {
             try
             {
@@ -378,6 +382,8 @@ namespace Risebird.Repository
                     parameters.Add("@SessionId", sessionId);
                     parameters.Add("@SerializedReportOfAIInterviewByAssistant", serializedReportOfAIInterviewByAssistant);
                     parameters.Add("@isExit", isExit);
+                    parameters.Add("@interviewStatus", interviewStatus);
+                    parameters.Add("@interviewerComment", interviewerComment);
                     parameters.Add("@timeNow", (isExit.HasValue && isExit.Value == true) ? DateTime.Now : null);
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveReportOfAIInterviewByAssistant", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout:150);
@@ -496,6 +502,31 @@ namespace Risebird.Repository
                     parameters.Add("@updatedAnswer", updatedAnswer);
                     parameters.Add("@timeNow", DateTime.Now);
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateCandidateAnswerById", parameters,
+                         commandType: CommandType.StoredProcedure, commandTimeout: 150);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateMeetingCompletedStatusForAIInterview(string sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateMeetingCompletedStatusForAIInterview", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout: 150);
                     return true;
                 }
