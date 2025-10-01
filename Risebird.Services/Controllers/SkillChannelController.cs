@@ -136,7 +136,7 @@ namespace Risebird.Services.Controllers
                                         irfModel.ClientId = clientDetails != null ? clientDetails.id : 67; //ust's client id : 29 ust, 67 ust us, 152 ust pe?
                                         irfModel.StartDate = DateTime.Now;
                                         irfModel.EndDate = DateTime.Now.AddMonths(3);
-                                        irfModel.MeetingPlatform = MeetingPlatforms.Zoom;
+                                        irfModel.MeetingPlatform = MeetingPlatforms.Zoho;
                                         irfModel.JDTiltle = reqData.jobTitle;
                                         irfModel.ClientName = clientDetails?.Name;
                                         irfModel.CreatedFromTemplateId = isExistsObj.TemplateId;

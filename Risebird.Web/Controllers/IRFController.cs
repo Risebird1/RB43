@@ -2113,7 +2113,7 @@ namespace Risebird.Web.Controllers
 
                         if (string.IsNullOrEmpty(model.MeetingPlatform))
                         {
-                            model.MeetingPlatform = MeetingPlatforms.Zoom;
+                            model.MeetingPlatform = MeetingPlatforms.Zoho;
                         }
                         //else
                         //{
