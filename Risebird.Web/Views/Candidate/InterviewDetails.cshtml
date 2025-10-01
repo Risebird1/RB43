@@ -678,12 +678,134 @@
                     <h5 class="modal-title pull-left" style="padding-top:0px;">Mandatory Instructions</h5>
                 </div>
 
-
                 <div class="modal-body mi-check" style="padding:0px;text-align: center;">
+                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;margin-top:">Please confirm you've read and agreed to the following by checking the box on each item below : </h1>
+                    @if (Model.CandidateDetails.IsAIInterview)
+                    {
+                        <div style="overflow-y:scroll;height:300px;">
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_4" style="float: left;width:100%;margin:0px">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_4" value="Camera Requirement" name="InterviewCheckshow" />
+                                        <label for="checklist_4" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Camera Requirement :</b>I understand that<b> my camera must remain ON throughout the interview.</b>
+                                        I will ensure my <b>entire responses are recorded with my face clearly visible, close-up, and properly captured</b> in good light and from the front angle. <br/>I will not allow my face to be partially visible, blocked, too far from the camera, or out of frame.</h2>
+                                    </label>
+                                </label>
+                            </div>
 
-                    <div class="modal-body mi-check" style="padding:0px;text-align: center;">
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_5" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_5" value="Stable Internet Connection" name="InterviewCheckshow" />
+                                        <label for="checklist_5" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Stable Internet Connection :</b>I will use <b>high-speed Wi-Fi</b> only (no mobile hotspots). I have tested my connection to avoid disruptions</h2>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_6" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_6" value="Professional Conduct" name="InterviewCheckshow" />
+                                        <label for="checklist_6" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Professional Conduct:</b>I will remain <b>seated in one place</b> for the entire interview. I will not move around or attempt the interview while traveling.</h2>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_7" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_7" value="ID Verification" name="InterviewCheckshow" />
+                                        <label for="checklist_7" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">ID Verification:</b>I will carry my <b>Aadhaar card and use the phone number linked to Aadhaar</b> for OTP verification.I understand that half faces, large headphones, poor lighting, or distant camera angles may cause negative verification.</h2>
+                                    </label>
+                                </label>
+                            </div>
 
-                        <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Please confirm you've read and agreed to the following by checking the box on each item below : </h1>
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_8" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_8" value="Response Recording & Speech-to-Text (STT) Accuracy" name="InterviewCheckshow" />
+                                        <label for="checklist_8" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Response Recording & Speech-to-Text (STT) Accuracy:</b>I understand that my  <b>spoken responses will be converted to text</b> and analyzed by AI. To avoid <b>wrong evaluation</b> due to mis-transcription, I will:</h2>
+                                        <ul>
+                                            <li style="color:#979494">Speak <b>clearly and at a natural pace.</b></li>
+                                            <li style="color:#979494">Use <b>complete sentences</b> and <b>avoid one-word answers</b></li>
+                                            <li style="color:#979494">Provide <b>detailed answers</b> for open-ended questions with examples and structure.</li>
+                                            <li style="color:#979494"><b>Avoid vague, generic,</b> or copied responses as these will lead to a <b>negative verdict from AI.</b></li>
+                                            <li style="color:#979494">Ensure my answers are <b>real, thoughtful, personal, and clear.</b></li>
+                                        </ul>
+                                    </label>
+                                </label>
+                            </div>
+
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_9" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_9" value="Voice Input & Noise Control" name="InterviewCheckshow" />
+                                        <label for="checklist_9" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Voice Input & Noise Control:</b>I will sit in a <b>quiet environment</b> with minimal background noise.
+                                        <br/>I will use a <b>headset/earphones with microphone</b>, placed close to my mouth, and speak <b>loudly, clearly, and with correct pronunciation.</b></h2>
+                                    </label>
+                                </label>
+                            </div>
+
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_10" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_10" value="Video Recording & AI Monitoring" name="InterviewCheckshow" />
+                                        <label for="checklist_10" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Video Recording & AI Monitoring:</b>I acknowledge that all responses will be video recorded and analyzed by AI for <b>text correctness, facial expressions, and speech sentiment.</b>
+                                        I understand I may <b>opt out</b> if I am not comfortable.</h2>
+                                    </label>
+                                </label>
+                            </div>
+
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_11" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_11" value="Support & Assistance" name="InterviewCheckshow" />
+                                        <label for="checklist_11" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Support & Assistance:</b>I understand that:</h2>
+                                        <ul style="margin:0px;padding:0px;">
+                                            <li style="list-style-type:disc">For <b>job role/process queries,</b> I must contact the Client HR.</li>
+                                            <li style="list-style-type:disc">For <b>technical issues</b> (login/access/interruption), I must contact the <b>Risebird coordinator/channel owner.</b></li>
+                                            <li style="list-style-type:disc">These details will be shared in my <b>interview invite.</b></li>
+                                        </ul>
+                                    </label>
+                                </label>
+                            </div>
+
+                            <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                                <label class="question" for="checklist_12" style="float: left;width:100%;margin:0px;">
+                                    <span class="round" style="float:left;left:0px;">
+                                        <input type="checkbox" id="checklist_12" value="Important Note" name="InterviewCheckshow" />
+                                        <label for="checklist_12" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                    </span>
+                                    <label class="consent-label" style="margin-left: 15px;">
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Important Note:</b>I understand that failure to follow these guidelines may result in <b>rescheduling or cancellation of my interview</b>.</h2>
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+                    } 
+                    else{
                         @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm) || !string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
                         {
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
@@ -692,31 +814,23 @@
                                         <input type="checkbox" id="checklist_1" value="CandidateConsent" name="InterviewCheckshow" />
                                         <label for="checklist_1" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
-
                                     <label class="consent-label" style="margin-left: 15px;">
                                         <h2 style="font-size:14.5px;line-height: 20px;color: #979494;font-weight:400;margin:0px;">
                                             <b style="color:green;padding-right: 7px;"> Candidate Job Consent Acknowledgement :</b>"I understand the job role and confirm my willingness to proceed with the hiring process for the 'company' I am interviewing for".
                                             <br />
-
                                             @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
                                             {
                                                 <p style="font-size:16px;padding: 5px 0px 0px 0px;float:left">
                                                     <b style="font-weight:600;color:grey"> Learn more:</b>
                                                     <span style="line-height: 22px;margin-bottom:5px;font-size: 15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 0px 0px 0px;">  <a target="_blank" href="@Model.CandidateDetails.CandidateVideo"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Job Role Video Explaination</a> </span>&
-
                                                 </p>
-
                                             }
-
-
                                             @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm))
                                             {
                                                 <p style="font-size:16px;padding: 5px 0px 0px 5px;float: left;">
                                                     <span style="line-height: 22px;margin-bottom:5px;font-size:15px;color: #979494;font-weight: 700;list-style:square;padding: 0px 10px 0px 0px;"><a target="_blank" href="@Model.CandidateDetails.ConsentForm"><span style="color: #4c87b6;font-weight:500;font-weight:bold;">Consent Text </span></a></span>
                                                 </p>
                                             }
-
-
                                         </h2>
                                     </label>
                                 </label>
@@ -737,7 +851,6 @@
                             </div>
                         }
 
-
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_3" style="float: left;width:100%">
                                 <span class="round" style="float:left;left:0px;">
@@ -749,23 +862,14 @@
                                 </label>
                             </label>
                         </div>
+                    }
 
-
-                        <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
-                            <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" checked id="agree" name="agree" /> <span style="font-weight:600;color: grey" ;> I hereby accept & acknowlege Risebird <a href="https://drive.google.com/file/d/1t9h7CLcwrbI7HzkJT5vs8pEWA5ySeiTY/view?usp=sharing" target="_blank" style="text-decoration:underline">Terms & Services</a></span>
-                        </div>
-                        <div class="col-md-12 pull-right">
-                            @*     <button type="button" class="mdc-button button-warning" data-bs-dismiss="modal" aria-label="Skip" style="z-index:100;margin-bottom: 10px;background: #a9a6a6;">
-                                <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">Skip</span>
-                            </button> *@
-                            <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()">Continue to join interview with my consent for above checked points </button>
-                        </div>
-
-
-
+                    <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
+                        <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" checked id="agree" name="agree" /> <span style="font-weight:600;color: grey;"> I hereby accept & acknowlege Risebird <a href="https://drive.google.com/file/d/1t9h7CLcwrbI7HzkJT5vs8pEWA5ySeiTY/view?usp=sharing" target="_blank" style="text-decoration:underline">Terms & Services</a></span>
                     </div>
-
-
+                    <div class="col-md-12 pull-right">
+                        <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()">Continue to join interview with my consent for above checked points </button>
+                    </div>
                 </div>
             </div>
         </div>
