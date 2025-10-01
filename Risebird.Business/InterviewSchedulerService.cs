@@ -472,5 +472,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<ZohoAccessToken> FetchZohoAccessToken(string Tokentype)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.FetchZohoAccessToken(Tokentype);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> SaveZohoAccessToken(ZohoAccessToken tokendetails)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.SaveZohoAccessToken(tokendetails);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

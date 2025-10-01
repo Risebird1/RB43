@@ -825,5 +825,55 @@ namespace Risebird.Repository
                 return string.Empty;
             }
         }
+        public async Task<ZohoAccessToken> FetchZohoAccessToken(string Tokentype)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@TokenType", Tokentype);
+                    var result = await SqlMapper.QueryAsync<ZohoAccessToken>(con, "usp_FetchZohoAccessToken", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> SaveZohoAccessToken(ZohoAccessToken tokendetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AccessToken", tokendetails.AccessToken);
+                    parameters.Add("@TokenExpiry", tokendetails.TokenExpiry);
+                    parameters.Add("@TokenType", tokendetails.TokenType);
+                    var result = await SqlMapper.QueryAsync<ZohoAccessToken>(con, "usp_SaveZohoAccessToken", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

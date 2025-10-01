@@ -33,7 +33,7 @@ namespace Risebird.Entities.ViewModel
         public int? PerHourRate { get; set; }
 
         [BindProperty]
-        new public string MeetingPlatform { get; set; } = MeetingPlatforms.Zoom;
+        new public string MeetingPlatform { get; set; } = MeetingPlatforms.Zoho;
 
         //public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.Zoho };
         public int SkillChannelCounts { get; set; }

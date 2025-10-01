@@ -1218,7 +1218,7 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Index");
                         if (meetingToUpdate.MeetingPlatform == null)
                         {
-                            meetingToUpdate.MeetingPlatform = MeetingPlatforms.Zoom;
+                            meetingToUpdate.MeetingPlatform = MeetingPlatforms.Zoho;
                         }
                         await SetAddUpdateMeetingParameters(meetingToUpdate);
 
@@ -7033,7 +7033,7 @@ namespace Risebird.Web.Controllers
                 var meetingplatform = await _meetingService.GetMeetingPlatformbyIRFId(irfid);
                 if (meetingplatform == null)
                 {
-                    meetingplatform = MeetingPlatforms.Zoom;
+                    meetingplatform = MeetingPlatforms.Zoho;
                 }
                 return Json(meetingplatform);
             }
