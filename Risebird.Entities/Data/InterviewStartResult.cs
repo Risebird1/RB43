@@ -22,5 +22,6 @@ namespace Risebird.Entities.Data
         public Guid SessionId { get; set; }
         public string ThreadId { get; set; }
         public List<string> Replies { get; set; }
+        public bool IsReportSavedToDB { get; set; }
     }
 }

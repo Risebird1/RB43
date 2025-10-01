@@ -213,6 +213,13 @@ namespace Risebird.Web.Controllers
                                         }
                                         else
                                         {
+                                            //check if the interview is already marked completed in the first details object above and if not, mark it as completed
+                                            if(meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+                                            {
+                                                await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+                                            }
+
                                             var exitModel = new AIInterviewExitModalViewModel
                                             {
                                                 Title = "Interview Complete",
@@ -237,6 +244,13 @@ namespace Risebird.Web.Controllers
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                     {
                                         // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                        //check if the interview is already marked completed in the first details object above and if not, mark it as completed
+                                        if (meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+                                        {
+                                            await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+                                        }
+
                                         var exitModel = new AIInterviewExitModalViewModel
                                         {
                                             Title = "Interview Complete",
@@ -257,6 +271,12 @@ namespace Risebird.Web.Controllers
                                 else
                                 {
                                     // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                    //check if the interview is already marked completed in the first details object above and if not, mark it as completed
+                                    if (meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+                                    {
+                                        await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+                                    }
                                     var exitModel = new AIInterviewExitModalViewModel
                                     {
                                         Title = "Interview Complete",
@@ -431,7 +451,14 @@ namespace Risebird.Web.Controllers
                                     else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                     {
+                                        //check if the interview is already marked completed in the first details object above and if not, mark it as completed
+                                        if (meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+                                        {
+                                            await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+                                        }
                                         // INTERVIEW COMPLETE - Return ExitModalPartial view
+
                                         var exitModel = new AIInterviewExitModalViewModel
                                         {
                                             Title = "Interview Complete",
@@ -453,6 +480,12 @@ namespace Risebird.Web.Controllers
                                 else
                                 {
                                     // INTERVIEW COMPLETE - Return ExitModalPartial view
+                                    //check if the interview is already marked completed in the first details object above and if not, mark it as completed
+                                    if (meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+                                    {
+                                        await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+                                    }
                                     var exitModel = new AIInterviewExitModalViewModel
                                     {
                                         Title = "Interview Complete",
@@ -643,6 +676,11 @@ namespace Risebird.Web.Controllers
                         await UploadBotInterviewVideo(model, question, userMessage);
 
                         // INTERVIEW COMPLETE - Return ExitModalPartial view
+                        //update the db for MeetingStatus = 4 here.
+                        await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+                        _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Preset);
+
+
                         var exitModel = new AIInterviewExitModalViewModel
                         {
                             Title = "Interview Complete",
@@ -714,6 +752,12 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+
+                            //update the db for MeetingStatus = 4 here.
+                            await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+                            _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Preset);
+
+
                             var exitModel = new AIInterviewExitModalViewModel
                             {
                                 Title = "Interview Complete",
@@ -753,6 +797,11 @@ namespace Risebird.Web.Controllers
                         await UploadBotInterviewVideo(model, question, userMessage);
 
                         // INTERVIEW COMPLETE - Return ExitModalPartial view
+                        //update the db for MeetingStatus = 4 here.
+                        await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+                        _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Adaptive);
+
+
                         var exitModel = new AIInterviewExitModalViewModel
                         {
                             Title = "Interview Complete",
@@ -965,10 +1014,10 @@ namespace Risebird.Web.Controllers
                         aiReport.Replies = list;
                         if (aiReport != null)
                         {
-                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
+                            //var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
                             if (isExit.HasValue && isExit.Value)
                             {
-                                if (result)
+                                if (aiReport.IsReportSavedToDB)
                                 {
                                     var exitModel = new AIInterviewExitModalViewModel
                                     {
@@ -1070,10 +1119,10 @@ namespace Risebird.Web.Controllers
                         aiReport.Replies = list;
                         if (aiReport != null)
                         {
-                            var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
+                            //var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
                             if (isExit.HasValue && isExit.Value)
                             {
-                                if (result)
+                                if (aiReport.IsReportSavedToDB)
                                 {
                                     var exitModel = new AIInterviewExitModalViewModel
                                     {

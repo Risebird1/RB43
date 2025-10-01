@@ -19,12 +19,14 @@ set @irfId  = (select id from IRF where IRFId = (select IRFId from InterviewMeet
 set @aiInterviewType  = (select AIInterviewType from IRF where id = @irfId)  
   
 select im.id as InterviewId, im.interviewDate, im.AssistantId, im.candidateEmail, ulc.MobileNumber, im.interviewer,  
-im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink,ISNULL(ad.matchPercentage, 0) as MatchScorePercentage,
-ISNULL(ad.id, 0) as AadharVerificationId, 
+im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink,
+ISNULL(ad.matchPercentage, 0) as MatchScorePercentage,
+ISNULL(ad.id, 0) as AadharVerificationId, ic.MeetingStatus, ic.InterviewStatus,
 case when (im.candidateName is not null and im.candidateName != '')  then im.candidateName else ulc.FirstName end as candidateName,
 irf.id as irfIntId, irf.AIInterviewType, IRF.IsAIInterview,  
 case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive  
 from InterviewMeetings im
+left join InterviewComments ic on ic.InterviewId = im.id
 left join AadhaarDetails ad on (ad.email = im.candidateEmail and ad.reference_id = CAST(im.id AS varchar(50)))
 join IRF on IRF.irfId = im.irfid  
 join UserList ulc on ulc.EmailId = im.candidateEmail  
