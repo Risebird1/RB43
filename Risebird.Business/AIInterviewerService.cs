@@ -96,11 +96,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null)
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null, int? interviewStatus = null, string interviewerComment = null)
         {
             try
             {
-                return await _aiInterviewerRepository.SaveReportOfAIInterviewByAssistant(sessionId, serializedReportOfAIInterviewByAssistant, isExit);
+                return await _aiInterviewerRepository.SaveReportOfAIInterviewByAssistant(sessionId, serializedReportOfAIInterviewByAssistant, isExit, interviewStatus, interviewerComment);
             }
             catch (Exception e)
             {
@@ -163,6 +163,19 @@ namespace Risebird.Business
             try
             {
                 return await _aiInterviewerRepository.UpdateCandidateAnswerById(questionId, updatedAnswer);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateMeetingCompletedStatusForAIInterview(string sid)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.UpdateMeetingCompletedStatusForAIInterview(sid);
             }
             catch (Exception e)
             {
