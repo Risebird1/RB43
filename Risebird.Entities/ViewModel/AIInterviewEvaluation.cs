@@ -15,7 +15,7 @@ namespace Risebird.Entities.ViewModel
         public List<RubricScoreSummary> RubricScoreSummary { get; set; }
 
         [JsonProperty("overall_technical_score")]
-        public int OverallTechnicalScore { get; set; }
+        public float OverallTechnicalScore { get; set; }
         public int AadharVerificationId { get; set; }
 
         [JsonProperty("final_verdict")]
@@ -25,7 +25,7 @@ namespace Risebird.Entities.ViewModel
         public string FinalComment { get; set; }
 
         [JsonProperty("overall_communication_score")]
-        public int OverallCommunicationScore { get; set; }
+        public float OverallCommunicationScore { get; set; }
 
         // Note: property name has a space in JSON ("overall_communication_score reasoning")
         [JsonProperty("overall_communication_score reasoning")]
@@ -44,13 +44,13 @@ namespace Risebird.Entities.ViewModel
         public string Verdict { get; set; }
 
         [JsonProperty("score")]
-        public int Score { get; set; }
+        public float Score { get; set; }
 
         [JsonProperty("comment")]
         public string Comment { get; set; }
 
         [JsonProperty("communication_score")]
-        public int CommunicationScore { get; set; }
+        public float CommunicationScore { get; set; }
 
         [JsonProperty("communication_comment")]
         public string CommunicationComment { get; set; }
@@ -68,7 +68,7 @@ namespace Risebird.Entities.ViewModel
         public string ObservedLevel { get; set; }
 
         [JsonProperty("score")]
-        public int Score { get; set; }
+        public float Score { get; set; }
     }
 
     public class LlmDetection

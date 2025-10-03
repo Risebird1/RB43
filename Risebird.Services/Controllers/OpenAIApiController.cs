@@ -217,7 +217,7 @@ namespace Risebird.Services.Controllers
                     return strict;
                 }
             }
-            catch { }
+            catch(Exception ex) { return null; }
 
             try
             {
