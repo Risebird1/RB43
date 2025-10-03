@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.Graph.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using Risebird.Business;
 using Risebird.Business.Interface;
@@ -123,6 +124,7 @@ namespace Risebird.Services.Controllers
         [HttpPost("report")]
         public async Task<IActionResult> Report([FromBody] AIReportVM input)
         {
+            bool isReportSavedToDb = false;
             //var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
             if(input?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
             {
@@ -142,12 +144,27 @@ namespace Risebird.Services.Controllers
                 {
                     var reportObject = new InterviewReportResult { SessionId = input.SessionId, ThreadId = threadId, Replies = replies };
                     //save the report in the database.
-                    await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(reportObject), input.isExit);
+                    var aIInterviewEvaluation = TryParseEvaluation(replies?.FirstOrDefault());
+                    int? interviewStatus = null;
+                    string interviewerComment = string.Empty;
+                    if (aIInterviewEvaluation != null)
+                    {
+                        if(aIInterviewEvaluation.FinalVerdict?.ToLower() == "select")
+                        {
+                            interviewStatus = 2;
+                        }
+                        else if(aIInterviewEvaluation.FinalVerdict?.ToLower() == "reject")
+                        {
+                            interviewStatus = 3;
+                        }
+                        interviewerComment = aIInterviewEvaluation.FinalComment;
+                    }
+                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(reportObject), input.isExit, interviewStatus, interviewerComment);
 
                 }
 
 
-                return Ok(new { input.SessionId, threadId, replies });
+                return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
             }
             else
             {
@@ -162,12 +179,102 @@ namespace Risebird.Services.Controllers
                 var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
 
                 //save the report in the database.
+                if (replies != null)
+                {
+                    var aiReport = new InterviewReportResult();
+                    var list = new List<string>();
+                    list.Add(replies.FirstOrDefault());
+                    aiReport.Replies = list;
+                    aiReport.SessionId = input.SessionId;
+                    aiReport.ThreadId = threadId;
+                    //save the report in the database.
 
+                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(aiReport), input.isExit);
 
-                return Ok(new { input.SessionId, threadId, replies });
+                }
+
+                return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
             }
             
         }
+        private AIInterviewEvaluation TryParseEvaluation(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            var cleaned = raw.Trim();
+            if (cleaned.StartsWith("```json")) cleaned = cleaned.Substring(6).TrimStart();
+            if (cleaned.EndsWith("```")) cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+            cleaned = cleaned.TrimStart('n');
+
+            try
+            {
+                var strict = JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
+                if (strict != null &&
+                    (strict.QuestionRatings != null || strict.RubricScoreSummary != null || strict.LlmDetection != null ||
+                     !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
+                     strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
+                {
+                    return strict;
+                }
+            }
+            catch { }
+
+            try
+            {
+                var root = JsonConvert.DeserializeObject<JObject>(cleaned);
+                if (root == null) return null;
+
+                var eval = new AIInterviewEvaluation
+                {
+                    OverallTechnicalScore = root.Value<int?>("overall_technical_score") ?? root.Value<int?>("overall_score") ?? 0,
+                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict"),
+                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment"),
+                    OverallCommunicationScore = root.Value<int?>("overall_communication_score") ?? root.Value<int?>("communication_score") ?? 0,
+                    OverallCommunicationScoreReasoning = root.Value<string>("overall_communication_score reasoning") ?? root.Value<string>("overall_communication_score_reasoning")
+                };
+
+                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"]);
+                if (qNode != null)
+                {
+                    eval.QuestionRatings = qNode.Select(q => new QuestionRating
+                    {
+                        Question = q.Value<string>("question") ?? q.Value<string>("text"),
+                        Verdict = q.Value<string>("verdict"),
+                        Score = q.Value<int?>("score") ?? 0,
+                        Comment = q.Value<string>("comment"),
+                        CommunicationScore = q.Value<int?>("communication_score") ?? 0,
+                        CommunicationComment = q.Value<string>("communication_comment")
+                    }).ToList();
+                }
+
+                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"]);
+                if (rNode != null)
+                {
+                    eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
+                    {
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("item"),
+                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected"),
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed"),
+                        Score = r.Value<int?>("score") ?? 0
+                    }).ToList();
+                }
+
+                var lNode = (JObject)(root["llm_detection"] ?? root["llmDetection"]);
+                if (lNode != null)
+                {
+                    eval.LlmDetection = new LlmDetection
+                    {
+                        LlmResponseSuspected = lNode.Value<bool?>("llm_response_suspected") ?? lNode.Value<bool?>("suspected") ?? false,
+                        EvidenceComment = lNode.Value<string>("evidence_comment") ?? lNode.Value<string>("evidence"),
+                        SuspiciousInstances = lNode["suspicious_instances"] is JArray arr ? arr.Select(x => x.ToString()).ToList() : null
+                    };
+                }
+
+                return eval;
+            }
+            catch { return null; }
+        }
+
 
     }
 }

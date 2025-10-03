@@ -12,6 +12,8 @@ Create Procedure usp_SaveReportOfAIInterviewByAssistant
 @SessionId varchar(200),
 @SerializedReportOfAIInterviewByAssistant varchar(max),
 @isExit bit = null,
+@interviewStatus int = null,
+@interviewerComment varchar(1000) = null,
 @timeNow datetime = null
 AS
 BEGIN
@@ -20,7 +22,8 @@ declare @interviewId int
 set @interviewId = (select id from InterviewMeetings where SessionId = @SessionId)
 
 update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
-HasCandidateExited = @isExit, CandidateExitedAt = @timeNow  where InterviewId  = @interviewId
+HasCandidateExited = @isExit, CandidateExitedAt = @timeNow, MeetingStatus = 4, InterviewStatus = @interviewStatus, InterviewerComment = @interviewerComment,
+ModifiedOn = @timeNow  where InterviewId  = @interviewId
 
 END
 GO
