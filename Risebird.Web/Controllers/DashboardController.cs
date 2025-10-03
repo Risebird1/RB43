@@ -114,12 +114,12 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-                        //for (int i = 0; i < 15; i++)
-                        //{
-                        //    //await ParseOpenAIResume();
-                        //    await ParseOpenAIResumeTImerFunctionCopy();
+                        for (int i = 0; i < 15; i++)
+                        {
+                            //await ParseOpenAIResume();
+                            await ParseOpenAIResumeTImerFunctionCopy();
 
-                        //}
+                        }
                         var model = new DashboardVM();
                         //await _assistantServiceHelper.DeleteFiles();
                         //daily interview tracking first chart
@@ -351,24 +351,28 @@ namespace Risebird.Web.Controllers
                 foreach (var resume in resumeList)
                 {
 
-                    string resumeLinkToParse = string.Empty;
-                    if (!resume.ResumeLink.Contains(".pdf"))
-                    {
-                        resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
-                    }
-                    else
-                    {
-                        resumeLinkToParse = resume.ResumeLink;
-                    }
-                    //convert resume into string
-                    var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
-                    if (!string.IsNullOrEmpty(resumeStringContent))
+                    //string resumeLinkToParse = string.Empty;
+                    //if (!resume.ResumeLink.Contains(".pdf"))
+                    //{
+                    //    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
+                    //}
+                    //else
+                    //{
+                    //    resumeLinkToParse = resume.ResumeLink;
+                    //}
+                    ////convert resume into string
+                    //var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+                    if (!string.IsNullOrEmpty(resume.ResumeLink))
                     {
                         var threadId = await _ai.CreateThreadAsync();
                         //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                        await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+                        //await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+                        //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+                        await _ai.AddMessageAsync(threadId, "user", "https://risebirdportal.blob.core.windows.net/resumes/Raju_Padipati.docx?sv=2024-11-04&spr=https&st=2025-10-02T14%3A48%3A06Z&se=2026-05-02T14%3A48%3A06Z&sr=c&sp=r&sig=ilSF48IqgthNAt3HplvVgjb6mHFJqB5HU%2Bov3XwyjTs%3D");
 
-                        var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named "Candidate Answer Evaluator"
+                        //var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Resume Parser)asst_T61hVvnYmOCmvyfKylFULdUk
+                        var runId = await _ai.CreateRunAsync(threadId, "asst_x4F8slGF4hnEI4EN7pBDGR2g"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g
+
                         await _ai.WaitForRunAsync(threadId, runId);
 
                         var replies = await _ai.GetMessagesAsync(threadId);

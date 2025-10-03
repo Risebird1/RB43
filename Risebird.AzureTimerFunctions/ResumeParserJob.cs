@@ -93,6 +93,7 @@ namespace Risebird.AzureTimerFunctions
 
                         //var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Resume Parser)asst_T61hVvnYmOCmvyfKylFULdUk
                         var runId = await _ai.CreateRunAsync(threadId, "asst_x4F8slGF4hnEI4EN7pBDGR2g"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g
+                        
                         await _ai.WaitForRunAsync(threadId, runId);
 
                         var replies = await _ai.GetMessagesAsync(threadId);
