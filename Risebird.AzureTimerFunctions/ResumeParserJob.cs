@@ -1,57 +1,45 @@
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
-using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Risebird.AzureTimerFunctions
 {
     public class ResumeParserJob
     {
-        private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        private readonly IMeetingRespository _meetingRespository;
         private readonly ICandidateRepository _candidateRepository;
         private readonly IAzureStorageHelper _azureStorageHelper;
         //private readonly IResumeParserHelper _resumeParserHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly IIRFService _irfService;
-        private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IValidationHelper _validationHelper;
-        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
 
 
         private readonly ILogger log;
 
-        public ResumeParserJob(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-            IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
-            ISASUrlHelper sasUrlHelper, IIRFService irfService,
+        public ResumeParserJob(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
+             ICandidateRepository candidateRepository,
+            IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
-            IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
+            IPdfReaderHelper pdfReaderHelper,
             IOpenAIInterviewerAssistantHelper ai)
         {
-            _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
-            _meetingRespository = meetingRespository;
-            _sasUrlHelper = sasUrlHelper;
             //_resumeParserHelper = resumeParserHelper;
             _candidateRepository = candidateRepository;
             _irfService = irfService;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _validationHelper = validationHelper;
-            _assistantServiceHelper = assistantServiceHelper;
             log = loggerFactory.CreateLogger<ResumeParserJob>();
             _pdfReaderHelper = pdfReaderHelper;
             _ai = ai;
@@ -72,26 +60,27 @@ namespace Risebird.AzureTimerFunctions
 
                 foreach (var resume in resumeList)
                 {
-                    
-                    string resumeLinkToParse = string.Empty;
-                    if (!resume.ResumeLink.Contains(".pdf"))
-                    {
-                        resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
-                    }
-                    else
-                    {
-                        resumeLinkToParse = resume.ResumeLink;
-                    }
-                    //convert resume into string
-                    var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
-                    if (!string.IsNullOrEmpty(resumeStringContent))
+
+                    //string resumeLinkToParse = string.Empty;
+                    //if (!resume.ResumeLink.Contains(".pdf"))
+                    //{
+                    //    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
+                    //}
+                    //else
+                    //{
+                    //    resumeLinkToParse = resume.ResumeLink;
+                    //}
+                    ////convert resume into string
+                    //var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+                    if (!string.IsNullOrEmpty(resume.ResumeLink))
                     {
                         var threadId = await _ai.CreateThreadAsync();
                         //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                        await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+                        //await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+                        await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
 
-                        var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named "Candidate Answer Evaluator"
-                        await _ai.WaitForRunAsync(threadId, runId);
+                        //var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Resume Parser)asst_T61hVvnYmOCmvyfKylFULdUk
+                        var runId = await _ai.CreateRunAsync(threadId, "asst_x4F8slGF4hnEI4EN7pBDGR2g"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g
 
                         var replies = await _ai.GetMessagesAsync(threadId);
 
@@ -190,7 +179,7 @@ namespace Risebird.AzureTimerFunctions
                                 }
                             }
 
-                            else if(candidateParsedData != null)
+                            else if (candidateParsedData != null)
                             {
                                 var candidate = new CandidateQuickAddModel();
                                 candidate.Name = candidateParsedData.name;
