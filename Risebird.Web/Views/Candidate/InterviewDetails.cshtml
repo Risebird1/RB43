@@ -1447,7 +1447,7 @@
         $('input[name="InterviewCheckshow"]').off('change').on('change', function() {
             if (!$(this).is(':checked')) {
                 // Store the unchecked checkbox ID
-@*               uncheckedCheckboxId = $(this).ctx('id'); *@ 
+                 @*uncheckedCheckboxId = $(this).ctx('id'); *@ 
                  uncheckedCheckboxId = $(this).attr('id');
                 // Show confirmation modal
                 openConsentConfirmationModal();
