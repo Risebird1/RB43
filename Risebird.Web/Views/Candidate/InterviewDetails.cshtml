@@ -1447,7 +1447,8 @@
         $('input[name="InterviewCheckshow"]').off('change').on('change', function() {
             if (!$(this).is(':checked')) {
                 // Store the unchecked checkbox ID
-                uncheckedCheckboxId = $(this).ctx('id');
+@*               uncheckedCheckboxId = $(this).ctx('id'); *@ 
+                 uncheckedCheckboxId = $(this).attr('id');
                 // Show confirmation modal
                 openConsentConfirmationModal();
                 // Prevent the checkbox from being unchecked until user confirms
@@ -1457,7 +1458,7 @@
 
         // Initialize button state for InterviewCheckshowDisplay checkboxes
         checkAllCheckboxesStatus();
-
+ 
         // Show error message initially since all checkboxes start unchecked
         $('#checkboxErrorMsg').show();
     }
