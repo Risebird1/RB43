@@ -17,153 +17,153 @@
 <style>
 
     .vertical-mdl-tabs .mdl-tabs__tab-bar {
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    margin-bottom: 35px;
-    height: inherit;
-    border-bottom: none;
-    /*    border-right: 1px solid rgba(10, 11, 49, 0.20);*/
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        margin-bottom: 35px;
+        height: inherit;
+        border-bottom: none;
+        /*    border-right: 1px solid rgba(10, 11, 49, 0.20);*/
     }
 
     .vertical-mdl-tabs .mdl-tabs__tab {
-    width: 100%;
-    height: 100px;
-    line-height: 27px;
-    box-sizing: border-box;
-    letter-spacing: 2px;
-    background: #f3f3f3;
+        width: 100%;
+        height: 100px;
+        line-height: 27px;
+        box-sizing: border-box;
+        letter-spacing: 2px;
+        background: #f3f3f3;
     }
 
     .none {
-    display: none;
+        display: none;
     }
 
     .vertical-mdl-tabs.mdl-tabs.is-upgraded a.mdl-tabs__tab.is-active {
-    border-left: 5px solid #ED462F;
-    background: #fff;
+        border-left: 5px solid #ED462F;
+        background: #fff;
     }
 
     .vertical-mdl-tabs.mdl-tabs.is-upgraded .mdl-tabs__tab.is-active:after {
-    content: inherit;
-    height: 0;
+        content: inherit;
+        height: 0;
     }
 
     .vertical-mdl-tabs.mdl-tabs.is-upgraded .mdl-tabs__panel.is-active, .mdl-tabs__panel {
-    padding: 0 0px;
+        padding: 0 0px;
     }
 
     .vertical-mdl-tabs.mdl-tabs .mdl-tabs__tab {
-    text-align: left;
+        text-align: left;
     }
 
     .small-txt {
-    font-size: 11px;
+        font-size: 11px;
     }
 
     .tab-div {
-    position: relative;
-    top: 19px;
+        position: relative;
+        top: 19px;
     }
 
     .tab-txt {
-    font-size: 14px;
+        font-size: 14px;
     }
 
     header {
-    font-family: 'Lobster', cursive;
-    text-align: center;
-    font-size: 25px;
+        font-family: 'Lobster', cursive;
+        text-align: center;
+        font-size: 25px;
     }
 
     #info {
-    font-size: 18px;
-    color: #555;
-    text-align: center;
-    margin-bottom: 25px;
+        font-size: 18px;
+        color: #555;
+        text-align: center;
+        margin-bottom: 25px;
     }
 
     a {
-    color: #074E8C;
+        color: #074E8C;
     }
 
     .scrollbar {
-    width: 100%;
-    float: left;
-    height: 300px;
-    /*background: #F5F5F5;*/
-    overflow-y: scroll;
-    margin-bottom: 25px;
+        width: 100%;
+        float: left;
+        height: 300px;
+        /*background: #F5F5F5;*/
+        overflow-y: scroll;
+        margin-bottom: 25px;
     }
 
     .force-overflow {
-    margin: 0px 10px 0px 0px;
-    /*min-height: 450px;*/
+        margin: 0px 10px 0px 0px;
+        /*min-height: 450px;*/
     }
 
 
 
     /*
-    *  STYLE 1
-    */
+        *  STYLE 1
+        */
 
 
     #style-4::-webkit-scrollbar {
-    width: 5px;
-    background-color: #F5F5F5;
+        width: 5px;
+        background-color: #F5F5F5;
     }
 
     #style-4::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 2px solid #555555;
+        background-color: #000000;
+        border: 2px solid #555555;
     }
 
 
 
     .mdl-tabs__panel h1 {
-    color: #000;
-    font-weight: 500;
-    font-size: 16px;
-    text-transform: uppercase;
-    float: left;
+        color: #000;
+        font-weight: 500;
+        font-size: 16px;
+        text-transform: uppercase;
+        float: left;
     }
 
     .panel-heading {
-    padding: 0;
-    border: 0;
+        padding: 0;
+        border: 0;
     }
 
     .panel .panel-title {
-    float: none !important;
-    display: inline;
+        float: none !important;
+        display: inline;
     }
 
     .panel-title > a, .panel-title > a:active {
-    display: block;
-    padding: 15px;
-    color: #998e8e !important;
-    font-size: 17px;
-    font-weight: 500;
-    padding: 0px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    word-spacing: 3px;
-    text-decoration: none !important;
+        display: block;
+        padding: 15px;
+        color: #998e8e !important;
+        font-size: 17px;
+        font-weight: 500;
+        padding: 0px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        word-spacing: 3px;
+        text-decoration: none !important;
     }
 
     .panel-heading a:before {
-    font-family: 'Glyphicons Halflings';
-    content: "\e114";
-    float: right;
-    transition: all 0.5s;
-    position: relative;
-    right: 10px;
+        font-family: 'Glyphicons Halflings';
+        content: "\e114";
+        float: right;
+        transition: all 0.5s;
+        position: relative;
+        right: 10px;
     }
 
     .panel-heading.active a:before {
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        transform: rotate(180deg);
     }
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
@@ -172,17 +172,16 @@
 <script src="~/Newassets/js/tabs.js?v=2024" type="text/javascript"></script>
 <style>
     body {
-    font-size: 1.3vw !important;
-    /* background: url(../../img/interview.svg) -20px 5px no-repeat !important;*/
+        font-size: 1.3vw !important;
+        /* background: url(../../img/interview.svg) -20px 5px no-repeat !important;*/
     }
 
     @@media (max-width: 768px) {
-    body {
-    background-size: 30% !important;
-    background-position: -20px 20px !important;
+        body {
+            background-size: 30% !important;
+            background-position: -20px 20px !important;
+        }
     }
-    }
-
 </style>
 
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
@@ -269,17 +268,17 @@
                                                             scheduleCount = +1;
                                                             <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:10px;">Scheduled Interview Details</h1></div>
                                                             @* @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
-                                                            {
-                                                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
-                                                                    <div class="calling" style="top:130px;right:55px;text-transform:uppercase">
-                                                                        <h1 style="line-height: 25px;font-weight: 600;color: green;">
-                                                                            Call the Interviewer
-                                                                        </h1> <span class="calling-icon blink" aria-label="Click here to call the interviewer" style="line-height: 23px;">
-                                                                            <span onclick="CommonCallButtonClick('Interviewer','@item.MobileNumber', 'Interviewer','@item.Interviewid', null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img style="position:relative;top:-1px;left:1px;" src="/img/calling.png" width="14"></span>
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            }*@
+                                                    {
+                                                    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
+                                                    <div class="calling" style="top:130px;right:55px;text-transform:uppercase">
+                                                    <h1 style="line-height: 25px;font-weight: 600;color: green;">
+                                                    Call the Interviewer
+                                                    </h1> <span class="calling-icon blink" aria-label="Click here to call the interviewer" style="line-height: 23px;">
+                                                    <span onclick="CommonCallButtonClick('Interviewer','@item.MobileNumber', 'Interviewer','@item.Interviewid', null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img style="position:relative;top:-1px;left:1px;" src="/img/calling.png" width="14"></span>
+                                                    </span>
+                                                    </div>
+                                                    </div>
+                                                    }*@
                                                             <div class="clearfix"></div>
                                                             <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:0px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
@@ -302,15 +301,16 @@
                                                             <div>
                                                                 @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                 {
-                                                                    
-                                                                    
+
+
                                                                     @if (Model.CandidateDetails.IsAIInterview)
                                                                     {
-                                                                        @* <a target="_blank" @displayStatus href="@Url.Action("Index", "AIInterview" , new { sid = item.SessionId})">Click here to join the meeting</a> *@
+                                                                        @* <a target="_blank" @displayStatus href="@Url.Action(" Index", "AIInterview" , new { sid=item.SessionId})">Click here to join the meeting</a> *@
                                                                         <button id="btn_ai_Interview" type="button"
                                                                                 class="btn btn-primary click_herebtn"
-                                                                                onclick="window.open('@Url.Action("Index", "AIInterview", new { sid = item.SessionId })', '_blank')"
-                                                                            @(item.AadharVerificationId > 0 ? "" : "disabled")>
+                                                                                onclick="window.open('@Url.Action(" Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
+                                                                        @(item.AadharVerificationId >
+                                                                            0 ? "" : "disabled")>
                                                                             Click here to join the meeting
                                                                         </button>
 
@@ -318,7 +318,7 @@
                                                                     else
                                                                     {
                                                                         <div style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
-                                                                        onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
+                                                                             onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
                                                                             Click here to join the meeting
                                                                             <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
                                                                         </div>
@@ -329,7 +329,8 @@
                                                                 {
                                                                     @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
                                                                     {
-                                                                        <a target="_blank" href="#" style="cursor: not-allowed; color:grey">Click here to join the meeting</a>@*  @Url.Action("Index", "AIInterview", new { sid = item.SessionId }) *@
+                                                                        <a target="_blank" href="#" style="cursor: not-allowed; color:grey">Click here to join the meeting</a>
+                                                                        @*  @Url.Action("Index", "AIInterview", new { sid = item.SessionId }) *@
                                                                     }
                                                                     else
                                                                     {
@@ -339,7 +340,7 @@
                                                                             </a>
                                                                         </div>
                                                                     }
-                                                                    
+
                                                                     <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
                                                                 }
                                                             </div>
@@ -539,7 +540,8 @@
 
 
                                                 }
-                                                </div></div>
+                                                </div>
+                                                </div>
                                                 }
 
                                                 }
@@ -593,7 +595,7 @@
 
                                                 <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
                                                 <div id="interviewConsent" class="top-margin" style="clear:both;">
-                                                <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/consent.png"/> INTERVIEW CONSENT DETAILS</h1></div>
+                                                <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/consent.png" /> INTERVIEW CONSENT DETAILS</h1></div>
                                                 <div style="clear:both"></div>
                                                 <div class="follow">
                                                 <div class="row">
@@ -686,12 +688,14 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_4" style="float: left;width:100%;margin:0px">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_4" value="Camera Requirement" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_4" value="Camera Requirement" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_4" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
-                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;"> Camera Requirement :</b>I understand that<b> my camera must remain ON throughout the interview.</b>
-                                        I will ensure my <b>entire responses are recorded with my face clearly visible, close-up, and properly captured</b> in good light and from the front angle. <br/>I will not allow my face to be partially visible, blocked, too far from the camera, or out of frame.</h2>
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;">
+                                            <b style="color:green;padding-right: 7px;"> Camera Requirement :</b>I understand that<b> my camera must remain ON throughout the interview.</b>
+                                            I will ensure my <b>entire responses are recorded with my face clearly visible, close-up, and properly captured</b> in good light and from the front angle. <br />I will not allow my face to be partially visible, blocked, too far from the camera, or out of frame.
+                                        </h2>
                                     </label>
                                 </label>
                             </div>
@@ -699,7 +703,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_5" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_5" value="Stable Internet Connection" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_5" value="Stable Internet Connection" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_5" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -710,7 +714,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_6" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_6" value="Professional Conduct" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_6" value="Professional Conduct" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_6" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -721,7 +725,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_7" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_7" value="ID Verification" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_7" value="ID Verification" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_7" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -733,7 +737,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_8" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_8" value="Response Recording & Speech-to-Text (STT) Accuracy" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_8" value="Response Recording & Speech-to-Text (STT) Accuracy" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_8" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -752,12 +756,14 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_9" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_9" value="Voice Input & Noise Control" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_9" value="Voice Input & Noise Control" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_9" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
-                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Voice Input & Noise Control:</b>I will sit in a <b>quiet environment</b> with minimal background noise.
-                                        <br/>I will use a <b>headset/earphones with microphone</b>, placed close to my mouth, and speak <b>loudly, clearly, and with correct pronunciation.</b></h2>
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;">
+                                            <b style="color:green;padding-right: 7px;">Voice Input & Noise Control:</b>I will sit in a <b>quiet environment</b> with minimal background noise.
+                                            <br />I will use a <b>headset/earphones with microphone</b>, placed close to my mouth, and speak <b>loudly, clearly, and with correct pronunciation.</b>
+                                        </h2>
                                     </label>
                                 </label>
                             </div>
@@ -765,12 +771,14 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_10" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_10" value="Video Recording & AI Monitoring" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_10" value="Video Recording & AI Monitoring" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_10" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
-                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;"><b style="color:green;padding-right: 7px;">Video Recording & AI Monitoring:</b>I acknowledge that all responses will be video recorded and analyzed by AI for <b>text correctness, facial expressions, and speech sentiment.</b>
-                                        I understand I may <b>opt out</b> if I am not comfortable.</h2>
+                                        <h2 style="font-size:14.8px;line-height: 20px;color: #979494;font-weight:400;margin:0px;">
+                                            <b style="color:green;padding-right: 7px;">Video Recording & AI Monitoring:</b>I acknowledge that all responses will be video recorded and analyzed by AI for <b>text correctness, facial expressions, and speech sentiment.</b>
+                                            I understand I may <b>opt out</b> if I am not comfortable.
+                                        </h2>
                                     </label>
                                 </label>
                             </div>
@@ -778,7 +786,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_11" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_11" value="Support & Assistance" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_11" value="Support & Assistance" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_11" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -795,7 +803,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_12" style="float: left;width:100%;margin:0px;">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_12" value="Important Note" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_12" value="Important Note" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_12" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -804,14 +812,15 @@
                                 </label>
                             </div>
                         </div>
-                    } 
-                    else{
+                    }
+                    else
+                    {
                         @if (!string.IsNullOrWhiteSpace(Model.CandidateDetails.ConsentForm) || !string.IsNullOrWhiteSpace(Model.CandidateDetails.CandidateVideo))
                         {
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_1" style="float: left;width:100%">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_1" value="CandidateConsent" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_1" value="CandidateConsent" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_1" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -841,7 +850,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_2" style="float: left;width:100%">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_2" value="CandidateIdVerification" name="InterviewCheckshow" />
+                                        <input type="checkbox" id="checklist_2" value="CandidateIdVerification" name="InterviewCheckshowDisplay" />
                                         <label for="checklist_2" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -854,7 +863,7 @@
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_3" style="float: left;width:100%">
                                 <span class="round" style="float:left;left:0px;">
-                                    <input type="checkbox" id="checklist_3" value="ShareExprience" name="InterviewCheckshow" />
+                                    <input type="checkbox" id="checklist_3" value="ShareExprience" name="InterviewCheckshowDisplay" />
                                     <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                 </span>
                                 <label class="consent-label" style="margin-left: 15px;">
@@ -863,12 +872,20 @@
                             </label>
                         </div>
                     }
-
                     <div class="col-md-12 pull-left text-left" style="margin-bottom:10px;">
                         <input style="position: relative;top: 3px;height: 17px;width: 17px;" type="checkbox" checked id="agree" name="agree" /> <span style="font-weight:600;color: grey;"> I hereby accept & acknowlege Risebird <a href="https://drive.google.com/file/d/1t9h7CLcwrbI7HzkJT5vs8pEWA5ySeiTY/view?usp=sharing" target="_blank" style="text-decoration:underline">Terms & Services</a></span>
                     </div>
+
+                    <!-- Error Message Display Above Button -->
+                    <div class="col-md-12 text-center" style="margin-bottom: 15px;">
+                        <div id="checkboxErrorMsg" class="alert alert-warning" style="display: none; margin: 0; padding: 10px;">
+                            <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
+                            <strong>Please check all the mandatory interview requirement checkboxes above to continue with the interview.</strong>
+                        </div>
+                    </div>
+
                     <div class="col-md-12 pull-right">
-                        <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()">Continue to join interview with my consent for above checked points </button>
+                        <button id="btnJoinInterview" style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()" disabled>Continue to join interview with my consent for above checked points </button>
                     </div>
                 </div>
             </div>
@@ -1371,6 +1388,38 @@
 </script>
 
 <script>
+    // Function to check if all InterviewCheckshowDisplay checkboxes are checked
+    function checkAllCheckboxesStatus() {
+        var allCheckboxes = $('input[name="InterviewCheckshowDisplay"]');
+        var checkedCheckboxes = $('input[name="InterviewCheckshowDisplay"]:checked');
+        var joinButton = $('#btnJoinInterview');
+        var errorMsg = $('#checkboxErrorMsg');
+
+        // Check if all checkboxes are checked
+        if (allCheckboxes.length === checkedCheckboxes.length) {
+            // All checkboxes checked - enable button and hide error
+            joinButton.prop('disabled', false).removeClass('btn-disabled').addClass('btn-enabled');
+            errorMsg.hide();
+        } else {
+            // Not all checkboxes checked - disable button and show error
+            joinButton.prop('disabled', true).removeClass('btn-enabled').addClass('btn-disabled');
+            errorMsg.show();
+        }
+    }
+
+    // Add event listeners for InterviewCheckshowDisplay checkboxes
+    $(document).ready(function() {
+        // Initialize button state
+        checkAllCheckboxesStatus();
+
+        // Add change event handlers for InterviewCheckshowDisplay checkboxes
+        $('input[name="InterviewCheckshowDisplay"]').off('change').on('change', function() {
+            checkAllCheckboxesStatus();
+        });
+    })
+</script>
+
+<script>
     // Global variable to track which checkbox was unchecked
     var uncheckedCheckboxId = null;
     // Global variable to track where Need Clarity was called from
@@ -1380,20 +1429,29 @@
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "block";
 
-        // Check all checkboxes by default
+        // Uncheck all InterviewCheckshowDisplay checkboxes by default
+        $('input[name="InterviewCheckshowDisplay"]').prop('checked', false);
+
+        // Check all InterviewCheckshow checkboxes by default (existing behavior)
         $('input[name="InterviewCheckshow"]').prop('checked', true);
 
-        // Add change event handlers for checkboxes
+        // Add change event handlers for InterviewCheckshow checkboxes (existing behavior)
         $('input[name="InterviewCheckshow"]').off('change').on('change', function() {
             if (!$(this).is(':checked')) {
                 // Store the unchecked checkbox ID
-                uncheckedCheckboxId = $(this).attr('id');
+                uncheckedCheckboxId = $(this).ctx('id');
                 // Show confirmation modal
                 openConsentConfirmationModal();
                 // Prevent the checkbox from being unchecked until user confirms
                 $(this).prop('checked', true);
             }
         });
+
+        // Initialize button state for InterviewCheckshowDisplay checkboxes
+        checkAllCheckboxesStatus();
+
+        // Show error message initially since all checkboxes start unchecked
+        $('#checkboxErrorMsg').show();
     }
 
     function closeInterviewerAlert() {
@@ -1521,8 +1579,11 @@
         );
     }
     function AcceptInterviewerAlert(){
-        var result = $('input[name="InterviewCheckshow"]:checked');
+        var result = $('input[name="InterviewCheckshowDisplay"]:checked');
         var resultString = '';
+
+        // Button is disabled when not all checkboxes are checked, so no additional validation needed
+
         if (result.length > 0) {
             result.each(function () {
                 if (resultString == '') {
@@ -1666,7 +1727,7 @@
                         <div class="mt-3">
                             <div id="verificationStatus" class="alert alert-warning" style="display: none;margin-top:20px;">
                                 @*                                 <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
- *@                                <span id="verificationStatusText" style="font-size:14px;">Please complete both photo capture and Aadhaar verification</span>
+                                *@                                <span id="verificationStatusText" style="font-size:14px;">Please complete both photo capture and Aadhaar verification</span>
                             </div>
                         </div>
                     </div>
@@ -1890,7 +1951,7 @@
             aiInterviewButton.disabled = false;  // enable it
             //aiInterviewButton.classList.remove("disabled-link"); // optional: remove custom disabled styling
         }
-        @* const meetingLinks = document.querySelectorAll('.meeting-link');
+    @* const meetingLinks = document.querySelectorAll('.meeting-link');
         meetingLinks.forEach(function(link) {
             if (isAadhaarVerified && capturedPhotoData) {
                 link.style.color = '#007bff';
@@ -2159,4 +2220,34 @@
             margin-top: 20px;
         }
     }
+
+    /* Interviewer Alert Button Styles */
+    #btnJoinInterview {
+        transition: opacity 0.3s ease, background-color 0.3s ease;
+    }
+
+        #btnJoinInterview:disabled,
+        #btnJoinInterview.btn-disabled {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+            #btnJoinInterview:disabled:hover,
+            #btnJoinInterview.btn-disabled:hover {
+                background-color: #6c757d !important;
+                border-color: #6c757d !important;
+            }
+
+        #btnJoinInterview.btn-enabled {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        #btnJoinInterview.btn-disabled {
+            cursor: not-allowed !important;
+        }
 </style>

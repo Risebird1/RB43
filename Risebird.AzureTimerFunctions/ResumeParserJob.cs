@@ -32,9 +32,9 @@ namespace Risebird.AzureTimerFunctions
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
             IPdfReaderHelper pdfReaderHelper,
             IOpenAIInterviewerAssistantHelper ai)
-        {           
+        {
             _applicationErrorLogger = applicationErrorLogger;
-            _azureStorageHelper = azureStorageHelper; 
+            _azureStorageHelper = azureStorageHelper;
             //_resumeParserHelper = resumeParserHelper;
             _candidateRepository = candidateRepository;
             _irfService = irfService;
@@ -179,7 +179,7 @@ namespace Risebird.AzureTimerFunctions
                                 }
                             }
 
-                            else if(candidateParsedData != null)
+                            else if (candidateParsedData != null)
                             {
                                 var candidate = new CandidateQuickAddModel();
                                 candidate.Name = candidateParsedData.name;

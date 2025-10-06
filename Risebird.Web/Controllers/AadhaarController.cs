@@ -160,13 +160,13 @@ namespace Risebird.Web.Controllers
             await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
             return Json("Aadhaar Details are verified successfully.");
         }
-        public void SetHeaderValue(AadhaarHeader _header, string datenow)
+        public void SetHeaderValue(AadhaarHeader _header, string datenow, string saltstan)
         {
             _header.client_code = client_code;
             _header.sub_client_code = client_code;
             _header.channel_code = "ANDROID_SDK";
             _header.channel_version = "1";
-            _header.stan = salt;
+            _header.stan = datenow;
             _header.client_ip = "";
             _header.transmission_datetime = Convert.ToInt64(datenow);
             _header.operation_mode = "SELF";
@@ -509,7 +509,7 @@ namespace Risebird.Web.Controllers
         {
             var model = new AadhaarVM();
             var datenow = GetCurrentUnixTimestampMillis();
-            SetHeaderValue(model.headers, datenow);
+            SetHeaderValue(model.headers, datenow, faceCompare_salt);
             model.request.api_key = faceCompare_api_key;
             model.request.request_id = Guid.NewGuid().ToString();
             model.request.purpose = "VERIFY";
