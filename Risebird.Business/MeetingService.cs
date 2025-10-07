@@ -3370,7 +3370,6 @@ namespace Risebird.Business
                         var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
                         //var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid, cancellationsource);
                         var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
-                        DeleteMeetingLink(result.ZoomMeetingId);
                         if (result.MeetingPlatForm == MeetingPlatforms.Zoho)
                         {
                             await _zoho.DeleteMeetingAsync(result.ZoomMeetingId);
