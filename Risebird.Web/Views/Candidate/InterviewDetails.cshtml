@@ -308,7 +308,7 @@
                                                                         @* <a target="_blank" @displayStatus href="@Url.Action(" Index", "AIInterview" , new { sid=item.SessionId})">Click here to join the meeting</a> *@
                                                                         <button id="btn_ai_Interview" type="button"
                                                                                 class="btn btn-primary click_herebtn"
-                                                                                onclick="window.open('@Url.Action(" Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
+                                                                                onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
                                                                         @(item.AadharVerificationId >
                                                                             0 ? "" : "disabled")>
                                                                             Click here to join the meeting
