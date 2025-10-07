@@ -1038,8 +1038,8 @@
             </div>
             <!-- Footer -->
             <div class="rb-footer">
-                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
-                 <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
+                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@
+                <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
                     <i id="footerVideoIcon" class="fa fa-video-camera"></i>
                 </button>
                 <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
@@ -1088,33 +1088,33 @@
                         <div class="min-vh">
                             @if (Model.IsAdaptive == true)
                             {
-                                <!-- Audio Section -->
-                                <div class="rb-interviewer-info" style="margin-top:0px">
-                                    <span style="font-size:16px;font-weight:600">AI Interviewer</span>
-                                    <div class="rb-interviewer-avatar">
-                                        <span>H</span>
-                                    </div>
-                                    <div class="rb-audio-waves" id="audioWaves" style="display: none;">
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                    </div>
+                            <!-- Audio Section -->
+                            <div class="rb-interviewer-info" style="margin-top:0px">
+                                <span style="font-size:16px;font-weight:600">AI Interviewer</span>
+                                <div class="rb-interviewer-avatar">
+                                    <span>H</span>
                                 </div>
-                                <audio id="assistantAudio" controls hidden></audio>
-                                @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
+                                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                </div>
+                            </div>
+                            <audio id="assistantAudio" controls hidden></audio>
+                            @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
                             }
                             else
                             {
-                                <!-- Video Section -->
-                                @if (Model.SynthesizedVideoUrl != null)
-                                {
-                                    <div class="rb-interviewer-info" style="margin-top:0px">
-                                        <video width="100%" controls autoplay>
-                                            <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
-                                        </video>
-                                    </div>
-                                }
+                            <!-- Video Section -->
+                            @if (Model.SynthesizedVideoUrl != null)
+                            {
+                            <div class="rb-interviewer-info" style="margin-top:0px">
+                                <video width="100%" controls autoplay>
+                                    <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                                </video>
+                            </div>
+                            }
                             }
                         </div>
                         <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
@@ -1125,15 +1125,15 @@
                         <div class="chat-log border rounded mt-3" id="chatLog">
                             @foreach (var line in Model.ChatLog)
                             {
-                                <div class="chat-message mb-3">
-                                    <div class="message-header">
-                                        <strong class="message-role">@line.Role:</strong>
-                                        <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
-                                    </div>
-                                    <div class="message-content">
-                                        <p>@line.Message</p>
-                                    </div>
+                            <div class="chat-message mb-3">
+                                <div class="message-header">
+                                    <strong class="message-role">@line.Role:</strong>
+                                    <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
                                 </div>
+                                <div class="message-content">
+                                    <p>@line.Message</p>
+                                </div>
+                            </div>
                             }
                         </div>
                         <button class="scroll-to-bottom" id="scrollToBottom" title="Scroll to Bottom">
@@ -1141,15 +1141,15 @@
                         </button>
                     </div>
                     <div class="rb-interview-actions">
-                        @* <a target="_blank" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId})" class="rb-action-btn rb-back-btn">
-                                Generate AIInterview Report <i class="fa fa-arrow-right"></i>
+                        @* <a target="_blank" href="@Url.Action(" Report", "AIInterview" , new { seId=Model.SessionId})" class="rb-action-btn rb-back-btn">
+                            Generate AIInterview Report <i class="fa fa-arrow-right"></i>
                         </a> *@
                         @* option to the candidate to exit the interview here *@
 
                         <a id="exitInterviewBtn" href="#" class="rb-action-btn rb-back-btn">
                             Exit Interview <i class="fa fa-sign-out"></i>
                         </a>
-                        @* <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
+                        @* <a target="_self" href="@Url.Action(" Report", "AIInterview" , new { seId=Model.SessionId, isExit=true})" class="rb-action-btn rb-back-btn">
                             Exit Interview <i class="fa fa-sign-out" "></i>
                         </a> *@
                     </div>
@@ -1200,8 +1200,7 @@
         }
     </style>
 </div>
-<script>
-    @* let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
+<script>@* let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
     let interviewId = parseInt("@Model.InterviewId");
     const timerDisplay = document.getElementById("timer");
     const timeField = document.getElementById("timeLeftField");
@@ -1251,12 +1250,10 @@
         }
     }, 1000);
 
-    updateTimerUI();
-</script>
+    updateTimerUI();</script>
 
 
-<script>
-    function playAssistantAudio(blob) {
+<script>function playAssistantAudio(blob) {
         debugger;
         const audioElement = document.getElementById("assistantAudio");
         const audioWaves = document.getElementById("audioWaves");
@@ -1343,24 +1340,20 @@
                 subtree: true
             });
         }
-    });
-</script>
+    });</script>
 @if (ViewData["AssistantAudioBase64"] is string base64Audio)
 {
-    <script>
-        const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+<script>const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
         const audioBlob = new Blob([
             Uint8Array.from(atob(base64), c => c.charCodeAt(0))
         ], { type: 'audio/mp3' });
 
-        playAssistantAudio(audioBlob);
-    </script>
+        playAssistantAudio(audioBlob);</script>
 }
 
 
 
-<script>
-    let mediaRecorderAudio;
+<script>let mediaRecorderAudio;
     let audioChunks = [];
     const recordBtn = document.getElementById("recordBtn");
     const audioInput = document.getElementById("audioInput");
@@ -1375,11 +1368,17 @@
         if (recordingOverlay) recordingOverlay.style.display = "none";
     }
     recordBtn.addEventListener("click", async () => {
+        console.log("=== RECORD BUTTON CLICKED ===");
+        console.log("Current mediaRecorderAudio state:", mediaRecorderAudio ? mediaRecorderAudio.state : "null");
+
         if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+            console.log("STARTING RECORDING...");
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorderAudio = new MediaRecorder(stream);
             mediaRecorderAudio.ondataavailable = e => { audioChunks.push(e.data); };
             mediaRecorderAudio.onstop = async () => {
+                console.log("=== ONSTOP EVENT TRIGGERED ===");
+                console.log("Recording has stopped, processing audio...");
                 timerStopped = true;
                 clearInterval(countdownInterval);
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
@@ -1390,24 +1389,73 @@
                 audioChunks = [];
                 recordBtn.textContent = "⭕";
                 recordBtn.setAttribute('data-tooltip', 'Record Audio');
+
+                console.log("Hiding recording overlay...");
+                // Hide recording overlay immediately and forcefully
+                if (recordingOverlay) {
+                    recordingOverlay.style.display = "none";
+                    recordingOverlay.style.visibility = "hidden";
+                    recordingOverlay.style.opacity = "0";
+                }
+
+                // Also call the function
                 hideRecordingOverlay();
-                overlay.style.display = "flex";
-                stopRecording();
+                // Small delay to ensure recording overlay is hidden
+                setTimeout(() => {
+                    console.log("=== SHOWING WAIT OVERLAY ===");
+                    // Double-check that recording overlay is hidden
+                    if (recordingOverlay) {
+                        recordingOverlay.style.display = "none";
+                        console.log("Final check: Recording overlay hidden");
+                    }
+                    overlay.style.display = "flex";
+                    form.submit();
+                }, 200);
             };
             mediaRecorderAudio.start();
-            startRecording();
+            console.log("MediaRecorder started");
             showRecordingOverlay();
+            console.log("Recording overlay shown");
             recordBtn.textContent = "☐";
             recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
+            console.log("Button updated to stop state");
         } else if (mediaRecorderAudio.state === "recording") {
-            mediaRecorderAudio.stop();
+            // Show confirmation dialog - recording continues until user decides
+            Swal.fire({
+                title: 'Submit Response?',
+                text: 'Are you sure you want to submit your response?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4eda92',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Submit Your Response',
+                cancelButtonText: 'Cancel',
+                reverseButtons: false,
+                focusConfirm: true
+            }).then((result) => {
+                // Check for both new and old SweetAlert versions
+                if (result.isConfirmed || result.value === true) {
+                    // User clicked Submit Recording - stop recording
+                    if (mediaRecorderAudio && mediaRecorderAudio.state === "recording") {
+                        console.log("Calling mediaRecorderAudio.stop()");
+                        mediaRecorderAudio.stop();
+                    } else {
+                        console.log("ERROR: MediaRecorder not active or null");
+                    }
+                } else if (result.isDismissed || result.value === false) {
+                    // User clicked Cancel or dismissed - recording continues
+                    console.log("=== CANCEL CLICKED ===");
+                    console.log("User cancelled, recording continues...");
+                } else {
+                    console.log("=== UNKNOWN RESULT ===");
+                    console.log("Unexpected result:", result);
+                }
+            });
         }
-    });
-</script>
+    });</script>
 
 
-<script>
-    // Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
+<script>// Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
     document.addEventListener('DOMContentLoaded', function () {
         const textarea = document.querySelector('.rb-chatbox-textarea');
         const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
@@ -1494,10 +1542,8 @@
                 hideLoading();
             });
         }
-    });
-</script>
-<script>
-    let mediaRecorder, recordedBlobs;
+    });</script>
+<script>let mediaRecorder, recordedBlobs;
     let isRecording = false;
     const video = document.getElementById('video');
     const btnRecord = document.getElementById('btnRecord');
@@ -1565,10 +1611,8 @@
         btnRecordToggle.className = 'rb-record-btn';
         btnRecord.style.display = 'none';
         btnRecord.style.animation = 'none';
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+    }</script>
+<script>document.addEventListener('DOMContentLoaded', function () {
         let video = document.getElementById('video');
         let footerVideoToggle = document.getElementById('footerVideoToggle');
         let footerVideoIcon = document.getElementById('footerVideoIcon');
@@ -1621,8 +1665,7 @@
                 }
             });
         }
-    });
-</script>
+    });</script>
 
 <!-- Custom Modal HTML -->
 <div id="customModal" class="custom-modal" style="display: none;">
@@ -1809,8 +1852,7 @@
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
 </style>
-<script>
-    // Custom Modal Functions
+<script>// Custom Modal Functions
     function showCustomModal(title, message, isSuccess = false) {
         const modal = document.getElementById('customModal');
         const modalMessage = document.getElementById('modalMessage');
@@ -1842,10 +1884,10 @@
         const modalConfirm = document.getElementById('modalConfirm');
 
         if (exitBtn) {
-                            exitBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                showCustomModal('Exit Interview?', 'Are you sure? <span style="display:block;font-size: 17px !important;color: #a79f9f !important;padding-top: 5px;">you want to exit the interview?</span>');
-                });
+         exitBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showCustomModal('Exit Interview?', 'Are you sure? <span style="display:block;font-size: 17px !important;color: #a79f9f !important;padding-top: 5px;">you want to exit the interview?</span>');
+          });
         }
 
         // Cancel button
@@ -1880,5 +1922,4 @@
                 // showFallbackCompletionMessage(); // This function is no longer needed
             }
         });
-    }
-</script>
+    }</script>
