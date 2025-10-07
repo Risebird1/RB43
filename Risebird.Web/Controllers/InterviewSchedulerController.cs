@@ -493,7 +493,7 @@ namespace Risebird.Web.Controllers
                     //var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
                     var rbMeetingLinkResponse = new ZohoMeetingResponse();
                     var teamsMeeting = new MetingResponse();
-                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    if (model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
@@ -504,7 +504,7 @@ namespace Risebird.Web.Controllers
                         }
                         zoomLink.meetingid = zoomLink.id.ToString();
                     }
-                    else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
+                    else if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
                         zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
@@ -1317,7 +1317,7 @@ namespace Risebird.Web.Controllers
                     //string meetingLink;// = string.Empty;
                     var zoomLink = new InstaZoomMeetingResponse();
                     var rbMeetingLinkResponse = new ZohoMeetingResponse();
-                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    if (model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
@@ -1328,7 +1328,7 @@ namespace Risebird.Web.Controllers
                         }
                         zoomLink.meetingid = zoomLink.id.ToString();
                     }
-                    else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
+                    else if (string.IsNullOrEmpty(model.MeetingPlatform) ||  model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         //var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
@@ -1726,7 +1726,7 @@ namespace Risebird.Web.Controllers
                     //string meetingLink;// = string.Empty;
                     var zoomLink = new InstaZoomMeetingResponse();
                     var rbMeetingLinkResponse = new ZohoMeetingResponse();
-                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    if (model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
@@ -1737,7 +1737,7 @@ namespace Risebird.Web.Controllers
                         }
                         zoomLink.meetingid = zoomLink.id.ToString();
                     }
-                    else if (model.MeetingPlatform == MeetingPlatforms.Zoho)
+                    else if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
