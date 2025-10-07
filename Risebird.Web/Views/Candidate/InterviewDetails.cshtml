@@ -308,7 +308,7 @@
                                                                         @* <a target="_blank" @displayStatus href="@Url.Action(" Index", "AIInterview" , new { sid=item.SessionId})">Click here to join the meeting</a> *@
                                                                         <button id="btn_ai_Interview" type="button"
                                                                                 class="btn btn-primary click_herebtn"
-                                                                                onclick="window.open('@Url.Action(" Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
+                                                                                onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
                                                                         @(item.AadharVerificationId >
                                                                             0 ? "" : "disabled")>
                                                                             Click here to join the meeting
@@ -820,7 +820,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_1" style="float: left;width:100%">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_1" value="CandidateConsent" name="InterviewCheckshowDisplay" />
+                                        <input type="checkbox" id="checklist_1" value="CandidateConsent" name="InterviewCheckshow" />
                                         <label for="checklist_1" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -850,7 +850,7 @@
                             <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                                 <label class="question" for="checklist_2" style="float: left;width:100%">
                                     <span class="round" style="float:left;left:0px;">
-                                        <input type="checkbox" id="checklist_2" value="CandidateIdVerification" name="InterviewCheckshowDisplay" />
+                                        <input type="checkbox" id="checklist_2" value="CandidateIdVerification" name="InterviewCheckshow" />
                                         <label for="checklist_2" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                     </span>
                                     <label class="consent-label" style="margin-left: 15px;">
@@ -863,7 +863,7 @@
                         <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                             <label class="question" for="checklist_3" style="float: left;width:100%">
                                 <span class="round" style="float:left;left:0px;">
-                                    <input type="checkbox" id="checklist_3" value="ShareExprience" name="InterviewCheckshowDisplay" />
+                                    <input type="checkbox" id="checklist_3" value="ShareExprience" name="InterviewCheckshow" />
                                     <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
                                 </span>
                                 <label class="consent-label" style="margin-left: 15px;">
@@ -883,10 +883,18 @@
                             <strong>Please check all the mandatory interview requirement checkboxes above to continue with the interview.</strong>
                         </div>
                     </div>
-
-                    <div class="col-md-12 pull-right">
-                        <button id="btnJoinInterview" style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()" disabled>Continue to join interview with my consent for above checked points </button>
-                    </div>
+                     @if (Model.CandidateDetails.IsAIInterview)
+                    {
+                        <div class="col-md-12 pull-right">
+                            <button id="btnJoinInterview" style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptAIInterviewerAlert()" disabled>Continue to join interview with my consent for above checked points </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-12 pull-right">
+                            <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()" disabled>Continue to join interview with my consent for above checked points </button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -1439,17 +1447,17 @@
         $('input[name="InterviewCheckshow"]').off('change').on('change', function() {
             if (!$(this).is(':checked')) {
                 // Store the unchecked checkbox ID
-                uncheckedCheckboxId = $(this).ctx('id');
+                 @*uncheckedCheckboxId = $(this).ctx('id'); *@ 
+                 uncheckedCheckboxId = $(this).attr('id');
                 // Show confirmation modal
                 openConsentConfirmationModal();
                 // Prevent the checkbox from being unchecked until user confirms
                 $(this).prop('checked', true);
             }
         });
-
         // Initialize button state for InterviewCheckshowDisplay checkboxes
         checkAllCheckboxesStatus();
-
+ 
         // Show error message initially since all checkboxes start unchecked
         $('#checkboxErrorMsg').show();
     }
@@ -1578,8 +1586,32 @@
             '@Model.Uniqueid'
         );
     }
-    function AcceptInterviewerAlert(){
+    function AcceptAIInterviewerAlert(){
         var result = $('input[name="InterviewCheckshowDisplay"]:checked');
+        var resultString = '';
+
+        // Button is disabled when not all checkboxes are checked, so no additional validation needed
+
+        if (result.length > 0) {
+            result.each(function () {
+                if (resultString == '') {
+                    resultString += $(this).val();
+                } else {
+                    resultString += "," + $(this).val();
+                }
+            });
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/CandidateAcknowledge",
+            data: { 'interviewid': @ViewBag.Interviewid, interviewchecks: resultString },
+            success: function (data) {
+                closeInterviewerAlert();
+            }
+        });
+    }
+    function AcceptInterviewerAlert(){
+        var result = $('input[name="InterviewCheckshow"]:checked');
         var resultString = '';
 
         // Button is disabled when not all checkboxes are checked, so no additional validation needed
