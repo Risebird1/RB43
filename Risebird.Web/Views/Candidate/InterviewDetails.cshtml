@@ -681,7 +681,7 @@
                 </div>
 
                 <div class="modal-body mi-check" style="padding:0px;text-align: center;">
-                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;margin-top:">Please confirm you've read and agreed to the following by checking the box on each item below : </h1>
+                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;margin-top:5px">Please confirm you've read and agreed to the following by checking the box on each item below : </h1>
                     @if (Model.CandidateDetails.IsAIInterview)
                     {
                         <div style="overflow-y:scroll;height:300px;">
@@ -878,7 +878,7 @@
 
                     <!-- Error Message Display Above Button -->
                     <div class="col-md-12 text-center" style="margin-bottom: 15px;">
-                        <div id="checkboxErrorMsg" class="alert alert-warning" style="display: none; margin: 0; padding: 10px;">
+                        <div id="checkboxErrorMsg" class="alert alert-warning" style="display: none; margin: 0; padding: 10px;font-size:13px;">
                             <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
                             <strong>Please check all the mandatory interview requirement checkboxes above to continue with the interview.</strong>
                         </div>
@@ -892,7 +892,7 @@
                     else
                     {
                         <div class="col-md-12 pull-right">
-                            <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()" disabled>Continue to join interview with my consent for above checked points </button>
+                            <button style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptInterviewerAlert()">Continue to join interview with my consent for above checked points </button>
                         </div>
                     }
                 </div>
