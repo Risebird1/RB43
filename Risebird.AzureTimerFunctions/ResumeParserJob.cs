@@ -61,43 +61,51 @@ namespace Risebird.AzureTimerFunctions
                 foreach (var resume in resumeList)
                 {
 
-                    //string resumeLinkToParse = string.Empty;
-                    //if (!resume.ResumeLink.Contains(".pdf"))
-                    //{
-                    //    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
-                    //}
-                    //else
-                    //{
-                    //    resumeLinkToParse = resume.ResumeLink;
-                    //}
-                    ////convert resume into string
-                    //var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
                     if (!string.IsNullOrEmpty(resume.ResumeLink))
                     {
-                        var threadId = await _ai.CreateThreadAsync();
-                        //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                        //await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
-                        await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+                        //undo the following comments that parsed the resume using open ai and initiated the variable candidateParsedData when you iron out the bugs/erratics of open ai and are ready to switch back to it as the first choice resume parser.
 
-                        //var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Resume Parser)asst_T61hVvnYmOCmvyfKylFULdUk
-                        var runId = await _ai.CreateRunAsync(threadId, "asst_x4F8slGF4hnEI4EN7pBDGR2g"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g
-
-                        var replies = await _ai.GetMessagesAsync(threadId);
 
                         CandidateResumeParsedDataOpenAI candidateParsedData = null;
 
-                        try
+                        string resumeLinkToParse = string.Empty;
+                        if (!resume.ResumeLink.Contains(".pdf"))
                         {
-                            candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replies?.FirstOrDefault());
-
+                            resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resume.ResumeLink);
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            log.LogInformation($" ResumeParserJob : Threw an exception Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 107");
-
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
+                            resumeLinkToParse = resume.ResumeLink;
                         }
+                        var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+
+                        if (!string.IsNullOrEmpty(resumeStringContent))
+                        {
+                            var threadId = await _ai.CreateThreadAsync();
+                            await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+
+                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+
+                            var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g 
+                            await _ai.WaitForRunAsync(threadId, runId);
+
+
+                            var replies = await _ai.GetMessagesAsync(threadId);
+
+                            try
+                            {
+                                candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replies?.FirstOrDefault());
+
+                            }
+                            catch (Exception ex)
+                            {
+                                log.LogInformation($" ResumeParserJob : Threw an exception Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 107");
+
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                            }
+                        }
+                        
 
 
                         //call the api for each of those resumes, return a candidate
