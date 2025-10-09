@@ -13,7 +13,6 @@ namespace Risebird.Entities.ViewModel
         public string EmailId { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
         public string Phone { get; set; }
         [Required]
         [Display(Name = "Resume Link")]

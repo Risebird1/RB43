@@ -39,7 +39,7 @@ Begin
 		(@templateName,              
 			@CreatedOn,   
 			@CreatedBy,  
-			'Zoom',
+			'Zoho',
 			1,
 			@assessmentGroupId)        --@IsAadhaarVerificationRequired
          
