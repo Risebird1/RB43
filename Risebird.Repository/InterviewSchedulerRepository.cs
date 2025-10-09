@@ -485,8 +485,7 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select IsNull(IsPaused,0) from IRF where IRFId=@IRFId";
-                var query = "Select Case When EndDate<Getdate() then 1 else IsNull(IsPaused,0) end from IRF where IRFId=@IRFId";
+                var query = "Select IsNull(IsPaused,0) from IRF where IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", SkillChannel);
                 using (SqlConnection con = new SqlConnection(connectionString))
