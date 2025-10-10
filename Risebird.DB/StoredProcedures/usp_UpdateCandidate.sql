@@ -43,9 +43,24 @@ AS
 Begin      
 declare      
 @CandidateUserId int = (select ul.id from Candidate ca join CandidatesMaster cm on cm.id = ca.CandidateMasterId       
-join UserList ul on ul.id =cm.UserId where ca.id=@id)      
-      
-update UserList set EmailId = @EmailId, FirstName=@Name, MobileNumber =@Phone,WhatsappNumber=@WhatsappNumber where id = @CandidateUserId      
+join UserList ul on ul.id =cm.UserId where ca.id=@id)    
+
+declare @UserIdOfTheNewEmailId int  = (select id from UserList where EmailId = @EmailId)
+
+if(@CandidateUserId != @UserIdOfTheNewEmailId and @UserIdOfTheNewEmailId is not null and @UserIdOfTheNewEmailId > 0) -- another entry with the same email the parameter holds already exists
+Begin
+
+	declare @CandidateMasterId int  = (select id from CandidatesMaster where UserId = @UserIdOfTheNewEmailId)
+
+	update Candidate set CandidateMasterId = @CandidateMasterId where id =@id
+
+	update UserList set FirstName=@Name, MobileNumber =@Phone, WhatsappNumber=@WhatsappNumber where id = @UserIdOfTheNewEmailId
+End
+else
+Begin
+	update UserList set EmailId = @EmailId, FirstName=@Name, MobileNumber =@Phone,WhatsappNumber=@WhatsappNumber where id = @CandidateUserId 
+end
+     
       
 update Candidate set       
 ResumeLink=@ResumeLink,      

@@ -21,8 +21,15 @@ declare @interviewId int
 
 set @interviewId = (select id from InterviewMeetings where SessionId = @SessionId)
 
+
+
 update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
-HasCandidateExited = @isExit, CandidateExitedAt = @timeNow, MeetingStatus = 4, InterviewStatus = @interviewStatus, InterviewerComment = @interviewerComment,
+HasCandidateExited = @isExit, CandidateExitedAt = @timeNow,
+MeetingStatus = CASE 
+                        WHEN (@interviewStatus IS NOT NULL and (@interviewStatus = 2 or @interviewStatus = 3)) THEN 4 
+                        ELSE MeetingStatus 
+                END,
+InterviewStatus = @interviewStatus, InterviewerComment = @interviewerComment,
 ModifiedOn = @timeNow  where InterviewId  = @interviewId
 
 END
