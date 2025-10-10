@@ -29,7 +29,6 @@ namespace Risebird.Entities.Data
         public string EmailId { get; set; }
         //[Required]
         public string Name { get; set; }
-        [Required]
         public string Phone { get; set; }
         [Display(Name = "Resume Link")]
         public string ResumeLink { get; set; }
