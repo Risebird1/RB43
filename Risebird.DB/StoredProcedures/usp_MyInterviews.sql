@@ -31,7 +31,7 @@ im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometrySc
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink ,irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CompanyDetails,                       
 ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, ulh.MobileNumber as HRMobileNumber,                      
 cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ca.IsProctor,        
-IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL(IRF.MeetingPlatform,'Zoom') MeetingPlatform,        
+IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL(im.MeetingPlatform,'Zoom') MeetingPlatform,        
 im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, Case When irf.IsNewSkillChannel=1 then (pm.DurationSelectedMin+5) else IRF.interviewDuration end as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,      
 Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,
 irf.IsNewSkillChannel, ca.CodedResumeLink as CandidateCodedResumeLink,ISNULL(pr.ProxyvotingCount,0) as ProxyvotingCount,
