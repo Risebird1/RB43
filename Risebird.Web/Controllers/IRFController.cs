@@ -4679,23 +4679,23 @@ namespace Risebird.Web.Controllers
             var _Category = resultData.OrderBy(x => x.Name);
             model._skilldetails.CategoryNameList = new SelectList(_Category, "id", "Name");
 
-            var skillset = await _skillService.GetSkills();
-            var primaryskilllist = new List<SelectListItem>();
-            model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
-            foreach (var item in skillset)
-            {
-                bool selected = false;
-                if (modeldata != null)
-                {
-                    if (modeldata.PrimarySkills != null && modeldata.PrimarySkills.Contains(item.Name))
-                    {
-                        selected = true;
-                    }
-                }
-                var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
-                primaryskilllist.Add(selectItem);
-            }
-            model._skilldetails.PrimarySkillsList = primaryskilllist;
+            //var skillset = await _skillService.GetSkills();
+            //var primaryskilllist = new List<SelectListItem>();
+            //model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
+            //foreach (var item in skillset)
+            //{
+            //    bool selected = false;
+            //    if (modeldata != null)
+            //    {
+            //        if (modeldata.PrimarySkills != null && modeldata.PrimarySkills.Contains(item.Name))
+            //        {
+            //            selected = true;
+            //        }
+            //    }
+            //    var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
+            //    primaryskilllist.Add(selectItem);
+            //}
+            //model._skilldetails.PrimarySkillsList = primaryskilllist;
             if (modeldata != null)
             {
                 model._skilldetails.id = modeldata.id;
@@ -4886,9 +4886,10 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> InterviewerEntitle(Assessment model)
         {
-            List<Skill> skills = await _skillService.GetSkills();
-            List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-            model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
+            //List<Skill> skills = await _skillService.GetSkills();
+            //List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+            //model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
+            model._skilldetails.PrimarySkill = "misc";
             var CheckAssesmentGroupNameExistOrNot = await _irfRepository.CheckAssessmentGroupAlraedyExist(model._skilldetails.NewAssessmentGroupName);
             if (CheckAssesmentGroupNameExistOrNot)
             {
