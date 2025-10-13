@@ -4889,7 +4889,11 @@ namespace Risebird.Web.Controllers
             //List<Skill> skills = await _skillService.GetSkills();
             //List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
             //model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
-            model._skilldetails.PrimarySkill = "misc";
+            if(string.IsNullOrEmpty(model._skilldetails.PrimarySkill))
+            {
+                model._skilldetails.PrimarySkill = "misc";
+
+            }
             var CheckAssesmentGroupNameExistOrNot = await _irfRepository.CheckAssessmentGroupAlraedyExist(model._skilldetails.NewAssessmentGroupName);
             if (CheckAssesmentGroupNameExistOrNot)
             {
