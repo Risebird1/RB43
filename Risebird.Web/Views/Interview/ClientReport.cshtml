@@ -364,6 +364,13 @@
                                                         }
                                                     }
                                                 }
+
+                                                  @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer"){
+                                                    @if (Model.resumeLink != null && Model.resumeLink != ""){
+                                                        <div class="report-heading">Resume Link :<a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink><img style="position:relative;left: -2px;width: 18px;" src="/img/resume-icon.png">Click here</a>
+                                                        </div>
+                                                    }
+                                                }
                                                 @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
                                                 {
                                                     <div class="report-heading">
@@ -372,7 +379,7 @@
 
                                                     <h4>@Model.CandidateEmail</h4>
                                                 }
-
+                                              
                                                 @*<div class="report-heading">
                                             Position
                                             </div>
@@ -401,6 +408,7 @@
                                                         <h5 style="color:red;font-size:15px;padding: 10px 0px 0px 0px;">No</h5>
                                                     }
                                                 }
+
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" >( @Model.NickName )</c>
                                                 @if (Model.CommunicationalProficiency != 0)
