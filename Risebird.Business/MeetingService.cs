@@ -1562,18 +1562,21 @@ namespace Risebird.Business
 
                         //_notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
 
-                        if (reportModel.InterviewStatus.Value == 2)
-                        {
-                            var namemodel = string.Empty;
 
-                            if (reportModel.CandidateName != null && reportModel.CandidateName.Length >= 2)
-                                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0] + reportModel.CandidateName?.ToCharArray()[1];
-                            else if (reportModel.CandidateName != null && reportModel.CandidateName.Length == 1)
-                                namemodel += reportModel.CandidateName?.ToCharArray()[0];
-                            //get curated users
-                            var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
-                            await _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
-                        }
+                        //confirm if this block of code that sends emails to curated users/subscribers of/to a Skill Channel should be put back into operation.
+
+                        //if (reportModel.InterviewStatus.Value == 2)
+                        //{
+                        //    var namemodel = string.Empty;
+
+                        //    if (reportModel.CandidateName != null && reportModel.CandidateName.Length >= 2)
+                        //        namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0] + reportModel.CandidateName?.ToCharArray()[1];
+                        //    else if (reportModel.CandidateName != null && reportModel.CandidateName.Length == 1)
+                        //        namemodel += reportModel.CandidateName?.ToCharArray()[0];
+                        //    //get curated users
+                        //    var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
+                        //    await _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
+                        //}
 
                     }
                 }

@@ -26,8 +26,11 @@
                 <div class="mandate">
                     @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
                 </div>
+                <input type="text" id="zskilldetails_PrimarySkills" name="_skilldetails.PrimarySkills" />
+
+
                 @*@Html.DropDownListFor(m => m._skilldetails.SelectedSkillIds, new SelectList(Model._skilldetails.PrimarySkills, "Value", "Text", Model._skilldetails.SelectedSkillIds), new { @id = "select", @class = "form-control" })*@
-                <select id="zskilldetails_SelectedSkillIds" name="_skilldetails.SelectedSkillIds" class="form-control multiselect" multiple="multiple" style="width:100%" required="required">
+                @* <select id="zskilldetails_SelectedSkillIds" name="_skilldetails.SelectedSkillIds" class="form-control multiselect" multiple="multiple" style="width:100%" required="required">
                     @foreach (var item in Model._skilldetails.PrimarySkillsList.ToList())
                     {
                         @if (item != null)
@@ -43,8 +46,8 @@
                         }
                     }
 
-                </select>
-                @Html.ValidationMessageFor(model => model._skilldetails.SelectedSkillIds, "", new { @class = "text-danger" })
+                </select> *@
+                @* @Html.ValidationMessageFor(model => model._skilldetails.SelectedSkillIds, "", new { @class = "text-danger" }) *@
             </div>
             <div class="form-group col-lg-6  col-md-6 col-sm-6 pull-left">
                 <div class="mandate">
@@ -212,7 +215,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v=2024" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        jQuery("#zskilldetails_SelectedSkillIds, #zskilldetails_ProfileTypeArray, #zskilldetails_SeniorityLevelArray, #zskilldetails_EmploymentTypeArray").select2({ multiple: true });
+        jQuery("#zskilldetails_ProfileTypeArray, #zskilldetails_SeniorityLevelArray, #zskilldetails_EmploymentTypeArray").select2({ multiple: true }); //#zskilldetails_SelectedSkillIds,
     });
 </script>
 <script>

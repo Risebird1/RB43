@@ -98,6 +98,10 @@ namespace Risebird.Services.Controllers
 
                             foreach (var item in reqData.CandidateList)
                             {
+                                if (string.IsNullOrWhiteSpace(item.Phone))
+                                {
+                                    item.Phone = "";
+                                }
                                 var obj = new CandidateQuickAddModel
                                 {
                                     Name = item.Name,
