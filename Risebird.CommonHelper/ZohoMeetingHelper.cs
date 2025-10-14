@@ -38,9 +38,9 @@ namespace Risebird.CommonHelper
             }
             _cachedAccessToken = zohodetails.AccessToken;
             _accessTokenExpiry = zohodetails.TokenExpiry;
-            if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTime.Now.AddMinutes(1))
+            if (_accessTokenExpiry > DateTime.Now.AddMinutes(2))
             {
-                return _cachedAccessToken!;
+                return _cachedAccessToken;
             }
 
             if (string.IsNullOrWhiteSpace(_options.RefreshToken))
@@ -91,9 +91,9 @@ namespace Risebird.CommonHelper
             }
             _cachedAccessToken = zohodetails.AccessToken;
             _accessTokenExpiry = zohodetails.TokenExpiry;
-            if (!string.IsNullOrWhiteSpace(_cachedAccessToken) && _accessTokenExpiry > DateTime.Now.AddMinutes(1))
+            if (_accessTokenExpiry > DateTime.Now.AddMinutes(5))
             {
-                return _cachedAccessToken!;
+                return _cachedAccessToken;
             }
 
             if (string.IsNullOrWhiteSpace(_options.RecordingRefreshToken))
@@ -195,9 +195,13 @@ namespace Risebird.CommonHelper
             return true;
         }
 
-        public async Task<IEnumerable<ZohoRecordingInfo>> GetRecordingAsync(string meetingKey)
+        public async Task<IEnumerable<ZohoRecordingInfo>> GetRecordingAsync(string meetingKey, string accesstoken = null)
         {
-            var token = await GetRecordingAccessTokenAsync();
+            var token = accesstoken;
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                token = await GetRecordingAccessTokenAsync();
+            }
             var client = CreateMeetingApiClient();
             var path = $"/{_options.OrganizationId}/recordings/{meetingKey}.json";
             var req = new RestRequest(path, Method.Get);
