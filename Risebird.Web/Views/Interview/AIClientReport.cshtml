@@ -342,6 +342,13 @@
                                                         <h2>@Model.CandidateName</h2>
                                                     }
                                                 }
+
+                                                 @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer"){
+                                                    @if (Model.resumeLink != null && Model.resumeLink != ""){
+                                                        <div class="report-heading">Resume Link :<a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink><img style="position:relative;left: -2px;width: 18px;" src="/img/resume-icon.png">Click here</a>
+                                                        </div>
+                                                    }
+                                                }
                                                 <div class="report-heading">
                                                     Email Id:
                                                 </div>
