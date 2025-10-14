@@ -373,7 +373,7 @@ namespace Risebird.AzureTimerFunctions
                                             {
                                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                                 log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-
+                                                return;
                                             }
                                             log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
                                             //generate SAS URL from the uploaded video url
@@ -430,6 +430,7 @@ namespace Risebird.AzureTimerFunctions
                                             {
                                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                                 log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                return;
                                             }
                                             log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
                                             //generate SAS URL from the uploaded video url
@@ -473,12 +474,14 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                                return;
                             }
                         }
                         catch (Exception ex)
                         {
                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                            return;
                         }
                     });
                 }
@@ -501,7 +504,7 @@ namespace Risebird.AzureTimerFunctions
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-
+                        return;
                     }
                 });
 
@@ -712,7 +715,7 @@ namespace Risebird.AzureTimerFunctions
                                             {
                                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                                 log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-
+                                                return;
                                             }
                                             log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
                                             //generate SAS URL from the uploaded video url
@@ -812,19 +815,21 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                                return;
                             }
                         }
                         catch (Exception ex)
                         {
                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-
+                        return;
                     }
                 });
                 #endregion
