@@ -152,11 +152,11 @@ namespace Risebird.Web.Controllers
                             {
                                 var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
                                 //if (allQuestions != null && allQuestions.Count() <= 10)
-                                if (allQuestions != null && allQuestions.Count() <= 25)
+                                if (allQuestions != null && allQuestions.Count() <= 35)
                                 //if(allQuestions != null && allQuestions.Count() <= 3)
                                 {
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
-                                    if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 25)
+                                    if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 35)
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                     {
                                         var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
@@ -182,7 +182,7 @@ namespace Risebird.Web.Controllers
                                         }
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
-                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 35)
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
                                     {
                                         model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
@@ -240,7 +240,7 @@ namespace Risebird.Web.Controllers
 
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
-                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 35)
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                     {
                                         // INTERVIEW COMPLETE - Return ExitModalPartial view
@@ -395,11 +395,11 @@ namespace Risebird.Web.Controllers
                             {
                                 var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
                                 //if (allQuestions != null && allQuestions.Count() <= 10)
-                                if (allQuestions != null && allQuestions.Count() <= 25)
+                                if (allQuestions != null && allQuestions.Count() <= 35)
                                 //if(allQuestions != null && allQuestions.Count() <= 3)
                                 {
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 10)
-                                    if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 25)
+                                    if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 35)
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                     {
                                         var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
@@ -424,7 +424,7 @@ namespace Risebird.Web.Controllers
                                         }
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
-                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 25)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 35)
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 3)
                                     {
                                         model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
@@ -448,7 +448,7 @@ namespace Risebird.Web.Controllers
                                         }
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
-                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 25)
+                                    else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 35)
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 3)
                                     {
                                         //check if the interview is already marked completed in the first details object above and if not, mark it as completed
@@ -669,7 +669,7 @@ namespace Risebird.Web.Controllers
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
                     var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
                     //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                    if (allQuestions?.Count() == 25)
+                    if (allQuestions?.Count() == 35)
                     //if (allQuestions?.Count() == 3)                                 
                     {
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
@@ -790,7 +790,7 @@ namespace Risebird.Web.Controllers
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
                     var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
                     //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                    if (allQuestions?.Count() == 25) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                    if (allQuestions?.Count() == 35) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
                                                      //if (allQuestions?.Count() == 3)//&& !string.IsNullOrEmpty(model.CurrentQuestion)
                     {
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
