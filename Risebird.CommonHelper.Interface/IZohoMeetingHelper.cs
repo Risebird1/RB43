@@ -11,7 +11,7 @@ namespace Risebird.CommonHelper.Interface
     {
         Task<ZohoMeetingResponse> CreateMeetingAsync(ZohoCreateMeetingRequest request);
         Task<bool> DeleteMeetingAsync(string meetingKey);
-        Task<IEnumerable<ZohoRecordingInfo>> GetRecordingAsync(string meetingKey);
+        Task<IEnumerable<ZohoRecordingInfo>> GetRecordingAsync(string meetingKey, string accesstoken = null);
         Task DeleteRecordingAsync(string recordingid);
         Task<string> GetRecordingAccessTokenAsync();
     }

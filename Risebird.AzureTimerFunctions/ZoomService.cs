@@ -151,7 +151,7 @@ namespace Risebird.AzureTimerFunctions
                                         {
                                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                             log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                            return;
+
                                         }
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -169,7 +169,7 @@ namespace Risebird.AzureTimerFunctions
                                         //    {
                                         //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                         //        log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                        //        return;
+                                        //        
                                         //    }
 
                                         //    log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -208,7 +208,7 @@ namespace Risebird.AzureTimerFunctions
                                             {
                                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                                 log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                                return;
+
                                             }
                                         }
 
@@ -247,7 +247,7 @@ namespace Risebird.AzureTimerFunctions
                                         {
                                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                             log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                            return;
+
                                         }
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -265,7 +265,7 @@ namespace Risebird.AzureTimerFunctions
                                         //    {
                                         //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                         //        log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                        //        return;
+                                        //        
                                         //    }
 
                                         //    log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -293,7 +293,7 @@ namespace Risebird.AzureTimerFunctions
                                             {
                                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                                 log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                                return;
+
                                             }
                                         }
 
@@ -321,26 +321,164 @@ namespace Risebird.AzureTimerFunctions
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                        return;
+
                     }
                 });
-
+                var accesstoken = await _zoho.GetRecordingAccessTokenAsync();
                 // RBMeet : fetch video link and dump in db
                 if (pendingRBMeetings.Count() > 0)
                 {
-                    var accesstoken = await _zoho.GetRecordingAccessTokenAsync();
                     log.LogInformation($"Zoho: AccessToken :{accesstoken}");
                     Parallel.ForEach(pendingRBMeetings, meeting =>
                     {
                         try
                         {
-                            ZohoAzureuploadVideoandTranscript(meeting);
+                            //ZohoAzureuploadVideoandTranscript(meeting);
+                            string videoSasUrl = string.Empty;
+                            string uploadedVideoClientExternalLink = string.Empty;
+                            string uploadedTranscriptClientExternalLink = string.Empty;
+                            int? videoDuration = null;
+                            string transcriptSasUrl = string.Empty;
+
+                            try
+                            {
+                                var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
+                                int maxduration = 0;
+                                if (recordinginfo.Count() > 0)
+                                    maxduration = recordinginfo.Max(r => r.duration);
+                                var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
+                                if (string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 15))
+                                {
+                                    var downloadUrl = _recordingupload?.downloadUrl;
+
+                                    if (downloadUrl != null)
+                                    {
+                                        HttpClient myWebClient = new HttpClient();
+                                        string uploadedVideoUrl = string.Empty;
+                                        var accessToken = accesstoken;
+                                        myWebClient.DefaultRequestHeaders.Authorization =
+                                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
+                                        //url of the video uploaded to the client's storage exclusively in cases where the client has requested for such a service. 
+                                        using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                        {
+                                            var topic = _recordingupload.erecordingId;
+                                            var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
+                                            long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                            fileName = fileName + "_" + unixTime.ToString();
+                                            try
+                                            {
+                                                uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+
+                                            }
+                                            log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                            //generate SAS URL from the uploaded video url
+                                            var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+                                            if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                            {
+                                                videoSasUrl = uploadedVideoUrl + "?" + sas;
+                                            }
+                                        }
+                                        if (!string.IsNullOrEmpty(videoSasUrl))
+                                        {
+                                            videoDuration = _recordingupload.duration / 60000;
+                                        }
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                            using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                            {
+                                                try
+                                                {
+                                                    string fileNameExternal = "recording.mp4";
+                                                    uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                    log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                }
+                                            }
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        }
+                                    }
+                                }
+                                if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink))
+                                {
+                                    var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
+                                    if (transcriptionDownloadUrl != null)
+                                    {
+                                        HttpClient myWebClient = new HttpClient();
+                                        string uploadedTranscriptUrl = string.Empty;
+                                        var accessToken = accesstoken;
+                                        myWebClient.DefaultRequestHeaders.Authorization =
+                                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
+                                        using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
+                                        {
+                                            var topic = _recordingupload.erecordingId;
+                                            var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
+                                            long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                            fileName = fileName + "_" + unixTime.ToString();
+                                            try
+                                            {
+                                                uploadedTranscriptUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                            }
+                                            log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                            //generate SAS URL from the uploaded video url
+                                            var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+                                            if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                            {
+                                                transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                            }
+                                        }
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                            using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
+                                            {
+                                                try
+                                                {
+                                                    string fileNameExternal = "transcript.json"; // meeting.imid.ToString() + 
+                                                    uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                    log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                }
+                                            }
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        }
+                                    }
+                                }
+                                //upload the video to azure blob using the download_Url
+                                if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
+                                {
+                                    var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink).Result;
+                                    if (result && recordinginfo.Count() == 1)
+                                    {
+                                        _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
+                                    }
+                                    log.LogInformation($"Zoho : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                            }
                         }
                         catch (Exception ex)
                         {
                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                            return;
                         }
                     });
                 }
@@ -363,7 +501,7 @@ namespace Risebird.AzureTimerFunctions
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                        return;
+
                     }
                 });
 
@@ -459,7 +597,7 @@ namespace Risebird.AzureTimerFunctions
                                         {
                                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                             log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                            return;
+
                                         }
 
                                         log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -477,7 +615,7 @@ namespace Risebird.AzureTimerFunctions
                                         //    {
                                         //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                         //        log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                        //        return;
+                                        //        
                                         //    }
 
                                         //    log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -505,7 +643,7 @@ namespace Risebird.AzureTimerFunctions
                                             {
                                                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                                 log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                                return;
+
                                             }
                                         }
                                         log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
@@ -524,7 +662,7 @@ namespace Risebird.AzureTimerFunctions
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                        return;
+
                     }
                 });
 
@@ -532,13 +670,161 @@ namespace Risebird.AzureTimerFunctions
                 {
                     try
                     {
-                        ZohoAzureuploadVideoandTranscript(meeting);
+                        try
+                        {
+                            //ZohoAzureuploadVideoandTranscript(meeting);
+                            string videoSasUrl = string.Empty;
+                            string uploadedVideoClientExternalLink = string.Empty;
+                            string uploadedTranscriptClientExternalLink = string.Empty;
+                            int? videoDuration = null;
+                            string transcriptSasUrl = string.Empty;
+
+                            try
+                            {
+                                var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
+                                int maxduration = 0;
+                                if (recordinginfo.Count() > 0)
+                                    maxduration = recordinginfo.Max(r => r.duration);
+                                var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
+                                if (string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 15))
+                                {
+                                    var downloadUrl = _recordingupload?.downloadUrl;
+
+                                    if (downloadUrl != null)
+                                    {
+                                        HttpClient myWebClient = new HttpClient();
+                                        string uploadedVideoUrl = string.Empty;
+                                        var accessToken = accesstoken;
+                                        myWebClient.DefaultRequestHeaders.Authorization =
+                                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
+                                        //url of the video uploaded to the client's storage exclusively in cases where the client has requested for such a service. 
+                                        using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                        {
+                                            var topic = _recordingupload.erecordingId;
+                                            var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
+                                            long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                            fileName = fileName + "_" + unixTime.ToString();
+                                            try
+                                            {
+                                                uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+
+                                            }
+                                            log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                            //generate SAS URL from the uploaded video url
+                                            var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+                                            if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                            {
+                                                videoSasUrl = uploadedVideoUrl + "?" + sas;
+                                            }
+                                        }
+                                        if (!string.IsNullOrEmpty(videoSasUrl))
+                                        {
+                                            videoDuration = _recordingupload.duration / 60000;
+                                        }
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                            using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                            {
+                                                try
+                                                {
+                                                    string fileNameExternal = "recording.mp4";
+                                                    uploadedVideoClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                    log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                }
+                                            }
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        }
+                                    }
+                                }
+                                if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink))
+                                {
+                                    var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
+                                    if (transcriptionDownloadUrl != null)
+                                    {
+                                        HttpClient myWebClient = new HttpClient();
+                                        string uploadedTranscriptUrl = string.Empty;
+                                        var accessToken = accesstoken;
+                                        myWebClient.DefaultRequestHeaders.Authorization =
+                                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
+                                        using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
+                                        {
+                                            var topic = _recordingupload.erecordingId;
+                                            var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
+                                            long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                            fileName = fileName + "_" + unixTime.ToString();
+                                            try
+                                            {
+                                                uploadedTranscriptUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream).Result;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                            }
+                                            log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                            //generate SAS URL from the uploaded video url
+                                            var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+                                            if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                            {
+                                                transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                            }
+                                        }
+                                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
+                                        {
+                                            using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
+                                            {
+                                                try
+                                                {
+                                                    string fileNameExternal = "transcript.json"; // meeting.imid.ToString() + 
+                                                    uploadedTranscriptClientExternalLink = _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid).Result;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                    log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                                }
+                                            }
+                                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        }
+                                    }
+                                }
+                                //upload the video to azure blob using the download_Url
+                                if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
+                                {
+                                    var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink).Result;
+                                    if (result && recordinginfo.Count() == 1)
+                                    {
+                                        _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
+                                    }
+                                    log.LogInformation($"Zoho : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                        }
                     }
                     catch (Exception ex)
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                        return;
+
                     }
                 });
                 #endregion
@@ -547,153 +833,6 @@ namespace Risebird.AzureTimerFunctions
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-        }
-        private async Task ZohoAzureuploadVideoandTranscript(PendingVideoMeetingsData meeting)
-        {
-            string videoSasUrl = string.Empty;
-            string uploadedVideoClientExternalLink = string.Empty;
-            string uploadedTranscriptClientExternalLink = string.Empty;
-            int? videoDuration = null;
-            string transcriptSasUrl = string.Empty;
-
-            try
-            {
-                var recordinginfo = await _zoho.GetRecordingAsync(meeting.ZoomMeetingId);
-                int maxduration = 0;
-                if (recordinginfo.Count() > 0)
-                    maxduration = recordinginfo.Max(r => r.duration);
-                var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
-                if (string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 15))
-                {
-                    var downloadUrl = _recordingupload?.downloadUrl;
-
-                    if (downloadUrl != null)
-                    {
-                        HttpClient myWebClient = new HttpClient();
-                        string uploadedVideoUrl = string.Empty;
-                        var accessToken = await _zoho.GetRecordingAccessTokenAsync();
-                        myWebClient.DefaultRequestHeaders.Authorization =
-                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
-                        //url of the video uploaded to the client's storage exclusively in cases where the client has requested for such a service. 
-                        using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
-                        {
-                            var topic = _recordingupload.erecordingId;
-                            var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
-                            long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                            fileName = fileName + "_" + unixTime.ToString();
-                            try
-                            {
-                                uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream);
-                            }
-                            catch (Exception ex)
-                            {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                return;
-                            }
-                            log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
-                            //generate SAS URL from the uploaded video url
-                            var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
-                            if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
-                            {
-                                videoSasUrl = uploadedVideoUrl + "?" + sas;
-                            }
-                        }
-                        if (!string.IsNullOrEmpty(videoSasUrl))
-                        {
-                            videoDuration = _recordingupload.duration / 60000;
-                        }
-                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
-                        {
-                            using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
-                            {
-                                try
-                                {
-                                    string fileNameExternal = "recording.mp4";
-                                    uploadedVideoClientExternalLink = await _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid);
-                                }
-                                catch (Exception ex)
-                                {
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                    log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                    return;
-                                }
-                            }
-                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
-                        }
-                    }
-                }
-                if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink))
-                {
-                    var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
-                    if (transcriptionDownloadUrl != null)
-                    {
-                        HttpClient myWebClient = new HttpClient();
-                        string uploadedTranscriptUrl = string.Empty;
-                        var accessToken = await _zoho.GetRecordingAccessTokenAsync();
-                        myWebClient.DefaultRequestHeaders.Authorization =
-                            new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
-                        using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
-                        {
-                            var topic = _recordingupload.erecordingId;
-                            var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
-                            long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                            fileName = fileName + "_" + unixTime.ToString();
-                            try
-                            {
-                                uploadedTranscriptUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream);
-                            }
-                            catch (Exception ex)
-                            {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                log.LogError($"Zoho : Error while inserting blob for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                return;
-                            }
-                            log.LogInformation($"Zoho : Video uploaded in blob for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
-                            //generate SAS URL from the uploaded video url
-                            var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
-                            if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
-                            {
-                                transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
-                            }
-                        }
-                        if (meeting.ClientCompanyName.ToLower() == ClientCompanyNames.Turing.ToLower())
-                        {
-                            using (Stream myStream = myWebClient.GetStreamAsync(transcriptionDownloadUrl).Result)
-                            {
-                                try
-                                {
-                                    string fileNameExternal = "transcript.json"; // meeting.imid.ToString() + 
-                                    uploadedTranscriptClientExternalLink = await _googleEventHelper.UploadToGoogleCloudStorage(fileNameExternal, myStream, meeting.imid);
-                                }
-                                catch (Exception ex)
-                                {
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                    log.LogError($"Error while uploading video to Google Cloud Storage for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                    return;
-                                }
-                            }
-                            log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
-                        }
-                    }
-                }
-                //upload the video to azure blob using the download_Url
-                if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
-                {
-                    var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink).Result;
-                    if (result && recordinginfo.Count() == 1)
-                    {
-                        await _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
-                    }
-                    log.LogInformation($"Zoho : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                log.LogError($"Zoho : Video upload error for meeting with id: {meeting.imid} and ZohoMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                return;
             }
         }
     }
