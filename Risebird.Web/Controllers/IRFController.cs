@@ -902,7 +902,7 @@ namespace Risebird.Web.Controllers
                         irfDetails.EndDate = DateTime.Now.AddMonths(3);
 
                         //Start: Auto Generate Scheduling Link 
-                        var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
+                        var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF", isAIInterview : irfDetails.IsAIInterview);
                         irfDetails.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         await checkSkillSetandCombine(irfDetails);
@@ -6710,7 +6710,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<string> AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string source, string meetingPlatform = null)
+        public async Task<string> AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string source, string meetingPlatform = null, bool? isAIInterview = false)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -6727,13 +6727,25 @@ namespace Risebird.Web.Controllers
             model_Second.Add(new daytimes_second { Daytype = "saturday", dayCheck = true, dayvalue = sun });
             var model_report = new daytimes_report();
             model_report.setvalue = model_Second;
-            model_report.StartDate = eventStartdate.AddHours(12);
+            if(isAIInterview.HasValue && isAIInterview.Value)
+            {
+                model_report.StartDate = eventStartdate;
+                model_report.duration = 15;
+                model_report.BufferTime = 0;
+
+            }
+            else
+            {
+                model_report.StartDate = eventStartdate.AddHours(12);
+                model_report.duration = 60;
+                model_report.BufferTime = 18;
+
+            }
             model_report.EndDate = eventStartdate.AddDays(60);
             model_report.EventName = EventName;
             model_report.SkillChannel = SkillChannel;
-            model_report.duration = 60;
+            
             model_report.Concurrency = 10;
-            model_report.BufferTime = 18;
             model_report.TimeSlotDays = 6;
             model_report.MeetingPlatform = meetingPlatform;
             model_report.sourcevalue = source;
@@ -7767,7 +7779,7 @@ namespace Risebird.Web.Controllers
 
                     //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
 
-                    string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform);
+                    string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform, isAIInterview: model.IsAIInterview);
 
                     model.CalendlyLink = _schedulinglink;
                     var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(model, emailId, "Client");
