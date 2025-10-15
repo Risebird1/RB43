@@ -204,9 +204,9 @@ namespace Risebird.Web.Controllers
 
                                             if (!string.IsNullOrEmpty(sampleQuestion.Message))
                                             {
-                                                model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
+                                                model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;//latestEntry.AIQuestionVideoLink;
                                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
-                                                model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
+                                                model.CurrentQuestionId = sampleQuestion.id;//latestEntry.DeliveryHeadQuestionId;
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                             }
