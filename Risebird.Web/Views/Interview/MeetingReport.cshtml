@@ -423,7 +423,55 @@
                                         .observation-btn-cancel:hover {
                                             background-color: #5a6268;
                                         }
+                                         {
+    position: relative;
+    width: 100%;
+}
 
+.question-dropdown {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.question-textarea {
+    width: 100%;
+    border: 1.5px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
+    font-family: inherit;
+    visibility: hidden;
+    COLOR:#888;
+}
+
+.question-textarea.show-visible {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.question-toggle-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.question-toggle-btn:hover {
+    background: #0056b3;
+}
+
+.question-toggle-btn.active {
+    background: #28a745;
+}
+
+.question-toggle-btn.active:hover {
+    background: #218838;
+}
                                     @@media (max-width: 768px) {
                                         .observation-modal-content {
                                             width: 90%;
@@ -526,12 +574,8 @@
                                                                     <!-- Left Section: Video Player Placeholder -->
                                                                     <div class="video-section">
                                                                         <div class="video-placeholder">
-                                                                            <div style="text-align: center;">
-                                                                                <i class="fa fa-play-circle" style="font-size: 48px; margin-bottom: 10px; opacity: 0.7;"></i>
-                                                                                <div>Zoho Meeting Placeholder</div>
-                                                                                <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">Video will be integrated here</div>
-                                                                            </div>
-                                                                            <div class="zoho-logo">Zoho Meeting</div>
+                                                                          <iframe src="https://meeting.zoho.in/meeting/login/embedmeeting.jsp?meetingKey=1314570290&newWindow=true&t=2f213b8b0cad0e3dcc90ac840b3704c25caf8b724fd645e75e76a49ea41b85c0"></iframe>
+
                                                                         </div>
 
 
@@ -604,90 +648,86 @@
                                                                                                         </tr>
                                                                                                     </thead>
                                                                                                     <tbody>
-                                                                                                        @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
-                                                                                                        {
-                                                                                                        <tr style="background:#fff">
-                                                                                                            <td>
-                                                                                                                @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
-                                                                                                                {
-
-                                                                                                                <a href="@Url.Action(" SampleQuestions", "IRF" , new { id=Model.IRFId, irf=Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
-                                                                                                                }
-                                                                                                                else
-                                                                                                                {
-
-                                                                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-                                                                                                                }
-
-                                                                                                            </td>
-                                                                                                            <td class="tooltipskill">
-                                                                                                                @* <span class="tooltipskilltext">@Model.QuestionsCollection[0].SkillName</span> *@
-                                                                                                                @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @readonly = "readonly" })
-
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
-
-                                                                                                            </td>
-
-                                                                                                            @*
-                                                                                                            <td>
-                                                                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
-                                                                                                            </td>*@
-
-                                                                                                            <td class="action text-center">
-                                                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute" style="width:30px!important;height:30px!important"><i class="fas  fa fa-plus"></i></span>
-                                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                                                <span onclick="openObservationModal(0)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                        }
-                                                                                                        else
-                                                                                                        {
-                                                                                                        for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
-                                                                                                        {
-                                                                                                        <tr style="cursor:pointer">
-                                                                                                            <td>
-
-                                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
-                                                                                                                {
-
-                                                                                                                @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                                }
-                                                                                                                else
-                                                                                                                {
-                                                                                                                var newList = new List<SelectListItem>
-                                                                                                                    ();
-                                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
-                                                                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
-
-                                                                                                                    }
-
-                                                                                                            </td>
-                                                                                                            <td class="tooltipskill">
-                                                                                                                <span class="tooltipskilltext">@Model.QuestionsCollection[i].SkillName</span>
-                                                                                                                @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
-                                                                                                            </td>
-
-                                                                                                            @*
-                                                                                                            <td>
-
-                                                                                                                @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
-
-                                                                                                            </td>*@
-
-                                                                                                            <td class="action text-center">
-                                                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                                                <span onclick="openObservationModal(@i)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                        }
-                                                                                                        }
-
+                                                                                                       @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
+{
+<tr style="background:#fff">
+    <td>
+        <div class="question-input-container">
+            @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
+            {
+                <div class="question-textarea show-visible">
+                    <textarea name="QuestionsCollection[0].Comment" id="QuestionsCollection_0__Comment" class="question-textarea" placeholder="Enter your question manually..."></textarea>
+                </div>
+            }
+            else
+            {
+                <div class="question-dropdown">
+                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                </div>
+                <div class="question-textarea">
+                    <textarea name="QuestionsCollection[0].Comment" id="QuestionsCollection_0__Comment_Manual" class="question-textarea" placeholder="Enter your question manually..." style="display: none;"></textarea>
+                </div>
+                <button type="button" class="question-toggle-btn" onclick="toggleQuestionInput(this, 0)">Add Manual Question</button>
+            }
+        </div>
+    </td>
+    <td class="tooltipskill">
+        @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @readonly = "readonly" })
+    </td>
+    <td>
+        @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+    </td>
+    <td class="action text-center">
+        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute" style="width:30px!important;height:30px!important"><i class="fas  fa fa-plus"></i></span>
+        <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+        <span onclick="openObservationModal(0)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
+    </td>
+</tr>
+}
+                                                                                                       else
+{
+for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+{
+<tr style="cursor:pointer">
+    <td>
+        <div class="question-input-container">
+            @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
+            {
+                <div class="question-dropdown">
+                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                </div>
+                <div class="question-textarea">
+                    <textarea name="QuestionsCollection[@i].Comment" id="QuestionsCollection[@i].Comment" class="question-textarea" placeholder="Enter your question manually..." style="display: none;"></textarea>
+                </div>
+                <button type="button" class="question-toggle-btn" onclick="toggleQuestionInput(this, @i)">Add Manual Question</button>
+            }
+            else
+            {
+                <div class="question-dropdown" style="display: none;">
+                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                </div>
+                <div class="question-textarea">
+                    <textarea name="QuestionsCollection[@i].Comment" id="QuestionsCollection[@i].Comment" class="question-textarea show-visible" placeholder="Enter your question manually...">@Model.QuestionsCollection[i].Comment</textarea>
+                </div>
+                <button type="button" class="question-toggle-btn active" onclick="toggleQuestionInput(this, @i)">Use Dropdown</button>
+            }
+        </div>
+    </td>
+    <td class="tooltipskill">
+        <span class="tooltipskilltext">@Model.QuestionsCollection[i].SkillName</span>
+        @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
+    </td>
+    <td>
+        @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+    </td>
+    <td class="action text-center">
+        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+        <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+        <span onclick="openObservationModal(@i)" class="mdc-fab app-fab--absolute observation-btn" title="Add Observation"><i class="fas fa-eye"></i></span>
+    </td>
+</tr>
+}
+}
 
                                                                                                         <div class="addreport">
 
@@ -2191,102 +2231,135 @@
         }
     }
     function AddRow() {
+    var $ttc = $("#QuestionsTable").find("tbody tr:last");
+    var $tr = $ttc.clone();
+    var trIndexReplaced = $("#QuestionsTable tr").length - 1;
 
-        var $ttc = $("#QuestionsTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#QuestionsTable tr").length - 1;
+    $tr.find("input,select,hidden,textarea").attr("name", function () {
+        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+        if (parts) {
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3];
+        }
+        // Handle manual textarea naming
+        var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
+        if (textareaParts) {
+            return textareaParts[1] + "[" + ++textareaParts[2] + "]." + textareaParts[3];
+        }
+        return this.name;
+    }).attr("id", function () {
+        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+        if (parts) {
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3];
+        }
+        // Handle manual textarea ID
+        var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
+        if (textareaParts) {
+            return textareaParts[1] + "_" + ++textareaParts[2] + "__" + textareaParts[3] + "_Manual";
+        }
+        return this.id;
+    });
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
+    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () {
+        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/);
+        return parts[1] + "[" + ++parts[2] + "]." + parts[3];
+    });
 
-        var rowCount = $('#QuestionsTable tr').length;
+    var rowCount = $('#QuestionsTable tr').length;
+    var finalIndex = rowCount - 1;
 
-        var finalIndex = rowCount - 1;
+    // Reset fields in the new row
+    $tr.find("select").val("");
+    $tr.find("input[type=text]").val("");
+    $tr.find("input[type=hidden]").val("");
+    $tr.find("textarea").val("");
+    $tr.find("a").val("");
 
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
+    // Reset toggle button state
+    $tr.find(".question-toggle-btn").removeClass("active").text("Add Manual Question");
+    $tr.find(".question-textarea textarea").hide();
+    $tr.find(".question-dropdown select").show();
 
-        $tr.find("a").val("");
+    // Update toggle button onclick with correct index
+    $tr.find(".question-toggle-btn").attr("onclick", `toggleQuestionInput(this, ${finalIndex})`);
+    
+    // Update observation button onclick with correct index
+    $tr.find(".observation-btn").attr("onclick", `openObservationModal(${finalIndex})`);
 
-        // add cloned row as last row
-        $("#QuestionsTable").find("tbody tr:last").after($tr);
+    // Add cloned row as last row
+    $("#QuestionsTable").find("tbody tr:last").after($tr);
 
-        // Find the affected form
-        var $form = $tr.closest("FORM");
+    // Find the affected form
+    var $form = $tr.closest("FORM");
 
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-        // Check document for changes
-        //$.validator.unobtrusive.parse(document);
+    // Unbind existing validation
+    $form.unbind();
+    $form.data("validator", null);
+}
+   function AddRowTwo() {
+    var $ttc = $("#QuestionsTableTwo").find("tbody tr:last");
+    var $tr = $ttc.clone();
+    var trIndexReplaced = $("#QuestionsTableTwo tr").length - 1;
 
-        // After creating the new row, add the observation button
-        setTimeout(() => {
-            const newRowIndex = document.querySelectorAll('#QuestionsTable tbody tr').length - 1;
-            const actionCell = document.querySelector(`#QuestionsTable tbody tr:nth-child(${newRowIndex + 1}) .action`);
+    $tr.find("input,select,hidden,textarea").attr("name", function () {
+        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+        if (parts) {
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3];
+        }
+        // Handle manual textarea naming
+        var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
+        if (textareaParts) {
+            return textareaParts[1] + "[" + ++textareaParts[2] + "]." + textareaParts[3];
+        }
+        return this.name;
+    }).attr("id", function () {
+        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+        if (parts) {
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3];
+        }
+        // Handle manual textarea ID
+        var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
+        if (textareaParts) {
+            return textareaParts[1] + "_" + ++textareaParts[2] + "__" + textareaParts[3] + "_Manual";
+        }
+        return this.id;
+    });
 
-            if (actionCell) {
-                const observationBtn = document.createElement('span');
-                observationBtn.className = 'mdc-fab app-fab--absolute observation-btn';
-                observationBtn.onclick = `openObservationModal(${newRowIndex})`;
-                observationBtn.title = 'Add Observation';
-                observationBtn.innerHTML = '<i class="fas fa-eye"></i>';
+    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () {
+        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/);
+        return parts[1] + "[" + ++parts[2] + "]." + parts[3];
+    });
 
-                actionCell.appendChild(observationBtn);
-            }
-        }, 100);
-    }
-    function AddRowTwo() {
+    var rowCount = $('#QuestionsTableTwo tr').length;
+    var finalIndex = rowCount - 1;
 
-        var $ttc = $("#QuestionsTableTwo").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#QuestionsTableTwo tr").length - 1;
+    // Reset fields in the new row
+    $tr.find("select").val("");
+    $tr.find("input[type=text]").val("");
+    $tr.find("input[type=hidden]").val("");
+    $tr.find("textarea").val("");
+    $tr.find("a").val("");
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
+    // Reset toggle button state (if exists)
+    $tr.find(".question-toggle-btn").removeClass("active").text("Add Manual Question");
+    $tr.find(".question-textarea textarea").hide();
+    $tr.find(".question-dropdown select").show();
 
-        var rowCount = $('#QuestionsTableTwo tr').length;
+    // Update toggle button onclick with correct index (if exists)
+    $tr.find(".question-toggle-btn").attr("onclick", `toggleQuestionInput(this, ${finalIndex})`);
+    
+    // Update observation button onclick with correct index (if exists)
+    $tr.find(".observation-btn").attr("onclick", `openObservationModal(${finalIndex})`);
 
-        var finalIndex = rowCount - 1;
+    // Add cloned row as last row
+    $("#QuestionsTableTwo").find("tbody tr:last").after($tr);
 
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
+    // Find the affected form
+    var $form = $tr.closest("FORM");
 
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#QuestionsTableTwo").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-    }
+    // Unbind existing validation
+    $form.unbind();
+    $form.data("validator", null);
+}
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2384,6 +2457,52 @@
     }
 
 
+
+  function toggleQuestionInput(button, rowIndex) {
+    const container = button.closest('.question-input-container');
+    const dropdown = container.querySelector('.question-dropdown select');
+    const textarea = container.querySelector('.question-textarea textarea');
+    
+    const isManual = button.textContent === 'Use Dropdown';
+    
+    if (isManual) {
+        // Switch to dropdown
+        dropdown.style.display = 'block';
+        textarea.style.display = 'none';
+        textarea.style.visibility = 'hidden';
+        textarea.value = '';
+        button.textContent = 'Add Manual Question';
+        button.classList.remove('active');
+
+        dropdown.name = `QuestionsCollection[${rowIndex}].Comment`;
+        textarea.name = '';
+    } else {
+        // Switch to manual input
+        dropdown.style.display = 'none';
+        textarea.style.display = 'block';
+        textarea.style.visibility = 'visible';
+        dropdown.value = '';
+        button.textContent = 'Use Dropdown';
+        button.classList.add('active');
+
+        textarea.name = `QuestionsCollection[${rowIndex}].Comment`;
+        dropdown.name = '';
+    }
+}
+
+    // Function to handle manual question skill mapping
+    function handleManualQuestionSkillMapping(textarea, rowIndex) {
+        var skillElementid = 'QuestionsCollection_' + rowIndex + '__SkillName';
+        var questionText = textarea.value.trim();
+
+        if (questionText.length > 0) {
+            // You can implement custom skill mapping logic here
+            // For now, we'll set a default skill or leave it empty
+            $("#" + skillElementid).val("Custom Question");
+        } else {
+            $("#" + skillElementid).val("");
+        }
+    }
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
             document.getElementById('InterviewerComment').disabled = false;
