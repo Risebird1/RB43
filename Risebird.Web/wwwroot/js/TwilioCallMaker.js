@@ -1,213 +1,187 @@
-﻿//<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js?v=7"></script>
-/*$.getScript("//static.twilio.com/libs/twiliojs/1.2/twilio.min.js?v=7");*/
-
+﻿
+/* -----------------------------
+   GLOBAL VARIABLES
+------------------------------ */
 var callRecipientName = "";
-//var canIrfid = "";
 var irfId = "";
-//var cancandidateEmail = "";
 var callRecipientEmail = "";
 var callRecipientPhoneNumber = "";
 var recipientType = '';
 var interviewId = '';
 
+var device;              // Twilio.Device instance
+var activeConnection;    // Current active call connection
+
+/* -----------------------------
+   MODAL HANDLER
+------------------------------ */
 var span = document.getElementById("callPopUp");
-// When the user clicks on <span> (x), close the modal
-if (span != null) {
-    span.onclick = function () {
+if (span) {
+    span.onclick = function() {
         hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
+        document.getElementById("myCallModal").style.display = "none";
+    };
+}
+
+/* -----------------------------
+   TOKEN GENERATION & DEVICE
+------------------------------ */
+async function GenerateToken() {
+    try {
+        const response = await fetch("/TwilioCalls/Generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ page: window.location.pathname })
+        });
+        const data = await response.json();
+
+        if (!device) {
+            setupDevice(data.token);
+        } else {
+            device.updateToken(data.token);
+        }
+
+        setTimeout(GenerateToken, 300000); // Refresh token every 5 mins
+    } catch (err) {
+        console.error("Error generating token:", err);
     }
 }
 
-
-function GenerateToken() {
-    $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-        // Set up the Twilio Client Device with the token
-        Twilio.Device.setup(data.token);
+function setupDevice(token) {
+    device = new Twilio.Device(token, {
+        codecPreferences: ["opus","pcmu"],
+        allowIncomingWhileBusy: true
     });
-    setTimeout(GenerateToken, 300000);
+
+    // Device ready
+    device.on("registered", () => console.log("Device registered"));
+    device.on("unregistered", () => console.log("Device unregistered"));
+    device.on("error", err => console.error("Device error:", err));
+
+    // Incoming call handler (optional)
+    device.on("incoming", connection => {
+        console.log("Incoming call", connection);
+        // Optional: auto accept or show modal
+    });
+
+    // Outgoing call connected
+    device.on("connect", connection => {
+        activeConnection = connection;
+        document.getElementById("callingLabel").innerHTML =
+            "In call with <b>" + callRecipientName + "</b>";
+        if (connection.parameters && connection.parameters.CallSid) {
+            startCallRecording(connection.parameters.CallSid);
+        }
+    });
+
+    // Outgoing call disconnected
+    device.on("disconnect", connection => {
+        if (activeConnection === connection) activeConnection = null;
+        document.getElementById("callingLabel").innerHTML = "Call disconnected!";
+        setTimeout(afterTimeOut, 2000);
+    });
 }
-$(document).ready(function () {
-    GenerateToken();
-});
 
-/* Callback to let us know Twilio Client is ready */
-Twilio.Device.ready(function (device) {
-
-});
-
+/* -----------------------------
+   CALL FUNCTIONS
+------------------------------ */
 function callRecipient(phoneNumber) {
-    callRecipientPhoneNumber = phoneNumber;
-    var params = {"phoneNumber": phoneNumber };
+    //debugger;
+    //phoneNumber = "+918888571923";
+    if (!device) return console.error("Device not initialized");
 
-    if(phoneNumber !=null && phoneNumber.length >= 9)
-    {
-        Twilio.Device.connect(params);
-    }
-    
+    callRecipientPhoneNumber = phoneNumber;
+    if (!phoneNumber || phoneNumber.length < 9) return;
+
+    device.connect({ phoneNumber });
 }
 
 function hangUp() {
-    Twilio.Device.disconnectAll();
+    if (activeConnection) {
+        activeConnection.disconnect();
+        activeConnection = null;
+    }
+    if (device) device.disconnectAll();
 }
-
-Twilio.Device.connect(function (connection) {
-    var appendText = "In call with " + "<b>" + callRecipientName + "</b>";
-    document.getElementById("callingLabel").innerHTML = appendText;
-    startCallRecording(connection.parameters.CallSid);
-});
 
 function afterTimeOut() {
-    var modal = document.getElementById("myCallModal");
-    modal.style.display = "none";
+    document.getElementById("myCallModal").style.display = "none";
 }
 
-Twilio.Device.disconnect(function (connection) {
-    var appendText = "Call disconnected! ";
-    document.getElementById("callingLabel").innerHTML = appendText;
-    setTimeout(afterTimeOut, 2000);
-
-});
 function startCallRecording(callSid) {
-    $.ajax({
-        url: '/User/makecall',
-        type: "GET",
-        //data: {'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
-        data: { 'sid': callSid, 'IRFId': irfId, 'callRecipient': callRecipientEmail, 'callRecipientPhoneNumber': callRecipientPhoneNumber, 'recipientType': recipientType },
-        success: function (data) {
-        }
-    });
+    fetch("/User/makecall?sid=" + encodeURIComponent(callSid)
+        + "&IRFId=" + encodeURIComponent(irfId)
+        + "&callRecipient=" + encodeURIComponent(callRecipientEmail)
+        + "&callRecipientPhoneNumber=" + encodeURIComponent(callRecipientPhoneNumber)
+        + "&recipientType=" + encodeURIComponent(recipientType),
+        { method: "GET" }
+    ).then(() => console.log("Recording request sent for CallSid:", callSid));
 }
-//function startCallRecordingInterviewer(sid) {
-//    $.ajax({
-//        url: '/User/makecallInterviewer',
-//        type: "GET",
-//        data: { 'sid': sid, 'CandidateEmail': cancandidateEmailid },
-//        success: function (data) {
-//            console.log("rsid:" + data);
-//        }
-//    });
-//}
-function CallButtonClick(candidateObj, indexid) {
-    if (indexid == 1) {
-        callRecipientName = candidateObj.Name;
-        irfId = candidateObj.IRFId;
-        //irfId = candidateObj.IRFName;
-        callRecipientEmail = candidateObj.EmailId;
-    }
-    else {
-        callRecipientName = candidateObj.name;
-        irfId = candidateObj.irfId;
-        //irfId = candidateObj.irfName;
-        callRecipientEmail = candidateObj.emailId;
-    }
-    // Get the modal
-    var modal = document.getElementById("myCallModal");
-    // When the user clicks the button, open the modal
+
+/* -----------------------------
+   MODAL & BUTTON HELPERS
+------------------------------ */
+function showCallModal(name, type = '') {
+    const modal = document.getElementById("myCallModal");
     modal.style.display = "block";
-    var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
-    document.getElementById("callingLabel").innerHTML = appendText;
+    document.getElementById("callingLabel").innerHTML = "Calling... <b>" + name + "</b>";
+    document.getElementById("idCallingTitle").innerHTML = type ? "Call " + type : "Call";
+}
+
+function CallButtonClick(candidateObj, indexid) {
+    callRecipientName = indexid === 1 ? candidateObj.Name : candidateObj.name;
+    callRecipientEmail = indexid === 1 ? candidateObj.EmailId : candidateObj.emailId;
+    irfId = indexid === 1 ? candidateObj.IRFId : candidateObj.irfId;
     recipientType = 'Candidate';
-    if (typeof candidateObj.Phone === 'undefined') {
-        // color is undefined
-        callRecipient(candidateObj.mobileNumber);
-    }
-    else {
-        callRecipient(candidateObj.Phone);
 
-    }
-    if (indexid == 1) {
-        if (typeof candidateObj.Phone === 'undefined') {
-            // color is undefined
-            callRecipient(candidateObj.mobileNumber);
-        }
-        else {
-            callRecipient(candidateObj.Phone);
+    showCallModal(callRecipientName);
 
-        }
-    }
-
-    else {
-        if (typeof candidateObj.Phone === 'undefined') {
-            // color is undefined
-            callRecipient(candidateObj.mobileNumber);
-        }
-        else {
-            callRecipient(candidateObj.phone);
-
-        }
-    }
+    const phone = candidateObj.Phone || candidateObj.mobileNumber || candidateObj.phone;
+    callRecipient(phone);
 }
 
 function CallButtonClickInterviewerjson(userId) {
-    var interviewer = $("#hidfirstname" + userId).val();
-    var mobile = $("#hidmobile" + userId).val();
-    var emailId = $("#hidcandidateEmail_" + userId).val();
-
-    // Get the modal
-    CallButtonClickInterviewer(interviewer, mobile, emailId);
-
+    const name = $("#hidfirstname" + userId).val();
+    const phone = $("#hidmobile" + userId).val();
+    const email = $("#hidcandidateEmail_" + userId).val();
+    CallButtonClickInterviewer(name, phone, email);
 }
+
 function CallButtonClickInterviewer(name, phoneNumber, emailId) {
     callRecipientName = name;
     callRecipientEmail = emailId;
     callRecipientPhoneNumber = phoneNumber;
-    irfId = '';
     recipientType = 'Interviewer';
-    // Get the modal
-    var modal = document.getElementById("myCallModal");
-    // When the user clicks the button, open the modal
-    modal.style.display = "block";
-    var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
-    document.getElementById("callingLabel").innerHTML = appendText;
-    document.getElementById("idCallingTitle").innerHTML = " Call ";
-    callRecipient(callRecipientPhoneNumber);
+    irfId = '';
 
+    showCallModal(callRecipientName);
+    callRecipient(callRecipientPhoneNumber);
 }
+
 function CommonCallButtonClick(name, mobileNumber, emailId = '', interviewIdParam = null, irfIdParam = null, recipientTypeParam = null) {
     callRecipientName = name;
-    if (interviewIdParam != null) {
-        interviewId = interviewIdParam;
-    }
+    if (interviewIdParam) interviewId = interviewIdParam;
     callRecipientPhoneNumber = mobileNumber;
     callRecipientEmail = emailId;
-    if (irfIdParam != null) {
-        irfId = irfIdParam;
-    }
-    if (recipientTypeParam != null) {
-        recipientType = recipientTypeParam;
-    }
-    // Get the modal
-    var modal = document.getElementById("myCallModal");
-    // When the user clicks the button, open the modal
-    modal.style.display = "block";
-    var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
-    document.getElementById("callingLabel").innerHTML = appendText;
-    document.getElementById("idCallingTitle").innerHTML = " Call ";
+    if (irfIdParam) irfId = irfIdParam;
+    if (recipientTypeParam) recipientType = recipientTypeParam;
 
+    showCallModal(callRecipientName);
     callRecipient(callRecipientPhoneNumber);
 }
+
 function CommonCallButtonClickJson(imid) {
-    var name = $("#hidcandidate_" + imid).val();
-    var mobile = $("#hidmobile" + imid).val();
-    var emailId = $("#hidcandidateEmail_" + imid).val();
-
-    // Get the modal
-    //CallButtonClickInterviewer(interviewer, mobile, emailId);
-    CommonCallButtonClick(name, mobile, emailId, imid, null, 'Candidate');
-
+    const name = $("#hidcandidate_" + imid).val();
+    const mobile = $("#hidmobile" + imid).val();
+    const email = $("#hidcandidateEmail_" + imid).val();
+    CommonCallButtonClick(name, mobile, email, imid, null, 'Candidate');
 }
 
 function CommonCallButtonClickJsonV2(imid) {
-    var name = $("#hidcandidate_" + imid).val();
-    var mobile = $("#hidmobile" + imid).val();
-    var emailId = $("#hidcandidateEmail_" + imid).val();
-
-    // Get the modal
-    //CallButtonClickInterviewer(interviewer, mobile, emailId);
-    CommonCallButtonClick(name, mobile, emailId, null, null, 'Interviewer');
-
+    const name = $("#hidcandidate_" + imid).val();
+    const mobile = $("#hidmobile" + imid).val();
+    const email = $("#hidcandidateEmail_" + imid).val();
+    CommonCallButtonClick(name, mobile, email, null, null, 'Interviewer');
 }
 
 function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = '') {
@@ -216,48 +190,32 @@ function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = ''
     callRecipientPhoneNumber = phone;
     callRecipientEmail = emailId;
     recipientType = type;
-    // Get the modal
-    var modal = document.getElementById("myCallModal");
-    // When the user clicks the button, open the modal
-    modal.style.display = "block";
-    var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
-    document.getElementById("callingLabel").innerHTML = appendText;
-    document.getElementById("idCallingTitle").innerHTML = "Call " + type;
-    //document.getElementById("idTitle").innerHTML = "Call " + type;
+
+    showCallModal(callRecipientName, type);
     callRecipient(callRecipientPhoneNumber);
 }
+
 function ModalButtonClickJsonHR(phone, id, type) {
-    if (type == 1) {
-        var name = $('#hidinterviewer' + id).val();
-        var emailId = $('#hidinterviewerEmailId' + id).val();
+    if (type === 1) {
+        const name = $('#hidinterviewer' + id).val();
+        const emailId = $('#hidinterviewerEmailId' + id).val();
         ModalButtonClickHR(phone, name, 'Interviewer', id, emailId);
-    }
-    else if (type == 2) {
-
-        var name = $('#hidcandidate' + id).val();
-        var emailId = $('#hidcandidateEmail' + id).val();
+    } else if (type === 2) {
+        const name = $('#hidcandidate' + id).val();
+        const emailId = $('#hidcandidateEmail_' + id).val();
         ModalButtonClickHR(phone, name, 'Candidate', id, emailId);
-
-}
-    else if (type == 3) {
-
-        var name = $('#hidclienthr' + id).val();
+    } else if (type === 3) {
+        const name = $('#hidclienthr' + id).val();
         ModalButtonClickHR(phone, name, 'Client HR', id);
-    }
-
-    else if (type == 4) {
-
-        var name = $('#hidstaff' + id).val();
+    } else if (type === 4) {
+        const name = $('#hidstaff' + id).val();
         ModalButtonClickHR(phone, name, 'StaffingAgency', id);
-
     }
 }
-
 
 function closeCallPopUp() {
     hangUp();
-    var modal = document.getElementById("myCallModal");
-    modal.style.display = "none";
+    document.getElementById("myCallModal").style.display = "none";
 }
 
 function CallModalButtonClick(emailId, phone, interviewid, type = '') {
@@ -265,15 +223,14 @@ function CallModalButtonClick(emailId, phone, interviewid, type = '') {
     callRecipientEmail = emailId;
     callRecipientPhoneNumber = phone;
     interviewId = interviewid;
-    recipientType = type;    
-    // Get the modal
-    var modal = document.getElementById("myCallModal");
-    // When the user clicks the button, open the modal
-    modal.style.display = "block";
-    var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
-    document.getElementById("callingLabel").innerHTML = appendText;
-    document.getElementById("idCallingTitle").innerHTML = " Call ";
+    recipientType = type;
+
+    showCallModal(callRecipientName);
     callRecipient(callRecipientPhoneNumber);
 }
 
+/* -----------------------------
+   INIT
+------------------------------ */
+document.addEventListener("DOMContentLoaded", GenerateToken);
 

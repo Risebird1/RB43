@@ -8,7 +8,7 @@
 
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js?v=2024"></script>
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -394,45 +394,11 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
+    
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+    
 
-    });
-
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        if (phoneNumber != null && phoneNumber.length >= 9) {
-            Twilio.Device.connect(params);
-        }
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        startCallRecording(connection.parameters.CallSid);
-    });
-
-    function afterTimeOut() {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-
-    });
+    
     function startCallRecording(sid) {
         console.log("sid:" + sid);
         $.ajax({
