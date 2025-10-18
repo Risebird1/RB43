@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 //using Twilio.AspNetCore
 using Twilio.Jwt;
+using Twilio.Jwt.AccessToken;
 using Twilio.Jwt.Client;
 
 namespace Risebird.Web.Controllers
@@ -35,19 +36,49 @@ namespace Risebird.Web.Controllers
         }
 
 
+        //public string GenerateToken()
+        //{
+        //    var scopes = new HashSet<IScope>
+        //    {
+        //        new IncomingClientScope("support_agent"),
+        //        new OutgoingClientScope("APb82708865faae9acaea7590423e9c965")
+        //    };
+        //    var capability = new ClientCapability("ACcad9f6682d4a76df9af7cde78dd0867e",
+        //                                          "3f15940e73243adb8e75f9689adaa0e2",
+        //                                          DateTime.Now.AddSeconds(300),
+        //                                          scopes: scopes);
+
+        //    return capability.ToJwt();
+        //}
+
         public string GenerateToken()
         {
-            var scopes = new HashSet<IScope>
-            {
-                new IncomingClientScope("support_agent"),
-                new OutgoingClientScope("APb82708865faae9acaea7590423e9c965")
-            };
-            var capability = new ClientCapability("ACcad9f6682d4a76df9af7cde78dd0867e",
-                                                  "3f15940e73243adb8e75f9689adaa0e2",
-                                                  DateTime.Now.AddSeconds(300),
-                                                  scopes: scopes);
+            // Twilio credentials
+            var accountSid = "ACcad9f6682d4a76df9af7cde78dd0867e";
+            var apiKeySid = "SKcd6324df7e715e757fe15b9d2742b867";
+            var apiKeySecret = "r6X3tuvGDMk71Wzcq2x2UR9Y6cG3EXmN";
 
-            return capability.ToJwt();
+            // Identity of this client
+            var identity = "support_agent";
+
+            // Voice grant
+            var voiceGrant = new VoiceGrant
+            {
+                OutgoingApplicationSid = "APb82708865faae9acaea7590423e9c965",
+                IncomingAllow = true // allow incoming calls
+            };
+
+            var token = new Token(
+                accountSid,
+                apiKeySid,
+                apiKeySecret,
+                identity: identity,
+                grants: new HashSet<IGrant> { voiceGrant }
+            );
+
+            
+
+            return token.ToJwt();
         }
 
         [HttpPost]
