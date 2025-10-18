@@ -175,7 +175,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js?v=2024"></script>
+
 <script type="text/javascript">
     //// script for loader starts here
     var candidate = "";
@@ -187,10 +187,7 @@
         modal.style.display = "none";
     }
     $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
+        
         $("#btnSearch").on('click', function () {
             var value = $("#searchinput").val();
             window.location.href = "/IRF/InterviewerDetail?Searchvalue=" + value;
@@ -207,37 +204,13 @@
     function callatag() {
         flag = false;
     }
-    Twilio.Device.ready(function (device) {
-
-    });
-
-    function callCandidate(phoneNumber) {
-        //  phoneNumber = '+918126991790';
-        var params = { "phoneNumber": phoneNumber };
-        if (phoneNumber != null && phoneNumber.length >= 9) {
-            Twilio.Device.connect(params);
-        }
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
-
+    
     function afterTimeOut() {
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-
-    });
+    
     function ModalButtonClick(candidateObj) {
         //flag = false;
         candidate = candidateObj.candidateName;
