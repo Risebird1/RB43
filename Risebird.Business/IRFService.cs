@@ -4248,6 +4248,7 @@ namespace Risebird.Business
                         foreach (var row in data.Rows.OfType<System.Data.DataRow>())
                         {
                             int irfId = Convert.ToInt32(row.ItemArray[2].ToString());
+                            int candidateId = Convert.ToInt32(row.ItemArray[3].ToString());
                             var irf = _irfRepository.GetIRFbyId(irfId, isStaging);
                             var calendlyLink = irf.CalendlyLink;
                             var jdLink = irf.JDLink;
@@ -4260,6 +4261,7 @@ namespace Risebird.Business
                             string value = row.ItemArray[1].ToString();
                             string candidateEmail = row.ItemArray[0].ToString();
                             canOnboardingStatus.emailId = candidateEmail;
+                            canOnboardingStatus.CandidateId = candidateId;
 
                             if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                             {
