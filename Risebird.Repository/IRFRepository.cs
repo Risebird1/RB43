@@ -5783,8 +5783,8 @@ namespace Risebird.Repository
             }
             else if (isApi)
             {
-                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
-                    new DataColumn("Import Status", typeof(string)), new DataColumn("IRFId", typeof(int)) });
+                dt.Columns.AddRange(new DataColumn[4] { new DataColumn("EmailId", typeof(string)),
+                    new DataColumn("Import Status", typeof(string)), new DataColumn("IRFId", typeof(int)), new DataColumn("CandidateId", typeof(int)) });
             }
             else
             {
@@ -5855,7 +5855,12 @@ namespace Risebird.Repository
                             {
                                 var resultArr = result.Split("|");
                                 var irfId = Convert.ToInt32(resultArr?.Last());
-                                dt.Rows.Add(obj.EmailId, resultArr[0], irfId);
+                                var candidateId = 0;
+                                if (resultArr.Count() > 1)
+                                {
+                                    candidateId = Convert.ToInt32(resultArr[1]);
+                                }
+                                dt.Rows.Add(obj.EmailId, resultArr[0], irfId, candidateId);
                             }
                             else
                             {

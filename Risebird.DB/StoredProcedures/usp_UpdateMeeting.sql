@@ -70,7 +70,7 @@ Begin
 					   ,[MobileNumber]= @MobileNumber
 					   ,[interviewer]= @interviewer
 					   ,[HRCoordinatorEmailId] =@HRCoordinatorEmailId
-					   ,[ZoomMeetingId]=@zoomMeetingId
+					   ,[ZoomMeetingId]=Isnull(@zoomMeetingId,ZoomMeetingId)
 					   ,[IsEmergency]=@IsEmergency
 					   ,[HasDistinctParticipants]=@HasDistinctParticipants
 					   ,[AssistantId] = @AssistantId
