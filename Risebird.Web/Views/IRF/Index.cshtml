@@ -1600,20 +1600,7 @@
     }*@
 <script src="~/js/BroadcastMessage.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
-@*<script src="~/js/CallTwilio.js"></script>
-*@@*<script>
-    var span = document.getElementById("callPopUp");
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            Twilio.Device.setup(data.token);
-        });
-    });
-</script>*@
+
 
 <script>
     var closeMember = document.getElementById("interviewerStatsPopUp");
@@ -3276,9 +3263,13 @@
     $("#btn_more ").click(function (e) {
         e.stopPropagation();
         var relatedDiv = $(this).closest('.dropdown').find('.dropdown-content');
-        relatedDiv.toggle().setAttribute("style", "display:block;top:-15px");
+        if(relatedDiv != null){
+
+            relatedDiv.toggle().setAttribute("style", "display:block;top:-15px");
+            $('.dropdown-content').not(relatedDiv).hide('fast');
+
+        }
         
-        $('.dropdown-content').not(relatedDiv).hide('fast');
 
     });
 </script>
