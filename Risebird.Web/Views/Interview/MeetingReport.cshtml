@@ -433,21 +433,35 @@
     margin-bottom: 5px;
 }
 
-.question-textarea {
-    width: 100%;
-    border: 1.5px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    resize: vertical;
-    font-family: inherit;
-    visibility: hidden;
-    COLOR:#888;
-}
+    .question-dropdown {
+        width: 100%;
+        margin-bottom: 5px;
+    }
 
-.question-textarea.show-visible {
-    display: block !important;
-    visibility: visible !important;
-}
+        .question-dropdown.hidden {
+            display: none !important;
+        }
+
+    .question-textarea {
+        width: 100%;
+        border: 1.5px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        resize: vertical;
+        font-family: inherit;
+        visibility: hidden;
+        COLOR: #888;
+    }
+
+        .question-textarea.show-visible {
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        .question-textarea.hidden {
+            display: none !important;
+            visibility: hidden !important;
+        }
 
 .question-toggle-btn {
     background: #007bff;
@@ -541,16 +555,7 @@
                                             </div>
                                             }
                                         </div>
-                                        @if (@*ViewBag.PageStatus == "Mainurl" ||*@ ViewBag.PageReport == "External" || ViewBag.profile != "Interviewer")
-                                        {
-                                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
-                                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public URL for Instant Report" onclick="GeneratePublicUrl(3)"></div>
-                                        }
 
-                                        @if (ViewBag.profile == "Client")
-                                        {
-                                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
-                                        }
                                     </div>
 
                                     <div class="content dataloading client">
@@ -648,8 +653,7 @@
                                                                                                         </tr>
                                                                                                     </thead>
                                                                                                     <tbody>
-                                                                                                       @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
-{
+                                                                                                       @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0){
 <tr style="background:#fff">
     <td>
         <div class="question-input-container">
@@ -665,7 +669,7 @@
                     @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
                 </div>
                 <div class="question-textarea">
-                    <textarea name="QuestionsCollection[0].Comment" id="QuestionsCollection_0__Comment_Manual" class="question-textarea" placeholder="Enter your question manually..." style="display: none;"></textarea>
+                    <textarea name="QuestionsCollection[0].Comment" id="QuestionsCollection_0__Comment" class="question-textarea" placeholder="Enter your question manually..." style="display: none;"></textarea>
                 </div>
                 <button type="button" class="question-toggle-btn" onclick="toggleQuestionInput(this, 0)">Add Manual Question</button>
             }
@@ -684,7 +688,7 @@
     </td>
 </tr>
 }
-                                                                                                       else
+ else
 {
 for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
 {
@@ -1184,10 +1188,7 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                                                 </div>
                                                                                                 <!--report end--->
                                                                                                 <!--Other skill set start-->
-                                                                                                @if (Model.SkillSetsevaluate > 1)
-                                                                                                {
-
-
+                                                                                                 @if (Model.SkillSetsevaluate > 1) {
                                                                                                 <div id="next-skill" style="margin-top:20px;">
 
                                                                                                     <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;">Other Skill Evaluation :<strong style="font-weight:500"> @Model.JDTitleTwo</strong></h1>
@@ -1222,18 +1223,28 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                                                                         @if (Model.QuestionsTwoCollection == null || Model.QuestionsTwoCollection.Count() == 0)
                                                                                                                         {
                                                                                                                         <tr style="background:#fff">
-                                                                                                                            <td>
 
-                                                                                                                                @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
-                                                                                                                                {
-                                                                                                                                <a href="@Url.Action(" SampleQuestions", "IRF" , new { id=Model.IRFId, irf=Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
-                                                                                                                                }
-                                                                                                                                else
-                                                                                                                                {
-                                                                                                                                @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
-                                                                                                                                }
+<td>
+    <div class="question-input-container">
+        @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
+        {
+            <div class="question-textarea show-visible">
+                <textarea name="QuestionsTwoCollection[0].Comment" id="QuestionsTwoCollection_0__Comment" class="question-textarea" placeholder="Enter your question manually..."></textarea>
+            </div>
+        }
+        else
+        {
+            <div class="question-dropdown">
+                @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
+            </div>
+            <div class="question-textarea">
+                <textarea name="QuestionsTwoCollection[0].Comment" id="QuestionsTwoCollection_0__Comment" class="question-textarea" placeholder="Enter your question manually..." style="display: none;"></textarea>
+            </div>
+            <button type="button" class="question-toggle-btn" onclick="toggleQuestionInputTwo(this, 0)">Add Manual Question</button>
+        }
+    </div>
+</td>
 
-                                                                                                                            </td>
                                                                                                                             <td>
                                                                                                                                 @Html.TextBox("QuestionsTwoCollection[0].SkillName", null, new { @readonly = "readonly" })
 
@@ -1260,23 +1271,35 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                                                                         for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                                                                         {
                                                                                                                         <tr style="cursor:pointer">
-                                                                                                                            <td>
+                                                                                                                            
 
-                                                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
-                                                                                                                                {
-                                                                                                                                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                                                }
-                                                                                                                                else
-                                                                                                                                {
-                                                                                                                                var newList = new List<SelectListItem>
-                                                                                                                                    ();
-                                                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
+                                                                                                                        
 
-                                                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                                                    }
-
-                                                                                                                            </td>
+<td>
+    <div class="question-input-container">
+        @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
+        {
+            <div class="question-dropdown">
+                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+            </div>
+            <div class="question-textarea">
+                <textarea name="QuestionsTwoCollection[@i].Comment" id="QuestionsTwoCollection[@i].Comment" class="question-textarea" placeholder="Enter your question manually..." style="display: none;"></textarea>
+            </div>
+            <button type="button" class="question-toggle-btn" onclick="toggleQuestionInputTwo(this, @i)">Add Manual Question</button>
+        }
+        else
+        {
+            <div class="question-dropdown" style="display: none;">
+                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+            </div>
+            <div class="question-textarea">
+                <textarea name="QuestionsTwoCollection[@i].Comment" id="QuestionsTwoCollection[@i].Comment" class="question-textarea show-visible" placeholder="Enter your question manually...">@Model.QuestionsTwoCollection[i].Comment</textarea>
+            </div>
+            <button type="button" class="question-toggle-btn active" onclick="toggleQuestionInputTwo(this, @i)">Use Dropdown</button>
+        }
+    </div>
+</td>
                                                                                                                             <td>
                                                                                                                                 @Html.TextBoxFor(m => m.QuestionsTwoCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
                                                                                                                             </td>
@@ -2295,71 +2318,71 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
     $form.unbind();
     $form.data("validator", null);
 }
-   function AddRowTwo() {
-    var $ttc = $("#QuestionsTableTwo").find("tbody tr:last");
-    var $tr = $ttc.clone();
-    var trIndexReplaced = $("#QuestionsTableTwo tr").length - 1;
+       function AddRowTwo() {
+        var $ttc = $("#QuestionsTableTwo").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#QuestionsTableTwo tr").length - 1;
 
-    $tr.find("input,select,hidden,textarea").attr("name", function () {
-        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
-        if (parts) {
+        $tr.find("input,select,hidden,textarea").attr("name", function () {
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+            if (parts) {
+                return parts[1] + "[" + ++parts[2] + "]." + parts[3];
+            }
+            // Handle manual textarea naming
+            var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
+            if (textareaParts) {
+                return textareaParts[1] + "[" + ++textareaParts[2] + "]." + textareaParts[3];
+            }
+            return this.name;
+        }).attr("id", function () {
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+            if (parts) {
+                return parts[1] + "_" + ++parts[2] + "__" + parts[3];
+            }
+            // Handle manual textarea ID
+            var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
+            if (textareaParts) {
+                return textareaParts[1] + "_" + ++textareaParts[2] + "__" + textareaParts[3] + "_Manual";
+            }
+            return this.id;
+        });
+
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () {
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/);
             return parts[1] + "[" + ++parts[2] + "]." + parts[3];
-        }
-        // Handle manual textarea naming
-        var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
-        if (textareaParts) {
-            return textareaParts[1] + "[" + ++textareaParts[2] + "]." + textareaParts[3];
-        }
-        return this.name;
-    }).attr("id", function () {
-        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
-        if (parts) {
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3];
-        }
-        // Handle manual textarea ID
-        var textareaParts = this.id.match(/(\D+)_(\d+)__(\D+)_Manual$/);
-        if (textareaParts) {
-            return textareaParts[1] + "_" + ++textareaParts[2] + "__" + textareaParts[3] + "_Manual";
-        }
-        return this.id;
-    });
+        });
 
-    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () {
-        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/);
-        return parts[1] + "[" + ++parts[2] + "]." + parts[3];
-    });
+        var rowCount = $('#QuestionsTableTwo tr').length;
+        var finalIndex = rowCount - 1;
 
-    var rowCount = $('#QuestionsTableTwo tr').length;
-    var finalIndex = rowCount - 1;
+        // Reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+        $tr.find("textarea").val("");
+        $tr.find("a").val("");
 
-    // Reset fields in the new row
-    $tr.find("select").val("");
-    $tr.find("input[type=text]").val("");
-    $tr.find("input[type=hidden]").val("");
-    $tr.find("textarea").val("");
-    $tr.find("a").val("");
+        // Reset toggle button state (if exists)
+        $tr.find(".question-toggle-btn").removeClass("active").text("Add Manual Question");
+        $tr.find(".question-textarea textarea").hide();
+        $tr.find(".question-dropdown select").show();
 
-    // Reset toggle button state (if exists)
-    $tr.find(".question-toggle-btn").removeClass("active").text("Add Manual Question");
-    $tr.find(".question-textarea textarea").hide();
-    $tr.find(".question-dropdown select").show();
+        // Update toggle button onclick with correct index (if exists)
+        $tr.find(".question-toggle-btn").attr("onclick", `toggleQuestionInput(this, ${finalIndex})`);
 
-    // Update toggle button onclick with correct index (if exists)
-    $tr.find(".question-toggle-btn").attr("onclick", `toggleQuestionInput(this, ${finalIndex})`);
-    
-    // Update observation button onclick with correct index (if exists)
-    $tr.find(".observation-btn").attr("onclick", `openObservationModal(${finalIndex})`);
+        // Update observation button onclick with correct index (if exists)
+        $tr.find(".observation-btn").attr("onclick", `openObservationModal(${finalIndex})`);
 
-    // Add cloned row as last row
-    $("#QuestionsTableTwo").find("tbody tr:last").after($tr);
+        // Add cloned row as last row
+        $("#QuestionsTableTwo").find("tbody tr:last").after($tr);
 
-    // Find the affected form
-    var $form = $tr.closest("FORM");
+        // Find the affected form
+        var $form = $tr.closest("FORM");
 
-    // Unbind existing validation
-    $form.unbind();
-    $form.data("validator", null);
-}
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+    }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2460,16 +2483,19 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
 
   function toggleQuestionInput(button, rowIndex) {
     const container = button.closest('.question-input-container');
+    const dropdownContainer = container.querySelector('.question-dropdown');
     const dropdown = container.querySelector('.question-dropdown select');
+    const textareaContainer = container.querySelector('.question-textarea');
     const textarea = container.querySelector('.question-textarea textarea');
     
     const isManual = button.textContent === 'Use Dropdown';
     
     if (isManual) {
         // Switch to dropdown
-        dropdown.style.display = 'block';
-        textarea.style.display = 'none';
-        textarea.style.visibility = 'hidden';
+        dropdownContainer.style.display = 'block';
+        dropdownContainer.classList.remove('hidden');
+        textareaContainer.style.display = 'none';
+        textareaContainer.classList.add('hidden');
         textarea.value = '';
         button.textContent = 'Add Manual Question';
         button.classList.remove('active');
@@ -2478,9 +2504,11 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
         textarea.name = '';
     } else {
         // Switch to manual input
-        dropdown.style.display = 'none';
-        textarea.style.display = 'block';
-        textarea.style.visibility = 'visible';
+        dropdownContainer.style.display = 'none';
+        dropdownContainer.classList.add('hidden');
+        textareaContainer.style.display = 'block';
+        textareaContainer.classList.remove('hidden');
+        textarea.classList.add('show-visible');
         dropdown.value = '';
         button.textContent = 'Use Dropdown';
         button.classList.add('active');
@@ -2488,6 +2516,61 @@ for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
         textarea.name = `QuestionsCollection[${rowIndex}].Comment`;
         dropdown.name = '';
     }
+}
+
+function toggleQuestionInputTwo(button, rowIndex) {
+    console.log('toggleQuestionInputTwo called with rowIndex:', rowIndex);
+    console.log('Button text:', button.textContent);
+    
+    const container = button.closest('.question-input-container');
+    const dropdownContainer = container.querySelector('.question-dropdown');
+    const dropdown = container.querySelector('.question-dropdown select');
+    const textareaContainer = container.querySelector('.question-textarea');
+    const textarea = container.querySelector('.question-textarea textarea');
+    
+    console.log('Container found:', !!container);
+    console.log('Dropdown container found:', !!dropdownContainer);
+    console.log('Dropdown found:', !!dropdown);
+    console.log('Textarea container found:', !!textareaContainer);
+    console.log('Textarea found:', !!textarea);
+    
+    // Check if textarea is currently visible by checking the button text
+    const isManual = button.textContent === 'Use Dropdown';
+    console.log('Is manual mode:', isManual);
+    
+    if (isManual) {
+        // Switch to dropdown
+        console.log('Switching to dropdown');
+        dropdownContainer.style.display = 'block';
+        dropdownContainer.classList.remove('hidden');
+        textareaContainer.style.display = 'none';
+        textareaContainer.classList.add('hidden');
+        textarea.value = '';
+        button.textContent = 'Add Manual Question';
+        button.classList.remove('active');
+
+        // Update the name attribute to use dropdown
+        dropdown.name = `QuestionsTwoCollection[${rowIndex}].Comment`;
+        textarea.name = '';
+    } else {
+        // Switch to manual input
+        console.log('Switching to manual input');
+        dropdownContainer.style.display = 'none';
+        dropdownContainer.classList.add('hidden');
+        textareaContainer.style.display = 'block';
+        textareaContainer.classList.remove('hidden');
+        textarea.classList.add('show-visible');
+        dropdown.value = '';
+        button.textContent = 'Use Dropdown';
+        button.classList.add('active');
+
+        // Update the name attribute to use textarea
+        textarea.name = `QuestionsTwoCollection[${rowIndex}].Comment`;
+        dropdown.name = '';
+    }
+    
+    console.log('After toggle - Dropdown container display:', dropdownContainer.style.display);
+    console.log('After toggle - Textarea container display:', textareaContainer.style.display);
 }
 
     // Function to handle manual question skill mapping
