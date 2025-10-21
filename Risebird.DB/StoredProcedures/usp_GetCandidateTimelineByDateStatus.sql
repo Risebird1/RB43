@@ -151,7 +151,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
-ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
+ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
 DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
@@ -159,6 +159,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ left join PaymentSLADetails psd on psd.Interviewid=im.id
  outer apply(select top 1 cs.Date From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
   End                              
@@ -188,7 +189,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
-ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
+ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
 DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
@@ -196,6 +197,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ left join PaymentSLADetails psd on psd.Interviewid=im.id
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
         
@@ -224,7 +226,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
-ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
+ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
 DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
@@ -232,6 +234,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ left join PaymentSLADetails psd on psd.Interviewid=im.id
  outer apply(select top 1 cs.Date From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
                       
@@ -258,7 +261,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
-ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
+ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
 DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
@@ -266,6 +269,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ left join PaymentSLADetails psd on psd.Interviewid=im.id
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
                            
@@ -294,14 +298,15 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
-ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
+ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
 DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
- left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ left join Trans_QCFormReport tqr on tqr.interviewid=im.id
+ left join PaymentSLADetails psd on psd.Interviewid=im.id
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
    End                                  
@@ -328,7 +333,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  IRF.id,IRF.IRFId,IRF.CalendlyLink,cci.IsColdCandidate, irf.IsAIInterview)
  Select CTE.*,im.Interviewer,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink
 ,dbo.fn_HasEmailDroppedOrBounced(CTE.CandidateEmailId) as HasEmailDroppedOrBounced,
-ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,1 as IsQCDone,
+ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
 DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
@@ -336,6 +341,7 @@ From CTE
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
+ left join PaymentSLADetails psd on psd.Interviewid=im.id
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
  
