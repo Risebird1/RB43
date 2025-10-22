@@ -1,31 +1,38 @@
-﻿
-/* -----------------------------
-   GLOBAL VARIABLES
------------------------------- */
-var callRecipientName = "";
-var irfId = "";
-var callRecipientEmail = "";
-var callRecipientPhoneNumber = "";
-var recipientType = '';
-var interviewId = '';
+﻿// ----------------------------
+// Global variables
+// ----------------------------
+let device;       // Twilio.Device instance
+let activeCall;   // Current call instance
 
-var device;              // Twilio.Device instance
-var activeConnection;    // Current active call connection
+let callRecipientName = "";
+let irfIdVar = "";
+let callRecipientEmail = "";
+let callRecipientPhoneNumber = "";
+let recipientType = '';
+let interviewId = '';
 
-/* -----------------------------
-   MODAL HANDLER
------------------------------- */
-var span = document.getElementById("callPopUp");
-if (span) {
-    span.onclick = function() {
-        hangUp();
-        document.getElementById("myCallModal").style.display = "none";
-    };
+
+// ----------------------------
+// Initialization only after user gesture
+// ----------------------------
+let isDeviceInitialized = false;
+
+async function initializeTwilioAfterGesture() {
+    if (isDeviceInitialized) return; // already initialized
+    console.log("Initializing Twilio Device...");
+
+    await GenerateToken();
+    isDeviceInitialized = true;
+    console.log("Twilio Device ready.");
 }
 
-/* -----------------------------
-   TOKEN GENERATION & DEVICE
------------------------------- */
+document.addEventListener("click", initializeTwilioAfterGesture, { once: true });
+document.addEventListener("keydown", initializeTwilioAfterGesture, { once: true });
+
+
+// ----------------------------
+// Token generation + Device setup
+// ----------------------------
 async function GenerateToken() {
     try {
         const response = await fetch("/TwilioCalls/Generate", {
@@ -33,15 +40,19 @@ async function GenerateToken() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page: window.location.pathname })
         });
+
         const data = await response.json();
 
         if (!device) {
             setupDevice(data.token);
         } else {
-            device.updateToken(data.token);
+            await device.updateToken(data.token);
+            console.log("Token updated successfully");
         }
 
-        setTimeout(GenerateToken, 300000); // Refresh token every 5 mins
+        // Refresh token every 5 minutes
+        setTimeout(GenerateToken, 300000);
+
     } catch (err) {
         console.error("Error generating token:", err);
     }
@@ -49,89 +60,151 @@ async function GenerateToken() {
 
 function setupDevice(token) {
     device = new Twilio.Device(token, {
-        codecPreferences: ["opus","pcmu"],
-        allowIncomingWhileBusy: true
+        logLevel: 1,
+        codecPreferences: ["opus", "pcmu"],
+        allowIncomingWhileBusy: true,
     });
 
-    // Device ready
-    device.on("registered", () => console.log("Device registered"));
-    device.on("unregistered", () => console.log("Device unregistered"));
-    device.on("error", err => console.error("Device error:", err));
+    device.on("registered", () => console.log("✅ Twilio Device registered."));
+    device.on("unregistered", () => console.log("🚫 Twilio Device unregistered."));
+    device.on("error", (error) => console.error("❌ Device error:", error));
+    device.on("incoming", (call) => console.log("📞 Incoming call detected:", call));
 
-    // Incoming call handler (optional)
-    device.on("incoming", connection => {
-        console.log("Incoming call", connection);
-        // Optional: auto accept or show modal
+    console.log("Twilio Device initialized.");
+}
+
+
+// ----------------------------
+// Outgoing Call
+// ----------------------------
+function callRecipient(phoneNumber) {
+    //debugger;
+    //phoneNumber = "+918888571923";
+    if (!device) {
+        console.error("Device not ready. Wait for initialization or user gesture.");
+        return;
+    }
+
+    callRecipientPhoneNumber = phoneNumber;
+
+    if (phoneNumber && phoneNumber.length >= 9) {
+        const params = { phoneNumber };
+        console.log("Dialing:", phoneNumber);
+        activeCall = device.connect({ params });
+        setupCallHandlers(activeCall);
+    } else {
+        console.warn("Invalid phone number");
+    }
+}
+
+
+// ----------------------------
+// Call Event Handlers
+// ----------------------------
+function setupCallHandlers(call) {
+    if (!call) return;
+
+    call.on("ringing", () => {
+        console.log("☎️ Call ringing...");
     });
 
-    // Outgoing call connected
-    device.on("connect", connection => {
-        activeConnection = connection;
-        document.getElementById("callingLabel").innerHTML =
-            "In call with <b>" + callRecipientName + "</b>";
-        if (connection.parameters && connection.parameters.CallSid) {
-            startCallRecording(connection.parameters.CallSid);
-        }
+    call.on("accept", () => {
+        const text = "In call with <b>" + callRecipientName + "</b>";
+        document.getElementById("callingLabel").innerHTML = text;
+        startCallRecording(call.parameters.CallSid);
     });
 
-    // Outgoing call disconnected
-    device.on("disconnect", connection => {
-        if (activeConnection === connection) activeConnection = null;
+    call.on("disconnect", () => {
         document.getElementById("callingLabel").innerHTML = "Call disconnected!";
+        setTimeout(afterTimeOut, 2000);
+    });
+
+    call.on("cancel", () => {
+        document.getElementById("callingLabel").innerHTML = "Call cancelled!";
+        setTimeout(afterTimeOut, 2000);
+    });
+
+    call.on("error", (error) => {
+        console.error("⚠️ Call error:", error);
+        document.getElementById("callingLabel").innerHTML = "Call failed: " + error.message;
         setTimeout(afterTimeOut, 2000);
     });
 }
 
-/* -----------------------------
-   CALL FUNCTIONS
------------------------------- */
-function callRecipient(phoneNumber) {
-    //debugger;
-    //phoneNumber = "+918888571923";
-    if (!device) return console.error("Device not initialized");
 
-    callRecipientPhoneNumber = phoneNumber;
-    if (!phoneNumber || phoneNumber.length < 9) return;
-
-    device.connect({ phoneNumber });
-}
-
+// ----------------------------
+// Hangup / Cleanup
+// ----------------------------
 function hangUp() {
-    if (activeConnection) {
-        activeConnection.disconnect();
-        activeConnection = null;
+    //debugger;
+
+    if (activeCall) {
+        //debugger;
+        activeCall.disconnect();
+        activeCall = null;
     }
-    if (device) device.disconnectAll();
+    
+    if (device) {
+        device.disconnectAll();
+    }
 }
 
 function afterTimeOut() {
-    document.getElementById("myCallModal").style.display = "none";
+    const modal = document.getElementById("myCallModal");
+    if (modal) modal.style.display = "none";
 }
 
+
+// ----------------------------
+// Recording trigger (backend)
+// ----------------------------
 function startCallRecording(callSid) {
-    fetch("/User/makecall?sid=" + encodeURIComponent(callSid)
-        + "&IRFId=" + encodeURIComponent(irfId)
-        + "&callRecipient=" + encodeURIComponent(callRecipientEmail)
-        + "&callRecipientPhoneNumber=" + encodeURIComponent(callRecipientPhoneNumber)
-        + "&recipientType=" + encodeURIComponent(recipientType),
-        { method: "GET" }
-    ).then(() => console.log("Recording request sent for CallSid:", callSid));
+    fetch(`/User/makecall?sid=${encodeURIComponent(callSid)}&IRFId=${encodeURIComponent(irfIdVar)}&callRecipient=${encodeURIComponent(callRecipientEmail)}&callRecipientPhoneNumber=${encodeURIComponent(callRecipientPhoneNumber)}&recipientType=${encodeURIComponent(recipientType)}`)
+        .then(() => console.log("🎙️ Recording request sent for:", callSid))
+        .catch(err => console.error("Recording request failed:", err));
 }
 
-/* -----------------------------
-   MODAL & BUTTON HELPERS
------------------------------- */
+
+// ----------------------------
+// UI / Button Functions
+// ----------------------------
+function openModalAndCall(name, phone, email, type, irf, interview) {
+    callRecipientName = name;
+    callRecipientPhoneNumber = phone;
+    callRecipientEmail = email || "";
+    recipientType = type || "";
+    irfIdVar = irf || "";
+    interviewId = interview || "";
+
+    const modal = document.getElementById("myCallModal");
+    if (modal) modal.style.display = "block";
+
+    document.getElementById("callingLabel").innerHTML = "Calling... <b>" + callRecipientName + "</b>";
+    document.getElementById("idCallingTitle").innerHTML = "Call " + (type || "");
+
+    // Make sure Twilio is initialized
+    initializeTwilioAfterGesture().then(() => callRecipient(callRecipientPhoneNumber));
+}
+
+
+// ----------------------------
+// Close popup
+// ----------------------------
+function closeCallPopUp() {
+    hangUp();
+    const modal = document.getElementById("myCallModal");
+    if (modal) modal.style.display = "none";
+}
 function showCallModal(name, type = '') {
     const modal = document.getElementById("myCallModal");
     modal.style.display = "block";
     document.getElementById("callingLabel").innerHTML = "Calling... <b>" + name + "</b>";
     document.getElementById("idCallingTitle").innerHTML = type ? "Call " + type : "Call";
 }
-
 function CallButtonClick(candidateObj, indexid) {
     callRecipientName = indexid === 1 ? candidateObj.Name : candidateObj.name;
     callRecipientEmail = indexid === 1 ? candidateObj.EmailId : candidateObj.emailId;
-    irfId = indexid === 1 ? candidateObj.IRFId : candidateObj.irfId;
+    irfIdVar = indexid === 1 ? candidateObj.IRFId : candidateObj.irfId;
     recipientType = 'Candidate';
 
     showCallModal(callRecipientName);
@@ -152,7 +225,7 @@ function CallButtonClickInterviewer(name, phoneNumber, emailId) {
     callRecipientEmail = emailId;
     callRecipientPhoneNumber = phoneNumber;
     recipientType = 'Interviewer';
-    irfId = '';
+    irfIdVar = '';
 
     showCallModal(callRecipientName);
     callRecipient(callRecipientPhoneNumber);
@@ -163,7 +236,7 @@ function CommonCallButtonClick(name, mobileNumber, emailId = '', interviewIdPara
     if (interviewIdParam) interviewId = interviewIdParam;
     callRecipientPhoneNumber = mobileNumber;
     callRecipientEmail = emailId;
-    if (irfIdParam) irfId = irfIdParam;
+    if (irfIdParam) irfIdVar = irfIdParam;
     if (recipientTypeParam) recipientType = recipientTypeParam;
 
     showCallModal(callRecipientName);
@@ -182,6 +255,17 @@ function CommonCallButtonClickJsonV2(imid) {
     const mobile = $("#hidmobile" + imid).val();
     const email = $("#hidcandidateEmail_" + imid).val();
     CommonCallButtonClick(name, mobile, email, null, null, 'Interviewer');
+}
+
+function CallModalButtonClick(emailId, phone, interviewid, type = '') {
+    callRecipientName = emailId;
+    callRecipientEmail = emailId;
+    callRecipientPhoneNumber = phone;
+    interviewId = interviewid;
+    recipientType = type;
+
+    showCallModal(callRecipientName);
+    callRecipient(callRecipientPhoneNumber);
 }
 
 function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = '') {
@@ -212,25 +296,3 @@ function ModalButtonClickJsonHR(phone, id, type) {
         ModalButtonClickHR(phone, name, 'StaffingAgency', id);
     }
 }
-
-function closeCallPopUp() {
-    hangUp();
-    document.getElementById("myCallModal").style.display = "none";
-}
-
-function CallModalButtonClick(emailId, phone, interviewid, type = '') {
-    callRecipientName = emailId;
-    callRecipientEmail = emailId;
-    callRecipientPhoneNumber = phone;
-    interviewId = interviewid;
-    recipientType = type;
-
-    showCallModal(callRecipientName);
-    callRecipient(callRecipientPhoneNumber);
-}
-
-/* -----------------------------
-   INIT
------------------------------- */
-document.addEventListener("DOMContentLoaded", GenerateToken);
-
