@@ -1,0 +1,547 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.IRF>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "IRF Details";
+    ViewBag.PageHeader = "IRF Details";
+    if (ViewBag.PageStatus == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFDetailsFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContextAccessor.HttpContext.Session.GetString("IRFDetailsFilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+}
+
+<style>
+    .DetailLink td {
+        color: darkblue;
+    }
+
+    .DetailLink:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+
+<style>
+    .modal-dialog {
+        height: 900px !important;
+    }
+
+    .modal-content {
+        /* 80% of window height */
+        height: 60%;
+    }
+</style>
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123941/stacktable.js"></script>
+<script>
+    $('table').stacktable();
+</script>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">IRF Details</h4></div>
+                </div>
+                <div class="pull-right">
+                    <div style="float:right">
+                        <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="irfDetailsTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Skill Channel</th>
+                                        <th>Risebird Channel Owner</th>
+                                         <th>JD Title</th>
+                                          <th>Client</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.IRFId</td>
+                                                <td>@item.RisebirdHREmail</td>
+                                                 <td> @item.JDTiltle </td>
+                                                  <td>@item.ClientCompName</td>
+                                                <td>
+                                                    <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+                                                    @if (ViewBag.profile == "Client")
+                                                    {
+                                                        @if (item.IsPaused)
+                                                        {
+                                                            <button id="play" class="mdc-fab app-fab--absolute" aria-label="Play" style="background:#319d31!important;">
+                                                                <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button id="pause" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
+                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                            </button>
+                                                        }
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Recruiter Stats">
+                                                            <a href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                <span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="arcs"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /><circle cx="12" cy="10" r="3" /><circle cx="12" cy="12" r="10" /></svg></span>
+                                                            </a>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client HR Stats">
+                                                            <a href="@Url.Action("ClientHRStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                <span title="Client HR Stats" class="mdc-fab__icon material-icons"><svg fill="#FFF" height="16" width="16" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 297 297"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m110.549,98.768c27.231,0 49.384-22.154 49.384-49.384 0.001-27.231-22.153-49.384-49.384-49.384s-49.384,22.153-49.384,49.384c0,27.231 22.154,49.384 49.384,49.384z"></path> <path d="m226.823,185.307c-30.794,0-55.846,25.053-55.846,55.846 0,30.794 25.053,55.846 55.846,55.846s55.846-25.053 55.846-55.846c0-30.793-25.052-55.846-55.846-55.846zm34.017,44.247l-36.494,36.494c-1.836,1.835-4.241,2.753-6.647,2.753-2.406,0-4.811-0.918-6.647-2.753l-18.247-18.247c-3.671-3.671-3.671-9.623 0-13.294 3.672-3.67 9.622-3.67 13.294,0l11.6,11.601 29.847-29.848c3.672-3.67 9.622-3.67 13.294,0 3.671,3.671 3.671,9.623-5.68434e-14,13.294z"></path> <path d="m206.751,172.72v-8.713c0-18.793-12.077-35.457-29.935-41.307l-.083-.027-26.121-4.325c-2.223-0.684-4.599,0.493-5.398,2.686l-29.638,81.319c-1.71,4.691-8.345,4.691-10.055,0l-29.638-81.319c-0.646-1.771-2.317-2.881-4.108-2.881-0.425,0-27.41,4.514-27.41,4.514-18.005,6-30.035,22.691-30.035,41.565v67.664c0,10.14 8.22,18.36 18.36,18.36h123.405c-0.382-2.984-0.601-6.017-0.601-9.103 0.001-32.361 21.671-59.74 51.257-68.433z"></path> <path d="m121.487,113.395c-1.157-1.26-2.848-1.895-4.558-1.895h-12.759c-1.711,0-3.402,0.634-4.558,1.895-1.791,1.951-2.051,4.769-0.779,6.972l6.82,10.282-3.193,26.934 6.287,16.725c0.613,1.682 2.992,1.682 3.605,0l6.287-16.725-3.193-26.934 6.82-10.282c1.272-2.203 1.012-5.021-0.779-6.972z"></path> </g> </g></svg></span>
+                                                            </a>
+                                                        </button>
+                                                    }
+                                                    else if ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner")
+                                                    {
+
+                                                        @if (item.IsPaused)
+                                                        {
+                                                            <button id="play" class="mdc-fab app-fab--absolute  " aria-label="Play" style="background:#319d31!important;">
+                                                                <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button id="pause" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
+                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                            </button>
+                                                        }
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Task" style="position: relative;">
+                                                            <span onclick="javascript:openTask('@item.id', '@item.IRFId');" title="task">
+                                                                <img width="18" src="~/img/to-do-task.png" style="position:relative;top:-1px;" />
+                                                            </span>
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit HM Instruction" style="position: relative;">
+                                                            <span onclick="javascript:openHMLink('@item.id');" title="Edit HM Instruction">
+                                                                <svg style="color: white;position: relative;left: 5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path>
+                                                                </svg>
+                                                                <svg style="position:relative;left:-4px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Share HM Instruction URL">
+                                                            <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="Share HM Instruction URL">
+                                                                <svg style="color: white;position:relative;left:4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                <svg style="color: white;position: relative; left: -3px;fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16">
+                                                                    <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" fill="white"></path>
+                                                                </svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+
+                                                            <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                            </a>
+
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Recruiter Stats">
+
+                                                            <a href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                @*<span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>*@
+                                                                <span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="arcs"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /><circle cx="12" cy="10" r="3" /><circle cx="12" cy="12" r="10" /></svg></span>
+                                                            </a>
+
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client HR Stats">
+
+                                                            <a href="@Url.Action("ClientHRStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                @*<span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>*@
+                                                                <span title="Client HR Stats" class="mdc-fab__icon material-icons"><svg fill="#00000" height="16" width="16" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 297 297"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m110.549,98.768c27.231,0 49.384-22.154 49.384-49.384 0.001-27.231-22.153-49.384-49.384-49.384s-49.384,22.153-49.384,49.384c0,27.231 22.154,49.384 49.384,49.384z"></path> <path d="m226.823,185.307c-30.794,0-55.846,25.053-55.846,55.846 0,30.794 25.053,55.846 55.846,55.846s55.846-25.053 55.846-55.846c0-30.793-25.052-55.846-55.846-55.846zm34.017,44.247l-36.494,36.494c-1.836,1.835-4.241,2.753-6.647,2.753-2.406,0-4.811-0.918-6.647-2.753l-18.247-18.247c-3.671-3.671-3.671-9.623 0-13.294 3.672-3.67 9.622-3.67 13.294,0l11.6,11.601 29.847-29.848c3.672-3.67 9.622-3.67 13.294,0 3.671,3.671 3.671,9.623-5.68434e-14,13.294z"></path> <path d="m206.751,172.72v-8.713c0-18.793-12.077-35.457-29.935-41.307l-.083-.027-26.121-4.325c-2.223-0.684-4.599,0.493-5.398,2.686l-29.638,81.319c-1.71,4.691-8.345,4.691-10.055,0l-29.638-81.319c-0.646-1.771-2.317-2.881-4.108-2.881-0.425,0-27.41,4.514-27.41,4.514-18.005,6-30.035,22.691-30.035,41.565v67.664c0,10.14 8.22,18.36 18.36,18.36h123.405c-0.382-2.984-0.601-6.017-0.601-9.103 0.001-32.361 21.671-59.74 51.257-68.433z"></path> <path d="m121.487,113.395c-1.157-1.26-2.848-1.895-4.558-1.895h-12.759c-1.711,0-3.402,0.634-4.558,1.895-1.791,1.951-2.051,4.769-0.779,6.972l6.82,10.282-3.193,26.934 6.287,16.725c0.613,1.682 2.992,1.682 3.605,0l6.287-16.725-3.193-26.934 6.82-10.282c1.272-2.203 1.012-5.021-0.779-6.972z"></path> </g> </g></svg></span>
+                                                            </a>
+
+                                                        </button>
+                                                        <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
+                                                            <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                        </button>
+                                                       
+
+                                                        <br />
+                                                        <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                            <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
+                                                            <span onclick="javascript:CheckIntervieweravailbility('@item.id', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                </svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute subc" aria-label="Edit Scheduler Event">
+                                                            <span onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-calendar-check-o"></i></span>
+                                                        </button>
+
+                                                        <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                            <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink ,type=3})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                        </button>
+                                                        <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.id, irfName = item.IRFId})" title="Client Interview Report">
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">
+                                                                <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
+                                                            </button>
+                                                        </a>
+                                                        <button class="mdc-fab app-fab--absolute item4" aria-label="Client FeedBack">
+                                                            <span onclick="javascript:getClientFeedback(@item.id);" title="Client FeedBack" class="mdc-fab__icon material-icons"><svg style="width:16px!important" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path d="M6.455 19L2 22.5V4a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.455zM4 18.385L5.763 17H20V5H4v13.385zM11 13h2v2h-2v-2zm0-6h2v5h-2V7z" /> </g> </svg></span>
+                                                        </button>
+
+                                                    }
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Skill Channel</th>
+                                        <th>Risebird Channel Owner</th>
+                                        <th>JD Title</th>
+                                        <th>Client</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter IRF Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="IRFDetails" method="post">
+                    <div class="form-group">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" class="form-control" id="startDate" name="StartDate" value="@strtDte" />
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" class="form-control" id="endDate" name="EndDate" value="@endDte" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Client Review Modal -->
+<div id="clientreviewModal" class="modal modal-bg" style="z-index:100">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-comments"></span>
+                </div>
+                <h5 class="modal-title pull-left">Client Feedback</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="clientreviewTableBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interviewer Member Modal -->
+<div id="interviewerMemberModal" class="modal modal-bg">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-users"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="memberTableBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Modal -->
+<div class="task-container">
+<div id="myTask" class="modal modal-bg">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Tasks</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="taskModalClose" style="cursor:pointer;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="hidcollectiveIRFid" />
+                <input type="hidden" id="hidcollectiveIRFName" />
+                <div id="memberTableBody2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Include Partial Views -->
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
+
+<!-- Include Scripts -->
+<script src="~/js/checkintervieweravailabilitybymail.js?v=2024"></script>
+<script src="~/js/filtervalidation.js?v=2024"></script>
+
+<script>
+
+    function searchResult() {
+        $('#irfDetailsTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#irfDetailsTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        var table = $('#irfDetailsTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+    };
+
+    function PlayIRF(id, irfId) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to play this IRF!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, go ahead',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PlayIRF',
+                        data: { 'irfId': id, 'IRFName': irfId },
+                        success: function (result) {
+                            swal.fire(result);
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.value) {
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            }
+        });
+    }
+
+    function PauseIRF(id, irfId) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to pause this IRF!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, go ahead',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PauseIRF',
+                        data: { 'irfId': id, 'IRFName': irfId },
+                        success: function (result) {
+                            swal.fire(result);
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.value) {
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            }
+        });
+    }
+
+    function openTask(id, irfId) {
+        var modal = document.getElementById("myTask");
+        modal.style.display = "block";
+        $("#hidcollectiveIRFid").val(id);
+        $("#hidcollectiveIRFName").val(irfId);
+        FetchDataInfo('completion');
+    }
+
+    function openHMLink(id) {
+        var currentPort = window.location.port;
+        var url = window.location.protocol + '//' + window.location.hostname + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + id;
+        window.open(url, '_blank');
+    }
+
+    function getClientFeedback(id) {
+        $.ajax({
+            url: '/IRF/GetIRFClientReview',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("clientreviewModal");
+                modal.style.display = "block";
+                $('#clientreviewTableBody').html('');
+                $('#clientreviewTableBody').html(data);
+            }
+        });
+    }
+
+    function Candidates(id, IRFid) {
+        var url = '/Candidate/GetCandidates?id=' + id + '&irfName=' + IRFid;
+        window.open(url, '_blank');
+    }
+
+    function EditIRF(id, templateId) {
+        if ('@ViewBag.profile' == 'Client' && templateId != null && templateId > 0) {
+            var url = '/IRF/EditIRF?id=' + id + '&templateId=' + templateId;
+            window.open(url, '_blank'); 
+        }
+        else {
+            $.ajax({
+                url: '/IRF/CheckEditCondition?IRFId=' + id,
+                type: 'POST',
+                success: function (result) {
+                    if (result == "Success") {
+                        var url = '/IRF/EditIRF?id=' + id;
+                        window.open(url, '_blank'); 
+                    }
+                    else {
+                        swal.fire("You are not authorized to edit this skill channel. Please contact Admin or Channel Owner.");
+                    }
+                }
+            });
+        }
+    }
+
+
+    function getIRFMembers(id, Name) {
+        $.ajax({
+            url: '/IRF/GetIRFInterviewerMembers',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("interviewerMemberModal");
+                modal.style.display = "block";
+                $('#memberTableBody').html('');
+                $('#memberTableBody').html(data);
+            }
+        });
+    }
+
+    function EditSchedulerEvent(schedulerlink) {
+        if (schedulerlink != '') {
+            var _uniqueid = schedulerlink.split('?')[schedulerlink.split('?').length - 1].split('=')[1];
+            window.location.href = "/InterviewScheduler/IRFSchedulerEventEdit?id=" + _uniqueid;
+        }
+    }
+
+    function FetchDataInfo(type) {
+        var irfid = $("#hidcollectiveIRFid").val();
+        $.ajax({
+            url: '/Task/SkillChannelCollectiveDetails',
+            data: { 'irfId': irfid, 'type': type },
+            success: function (data) {
+                $('#memberTableBody2').html('');
+                $('#memberTableBody2').html(data);
+            }
+        });
+    }
+
+    // Close modal handlers
+    var closeTaskModel = document.getElementById("taskModalClose");
+    if (closeTaskModel) {
+        closeTaskModel.onclick = function () {
+            var modal = document.getElementById("myTask");
+            modal.style.display = "none";
+        }
+    }
+</script>

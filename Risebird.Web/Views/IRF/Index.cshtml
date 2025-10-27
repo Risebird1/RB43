@@ -140,27 +140,27 @@
 
                                     @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                     {
-                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
+                                        @* @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Skill Channel</font></span>
                                             </button>
 
-                                            @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Groups</font></span>
-                                </button> *@
+                                </button> 
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer",new { uniqueid="74206543283756"})'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
                                             </button>
-                                        }
-                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile == "InterviewerManagement")
+                                        } *@
+                                @*         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile == "InterviewerManagement")
                                         {
 
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Groups</font></span>
                                             </button>
 
-                                        }
+                                        } *@
 
 
                                     }
@@ -544,8 +544,7 @@
                                                                         <div class="scrollbar" id="style-2" style="height:170px;margin: 0px 10px 0px 0px;">
                                                                         @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile == "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
                                                                         {
-                                                                            <div class="dropdown-content-menu" onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');"><span class="fas fa-edit" style="left:2px;top:-1px;position: relative;font-size:13px; margin-right: 8px; color: #6e7fa9;"></span>Edit IRF</div>
-                                                                            
+@*                                                                             <div class="dropdown-content-menu" onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');"><span class="fas fa-edit" style="left:2px;top:-1px;position: relative;font-size:13px; margin-right: 8px; color: #6e7fa9;"></span>Edit IRF</div>*@                                                                            
 
                                                                             <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditIRFInterviewers('@item.id');" title="Edit IRF Interviewers"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
                                                                                     
