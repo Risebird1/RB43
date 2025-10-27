@@ -91,14 +91,14 @@
                                                                         <thead>
                                                                             <tr>
                                                                                 <th width="10%" class="table_heading">Skill Level<span class="red">*</span></th>
-                                                                                <th width="24%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                                                                <th width="18%" class="table_heading">Skill Name<span class="red">*</span></th>
                                                                                 <th class="table_heading">Weightage <span class="red">*</span></th>
-                                                                                <th width="32%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
+                                                                                <th width="30%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Concepts<span class="red">*</span></th>
                                                                                 <th width="25%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Expectations<span class="red">*</span></th>
                                                                                 <th width="15.7%" class="table_heading" style="float:left;margin-right:2px;display:@(rubricDisplayStatus)">Time limit <span class="red">*</span></th>
                                                                                 @if (Model.TechRubricType == TechRubricTypes.Advanced)
                                                                                 {
-                                                                                    <th width="26%" class="table_heading" style="float:left">Is Elimination Skill</th>
+                                                                                    <th width="28%" class="table_heading" style="float:left">Is Elimination Skill</th>
                                                                                 }
                                                                                 else
                                                                                 {
@@ -124,7 +124,7 @@
                                                                                     <td>
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                                     </td>
-                                                                                    <td class="tooltip-skill" width="35%" style="float:left;display:@rubricDisplayStatus">
+                                                                                    <td class="tooltip-skill" width="31%" style="float:left;display:@rubricDisplayStatus">
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="500" style="font-weight:600">
                                                                                         @if (Model.SkillCollection[0].Concepts != null)
                                                                                         {
@@ -2343,6 +2343,11 @@ else
     /* Ensure table is responsive */
     .table-responsive-sm {
         overflow-x: auto;
+    }
+
+    .table > tbody > tr > td{
+        vertical-align:top;
+        white-space:normal;
     }
 </style>
 
