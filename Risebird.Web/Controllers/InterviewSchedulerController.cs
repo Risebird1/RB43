@@ -519,6 +519,12 @@ namespace Risebird.Web.Controllers
                         zoomLink.join_url = teamsMeeting.joinUrl;
                         zoomLink.accountemail = teamsMeeting.accountEmail;
                     }
+                    else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
+                    {
+                        zoomLink.meetingid = "";
+                        zoomLink.join_url = "";
+                        zoomLink.accountemail = "AI";
+                    }
                     string textreminder = string.Empty;
                     if (!model.reschedulerequest)
                     {
@@ -1328,7 +1334,7 @@ namespace Risebird.Web.Controllers
                         }
                         zoomLink.meetingid = zoomLink.id.ToString();
                     }
-                    else if (string.IsNullOrEmpty(model.MeetingPlatform) ||  model.MeetingPlatform == MeetingPlatforms.Zoho)
+                    else if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoho)
                     {
                         //rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                         //var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
@@ -1336,6 +1342,12 @@ namespace Risebird.Web.Controllers
                         zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
                         zoomLink.join_url = rbMeetingLinkResponse.joinLink;
                         zoomLink.accountemail = rbMeetingLinkResponse.accountEmail;
+                    }
+                    else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
+                    {
+                        zoomLink.meetingid = "";
+                        zoomLink.join_url = "";
+                        zoomLink.accountemail = "AI";
                     }
                     string textreminder = string.Empty;
                     if (!model.reschedulerequest)
@@ -1362,7 +1374,7 @@ namespace Risebird.Web.Controllers
                             {
                                 await _zoho.DeleteMeetingAsync(candidateuniqueid.ZoomMeetingId);
                             }
-                            else
+                            else if (model.MeetingPlatform == MeetingPlatforms.Zoom)
                             {
                                 DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
                             }
@@ -1744,6 +1756,12 @@ namespace Risebird.Web.Controllers
                         zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
                         zoomLink.join_url = rbMeetingLinkResponse.joinLink;
                         zoomLink.accountemail = rbMeetingLinkResponse.accountEmail;
+                    }
+                    else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
+                    {
+                        zoomLink.meetingid = "";
+                        zoomLink.join_url = "";
+                        zoomLink.accountemail = "AI";
                     }
                     string textreminder = string.Empty;
                     if (!model.reschedulerequest)

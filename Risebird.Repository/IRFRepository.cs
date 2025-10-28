@@ -2471,9 +2471,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDTitleTwo", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@JDTitleTwo"].Value = irfDetails.JDTitleTwo;
-
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
                     //cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
@@ -6701,9 +6705,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
-
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoho";
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
@@ -6951,9 +6959,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
-
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoho";
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;

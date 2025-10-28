@@ -5,5 +5,6 @@
         public static readonly string Zoom = "Zoom";
         public static readonly string Zoho = "Zoho";
         public static readonly string TeamsMeet = "Teams";
+        public static readonly string AIInterview = "AIInterview";
     }
 }
