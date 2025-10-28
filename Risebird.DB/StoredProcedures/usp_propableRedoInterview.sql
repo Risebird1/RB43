@@ -84,7 +84,7 @@ where IsNull(IsProctor,0)=0 and ISNULL(im.RedoInterview,0)=0 and tq.id is null
 GROUP BY im.IRFId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id,IRF.id,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END ,IRF.IsVideoRequired,uli.MobileNumber,imjt.Joinedon,imjf.FirstJoinedon,ulco.EmailId,pm.DurationSelectedMin,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating,Isnull(ulim.FirstName,''),(pm.DurationSelectedMin-ic.VideoDuration)   
 order by Interviewdate desc 
 end
-else if(@actionstatus='QCZohoReview')
+else if(@actionstatus='QCAIInterview')
 begin
 SELECT im.IRFId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END AS InterviewerLateJoin,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,imjf.FirstJoinedon,ulco.EmailId as ChannelOwner,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating,Isnull(ulim.FirstName,'') as InterviewerName,(pm.DurationSelectedMin-ic.VideoDuration) as deficit   
 FROM InterviewMeetings im join IRF on im.IRFId=irf.IRFId  
@@ -98,7 +98,7 @@ left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.Compa
 Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime   
 left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt   
 Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf    
-where IsNull(IsProctor,0)=0 and ISNULL(im.RedoInterview,0)=0 and tq.id is null and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and im.MeetingPlatForm='Zoho'
+where IsNull(IsProctor,0)=0 and ISNULL(im.RedoInterview,0)=0 and tq.id is null and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and IRF.IsAIInterview=1
 GROUP BY im.IRFId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id,IRF.id,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END ,IRF.IsVideoRequired,uli.MobileNumber,imjt.Joinedon,imjf.FirstJoinedon,ulco.EmailId,pm.DurationSelectedMin,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating,Isnull(ulim.FirstName,''),(pm.DurationSelectedMin-ic.VideoDuration)   
 order by Interviewdate desc 
 end
