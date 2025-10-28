@@ -21,7 +21,10 @@ declare @interviewId int
 
 set @interviewId = (select id from InterviewMeetings where SessionId = @SessionId)
 
-
+if not exists (select top 1 id from BotInterviewQuestionVideos where SessionId = @SessionId)
+Begin
+	set @interviewStatus = null
+End
 
 update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
 HasCandidateExited = @isExit, CandidateExitedAt = @timeNow,
