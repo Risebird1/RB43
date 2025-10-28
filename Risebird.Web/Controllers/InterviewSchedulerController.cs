@@ -521,7 +521,6 @@ namespace Risebird.Web.Controllers
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
                     {
-                        rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
                         zoomLink.meetingid = "";
                         zoomLink.join_url = "";
                         zoomLink.accountemail = "AI";
@@ -1346,7 +1345,6 @@ namespace Risebird.Web.Controllers
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
                     {
-                        rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
                         zoomLink.meetingid = "";
                         zoomLink.join_url = "";
                         zoomLink.accountemail = "AI";
@@ -1376,11 +1374,7 @@ namespace Risebird.Web.Controllers
                             {
                                 await _zoho.DeleteMeetingAsync(candidateuniqueid.ZoomMeetingId);
                             }
-                            else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
-                            {
-                                //Nothing need to delete
-                            }
-                            else
+                            else if (model.MeetingPlatform == MeetingPlatforms.Zoom)
                             {
                                 DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
                             }
@@ -1765,7 +1759,6 @@ namespace Risebird.Web.Controllers
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.AIInterview)
                     {
-                        rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
                         zoomLink.meetingid = "";
                         zoomLink.join_url = "";
                         zoomLink.accountemail = "AI";
