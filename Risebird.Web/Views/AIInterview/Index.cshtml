@@ -1524,7 +1524,9 @@
     }
     function startRecording() {
         chunks = [];
-        let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
+        //let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
+        let options = { mimeType: 'video/mp4;codecs=avc1.42E01E,mp4a.40.2' };
+
         try {
             mediaRecorder = new MediaRecorder(window.stream, options);
         } catch (e) {
