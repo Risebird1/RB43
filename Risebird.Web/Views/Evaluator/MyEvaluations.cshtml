@@ -266,7 +266,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
 
 
 @if (ViewBag.Message != null)
@@ -427,57 +427,15 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
+    
+    
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+    
 
-    });
+    
 
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        if(phoneNumber !=null && phoneNumber.length >= 9)
-        {
-            Twilio.Device.connect(params);
-        }
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        startCallRecording(connection.parameters.CallSid);
-    });
-
-    function afterTimeOut() {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-
-    });
-    function startCallRecording(sid) {
-        console.log("sid:" + sid);
-        $.ajax({
-            url: '/User/makecall',
-            type: "GET",
-            data: { 'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
-            success: function (data) {
-                console.log("rsid:" + data);
-            }
-        });
-    }
+    
+    
     function ModalButtonClick(mobileNumber, candidateName, irfid, candidateemailid) {
         candidate = candidateName;
         canIrfid = irfid;

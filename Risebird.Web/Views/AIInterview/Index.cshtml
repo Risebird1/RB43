@@ -1038,8 +1038,8 @@
             </div>
             <!-- Footer -->
             <div class="rb-footer">
-                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@
-                <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
+                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
+                 <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
                     <i id="footerVideoIcon" class="fa fa-video-camera"></i>
                 </button>
                 <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
@@ -1088,33 +1088,33 @@
                         <div class="min-vh">
                             @if (Model.IsAdaptive == true)
                             {
-                            <!-- Audio Section -->
-                            <div class="rb-interviewer-info" style="margin-top:0px">
-                                <span style="font-size:16px;font-weight:600">AI Interviewer</span>
-                                <div class="rb-interviewer-avatar">
-                                    <span>H</span>
+                                <!-- Audio Section -->
+                                <div class="rb-interviewer-info" style="margin-top:0px">
+                                    <span style="font-size:16px;font-weight:600">AI Interviewer</span>
+                                    <div class="rb-interviewer-avatar">
+                                        <span>H</span>
+                                    </div>
+                                    <div class="rb-audio-waves" id="audioWaves" style="display: none;">
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                    </div>
                                 </div>
-                                <div class="rb-audio-waves" id="audioWaves" style="display: none;">
-                                    <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
-                                    <div class="wave-bar"></div>
-                                </div>
-                            </div>
-                            <audio id="assistantAudio" controls hidden></audio>
-                            @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
+                                <audio id="assistantAudio" controls hidden></audio>
+                                @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
                             }
                             else
                             {
-                            <!-- Video Section -->
-                            @if (Model.SynthesizedVideoUrl != null)
-                            {
-                            <div class="rb-interviewer-info" style="margin-top:0px">
-                                <video width="100%" controls autoplay>
-                                    <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
-                                </video>
-                            </div>
-                            }
+                                <!-- Video Section -->
+                                @if (Model.SynthesizedVideoUrl != null)
+                                {
+                                    <div class="rb-interviewer-info" style="margin-top:0px">
+                                        <video width="100%" controls autoplay>
+                                            <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                                        </video>
+                                    </div>
+                                }
                             }
                         </div>
                         <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
@@ -1125,15 +1125,15 @@
                         <div class="chat-log border rounded mt-3" id="chatLog">
                             @foreach (var line in Model.ChatLog)
                             {
-                            <div class="chat-message mb-3">
-                                <div class="message-header">
-                                    <strong class="message-role">@line.Role:</strong>
-                                    <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
+                                <div class="chat-message mb-3">
+                                    <div class="message-header">
+                                        <strong class="message-role">@line.Role:</strong>
+                                        <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
+                                    </div>
+                                    <div class="message-content">
+                                        <p>@line.Message</p>
+                                    </div>
                                 </div>
-                                <div class="message-content">
-                                    <p>@line.Message</p>
-                                </div>
-                            </div>
                             }
                         </div>
                         <button class="scroll-to-bottom" id="scrollToBottom" title="Scroll to Bottom">
@@ -1141,15 +1141,15 @@
                         </button>
                     </div>
                     <div class="rb-interview-actions">
-                        @* <a target="_blank" href="@Url.Action(" Report", "AIInterview" , new { seId=Model.SessionId})" class="rb-action-btn rb-back-btn">
-                            Generate AIInterview Report <i class="fa fa-arrow-right"></i>
+                        @* <a target="_blank" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId})" class="rb-action-btn rb-back-btn">
+                                Generate AIInterview Report <i class="fa fa-arrow-right"></i>
                         </a> *@
                         @* option to the candidate to exit the interview here *@
 
                         <a id="exitInterviewBtn" href="#" class="rb-action-btn rb-back-btn">
                             Exit Interview <i class="fa fa-sign-out"></i>
                         </a>
-                        @* <a target="_self" href="@Url.Action(" Report", "AIInterview" , new { seId=Model.SessionId, isExit=true})" class="rb-action-btn rb-back-btn">
+                        @* <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
                             Exit Interview <i class="fa fa-sign-out" "></i>
                         </a> *@
                     </div>
@@ -1200,7 +1200,8 @@
         }
     </style>
 </div>
-<script>@* let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
+<script>
+    @* let totalSecondsLeft = parseInt("@Model.TimeLeftInSeconds" || "900");
     let interviewId = parseInt("@Model.InterviewId");
     const timerDisplay = document.getElementById("timer");
     const timeField = document.getElementById("timeLeftField");
@@ -1250,10 +1251,12 @@
         }
     }, 1000);
 
-    updateTimerUI();</script>
+    updateTimerUI();
+</script>
 
 
-<script>function playAssistantAudio(blob) {
+<script>
+    function playAssistantAudio(blob) {
         debugger;
         const audioElement = document.getElementById("assistantAudio");
         const audioWaves = document.getElementById("audioWaves");
@@ -1340,15 +1343,18 @@
                 subtree: true
             });
         }
-    });</script>
+    });
+</script>
 @if (ViewData["AssistantAudioBase64"] is string base64Audio)
 {
-<script>const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+    <script>
+        const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
         const audioBlob = new Blob([
             Uint8Array.from(atob(base64), c => c.charCodeAt(0))
         ], { type: 'audio/mp3' });
 
-        playAssistantAudio(audioBlob);</script>
+        playAssistantAudio(audioBlob);
+    </script>
 }
 
 <script>
@@ -1442,7 +1448,8 @@
 
 
 
-<script>// Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
+<script>
+    // Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
     document.addEventListener('DOMContentLoaded', function () {
         const textarea = document.querySelector('.rb-chatbox-textarea');
         const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
@@ -1549,8 +1556,10 @@
                 hideLoading();
             });
         }
-    });</script>
-<script>let mediaRecorder, recordedBlobs;
+    });
+</script>
+<script>
+    let mediaRecorder, recordedBlobs;
     let isRecording = false;
     const video = document.getElementById('video');
     const btnRecord = document.getElementById('btnRecord');
@@ -1618,8 +1627,10 @@
         btnRecordToggle.className = 'rb-record-btn';
         btnRecord.style.display = 'none';
         btnRecord.style.animation = 'none';
-    }</script>
-<script>document.addEventListener('DOMContentLoaded', function () {
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
         let video = document.getElementById('video');
         let footerVideoToggle = document.getElementById('footerVideoToggle');
         let footerVideoIcon = document.getElementById('footerVideoIcon');
@@ -1672,7 +1683,8 @@
                 }
             });
         }
-    });</script>
+    });
+</script>
 
 <!-- Custom Modal HTML -->
 <div id="customModal" class="custom-modal" style="display: none;">
@@ -1859,7 +1871,8 @@
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
 </style>
-<script>// Custom Modal Functions
+<script>
+    // Custom Modal Functions
     function showCustomModal(title, message, isSuccess = false) {
         const modal = document.getElementById('customModal');
         const modalMessage = document.getElementById('modalMessage');
@@ -1891,10 +1904,10 @@
         const modalConfirm = document.getElementById('modalConfirm');
 
         if (exitBtn) {
-         exitBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          showCustomModal('Exit Interview?', 'Are you sure? <span style="display:block;font-size: 17px !important;color: #a79f9f !important;padding-top: 5px;">you want to exit the interview?</span>');
-          });
+                            exitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                showCustomModal('Exit Interview?', 'Are you sure? <span style="display:block;font-size: 17px !important;color: #a79f9f !important;padding-top: 5px;">you want to exit the interview?</span>');
+                });
         }
 
         // Cancel button
@@ -1929,4 +1942,5 @@
                 // showFallbackCompletionMessage(); // This function is no longer needed
             }
         });
-    }</script>
+    }
+</script>

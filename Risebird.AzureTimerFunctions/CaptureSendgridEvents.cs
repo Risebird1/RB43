@@ -1,0 +1,80 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
+
+namespace Risebird.MicroService
+{
+    public class CaptureSendgridEvents
+    {
+        private readonly IConfiguration _configuration;
+        private readonly ILogger log;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ISendGridRepository _sendGridRepository;
+        public CaptureSendgridEvents(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, ISendGridRepository sendGridRepository)
+        {
+            _configuration = configuration;
+            _applicationErrorLogger = applicationErrorLogger;
+            _sendGridRepository = sendGridRepository;
+            log = loggerFactory.CreateLogger<CaptureSendgridEvents>();
+        }
+
+        [Function("CaptureSendgridEvents")]
+        public async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CaptureSendgridEvents")] HttpRequestData req)
+        {
+            try
+            {
+                log.LogInformation($"CaptureSendgridEvents : C# HTTP trigger function invoked at {DateTime.Now}");
+
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                log.LogInformation($"CaptureSendgridEvents : Event data recieved with request body :  {requestBody}");
+
+                var dataList = JsonConvert.DeserializeObject<IEnumerable<SendgridEventData>>(requestBody);
+
+                if (dataList != null)
+                {
+                    Parallel.ForEach(dataList, async data =>
+                    {
+                        try
+                        {
+                            if (data != null && !string.IsNullOrEmpty(data.sg_message_id) && data.sg_message_id.Contains("."))
+                            {
+                                data.Split_Message_Id = data.sg_message_id.Split(".")[0];
+                            }
+                            _ = await _sendGridRepository.SaveSendGridEventDetails(data);
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            log.LogError($"CaptureSendgridEvents : Error at: {DateTime.Now}, Message : {ex.Message}");
+                            return;
+                        }
+                    });
+                }
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(true);
+                return response;
+                //return new OkObjectResult(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+    }
+}

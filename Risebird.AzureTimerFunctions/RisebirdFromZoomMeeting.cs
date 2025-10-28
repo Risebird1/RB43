@@ -1,0 +1,174 @@
+﻿using Dapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using System;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Risebird.MicroService
+{
+    public class RisebirdFromZoomMeeting
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ILogger log;
+
+        public RisebirdFromZoomMeeting(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        {
+            _applicationErrorLogger = applicationErrorLogger;
+            _configuration = configuration;
+            log = loggerFactory.CreateLogger<RisebirdFromZoomMeeting>();
+        }
+
+        [Function("RisebirdFromZoomMeeting")]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
+        {
+            var response = req.CreateResponse();
+            log.LogInformation("C# HTTP trigger function processed a request.");
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            log.LogInformation(requestBody);
+            string eventType = string.Empty;
+            string UserName = string.Empty;
+            string Emailid = string.Empty;
+            string Meetingid = string.Empty;
+            DateTime ActionDate = new DateTime();
+            string ActionDatejoin = string.Empty;
+            string ActionDateleft = string.Empty;
+            string plainToken = string.Empty;
+            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
+            var children = stuff.Children().GetEnumerator();
+            while (children.MoveNext())
+            {
+                var mainDetails = children.Current;
+                if (((JProperty)mainDetails).Name == "event")
+                {
+                    eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
+                }
+                else if (((JProperty)mainDetails).Name == "payload")
+                {
+                    foreach (var data in mainDetails.Children())
+                    {
+                        var internalNodes = data.Children().GetEnumerator();
+                        while (internalNodes.MoveNext())
+                        {
+                            var mainFamilies1 = internalNodes.Current;
+                            if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
+                            {
+                                plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
+                            }
+                            else if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "object")
+                            {
+                                Meetingid = ((JProperty)mainFamilies1).Value["id"].ToString();
+                                var currentmainDetails = internalNodes.Current;
+                                foreach (var internernodeParticipent in currentmainDetails.Children())
+                                {
+                                    var internalNodes1 = internernodeParticipent.Children().GetEnumerator();
+                                    while (internalNodes1.MoveNext())
+                                    {
+                                        var mainFamilies2 = internalNodes1.Current;
+                                        if (((Newtonsoft.Json.Linq.JProperty)mainFamilies2).Name == "participant")
+                                        {
+                                            UserName = ((JProperty)mainFamilies2).Value["user_name"].ToString();
+                                            Emailid = ((JProperty)mainFamilies2).Value["email"].ToString();
+                                            var datemainDetails = internalNodes1.Current;
+                                            foreach (var finddate in datemainDetails.Children())
+                                            {
+                                                var internalNodes2 = finddate.Children().GetEnumerator();
+                                                while (internalNodes2.MoveNext())
+                                                {
+                                                    var mainFamilies3 = internalNodes2.Current;
+                                                    if (((Newtonsoft.Json.Linq.JProperty)mainFamilies3).Name == "leave_time")
+                                                    {
+                                                        ActionDateleft = ((JProperty)mainFamilies2).Value["leave_time"].ToString();
+                                                    }
+                                                    else if (((Newtonsoft.Json.Linq.JProperty)mainFamilies3).Name == "join_time")
+                                                    {
+                                                        ActionDatejoin = ((JProperty)mainFamilies2).Value["join_time"].ToString();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (eventType == "PARTICIPANT_LEFT" || eventType == "PARTICIPANT_JOINED")
+            {
+                try
+                {
+                    if (eventType == "PARTICIPANT_JOINED")
+                    {
+                        ActionDate = Convert.ToDateTime(ActionDatejoin);
+                    }
+                    else
+                    {
+                        ActionDate = Convert.ToDateTime(ActionDateleft);
+                    }
+                    ActionDate = TimeZoneInfo.ConvertTimeFromUtc(ActionDate, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    string connectionString = "Server=tcp:risebirdprod.database.windows.net,1433;Initial Catalog=productProdDB;Persist Security Info=False;User ID=risebirdadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string sqlProcReport = "INSERT INTO ZoomMeetingTransmission Values (@eventType, @UserName, @Meetingid,@Emailid,@ActionDate);";
+                        var result3 = conn.Execute(sqlProcReport, new
+                        {
+                            eventType,
+                            UserName,
+                            Meetingid,
+                            Emailid,
+                            ActionDate
+                        });
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            else if (eventType == "URL_VALIDATION")
+            {
+                var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
+                var enc = Encoding.Default;
+                HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
+                hmac.Initialize();
+                byte[] buffer = enc.GetBytes(plainToken);
+                var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
+                ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
+                _zoom.plainToken = plainToken;
+                _zoom.encryptedToken = hashForValidate;
+                
+                //return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+
+
+                // Serialize the object using Newtonsoft.Json
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(_zoom);
+
+                // Write the JSON string to the response
+                await response.WriteStringAsync(json);
+                response.StatusCode = HttpStatusCode.OK;
+                // Set Content-Type header
+                response.Headers.Add("Content-Type", "application/json");
+
+                return response;
+            }
+            response.StatusCode = HttpStatusCode.OK;
+            await response.WriteAsJsonAsync("Success");
+            return response;
+            //return new OkObjectResult("Success");
+        }
+    }
+}

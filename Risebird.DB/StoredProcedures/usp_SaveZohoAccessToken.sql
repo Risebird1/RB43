@@ -14,6 +14,7 @@ Create Procedure usp_SaveZohoAccessToken
 @TokenType varchar(20)
 AS
 BEGIN
+Delete from ZohoAccessToken where TokenType=@TokenType
 Insert into ZohoAccessToken(AccessToken,TokenExpiry,TokenType) values(@AccessToken,@TokenExpiry,@TokenType)
 END
 GO

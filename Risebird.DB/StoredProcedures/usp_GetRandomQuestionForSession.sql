@@ -46,8 +46,8 @@ BEGIN
         WHERE SessionId = @SessionId AND [Role] = 'assistant'
     );
 
-    -- If already asked 25 questions, stop
-    IF (@AskedCount >= 25) -- change back to 10 if needed
+    -- If already asked 35 questions, stop
+    IF (@AskedCount >= 35) -- change back to 10 if needed
     BEGIN
         SELECT NULL AS [Message], NULL AS AIQuestionVideoLink, NULL AS Id;
         RETURN;

@@ -286,8 +286,16 @@
                                                             <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
                                                             @* @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
-
+                                                                @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId == 0)
+                                                                {
+                                                                    <div style="padding:0px;margin:0px 0px 25px 0px;">
+                                                                        <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
+                                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup(@item.Interviewid)" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
+                                                                        </button>
+                                                                    </div>
+                                                                }
                                                             } *@
+
                                                             @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId == 0)
                                                             {
                                                                 <div style="padding:0px;margin:0px 0px 25px 0px;">
@@ -301,74 +309,44 @@
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
 
-                                                                @if (Model.CandidateDetails.IsAIInterview && item.interviewDate.AddHours(24) <= DateTime.Now && item.interviewDate.AddHours(36) >= DateTime.Now)
+                                                                @if(Model.CandidateDetails.IsAIInterview)
                                                                 {
                                                                     <button id="btn_ai_Interview" type="button"
-                                                                            class="btn btn-primary click_herebtn"
-                                                                            onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
+                                                                    class="btn btn-primary click_herebtn"
+                                                                    onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
                                                                     @(item.AadharVerificationId >
-                                                                        0 ? "" : "disabled")>
+                                                                                0 ? "" : "disabled")>
                                                                         Click here to join the meeting
                                                                     </button>
                                                                 }
-                                                                else if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
+                                                                @* else if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
                                                                 {
                                                                     <a target="_blank" href="#" style="cursor: not-allowed; color:grey">Click here to join the meeting</a>
-                                                                }
 
-                                                                @if (!Model.CandidateDetails.IsAIInterview && item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                } *@
+                                                                else if (!Model.CandidateDetails.IsAIInterview)
                                                                 {
-
-
-                                                                    @* @if (Model.CandidateDetails.IsAIInterview)
+                                                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                     {
-                                                                        <button id="btn_ai_Interview" type="button"
-                                                                                class="btn btn-primary click_herebtn"
-                                                                                onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
-                                                                        @(item.AadharVerificationId >
-                                                                            0 ? "" : "disabled")>
-                                                                            Click here to join the meeting
-                                                                        </button>
-
+                                                                                    <div style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                                                                onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
+                                                                                            Click here to join the meeting
+                                                                                            <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
+                                                                                    </div>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <div style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
-                                                                             onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
-                                                                            Click here to join the meeting
-                                                                            <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
-                                                                        </div>
-                                                                    } *@
 
-                                                                    <div style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
-                                                                         onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)">
-                                                                        Click here to join the meeting
-                                                                        <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
-                                                                    </div>
+                                                                                    <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
+                                                                                            Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;position: relative;top:6px;background:#b6bdc37a;">
+                                                                                                <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
+                                                                                            </a>
+                                                                                    </div>
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    @* @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
-                                                                    {
-                                                                        <a target="_blank" href="#" style="cursor: not-allowed; color:grey">Click here to join the meeting</a>
+                                                                                    <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
                                                                     }
-                                                                    else
-                                                                    {
-                                                                        <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
-                                                                            Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;position: relative;top:6px;background:#b6bdc37a;">
-                                                                                <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
-                                                                            </a>
-                                                                        </div>
-                                                                    } *@
-
-                                                                    <div style="margin: 18px 0px 8px 0px;color: #dedcdc;" class="meeting-link text-uppercase">
-                                                                        Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;position: relative;top:6px;background:#b6bdc37a;">
-                                                                            <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" />Meeting Link</span>
-                                                                        </a>
-                                                                    </div>
-                                                                    <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
                                                                 }
+                                                                
                                                             </div>
 
                                                             @if (item.interviewDate >= DateTime.Now)
@@ -909,7 +887,7 @@
                             <strong>Please check all the mandatory interview requirement checkboxes above to continue with the interview.</strong>
                         </div>
                     </div>
-                     @if (Model.CandidateDetails.IsAIInterview)
+                    @if (Model.CandidateDetails.IsAIInterview)
                     {
                         <div class="col-md-12 pull-right">
                             <button id="btnJoinInterview" style="margin-bottom: 10px;text-transform:none;width:auto;" type="button" class="mdc-button button-warning" onclick="AcceptAIInterviewerAlert()" disabled>Continue to join interview with my consent for above checked points </button>
@@ -1473,7 +1451,7 @@
         $('input[name="InterviewCheckshow"]').off('change').on('change', function() {
             if (!$(this).is(':checked')) {
                 // Store the unchecked checkbox ID
-                 @*uncheckedCheckboxId = $(this).ctx('id'); *@ 
+    @*uncheckedCheckboxId = $(this).ctx('id'); *@ 
                  uncheckedCheckboxId = $(this).attr('id');
                 // Show confirmation modal
                 openConsentConfirmationModal();
@@ -1483,7 +1461,7 @@
         });
         // Initialize button state for InterviewCheckshowDisplay checkboxes
         checkAllCheckboxesStatus();
- 
+
         // Show error message initially since all checkboxes start unchecked
         $('#checkboxErrorMsg').show();
     }
