@@ -5819,96 +5819,101 @@ namespace Risebird.Repository
                     {
                         foreach (var obj in candidateList)
                         {
-                            DynamicParameters parameters = new DynamicParameters();
-                            if (!isApi)
+                            try
                             {
-                                parameters.Add("@IRFId", obj.IRFId);
-
-                            }
-                            else
-                            {
-                                parameters.Add("@jobId", jobId);
-                            }
-
-                            parameters.Add("@countryCode", obj.countryCode);
-
-                            parameters.Add("@Name", obj.Name);
-                            parameters.Add("@EmailId", obj.EmailId);
-                            parameters.Add("@ResumeLink", obj.ResumeLink);
-                            parameters.Add("@Phone", obj.Phone);
-                            if (userId.HasValue)
-                            {
-                                parameters.Add("@AddedByUserId", userId);
-
-                            }
-                            else
-                            {
-                                parameters.Add("@AddedByUserId", obj.AddedByUserId);
-
-                            }
-                            parameters.Add("@date", DateTime.Now);
-                            if (isApi && !string.IsNullOrEmpty(ApiRequestedBy))
-                            {
-                                parameters.Add("@ClientHREmail", ApiRequestedBy);
-                                parameters.Add("@ProfileSource", ApiRequestedBy);
-                                parameters.Add("@WhatsappNumber", obj.Phone);
-                            }
-                            else
-                            {
-                                parameters.Add("@ClientHREmail", obj.ClientHREmail);
-                                parameters.Add("@ProfileSource", obj.ProfileSource);
-                                parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
-                            }
-                            parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
-                            parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
-
-
-                            await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
-
-                            var result = parameters.Get<string>("@operationStatus");
-                            if (isResumeParser)
-                            {
-                                dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
-                            }
-                            else if (isApi)
-                            {
-                                if (string.IsNullOrWhiteSpace(result))
+                                DynamicParameters parameters = new DynamicParameters();
+                                if (!isApi)
                                 {
-                                    result = "";
-                                }
-                                var resultArr = result.Split("|");
-                                var irfId = Convert.ToInt32(resultArr?.Last());
-                                var candidateId = 0;
-                                if (resultArr.Count() > 1)
+                                    parameters.Add("@IRFId", obj.IRFId);                                }
+                                else
                                 {
-                                    candidateId = Convert.ToInt32(resultArr[1]);
+                                    parameters.Add("@jobId", jobId);
                                 }
-                                dt.Rows.Add(obj.EmailId, resultArr[0], irfId, candidateId);
+                                parameters.Add("@countryCode", obj.countryCode);
+                                parameters.Add("@Name", obj.Name);
+                                parameters.Add("@EmailId", obj.EmailId);
+                                parameters.Add("@ResumeLink", obj.ResumeLink);
+                                parameters.Add("@Phone", obj.Phone);
+                                if (userId.HasValue)
+                                {
+                                    parameters.Add("@AddedByUserId", userId);
+                                }
+                                else
+                                {
+                                    parameters.Add("@AddedByUserId", obj.AddedByUserId);
+                                }
+                                parameters.Add("@date", DateTime.Now);
+                                if (isApi && !string.IsNullOrEmpty(ApiRequestedBy))
+                                {
+                                    parameters.Add("@ClientHREmail", ApiRequestedBy);
+                                    parameters.Add("@ProfileSource", ApiRequestedBy);
+                                    parameters.Add("@WhatsappNumber", obj.Phone);
+                                }
+                                else
+                                {
+                                    parameters.Add("@ClientHREmail", obj.ClientHREmail);
+                                    parameters.Add("@ProfileSource", obj.ProfileSource);
+                                    parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                                }
+                                parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
+                                parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+
+                                await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
+
+                                var result = parameters.Get<string>("@operationStatus");
+                                if (isResumeParser)
+                                {
+                                    dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
+                                }
+                                else if (isApi)
+                                {
+                                    var candidateId = 0;
+                                    var irfId = 0;
+                                    var candidateStatus = string.Empty;
+                                    if (string.IsNullOrWhiteSpace(result))
+                                    {
+                                        result = "";
+                                    }
+                                    var resultArr = result.Split("|");
+                                    if (!string.IsNullOrWhiteSpace(resultArr?.Last()))
+                                    {
+                                        irfId = Convert.ToInt32(resultArr?.Last());
+                                    }
+                                    if (resultArr.Count() > 1)
+                                    {
+                                        candidateId = Convert.ToInt32(resultArr[1]);
+                                    }
+                                    candidateStatus = resultArr[0];
+                                    if (string.IsNullOrWhiteSpace(candidateStatus))
+                                    {
+                                        candidateStatus = "Fail to Add Candidate at this time";
+                                    }
+                                    dt.Rows.Add(obj.EmailId, candidateStatus, irfId, candidateId);
+                                }
+                                else
+                                {
+                                    dt.Rows.Add(obj.EmailId, result);
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                dt.Rows.Add(obj.EmailId, result);
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, "AddCandidateAPI");
+                                dt.Rows.Add(obj.EmailId, "Fail to Add Candidate at this time", 0, 0);
                             }
                         }
                         return dt;
-
                     }
-
                     return null;
-
                 }
-
             }
-
             catch (SqlException e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e, "AddCandidateAPI");
                 return null;
             }
-
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e, "AddCandidateAPI");
                 return null;
             }
         }
