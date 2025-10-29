@@ -142,7 +142,7 @@ namespace Risebird.Services.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, "AddCandidateAPI");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
