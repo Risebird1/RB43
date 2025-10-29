@@ -44,6 +44,20 @@
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
                 <div class="pull-left">
+                    @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
+                    {
+                        if (ViewBag.actionstatus == "AIMeetingStatus")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('MeetingStatus','@ViewBag.ReturnBack')"><strong>Status Pending Interview</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('AIMeetingStatus','@ViewBag.ReturnBack')"><strong>AI Pending Interview</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('MeetingStatus','@ViewBag.ReturnBack')"><strong>Status Pending Interview</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('AIMeetingStatus','@ViewBag.ReturnBack')"><strong>AI Pending Interview</strong></div>
+                        }
+                    }
+
                     @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview")
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
@@ -87,6 +101,7 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview','@ViewBag.ReturnBack')"><strong>AI Interviews</strong></div>
                         }
                     }
+
                 </div>
                 <div class="pull-right">
                     <div>
