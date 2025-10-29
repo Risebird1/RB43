@@ -14,7 +14,36 @@
     var Header = "<div id='myinterview_1'> Interview Details</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<style>
+    /* Blink effect for Add Candidate Code here button */
+    .add-code-btn {
+        animation: blinkButton 2.5s infinite;
+    }
 
+    @@keyframes blinkButton {
+        0%, 100% {
+            opacity: 1;
+            background-color: #e8330d;
+        }
+        50% {
+            opacity: 0.5;
+            background-color: #e23d14;
+                box-shadow: 0 10px 16px 0 rgb(246 239 87 / 60%);
+        }
+    }
+    
+    /* Optional: Add a subtle glow effect */
+    .add-code-btn {
+        box-shadow: 0 0 5px rgba(77, 152, 211, 0.5);
+    }
+    
+    .add-code-btn:hover {
+        animation-play-state: paused;
+        opacity: 0.5;
+        background-color: #4d98d3;
+    }
+
+</style>
 <input type="hidden" value="@ViewBag.id" id="id" />
 <input type="hidden" value="@ViewBag.InterviewId" id="hidinterviewid" />
 
@@ -822,6 +851,21 @@
 
                 <div style="overflow-y:auto;max-height:470px;">
                     <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">Please confirm you've read and agreed to the following by checking the box on each item below:</h1>
+                    @if (Model.CodeSnippetRequired)
+                    {
+                        <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
+                            <label class="question" for="checklist_3" style="float: left;width:100%;padding: 10px 0px;">
+                                <span class="round" style="float:left;left:0px;">
+                                    <input type="checkbox" id="checklist_3" name="InterviewCheckshow" />
+                                    <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                                </span>
+                                <label class="consent-label" style="margin-left: 15px;">
+                                    <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate Code :</b>is mandatory for this interview.<span class="add-code-btn" style="background: #4d98d3;color:#fff;border-radius:3px;font-size: 13px;border: 3px double;padding:5px 2px;line-height: 5px;margin-left: 10px;"><a style="padding: 0px 10px;color: #fff;text-decoration: none;" target="_blank" href="@Url.Action("AddCodeDetails", "Interview" ,new{id=ViewBag.id,interviewId =ViewBag.InterviewId})">Add Candidate Code here</a></span></h2>
+                                </label>
+                            </label>
+                        </div>
+                    }
+                    
                     <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                         <label class="question" for="checklist_9" style="float: left;width:100%">
                             <span class="round" style="float:left;left:0px;">
@@ -889,20 +933,7 @@
                             </label>
                         </div>
                     }
-                    @if (Model.CodeSnippetRequired)
-                    {
-                        <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
-                            <label class="question" for="checklist_3" style="float: left;width:100%">
-                                <span class="round" style="float:left;left:0px;">
-                                    <input type="checkbox" id="checklist_3" name="InterviewCheckshow" />
-                                    <label for="checklist_3" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
-                                </span>
-                                <label class="consent-label" style="margin-left: 15px;">
-                                    <h2 style="font-size:14.8px;line-height:25px;color: #979494;font-weight:400;"><b style="color:green;padding-right: 7px;"> Candidate Code :</b>is mandatory for this interview.<span style="background: #4d98d3;color:#fff;border-radius:3px;font-size: 13px;padding: 3px 2px;line-height: 5px;margin-left: 10px;"><a style="padding: 0px 10px;color: #fff;text-decoration: none;" target="_blank" href="@Url.Action("AddCodeDetails", "Interview" ,new{id=ViewBag.id,interviewId =ViewBag.InterviewId})">Add Candidate Code here</a></span></h2>
-                                </label>
-                            </label>
-                        </div>
-                    }
+                   
 
                     <div class="col-md-12 pull-left text-left" style="width:100%;clear:both;">
                         <label class="question" for="checklist_4" style="float: left;width:100%">
