@@ -1636,6 +1636,10 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Status Pending";
                         }
+                        else if (actionstatus == RibbonActionType.AIMeetingStatus)
+                        {
+                            ViewBag.PageHeader = "AI Status Pending";
+                        }
                         else if (actionstatus == RibbonActionType.QcPending)
                         {
                             ViewBag.PageHeader = "Qc Pending";
