@@ -113,7 +113,7 @@
                         @if (ViewBag.Actiontype == 0)
                         {
                             @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" ||
-                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview"
+                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview"
                            || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount"
                            || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
                            || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "DeletedZoomMeetings"
@@ -123,7 +123,7 @@
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                                 </button>
                             }
-                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview"))
+                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview"))
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
@@ -322,7 +322,7 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -396,7 +396,7 @@
                                                         <th>Interviewer Late join</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
@@ -408,7 +408,7 @@
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
@@ -417,11 +417,11 @@
                                                         //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Interview Status</th>
                                                             }
@@ -442,7 +442,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -591,7 +591,7 @@
                                                         <th>Action</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>
                                                             Action
@@ -651,7 +651,7 @@
                                                         <th>Interviewer Late join</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
@@ -663,7 +663,7 @@
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
@@ -673,11 +673,11 @@
                                                         //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Interview Status</th>
                                                             }
@@ -698,7 +698,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -1049,7 +1049,7 @@
                                                                 }
                                                             </td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
                                                             <td>
                                                                 @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
@@ -1624,7 +1624,7 @@
                                                                 </td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
@@ -1661,7 +1661,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
 
                                                             <td>
@@ -1680,7 +1680,7 @@
                                                             //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                             {
-                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
+                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                                 {
                                                                     @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                                     {
@@ -1698,7 +1698,7 @@
                                                                         }
                                                                     }
                                                                 }
-                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
+                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                                 {
                                                                     @if (item.intervieweStatusStatDesc != "0")
                                                                     {
@@ -1734,7 +1734,7 @@
                                                         @*PotentialRiskInterviewCount not allow*@
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
-                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                             {
                                                                 <td>@item.ChannelOwner</td>
                                                             }
