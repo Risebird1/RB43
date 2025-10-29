@@ -1439,5 +1439,133 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> SentimentAnalysis(Guid seId)
+        {
+            try
+            {
+                string profileName = string.Empty;
+                profileName = HttpContext?.Session?.GetString("profileName")?.Trim();
+                profileName = profileName?.Replace("\"", "");
+                ViewBag.ProfileName = profileName;
+
+                //var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+
+                //if (meetingDetails == null)
+                //{
+                //    return NotFound("Interview session not found.");
+                //}
+
+                var model = new VideoSentimentAnalysis
+                {
+                    //CandidateName = meetingDetails.candidateName ?? "Candidate",
+                    //CandidateEmail = meetingDetails.candidateEmail ?? "",
+                    //InterviewDate = meetingDetails.interviewDate,
+                    //SessionId = seId.ToString(),
+                    //InterviewId = meetingDetails.InterviewId,
+                    CandidateName = "aja",
+                    CandidateEmail = "ajay12@gmail.com",
+                    InterviewDate = DateTime.Now,
+                    SessionId = seId.ToString(),
+                    InterviewId = 2,
+                    SentimentScore = 20, // Default value - you can calculate this from actual sentiment data
+                    StarRating = 4, // Default value - you can calculate this from actual rating data
+                    Mentions = 7,
+                    AverageRating = 3.6,
+                    TopModifiers = new List<KeywordModifier>
+                    {
+                        new KeywordModifier 
+                        { 
+                            Keyword = "Fear", 
+                            MentionCount = 1, 
+                            SentimentType = "neutral",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "John D.", Date = DateTime.Now.AddDays(-30), Comment = "Based on AI emotion recognition, the subject exhibited a fearful emotional state, characterized by tense facial expressions, widened eyes, and elevated alertness", Keyword = "Fear" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "confused", 
+                            MentionCount = 1, 
+                            SentimentType = "positive",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "Sarah M.", Date = DateTime.Now.AddDays(-25), Comment = "Based on AI emotion recognition, the subject exhibited a confused emotional state, characterized by uncertain facial expressions and mild cognitive hesitation", Keyword = "confused" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "sad", 
+                            MentionCount = 1, 
+                            SentimentType = "negative",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "Mike T.", Date = DateTime.Now.AddDays(-20), Comment = "Based on AI emotion recognition, the subject exhibited a sad emotional state, characterized by downturned lips, lowered gaze, and subdued facial expressions", Keyword = "sad" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "calm", 
+                            MentionCount = 1, 
+                            SentimentType = "negative",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "Lisa K.", Date = DateTime.Now.AddDays(-15), Comment = "Based on AI emotion recognition, the subject exhibited a calm emotional state, characterized by relaxed facial muscles, steady gaze, and composed demeanor.", Keyword = "calm" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "surprised", 
+                            MentionCount = 1, 
+                            SentimentType = "positive",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "Tom H.", Date = DateTime.Now.AddDays(-10), Comment = "Based on AI emotion recognition, the subject exhibited a surprised emotional state, characterized by widened eyes, raised eyebrows, and slightly open mouth.", Keyword = "surprised" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "disgusted", 
+                            MentionCount = 1, 
+                            SentimentType = "positive",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "Jim B.", Date = new DateTime(2021, 1, 29), Comment = "Based on AI emotion recognition, the subject exhibited a disgusted emotional state, characterized by wrinkled nose, raised upper lip, and facial tension.", Keyword = "disgusted" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "angry", 
+                            MentionCount = 1, 
+                            SentimentType = "negative",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "Emma W.", Date = DateTime.Now.AddDays(-5), Comment = "Based on AI emotion recognition, the subject exhibited an angry emotional state, characterized by furrowed brows, tightened jaw muscles, and intense or glaring facial expressions.", Keyword = "angry" }
+                            }
+                        },
+                        new KeywordModifier 
+                        { 
+                            Keyword = "happy", 
+                            MentionCount = 1, 
+                            SentimentType = "positive",
+                            Mentions = new List<KeywordMention>
+                            {
+                                new KeywordMention { UserName = "James R.", Date = DateTime.Now.AddDays(-2), Comment = "Based on AI emotion recognition, the subject exhibited a happy emotional state, characterized by smiling facial expressions, raised cheeks, and bright eye contact", Keyword = "happy" }
+                            }
+                        }
+                    }
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                // Return a simple error response if view fails
+                return Content($"An error occurred: {ex.Message}. Please contact support.");
+            }
+        }
     }
 }
