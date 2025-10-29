@@ -5872,6 +5872,10 @@ namespace Risebird.Repository
                             }
                             else if (isApi)
                             {
+                                if (string.IsNullOrWhiteSpace(result))
+                                {
+                                    result = "";
+                                }
                                 var resultArr = result.Split("|");
                                 var irfId = Convert.ToInt32(resultArr?.Last());
                                 var candidateId = 0;
