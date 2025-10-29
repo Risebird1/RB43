@@ -1357,17 +1357,15 @@
     </script>
 }
 
-
-
 <script>
     let mediaRecorderAudio;
     let audioChunks = [];
     const recordBtn = document.getElementById("recordBtn");
     const audioInput = document.getElementById("audioInput");
     const videoInput = document.getElementById("videoInput");
-    const form = document.querySelector("form");
+    const form = document.querySelector("form"); // 🔥 grabs the first form on the page
     const overlay = document.getElementById("waitOverlay");
-    const recordingOverlay = document.getElementById("recordingOverlay");
+        const recordingOverlay = document.getElementById("recordingOverlay");
     function showRecordingOverlay() {
         if (recordingOverlay) recordingOverlay.style.display = "flex";
     }
@@ -1378,32 +1376,76 @@
         if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorderAudio = new MediaRecorder(stream);
-            mediaRecorderAudio.ondataavailable = e => { audioChunks.push(e.data); };
+
+            mediaRecorderAudio.ondataavailable = e => {
+                audioChunks.push(e.data);
+            };
+
             mediaRecorderAudio.onstop = async () => {
                 timerStopped = true;
                 clearInterval(countdownInterval);
+
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+
+                // populate the file input with blob data
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 audioInput.files = dataTransfer.files;
+
                 audioChunks = [];
                 recordBtn.textContent = "⭕";
                 recordBtn.setAttribute('data-tooltip', 'Record Audio');
-                hideRecordingOverlay();
                 overlay.style.display = "flex";
                 stopRecording();
+                // 🔥 Submit the form automatically
+                form.submit();
             };
+
             mediaRecorderAudio.start();
             startRecording();
-            showRecordingOverlay();
             recordBtn.textContent = "☐";
             recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
-        } else if (mediaRecorderAudio.state === "recording") {
-            mediaRecorderAudio.stop();
+        }
+        else if (mediaRecorderAudio.state === "recording") {
+            // Show confirmation dialog - recording continues until user decides
+            Swal.fire({
+                title: 'Submit Response?',
+                text: 'Are you sure you want to submit your response?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4eda92',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Submit Your Response',
+                cancelButtonText: 'Cancel',
+                reverseButtons: false,
+                focusConfirm: true
+            }).then((result) => {
+                // Check for both new and old SweetAlert versions
+                if (result.isConfirmed || result.value === true) {
+                    // User clicked Submit Recording - stop recording
+                    if (mediaRecorderAudio && mediaRecorderAudio.state === "recording") {
+                        console.log("Calling mediaRecorderAudio.stop()");
+                        mediaRecorderAudio.stop();
+                    } else {
+                        console.log("ERROR: MediaRecorder not active or null");
+                    }
+                } else if (result.isDismissed || result.value === false) {
+                    // User clicked Cancel or dismissed - recording continues
+                    console.log("=== CANCEL CLICKED ===");
+                    console.log("User cancelled, recording continues...");
+                } else {
+                    console.log("=== UNKNOWN RESULT ===");
+                    console.log("Unexpected result:", result);
+                }
+            });
         }
     });
 </script>
+
+
+
+
 
 
 <script>
@@ -1445,12 +1487,32 @@
 
         function submitForm() {
             if (textarea && textarea.value.trim().length > 0 && form) {
+                // Show confirmation dialog before submitting text answer
+                Swal.fire({
+                    title: 'Submit Answer?',
+                    text: 'Are you sure you want to submit your text answer?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4eda92',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Submit Answer',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: false,
+                    focusConfirm: true
+                }).then((result) => {
+                    if (result.isConfirmed || result.value === true) {
+                        // User confirmed - submit the form
                 showLoading();
                 if (sendBtn) {
                     sendBtn.style.opacity = '0.7';
                     sendBtn.style.transform = 'scale(0.95)';
                 }
                 form.submit();
+                    } else {
+                        // User cancelled - do nothing
+                        console.log("Text answer submission cancelled");
+                    }
+                });
             }
         }
 
@@ -1524,7 +1586,9 @@
     }
     function startRecording() {
         chunks = [];
-        let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
+        //let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
+        let options = { mimeType: 'video/mp4;codecs=avc1.42E01E,mp4a.40.2' };
+
         try {
             mediaRecorder = new MediaRecorder(window.stream, options);
         } catch (e) {
@@ -1544,7 +1608,7 @@
             dataTransfervideo.items.add(filevideo);
             videoInput.files = dataTransfervideo.files;
             chunks = [];
-            hideRecordingOverlay();
+          // hideRecordingOverlay();
             form.submit();
         }
         mediaRecorder.start();
