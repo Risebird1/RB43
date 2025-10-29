@@ -36,7 +36,7 @@ declare @UnfilledMeetingStatusCount int = (select Count(distinct im.id) from Int
  left join UserList uli on uli.EmailId=im.interviewer    
  left join UserList ulc on ulc.id=IRF.RisebirdHr    
  where confirmationStatus=1 and        
- interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid)        
+ interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid and Isnull(IRF.IsAIInterview,0)=0)        
         
  declare @UnfilledCommentsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId                  
  left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and isAutoCancelled=1  and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid )        
@@ -226,9 +226,7 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and
 End    
 set @UnassignedInterviewsCount  = (select Count(distinct im.id) from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id  where confirmationStatus=1 and interviewer is null and ic.MeetingStatus=2 and DATEDIFF(DAY, interviewDate, @currentdate)<1 )        
         
-set @UnfilledMeetingStatusCount = (select Count(distinct im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2
-  
-) and DATEDIFF(DAY, interviewDate, @currentdate)<7 )        
+set @UnfilledMeetingStatusCount = (select Count(distinct im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id Join IRF on IRF.IRFId=im.IRFId where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and Isnull(IRF.IsAIInterview,0)=0)        
         
  set @UnfilledCommentsCount = (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, @currentdate)<7 )        
         

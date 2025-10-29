@@ -1518,6 +1518,21 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
                     cmdCreateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsAIInterview", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsAIInterview"].Value = irfDetails.IsAIInterview;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
+
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
+
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -5857,6 +5872,10 @@ namespace Risebird.Repository
                             }
                             else if (isApi)
                             {
+                                if (string.IsNullOrWhiteSpace(result))
+                                {
+                                    result = "";
+                                }
                                 var resultArr = result.Split("|");
                                 var irfId = Convert.ToInt32(resultArr?.Last());
                                 var candidateId = 0;
