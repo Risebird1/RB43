@@ -47,13 +47,14 @@ namespace Risebird.Web.Controllers
         private readonly ISynthesiaTextToVideoService _synthesiaTextToVideoService;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IIRFService _iRFService;
+        private readonly IAWSRekognitionService _aWSRekognitionService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
-            IIRFService iRFService)
+            IIRFService iRFService, IAWSRekognitionService aWSRekognitionService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -66,6 +67,7 @@ namespace Risebird.Web.Controllers
             _synthesiaTextToVideoService = synthesiaTextToVideoService;
             _pdfReaderHelper = pdfReaderHelper;
             _iRFService = iRFService;
+            _aWSRekognitionService = aWSRekognitionService;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -889,6 +891,9 @@ namespace Risebird.Web.Controllers
                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
                     if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
                     {
+
+                        //var key = await _aWSRekognitionService.UploadVideoAsync(model.VideoFile);
+                        //var faceDetection = await _aWSRekognitionService.AnalyzeVideoAsync(key);
                         var file = model.VideoFile;
                         var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".mp4";
                         //await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
@@ -1437,5 +1442,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+
     }
 }

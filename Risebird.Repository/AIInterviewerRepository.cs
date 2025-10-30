@@ -542,5 +542,63 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<bool> SaveSentimentAnalysis(VideoSentimentAnalysis obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@biqvId", obj.biqvId);
+                    parameters.Add("@FEAR", obj.FEAR);
+                    parameters.Add("@CONFUSED", obj.CONFUSED);
+                    parameters.Add("@SAD", obj.SAD);
+                    parameters.Add("@CALM", obj.CALM);
+                    parameters.Add("@SURPRISED", obj.SURPRISED);
+                    parameters.Add("@DISGUSTED", obj.DISGUSTED);
+                    parameters.Add("@ANGRY", obj.ANGRY);
+                    parameters.Add("@HAPPY", obj.HAPPY);
+                    parameters.Add("@CreatedAt", DateTime.Now);
+                    parameters.Add("@CreatedBy", obj.CreatedBy);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveSentimentAnalysis", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@biqvId", videoId);
+                    var result = await SqlMapper.QueryAsync<VideoSentimentAnalysis>(con, "usp_GetSentimentAnalysisById", parameters,
+                         commandType: CommandType.StoredProcedure, commandTimeout: 150);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

@@ -7290,6 +7290,37 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
         #endregion
-        
+        public async Task<IActionResult> GetSentimentAnalysis(int videoId, bool isRedo = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+
+                        return View();
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
     }
 }

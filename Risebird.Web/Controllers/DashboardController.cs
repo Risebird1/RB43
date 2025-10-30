@@ -59,6 +59,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateRepository _candidateRepository;
         private readonly IValidationHelper _validationHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IAWSRekognitionService _aWSRekognitionService;
 
         //private readonly IIRFService _irfService;
 
@@ -70,7 +71,8 @@ namespace Risebird.Web.Controllers
             IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository,
             ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper, IIRFService irfService,
             ICandidateRepository candidateRepository, IPdfReaderHelper pdfReaderHelper,
-            IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai, IAffIndaResumeParserHelper affIndaResumeParserHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai, 
+            IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -97,6 +99,7 @@ namespace Risebird.Web.Controllers
             _validationHelper = validationHelper;
             _ai = ai;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _aWSRekognitionService = aWSRekognitionService;
         }
 
         [Authorize]
@@ -114,6 +117,13 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        //var videoUrl = "https://risebirdportal.blob.core.windows.net/botinterviewvideo/dbf97ddf-838d-439c-94e5-c079863e5f7f202510241703490521.mp4?sv=2024-11-04&spr=https&st=2025-10-24T11%3A33%3A49Z&se=2026-05-24T11%3A33%3A49Z&sr=c&sp=r&sig=iY%2BfFYOJ%2Fm0kVU0Llg0tsau9WUUInSAAlarLm7UkkYg%3D";
+                        //var key = await _aWSRekognitionService.UploadVideoAsync(videoUrl);
+
+                        ////key = "uploads/8207d478-a83f-4404-95b5-7eebbfcea380_dbf97ddf-838d-439c-94e5-c079863e5f7f202510241703490521.mp4";
+
+                        //string key = "uploads/Azure_Blob_Video_encoded.mp4";
+                        //var faceDetection = await _aWSRekognitionService.AnalyzeVideoAsync(key);
                         //for (int i = 0; i < 15; i++)
                         //{
                         //    //await ParseOpenAIResume();
