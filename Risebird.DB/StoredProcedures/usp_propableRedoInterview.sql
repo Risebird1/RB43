@@ -13,6 +13,7 @@ CREATE Procedure usp_propableRedoInterview
 @actionstatus varchar(50)
 AS  
 BEGIN  
+Declare @currentdate datetime=DateAdd(Minute,330,Getdate())
 if(@actionstatus='PropableRedo')
 begin
 ;with CTE as(Select im.id,'deficitmorethan10' as Type  
@@ -98,7 +99,7 @@ left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.Compa
 Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime   
 left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt   
 Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf    
-where IsNull(IsProctor,0)=0 and ISNULL(im.RedoInterview,0)=0 and tq.id is null and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and IRF.IsAIInterview=1
+where IsNull(IsProctor,0)=0 and ISNULL(im.RedoInterview,0)=0 and tq.id is null and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and IRF.IsAIInterview=1 and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7
 GROUP BY im.IRFId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id,IRF.id,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END ,IRF.IsVideoRequired,uli.MobileNumber,imjt.Joinedon,imjf.FirstJoinedon,ulco.EmailId,pm.DurationSelectedMin,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating,Isnull(ulim.FirstName,''),(pm.DurationSelectedMin-ic.VideoDuration),IRF.IsAIInterview     
 order by Interviewdate desc 
 end
