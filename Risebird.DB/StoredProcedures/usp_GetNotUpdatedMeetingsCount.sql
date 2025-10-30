@@ -36,7 +36,7 @@ declare @UnfilledMeetingStatusCount int = (select Count(distinct im.id) from Int
  left join UserList uli on uli.EmailId=im.interviewer    
  left join UserList ulc on ulc.id=IRF.RisebirdHr    
  where confirmationStatus=1 and        
- interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid)        
+ interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid and Isnull(IRF.IsAIInterview,0)=0)        
         
  declare @UnfilledCommentsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId                  
  left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and isAutoCancelled=1  and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid )        
@@ -45,8 +45,6 @@ declare @UnfilledMeetingStatusCount int = (select Count(distinct im.id) from Int
  left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate and ulsh.Emailid= @Emailid)        
         
  declare @UnAttendedZoomLink int = (Select Count(*) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1                       
-  
-   
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid                   
 join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid                  
 join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid                
@@ -55,19 +53,16 @@ dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate())
 and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate()))        
         
 declare @MissingVideoLink int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId                  
- left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh
-.Emailid= @Emailid)        
+ left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid and IsNull(IRF.IsAIInterview,0)=0)        
         
 declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateResume cr join irf on irf.id = cr.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId             
  left join UserList ulsh on ulsh.id=sh.Userid join UserList ulc on ulc.id=irf.RisebirdHr where IsnUll(cr.Isprocessed,0)=0 and ulc.Emailid= @Emailid)        
         
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId            
 join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
- 
-       
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1     
 left join UserList ulco on IRF.RisebirdHr=ulco.id    
-where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulco.Emailid= @Emailid)        
+where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulco.Emailid= @Emailid and IsNull(IRF.IsAIInterview,0)=0)        
           
 declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4      
  and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)        
@@ -231,9 +226,7 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and
 End    
 set @UnassignedInterviewsCount  = (select Count(distinct im.id) from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id  where confirmationStatus=1 and interviewer is null and ic.MeetingStatus=2 and DATEDIFF(DAY, interviewDate, @currentdate)<1 )        
         
-set @UnfilledMeetingStatusCount = (select Count(distinct im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2
-  
-) and DATEDIFF(DAY, interviewDate, @currentdate)<7 )        
+set @UnfilledMeetingStatusCount = (select Count(distinct im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id Join IRF on IRF.IRFId=im.IRFId where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and Isnull(IRF.IsAIInterview,0)=0)        
         
  set @UnfilledCommentsCount = (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, @currentdate)<7 )        
         
@@ -244,21 +237,13 @@ left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmissi
 join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid                  
 where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate()))        
         
-set @MissingVideoLink = (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,
-  
-    
-@currentdate)<7)        
+set @MissingVideoLink = (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id Join IRF on IRF.IRFId=im.IRFId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and IsNull(IRF.IsAIInterview,0)=0)       
         
 set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where IsnUll(Isprocessed,0)=0)        
         
-set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeetings im join IRF on im.IRFId=im.IRFId join InterviewComments ic on im.id=ic.InterviewId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=
-  
-    
-uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id       
+set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeetings im join IRF on im.IRFId=im.IRFId join InterviewComments ic on im.id=ic.InterviewId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id       
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)    
-  
-   
-and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0)        
+and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and IsNull(IRF.IsAIInterview,0)=0)        
         
 set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)        
         

@@ -4249,14 +4249,7 @@ namespace Risebird.Business
                         {
                             int irfId = Convert.ToInt32(row.ItemArray[2].ToString());
                             int candidateId = Convert.ToInt32(row.ItemArray[3].ToString());
-                            var irf = _irfRepository.GetIRFbyId(irfId, isStaging);
-                            var calendlyLink = irf.CalendlyLink;
-                            var jdLink = irf.JDLink;
-                            var client = await _clientService.GetClient(irf.ClientId, isStaging);
-                            //var irfClientUsers = _irfRepository.GetTransClientUser(irf.id, isStaging).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                            var irfClientUsers = new List<TransClientUser>();
-                            string primarySkill = string.Empty;
-                            primarySkill = irf.JDTiltle.Split("|")[0];
+
                             var canOnboardingStatus = new CandidateOnboardingStatus();
                             string value = row.ItemArray[1].ToString();
                             string candidateEmail = row.ItemArray[0].ToString();
@@ -4265,7 +4258,14 @@ namespace Risebird.Business
 
                             if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                             {
-
+                                var irf = _irfRepository.GetIRFbyId(irfId, isStaging);
+                                var calendlyLink = irf.CalendlyLink;
+                                var jdLink = irf.JDLink;
+                                var client = await _clientService.GetClient(irf.ClientId, isStaging);
+                                //var irfClientUsers = _irfRepository.GetTransClientUser(irf.id, isStaging).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                                var irfClientUsers = new List<TransClientUser>();
+                                string primarySkill = string.Empty;
+                                primarySkill = irf.JDTiltle.Split("|")[0];
                                 canOnboardingStatus.onboardingStatus = "successful";
                                 if (candidateEmail != null && calendlyLink != null)
                                 {
@@ -4429,7 +4429,7 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e, "AddCandidateAPI");
                 return null;
             }
         }

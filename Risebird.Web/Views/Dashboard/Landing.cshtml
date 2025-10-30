@@ -1,0 +1,369 @@
+﻿@model Risebird.Entities.ViewModel.DashboardVM
+@using Risebird.Entities.Data;
+@using Risebird.Entities.Enum;
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<div>Dashboard Landing</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css?v=2024" defer>
+
+<style>
+    .mini-dashboard {
+        background: #f8faff;
+        min-height: 100vh;
+        padding: 15px 15px 0px 95px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .dashboard-header {
+        background:rgb(210 227 240);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .dashboard-title {
+        color: #000;
+        font-size: 1.8rem;
+        font-weight: 500;
+        margin: 0;
+    }
+    
+    .dashboard-subtitle {
+        color: rgb(113 100 100 / 80%);
+        font-size: 1.3rem;
+        margin-top: 5px;
+    }
+    
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        font-size: 18px;
+        color: white;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #2c3e50;
+    }
+    
+    .stat-label {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .qc-icon { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .status-icon { background: linear-gradient(135deg, #3498db, #2980b9); }
+
+    .status-icon .fa-clock:before {
+        position:relative;
+        left:0px;
+        }
+    .unassigned-icon { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .missed-icon { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    
+    .actions-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .actions-title {
+        color: #2c3e50;
+        font-size:2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
+        gap:5px;
+    }
+    
+    .action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #42a5f5 100%);
+        color: white!important;
+        border: none;
+        border-radius: 8px;
+        padding: 15px 20px;
+        font-size:13px;
+        font-weight: 500;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        cursor: pointer;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+     .action-btn.add { background: linear-gradient(135deg, #27ae60b3, #2ecc71);box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3); }
+    .action-btn.add:hover { box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4); }
+
+    .action-btn.edit {background: linear-gradient(135deg, #f39c1299, #e67e22d9);box-shadow: 0 2px 10px rgba(243, 156, 18, 0.3);}
+    .action-btn.edit:hover { box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4); }
+    .action-btn.assessment {background: linear-gradient(135deg, #8e2ab775, #b992c9);box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);}
+    .action-btn.assessment:hover { box-shadow: 0 6px 20px rgba(142, 68, 173, 0.4); }
+    
+    .action-btn.emergency { background: linear-gradient(135deg, #e74c3c, #c0392b); box-shadow: 0 2px 10px rgba(231, 76, 60, 0.3); }
+    .action-btn.emergency:hover { box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4); }
+    
+    .action-btn.dashboard { background: linear-gradient(135deg, #34495e, #2c3e50); box-shadow: 0 2px 10px rgba(52, 73, 94, 0.3); }
+    .action-btn.dashboard:hover { box-shadow: 0 6px 20px rgba(52, 73, 94, 0.4); }
+    
+    .btn-icon {
+        font-size: 1.5rem;
+    }
+    
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #ecf0f1;
+    }
+    
+    .quick-stat {
+        text-align: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .quick-stat-number {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .quick-stat-label {
+        font-size: 0.7rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    @@media (max-width: 768px) {
+        .mini-dashboard {
+            padding: 10px;
+        }
+        
+        .stats-container {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-card {
+            padding: 15px;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+        }
+        
+        .dashboard-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="mini-dashboard">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">📊 Dashboard Landing</h1>
+        <p class="dashboard-subtitle">Quick access to key metrics and essential actions</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-container">
+        <!-- QC Pending -->
+        <div class="stat-card" onclick="OpenRibbonDetails('QCPendingReport')">
+            <div class="stat-icon qc-icon">
+                <i class="fa fa-clipboard-check"></i>
+            </div>
+            <div class="stat-number">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</div>
+            <div class="stat-label">QC Pending</div>
+        </div>
+        
+        <!-- Status Pending -->
+        <div class="stat-card" onclick="OpenRibbonDetails('MeetingStatus')">
+            <div class="stat-icon status-icon">
+                <i class="fa fa-clock"></i>
+            </div>
+            <div class="stat-number">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</div>
+            <div class="stat-label">Status Pending</div>
+        </div>
+        
+        <!-- Unassigned Interviews -->
+        <div class="stat-card" onclick="OpenRibbonDetails('InterviewCount')">
+            <div class="stat-icon unassigned-icon">
+                <i class="fa fa-user-times"></i>
+            </div>
+            <div class="stat-number">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</div>
+            <div class="stat-label">Unassigned</div>
+        </div>
+        
+        <!-- Missed Candidates -->
+        <div class="stat-card" onclick="MissedCandidate()">
+            <div class="stat-icon missed-icon">
+                <i class="fa fa-user-slash"></i>
+            </div>
+            <div class="stat-number">@Model.NotUpdatedMeetingsObj.MissedCandidateCount</div>
+            <div class="stat-label">Missed</div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="actions-container">
+        <h2 class="actions-title">⚡ Quick Actions</h2>
+        
+        <div class="actions-grid">
+            <!-- MAIN DASHBOARD -->
+            <a href="@Url.Action("Index", "Dashboard")" class="action-btn dashboard" target="_blank">
+                <i class="fa fa-tachometer-alt btn-icon"></i>
+                <span>Main Dashboard</span>
+            </a>
+            <!-- EDIT SKILL CHANNELS -->
+            @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
+            {
+                <a href="@Url.Action("IRFDetails", "IRF")" class="action-btn edit" target="_blank">
+                    <i class="fa fa-edit btn-icon"></i>
+                    <span>Edit Skill Channels</span>
+                </a>
+            }
+            @if (ViewBag.ProfileName != "CuratedUser" && ViewBag.IsClientUser == false && ViewBag.ProfileName != "Recruiter")
+            {
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
+                {
+                    <!-- ADD SKILL CHANNEL -->
+                    <a href="@Url.Action("Add", "IRF")" class="action-btn add" target="_blank">
+                        <i class="fa fa-plus btn-icon"></i>
+                        <span>Add Skill Channel</span>
+                    </a>
+                    
+                    <!-- LEAD INTERVIEWERS -->
+                    <a href="@Url.Action("LeadInterviewer", "Interviewer", new { uniqueid = "74206543283756" })" class="action-btn" target="_blank">
+                        <i class="fa fa-user-tie btn-icon"></i>
+                        <span>Lead Interviewers</span>
+                    </a>
+                }
+                
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "InterviewerManagement")
+                {
+                    <!-- ASSESSMENT GROUPS -->
+                    <a href="@Url.Action("InterviewerEntitle", "IRF")" class="action-btn assessment" target="_blank">
+                        <i class="fa fa-users btn-icon"></i>
+                        <span>Assessment Groups</span>
+                    </a>
+                }
+            }
+            
+            <!-- EMERGENCY DASHBOARD -->
+@*             @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+            {
+                <a href="@Url.Action("EmergencyDashboard", "Dashboard")" class="action-btn emergency">
+                    <i class="fa fa-exclamation-triangle btn-icon"></i>
+                    <span>Emergency Dashboard</span>
+                </a>
+            }
+ *@            
+        </div>
+        
+     
+    </div>
+</div>
+
+<script>
+
+    function OpenRibbonDetails(actionstatus) {
+        if ('@ViewBag.ProfileName' == "Quality Controller") {
+            window.open("/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=2", "_blank");
+        } else {
+            window.open("/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=1","_blank");
+        }
+    }
+    
+    // MissedCandidate function - Exact copy from Emergency Dashboard
+    function MissedCandidate() {
+        window.open('/Dashboard/InterviewManagementDetails?returnBack=' + 1, '_blank');
+    }
+    
+    // Initialize tooltips and add click animations
+    document.addEventListener('DOMContentLoaded', function() {
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        // Add click animation to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    });
+</script>

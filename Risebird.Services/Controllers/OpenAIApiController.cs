@@ -147,17 +147,20 @@ namespace Risebird.Services.Controllers
                     var aIInterviewEvaluation = TryParseEvaluation(replies?.FirstOrDefault());
                     int? interviewStatus = null;
                     string interviewerComment = string.Empty;
-                    if (aIInterviewEvaluation != null)
+                    if (!string.IsNullOrWhiteSpace(meetingDetails.QuestionAnswerSetInJson))
                     {
-                        if(aIInterviewEvaluation.FinalVerdict?.ToLower() == "select")
+                        if (aIInterviewEvaluation != null)
                         {
-                            interviewStatus = 2;
+                            if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "select")
+                            {
+                                interviewStatus = 2;
+                            }
+                            else if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "reject")
+                            {
+                                interviewStatus = 3;
+                            }
+                            interviewerComment = aIInterviewEvaluation.FinalComment;
                         }
-                        else if(aIInterviewEvaluation.FinalVerdict?.ToLower() == "reject")
-                        {
-                            interviewStatus = 3;
-                        }
-                        interviewerComment = aIInterviewEvaluation.FinalComment;
                     }
                     isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(reportObject), input.isExit, interviewStatus, interviewerComment);
 

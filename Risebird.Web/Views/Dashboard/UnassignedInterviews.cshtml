@@ -44,49 +44,64 @@
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCZohoReview")
+                    @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                     {
-                        if (ViewBag.actionstatus == "QCPendingReport")
+                        if (ViewBag.actionstatus == "AIMeetingStatus")
                         {
-                            <div class="feedback-tab-ac"onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Meeting Review</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "QCReport")
-                        {
-                            <div class="feedback-tab"onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab-ac"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Meeting Review</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "PropableRedo")
-                        {
-                            <div class="feedback-tab"onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab-ac"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Meeting Review</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "QCZohoReview")
-                        {
-                            <div class="feedback-tab"onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab-ac"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Meeting Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('MeetingStatus','@ViewBag.ReturnBack')"><strong>Status Pending Interview</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('AIMeetingStatus','@ViewBag.ReturnBack')"><strong>AI Pending Interview</strong></div>
                         }
                         else
                         {
-                            <div class="feedback-tab"onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab"onclick="Changeurldetails('QCZohoReview','@ViewBag.ReturnBack')"><strong>Zoho Meeting Review</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('MeetingStatus','@ViewBag.ReturnBack')"><strong>Status Pending Interview</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('AIMeetingStatus','@ViewBag.ReturnBack')"><strong>AI Pending Interview</strong></div>
                         }
                     }
+
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview")
+                    {
+                        if (ViewBag.actionstatus == "QCPendingReport")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview','@ViewBag.ReturnBack')"><strong>AI Interviews</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCReport")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview','@ViewBag.ReturnBack')"><strong>AI Interviews</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "PropableRedo")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview','@ViewBag.ReturnBack')"><strong>AI Interviews</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCAIInterview")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCAIInterview','@ViewBag.ReturnBack')"><strong>AI Interviews</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo','@ViewBag.ReturnBack')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview','@ViewBag.ReturnBack')"><strong>AI Interviews</strong></div>
+                        }
+                    }
+
                 </div>
                 <div class="pull-right">
                     <div>
@@ -98,7 +113,7 @@
                         @if (ViewBag.Actiontype == 0)
                         {
                             @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" ||
-                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview"
+                           ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview"
                            || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount"
                            || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
                            || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "DeletedZoomMeetings"
@@ -108,7 +123,7 @@
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                                 </button>
                             }
-                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview"))
+                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "VideoLink" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview"))
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
@@ -127,7 +142,7 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                         {
                             <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
                         }
@@ -144,18 +159,19 @@
                                 </button>
                                 @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR")
                                 {
-                                    
+
                                     <a target="_blank" href="@Url.Action("UnassignedMags", "Dashboard")" title="MAGs of all Unassigned Interviews" style="text-decoration:none;display: inline-block;margin: 4px 4px;">
-                                        
+
                                         <span style="background:#abadabe3;padding: 4px 10px 8px 10px;border-radius: 0px;color: #fff;font-size: 15px;font-weight:700;text-transform: uppercase;">
                                             <font style="font-weight:400;text-transform: uppercase;font-size: 12px;">
                                                 MAGs of all Unassigned Interviews
-                                                <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path>
-                                                
+                                                <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                                    <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path>
+
                                                 </svg>
-                                            
+
                                             </font>
-                                        
+
                                         </span>
                                     </a>
                                 }
@@ -306,12 +322,12 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Action</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
 
                                                         <th>
@@ -364,7 +380,7 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
@@ -380,32 +396,32 @@
                                                         <th>Interviewer Late join</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                    //PotentialRiskInterviewCount not allow
+                                                        //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Interview Status</th>
                                                             }
@@ -414,7 +430,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -424,9 +440,9 @@
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -510,7 +526,7 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
@@ -570,12 +586,12 @@
 
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>
                                                             Action
@@ -619,7 +635,7 @@
                                                         <th>Join Time</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Interviewer Issues found in the Transcript</th>
                                                         <th>AI Transcript analysis score</th>
@@ -635,33 +651,33 @@
                                                         <th>Interviewer Late join</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport"  && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
 
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                    //PotentialRiskInterviewCount not allow
+                                                        //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
+                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                             {
                                                                 <th>Interview Status</th>
                                                             }
@@ -669,7 +685,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -680,9 +696,9 @@
                                                     }
 
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -766,11 +782,11 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
-                                                   
+
 
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
@@ -855,11 +871,11 @@
                                                                     </span>
                                                                 }
 
-                                                                @if(item.IsAIInterview)
-                                                                        {
-                                                                            <span class="interview_9">
-                                                                                <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                @if (item.IsAIInterview)
+                                                                {
+                                                                    <span class="interview_9">
+                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
                                                                                 <span>
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                                                                         <!-- Report/document shape -->
@@ -877,17 +893,19 @@
                                                                                         <line x1="7" y1="18" x2="17" y2="18"></line>
                                                                                     </svg>
                                                                                 </span>
-                                                                                    </button>
-                                                                                </a>
-                                                                            </span> //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                        }
-                                                                        else{
-                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                    </button>
-                                                                </a>
-                                                                        }
+                                                                            </button>
+                                                                        </a>
+                                                                    </span>
+                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                }
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top: -3px;">
                                                                     <span onclick="OpenRedoFormModel('@item.imid')" title="ReDo Reject Interview" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
@@ -934,11 +952,11 @@
                                                                     </span>
                                                                 }
 
-                                                                @if(item.IsAIInterview)
-                                                                        {
-                                                                            <span class="interview_9">
-                                                                                <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                @if (item.IsAIInterview)
+                                                                {
+                                                                    <span class="interview_9">
+                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
                                                                                 <span>
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                                                                         <!-- Report/document shape -->
@@ -956,18 +974,20 @@
                                                                                         <line x1="7" y1="18" x2="17" y2="18"></line>
                                                                                     </svg>
                                                                                 </span>
-                                                                                    </button>
-                                                                                </a>
-                                                                            </span> //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                        }
-                                                                        else{
+                                                                            </button>
+                                                                        </a>
+                                                                    </span>
+                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                }
+                                                                else
+                                                                {
 
-                                                                <a target="_blank" style="text-decoration:none;" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                    </button>
-                                                                </a>
-                                                                        }
+                                                                    <a target="_blank" style="text-decoration:none;" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                }
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
                                                                     <div onclick="PaymentSLADetails('@item.id','@item.candidateEmail','@item.interviewer',false,'PotentailRiskClient',false)" title="Palyment SLA" class="mdc-fab__icon material-icons">
                                                                         <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
@@ -1029,7 +1049,7 @@
                                                                 }
                                                             </td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
                                                             <td>
                                                                 @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
@@ -1052,7 +1072,7 @@
                                                             </td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td>
                                                                 <span>
@@ -1072,11 +1092,11 @@
                                                         </button>
                                                         </a> *@
 
-                                                        @if(item.IsAIInterview)
-                                                                        {
-                                                                            <span class="interview_9">
-                                                                                <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                @if (item.IsAIInterview)
+                                                                {
+                                                                    <span class="interview_9">
+                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
                                                                                 <span>
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                                                                         <!-- Report/document shape -->
@@ -1094,17 +1114,19 @@
                                                                                         <line x1="7" y1="18" x2="17" y2="18"></line>
                                                                                     </svg>
                                                                                 </span>
-                                                                                    </button>
-                                                                                </a>
-                                                                            </span> //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                        }
-                                                                        else{
-                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                    </button>
-                                                                </a>
-                                                                        }
+                                                                            </button>
+                                                                        </a>
+                                                                    </span>
+                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                }
                                                                 @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                                                                 {
                                                                     <span class="interview_9">
@@ -1171,11 +1193,11 @@
                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
                                                         </button>
                                                         </a> *@
-                                                        @if(item.IsAIInterview)
-                                                                        {
-                                                                            <span class="interview_9">
-                                                                                <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                @if (item.IsAIInterview)
+                                                                {
+                                                                    <span class="interview_9">
+                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
                                                                                 <span>
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                                                                         <!-- Report/document shape -->
@@ -1193,17 +1215,19 @@
                                                                                         <line x1="7" y1="18" x2="17" y2="18"></line>
                                                                                     </svg>
                                                                                 </span>
-                                                                                    </button>
-                                                                                </a>
-                                                                            </span> //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                        }
-                                                                        else{
-                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                    </button>
-                                                                </a>
-                                                                        }
+                                                                            </button>
+                                                                        </a>
+                                                                    </span>
+                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                }
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
                                                                     <span onclick="OpenRedoRequestFormModel('@item.imid','@item.intervieweStatusStatDesc','QCPendingReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
@@ -1293,7 +1317,7 @@
                                                             <td>
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
-                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                                 {
                                                                     <div>
 
@@ -1472,7 +1496,7 @@
                                                         {
                                                             <td>@item.Joinedon</td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td style="text-align:center">
 
@@ -1600,7 +1624,7 @@
                                                                 </td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
@@ -1615,11 +1639,11 @@
                                                                 <td></td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -1637,7 +1661,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
 
                                                             <td>
@@ -1653,10 +1677,10 @@
 
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
-                                                        //PotentialRiskInterviewCount not allow
+                                                            //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                             {
-                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
+                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                                 {
                                                                     @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                                     {
@@ -1674,7 +1698,7 @@
                                                                         }
                                                                     }
                                                                 }
-                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
+                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
                                                                 {
                                                                     @if (item.intervieweStatusStatDesc != "0")
                                                                     {
@@ -1688,7 +1712,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             <td>@item.Name</td>
                                                         }
@@ -1708,9 +1732,9 @@
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCZohoReview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
-                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
                                                             {
                                                                 <td>@item.ChannelOwner</td>
                                                             }
@@ -2126,7 +2150,7 @@
 
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCZohoReview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td>@item.ChannelOwner</td>
                                                         }

@@ -1093,6 +1093,7 @@ namespace Risebird.Web.Controllers
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;
                 reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
+                reportModel.resumeLink = meetingDetails.resumeLink;
                 reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
 
                 return View(reportModel);
@@ -1194,6 +1195,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsAdaptive = true;
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
+                reportModel.resumeLink = meetingDetails.resumeLink;
                 reportModel.InterviewDate = meetingDetails.interviewDate;
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;

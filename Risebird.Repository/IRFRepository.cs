@@ -1518,6 +1518,21 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
                     cmdCreateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsAIInterview", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsAIInterview"].Value = irfDetails.IsAIInterview;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
+
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
+
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -2471,9 +2486,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDTitleTwo", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@JDTitleTwo"].Value = irfDetails.JDTitleTwo;
-
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
                     //cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
@@ -5800,92 +5819,101 @@ namespace Risebird.Repository
                     {
                         foreach (var obj in candidateList)
                         {
-                            DynamicParameters parameters = new DynamicParameters();
-                            if (!isApi)
+                            try
                             {
-                                parameters.Add("@IRFId", obj.IRFId);
-
-                            }
-                            else
-                            {
-                                parameters.Add("@jobId", jobId);
-                            }
-
-                            parameters.Add("@countryCode", obj.countryCode);
-
-                            parameters.Add("@Name", obj.Name);
-                            parameters.Add("@EmailId", obj.EmailId);
-                            parameters.Add("@ResumeLink", obj.ResumeLink);
-                            parameters.Add("@Phone", obj.Phone);
-                            if (userId.HasValue)
-                            {
-                                parameters.Add("@AddedByUserId", userId);
-
-                            }
-                            else
-                            {
-                                parameters.Add("@AddedByUserId", obj.AddedByUserId);
-
-                            }
-                            parameters.Add("@date", DateTime.Now);
-                            if (isApi && !string.IsNullOrEmpty(ApiRequestedBy))
-                            {
-                                parameters.Add("@ClientHREmail", ApiRequestedBy);
-                                parameters.Add("@ProfileSource", ApiRequestedBy);
-                                parameters.Add("@WhatsappNumber", obj.Phone);
-                            }
-                            else
-                            {
-                                parameters.Add("@ClientHREmail", obj.ClientHREmail);
-                                parameters.Add("@ProfileSource", obj.ProfileSource);
-                                parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
-                            }
-                            parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
-                            parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
-
-
-                            await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
-
-                            var result = parameters.Get<string>("@operationStatus");
-                            if (isResumeParser)
-                            {
-                                dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
-                            }
-                            else if (isApi)
-                            {
-                                var resultArr = result.Split("|");
-                                var irfId = Convert.ToInt32(resultArr?.Last());
-                                var candidateId = 0;
-                                if (resultArr.Count() > 1)
+                                DynamicParameters parameters = new DynamicParameters();
+                                if (!isApi)
                                 {
-                                    candidateId = Convert.ToInt32(resultArr[1]);
+                                    parameters.Add("@IRFId", obj.IRFId);                                }
+                                else
+                                {
+                                    parameters.Add("@jobId", jobId);
                                 }
-                                dt.Rows.Add(obj.EmailId, resultArr[0], irfId, candidateId);
+                                parameters.Add("@countryCode", obj.countryCode);
+                                parameters.Add("@Name", obj.Name);
+                                parameters.Add("@EmailId", obj.EmailId);
+                                parameters.Add("@ResumeLink", obj.ResumeLink);
+                                parameters.Add("@Phone", obj.Phone);
+                                if (userId.HasValue)
+                                {
+                                    parameters.Add("@AddedByUserId", userId);
+                                }
+                                else
+                                {
+                                    parameters.Add("@AddedByUserId", obj.AddedByUserId);
+                                }
+                                parameters.Add("@date", DateTime.Now);
+                                if (isApi && !string.IsNullOrEmpty(ApiRequestedBy))
+                                {
+                                    parameters.Add("@ClientHREmail", ApiRequestedBy);
+                                    parameters.Add("@ProfileSource", ApiRequestedBy);
+                                    parameters.Add("@WhatsappNumber", obj.Phone);
+                                }
+                                else
+                                {
+                                    parameters.Add("@ClientHREmail", obj.ClientHREmail);
+                                    parameters.Add("@ProfileSource", obj.ProfileSource);
+                                    parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                                }
+                                parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
+                                parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+
+                                await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
+
+                                var result = parameters.Get<string>("@operationStatus");
+                                if (isResumeParser)
+                                {
+                                    dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
+                                }
+                                else if (isApi)
+                                {
+                                    var candidateId = 0;
+                                    var irfId = 0;
+                                    var candidateStatus = string.Empty;
+                                    if (string.IsNullOrWhiteSpace(result))
+                                    {
+                                        result = "";
+                                    }
+                                    var resultArr = result.Split("|");
+                                    if (!string.IsNullOrWhiteSpace(resultArr?.Last()))
+                                    {
+                                        irfId = Convert.ToInt32(resultArr?.Last());
+                                    }
+                                    if (resultArr.Count() > 1)
+                                    {
+                                        candidateId = Convert.ToInt32(resultArr[1]);
+                                    }
+                                    candidateStatus = resultArr[0];
+                                    if (string.IsNullOrWhiteSpace(candidateStatus))
+                                    {
+                                        candidateStatus = "Fail to Add Candidate at this time";
+                                    }
+                                    dt.Rows.Add(obj.EmailId, candidateStatus, irfId, candidateId);
+                                }
+                                else
+                                {
+                                    dt.Rows.Add(obj.EmailId, result);
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                dt.Rows.Add(obj.EmailId, result);
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, "AddCandidateAPI");
+                                dt.Rows.Add(obj.EmailId, "Fail to Add Candidate at this time", 0, 0);
                             }
                         }
                         return dt;
-
                     }
-
                     return null;
-
                 }
-
             }
-
             catch (SqlException e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e, "AddCandidateAPI");
                 return null;
             }
-
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e, "AddCandidateAPI");
                 return null;
             }
         }
@@ -6701,9 +6729,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
-
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoho";
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
@@ -6951,9 +6983,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
-
+                    var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
+                    if (irfDetails.IsAIInterview)
+                    {
+                        meetingPlatForm = MeetingPlatforms.AIInterview;
+                    }
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoho";
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = meetingPlatForm;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
