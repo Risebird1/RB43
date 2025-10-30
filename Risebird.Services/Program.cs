@@ -112,8 +112,8 @@ builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService
 builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
-
-
+builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 var app = builder.Build();
 

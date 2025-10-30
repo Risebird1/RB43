@@ -406,7 +406,8 @@ namespace Risebird.Entities.ViewModel
         public string QuestionAnswerSetInJson { get; set; }
         public int AadharVerificationId { get; set; }
         public int MatchScorePercentage { get; set; }
-  
+        public string CandidateAnswerVideoLink { get; set; } // in case of ai interview, fetches the link from the table BotInterviewQuestionVideos
+        public int CandidateAnswerVideoIdAI { get; set; }
     }
 
     public class VedioComments
