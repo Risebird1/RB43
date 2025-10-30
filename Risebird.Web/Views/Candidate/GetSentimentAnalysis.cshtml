@@ -1,0 +1,1601 @@
+@using Risebird.Entities.ViewModel
+@using System.Linq
+@model VideoSentimentAnalysis
+@{
+    ViewData["Title"] = "Sentiment Analysis";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .sentiment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+        /* Background decorative element */
+        .sentiment-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 165, 0, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+    .sentiment-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    /* Sentiment Score Card */
+    .sentiment-score-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px 20px 30px 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        min-width: 350px;
+        position: relative;
+        z-index: 2;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .sentiment-score-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+    .sentiment-score-header {
+        color: #000;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+    }
+
+    .sentiment-gauge-container {
+        position: relative;
+        height: 225px;
+        margin: 0 auto;
+    }
+
+    .sentiment-gauge {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        position: relative;
+        transform: rotate(-90deg);
+    }
+
+    .sentiment-gauge-circle {
+        width: 100%;
+        height: 100%;
+        fill: none;
+        stroke: #f0f0f0;
+        stroke-width: 12;
+    }
+
+    .sentiment-gauge-fill {
+        width: 100%;
+        height: 100%;
+        fill: none;
+        stroke: #FF6B35;
+        stroke-width: 12;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1.5s ease-out;
+        stroke-dasharray: 565.48;
+    }
+
+    .sentiment-score-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(90deg);
+        font-size: 3rem;
+        font-weight: 700;
+        color: #FF6B35;
+        line-height: 1;
+    }
+
+    /* Main Content Card */
+    .sentiment-main-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        overflow: visible;
+        flex: 1;
+        min-width: 500px;
+        position: relative;
+        z-index: 2;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .sentiment-main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+    .sentiment-card-header {
+        background: linear-gradient(135deg, #97caf4 0%, #5a9bd4 100%);
+        padding: 14px 24px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 17px;
+    }
+
+    .sentiment-card-body {
+        padding: 30px;
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        overflow: visible;
+        position: relative;
+    }
+
+    .sentiment-avatar {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #fcfcfc 0%, #dbeaf7bd 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 2px solid #afd1ee;
+        transition: transform 0.3s ease;
+    }
+
+        .sentiment-avatar:hover {
+            transform: scale(1.05);
+        }
+
+    .sentiment-avatar-icon {
+        width: 50px;
+        height: 50px;
+        stroke: #9abad6;
+        fill: none;
+        stroke-width: 2;
+    }
+
+    .sentiment-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sentiment-stars {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .sentiment-candidate-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sentiment-candidate-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+        letter-spacing: -0.3px;
+    }
+
+    .sentiment-candidate-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 0.875rem;
+        color: #666;
+    }
+
+    .sentiment-candidate-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .sentiment-candidate-detail-item svg {
+            width: 16px;
+            height: 16px;
+            color: #999;
+            flex-shrink: 0;
+        }
+
+    .sentiment-star {
+        width: 24px;
+        height: 24px;
+        color: #FF6B35;
+        transition: transform 0.2s ease;
+    }
+
+        .sentiment-star.empty {
+            color: #E0E0E0;
+        }
+
+        .sentiment-star:hover {
+            transform: scale(1.2);
+        }
+
+    .sentiment-rating-container {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Sentiment Metrics Section */
+    .sentiment-metrics {
+        background: #fff;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 6px;
+    }
+
+    .sentiment-metric-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .top-modifiers-section {
+        grid-column: 1 / -1;
+        margin-top: 8px;
+    }
+
+    .sentiment-metric-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #6eaade;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+    }
+
+    .sentiment-metric-value {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.2;
+        letter-spacing: -0.3px;
+    }
+
+    /* Sentiment gauge in metric section */
+    .sentiment-metric-gauge {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin-bottom: 8px;
+    }
+
+        .sentiment-metric-gauge svg {
+            width: 80px;
+            height: 80px;
+            transform: rotate(-90deg);
+        }
+
+    .sentiment-metric-gauge-circle {
+        fill: none;
+        stroke: #F0F0F0;
+        stroke-width: 5;
+    }
+
+    .sentiment-metric-gauge-fill {
+        fill: none;
+        stroke: #FF6B35;
+        stroke-width: 5;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s ease-out;
+        stroke-dasharray: 251.33; /* 2 * π * 40 */
+    }
+
+    .sentiment-metric-gauge-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(0deg);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #FF6B35;
+    }
+
+    .sentiment-metric-value.rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 2rem;
+        justify-content: flex-end;
+    }
+
+        .sentiment-metric-value.rating svg {
+            width: 20px;
+            height: 20px;
+            fill: #FFB300;
+            color: #FFB300;
+            flex-shrink: 0;
+        }
+
+    .modifiers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 0px;
+    }
+
+    .modifier-tag {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        border: 2px solid transparent;
+        flex-shrink: 0;
+        white-space: normal;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        min-width: 100px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+        .modifier-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #e0e0e0, #f5f5f5);
+            transition: all 0.3s ease;
+        }
+
+        .modifier-tag:hover {
+            background: linear-gradient(135deg, #d1e9fe 0%, #bad6ee99 100%);
+            color: #78a1c5;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(120, 161, 197, 0.25);
+            border-color: #87b2d7;
+        }
+
+        .modifier-tag.active {
+            background: linear-gradient(135deg, #FF6B35 0%, #ff8c52 100%);
+            color: #fff;
+            border-color: #FF6B35;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
+        }
+
+    /* Tag Content Structure */
+    .modifier-tag-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    .modifier-tag-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: capitalize;
+    }
+
+    /* Circular Progress Indicator */
+    .modifier-tag-gauge {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        margin: 4px 0;
+    }
+
+        .modifier-tag-gauge svg {
+            width: 50px;
+            height: 50px;
+            transform: rotate(-90deg);
+        }
+
+    .modifier-tag-gauge-circle {
+        fill: none;
+        stroke: #e0e0e0;
+        stroke-width: 4;
+    }
+
+    .modifier-tag-gauge-fill {
+        fill: none;
+        stroke-linecap: round;
+        stroke-width: 4;
+        transition: stroke-dashoffset 1s ease-out, stroke 0.3s ease;
+    }
+
+    .modifier-tag-gauge-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(0deg);
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #333;
+        line-height: 1;
+    }
+
+    .modifier-tag.active .modifier-tag-gauge-value {
+        color: #fff;
+    }
+
+    .modifier-tag.active .modifier-tag-gauge-circle {
+        stroke: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Mini Progress Bar */
+    .modifier-tag-progress {
+        width: 100%;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 4px;
+        position: relative;
+    }
+
+    .modifier-tag.active .modifier-tag-progress {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .modifier-tag-progress-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 1s ease-out, background 0.3s ease;
+        background: linear-gradient(90deg, #4a90e2, #5ba3f5);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .modifier-tag-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            left: -100%;
+        }
+
+        100% {
+            left: 100%;
+        }
+    }
+
+    /* Confidence Badge */
+    .modifier-tag-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #666;
+        margin-top: 2px;
+    }
+
+    .modifier-tag.active .modifier-tag-badge {
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
+    }
+
+    .modifier-tag-badge-icon {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4a90e2;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.7;
+            transform: scale(1.2);
+        }
+    }
+
+    .modifier-tag.active .modifier-tag-badge-icon {
+        background: #fff;
+    }
+
+    /* Color Variations based on confidence */
+    .modifier-tag.confidence-high .modifier-tag-gauge-fill {
+        stroke: #28a745;
+    }
+
+    .modifier-tag.confidence-high .modifier-tag-progress-fill {
+        background: linear-gradient(90deg, #28a745, #34ce57);
+    }
+
+    .modifier-tag.confidence-medium .modifier-tag-gauge-fill {
+        stroke: #ffc107;
+    }
+
+    .modifier-tag.confidence-medium .modifier-tag-progress-fill {
+        background: linear-gradient(90deg, #ffc107, #ffca2c);
+    }
+
+    .modifier-tag.confidence-low .modifier-tag-gauge-fill {
+        stroke: #dc3545;
+    }
+
+    .modifier-tag.confidence-low .modifier-tag-progress-fill {
+        background: linear-gradient(90deg, #dc3545, #e4606d);
+    }
+
+    .modifier-tag.confidence-normal .modifier-tag-gauge-fill {
+        stroke: #4a90e2;
+    }
+
+    .modifier-tag.confidence-normal .modifier-tag-progress-fill {
+        background: linear-gradient(90deg, #4a90e2, #5ba3f5);
+    }
+
+    /* Modifier Detail Popup */
+    .modifier-popup {
+        position: absolute;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        padding: 16px;
+        min-width: 300px;
+        max-width: 380px;
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+        pointer-events: none;
+        border: 1px solid #E0E0E0;
+        text-align: left;
+    }
+
+    /* Active popup that's moved to body */
+    .modifier-popup-active {
+        position: fixed !important;
+        z-index: 999999 !important;
+    }
+
+    /* Popup visibility is handled by JavaScript - CSS hover removed to prevent conflicts */
+
+    /* Connecting line between tag and popup */
+    .modifier-popup::before {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 24px;
+        width: 1px;
+        height: 8px;
+        background: #E0E0E0;
+    }
+
+    .modifier-popup::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 160px;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid #fff;
+    }
+
+    .modifier-popup-header {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #E0E0E0;
+        line-height: 1.4;
+    }
+
+    .modifier-popup-content {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        white-space: normal;
+    }
+
+    .modifier-popup-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #F5F5F5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid #E0E0E0;
+    }
+
+        .modifier-popup-avatar svg {
+            width: 24px;
+            height: 24px;
+            stroke: #999;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+    .modifier-popup-details {
+        flex: 1;
+        min-width: 0;
+        line-height: 16px;
+    }
+
+    .modifier-popup-user {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+        font-size: 0.9375rem;
+    }
+
+    .modifier-popup-date {
+        font-size: 0.75rem;
+        color: #999;
+        margin-bottom: 12px;
+    }
+
+    .modifier-popup-comment {
+        font-size: 0.8rem;
+        color: #666;
+        line-height: 1.3;
+    }
+
+        .modifier-popup-comment .highlight {
+            color: #949b97;
+            font-weight: 700;
+        }
+
+    /* Confidence Level Progress Bar */
+    .modifier-popup-confidence-level {
+        margin-bottom: 12px;
+        font-size: 0.8125rem;
+        color: #666;
+    }
+
+    .confidence-level-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        color: #999;
+        padding-top:
+        position: relative;
+    }
+    .confidence-level-label {
+       display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+    font-size: 0.85rem;
+    color: #958080;
+    position: relative;
+    text-transform: lowercase;
+    }
+
+    /* Up-arrow pointing to the gauge above */
+    .confidence-level-label::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgb(224 224 224);
+            pointer-events: none;
+    }
+
+    .confidence-level-value {
+        font-weight: 700;
+        color: #949b97; font-size: 0.875rem;
+    }
+
+    .confidence-progress-bar-container {
+        width: 100%;
+        height: 4px;
+        background-color: #F0F0F0;
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .confidence-progress-bar {
+        height: 100%;
+        background: linear-gradient(135deg, #4eda92 60%, #56e0cb 100%);
+        border-radius: 4px;
+        transition: width 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Popup confidence bar colors by level */
+    .confidence-progress-bar.confidence-high {
+        background: linear-gradient(90deg, #28a745, #34ce57);
+    }
+    .confidence-progress-bar.confidence-medium {
+        background: linear-gradient(90deg, #ffc107, #ffca2c);
+    }
+    .confidence-progress-bar.confidence-low {
+        background: linear-gradient(90deg, #dc3545, #e4606d);
+    }
+    .confidence-progress-bar.confidence-normal {
+        background: linear-gradient(90deg, #4a90e2, #5ba3f5);
+    }
+
+        .confidence-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 968px) {
+        .sentiment-metrics {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .sentiment-content {
+            flex-direction: column;
+        }
+
+        .sentiment-score-card {
+            width: 100%;
+            min-width: unset;
+        }
+
+        .sentiment-main-card {
+            width: 100%;
+            min-width: unset;
+        }
+
+        .sentiment-card-body {
+            flex-direction: column;
+        }
+
+        .sentiment-container::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .sentiment-metrics {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .sentiment-metric-value {
+            font-size: 2rem;
+        }
+
+        .sentiment-candidate-name {
+            font-size: 1.125rem;
+        }
+
+        .sentiment-candidate-details {
+            font-size: 0.8125rem;
+        }
+
+        .sentiment-stars {
+            gap: 10px;
+        }
+    }
+</style>
+
+<div class="sentiment-container">
+    <div class="sentiment-content">
+        <!-- Sentiment Score Card -->
+        <div class="sentiment-score-card">
+            <div class="sentiment-score-header">Candidate Answer</div>
+            <div class="sentiment-gauge-container">
+                <video controls="" style="width:300px;" class="rb-video-element">
+                    <source src="https://risebirdportal.blob.core.windows.net/botinterviewvideo/9d9b8ead-b25a-4852-9b73-69f6eec79744202507231648449713.mp4?sv=2024-11-04&amp;spr=https&amp;st=2025-07-23T11%3A18%3A45Z&amp;se=2026-02-23T11%3A18%3A45Z&amp;sr=c&amp;sp=r&amp;sig=ga5oJ9bC3qvMp9JYtWDxM3azsNFdXe3qn9EjFK5BOU8%3D" type="video/mp4">
+                    <source src="https://risebirdportal.blob.core.windows.net/botinterviewvideo/9d9b8ead-b25a-4852-9b73-69f6eec79744202507231648449713.mp4?sv=2024-11-04&amp;spr=https&amp;st=2025-07-23T11%3A18%3A45Z&amp;se=2026-02-23T11%3A18%3A45Z&amp;sr=c&amp;sp=r&amp;sig=ga5oJ9bC3qvMp9JYtWDxM3azsNFdXe3qn9EjFK5BOU8%3D" type="video/webm">
+                    Your browser does not support the video element.
+                </video>
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="sentiment-main-card">
+            <div class="sentiment-card-header">
+                Interview Sentiment Analysis
+            </div>
+            <div class="sentiment-card-body">
+                <div class="sentiment-avatar">
+                    <svg class="sentiment-avatar-icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                </div>
+                <div class="sentiment-details">
+                    <div class="sentiment-stars">
+                        <div class="sentiment-candidate-info">
+                            <div class="sentiment-candidate-name">@(Model.CandidateName ?? "Candidate")</div>
+                            <div class="sentiment-candidate-details">
+                                <div class="sentiment-candidate-detail-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                        <polyline points="22,6 12,13 2,6" />
+                                    </svg>
+                                    <span>@(Model.CandidateEmail ?? "N/A")</span>
+                                </div>
+                                <div class="sentiment-candidate-detail-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                    <span>@Model.InterviewDate.ToString("MMMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sentiment Metrics Section -->
+                    <div class="sentiment-metric-label">TOP SENTIMENTS :</div>
+                    <div class="sentiment-metrics">
+                        <div class="sentiment-metric-section top-modifiers-section">
+                            <div class="modifiers-grid">
+                                @if (Model.FEAR.HasValue && Model.FEAR.Value > 0)
+                                {
+                                    var fearValues = Model.FEAR ?? 0;
+                                    var fearPercent = System.Math.Round(fearValues, 1);
+                                    var circumference = 2 * System.Math.PI * 20; // radius = 20
+                                    var offset = circumference - (circumference * fearValues / 100);
+                                    <div class="modifier-tag @(fearValues >= 70 ? "confidence-high" : fearValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="fear">
+                                        <div class="modifier-tag-content">
+                                            <div class="modifier-tag-name">Fear</div>
+                                            <div class="modifier-tag-gauge">
+                                                <svg>
+                                                    <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                    <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                            style="stroke-dasharray: @circumference; stroke-dashoffset: @circumference;"
+                                                            data-percent="@fearValues"></circle>
+                                                </svg>
+                                            <div class="modifier-tag-gauge-value">@fearPercent%</div>
+                                            </div>
+                                            <div class="confidence-level-label">
+                                                <span>Confidence Level</span>
+                                                
+                                            </div>
+                                           
+                                           
+                                        </div>
+                                        <div class="modifier-popup">
+
+                                            <div class="modifier-popup-content">
+                                                <div class="modifier-popup-avatar">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="modifier-popup-details">
+                                                    <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                    <div class="modifier-popup-date">Detected Emotion: Fear</div>
+                                                    <div class="modifier-popup-confidence-level">
+                                                        <div class="confidence-level-title">
+                                                            <span>Confidence Level:</span>
+                                                            @{
+                                                                var fearValue = Model.FEAR ?? 0;
+                                                            }
+                                                            <span class="confidence-level-value">@fearPercent%</span>
+                                                        </div>
+                                                        <div class="confidence-progress-bar-container">
+                                                            <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@fearValue"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modifier-popup-comment">
+                                                        <span>Based on AI emotion recognition, the subject exhibited a state of <span class="highlight">fear</span>, characterized by tense facial expressions, widened eyes, and elevated alertness</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.CONFUSED.HasValue && Model.CONFUSED.Value > 0)
+                                {
+                                    var confusedValues = Model.CONFUSED ?? 0;
+                                    var confusedPercent = System.Math.Round(confusedValues, 1);
+                                    var confusedCircumference = 2 * System.Math.PI * 20;
+                                    <div class="modifier-tag @(confusedValues >= 70 ? "confidence-high" : confusedValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="confused">
+                                        <div class="modifier-tag-content">
+                                            <div class="modifier-tag-name">Confused</div>
+                                            <div class="modifier-tag-gauge">
+                                                <svg>
+                                                    <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                    <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                            style="stroke-dasharray: @confusedCircumference; stroke-dashoffset: @confusedCircumference;"
+                                                            data-percent="@confusedValues"></circle>
+                                                </svg>
+                                                <div class="modifier-tag-gauge-value">@confusedPercent%</div>
+                                            </div>
+                                            <div class="confidence-level-label">
+                                                <span>Confidence Level</span>
+                                               
+                                            </div>
+                                           
+                                        </div>
+                                        <div class="modifier-popup">
+
+                                            <div class="modifier-popup-content">
+                                                <div class="modifier-popup-avatar">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="modifier-popup-details">
+                                                    <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                    <div class="modifier-popup-date">Detected Emotion: Confused</div>
+                                                    <div class="modifier-popup-confidence-level">
+                                                        <div class="confidence-level-title">
+                                                            <span>Confidence Level:</span>
+                                                            @{
+                                                                var confusedValue = Model.CONFUSED ?? 0;
+                                                            }
+                                                            <span class="confidence-level-value">@confusedPercent%</span>
+                                                        </div>
+                                                        <div class="confidence-progress-bar-container">
+                                                            <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@confusedValue"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modifier-popup-comment">
+                                                        <span>Based on AI emotion recognition, the subject exhibited a <span class="highlight">confused</span> emotional state, characterized by uncertain facial expressions and mild cognitive hesitation</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.SAD.HasValue && Model.SAD.Value > 0)
+                                {
+                                    var sadValues = Model.SAD ?? 0;
+                                    var sadPercent = System.Math.Round(sadValues, 1);
+                                    var sadCircumference = 2 * System.Math.PI * 20;
+                                    <div class="modifier-tag @(sadValues >= 70 ? "confidence-high" : sadValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="sad">
+                                        <div class="modifier-tag-content">
+                                            <div class="modifier-tag-name">Sad</div>
+                                            <div class="modifier-tag-gauge">
+                                                <svg>
+                                                    <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                    <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                            style="stroke-dasharray: @sadCircumference; stroke-dashoffset: @sadCircumference;"
+                                                            data-percent="@sadValues"></circle>
+                                                </svg>
+                                                <div class="modifier-tag-gauge-value">@sadPercent%</div>
+                                            </div>
+                                            <div class="confidence-level-label">
+                                                <span>Confidence Level</span>
+                                              
+                                            </div>
+                                           
+                                        </div>
+                                        <div class="modifier-popup">
+
+                                            <div class="modifier-popup-content">
+                                                <div class="modifier-popup-avatar">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="modifier-popup-details">
+                                                    <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                    <div class="modifier-popup-date">Detected Emotion: Sad</div>
+                                                    <div class="modifier-popup-confidence-level">
+                                                        <div class="confidence-level-title">
+                                                            <span>Confidence Level:</span>
+                                                            @{
+                                                                var sadValue = Model.SAD ?? 0;
+                                                            }
+                                                            <span class="confidence-level-value">@sadPercent%</span>
+                                                        </div>
+                                                        <div class="confidence-progress-bar-container">
+                                                            <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@sadValue"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modifier-popup-comment">
+                                                        <span>Based on AI emotion recognition, the subject exhibited a <span class="highlight">sad</span> emotional state, characterized by downturned lips, lowered gaze, and subdued facial expressions</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @{
+                                    var calmValues = Model.CALM ?? 0;
+                                    var calmPercent = System.Math.Round(calmValues, 1);
+                                    var calmCircumference = 2 * System.Math.PI * 20;
+                                }
+                                <div class="modifier-tag @(calmValues >= 70 ? "confidence-high" : calmValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="calm">
+                                    <div class="modifier-tag-content">
+                                        <div class="modifier-tag-name">Calm</div>
+                                        <div class="modifier-tag-gauge">
+                                            <svg>
+                                                <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                        style="stroke-dasharray: @calmCircumference; stroke-dashoffset: @calmCircumference;"
+                                                        data-percent="@calmValues"></circle>
+                                            </svg>
+                                            <div class="modifier-tag-gauge-value">@calmPercent%</div>
+                                        </div>
+                                        <div class="confidence-level-label">
+                                            <span>Confidence Level</span>
+                                           
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="modifier-popup">
+
+                                        <div class="modifier-popup-content">
+                                            <div class="modifier-popup-avatar">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="modifier-popup-details">
+                                                <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                <div class="modifier-popup-date">Detected Emotion: Calm</div>
+                                                <div class="modifier-popup-confidence-level">
+                                                    <div class="confidence-level-title">
+                                                        <span>Confidence Level:</span>
+                                                        @{
+                                                            var calmValue = Model.CALM ?? 0;
+                                                        }
+                                                        <span class="confidence-level-value">@calmPercent%</span>
+                                                    </div>
+                                                    <div class="confidence-progress-bar-container">
+                                                        <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@calmValue"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="modifier-popup-comment">
+                                                    <span>Based on AI emotion recognition, the subject exhibited a <span class="highlight">calm</span> emotional state, characterized by relaxed facial muscles, steady gaze, and composed demeanor.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @{
+                                    var surprisedValues = Model.SURPRISED ?? 0;
+                                    var surprisedPercent = System.Math.Round(surprisedValues, 1);
+                                    var surprisedCircumference = 2 * System.Math.PI * 20;
+                                }
+                                <div class="modifier-tag @(surprisedValues >= 70 ? "confidence-high" : surprisedValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="surprised">
+                                    <div class="modifier-tag-content">
+                                        <div class="modifier-tag-name">Surprised</div>
+                                        <div class="modifier-tag-gauge">
+                                            <svg>
+                                                <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                        style="stroke-dasharray: @surprisedCircumference; stroke-dashoffset: @surprisedCircumference;"
+                                                        data-percent="@surprisedValues"></circle>
+                                            </svg>
+                                            <div class="modifier-tag-gauge-value">@surprisedPercent%</div>
+                                        </div>
+                                        <div class="confidence-level-label">
+                                            <span>Confidence Level</span>
+                                          
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="modifier-popup">
+
+                                    <div class="modifier-popup-content">
+                                        <div class="modifier-popup-avatar">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="modifier-popup-details">
+                                            <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                            <div class="modifier-popup-date">Detected Emotion: Surprised</div>
+                                            <div class="modifier-popup-confidence-level">
+                                                <div class="confidence-level-title">
+                                                    <span>Confidence Level:</span>
+                                                    @{
+                                                        var surprisedValue = Model.SURPRISED ?? 0;
+                                                    }
+                                                    <span class="confidence-level-value">@surprisedPercent%</span>
+                                                </div>
+                                                <div class="confidence-progress-bar-container">
+                                                    <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@(Model.SURPRISED ?? 0)"></div>
+                                                </div>
+                                            </div>
+                                            <div class="modifier-popup-comment">
+                                                <span>Based on AI emotion recognition, the subject exhibited a <span class="highlight">surprised</span> emotional state, characterized by widened eyes, raised eyebrows, and slightly open mouth.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                @{
+                                    var disgustedValues = Model.DISGUSTED ?? 0;
+                                    var disgustedPercent = System.Math.Round(disgustedValues, 1);
+                                    var disgustedCircumference = 2 * System.Math.PI * 20;
+                                }
+                                <div class="modifier-tag @(disgustedValues >= 70 ? "confidence-high" : disgustedValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="disgusted">
+                                    <div class="modifier-tag-content">
+                                        <div class="modifier-tag-name">Disgusted</div>
+                                        <div class="modifier-tag-gauge">
+                                            <svg>
+                                                <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                        style="stroke-dasharray: @disgustedCircumference; stroke-dashoffset: @disgustedCircumference;"
+                                                        data-percent="@disgustedValues"></circle>
+                                            </svg>
+                                            <div class="modifier-tag-gauge-value">@disgustedPercent%</div>
+                                        </div>
+                                        <div class="confidence-level-label">
+                                            <span>Confidence Level</span>
+                                           
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="modifier-popup">
+
+                                        <div class="modifier-popup-content">
+                                            <div class="modifier-popup-avatar">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="modifier-popup-details">
+                                                <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                <div class="modifier-popup-date">Detected Emotion: Disgusted</div>
+                                                <div class="modifier-popup-confidence-level">
+                                                    <div class="confidence-level-title">
+                                                        <span>Confidence Level:</span>
+                                                        @{
+                                                            var disgustedValue = Model.DISGUSTED ?? 0;
+                                                        }
+                                                        <span class="confidence-level-value">@disgustedPercent%</span>
+                                                    </div>
+                                                    <div class="confidence-progress-bar-container">
+                                                        <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@disgustedValue"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="modifier-popup-comment">
+                                                    <span>Based on AI emotion recognition, the subject exhibited a <span class="highlight">disgusted</span> emotional state, characterized by wrinkled nose, raised upper lip, and facial tension.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @{
+                                    var angryValues = Model.ANGRY ?? 0;
+                                    var angryPercent = System.Math.Round(angryValues, 1);
+                                    var angryCircumference = 2 * System.Math.PI * 20;
+                                }
+                                <div class="modifier-tag @(angryValues >= 70 ? "confidence-high" : angryValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="angry">
+                                    <div class="modifier-tag-content">
+                                        <div class="modifier-tag-name">Angry</div>
+                                        <div class="modifier-tag-gauge">
+                                            <svg>
+                                                <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                        style="stroke-dasharray: @angryCircumference; stroke-dashoffset: @angryCircumference;"
+                                                        data-percent="@angryValues"></circle>
+                                            </svg>
+                                            <div class="modifier-tag-gauge-value">@angryPercent%</div>
+                                        </div>
+                                        <div class="confidence-level-label">
+                                            <span>Confidence Level</span>
+                                            
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="modifier-popup">
+
+                                        <div class="modifier-popup-content">
+                                            <div class="modifier-popup-avatar">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="modifier-popup-details">
+                                                <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                <div class="modifier-popup-date">Detected Emotion: Angry</div>
+                                                <div class="modifier-popup-confidence-level">
+                                                    <div class="confidence-level-title">
+                                                        <span>Confidence Level:</span>
+                                                        @{
+                                                            var angryValue = Model.ANGRY ?? 0;
+                                                        }
+                                                        <span class="confidence-level-value">@angryPercent%</span>
+                                                    </div>
+                                                    <div class="confidence-progress-bar-container">
+                                                        <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@angryValue"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="modifier-popup-comment">
+                                                    <span>Based on AI emotion recognition, the subject exhibited an <span class="highlight">angry</span> emotional state, characterized by furrowed brows, tightened jaw muscles, and intense or glaring facial expressions.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @{
+                                    var happyValues = Model.HAPPY ?? 0;
+                                    var happyPercent = System.Math.Round(happyValues, 1);
+                                    var happyCircumference = 2 * System.Math.PI * 20;
+                                }
+                                <div class="modifier-tag @(happyValues >= 70 ? "confidence-high" : happyValues >= 40 ? "confidence-medium" : "confidence-low")" data-keyword="happy">
+                                    <div class="modifier-tag-content">
+                                        <div class="modifier-tag-name">Happy</div>
+                                        <div class="modifier-tag-gauge">
+                                            <svg>
+                                                <circle class="modifier-tag-gauge-circle" cx="25" cy="25" r="20"></circle>
+                                                <circle class="modifier-tag-gauge-fill" cx="25" cy="25" r="20"
+                                                        style="stroke-dasharray: @happyCircumference; stroke-dashoffset: @happyCircumference;"
+                                                        data-percent="@happyValues"></circle>
+                                            </svg>
+                                            <div class="modifier-tag-gauge-value">@happyPercent%</div>
+                                        </div>
+                                        <div class="confidence-level-label">
+                                            <span>Confidence Level</span>
+                                           
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="modifier-popup">
+
+                                        <div class="modifier-popup-content">
+                                            <div class="modifier-popup-avatar">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="modifier-popup-details">
+                                                <div class="modifier-popup-date">@Model.InterviewDate.ToString("MM/dd/yy")</div>
+                                                <div class="modifier-popup-date">Detected Emotion: Happy</div>
+                                                <div class="modifier-popup-confidence-level">
+                                                    <div class="confidence-level-title">
+                                                        <span>Confidence Level:</span>
+                                                        @{
+                                                            var happyValue = Model.HAPPY ?? 0;
+                                                        }
+                                                        <span class="confidence-level-value">@happyPercent%</span>
+                                                    </div>
+                                                    <div class="confidence-progress-bar-container">
+                                                        <div class="confidence-progress-bar" style="width: 0%;" data-confidence="@happyValue"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="modifier-popup-comment">
+                                                    <span>Based on AI emotion recognition, the subject exhibited a <span class="highlight">happy</span> emotional state, characterized by smiling facial expressions, raised cheeks, and bright eye contact</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    // Animate sentiment gauge on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        // Large gauge in score card
+        const gaugeFill = document.querySelector('.sentiment-gauge-fill');
+        if (gaugeFill) {
+            const score = parseInt(gaugeFill.getAttribute('data-score')) || 0;
+            const positiveScore = score > 0 ? score : 0;
+            const circumference = 565.48; // 2 * π * 90
+            const offset = circumference - (circumference * positiveScore / 100);
+
+            // Set initial value (full circle)
+            gaugeFill.style.strokeDashoffset = circumference.toString();
+
+            // Animate to actual value
+            setTimeout(() => {
+                gaugeFill.style.strokeDashoffset = offset.toString();
+            }, 100);
+        }
+
+        // Small gauge in metrics section
+        const metricGauge = document.querySelector('.sentiment-metric-gauge');
+        if (metricGauge) {
+            const score = parseInt(metricGauge.getAttribute('data-score')) || 0;
+            const positiveScore = score > 0 ? score : 0;
+            const circumference = 251.33; // 2 * π * 40
+            const offset = circumference - (circumference * positiveScore / 100);
+            const gaugeFillCircle = metricGauge.querySelector('.sentiment-metric-gauge-fill');
+
+            if (gaugeFillCircle) {
+                // Set initial value (full circle)
+                gaugeFillCircle.style.strokeDashoffset = circumference.toString();
+
+                // Animate to actual value
+                setTimeout(() => {
+                    gaugeFillCircle.style.strokeDashoffset = offset.toString();
+                }, 150);
+            }
+        }
+
+        // Animate modifier tag gauges and progress bars
+        const modifierTagGauges = document.querySelectorAll('.modifier-tag-gauge-fill');
+        modifierTagGauges.forEach((gauge, index) => {
+            const percent = parseFloat(gauge.getAttribute('data-percent')) || 0;
+            const circumference = 2 * Math.PI * 20; // radius = 20
+            const offset = circumference - (circumference * percent / 100);
+
+            setTimeout(() => {
+                gauge.style.strokeDashoffset = offset;
+            }, 200 + (index * 100));
+        });
+
+        // Animate modifier tag progress bars
+        const modifierTagProgressBars = document.querySelectorAll('.modifier-tag-progress-fill');
+        modifierTagProgressBars.forEach((bar, index) => {
+            const width = parseFloat(bar.getAttribute('data-width')) || 0;
+            setTimeout(() => {
+                bar.style.width = width + '%';
+            }, 300 + (index * 100));
+        });
+
+        // Alternative approach: Move popups to body element to avoid stacking context issues
+        const modifierTags = document.querySelectorAll('.modifier-tag');
+        modifierTags.forEach(tag => {
+            let activePopup = null;
+            let popupClone = null;
+            let hideTimeout = null;
+
+            tag.addEventListener('mouseenter', function () {
+                // Clear any pending hide timeout
+                if (hideTimeout) {
+                    clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+
+                const originalPopup = this.querySelector('.modifier-popup');
+                if (!originalPopup) return;
+
+                // Clone the popup and append to body to avoid parent container issues
+                if (!popupClone) {
+                    popupClone = originalPopup.cloneNode(true);
+                    popupClone.classList.add('modifier-popup-active');
+                    popupClone.style.display = 'none';
+                    document.body.appendChild(popupClone);
+
+                    // Set up popup hover handlers
+                    popupClone.addEventListener('mouseenter', function () {
+                        if (hideTimeout) {
+                            clearTimeout(hideTimeout);
+                            hideTimeout = null;
+                        }
+                        this.style.opacity = '1';
+                        this.style.display = 'block';
+                    });
+
+                    popupClone.addEventListener('mouseleave', function () {
+                        this.style.opacity = '0';
+                        this.style.visibility = 'hidden';
+                        this.style.display = 'none';
+                        this.style.maxHeight = '';
+                        this.style.overflowY = '';
+                    });
+                }
+
+                activePopup = popupClone;
+
+                // Show and measure
+                activePopup.style.display = 'block';
+                activePopup.style.visibility = 'visible';
+                activePopup.style.opacity = '0';
+                activePopup.style.position = 'fixed';
+                activePopup.style.zIndex = '999999';
+                activePopup.style.left = '-9999px';
+                activePopup.style.top = '-9999px';
+                activePopup.style.maxWidth = '380px';
+                activePopup.style.width = 'auto';
+
+                // Force layout
+                void activePopup.offsetWidth;
+
+                const rect = this.getBoundingClientRect();
+                const popupRect = activePopup.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const popupWidth = popupRect.width || 300;
+                const popupHeight = popupRect.height || 200;
+
+                // Calculate position
+                const centerX = rect.left + (rect.width / 2);
+                const popupLeft = centerX - (popupWidth / 2);
+                const popupRight = centerX + (popupWidth / 2);
+
+                let finalLeft;
+                if (popupRight > viewportWidth - 20) {
+                    finalLeft = viewportWidth - popupWidth - 20;
+                    if (finalLeft < 20) {
+                        finalLeft = 20;
+                        activePopup.style.maxWidth = (viewportWidth - 40) + 'px';
+                    }
+                } else if (popupLeft < 20) {
+                    finalLeft = 20;
+                } else {
+                    finalLeft = popupLeft;
+                }
+
+                // Vertical positioning - prioritize showing above for top row items
+                let finalTop;
+                const spaceBelow = viewportHeight - rect.bottom - 20;
+                const spaceAbove = rect.top - 20;
+
+                // Check if item is in top portion of viewport (first 30% or less than 150px from top)
+                const isTopRow = rect.top < (viewportHeight * 0.3) || rect.top < 150;
+
+                // If it's a top row item or there's more space above than below, show above
+                if (isTopRow || (spaceAbove >= popupHeight && spaceAbove > spaceBelow)) {
+                    finalTop = rect.top - popupHeight - 12;
+                    // If popup would go off top, adjust
+                    if (finalTop < 20) {
+                        // Show below with scrolling if there's minimum space
+                        finalTop = rect.bottom + 8;
+                        const maxHeight = viewportHeight - finalTop - 20;
+                        if (maxHeight > 100) {
+                            activePopup.style.maxHeight = maxHeight + 'px';
+                            activePopup.style.overflowY = 'auto';
+                        } else {
+                            // Very little space, position at top of viewport
+                            finalTop = 20;
+                            activePopup.style.maxHeight = (viewportHeight - 40) + 'px';
+                            activePopup.style.overflowY = 'auto';
+                        }
+                    } else {
+                        // Enough space above, show there
+                        activePopup.style.maxHeight = '';
+                        activePopup.style.overflowY = '';
+                    }
+                } else {
+                    // Show below (default)
+                    finalTop = rect.bottom + 8;
+                    const finalBottom = finalTop + popupHeight;
+                    if (finalBottom > viewportHeight - 20) {
+                        // Not enough space below, try showing above
+                        if (spaceAbove >= popupHeight) {
+                            finalTop = rect.top - popupHeight - 12;
+                            if (finalTop < 20) finalTop = 20;
+                            activePopup.style.maxHeight = '';
+                            activePopup.style.overflowY = '';
+                        } else {
+                            // No good option, show below with scroll
+                            const maxHeight = viewportHeight - finalTop - 20;
+                            if (maxHeight > 100) {
+                                activePopup.style.maxHeight = maxHeight + 'px';
+                                activePopup.style.overflowY = 'auto';
+                            } else {
+                                finalTop = Math.max(20, rect.top - popupHeight - 12);
+                                activePopup.style.maxHeight = '';
+                                activePopup.style.overflowY = '';
+                            }
+                        }
+                    } else {
+                        // Enough space below, show there
+                        activePopup.style.maxHeight = '';
+                        activePopup.style.overflowY = '';
+                    }
+                }
+
+                // Position and show
+                activePopup.style.left = finalLeft + 'px';
+                activePopup.style.top = finalTop + 'px';
+                activePopup.style.opacity = '1';
+                activePopup.style.pointerEvents = 'auto';
+
+                // Animate progress bars + apply level colors
+                const progressBars = activePopup.querySelectorAll('.confidence-progress-bar');
+                progressBars.forEach(bar => {
+                    bar.style.width = '0%';
+                    const confidenceValue = parseFloat(bar.getAttribute('data-confidence')) || 0;
+
+                    // apply color class based on value
+                    bar.classList.remove('confidence-high', 'confidence-medium', 'confidence-low', 'confidence-normal');
+                    if (confidenceValue >= 70) {
+                        bar.classList.add('confidence-high');
+                    } else if (confidenceValue >= 40) {
+                        bar.classList.add('confidence-medium');
+                    } else if (confidenceValue > 0) {
+                        bar.classList.add('confidence-low');
+                    } else {
+                        bar.classList.add('confidence-normal');
+                    }
+
+                    setTimeout(() => {
+                        bar.style.width = confidenceValue + '%';
+                    }, 100);
+                });
+            });
+
+            tag.addEventListener('mouseleave', function () {
+                if (activePopup) {
+                    // Delay hiding to allow mouse to move to popup
+                    hideTimeout = setTimeout(() => {
+                        if (activePopup) {
+                            activePopup.style.opacity = '0';
+                            activePopup.style.visibility = 'hidden';
+                            activePopup.style.display = 'none';
+                            activePopup.style.maxHeight = '';
+                            activePopup.style.overflowY = '';
+                            activePopup.style.maxWidth = '';
+                        }
+                    }, 100);
+                }
+            });
+        });
+    });
+</script>
+

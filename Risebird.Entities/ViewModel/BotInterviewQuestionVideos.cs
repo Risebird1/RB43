@@ -42,10 +42,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime InterviewDate { get; set; } = DateTime.Now;
         public string SessionId { get; set; } = string.Empty;
         public int InterviewId { get; set; } = 0;
-        public int SentimentScore { get; set; } = 0; // Range: -100 to +100
-        public int StarRating { get; set; } = 0; // Range: 1-5
-        public int Mentions { get; set; } = 0;
-        public double AverageRating { get; set; } = 0.0;
         public int id { get; set; }
 
         public int biqvId { get; set; }
@@ -69,24 +65,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedAt { get; set; }
 
         public string CreatedBy { get; set; } = string.Empty;
-        public List<KeywordModifier> TopModifiers { get; set; } = new List<KeywordModifier>();
-
     }
   
-    public class KeywordModifier
-    {
-        public string Keyword { get; set; } = string.Empty;
-        public int MentionCount { get; set; }
-        public string SentimentType { get; set; } = "neutral"; // "positive", "negative", "neutral"
-        public List<KeywordMention> Mentions { get; set; } = new List<KeywordMention>();
-    }
 
-    public class KeywordMention
-    {
-        public string UserName { get; set; } = string.Empty;
-        public DateTime Date { get; set; }
-        public string Comment { get; set; } = string.Empty;
-        public string Keyword { get; set; } = string.Empty;
-    }
 
 }

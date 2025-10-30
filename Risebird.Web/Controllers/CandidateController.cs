@@ -7290,6 +7290,57 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
         #endregion
-        
+
+
+        public async Task<IActionResult> GetSentimentAnalysis(int videoId, bool isRedo = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+
+                        var model = new VideoSentimentAnalysis
+                        {
+                            //CandidateName = meetingDetails.candidateName ?? "Candidate",
+                            //CandidateEmail = meetingDetails.candidateEmail ?? "",
+                            //InterviewDate = meetingDetails.interviewDate,
+                            //SessionId = seId.ToString(),
+                            //InterviewId = meetingDetails.InterviewId,
+                            CandidateName = "Chahat Gogia",
+                            CandidateEmail = "chahatgogia95@gmail.com",
+                            InterviewDate = DateTime.Now,
+                            FEAR = 81,
+                            CONFUSED = 13,
+                            SAD = 5,
+                            CALM = 1,
+                            DISGUSTED = 1,
+                            SURPRISED = 5,
+                            HAPPY = 0,
+                            ANGRY = 0,
+                        };
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
