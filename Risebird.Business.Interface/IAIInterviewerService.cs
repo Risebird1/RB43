@@ -24,5 +24,8 @@ namespace Risebird.Business.Interface
         Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId);
         Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer);
         Task<bool> UpdateMeetingCompletedStatusForAIInterview(string sid);
+        Task<VideoSentimentAnalysis> GenerateSentimentAnalysis(int videoId, string user, string videoUrl);
+        Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);
+        Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
     }
 }
