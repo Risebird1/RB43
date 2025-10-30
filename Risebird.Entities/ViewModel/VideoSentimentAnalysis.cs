@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -7,6 +8,13 @@ namespace Risebird.Entities.ViewModel
     /// </summary>
     public class VideoSentimentAnalysis
     {
+        public string CandidateName { get; set; } = string.Empty;
+        public string CandidateEmail { get; set; } = string.Empty;
+        public DateTime InterviewDate { get; set; } = DateTime.Now;
+        public string ResumeLink { get; set; } 
+        public string SessionId { get; set; } = string.Empty;
+        public int InterviewId { get; set; } = 0;
+        public string VideoUrl { get; set; }
         public int id { get; set; }
 
         public int biqvId { get; set; }

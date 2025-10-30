@@ -9,7 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_SaveSentimentAnalysis
-@SessionId varchar(200),
 @biqvId int,
 @FEAR float = null,
 @CONFUSED float = null,

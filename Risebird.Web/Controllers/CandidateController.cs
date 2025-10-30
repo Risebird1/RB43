@@ -7320,7 +7320,11 @@ namespace Risebird.Web.Controllers
                                 sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
                             }
                         }
-                        
+                        sentimentViewModel.CandidateEmail = meetingDetails.candidateEmail;
+                        sentimentViewModel.CandidateName = meetingDetails.candidateName;
+                        sentimentViewModel.InterviewDate = meetingDetails.interviewDate;
+                        sentimentViewModel.ResumeLink = meetingDetails.resumeLink;
+                        sentimentViewModel.VideoUrl = meetingDetails.CandidateAnswerVideoLink;
                         return View(sentimentViewModel);
                     }
                     else
