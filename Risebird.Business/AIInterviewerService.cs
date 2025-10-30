@@ -262,5 +262,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetAIInterviewSpecificDetailsByCandidateVideoId(videoId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

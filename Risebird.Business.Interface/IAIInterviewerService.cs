@@ -26,5 +26,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateMeetingCompletedStatusForAIInterview(string sid);
         Task<VideoSentimentAnalysis> GenerateSentimentAnalysis(int videoId, string user, string videoUrl);
         Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);
+        Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
     }
 }

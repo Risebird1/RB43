@@ -26,5 +26,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateMeetingCompletedStatusForAIInterview(string sessionId);
         Task<bool> SaveSentimentAnalysis(VideoSentimentAnalysis obj);
         Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);
+        Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
     }
 }

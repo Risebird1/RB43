@@ -600,5 +600,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@biqvId", videoId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetAIInterviewSpecificDetailsByCandidateVideoId", parameters,
+                         commandType: CommandType.StoredProcedure, commandTimeout: 150);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

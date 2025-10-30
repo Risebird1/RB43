@@ -63,6 +63,7 @@ namespace Risebird.Web.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IZohoMeetingHelper _zoho;
+        private readonly IAIInterviewerService _aiInterviewerService;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
@@ -71,7 +72,8 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
             IAadhaarService aadhaarService, IZoomHelper zoomHelper,
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env, IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho)
+            IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env,
+            IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -99,6 +101,7 @@ namespace Risebird.Web.Controllers
             _env = env;
             _encryptionHelper = encryptionHelper;
             _zoho = zoho;
+            _aiInterviewerService = aiInterviewerService;
         }
 
         [HttpGet]
@@ -7298,10 +7301,27 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        var meetingDetails = await _aiInterviewerService.GetAIInterviewSpecificDetailsByCandidateVideoId(videoId);
+                        var sentimentViewModel = new VideoSentimentAnalysis();
+                        if(isRedo)
+                        {
+                            sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
 
-                        return View();
+                        }
+                        else
+                        {
+                            sentimentViewModel = await _aiInterviewerService.GetSentimentAnalysisById(videoId);
+                            if (sentimentViewModel == null)
+                            {
+                                sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
+                            }
+                        }
+                        
+                        return View(sentimentViewModel);
                     }
                     else
                     {
