@@ -917,18 +917,14 @@ namespace Risebird.Business
                         //var interviewers = new List<string>();
                         //interviewers = (await _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId)).ToList();
                         var interviewers = await _meetingRespository.GetEmergencyInterviewersForIRF(meeting.irfIntId);
-
                         if (interviewers != null)
                         {
                             var filteredInterviewers = interviewers.Where(x => x.EmailId != email).ToList();
-
                             //interviewers.Remove(email);
-
                             //.Remove(x => x.emailId == email)
                             foreach (var item in filteredInterviewers)
                             {
-                                await _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(), item.uniqueid, meeting.irfIntId, meetingid);
-
+                                _notificationHelper.EmergencyInterviewerMail(item.EmailId, meeting.interviewDate.ToString(), item.uniqueid, meeting.irfIntId, meetingid);
                             }
                             //await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(),meeting.uniqueId, meeting.irfIntId, meetingid);
                         }
