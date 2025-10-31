@@ -716,10 +716,10 @@ namespace Risebird.Web.Controllers
             {
                 employementdetails.message = "Fail to verify,please check the details and try again.";
             }
-            if (employementdetails != null && string.IsNullOrEmpty(employementdetails.message))
-            {
-                employementdetails.message = "Employment records not found.";
-            }
+            //if (employementdetails != null && string.IsNullOrEmpty(employementdetails.message) && !employementdetails.Isemployed)
+            //{
+            //    employementdetails.message = "Employment records not found.";
+            //}
             employementdetails.CandidateEmail = employementdetails.CandidateEmail?.Trim();
             if ((applicantId.HasValue || (isApplicantRenewed && irfId.HasValue)) && employementdetails != null && employementdetails.message == null)
             {
