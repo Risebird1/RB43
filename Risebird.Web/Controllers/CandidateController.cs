@@ -7293,6 +7293,8 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
         #endregion
+
+        [HttpPost]
         public async Task<IActionResult> GetSentimentAnalysis(int videoId, bool isRedo = false)
         {
             try
@@ -7320,12 +7322,17 @@ namespace Risebird.Web.Controllers
                                 sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
                             }
                         }
-                        sentimentViewModel.CandidateEmail = meetingDetails.candidateEmail;
-                        sentimentViewModel.CandidateName = meetingDetails.candidateName;
-                        sentimentViewModel.InterviewDate = meetingDetails.interviewDate;
-                        sentimentViewModel.ResumeLink = meetingDetails.resumeLink;
-                        sentimentViewModel.VideoUrl = meetingDetails.CandidateAnswerVideoLink;
-                        return View(sentimentViewModel);
+                        //sentimentViewModel.CandidateEmail = meetingDetails.candidateEmail;
+                        //sentimentViewModel.CandidateName = meetingDetails.candidateName;
+                        //sentimentViewModel.InterviewDate = meetingDetails.interviewDate;
+                        //sentimentViewModel.ResumeLink = meetingDetails.resumeLink;
+                        //sentimentViewModel.VideoUrl = meetingDetails.CandidateAnswerVideoLink;
+                        //return View(sentimentViewModel);
+                        if(sentimentViewModel != null)
+                        {
+                            return Json(true);
+                        }
+                        return Json(false);
                     }
                     else
                     {
@@ -7341,7 +7348,7 @@ namespace Risebird.Web.Controllers
             catch (System.Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return Json(false);
             }
         }
 
