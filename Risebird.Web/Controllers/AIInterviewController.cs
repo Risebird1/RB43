@@ -1095,7 +1095,11 @@ namespace Risebird.Web.Controllers
                 reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
                 reportModel.resumeLink = meetingDetails.resumeLink;
                 reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
+                if(meetingDetails.CandidateAnswerVideoIdAI > 0)
+                {
+                    reportModel.sentimentViewModel = await _aiinterviewerService.GetSentimentAnalysisById(meetingDetails.CandidateAnswerVideoIdAI);
 
+                }
                 return View(reportModel);
             }
             else
