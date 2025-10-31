@@ -237,6 +237,7 @@ namespace Risebird.Repository
                             
                             _resultVM.MeetingStatus = !string.IsNullOrEmpty(dt.Rows[0]["MeetingStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["MeetingStatus"]) : 0;
                             _resultVM.InterviewStatus = !string.IsNullOrEmpty(dt.Rows[0]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["InterviewStatus"]) : 0;
+                            _resultVM.CandidateAnswerVideoIdAI = !string.IsNullOrEmpty(dt.Rows[0]["CandidateAnswerVideoIdAI"].ToString()) ? Convert.ToInt32(dt.Rows[0]["CandidateAnswerVideoIdAI"]) : 0;
                             
                             try 
                             {
