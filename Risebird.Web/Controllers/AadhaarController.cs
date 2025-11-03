@@ -716,11 +716,10 @@ namespace Risebird.Web.Controllers
             {
                 employementdetails.message = "Fail to verify,please check the details and try again.";
             }
-            if (employementdetails != null && string.IsNullOrEmpty(employementdetails.message) && !employementdetails.Isemployed)
-            {
-                employementdetails.message = "Employment records not found.";
-
-            }
+            //if (employementdetails != null && string.IsNullOrEmpty(employementdetails.message) && !employementdetails.Isemployed)
+            //{
+            //    employementdetails.message = "Employment records not found.";
+            //}
             employementdetails.CandidateEmail = employementdetails.CandidateEmail?.Trim();
             if ((applicantId.HasValue || (isApplicantRenewed && irfId.HasValue)) && employementdetails != null && employementdetails.message == null)
             {
@@ -732,7 +731,6 @@ namespace Risebird.Web.Controllers
                     int index = str.IndexOf(" ");
                     if (index > 0)
                     {
-
                         model.FirstName = str.Substring(0, index);
                         model.LastName = str.Substring(index + 1);
                     }
@@ -749,9 +747,7 @@ namespace Risebird.Web.Controllers
                 if (applicantId.HasValue)
                 {
                     model.id = applicantId.Value;
-
                     await _interviewerService.UpdateApplicantsEmploymentDetails(model, loggedInUser);
-
                 }
                 else if (isApplicantRenewed && irfId.HasValue && irfId.Value > 0)
                 {
