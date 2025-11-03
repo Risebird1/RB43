@@ -2143,12 +2143,10 @@ namespace Risebird.Web.Controllers
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
-
                         }
                         else
                         {
                             ViewBag.VideoConfirmationPopup = false;
-
                         }
                         if (model.AcknowledgementStatus.ToUpper() != "YES" && model.AcknowledgementStatus.ToUpper() != "NO")
                         {
