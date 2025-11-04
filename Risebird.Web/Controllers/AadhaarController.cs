@@ -682,10 +682,10 @@ namespace Risebird.Web.Controllers
                         {
                             employementdetails.message = "Failed to verify , API didn't work, try after sometime";
                         }
-                        else if (model.CandidateEmail.ToLower() != candidateemail.ToLower())
-                        {
-                            employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
-                        }
+                        //else if (model.CandidateEmail.ToLower() != candidateemail.ToLower())
+                        //{
+                        //    employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
+                        //}
                         else
                         {
                             employementdetails.message = "No employement records are found, so we don't process further.";
@@ -698,10 +698,10 @@ namespace Risebird.Web.Controllers
                     {
                         employementdetails.message = "Employment records not found.";
                     }
-                    else if (string.IsNullOrEmpty(employementdetails.CandidateEmail) || employementdetails.CandidateEmail.ToLower() != candidateemail.ToLower())
-                    {
-                        employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
-                    }
+                    //else if (string.IsNullOrEmpty(employementdetails.CandidateEmail) || employementdetails.CandidateEmail.ToLower() != candidateemail.ToLower())
+                    //{
+                    //    employementdetails.message = "The emailId specified does not match with the one associated with this mobile number.";
+                    //}
                     else
                     {
                         var companystatus = await _aadhaarService.CheckCompanyStatus(employementdetails.CompanyName);
