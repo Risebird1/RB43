@@ -13,7 +13,9 @@ Create Procedure usp_GetSentimentAnalysisById
 AS
 BEGIN
 
-select * from VideoSentimentAnalysis where biqvId =@biqvId
+select vsa.*, biqv.VideoLink as VideoUrl from VideoSentimentAnalysis vsa
+join BotInterviewQuestionVideos biqv  on biqv.id = vsa.biqvId
+where biqvId =@biqvId
 
 END
 GO
