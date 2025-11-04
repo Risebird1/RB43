@@ -96,28 +96,28 @@ namespace Risebird.Web.Controllers
                         //var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
                         //var _lastdate = _firstdate.AddDays(6);
                         //item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
-                        if (1 <= item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 7)
+                        if (1 <= item.Date.AddMonths(3).Day && item.Date.AddMonths(3).Day <= 7)
                         {
-                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 1));
-                            var _lastdate = item.Date.AddMonths(1).AddDays(7 - item.Date.AddMonths(1).Day);
+                            var _firstdate = item.Date.AddMonths(3).AddDays(-(item.Date.AddMonths(3).Day - 1));
+                            var _lastdate = item.Date.AddMonths(3).AddDays(7 - item.Date.AddMonths(3).Day);
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
-                        else if (7 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 14)
+                        else if (7 < item.Date.AddMonths(3).Day && item.Date.AddMonths(3).Day <= 14)
                         {
-                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 7));
-                            var _lastdate = item.Date.AddMonths(1).AddDays(14 - item.Date.AddMonths(1).Day);
+                            var _firstdate = item.Date.AddMonths(3).AddDays(-(item.Date.AddMonths(3).Day - 7));
+                            var _lastdate = item.Date.AddMonths(3).AddDays(14 - item.Date.AddMonths(3).Day);
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
-                        else if (14 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 21)
+                        else if (14 < item.Date.AddMonths(3).Day && item.Date.AddMonths(3).Day <= 21)
                         {
-                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 14));
-                            var _lastdate = item.Date.AddMonths(1).AddDays(21 - item.Date.AddMonths(1).Day);
+                            var _firstdate = item.Date.AddMonths(3).AddDays(-(item.Date.AddMonths(3).Day - 14));
+                            var _lastdate = item.Date.AddMonths(3).AddDays(21 - item.Date.AddMonths(3).Day);
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
-                        else if (21 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 31)
+                        else if (21 < item.Date.AddMonths(3).Day && item.Date.AddMonths(3).Day <= 31)
                         {
-                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 21));
-                            var _lastdate = item.Date.AddMonths(2).AddDays(-(item.Date.AddMonths(1).Day + 1));
+                            var _firstdate = item.Date.AddMonths(3).AddDays(-(item.Date.AddMonths(3).Day - 21));
+                            var _lastdate = item.Date.AddMonths(3).AddDays(-(item.Date.AddMonths(3).Day + 1));
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
                         if (string.IsNullOrWhiteSpace(item.MeetingStatusDetails))
