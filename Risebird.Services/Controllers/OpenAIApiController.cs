@@ -135,7 +135,7 @@ namespace Risebird.Services.Controllers
                 input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
                 await _ai.AddMessageAsync(threadId, "user", input.Message);
 
-                var runId = await _ai.CreateRunAsync(threadId, meetingDetails.AssistantId);
+                var runId = await _ai.CreateRunAsync(threadId, meetingDetails.OpenAIAssistantId);//meetingDetails.AssistantId
                 await _ai.WaitForRunAsync(threadId, runId);
 
                 var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.

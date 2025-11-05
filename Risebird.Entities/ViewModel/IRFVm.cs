@@ -277,6 +277,9 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
 
+        [DisplayName("AssistantId")]
+        public string OpenAIAssistantId { get; set; }
+
     }
     public class InterviewerIds
     {
@@ -413,6 +416,8 @@ namespace Risebird.Entities.ViewModel
         public int Concurrency { get; set; }
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
+        public string OpenAIAssistantId { get; set; }
+
     }
     public class SkillCahnnelDetailsVM
     {

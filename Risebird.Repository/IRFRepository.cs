@@ -646,6 +646,7 @@ namespace Risebird.Repository
                             _resultVM.CodeSnippetRequired = !string.IsNullOrEmpty(dt.Rows[0]["CodeSnippetRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["CodeSnippetRequired"]) : false;
                             _resultVM.IsAIInterview = !string.IsNullOrEmpty(dt.Rows[0]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAIInterview"]) : false;
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIInterviewType"]) : 0;
+                            _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
 
                         }
                     }
@@ -2542,6 +2543,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIAssistantId", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@OpenAIAssistantId"].Value = irfDetails.OpenAIAssistantId;
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
