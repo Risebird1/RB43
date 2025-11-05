@@ -67,6 +67,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @SMEBulkData AS [dbo].[CommonId_TableType] READONLY,  
  @IsNewSkillChannel bit = null,  
  @TechRubricType varchar(20) = null,  
+ @OpenAIAssistantId varchar(60) = null,
  @IsVideoRequired bit  
  --@FixedAmount int = null  
  --@idRecommendation int,  
@@ -132,6 +133,7 @@ BEGIN
  ,[TechRubricType] =@TechRubricType
  ,[IsAIInterview]=@IsAIInterview
  ,[AIInterviewType]=@AIInterviewType
+ ,[OpenAIAssistantId] = @OpenAIAssistantId
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  
