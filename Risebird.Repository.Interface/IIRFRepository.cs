@@ -293,6 +293,7 @@ namespace Risebird.Repository.Interface
         Task<SkillComment> GetDeliveryHeadSampleQuestionById(int id);
         Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink);
         Task<List<CancelCandidateListResponse>> CancelInterviewViaApi(List<string> candidateList, string requestedBy, string jobId, string SkillChannelId);
+        Task<bool> FlagQuestionForSentimentAnalysis(int id);
 
     }
 }

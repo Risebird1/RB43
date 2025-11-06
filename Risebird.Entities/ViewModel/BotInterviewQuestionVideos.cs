@@ -17,6 +17,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateAnswer { get; set; }
         public string BotAudioLink { get; set; }
         public int DeliveryHeadQuestionId { get; set; }
+        public bool IsFlaggedForSentimentAnalysis { get; set; }
 
     }
 

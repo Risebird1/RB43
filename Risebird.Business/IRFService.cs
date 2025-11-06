@@ -4743,5 +4743,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> FlagQuestionForSentimentAnalysis(int id)
+        {
+            try
+            {
+                return await _irfRepository.FlagQuestionForSentimentAnalysis(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
