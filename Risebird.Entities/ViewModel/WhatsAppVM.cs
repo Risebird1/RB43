@@ -64,11 +64,5 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string FirstName { get; set; }
     }
-    public class CandidateWhatsAppList
-    {
-        public string emailId { get; set; } 
-        public string irfId { get; set; } 
-        public string irfName { get; set; } 
-    }
 }
 
