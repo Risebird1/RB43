@@ -10145,6 +10145,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<bool> FlagQuestionForSentimentAnalysis(int id)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query(con, "usp_FlagQuestionForSentimentAnalysis", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 
