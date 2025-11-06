@@ -26,8 +26,11 @@
         candidateName = c.candidateName,
         candidateEmail = c.candidateEmail,
         IRFId = c.IRFId,
+        irfId = c.IRFId,
+        irfName = c.IRFId,
         MobileNumber = c.MobileNumber,
-        ClientHrContact = c.ClientHrContact
+        ClientHrContact = c.ClientHrContact,
+        IsColdCandidate = false // NotScheduledMeetingsCO doesn't have cold candidate flag
     })));
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
@@ -242,55 +245,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- WhatsApp Invite Modal -->
-                            <div id="whatsappInviteModal" class="modal modal-bg" style="z-index: 1060;">
-                                <div class="modal-dialog modal-lg" role="document" style="z-index: 1061;">
-                                    <div class="modal-content">
-                                        <div class="filheader">
-                                            <div class="filavatar">
-                                                <span>
-                                                    <img src="~/img/whatsapp.png" />
-                                                </span>
-                                            </div>
-                                            <h5 class="modal-title pull-left">Send WhatsApp Invite</h5>
-                                        </div>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="CloseWhatsAppInviteModal()">
-                                            <span aria-hidden="true" style="cursor:pointer;">&times;</span>
-                                        </button>
-                                        <div class="modal-body" style="padding: 20px;">
-                                            <div class="form-group" style="margin-bottom: 15px;">
-                                                <label style="font-weight: bold; margin-bottom: 10px; display: block;color:#000;font-size:13px;">
-                                                    <input type="checkbox" id="selectAllCandidates" onchange="ToggleSelectAll()" style="margin-right: 8px;" />
-                                                    Select All Candidates
-                                                </label>
-                                            </div>
-                                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                                <table class="table table-striped table-bordered" style="width:100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 50px;">Select</th>
-                                                            <th>Name</th>
-                                                            <th>Email</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="whatsappInviteCandidateList">
-                                                        <!-- Candidate list will be populated here -->
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 15px;">
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="CloseWhatsAppInviteModal()" style="margin-right: 10px;">
-                                                Cancel
-                                            </button>
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SendBulkWhatsAppInvites()" style="background: #2c8d2cb8!important;">
-                                                <img src="~/img/whatsapp.png" style="max-width:18px; vertical-align: middle; margin-right: 5px;" />
-                                                Send Invite
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @await Html.PartialAsync("~/Views/Common/_WhatsAppInviteModal.cshtml")
                             @if (HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
                             {
                                 <div id="staffing_notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Client/ReScheduleMeetings' class='btn btn-primary staffntschnext-btn'>NEXT</a>" data-position="top">
@@ -683,185 +638,8 @@
         });
     }
 
-    // WhatsApp Invite Modal Functions
-    function OpenWhatsAppInviteModal() {
-        // Filter candidates - only show those who have Client HR contact
-        var eligibleCandidates = candidatesData.filter(function(candidate) {
-            return candidate.ClientHrContact && candidate.ClientHrContact != null && candidate.ClientHrContact != '';
-        });
-
-        if (eligibleCandidates.length === 0) {
-            swal.fire({
-                title: 'No Eligible Candidates',
-                html: '<p>There are no candidates eligible to receive WhatsApp invites. Candidates must have Client HR contact information.</p>',
-                type: 'info',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        // Populate candidate list
-        var tbody = document.getElementById('whatsappInviteCandidateList');
-        tbody.innerHTML = '';
-
-        eligibleCandidates.forEach(function(candidate) {
-            var row = document.createElement('tr');
-            
-            // Escape HTML to prevent XSS
-            var candidateName = (candidate.candidateName || 'N/A').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            var candidateEmail = (candidate.candidateEmail || 'N/A').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            
-            row.innerHTML = 
-                '<td style="text-align: center;">' +
-                    '<input type="checkbox" class="candidate-checkbox" value="' + (candidate.candidateEmail || '').replace(/"/g, '&quot;') + '" ' +
-                    'data-imid="' + candidate.imid + '" ' +
-                    'data-irfid="' + candidate.imid + '" ' +
-                    'data-irfname="' + (candidate.IRFId || '').replace(/"/g, '&quot;') + '" />' +
-                '</td>' +
-                '<td>' + candidateName + '</td>' +
-                '<td>' + candidateEmail + '</td>';
-            tbody.appendChild(row);
-        });
-
-        // Reset select all checkbox
-        document.getElementById('selectAllCandidates').checked = false;
-
-        // Show modal
-        $('#whatsappInviteModal').modal('show');
-    }
-
-    function CloseWhatsAppInviteModal() {
-        $('#whatsappInviteModal').modal('hide');
-        // Clear checkboxes
-        document.querySelectorAll('.candidate-checkbox').forEach(function(cb) {
-            cb.checked = false;
-        });
-        document.getElementById('selectAllCandidates').checked = false;
-    }
-
-    function ToggleSelectAll() {
-        var selectAll = document.getElementById('selectAllCandidates');
-        var checkboxes = document.querySelectorAll('.candidate-checkbox');
-        
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = selectAll.checked;
-        });
-    }
-
-    function SendBulkWhatsAppInvites() {
-        var selectedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked');
-        
-        if (selectedCheckboxes.length === 0) {
-            swal.fire({
-                title: 'No Selection',
-                html: '<p>Please select at least one candidate to send WhatsApp invite.</p>',
-                type: 'warning',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        var selectedCandidates = [];
-        selectedCheckboxes.forEach(function(checkbox) {
-            selectedCandidates.push({
-                emailId: checkbox.value,
-                imid: checkbox.getAttribute('data-imid'),
-                irfId: checkbox.getAttribute('data-irfid'), // This is imid, used as irfId like in existing Sendinvite
-                irfName: checkbox.getAttribute('data-irfname')
-            });
-        });
-
-        // Show confirmation
-        swal.fire({
-            title: 'Send WhatsApp Invites?',
-            html: '<p>You are about to send WhatsApp invites to <strong>' + selectedCandidates.length + '</strong> candidate(s).</p><p>Do you want to continue?</p>',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#2c8d2c',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Send Invites',
-            cancelButtonText: 'Cancel',
-            allowOutsideClick: false
-        }).then(function(result) {
-            if (result.value) {
-                // Disable send button to prevent multiple clicks
-                var sendButton = document.querySelector('#whatsappInviteModal .modal-footer button[onclick="SendBulkWhatsAppInvites()"]');
-                if (sendButton) {
-                    sendButton.disabled = true;
-                    sendButton.innerHTML = '<span>Sending...</span>';
-                }
-
-                var successCount = 0;
-                var failCount = 0;
-                var total = selectedCandidates.length;
-                var completed = 0;
-                var iframes = [];
-
-                // Send invites sequentially using iframes (since SendInvite returns a redirect)
-                // Use a default future date (1 year from now) for endDate since MeetingVM doesn't have EndDate
-                var defaultEndDate = new Date();
-                defaultEndDate.setFullYear(defaultEndDate.getFullYear() + 1);
-                var defaultEndDateStr = defaultEndDate.toISOString();
-                
-                selectedCandidates.forEach(function(candidate, index) {
-                    setTimeout(function() {
-                        var inviteUrl = '@Url.Action("SendInvite", "Candidate")' + 
-                            '?irfId=' + candidate.irfId + 
-                            '&IRFName=' + encodeURIComponent(candidate.irfName || '') + 
-                            '&emailId=' + encodeURIComponent(candidate.emailId) + 
-                            '&endDate=' + encodeURIComponent(defaultEndDateStr) + 
-                            '&communicationMedium=2&pageUrl=NotScheduledMeetingsCO'; // 2 = WhatsApp
-
-                        // Create a hidden iframe to trigger the invite
-                        var iframe = document.createElement('iframe');
-                        iframe.style.display = 'none';
-                        iframe.src = inviteUrl;
-                        iframe.id = 'invite-iframe-' + index;
-                        document.body.appendChild(iframe);
-                        iframes.push(iframe);
-
-                        // Check completion after a delay
-                        setTimeout(function() {
-                            completed++;
-                            successCount++; 
-
-                            if (completed === total) {
-                                // Clean up iframes
-                                iframes.forEach(function(iframe) {
-                                    setTimeout(function() {
-                                        if (iframe.parentNode) {
-                                            document.body.removeChild(iframe);
-                                        }
-                                    }, 100);
-                                });
-                                
-                                // Show success message
-                                swal.fire({
-                                    title: 'Invites Sent!',
-                                    html: '<p>WhatsApp invites have been sent to <strong>' + successCount + '</strong> candidate(s).</p>',
-                                    type: 'success',
-                                    confirmButtonText: 'OK',
-                                    allowOutsideClick: false
-                                }).then(function() {
-                                    CloseWhatsAppInviteModal();
-                                    // Reload page to refresh candidate list
-                                    location.reload();
-                                });
-                            }
-                        }, 2000); // Wait 2 seconds per invite
-                    }, 500 * index); // Stagger requests by 500ms
-                });
-            }
-        });
-    }
-
-    // Update select all checkbox when individual checkboxes change
-    $(document).on('change', '.candidate-checkbox', function() {
-        var totalCheckboxes = document.querySelectorAll('.candidate-checkbox').length;
-        var checkedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked').length;
-        document.getElementById('selectAllCandidates').checked = (totalCheckboxes === checkedCheckboxes);
-    });
-    // WhatsApp Invite Modal Functions Ends
+    // Set pageUrl variable for partial view to know it's NotScheduledMeetingsCO page
+    var pageUrl = 'NotScheduledMeetingsCO';
 
 
     function searchResult() {

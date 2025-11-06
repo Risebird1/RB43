@@ -53,13 +53,7 @@
     </style>
 }
 
-@* @if (ViewBag.AccessType != "Public")
-{
-    <style>
-
-
-  </style>
-} *@
+@
 
 <input type="hidden" value="@ViewBag.profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
@@ -1223,55 +1217,7 @@
                 </div>
             </div>
 
-            <!-- WhatsApp Invite Modal -->
-            <div id="whatsappInviteModal" class="modal modal-bg" style="z-index: 1060;">
-                <div class="modal-dialog modal-lg" role="document" style="z-index: 1061;">
-                    <div class="modal-content">
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span>
-                                    <img src="~/img/whatsapp.png" />
-                                </span>
-                            </div>
-                            <h5 class="modal-title pull-left">Send WhatsApp Invite</h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" onclick="CloseWhatsAppInviteModal()" style="cursor:pointer;">&times;</span>
-                        </button>
-                        <div class="modal-body" style="padding: 20px;">
-                            <div class="form-group" style="margin-bottom: 15px;">
-                                <label style="font-weight: bold; margin-bottom: 10px; display: block;">
-                                    <input type="checkbox" id="selectAllCandidates" onchange="ToggleSelectAll()" style="margin-right: 8px;" />
-                                    Select All Candidates
-                                </label>
-                            </div>
-                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                <table class="table table-striped table-bordered" style="width:100%;">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 50px;">Select</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="whatsappInviteCandidateList">
-                                        <!-- Candidate list will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 15px;">
-                            @*  <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="CloseWhatsAppInviteModal()" style="margin-right: 10px;">
-                                Cancel
-                            </button> *@
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SendBulkWhatsAppInvites()" style="background: #2c8d2cb8!important;">
-                                <img src="~/img/whatsapp.png" style="max-width:18px; vertical-align: middle; margin-right: 5px;" />
-                                Send Invite
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @await Html.PartialAsync("~/Views/Common/_WhatsAppInviteModal.cshtml")
 
             <!-- end row -->
             <div id="myCallRecords" class="modal modal-bg">
@@ -2038,141 +1984,6 @@ else if (ViewBag.Message != null)
     const loop = setInterval(toggleHandler, 1000);
 </script>
 
-<script>
-    // WhatsApp Invite Modal Functions
-    function OpenWhatsAppInviteModal() {
-        // Filter candidates - only show those who can receive invites
-        var eligibleCandidates = candidatesData.filter(function(candidate) {
-            return candidate.ClientHRAttemptContact && !candidate.IsColdCandidate;
-        });
-
-        if (eligibleCandidates.length === 0) {
-            swal.fire({
-                title: 'No Eligible Candidates',
-                html: '<p>There are no candidates eligible to receive WhatsApp invites. Candidates must have Client HR contact information and not be marked as cold candidates.</p>',
-                type: 'info',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        // Populate candidate list
-        var tbody = document.getElementById('whatsappInviteCandidateList');
-        tbody.innerHTML = '';
-
-        eligibleCandidates.forEach(function(candidate) {
-            var row = document.createElement('tr');
-            // Format EndDate properly for URL
-            var endDateFormatted = '';
-            if (candidate.EndDate) {
-                var endDate = new Date(candidate.EndDate);
-                // Format as yyyy-MM-ddTHH:mm:ss (ISO format)
-                endDateFormatted = endDate.toISOString();
-            }
-
-            // Escape HTML to prevent XSS
-            var candidateName = (candidate.Name || 'N/A').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            var candidateEmail = (candidate.EmailId || 'N/A').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-            row.innerHTML =
-                '<td style="text-align: center;">' +
-                    '<input type="checkbox" class="candidate-checkbox" value="' + candidate.EmailId.replace(/"/g, '&quot;') + '" ' +
-                    'data-irfid="' + candidate.IRFId + '" ' +
-                    'data-irfname="' + (candidate.IRFName || '').replace(/"/g, '&quot;') + '" ' +
-                    'data-enddate="' + endDateFormatted.replace(/"/g, '&quot;') + '" />' +
-                '</td>' +
-                '<td>' + candidateName + '</td>' +
-                '<td>' + candidateEmail + '</td>';
-            tbody.appendChild(row);
-        });
-
-        // Reset select all checkbox
-        document.getElementById('selectAllCandidates').checked = false;
-
-        // Show modal
-        $('#whatsappInviteModal').modal('show');
-    }
-
-    function CloseWhatsAppInviteModal() {
-        $('#whatsappInviteModal').modal('hide');
-        // Clear checkboxes
-        document.querySelectorAll('.candidate-checkbox').forEach(function(cb) {
-            cb.checked = false;
-        });
-        document.getElementById('selectAllCandidates').checked = false;
-    }
-
-    function ToggleSelectAll() {
-        var selectAll = document.getElementById('selectAllCandidates');
-        var checkboxes = document.querySelectorAll('.candidate-checkbox');
-
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = selectAll.checked;
-        });
-    }
-
-    function SendBulkWhatsAppInvites() {
-        var selectedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked');
-        if (selectedCheckboxes.length === 0) {
-            swal.fire({
-                title: 'No Selection',
-                html: '<p>Please select at least one candidate to send WhatsApp invite.</p>',
-                type: 'warning',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        var selectedCandidates = [];
-        selectedCheckboxes.forEach(function(checkbox) {
-            selectedCandidates.push({
-                candidateEmail: checkbox.value,
-                IRFId: checkbox.getAttribute('data-irfid'),
-                IRFName: checkbox.getAttribute('data-irfname'),
-                endDate: checkbox.getAttribute('data-enddate')
-            });
-        });
-
-        // Show confirmation
-        swal.fire({
-            title: 'Send WhatsApp Invites?',
-            html: '<p>You are about to send WhatsApp invites to <strong>' + selectedCandidates.length + '</strong> candidate(s).</p><p>Do you want to continue?</p>',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#2c8d2c',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Send Invites',
-            cancelButtonText: 'Cancel',
-            allowOutsideClick: false
-        }).then(function(result) {
-            if (result.value) {
-                 $.ajax({
-                            url: '/Candidate/SendWhatsAppInvite',
-                            method: 'POST',
-                            data: { 'CandidateList': selectedCandidates },
-                            success: function (data) {
-                                 swal.fire({
-                                    title: 'Invites Sent!',
-                                    html: '<p>WhatsApp invites have been sent to candidate(s).</p>',
-                                    type: 'success',
-                                    confirmButtonText: 'OK',
-                                    allowOutsideClick: false
-                                }).then(function() {
-                                    CloseWhatsAppInviteModal();
-                                });
-                            }
-                 });
-            }
-        });
-    }
-
-    // Update select all checkbox when individual checkboxes change
-    $(document).on('change', '.candidate-checkbox', function() {
-        var totalCheckboxes = document.querySelectorAll('.candidate-checkbox').length;
-        var checkedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked').length;
-        document.getElementById('selectAllCandidates').checked = (totalCheckboxes === checkedCheckboxes);
-    });
-</script>
 
 
 
