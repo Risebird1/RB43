@@ -14,7 +14,9 @@ Create Procedure usp_GetBotInterviewVideoDetails
 AS
 BEGIN
 
-select * from BotInterviewQuestionVideos where SessionId = @SessionId
+select biqv.*, sq.IsFlaggedForSentimentAnalysis from BotInterviewQuestionVideos biqv 
+join SkillChannelSampleQuestions sq on sq.id = biqv.DeliveryHeadQuestionId
+where SessionId = @SessionId
 order by CreatedAt 
 
 END

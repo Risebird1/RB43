@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[SkillChannelSampleQuestions](
 	[SkillName] [varchar](500) NULL,
 	[AIQuestionVideoLink] [varchar](max) NULL,
 	[ExpectedAnswer] [varchar](5000) NULL,
+	[IsFlaggedForSentimentAnalysis] [bit] NULL,
  CONSTRAINT [PK_SkillChannelSampleQuestions] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -47,6 +48,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE SkillChannelSampleQuestions
     Add ExpectedAnswer varchar(5000)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsFlaggedForSentimentAnalysis')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add IsFlaggedForSentimentAnalysis bit
 END
 
 End
