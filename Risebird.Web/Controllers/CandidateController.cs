@@ -7309,7 +7309,7 @@ namespace Risebird.Web.Controllers
                     {
                         var meetingDetails = await _aiInterviewerService.GetAIInterviewSpecificDetailsByCandidateVideoId(videoId);
                         var sentimentViewModel = new VideoSentimentAnalysis();
-                        if(isRedo)
+                        if (isRedo)
                         {
                             sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
 
@@ -7328,7 +7328,7 @@ namespace Risebird.Web.Controllers
                         //sentimentViewModel.ResumeLink = meetingDetails.resumeLink;
                         //sentimentViewModel.VideoUrl = meetingDetails.CandidateAnswerVideoLink;
                         //return View(sentimentViewModel);
-                        if(sentimentViewModel != null)
+                        if (sentimentViewModel != null)
                         {
                             return Json(true);
                         }
@@ -7351,7 +7351,11 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
+        [HttpPost]
+        public async Task<JsonResult> SendWhatsAppInvite(List<CandidateDetailsForWhatsApp> CandidateList)
+        {
+            return Json("");
+        }
 
     }
 }

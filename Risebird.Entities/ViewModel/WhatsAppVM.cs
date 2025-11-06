@@ -38,6 +38,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string JobTitle { get; set; }
         public int IRFId { get; set; }
+        public string IRFName { get; set; }
     }
     public class InterviewUsersDetails
     {
@@ -62,6 +63,12 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public int id { get; set; }
         public string FirstName { get; set; }
+    }
+    public class CandidateWhatsAppList
+    {
+        public string emailId { get; set; } 
+        public string irfId { get; set; } 
+        public string irfName { get; set; } 
     }
 }
 
