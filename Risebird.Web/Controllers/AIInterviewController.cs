@@ -1450,5 +1450,63 @@ namespace Risebird.Web.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> FlagQuestionForSentimentAnalysis(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
+
+
+                        //save the video link in our db against the above id
+
+                        var result = await _iRFService.FlagQuestionForSentimentAnalysis(id);
+                        var comment = questionDetails.Comment ?? string.Empty;
+                        var snippet = comment.Length > 25
+                            ? comment.Substring(0, 25) + "..."
+                            : comment;
+                        if (result)
+                        {
+                            
+                            return Json(new { issuccessful = true, message = $"Successfully flagged the question starting with '{snippet}' for sentiment analysis."});//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+
+                            //return Json($"Successfully flagged the question starting with '{questionDetails.Comment.Substring(0, 25)}' for sentiment analysis.");
+                        }
+                        else
+                        {
+                            return Json(new { issuccessful = false, message = $"Failed to flag the question starting with '{snippet}' for sentiment analysis." });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+
+                            //return Json($"Failed to flag the question starting with '{questionDetails.Comment.Substring(0, 25)}' for sentiment analysis.");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { issuccessful = false, message = $"Failed." });
+
+                //return Json(false);
+
+            }
+        }
+
     }
 }
