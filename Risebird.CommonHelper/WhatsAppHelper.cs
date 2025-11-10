@@ -10,6 +10,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Risebird.CommonHelper
 {
@@ -174,11 +175,18 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    dataResult.Item1 = "8077988602";
                     if (!string.IsNullOrEmpty(dataResult.Item1))
                     {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
+                        var phonenumber = ExtractCountryCode(dataResult.Item1);
+                        if (string.IsNullOrWhiteSpace(phonenumber.Item1))
+                        {
+                            _whatsAppVM.CountryCode = "+91";
+                        }
+                        else
+                        {
+                            _whatsAppVM.CountryCode = phonenumber.Item1;
+                        }
+                        _whatsAppVM.WhatsAppNumber = phonenumber.Item2;
                         _whatsAppVM.UserName = dataResult.Item2;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
@@ -855,6 +863,36 @@ namespace Risebird.CommonHelper
                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
+        }
+
+        public (string CountryCode, string MobileNumber) ExtractCountryCode(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return ("", "");
+
+            // Clean up unwanted chars (spaces, dashes)
+            string phone = input.Replace(" ", "").Replace("-", "");
+
+            // Match +91, 91, or 0091 at the start (1 to 3 digits country code)
+            var match = Regex.Match(phone, @"^(?:\+|00)?(\d{1,3})");
+
+            if (match.Success)
+            {
+                string code = match.Groups[1].Value;
+                string prefix = match.Value;
+
+                // Remove matched part (country code)
+                string numberWithoutCode = phone.Substring(prefix.Length);
+
+                // Normalize to + format for code
+                string countryCode = "+" + code;
+
+                // Return both
+                return (countryCode, numberWithoutCode);
+            }
+
+            // No code found — return as is
+            return ("", phone);
         }
     }
 }
