@@ -174,6 +174,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
+                    dataResult.Item1 = "8077988602";
                     if (!string.IsNullOrEmpty(dataResult.Item1))
                     {
                         _whatsAppVM.CountryCode = "+91";

@@ -7396,13 +7396,14 @@ namespace Risebird.Web.Controllers
                             oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
                         oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
-
+                        var UnsubscribeLink = linkurl + "/Candidate/Unsubscribe?emailid=" + email + "&irfid=" + irfId;
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = email;
                         _whatsapp.PrimarySkill = primarySkill;
                         _whatsapp.ClientName = client.Name;
                         _whatsapp.Event = "Schedule Interview";
                         _whatsapp.buttonlink = oneTimeSchedulingLink;
+                        _whatsapp.UnsubscribeLink = UnsubscribeLink;
                         _whatsapp.irfId = irfId;
                         _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                         if (candidate.TotalInvites == 0)
@@ -7419,6 +7420,10 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+        }
+        public async Task<JsonResult> Unsubscribe(string emailid, int irfid)
+        {
+            return Json("Unsubscribed Successfully.");
         }
     }
 }

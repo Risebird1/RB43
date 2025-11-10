@@ -1326,6 +1326,7 @@ namespace Risebird.Business
 
                     if (!communicationMedium.HasValue || (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp))
                     {
+                        var UnsubscribeLink = linkurl + "/Candidate/Unsubscribe?emailid=" + email + "&irfid=" + irfId;
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = email;
                         _whatsapp.InterviewDate = primarySkill;
@@ -1335,6 +1336,7 @@ namespace Risebird.Business
                         _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
                         oneTimeSchedulingLink = oneTimeSchedulingLink.Replace(linkurl + "/", "");
                         _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "");
+                        _whatsapp.UnsubscribeLink = UnsubscribeLink;
                         _whatsapp.irfId = irfId;
                         _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     }
@@ -3469,7 +3471,7 @@ namespace Risebird.Business
                     //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
 
                     await _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, client.LogoLink);
-                   
+
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
