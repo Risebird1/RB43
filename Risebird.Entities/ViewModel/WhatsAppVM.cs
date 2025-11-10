@@ -21,7 +21,8 @@ namespace Risebird.Entities.ViewModel
         public string Interviewduration { get; set; }
         public int InterviewId { get; set; }
         public string SentBy { get; set; }
-
+        public string ClientName { get; set; }
+        public string UnsubscribeLink { get; set; }
     }
     public class WhatsAppVMResponse
     {

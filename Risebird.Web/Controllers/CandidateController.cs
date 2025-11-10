@@ -3241,15 +3241,15 @@ namespace Risebird.Web.Controllers
 
                 await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), null, id);
                 //WhatsApp Send
-                WhatsAppVM _whatsapp = new WhatsAppVM();
-                _whatsapp.Emailid = CandidateEmail;
-                _whatsapp.Event = "Interview Reschedule Send Risebird";
-                _whatsapp.InterviewDate = result.interviewDate.ToString();
-                _whatsapp.Header = result.ClientName;
-                _whatsapp.MessageValue = result.JDTiltle;
-                _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "");
-                _whatsapp.InterviewId = id;
-                await _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
+                //WhatsAppVM _whatsapp = new WhatsAppVM();
+                //_whatsapp.Emailid = CandidateEmail;
+                //_whatsapp.Event = "Interview Reschedule Send Risebird";
+                //_whatsapp.InterviewDate = result.interviewDate.ToString();
+                //_whatsapp.Header = result.ClientName;
+                //_whatsapp.MessageValue = result.JDTiltle;
+                //_whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "");
+                //_whatsapp.InterviewId = id;
+                //await _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);
         }
@@ -7354,8 +7354,71 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SendWhatsAppInvite(List<CandidateDetailsForWhatsApp> CandidateList)
         {
-            return Json("");
+            foreach (var item in CandidateList)
+            {
+                WhatsAppSend(item.IRFId, item.candidateEmail);
+            }
+            return Json("Send Successfully.");
         }
+        public async Task WhatsAppSend(int irfId, string email)
+        {
+            try
+            {
+                var linkurl = "https://" + Request.Host.ToString();
+                //update irf Invite count here
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                var inviteCount = irf.TotalInvites;
+                var calendlyLink = irf.CalendlyLink;
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
+                //var candidateInviteCount = candidate.TotalInvites;
+                if (candidate != null)
+                {
+                    if (email != null && calendlyLink != null)
+                    {
+                        var jdLink = irf.JDLink;
+                        var client = await _clientService.GetClient(irf.ClientId);
+                        string primarySkill = string.Empty;
+                        if (irf.SkillSetsevaluate > 1)
+                        {
+                            primarySkill = irf.JDTiltle + " and " + irf.JDTitleTwo;
+                        }
+                        else
+                        {
+                            primarySkill = irf.JDTiltle.Split("|")[0];
+                        }
+                        string oneTimeSchedulingLink = string.Empty;
 
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
+                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
+                        {
+                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
+                        }
+                        oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
+
+                        WhatsAppVM _whatsapp = new WhatsAppVM();
+                        _whatsapp.Emailid = email;
+                        _whatsapp.PrimarySkill = primarySkill;
+                        _whatsapp.ClientName = client.Name;
+                        _whatsapp.Event = "Schedule Interview";
+                        _whatsapp.buttonlink = oneTimeSchedulingLink;
+                        _whatsapp.irfId = irfId;
+                        _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
+                        if (candidate.TotalInvites == 0)
+                        {
+                            _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                        }
+                        _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+                        //add candidate status
+                        //await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
     }
 }

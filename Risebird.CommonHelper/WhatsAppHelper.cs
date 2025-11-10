@@ -187,20 +187,25 @@ namespace Risebird.CommonHelper
                             { "Authorization", "Basic " + accesskey },
                             { "Content-Type", "application/json" }
                         };
-                        List<HttpParameters> parameters = new List<HttpParameters>
+                        var traits = new Dictionary<string, object>();
+                        traits["Client"] = _whatsAppVM.ClientName;
+                        traits["JdTitle"] = _whatsAppVM.PrimarySkill;
+                        traits["ScheduleLink"] = _whatsAppVM.buttonlink;
+                        traits["UnsubscribeLink"] = _whatsAppVM.UnsubscribeLink;
+
+                        var bodyData = new
                         {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
+                            phoneNumber = _whatsAppVM.WhatsAppNumber,
+                            countryCode = _whatsAppVM.CountryCode,
+                            @event = _whatsAppVM.Event,
+                            traits = traits
                         };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, bodyData, headers);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
-
                     }
                 }
                 return "Message sent successfully.";

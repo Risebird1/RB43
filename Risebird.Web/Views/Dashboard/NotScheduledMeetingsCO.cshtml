@@ -22,11 +22,10 @@
     
     // Serialize candidate data for WhatsApp invite modal
     var candidatesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(c => new {
-        imid = c.imid,
+        imid = 0,
         candidateName = c.candidateName,
         candidateEmail = c.candidateEmail,
-        IRFId = c.IRFId,
-        irfId = c.IRFId,
+        IRFId = c.imid,
         irfName = c.IRFId,
         MobileNumber = c.MobileNumber,
         ClientHrContact = c.ClientHrContact,

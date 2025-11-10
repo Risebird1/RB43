@@ -179,22 +179,22 @@ namespace Risebird.AzureTimerFunctions
                             Subject = $"Risebird: Due to unforeseen circumstances, If the interviewer was unable to join the interview. We apologize for the inconvenience. Kindly reschedule."
                         };
                         var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink, item.interviewMeetingId);
-                        WhatsAppVM _whatsapp = new WhatsAppVM();
-                        _whatsapp.Emailid = item.candidateEmail;
-                        //if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
-                        //{
-                        _whatsapp.Event = "Interview Reschedule Risebird";
-                        //}
-                        //else
-                        //{
-                        //    _whatsapp.Event = "Interview Reschedule";
-                        //}
-                        oneTimeSchedulingLink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "").ToString();
-                        _whatsapp.buttonlink = oneTimeSchedulingLink;
-                        _whatsapp.InterviewId = item.interviewMeetingId;
-                        //_whatsapp.buttonlink = oneTimeSchedulingLink.Split("=").LastOrDefault().ToString();
-                        _whatsapp.irfId = item.irfId;
-                        _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
+                        //WhatsAppVM _whatsapp = new WhatsAppVM();
+                        //_whatsapp.Emailid = item.candidateEmail;
+                        ////if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        ////{
+                        //_whatsapp.Event = "Interview Reschedule Risebird";
+                        ////}
+                        ////else
+                        ////{
+                        ////    _whatsapp.Event = "Interview Reschedule";
+                        ////}
+                        //oneTimeSchedulingLink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "").ToString();
+                        //_whatsapp.buttonlink = oneTimeSchedulingLink;
+                        //_whatsapp.InterviewId = item.interviewMeetingId;
+                        ////_whatsapp.buttonlink = oneTimeSchedulingLink.Split("=").LastOrDefault().ToString();
+                        //_whatsapp.irfId = item.irfId;
+                        //_ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
                 }
             }
