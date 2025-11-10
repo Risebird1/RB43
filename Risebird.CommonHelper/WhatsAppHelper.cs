@@ -10,6 +10,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Risebird.CommonHelper
 {
@@ -176,8 +177,16 @@ namespace Risebird.CommonHelper
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(dataResult.Item1))
                     {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
+                        var phonenumber = ExtractCountryCode(dataResult.Item1);
+                        if (string.IsNullOrWhiteSpace(phonenumber.Item1))
+                        {
+                            _whatsAppVM.CountryCode = "+91";
+                        }
+                        else
+                        {
+                            _whatsAppVM.CountryCode = phonenumber.Item1;
+                        }
+                        _whatsAppVM.WhatsAppNumber = phonenumber.Item2;
                         _whatsAppVM.UserName = dataResult.Item2;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
@@ -187,20 +196,25 @@ namespace Risebird.CommonHelper
                             { "Authorization", "Basic " + accesskey },
                             { "Content-Type", "application/json" }
                         };
-                        List<HttpParameters> parameters = new List<HttpParameters>
+                        var traits = new Dictionary<string, object>();
+                        traits["Client"] = _whatsAppVM.ClientName;
+                        traits["JdTitle"] = _whatsAppVM.PrimarySkill;
+                        traits["ScheduleLink"] = _whatsAppVM.buttonlink;
+                        traits["UnsubscribeLink"] = _whatsAppVM.UnsubscribeLink;
+
+                        var bodyData = new
                         {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
+                            phoneNumber = _whatsAppVM.WhatsAppNumber,
+                            countryCode = _whatsAppVM.CountryCode,
+                            @event = _whatsAppVM.Event,
+                            traits = traits
                         };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, bodyData, headers);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
-
                     }
                 }
                 return "Message sent successfully.";
@@ -849,6 +863,36 @@ namespace Risebird.CommonHelper
                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
+        }
+
+        public (string CountryCode, string MobileNumber) ExtractCountryCode(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return ("", "");
+
+            // Clean up unwanted chars (spaces, dashes)
+            string phone = input.Replace(" ", "").Replace("-", "");
+
+            // Match +91, 91, or 0091 at the start (1 to 3 digits country code)
+            var match = Regex.Match(phone, @"^(?:\+|00)?(\d{1,3})");
+
+            if (match.Success)
+            {
+                string code = match.Groups[1].Value;
+                string prefix = match.Value;
+
+                // Remove matched part (country code)
+                string numberWithoutCode = phone.Substring(prefix.Length);
+
+                // Normalize to + format for code
+                string countryCode = "+" + code;
+
+                // Return both
+                return (countryCode, numberWithoutCode);
+            }
+
+            // No code found — return as is
+            return ("", phone);
         }
     }
 }

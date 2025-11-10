@@ -19,6 +19,18 @@
 <script>
     var Header = "<div>Not Scheduled Candidates</div>";
     $('#txtpageHeader').empty().html(Header);
+    
+    // Serialize candidate data for WhatsApp invite modal
+    var candidatesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(c => new {
+        imid = 0,
+        candidateName = c.candidateName,
+        candidateEmail = c.candidateEmail,
+        IRFId = c.imid,
+        irfName = c.IRFId,
+        MobileNumber = c.MobileNumber,
+        ClientHrContact = c.ClientHrContact,
+        IsColdCandidate = false // NotScheduledMeetingsCO doesn't have cold candidate flag
+    })));
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
@@ -73,10 +85,16 @@
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
-                            <div class="filter-note" style="text-align: right;"> Note: To visualize data older than 45 days, please apply filter</div>
+                            <div class="filter-note" style="text-align: right;margin-right:250px;"> Note: To visualize data older than 45 days, please apply filter</div>
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" style="float: left;margin-right: 5px;background: #2c8d2cb8!important;" onclick="OpenWhatsAppInviteModal()">
+                                <span data-toggle="tooltip" data-placement="top" data-original-title="Tooltip on top">
+                                    <img src="~/img/whatsapp.png" style="max-width:18px; vertical-align: middle; margin-right: 5px;" />
+                                    <font style=" font-family: Roboto, sans-serif; font-size:12px;"> WhatsApp Invite</font>
+                                </span>
                             </button>
                             <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("NotScheduledMeetingstoExcel", "Dashboard")'"></i></span>
                         </div>
@@ -226,6 +244,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @await Html.PartialAsync("~/Views/Common/_WhatsAppInviteModal.cshtml")
                             @if (HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
                             {
                                 <div id="staffing_notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Client/ReScheduleMeetings' class='btn btn-primary staffntschnext-btn'>NEXT</a>" data-position="top">
@@ -617,6 +636,11 @@
             }
         });
     }
+
+    // Set pageUrl variable for partial view to know it's NotScheduledMeetingsCO page
+    var pageUrl = 'NotScheduledMeetingsCO';
+
+
     function searchResult() {
         $('#meeting').DataTable();
     }

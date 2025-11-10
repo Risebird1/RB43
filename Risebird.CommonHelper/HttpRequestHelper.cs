@@ -48,7 +48,6 @@ namespace Risebird.CommonHelper
                     foreach (var item in parameters)
                     {
                         request.AddParameter(item.name, item.value, item.parameterType);
-
                     }
                 }
                 RestResponse response = await client.ExecuteAsync(request);
