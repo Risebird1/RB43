@@ -22,6 +22,19 @@
 <script>
     var Header = "Candidates for <strong>@ViewBag.IRFName</strong>";
     $('#txtpageHeader').empty().html(Header);
+
+    // Serialize candidate data for WhatsApp invite modal
+    var candidatesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(c => new
+        {
+            id = c.id,
+            Name = c.Name,
+            EmailId = c.EmailId,
+            EndDate = c.EndDate,
+            IRFId = c.IRFId,
+            IRFName = c.IRFName,
+            ClientHRAttemptContact = c.ClientHRAttemptContact,
+            IsColdCandidate = c.IsColdCandidate
+        })));
 </script>
 
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
@@ -39,14 +52,6 @@
 
     </style>
 }
-
-@* @if (ViewBag.AccessType != "Public")
-{
-    <style>
-
-
-  </style>
-} *@
 
 <input type="hidden" value="@ViewBag.profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
@@ -89,6 +94,12 @@
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" style="background: #2c8d2cb8!important;">
+                                <span data-toggle="tooltip" data-placement="top" onclick="OpenWhatsAppInviteModal()" data-original-title="Tooltip on top">
+                                    <img src="~/img/whatsapp.png" style="max-width:18px; vertical-align: middle; margin-right: 5px;" />
+                                    <font style=" font-family: Roboto, sans-serif; font-size:12px;"> WhatsApp Invite</font>
+                                </span>
                             </button>
 
                             @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -677,7 +688,7 @@
 
 
                                                                 <td style="width:20%" class="text-left">
-                                                               
+
                                                                     @if (ViewBag.profile != "Recruiter")
 
                                                                     {
@@ -780,10 +791,10 @@
                                                                     @if (ViewBag.AccessType != "Public")
                                                                     {
 
-                                                                      <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                        <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
                                                                             <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
                                                                         </a>
-                                                                       
+
                                                                     }
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
@@ -818,10 +829,10 @@
 
 
                                                                         <div style="float:left;">
-                                                                              @if(item.IsAIInterview)
-                                                                        {
-                                                                            <span class="interview_9">
-                                                                                <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                            @if (item.IsAIInterview)
+                                                                            {
+                                                                                <span class="interview_9">
+                                                                                    <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
                                                                                         <button class="btn shadow btn-xs sharp me-1" aria-label="Report" style="position:relative;top: 0px;width: 23px;height: 23px;background: #42a5f5;">
                                                                                             <span>
                                                                                                 <svg style="position:relative;top:-2px;left:-2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -840,17 +851,19 @@
                                                                                                     <line x1="7" y1="18" x2="17" y2="18"></line>
                                                                                                 </svg>
                                                                                             </span>
+                                                                                        </button>
+                                                                                    </a>
+                                                                                </span>
+                                                                                //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.IRFId})">
+                                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;   margin: 0px 0px 0px 3px;">
+                                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-2px;left:-1px" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                                     </button>
                                                                                 </a>
-                                                                            </span> //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                        }
-                                                                        else{
-                                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.IRFId})">
-                                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;   margin: 0px 0px 0px 3px;">
-                                                                                    <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-2px;left:-1px" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                                </button>
-                                                                            </a>
-                                                                        }
+                                                                            }
                                                                         </div>
 
 
@@ -861,12 +874,12 @@
                                                                         <div style="float:left">
                                                                             <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:22px!important;height:22px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:2px;left:0px;margin: 0px 0px 0px 3px;">
                                                                                 <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                   <img src="~/img/approve-blk.png" style="position: relative;top: -1.5px;left:-3px;max-width: 16px;" />
+                                                                                    <img src="~/img/approve-blk.png" style="position: relative;top: -1.5px;left:-3px;max-width: 16px;" />
                                                                                 </span>
                                                                             </button>
                                                                         </div>
                                                                     }
-                                                                    @if (ViewBag.profile == "Client"  && ViewBag.AccessType == "Public")
+                                                                    @if (ViewBag.profile == "Client" && ViewBag.AccessType == "Public")
                                                                     {
 
                                                                         <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail" style="top: 0px;left:-6px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
@@ -1202,6 +1215,8 @@
                 </div>
             </div>
 
+            @await Html.PartialAsync("~/Views/Common/_WhatsAppInviteModal.cshtml")
+
             <!-- end row -->
             <div id="myCallRecords" class="modal modal-bg">
                 <!-- Modal content -->
@@ -1357,7 +1372,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-        
+
                     Swal.fire({
 
                         title: '<strong>Successful</u></strong>',
@@ -1369,7 +1384,7 @@
                         allowOutsideClick: false
 
                     }).then((result) => {
-        
+
                     });
             }
             else {
@@ -1966,6 +1981,7 @@ else if (ViewBag.Message != null)
 
     const loop = setInterval(toggleHandler, 1000);
 </script>
+
 
 
 
