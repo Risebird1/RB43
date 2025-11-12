@@ -22,7 +22,7 @@ namespace Risebird.Business.Interface
         Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null);
         Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId);
         Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId);
-        Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer);
+        Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer, string updatedBy);
         Task<bool> UpdateMeetingCompletedStatusForAIInterview(string sid);
         Task<VideoSentimentAnalysis> GenerateSentimentAnalysis(int videoId, string user, string videoUrl);
         Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);

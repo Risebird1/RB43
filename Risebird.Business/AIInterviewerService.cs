@@ -163,11 +163,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer)
+        public async Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer, string updatedBy)
         {
             try
             {
-                return await _aiInterviewerRepository.UpdateCandidateAnswerById(questionId, updatedAnswer);
+                return await _aiInterviewerRepository.UpdateCandidateAnswerById(questionId, updatedAnswer, updatedBy);
             }
             catch (Exception e)
             {
