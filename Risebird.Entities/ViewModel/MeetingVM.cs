@@ -409,6 +409,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateAnswerVideoLink { get; set; } // in case of ai interview, fetches the link from the table BotInterviewQuestionVideos
         public int CandidateAnswerVideoIdAI { get; set; }
         public string OpenAIAssistantId { get; set; }//assistant Id on skill channel global level
+        public int AICandidateResponseVideoCount { get; set; }
     }
 
     public class VedioComments
