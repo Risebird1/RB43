@@ -493,7 +493,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer)
+        public async Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer, string updatedBy)
         {
             try
             {
@@ -502,6 +502,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@questionId", questionId);
                     parameters.Add("@updatedAnswer", updatedAnswer);
+                    parameters.Add("@updatedBy", updatedBy);
                     parameters.Add("@timeNow", DateTime.Now);
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateCandidateAnswerById", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout: 150);

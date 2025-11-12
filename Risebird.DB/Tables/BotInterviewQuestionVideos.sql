@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[BotInterviewQuestionVideos](
 	[BotAudioLink] [varchar](2000) NULL,
 	[DeliveryHeadQuestionId] [int] NULL,
 	[AnswerModifiedAt] [datetime] NULL,
+	[AnswerModifiedBy] [varchar](100) NULL,
  CONSTRAINT [PK_BotInterviewQuestionVideos] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -70,6 +71,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE BotInterviewQuestionVideos
     Add AnswerModifiedAt datetime null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AnswerModifiedBy')
+      AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    Add AnswerModifiedBy varchar(100) null
 END
 
 END
