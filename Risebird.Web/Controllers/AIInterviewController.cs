@@ -1425,9 +1425,11 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                var email = HttpContext.Session.GetString("email")?.Trim();
+                email = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == ProfileNames.QualityController)
                 {
-                    var model = await _aiinterviewerService.UpdateCandidateAnswerById(questionId, candidateAnswer);
+                    var model = await _aiinterviewerService.UpdateCandidateAnswerById(questionId, candidateAnswer, email);
                     if (model)
                     {
                         return Json(true);
