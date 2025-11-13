@@ -1495,7 +1495,30 @@
                                 <input type="hidden" asp-for="InterviewStatusTwo" id="InterviewStatusTwo" />
                                 <label id="interviewStatusTwo_Error" class="text-danger"></label>
                                 <label id="meetingStatusTwo_Error" class="text-danger"></label>
+                                
+                                <div class="int-form-group">
+                                    @Html.TextBoxFor(m => m.CandidateName, new { @readonly = "readonly", @placeholder = "" })
+                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "" })
 
+                                </div>
+                                <div class="int-form-group">
+                                    @Html.TextBoxFor(m => m.CandidateEmail, new { @readonly = "readonly", @placeholder = "", style = "width:400px;" })
+                                    @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "" })
+
+                                </div>
+
+                                <div class="int-form-group">
+                                    @Html.TextBoxFor(m => m.IRFName, new { @readonly = "readonly", @placeholder = "" })
+                                    @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "" })
+
+                                </div>
+
+                                
+                                <div class="int-form-group">
+                                    @Html.TextBoxFor(m => m.interviewDate, new { @readonly = "readonly", @placeholder = "" })
+
+                                    @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "" })
+                                </div>
                                 <div class="mb-3">
                                     <label for="MeetingStatus" class="form-label">Meeting Status</label>
                                     @Html.DropDownList("MeetingStatus", meetingStatusList, "Select", new { @class = "form-control", @id = "MeetingStatus", @onchange = "MeetingStatusChanged(this.value)" })

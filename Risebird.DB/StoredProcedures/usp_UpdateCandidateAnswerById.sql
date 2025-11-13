@@ -11,11 +11,13 @@ GO
 Create Procedure usp_UpdateCandidateAnswerById
 @questionId int,
 @updatedAnswer varchar(max) = null,
+@updatedBy varchar(100) = null,
 @timeNow datetime = null
 AS
 BEGIN
 
-update BotInterviewQuestionVideos set CandidateAnswer = @updatedAnswer, AnswerModifiedAt = @timeNow where id =@questionId
+update BotInterviewQuestionVideos set CandidateAnswer = @updatedAnswer, AnswerModifiedAt = @timeNow,
+ AnswerModifiedBy = @updatedBy where id =@questionId
 
 END
 GO

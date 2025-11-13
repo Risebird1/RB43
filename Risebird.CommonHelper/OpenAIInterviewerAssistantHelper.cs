@@ -102,30 +102,38 @@ namespace Risebird.CommonHelper
 
         public async Task<List<string>> GetMessagesAsync(string threadId)
         {
-            var url = $"https://api.openai.com/v1/threads/{threadId}/messages";
-            var response = await _http.GetAsync(url);
-            //var result = await response.Content.ReadFromJsonAsync<dynamic>();
-            var result = await response.Content.ReadFromJsonAsync<MessageListResponse>();
-            var messages = new List<string>();
-            //foreach (var msg in result.data)
-            //{
-            //    if (msg.role == "assistant")
-            //        messages.Add((string)msg.content[0].text.value);
-            //}
-            foreach (var msg in result.data)
+            try
             {
-                if (msg.role == "assistant")
+                var url = $"https://api.openai.com/v1/threads/{threadId}/messages";
+                var response = await _http.GetAsync(url);
+                //var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                var result = await response.Content.ReadFromJsonAsync<MessageListResponse>();
+                var messages = new List<string>();
+                //foreach (var msg in result.data)
+                //{
+                //    if (msg.role == "assistant")
+                //        messages.Add((string)msg.content[0].text.value);
+                //}
+                foreach (var msg in result.data)
                 {
-                    foreach (var contentItem in msg.content)
+                    if (msg.role == "assistant")
                     {
-                        if (contentItem.type == "text")
+                        foreach (var contentItem in msg.content)
                         {
-                            messages.Add(contentItem.text.value);
+                            if (contentItem.type == "text")
+                            {
+                                messages.Add(contentItem.text.value);
+                            }
                         }
                     }
                 }
+                return messages;
             }
-            return messages;
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<List<TranscriptConv>> GetFullConversation(Guid sessionId, string threadId)
