@@ -33,6 +33,8 @@ namespace Risebird.Entities.ViewModel
         public string? email { get; set; }
         public string? inAndOutTime { get; set; }
         public int totalDurationMinutes { get; set; }
+        public long leaveTime { get; set; }
+        public long joinTime { get; set; }
     }
     public class ZohoAccessToken
     {
@@ -44,5 +46,13 @@ namespace Risebird.Entities.ViewModel
     {
         public static readonly string Meeting = "Meeting";
         public static readonly string Recording = "Recording";
+    }
+    public class ZohoParticipantList
+    {
+        public string ParticipantName { get; set; }
+        public DateTime ActionDate { get; set; }
+        public string Event { get; set; }
+        public string Meetingid { get; set; }
+        public string ZoomMeetingId { get; set; }
     }
 }
