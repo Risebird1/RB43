@@ -437,7 +437,7 @@
                                                                 {
                                                                     <th class="text-center" id="myinterview_7">Meeting Link</th>
                                                                 }
-                                                                <th id="myinterview_6">Resume</th>
+                                                                @* <th id="myinterview_6">Resume</th> *@
                                                                 <th>AI Interview Link</th>
                                                                 @* <th>Variable Pay</th>*@
 
@@ -475,7 +475,7 @@
                                                                     <th class="text-center">Meeting Link</th>
                                                                 }
 
-                                                                <th>Resume</th>
+                                                                @* <th>Resume</th> *@
                                                                 <th>AI Interview Link</th>
                                                                 @* <th>Variable Pay</th>*@
 
@@ -1032,7 +1032,7 @@
 
 
                                                                     }
-                                                                    @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
+                                                                   @*  @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
                                                                     {
                                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.CandidateCodedResumeLink>Resume</a> </td>
                                                                     }
@@ -1043,7 +1043,7 @@
                                                                     else
                                                                     {
                                                                         <td>No Resume</td>
-                                                                    }
+                                                                    } *@
                                                                     @if(item.IsAIInterview)
                                                                     {
                                                                         <td>

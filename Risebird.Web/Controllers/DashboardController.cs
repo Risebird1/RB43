@@ -1889,6 +1889,10 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
+                        else if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        {
+                            modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
+                        }
                         else
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName, filter);

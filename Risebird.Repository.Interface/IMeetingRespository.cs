@@ -201,7 +201,7 @@ namespace Risebird.Repository.Interface
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response,string cancellationreason);
+        Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response, string cancellationreason);
         Task<bool> ApplyInterviewPenalty(int meetingid, string JobCountry, string interviewer);
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
@@ -300,5 +300,7 @@ namespace Risebird.Repository.Interface
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingTranscriptMeetings();
+        Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();
+        Task SaveZohoMeetingParticipantDetails(List<ZohoParticipantList> _participantlist);
     }
 }
