@@ -29,7 +29,7 @@ namespace Risebird.CommonHelper
             _options = options.Value;
             _interviewSchedulerservice = interviewSchedulerservice;
         }
-        private async Task<string> GetAccessTokenAsync()
+        public async Task<string> GetAccessTokenAsync()
         {
             var zohodetails = await _interviewSchedulerservice.FetchZohoAccessToken(ZooTokenTypes.Meeting);
             if (zohodetails == null)
@@ -38,7 +38,7 @@ namespace Risebird.CommonHelper
             }
             _cachedAccessToken = zohodetails.AccessToken;
             _accessTokenExpiry = zohodetails.TokenExpiry;
-            if (_accessTokenExpiry > DateTime.Now.AddMinutes(2))
+            if (_accessTokenExpiry > DateTime.Now.AddMinutes(5))
             {
                 return _cachedAccessToken;
             }
@@ -252,7 +252,7 @@ namespace Risebird.CommonHelper
             var token = await GetAccessTokenAsync();
             var client = CreateMeetingApiClient();
             // Endpoint may vary by Zoho API version; this targets participant report for a meeting/session
-            var path = $"/{_options.OrganizationId}/participant/{meetingKey}.json?index=1&count=10";
+            var path = $"/{_options.OrganizationId}/participant/{meetingKey}.json?index=1&count=50";
             var req = new RestRequest(path, Method.Get);
             req.AddHeader("Authorization", $"Zoho-oauthtoken {token}");
             req.AddHeader("Accept", "application/json");
@@ -278,7 +278,8 @@ namespace Risebird.CommonHelper
                         participantId = p.TryGetProperty("memberId", out var pid) ? pid.GetString() : null,
                         email = p.TryGetProperty("email", out var e) ? e.GetString() : null,
                         inAndOutTime = p.TryGetProperty("inAndOutTime", out var ia) ? ia.GetString() : null,
-                        totalDurationMinutes = p.TryGetProperty("duration", out var td) ? td.GetInt32() / 60000 : 0
+                        leaveTime = p.TryGetProperty("leaveTime", out var lt) ? lt.GetInt64() : 0,
+                        joinTime = p.TryGetProperty("joinTime", out var jt) ? jt.GetInt64() : 0
                     });
                 }
             }
