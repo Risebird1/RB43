@@ -4517,6 +4517,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation()
+        {
+            try
+            {
+                return await _meetingRespository.GetZohoLiveMeetingInfomation();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
