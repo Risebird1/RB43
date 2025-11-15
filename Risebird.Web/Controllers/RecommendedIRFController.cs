@@ -926,9 +926,9 @@ namespace Risebird.Web.Controllers
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
             var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
-            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
+            var path = $"https://risebirdazuretimerfunctions.azurewebsites.net/api/CheckIRFAvailability";
             //var path = $"http://localhost:7071/api/CheckIRFAvailability";
-            var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+            var functionKey = "jvvpVOYpFHtDdwamlUfqsCfB9nb7rdf26AHfptDDdX4aAzFuvG37Vg==";
             //functionKey = string.Empty;
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
         }

@@ -617,8 +617,8 @@ namespace Risebird.Web.Controllers
             mobiledata.mobileNumber = mobile;
             mobiledata.CandidateEmail = candidateEmail;
             mobiledata.panNumber = "";
-            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SignzyEmploymentVerification";
-            var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
+            var path = $"https://risebirdazuretimerfunctions.azurewebsites.net/api/SignzyEmploymentVerification";
+            var functionKey = "LjeeKEjzQQqawcVuFtmM201YyePZnCvq53K5AaG9Fg2eAzFuVj3nAA==";
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
         [HttpPost]
