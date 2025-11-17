@@ -130,44 +130,72 @@ namespace Risebird.Services.Controllers
             {
                 var meetingDetails = await _aIInterviewerService.GetAIInterviewDetailsBySessionId(input.SessionId);
 
-                var threadId = await _ai.CreateThreadAsync();
-                //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
-                await _ai.AddMessageAsync(threadId, "user", input.Message);
-
-                var runId = await _ai.CreateRunAsync(threadId, meetingDetails.OpenAIAssistantId);//meetingDetails.AssistantId
-                await _ai.WaitForRunAsync(threadId, runId);
-
-                var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
-
-                if(replies!= null)
+                if(string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson) && input.isExit)
                 {
-                    var reportObject = new InterviewReportResult { SessionId = input.SessionId, ThreadId = threadId, Replies = replies };
-                    //save the report in the database.
-                    var aIInterviewEvaluation = TryParseEvaluation(replies?.FirstOrDefault());
-                    int? interviewStatus = null;
-                    string interviewerComment = string.Empty;
-                    if (!string.IsNullOrWhiteSpace(meetingDetails.QuestionAnswerSetInJson))
-                    {
-                        if (aIInterviewEvaluation != null)
-                        {
-                            if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "select")
-                            {
-                                interviewStatus = 2;
-                            }
-                            else if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "reject")
-                            {
-                                interviewStatus = 3;
-                            }
-                            interviewerComment = aIInterviewEvaluation.FinalComment;
-                        }
-                    }
-                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(reportObject), input.isExit, interviewStatus, interviewerComment);
-
+                    //mark as no show
+                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, null, input.isExit, null, null, 1);
+                    return Ok(new InterviewReportResult { SessionId = input.SessionId, IsReportSavedToDB = true });
                 }
+                else if((!string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson)))
+                {
+                    var threadId = await _ai.CreateThreadAsync();
+                    //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
+                    input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
+                    await _ai.AddMessageAsync(threadId, "user", input.Message);
+
+                    var runId = await _ai.CreateRunAsync(threadId, meetingDetails.OpenAIAssistantId);//meetingDetails.AssistantId
+                    await _ai.WaitForRunAsync(threadId, runId);
+
+                    var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
+
+                    if (replies != null)
+                    {
+                        var reportObject = new InterviewReportResult { SessionId = input.SessionId, ThreadId = threadId, Replies = replies };
+                        //save the report in the database.
+                        var aIInterviewEvaluation = TryParseEvaluation(replies?.FirstOrDefault());
+                        int? interviewStatus = null;
+                        string interviewerComment = string.Empty;
+                        if (!string.IsNullOrWhiteSpace(meetingDetails.QuestionAnswerSetInJson))
+                        {
+                            if (aIInterviewEvaluation != null)
+                            {
+                                if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "select")
+                                {
+                                    interviewStatus = 2;
+                                }
+                                else if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "reject")
+                                {
+                                    interviewStatus = 3;
+                                }
+                                interviewerComment = aIInterviewEvaluation.FinalComment;
+                            }
+                        }
+                        int? meetingStatus = null;
+                        if(input.isExit)
+                        {
+                            if(interviewStatus == 2 || interviewStatus == 3)
+                            {
+                                meetingStatus = 4;
+                            }
+                            else
+                            {
+                                meetingStatus = 3; //dropped
+                            }
+                        }
+                        isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(reportObject), input.isExit, interviewStatus, interviewerComment, meetingStatus);
+
+                    }
 
 
-                return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
+                    return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
+                }
+                else
+                {
+                    return null;
+                }
+                
+                
+
             }
             else
             {
