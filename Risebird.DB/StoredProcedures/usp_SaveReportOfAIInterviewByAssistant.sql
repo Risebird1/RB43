@@ -10,10 +10,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_SaveReportOfAIInterviewByAssistant
 @SessionId varchar(200),
-@SerializedReportOfAIInterviewByAssistant varchar(max),
+@SerializedReportOfAIInterviewByAssistant varchar(max) = null,
 @isExit bit = null,
 @interviewStatus int = null,
 @interviewerComment varchar(1000) = null,
+@meetingStatus int = null,
 @timeNow datetime = null
 AS
 BEGIN
@@ -26,14 +27,26 @@ Begin
 	set @interviewStatus = null
 End
 
-update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
-HasCandidateExited = @isExit, CandidateExitedAt = @timeNow,
-MeetingStatus = CASE 
-                        WHEN (@interviewStatus IS NOT NULL and (@interviewStatus = 2 or @interviewStatus = 3)) THEN 4 
-                        ELSE MeetingStatus 
-                END,
-InterviewStatus = @interviewStatus, InterviewerComment = @interviewerComment,
-ModifiedOn = @timeNow  where InterviewId  = @interviewId
+if(@meetingStatus is null)
+Begin
+	update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
+	HasCandidateExited = @isExit, CandidateExitedAt = @timeNow,
+	MeetingStatus = CASE 
+							WHEN (@interviewStatus IS NOT NULL and (@interviewStatus = 2 or @interviewStatus = 3)) THEN 4 
+							ELSE MeetingStatus 
+					END,
+	InterviewStatus = @interviewStatus, InterviewerComment = @interviewerComment,
+	ModifiedOn = @timeNow  where InterviewId  = @interviewId
+End
+else
+begin
+	update InterviewComments set ReportOfAIInterviewByAssistant = @SerializedReportOfAIInterviewByAssistant,
+	HasCandidateExited = @isExit, CandidateExitedAt = @timeNow,
+	MeetingStatus = @meetingStatus,
+	InterviewStatus = @interviewStatus, InterviewerComment = @interviewerComment,
+	ModifiedOn = @timeNow  where InterviewId  = @interviewId
+end
+
 
 END
 GO

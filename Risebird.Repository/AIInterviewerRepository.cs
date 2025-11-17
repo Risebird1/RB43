@@ -374,7 +374,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant, bool? isExit = null, int? interviewStatus = null, string interviewerComment = null)
+        public async Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant = null, bool? isExit = null, int? interviewStatus = null, string interviewerComment = null, int? meetingStatus = null)
         {
             try
             {
@@ -386,6 +386,7 @@ namespace Risebird.Repository
                     parameters.Add("@isExit", isExit);
                     parameters.Add("@interviewStatus", interviewStatus);
                     parameters.Add("@interviewerComment", interviewerComment);
+                    parameters.Add("@meetingStatus", meetingStatus);
                     parameters.Add("@timeNow", (isExit.HasValue && isExit.Value == true) ? DateTime.Now : null);
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveReportOfAIInterviewByAssistant", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout:150);
