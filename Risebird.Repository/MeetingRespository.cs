@@ -5267,7 +5267,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response,string cancellationreason)
+        public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response, string cancellationreason)
         {
             try
             {
@@ -7711,6 +7711,60 @@ namespace Risebird.Repository
             }
             return false;
         }
-
+        public async Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ZohoParticipantList>(con, "usp_FetchZohoInterviewForParticipant", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task SaveZohoMeetingParticipantDetails(List<ZohoParticipantList> _participantlist)
+        {
+            try
+            {
+                foreach (var item in _participantlist)
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@Event", item.Event);
+                        parameters.Add("@ParticipantName", item.ParticipantName);
+                        parameters.Add("@Meetingid", item.Meetingid);
+                        parameters.Add("@ActionDate", item.ActionDate);
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        {
+                            var result = await SqlMapper.QueryAsync(con, "usp_SaveZohoInterviewParticipantDetails", parameters,
+                                commandType: CommandType.StoredProcedure);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
     }
 }
