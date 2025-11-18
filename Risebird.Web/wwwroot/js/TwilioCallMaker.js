@@ -59,6 +59,7 @@ async function GenerateToken() {
 }
 
 function setupDevice(token) {
+    //debugger;
     device = new Twilio.Device(token, {
         logLevel: 1,
         codecPreferences: ["opus", "pcmu"],
@@ -79,6 +80,7 @@ function setupDevice(token) {
 // ----------------------------
 function callRecipient(phoneNumber) {
     //debugger;
+    //phoneNumber = "+918105232468";
     //phoneNumber = "+918888571923";
     if (!device) {
         console.error("Device not ready. Wait for initialization or user gesture.");
@@ -102,6 +104,7 @@ function callRecipient(phoneNumber) {
 // Call Event Handlers
 // ----------------------------
 function setupCallHandlers(call) {
+    //debugger;
     if (!call) return;
 
     call.on("ringing", () => {
