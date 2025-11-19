@@ -1940,11 +1940,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer)
         {
             try
             {
-                var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment);
+                var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer);
                 return flagUpdateResult;
             }
             catch (Exception ex)
