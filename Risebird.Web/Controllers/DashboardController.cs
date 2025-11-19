@@ -71,7 +71,7 @@ namespace Risebird.Web.Controllers
             IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository,
             ITwilioHelper twilioHelper, IEncryptionHelper encryptionHelper, IIRFService irfService,
             ICandidateRepository candidateRepository, IPdfReaderHelper pdfReaderHelper,
-            IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai, 
+            IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
@@ -5152,7 +5152,7 @@ namespace Risebird.Web.Controllers
             return Json("Fail to Move the Interviewer, Please try again.");
         }
         [HttpPost]
-        public async Task<JsonResult> InactivateInterviewer(int interviewerId, string comment)
+        public async Task<JsonResult> InactivateInterviewer(int interviewerId, string comment, bool blockinterviewer)
         {
             try
             {
@@ -5163,7 +5163,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                 }
 
-                var result = await _interviewerService.InactivateInterviewer(interviewerId, emailId, comment);
+                var result = await _interviewerService.InactivateInterviewer(interviewerId, emailId, comment, blockinterviewer);
                 if (result)
                 {
                     return Json(new { success = true, message = "Interviewer inactivated successfully." });

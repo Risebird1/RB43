@@ -164,6 +164,14 @@
                                                                         </span>
                                                                     </button>
                                                                 }
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Block Interviewer" style="width:27px!important;height:27px!important">
+                                                                    <span onclick="javascript:blockInterviewer('@item.UserId');" title="Block Interviewer" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="12" height="12" viewBox="0 0 48 48">
+                                                                            <path fill="#d50000" d="M5.7 22H42.5V26H5.7z" transform="rotate(-45.001 24.036 24.037)"></path>
+                                                                            <path fill="#d50000" d="M24,4C13,4,4,13,4,24s9,20,20,20s20-9,20-20S35,4,24,4z M24,40c-8.8,0-16-7.2-16-16S15.2,8,24,8 s16,7.2,16,16S32.8,40,24,40z"></path>
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
                                                             </td>
                                                             <td>
                                                                 <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
@@ -467,6 +475,68 @@
                     data: {
                         interviewerId: interviewerId,
                         comment: comment
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Removed!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while processing your request.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+    function blockInterviewer(interviewerId) {
+        Swal.fire({
+            title: 'Block Interviewer',
+            text: "Are you sure you want to block this interviewer from the system?",
+            icon: 'warning',
+            html: `
+                <div class="form-group">
+                    <label for="remove-comment" class="text-left d-block mb-2">Please provide a reason for block:</label>
+                    <textarea id="remove-comment" class="form-control" rows="3" style="margin-top:10px;"></textarea>
+                </div>`,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, block',
+            cancelButtonText: 'Cancel',
+            preConfirm: () => {
+                const comment = document.getElementById('remove-comment').value;
+                if (!comment || comment.trim() === '') {
+                    Swal.showValidationMessage('Please enter a comment');
+                    return false;
+                }
+                return comment;
+            }
+        }).then((result) => {
+            if (result.dismiss !== 'cancel') {
+                const comment = result.value;
+                $.ajax({
+                    url: '/Dashboard/InactivateInterviewer',
+                    type: 'POST',
+                    data: {
+                        interviewerId: interviewerId,
+                        comment: comment,
+                        blockinterviewer:true
                     },
                     success: function (response) {
                         if (response.success) {
