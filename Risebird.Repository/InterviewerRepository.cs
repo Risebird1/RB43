@@ -4115,7 +4115,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer)
         {
             try
             {
@@ -4124,6 +4124,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@modifiedBy", modifiedBy);
                 dynamicParameters.Add("@modifiedOn", DateTime.Now);
                 dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@blockinterviewer", blockinterviewer);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
