@@ -7427,57 +7427,5 @@ namespace Risebird.Web.Controllers
         {
             return Json("Unsubscribed Successfully.");
         }
-        public async Task TestData()
-        {
-            var meetingForParticipants = await _meetingService.GetZohoLiveMeetingInfomation();
-            var accesstoken = await _zoho.GetAccessTokenAsync();
-            //Fetch Meeting Infomation From DB to check the Participent Report
-            var _meetingList = meetingForParticipants.Select(x => x.ZoomMeetingId).Distinct().ToList();
-            if (_meetingList.Count() > 0)
-            {
-                Parallel.ForEach(_meetingList, meeting =>
-                {
-                    var _participantList = new List<ZohoParticipantList>();
-                    var ParticipantInfo = _zoho.GetParticipantReportAsync(meeting).Result;
-                    foreach (var item in ParticipantInfo)
-                    {
-                        var meets = meetingForParticipants.Where(x => x.ZoomMeetingId == meeting && x.ParticipantName == item.email)?.ToList();
-                        if (item.joinTime > 0)
-                        {
-                            DateTime joinDateTime = DateTimeOffset.FromUnixTimeMilliseconds(item.joinTime).ToLocalTime().DateTime;
-                            joinDateTime = joinDateTime.AddTicks(-(joinDateTime.Ticks % TimeSpan.TicksPerSecond));
-                            var _meets = meets.Where(x => x.Event == "PARTICIPANT_JOINED" && x.ParticipantName == item.email && x.ActionDate == joinDateTime)?.ToList();
-                            if (_meets.Count() == 0)
-                            {
-                                _participantList.Add(new ZohoParticipantList
-                                {
-                                    ParticipantName = item.email,
-                                    ActionDate = joinDateTime,
-                                    Meetingid = meeting,
-                                    Event = "PARTICIPANT_JOINED"
-                                });
-                            }
-                        }
-                        if (item.leaveTime > 0)
-                        {
-                            DateTime leaveDateTime = DateTimeOffset.FromUnixTimeMilliseconds(item.leaveTime).ToLocalTime().DateTime;
-                            leaveDateTime = leaveDateTime.AddTicks(-(leaveDateTime.Ticks % TimeSpan.TicksPerSecond));
-                            var _meets = meets.Where(x => x.Event == "PARTICIPANT_LEFT" && x.ParticipantName == item.email && x.ActionDate == leaveDateTime)?.ToList();
-                            if (_meets.Count() == 0)
-                            {
-                                _participantList.Add(new ZohoParticipantList
-                                {
-                                    ParticipantName = item.email,
-                                    ActionDate = leaveDateTime,
-                                    Meetingid = meeting,
-                                    Event = "PARTICIPANT_LEFT"
-                                });
-                            }
-                        }
-                    }
-                    //Save in DB
-                });
-            }
-        }
     }
 }
