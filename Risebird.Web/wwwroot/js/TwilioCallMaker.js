@@ -78,10 +78,7 @@ function setupDevice(token) {
 // ----------------------------
 // Outgoing Call
 // ----------------------------
-function callRecipient(phoneNumber) {
-    //debugger;
-    //phoneNumber = "+918105232468";
-    //phoneNumber = "+918888571923";
+function callRecipient(phoneNumber) {    
     if (!device) {
         console.error("Device not ready. Wait for initialization or user gesture.");
         return;
