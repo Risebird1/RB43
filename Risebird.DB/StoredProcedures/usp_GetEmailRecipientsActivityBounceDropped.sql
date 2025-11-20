@@ -60,7 +60,7 @@ end as candidateName, ca.ClientHRAttemptContact as CandidateClientHR,IRF.EndDate
   and sge.email != 'hire@risebird.io'    
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY,-1, @timeNow) as date)) or    
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))    
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
+  --and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
   order by smd.CreatedAt desc    
     
 end  
@@ -86,7 +86,7 @@ end as candidateName, ca.ClientHRAttemptContact as CandidateClientHR,IRF.EndDate
   and sge.email != 'hire@risebird.io'    
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY,-1, @timeNow) as date)) or    
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))    
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
+  --and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
   order by smd.CreatedAt desc    
     
 end  
@@ -114,7 +114,7 @@ end as candidateName, ca.ClientHRAttemptContact as CandidateClientHR,IRF.EndDate
   and sge.email != 'hire@risebird.io'    
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY,-1, @timeNow) as date)) or    
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))    
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
+  --and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
   order by smd.CreatedAt desc    
     
 end  
@@ -142,7 +142,7 @@ end as candidateName, ca.ClientHRAttemptContact as CandidateClientHR,IRF.EndDate
   and sge.email != 'hire@risebird.io'    
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY,-1, @timeNow) as date)) or    
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))    
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
+  --and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
   order by smd.CreatedAt desc    
     
 end  
@@ -169,7 +169,7 @@ end as candidateName, ca.ClientHRAttemptContact as CandidateClientHR,IRF.EndDate
   and sge.email != 'hire@risebird.io'    
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY,-1, @timeNow) as date)) or    
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))    
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
+  --and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
   order by smd.CreatedAt desc    
     
 End    
@@ -195,7 +195,7 @@ end as candidateName, ca.ClientHRAttemptContact as CandidateClientHR,IRF.EndDate
   and sge.email != 'hire@risebird.io'    
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY,-1, @timeNow) as date)) or    
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))    
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
+  --and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3))    
   order by smd.CreatedAt desc    
     
      
