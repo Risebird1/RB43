@@ -3010,17 +3010,22 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive, bool? IsBlocked)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    if (IsBlocked == true)
+                    {
+                        IsActive = false;
+                    }
                     var parameters = new DynamicParameters();
                     parameters.Add("@Emailid", Emailid);
                     parameters.Add("@LeadInterviewer", LeadInterviewer);
                     parameters.Add("@IsApproved", IsApproved);
                     parameters.Add("@IsActive", IsActive);
+                    parameters.Add("@IsBlocked", IsBlocked);
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerFlags", parameters,
                            commandType: CommandType.StoredProcedure);
                     return true;
@@ -4115,7 +4120,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer)
         {
             try
             {
