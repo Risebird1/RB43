@@ -30,7 +30,7 @@ and (ic.InterviewStatus=1 or ic.InterviewStatus=5 or ic.InterviewStatus=3)) trc
 outer Apply (Select Count(im.id) as TotalDeficitMeetings from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id join IRF ir on im.IRFId=ir.IRFId join PlanTypeChargesMaster pt on pt.CompanyType=ir.CompanyType and pt.PlanTypeEnumValue=ir.Heuristicsscore and pt.CountryType=ir.JobCountry   
 where (ic.VideoDuration-pt.DurationSelectedMin<0 and ic.VideoDuration-pt.DurationSelectedMin>-pt.DurationSelectedMin) and im.Interviewer=ul.EmailId and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)) tdf  
 outer Apply (Select Top 1 Comment as RedMarkerReviewComment from RedMarkerStatusDetails where InterviewerUserid=ul.id and IRFId=0 and Type='TotalInterview' Order by CreatedOn desc) Rcd
-where EmailId in(Select Distinct Interviewer from InterviewMeetings where interviewDate>@startdate and interviewDate<@enddate and Interviewer is not null)  
+where EmailId in(Select Distinct Interviewer from InterviewMeetings where interviewDate>@startdate and interviewDate<@enddate and Interviewer is not null) and Isnull(ip.IsDeleted,0)=0
 order by sti.TotalInterview desc  
 end
 GO
