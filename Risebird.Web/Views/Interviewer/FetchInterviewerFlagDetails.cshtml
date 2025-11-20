@@ -36,6 +36,7 @@
             <th>Lead Interviewer</th>
             <th> Approved</th>
             <th> Active</th>
+            <th> Blocked</th>
             <th> Interested</th>
         </tr>
     </thead>
@@ -60,6 +61,12 @@
                 <div class="custom-select">
                     @Html.DropDownListFor(model => model.IsActive, new[]{   new SelectListItem { Text = "No", Value = "false" },
                     new SelectListItem { Text = "Yes", Value = "true"} }, new { @class = "text-box single-line", @onchange = "changeIsActive()" })
+                </div>
+            </td>
+            <td>
+                <div class="custom-select">
+                    @Html.DropDownListFor(model => model.IsDeleted, new[]{   new SelectListItem { Text = "No", Value = "false" },
+                    new SelectListItem { Text = "Yes", Value = "true"} }, new { @class = "text-box single-line", @onchange = "changeIsBlocked()" })
                 </div>
             </td>
             <td> @Model.IsInterested</td>
@@ -99,10 +106,26 @@
             data: { 'Emailid': Emailid, 'IsActive': isActive },
             success: function (data) {
                 swal.fire("Interviewer active status updated successfully.");
-                if(isActive=='Yes'){
+                if(isActive=='true'){
                    captureInterviewerRelatedclick('Suspious Interviewer', 'Flag Active Y',0,interviewerid);
-                }else if(isActive=='No'){
+                }else if(isActive=='false'){
                     captureInterviewerRelatedclick('Suspious Interviewer', 'Flag Active N',0,interviewerid);
+                }
+            }
+        });
+    }
+    function changeIsBlocked() {
+        var Emailid = $("#EmailId").val();
+        var isBlocked = $("#IsDeleted").val();
+        $.ajax({
+            url: '/Interviewer/InterviewerFlagUpdate',
+            data: { 'Emailid': Emailid, 'IsBlocked': isBlocked },
+            success: function (data) {
+                swal.fire("Interviewer blocked from System successfully.");
+                    if(isBlocked=='true'){
+                   captureInterviewerRelatedclick('Suspious Interviewer', 'Flag Blocked Y',0,interviewerid);
+                }else if(isBlocked=='false'){
+                    captureInterviewerRelatedclick('Suspious Interviewer', 'Flag Blocked N',0,interviewerid);
                 }
             }
         });
