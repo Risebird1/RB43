@@ -30,7 +30,7 @@ left join UserList uli on uli.id=  irf.RisebirdHr
 join UserList ula on ula.EmailId=im.candidateEmail
 Join CandidatesMaster cm on cm.UserId=ula.id
 left join Candidate ca on ca.IRFId=IRF.id and ca.CandidateMasterId=cm.id
-where ca.ClientHRAttemptContact=@Emailid
+where ca.ClientHRAttemptContact=@Emailid and im.interviewDate >= dateadd(MINUTE, 330, getdate())
 order by im.interviewDate desc    
 end
 else if(@Roleid=4)
@@ -45,7 +45,7 @@ left join UserList uli on uli.id=  irf.RisebirdHr
 join UserList ula on ula.EmailId=im.candidateEmail
 Join CandidatesMaster cm on cm.UserId=ula.id
 left join Candidate ca on ca.IRFId=IRF.id and ca.CandidateMasterId=cm.id
-where ca.ProfileSource=@Emailid
+where ca.ProfileSource=@Emailid and im.interviewDate >= dateadd(MINUTE, 330, getdate())
 end
 else if(@Roleid=9)
 begin
@@ -56,7 +56,7 @@ join UserList ul on ul.id = pnc.CandidateUserId
 join InterviewComments ic on ic.Interviewid=im.id  
 inner join IRF on im.IRFId=irf.IRFId   
 left join UserList uli on uli.id=  irf.RisebirdHr  
-where IRF.ClientId=@Clientid
+where IRF.ClientId=@Clientid and im.interviewDate >= dateadd(MINUTE, 330, getdate())
 end
 else
 begin
@@ -69,7 +69,7 @@ inner join IRF on im.IRFId=irf.IRFId
 left join UserList uli on uli.id=  irf.RisebirdHr  
 join TransClientUser tu on tu.IRFId=IRF.id
 join UserList ula on ula.id=tu.ClientUserId
-where ula.EmailId=@Emailid
+where ula.EmailId=@Emailid and im.interviewDate >= dateadd(MINUTE, 330, getdate())
 end
 End
 else
@@ -81,8 +81,9 @@ join UserList ul on ul.id = pnc.CandidateUserId
 join InterviewComments ic on ic.Interviewid=im.id  
 inner join IRF on im.IRFId=irf.IRFId   
 left join UserList uli on uli.id=  irf.RisebirdHr  
+where im.interviewDate >= dateadd(MINUTE, 330, getdate())
 --where interviewDate >= dateadd(DAY, -8, getdate())  
-order by im.interviewDate desc    
+order by im.interviewDate desc     
 End
 End     
 GO
