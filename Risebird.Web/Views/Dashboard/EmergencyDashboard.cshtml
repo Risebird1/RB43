@@ -3013,14 +3013,17 @@
         </div>
     </div>
 </div>
-@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@* @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml") *@
 <script>
     function MissedCandidate() {
           window.open('/Dashboard/InterviewManagementDetails?returnBack=" + 1', '_blank');
     }
 
     function MialsDetails(recipientType) {
-          window.open('/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + 1', '_blank');
+        var url = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType="
+        + encodeURIComponent(recipientType)
+        + "&returnBack=1";
+        window.open(url, '_blank');
     }
     function OpenRibbonDetails(actionstatus) {
         if ('@ViewBag.ProfileName' == "Quality Controller") {
@@ -3415,7 +3418,6 @@
         setTimeout(setRibbon, 60000);
     }
 </script>
-<script src="~/js/TwilioCallMaker.js"></script>
 <script>
     function openCallpopup() {
         var modal = document.getElementById("CallModelPopup");
