@@ -246,7 +246,7 @@
                                 <div id="survey-feedback">
                                     <div class="front-card countdown__timer" style="cursor:pointer" onclick="CallibrationCallsIRFDetalis('Upcoming')">
                                         <div class="panel-heading" data-position="bottom">
-                                            <div id="slotsId">
+                                             <div id="slotsId">
                                                 <div class="panel-body panel-body-table">
                                                     <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #392174ba;padding:8px!important;"><img src="~/img/calibration-call.png"></span></div>
                                                     <div class="col-md-9 pull-left">
@@ -3016,7 +3016,7 @@
 @* @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml") *@
 <script>
     function MissedCandidate() {
-          window.open('/Dashboard/InterviewManagementDetails?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/InterviewManagementDetails?returnBack=1', '_blank');
     }
 
     function MialsDetails(recipientType) {
@@ -3025,36 +3025,47 @@
         + "&returnBack=1";
         window.open(url, '_blank');
     }
+ 
     function OpenRibbonDetails(actionstatus) {
-        if ('@ViewBag.ProfileName' == "Quality Controller") {
-            window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=" + 2;
-        }
-        else {
-            window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=" + 1;
+    var url = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus;
 
-        }
+    if ('@ViewBag.ProfileName' === "Quality Controller") {
+        url += "&returnBack=2";
+    } else {
+        url += "&returnBack=1";
     }
+    window.open(url, "_blank");
+}
 
-    function CallibrationCallsIRFDetalis(type) {
+  @*   function CallibrationCallsIRFDetalis(type) {
           window.open('/IRF/CalibrationMeetingsDetails?type=" + type + "&returnBack=" + 1', '_blank');
+    } *@
+       function CallibrationCallsIRFDetalis(type) {
+        var url = "/IRF/CalibrationMeetingsDetails?type="
+        + encodeURIComponent(type)
+        + "&returnBack=1";
+        window.open(url, '_blank');
     }
 
     function PotentialRiskByCandidate() {
-          window.open('/Dashboard/PotentialRiskByCandidate?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/PotentialRiskByCandidate?returnBack=1', '_blank');
     }
     function DMApprove() {
-          window.open('/Dashboard/GetDMApproveDetails?returnBack=" + 1', '_blank');
+         window.open('/Dashboard/GetDMApproveDetails?returnBack=1', '_blank');
+
     }
 
     function ColdCandidatesDetalis() {
-        window.open('/Dashboard/GetColdCandidatesList?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/GetColdCandidatesList?returnBack=1', '_blank');
     }
 
     function PQIDetalis() {
-        window.open('/Dashboard/InterviewerIRFDetails?returnBack=" + 1', '_blank');
+         window.open('/Dashboard/InterviewerIRFDetails?returnBack=1', '_blank');
+
     }
     function TechQCInterviews() {
-        window.open('/Dashboard/TechQCDetails?returnBack=" + 1', '_blank');
+       window.open('/Dashboard/TechQCDetails?returnBack=1', '_blank');
+
     }
 
     function AIVerdict() {
@@ -3081,50 +3092,62 @@
         window.open('/Dashboard/NotScheduledMeetingsCO', '_blank');
     }
     function SkillChannelsByTemplate() {
-        window.location.href = "/IRF/SkillChannelsByTemplate?returnBack=" + 1;
+        window.open('/IRF/SkillChannelsByTemplate?returnBack=1', '_blank');
     }
     function RedoRequest() {
-        window.location.href = "/Dashboard/RedoRequest?returnBack=" + 1;
+        window.open('/Dashboard/RedoRequest?returnBack=1', '_blank');
+
     }
 
     function ProbableNoShow() {
-        window.location.href = "/Interview/ProbableNoShowCandidates?returnBack=" + 1;
+        window.open('/Interview/ProbableNoShowCandidates?returnBack=1', '_blank');
     }
     function OpenRibbonDetailsUnProcessedResume(actionstatus) {
-        window.location.href = "/Dashboard/UnProcessedResume?returnBack=" + 1;
+        window.open("/Dashboard/UnProcessedResume?returnBack=1", "_blank");
     }
     function OpenRibbonDetailsRaisedIssue() {
-        window.location.href = "/Support/RaisedRequests?returnBack=" + 1;
+         window.open("/Support/RaisedRequests?returnBack=1", "_blank");
     }
 
     function BlackListCompany() {
-      window.open('/Dashboard/BlackListCompany?returnBack=" + 1', '_blank');
-
+        window.open('/Dashboard/BlackListCompany?returnBack=1', '_blank');
     }
     function PaymentSlacompliance() {
-        window.open('/Interview/PaymentSlaDetails?returnBack=" + 1', '_blank');
+        window.open('/Interview/PaymentSlaDetails?returnBack=1', '_blank');
+
     }
     function HighRiskInterviewers() {
-       window.open('/Dashboard/HighRiskInterviewers?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/HighRiskInterviewers?returnBack=1', '_blank');
     }
     function OpenCandidateWaiting() {
-        window.open('/Dashboard/Participantwaiting?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/Participantwaiting?returnBack=1', '_blank');
     }
     function ProxyReport() {
-       window.open('/Dashboard/ProxyReport?returnBack=" + 1', '_blank');
+       window.open('/Dashboard/ProxyReport?returnBack=1', '_blank');
     }
     function Campaign() {
-        window.open('/IRF/Campaigns?returnBack=" + 1', '_blank');
+        window.open('/IRF/Campaigns?returnBack=1', '_blank');
 
     }
     function PLIDetalis() {
-        window.open('/Dashboard/InterviewerIRFLogisticDetails?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/InterviewerIRFLogisticDetails?returnBack=1', '_blank');
     }
-    function PotentialPauseIRFDetalis(type) {
+  @*   function PotentialPauseIRFDetalis(type) {
+
         window.open('/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1', '_blank');
+    } *@
+
+    function PotentialPauseIRFDetalis(type) {
+        var url = "/Dashboard/PotentialPausedDetails?type="
+        + encodeURIComponent(type)
+        + "&returnBack=1";
+        window.open(url, '_blank');
     }
+
+
+
     function InterviewerVideoKYC() {
-        window.open('/Dashboard/InterviewerVideoKYC?returnBack=" + 1', '_blank');
+        window.open('/Dashboard/InterviewerVideoKYC?returnBack=1', '_blank');
     }
     function AllEmergencyInterview() {
         window.open('/Dashboard/AllEmergencyInterviewDetails', '_blank');

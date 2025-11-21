@@ -236,6 +236,7 @@ namespace Risebird.Web.Controllers
             model.timeslots = new SelectList(timeslot, "id", "Name");
             model.IRFList = await _interviewSchedulerservice.GetIRFList();
             var IntervalsList = new List<TimeslotsVM>();
+            IntervalsList.Add(new TimeslotsVM { id = 15, Name = "15" });
             IntervalsList.Add(new TimeslotsVM { id = 30, Name = "30" });
             IntervalsList.Add(new TimeslotsVM { id = 60, Name = "60" });
             model.IntervalList = new SelectList(IntervalsList, "id", "Name");
