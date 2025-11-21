@@ -8523,10 +8523,12 @@ ul.ks-cboxtags {
     margin-top: 20px;
 }
 
-#detailsTable_filter .form-control-sm {
+#detailsTable_filter .form-control-sm, #campaignTable_filter .form-control-sm {
     border: 1px solid #E3E3E3 !important;
 }
-
+#campaignTable_filter .dataTables_filter input[type=search] {
+    border: 1px solid #E3E3E3 !important;
+}
 #detailsTable_filter #search {
     top: 3px;
 }
