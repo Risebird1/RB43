@@ -2270,7 +2270,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.PageHeader = "Unprocessed Resume";
-                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        //modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
                     }
                     else
