@@ -1,4 +1,11 @@
-﻿<div id="CandidateResumeSummaryModal" class="modal modal-bg" style="z-index:199;">
+﻿
+@{
+    
+    Layout = null;
+
+}
+
+<div id="CandidateResumeSummaryModal" class="modal modal-bg" style="z-index:199;">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="height:auto">
@@ -29,7 +36,6 @@
 <script>
     
     function GetCandidateResumeSummary(candidateId) {
-        debugger;
         var modal = document.getElementById("CandidateResumeSummaryModal");
         modal.style.display = "block";
         $("#id_candidateResumeSummaryBody").html('');
