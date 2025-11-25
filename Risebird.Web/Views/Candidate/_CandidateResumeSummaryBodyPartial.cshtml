@@ -1,0 +1,337 @@
+﻿@model Risebird.Entities.ViewModel.ResumeSummaryVM
+
+
+@* Modal body partial for ResumeSummaryVM *@
+<div class="resume-summary-modal-body">
+
+    @* Confidence *@
+    <div class="mb-3">
+        <h5>Confidence</h5>
+        <p class="mb-0">@(!string.IsNullOrEmpty(Model?.Confidence) ? Model.Confidence : "<em>N/A</em>")</p>
+    </div>
+
+    <hr />
+
+    @* Skills *@
+    <div class="mb-3">
+        <h5>Skills</h5>
+
+        @if (Model?.Skills == null)
+        {
+            <p><em>No skills data</em></p>
+        }
+        else
+        {
+            <div class="mb-2">
+                <strong>Primary specialization:</strong>
+                <div>@(string.IsNullOrEmpty(Model.Skills.Primary_Specialization) ? (object)"<em>N/A</em>" : Model.Skills.Primary_Specialization)</div>
+            </div>
+
+            <div class="mb-2">
+                <strong>Secondary specializations:</strong>
+                @if (Model.Skills.Secondary_Specializations?.Any() == true)
+                {
+                    <ul class="mb-0">
+                        @foreach (var s in Model.Skills.Secondary_Specializations)
+                        {
+                            <li>@(string.IsNullOrEmpty(s) ? "<em>N/A</em>" : s)</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div><em>None</em></div>
+                }
+            </div>
+
+            <div class="mb-2">
+                <strong>Technical skills:</strong>
+                @if (Model.Skills.Technical_Skills?.Any() == true)
+                {
+                    <ul class="mb-0">
+                        @foreach (var t in Model.Skills.Technical_Skills)
+                        {
+                            <li>@(string.IsNullOrEmpty(t) ? "<em>N/A</em>" : t)</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div><em>None</em></div>
+                }
+            </div>
+
+            <div class="mb-2">
+                <strong>Soft skills:</strong>
+                @if (Model.Skills.Soft_Skills?.Any() == true)
+                {
+                    <ul class="mb-0">
+                        @foreach (var so in Model.Skills.Soft_Skills)
+                        {
+                            <li>@(string.IsNullOrEmpty(so) ? "<em>N/A</em>" : so)</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div><em>None</em></div>
+                }
+            </div>
+        }
+    </div>
+
+    <hr />
+
+    @* Work experience *@
+    <div class="mb-3">
+        <h5>Work experience</h5>
+
+        @if (Model?.Work_Experience == null || !Model.Work_Experience.Any())
+        {
+            <p><em>No work experience listed</em></p>
+        }
+        else
+        {
+            <div class="accordion" id="workExperienceAccordion">
+                @for (int i = 0; i < Model.Work_Experience.Count; i++)
+                {
+                    var item = Model.Work_Experience[i];
+                    var cardId = $"we{i}";
+                    <div class="card mb-2">
+                        <div class="card-header p-2" id="heading@cardId">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@(string.IsNullOrEmpty(item?.Job_Title) ? "Job" : item.Job_Title)</strong>
+                                    <div class="small text-muted">@((string.IsNullOrEmpty(item?.Company_Name) ? "Unknown company" : item.Company_Name))</div>
+                                </div>
+                                <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@cardId" aria-expanded="false" aria-controls="collapse@cardId">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="collapse@cardId" class="collapse" aria-labelledby="heading@cardId" data-bs-parent="#workExperienceAccordion">
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">Employment type</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(item?.Employment_Type) ? item.Employment_Type : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Start date</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(item?.Start_Date) ? item.Start_Date : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">End date</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(item?.End_Date) ? item.End_Date : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Location</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(item?.Location) ? item.Location : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Domain / Industry</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(item?.Domain_Or_Industry) ? item.Domain_Or_Industry : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Tech stack</dt>
+                                    <dd class="col-sm-8">
+                                        @if (item?.Tech_Stack?.Any() == true)
+                                        {
+                                            <ul class="mb-0">
+                                                @foreach (var tech in item.Tech_Stack)
+                                                {
+                                                    <li>@(string.IsNullOrEmpty(tech) ? "<em>N/A</em>" : tech)</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <em>None listed</em>
+                                        }
+                                    </dd>
+
+                                    <dt class="col-sm-4">Responsibilities</dt>
+                                    <dd class="col-sm-8">
+                                        @if (item?.Responsibilities_Raw?.Any() == true)
+                                        {
+                                            <ol class="mb-0">
+                                                @foreach (var r in item.Responsibilities_Raw)
+                                                {
+                                                    <li>@(string.IsNullOrEmpty(r) ? "<em>N/A</em>" : r)</li>
+                                                }
+                                            </ol>
+                                        }
+                                        else
+                                        {
+                                            <em>None listed</em>
+                                        }
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <hr />
+
+    @* Work gaps *@
+    <div class="mb-3">
+        <h5>Work gaps</h5>
+        @if (Model?.Work_Gaps == null || !Model.Work_Gaps.Any())
+        {
+            <p><em>No work gaps recorded</em></p>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var g in Model.Work_Gaps)
+                {
+                    <li class="list-group-item">
+                        <div><strong>Type:</strong> @(string.IsNullOrEmpty(g?.Gap_Type) ? "<em>N/A</em>" : g.Gap_Type)</div>
+                        <div><strong>Start:</strong> @(string.IsNullOrEmpty(g?.Start_Date) ? "<em>N/A</em>" : g.Start_Date)</div>
+                        <div><strong>End:</strong> @(string.IsNullOrEmpty(g?.End_Date) ? "<em>N/A</em>" : g.End_Date)</div>
+                        <div><strong>Description:</strong> @(string.IsNullOrEmpty(g?.Description_Raw) ? "<em>N/A</em>" : g.Description_Raw)</div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <hr />
+
+    @* Academics *@
+    <div class="mb-3">
+        <h5>Academics</h5>
+        @if (Model?.Academics == null || !Model.Academics.Any())
+        {
+            <p><em>No academic records</em></p>
+        }
+        else
+        {
+            <div class="accordion" id="academicsAccordion">
+                @for (int i = 0; i < Model.Academics.Count; i++)
+                {
+                    var a = Model.Academics[i];
+                    var aid = $"acad{i}";
+                    <div class="card mb-2">
+                        <div class="card-header p-2" id="heading@aid">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>@(string.IsNullOrEmpty(a?.Degree) ? "Degree" : a.Degree)</strong>
+                                    <div class="small text-muted">@((string.IsNullOrEmpty(a?.Institution) ? "Unknown institution" : a.Institution))</div>
+                                </div>
+                                <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@aid" aria-expanded="false" aria-controls="collapse@aid">Details</button>
+                            </div>
+                        </div>
+                        <div id="collapse@aid" class="collapse" aria-labelledby="heading@aid" data-bs-parent="#academicsAccordion">
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">Field of study</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(a?.Field_Of_Study) ? a.Field_Of_Study : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Start</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(a?.Start_Date) ? a.Start_Date : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">End</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(a?.End_Date) ? a.End_Date : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Location</dt>
+                                    <dd class="col-sm-8">@(!string.IsNullOrEmpty(a?.Location) ? a.Location : "<em>N/A</em>")</dd>
+
+                                    <dt class="col-sm-4">Achievements</dt>
+                                    <dd class="col-sm-8">
+                                        @if (a?.Achievements?.Any() == true)
+                                        {
+                                            <ul class="mb-0">
+                                                @foreach (var ac in a.Achievements)
+                                                {
+                                                    <li>@(string.IsNullOrEmpty(ac) ? "<em>N/A</em>" : ac)</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <em>None listed</em>
+                                        }
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <hr />
+
+    @* Academic gaps *@
+    <div class="mb-3">
+        <h5>Academic gaps</h5>
+        @if (Model?.Academic_Gaps == null || !Model.Academic_Gaps.Any())
+        {
+            <p><em>No academic gaps</em></p>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var ag in Model.Academic_Gaps)
+                {
+                    <li class="list-group-item">
+                        <div><strong>Start:</strong> @(string.IsNullOrEmpty(ag?.Start_Date) ? "<em>N/A</em>" : ag.Start_Date)</div>
+                        <div><strong>End:</strong> @(string.IsNullOrEmpty(ag?.End_Date) ? "<em>N/A</em>" : ag.End_Date)</div>
+                        <div><strong>Reason:</strong> @(string.IsNullOrEmpty(ag?.Gap_Reason) ? "<em>N/A</em>" : ag.Gap_Reason)</div>
+                        <div><strong>Description:</strong> @(string.IsNullOrEmpty(ag?.Description_Raw) ? "<em>N/A</em>" : ag.Description_Raw)</div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <hr />
+
+    @* Certifications *@
+    <div class="mb-3">
+        <h5>Certifications</h5>
+        @if (Model?.Certifications == null || !Model.Certifications.Any())
+        {
+            <p><em>No certifications</em></p>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var c in Model.Certifications)
+                {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>@(string.IsNullOrEmpty(c?.Name) ? "Certification" : c.Name)</strong>
+                                <div class="small text-muted">@(!string.IsNullOrEmpty(c?.Issuing_Organization) ? c.Issuing_Organization : "")</div>
+                            </div>
+                            <div class="text-right small">
+                                <div>@(!string.IsNullOrEmpty(c?.Issue_Date) ? c.Issue_Date : "")</div>
+                                <div>@(!string.IsNullOrEmpty(c?.Expiration_Date) ? $"Expires: {c.Expiration_Date}" : "")</div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(c?.Credential_Id) || !string.IsNullOrEmpty(c?.Description_Raw))
+                        {
+                            <hr />
+                            <div>
+                                @if (!string.IsNullOrEmpty(c?.Credential_Id))
+                                {
+                                    <div><strong>Credential ID:</strong> @c.Credential_Id</div>
+                                }
+                                @if (!string.IsNullOrEmpty(c?.Description_Raw))
+                                {
+                                    <div><strong>Description:</strong> @c.Description_Raw</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>
+
+    
