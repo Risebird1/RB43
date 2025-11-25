@@ -1698,6 +1698,18 @@ text-shadow: 0 0 15px #bfb8da;
 
     // Wrapper function for direct OpenSendmailModal calls from other parts of the page
     function openNeedClarityFromPage(interviewId, clienthr, candidateName, candidateEmail, irfId, uniqueid) {
+        $.ajax({
+            url: '/Interview/CandidateMeetingsStatus',
+            method: 'GET',
+            data: {
+                'meetingid': interviewid,
+                'status': 4,
+                'uniqueid': uniqueid,
+                'Irfid': irfid
+            },
+            success: function (result) {
+            }
+        })
         // Set the source to indicate this came from the main page (not InterviewAlert popup)
         needClaritySource = 'Page';
 
