@@ -18,6 +18,7 @@
 
 <div class="main-panel" id="main-panel">
     <div>
+         <div class="mobile-view">
         <div class="pt30">
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
@@ -25,27 +26,13 @@
 
                         <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                         <h4 class="card-title"></h4>
-                        <div class="mobile-view"> <h4 class="card-title">BlackList Company</h4></div>
+                        <h4 class="card-title">BlackList Company</h4>
                     </div>
-                    <div class="pull-right client-ms">
-                        @if (ViewBag.ReturnBack == 1)
-                        {
-                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>    
-                        }
-                        else
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
-                        }
-                    </div>
-
+                   
                 </div>
             </div>
         </div>
-
+        </div>
         <div class="content client">
             <div class="row bl-bg">
                 <div class="col-md-12">

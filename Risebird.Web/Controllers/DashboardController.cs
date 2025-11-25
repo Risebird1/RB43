@@ -2270,7 +2270,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.PageHeader = "Unprocessed Resume";
-                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        //modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
                     }
                     else
@@ -5249,10 +5249,25 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AITwinInterviewer()
+        public async Task<IActionResult> AITwinInterviewer(Guid? seId = null)
         {
             try
             {
+                // Pass session ID via ViewBag if provided
+                if (seId.HasValue)
+                {
+                    ViewBag.SessionId = seId.Value.ToString();
+                }
+                else
+                {
+                    // Optionally check session storage for session ID
+                    var sessionIdFromSession = HttpContext.Session.GetString("AISessionId");
+                    if (!string.IsNullOrEmpty(sessionIdFromSession))
+                    {
+                        ViewBag.SessionId = sessionIdFromSession;
+                    }
+                }
+                
                 return View();
             }
             catch (Exception ex)
