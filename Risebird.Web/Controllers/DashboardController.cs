@@ -1961,7 +1961,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SensitiveData(string actionstatus, int actiontype, int returnBack)
+        public async Task<IActionResult> SensitiveData(string actionstatus, int actiontype)
         {
             try
             {
@@ -1973,7 +1973,6 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     ViewBag.emailid = emailid;
                     ViewBag.PageFrom = "Completed";
-                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Finance")
                     {
                         if (HttpContext.Session.GetString("SensitiveDataFilters") != null)
@@ -2035,7 +2034,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SensitiveData(UnassignedInterviewsFilter filter, string actionstatus, int actiontype, int returnBack)
+        public async Task<IActionResult> SensitiveData(UnassignedInterviewsFilter filter, string actionstatus, int actiontype)
         {
             try
             {
@@ -2047,7 +2046,6 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     ViewBag.emailid = emailid;
                     ViewBag.ProfileName = profileName;
-                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer" || profileName == "TechSupport")
                     {
                         if (filter != null)
