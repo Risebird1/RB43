@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
+//using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
-using static SkiaSharp.HarfBuzz.SKShaper;
-using UglyToad.PdfPig.Logging;
-using Amazon.Rekognition.Model;
+//using static SkiaSharp.HarfBuzz.SKShaper;
+//using UglyToad.PdfPig.Logging;
+//using Amazon.Rekognition.Model;
 using Newtonsoft.Json.Linq;
 
 namespace Risebird.Business
