@@ -1,66 +1,257 @@
 ﻿
 @{
-    
     Layout = null;
-
 }
 
-<div id="CandidateResumeSummaryModal" class="modal modal-bg" style="z-index:199;">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" style="height:auto">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
-                </div>
-                <h5 class="modal-title pull-left" id="id_candidateResumeSummaryModalTitle"> Candidate's Resume Summary </h5>
+<style>
+    #CandidateResumeSummaryModal .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+
+    #CandidateResumeSummaryModal .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 30px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #CandidateResumeSummaryModal .modal-header .modal-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    #CandidateResumeSummaryModal .modal-header .modal-title i {
+        font-size: 24px;
+    }
+
+    #CandidateResumeSummaryModal .modal-header .close {
+        color: white;
+        opacity: 0.9;
+        font-size: 28px;
+        font-weight: 300;
+        text-shadow: none;
+        padding: 0;
+        margin: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    #CandidateResumeSummaryModal .modal-header .close:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(90deg);
+    }
+
+    #CandidateResumeSummaryModal .modal-body {
+        padding: 30px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    #CandidateResumeSummaryModal .modal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #CandidateResumeSummaryModal .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #CandidateResumeSummaryModal .modal-body::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 10px;
+    }
+
+    #CandidateResumeSummaryModal .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
+    }
+
+    #CandidateResumeSummaryModal .modal-footer {
+        border-top: 1px solid #e9ecef;
+        padding: 15px 30px;
+        background: #f8f9fa;
+    }
+
+    #CandidateResumeSummaryModal .btn-close-modal {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    #CandidateResumeSummaryModal .btn-close-modal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .resume-summary-loading {
+        text-align: center;
+        padding: 40px;
+    }
+
+    .resume-summary-loading .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div id="CandidateResumeSummaryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="candidateResumeSummaryModalLabel" aria-hidden="true" style="z-index:10000;">
+    <div class="modal-dialog modal-xl" role="document" style="max-width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="id_candidateResumeSummaryModalTitle">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Candidate's Resume Summary</span>
+                </h5>
+                <button type="button" class="close" onclick="closeCandidateResumeSummaryModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeCandidateResumeSummaryModal()" style="cursor:pointer;" aria-hidden="true">&times;</span>
-            </button>
             <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="video-url" id="id_candidateResumeSummaryBody">
-                        
+                <div id="id_candidateResumeSummaryBody">
+                    <div class="resume-summary-loading">
+                        <div class="spinner"></div>
+                        <p class="text-muted">Loading resume summary...</p>
                     </div>
                 </div>
-                <div class="col-md-12 ">
-                    <div class="text-right">
-                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCandidateResumeSummaryModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                    </div>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-close-modal" onclick="closeCandidateResumeSummaryModal()">
+                    <i class="fas fa-times mr-2"></i> Close
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-    
     function GetCandidateResumeSummary(candidateId) {
-        var modal = document.getElementById("CandidateResumeSummaryModal");
-        modal.style.display = "block";
-        $("#id_candidateResumeSummaryBody").html('');
+        // First, completely clean up any existing modals and backdrops
+        cleanupAllModals();
         
-        $("#id_candidateResumeSummaryModalTitle").text("Candidate's Resume Summary: " + candidateId);
+        // Wait a moment for cleanup to complete
+        setTimeout(function() {
+            var modal = $('#CandidateResumeSummaryModal');
+            
+            // Ensure modal is in clean state
+            modal.removeClass('show');
+            modal.css('display', 'none');
+            
+            // Now show the modal
+            modal.modal('show');
+            
+            $("#id_candidateResumeSummaryModalTitle span").text("Candidate's Resume Summary: " + candidateId);
+            $("#id_candidateResumeSummaryBody").html('<div class="resume-summary-loading"><div class="spinner"></div><p class="text-muted">Loading resume summary...</p></div>');
+            
+            $.ajax({
+                url: '/Candidate/GetCandidateResumeSummary',
+                type: 'POST',
+                data: { 'candidateId': candidateId },
+                success: function (result) {
+                    if (result != null) {
+                        $("#id_candidateResumeSummaryBody").html(result);
+                    }
+                    else {
+                        $("#id_candidateResumeSummaryBody").html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle mr-2"></i>Some error occurred. Please try again!</div>');
+                    }
+                },
+                error: function () {
+                    $("#id_candidateResumeSummaryBody").html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle mr-2"></i>Failed to load resume summary. Please try again!</div>');
+                }
+            });
+        }, 100);
+    }
+    
+    // Function to clean up all modals and backdrops
+    function cleanupAllModals() {
+        // Remove all backdrops
+        $('.modal-backdrop').remove();
         
-        $.ajax({
-            url: '/Candidate/GetCandidateResumeSummary',
-            type: 'POST',
-            data: { 'candidateId': candidateId },
-            success: function (result) {
-                debugger;
-                if (result != null) {
-                    $("#id_candidateResumeSummaryBody").html(result);
-                }
-                else {
-                    swal.fire("Some error occured. Please try again!");
-                }
+        // Remove modal-open class from body
+        $('body').removeClass('modal-open');
+        
+        // Reset body padding
+        $('body').css('padding-right', '');
+        
+        // Hide all modals that might be showing
+        $('.modal.show').removeClass('show');
+        $('.modal.show').css('display', 'none');
+        
+        // Remove any inline styles that might be blocking
+        $('.modal').each(function() {
+            if ($(this).hasClass('show')) {
+                $(this).removeClass('show');
+                $(this).css('display', 'none');
             }
         });
-        
-    }
-    function closeCandidateResumeSummaryModal() {
-        var modal = document.getElementById("CandidateResumeSummaryModal");
-        modal.style.display = "none";
     }
     
+    function closeCandidateResumeSummaryModal() {
+        var modal = $('#CandidateResumeSummaryModal');
+        
+        // Hide the modal
+        modal.modal('hide');
+        
+        // Force cleanup after animation
+        setTimeout(function() {
+            cleanupAllModals();
+        }, 300);
+    }
+
+    // Handle modal hidden event to ensure cleanup
+    $('#CandidateResumeSummaryModal').on('hidden.bs.modal', function () {
+        cleanupAllModals();
+    });
+    
+    // Also handle when modal is shown to ensure no duplicate backdrops
+    $('#CandidateResumeSummaryModal').on('shown.bs.modal', function () {
+        // Remove any extra backdrops (should only be one)
+        var backdrops = $('.modal-backdrop');
+        if (backdrops.length > 1) {
+            backdrops.slice(1).remove();
+        }
+    });
+
+    // Close modal when clicking outside
+    $(document).on('click', '#CandidateResumeSummaryModal', function(e) {
+        if ($(e.target).hasClass('modal')) {
+            closeCandidateResumeSummaryModal();
+        }
+    });
+
+    // Close modal on ESC key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $('#CandidateResumeSummaryModal').hasClass('show')) {
+            closeCandidateResumeSummaryModal();
+        }
+    });
 </script>
