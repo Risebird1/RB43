@@ -842,30 +842,6 @@
 <script src="~/js/assessmentgroupfunctionalities.js"></script>
 <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
 
-    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="mdc-fab__icon material-icons">
-                        <img src="~/img/Aadhaar/verificationlogo.png" />
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Candidate Verified Data</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div style="padding:10px" id="divAadhaarKYC">
-                </div>
-                <div>
-                    <div class="col-md-12 text-right">
-                        <div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -938,9 +914,7 @@
 @await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
 @await Html.PartialAsync("~/Views/IRF/AddAGInterviewerToIRFPartial.cshtml")
-@await Html.PartialAsync("~/Views/Common/_InterviewCancellationDetails.cshtml")
 
-<script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
 <script src="~/js/checkintervieweravailabilitybymail.js"></script>
 <script src="~/js/common.js"></script>
@@ -952,37 +926,14 @@
     $(document).ready(function () {
 
         $("#ResetFilter").click(function () {
-            ResetFilter();
+            ResetFilter('@ViewBag.ReturnBack');
         })
-
         if ('@filter' != "") {
-
             ApplySessionFilter();
         }
-        //$("#Status").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-        //$("#Client").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-        //$("#ClientHREmail").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-
-
-
     });
 
-    function ResetFilter() {
+    function ResetFilter(returnBack) {
         var value = $("#hidactionstatus").val();
         window.location.href = "/Dashboard/ResetSensitiveDataFilter?actionstatus=" + value;
 
