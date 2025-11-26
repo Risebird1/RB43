@@ -303,48 +303,6 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ul.EmailId=@emailID and ISNULL(IRF.IsAIInterview,0)=0
 		end
 	end
-	else If(@actionstatus ='SensitiveData')
-	begin
-		if (@actiontype = 0)
-		begin
-			if (@Profile = 'SeniorHR')
-			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AIVerdict from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
-               where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ulco.Emailid= @Emailid and ISNULL(IRF.IsAIInterview,0)=0
-			end
-			else
-			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,im.SessionId,IRF.IsAIInterview,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END AS InterviewerLateJoin,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,imjf.FirstJoinedon,ulco.EmailId as ChannelOwner,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating,Isnull(ulim.FirstName,'') as InterviewerName,(pm.DurationSelectedMin-ic.VideoDuration) as deficit from InterviewMeetings im join IRF on im.IRFId=irf.IRFId
-				join Client cl on irf.ClientId=cl.id 
-				join InterviewComments ic on ic.InterviewId=im.id 
-				join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
-				join UserList ulim on ulim.EmailId=im.interviewer
-				left join UserList ulco on IRF.RisebirdHr=ulco.id
-				left join CandidateFeedbackDetails cfd on cfd.Interviewid=im.id 
-				left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
-				Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime 
-				left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt 
-				Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf  
-				where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ISNULL(IRF.IsAIInterview,0)=0
-			end
-		end
-		else
-		begin
-			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,im.SessionId,IRF.IsAIInterview,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END AS InterviewerLateJoin,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,imjf.FirstJoinedon,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AIVerdict from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
-			left join UserList ulco on IRF.RisebirdHr=ulco.id
-			left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
-			Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
-			Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf  
-			where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ul.EmailId=@emailID and ISNULL(IRF.IsAIInterview,0)=0
-			union 
-			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,im.SessionId,IRF.IsAIInterview,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END AS InterviewerLateJoin,IRF.IsVideoRequired,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,imjf.FirstJoinedon,pm.DurationSelectedMin as interviewDuration,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AIVerdict from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
-			left join UserList ulco on IRF.RisebirdHr=ulco.id
-			left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
-			Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
-			Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf  
-			where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ul.EmailId=@emailID and ISNULL(IRF.IsAIInterview,0)=0
-		end
-	end
 	else If(@actionstatus ='QCReport')
 	begin
 		if (@actiontype = 0)
