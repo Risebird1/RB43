@@ -751,23 +751,6 @@
                                                 {
 
                                                     <tr id=@item.Interviewid>
-                                                        @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
-                                                        {
-                                                            <td>
-
-                                                                <span>
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Undo Suspicious Interviewer">
-                                                                        <span onclick="undoSuspiciousInterviewer('@item.InterviewerProfileId');" title="Undo Suspicious Interviewer" class="mdc-fab__icon touch"><svg width="20" height="20" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 7V9.5V12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M7.875 9.5H14.875C20.375 9.5 20.375 18 14.875 18C11.875 18 4.875 18 4.875 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11.375 13L7.875 9.5L11.375 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> </svg></span>
-                                                                    </button>
-                                                                </span>
-
-                                                                <span>
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
-                                                                        <span onclick="javascript:OpenInterviewerFlagDetails('@item.SuspiciousEmail');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
-                                                                    </button>
-                                                                </span>
-                                                            </td>
-                                                        }
                                                         @if (ViewBag.actionstatus == "RedoInterviewCount")
                                                         {
                                                             <td>
@@ -839,24 +822,6 @@
                                                             </td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus == "CancelledInterviewCount")
-                                                        {
-                                                            <td>
-                                                                <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Reschedule Invite">
-                                                                    <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                    </span>
-                                                                </button>
-                                                                @* <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top:2px;">
-                                                                    <span onclick="OpenRedoFormModel('@item.imid')" title="ReDo Reject Interview" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                                                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button> *@
-                                                            </td>
-                                                        }
                                                         @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                         {
 
@@ -915,58 +880,6 @@
                                                             </td>
 
 
-                                                        }
-                                                        @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
-                                                        {
-                                                            <td class="meeting-detail-icon">
-                                                                <span class="interview_4">
-                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewing Members" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #4fb3e4;color:#fff;">
-                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
-                                                                            <i class="fas fa-users fa-xs" style="font-size: 13px;position:relative;left:-2px;"></i>
-                                                                        </span>
-                                                                    </button>
-                                                                </span>
-                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #51a1ef!important; border: 1px #7e97bab3!important;">
-                                                                    <span class="mdc-fab__icon material-icons" onclick="javascript:GetAssessmentGroupInterviewerMembers('@item.AssessmentGroupId', '@item.AssessmentGroup', '@item.irfIntId', '@item.IRFId');" title="Interviewers' List"><span class="fa fa-user-plus" style="left:0px;top:0px;position: relative;font-size:12px;font-family: 'Font Awesome 5 Pro';color:#fff"></span></span>
-                                                                </button>
-                                                                @if (ViewBag.actionstatus == "InterviewCount")
-                                                                {
-                                                                    <input type="hidden" value="@item.scheduleUniqueid" id="scheduleUniqueid" />
-                                                                    <input type="hidden" value="@item.imid" id="imid" />
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId','@ViewBag.emailid','@item.scheduleUniqueid')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn" style="cursor: pointer;position:relative;top:1px;width:25px!important;height:25px!important" title="Cancel Interview and Schedule Interview"><span class="fal fa-times" style="font-size:13px;line-height:27px;animation:none;"></span></span></span>
-                                                                    <a style="text-decoration: none;" target="_blank" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.irfIntId })" title="Edit">
-                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Edit" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#54a5f6 ;color:#fff;">
-                                                                            <span title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                        </button>
-                                                                    </a>
-                                                                    @* <div class="mdc-fab app-fab--absolute" style="position:relative;">
-                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
-                                                        </div> *@
-                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
-                                                        <span onclick="javascript:CheckIntervieweravailbility('@item.irfIntId', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                                                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                        </svg>
-                                                        </span>
-                                                        </button>*@
-                                                                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
-                                                                    {
-                                                                        <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.irfIntId, irfName = item.IRFId})" title="Client Interview Report">
-                                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Mail Activity For Availability" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#039BE5;color:#fff;">
-                                                                                <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg style="left: -1px;top:-1px;position: relative;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
-                                                                            </button>
-                                                                        </a>
-                                                                    }
-
-
-                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up." style="position:relative;top:3px;">
-                                                        <span onclick="javascript:SendOpenInterview('@item.irfIntId');" title="Send email communication all open interviews that are available to be taken up." class="mdc-fab__icon material-icons">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M2 5.5V3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V19h18V7.3l-8 7.2-10-9zM0 10h5v2H0v-2zm0 5h8v2H0v-2z"></path> </g> </svg>
-                                                        </span>
-                                                        </button>*@
-                                                                }
-                                                            </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
                                                         {
@@ -2937,37 +2850,6 @@
     function closeinterviewerFlagDetailsModal() {
         var modal = document.getElementById("interviewerFlagDetailsModal");
         modal.style.display = "none";
-    }
-    function OpenInterviewerFlagDetails(Emailid) {
-        $.ajax({
-            url: '/Interviewer/FetchInterviewerFlagDetails',
-            data: { 'InterviewerEmailid': Emailid },
-            success: function (data) {
-                var modal = document.getElementById("interviewerFlagDetailsModal");
-                modal.style.display = "block";
-                $('#FlagDetailsTablebody').html('');
-                $('#FlagDetailsTablebody').html(data);
-            }
-        });
-    }
-
-    function undoSuspiciousInterviewer(UserId) {
-
-        if (UserId != '') {
-            $.ajax({
-                url: '/Dashboard/UndoSuspiciousInterviewer',
-                data: { 'UserId': UserId },
-                type: "POST",
-                success: function (data) {
-                    swal.fire(data).then(function () {
-                        location.reload(true);
-                    });
-                }
-            });
-        }
-        else {
-            swal.fire("Please undo the undo the suspicious interviewer.");
-        }
     }
 </script>
 <script>
