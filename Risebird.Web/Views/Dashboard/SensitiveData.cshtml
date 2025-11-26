@@ -1,0 +1,1133 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.Data;
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Sensitive Data";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
+    string[] Status = new string[] { };
+    string[] Client = new string[] { };
+    string[] ClientHREmail = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("SensitiveDataFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContextAccessor.HttpContext.Session.GetString("SensitiveDataFilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+
+    Status = filter.Status != null ? filter.Status : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+    ClientHREmail = filter.ClientHREmail != null ? filter.ClientHREmail : new string[] { };
+
+}
+
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<input type="hidden" id="txtrate" value="@Model.Count()" />
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Sensitive Data</h4></div>
+                </div>
+                <div class="pull-left">
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "FakeReport")
+                    {
+                        if (ViewBag.actionstatus == "QCPendingReport")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCReport")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "PropableRedo")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCAIInterview")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "FakeReport")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                        }
+                    }
+
+                </div>
+                <div class="pull-right">
+                    <div>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                        @if (ViewBag.Actiontype != 0)
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        }
+                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                        {
+                            <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content  client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div class="dataloading">
+
+                                <div class="toolbar">
+                                    <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
+                                    <input type="hidden" value="@ViewBag.Actiontype" id="hidactiontype" />
+                                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="filheader">
+                                                    <div class="filavatar">
+                                                        <span class="fa fa-filter"></span>
+                                                    </div>
+                                                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                                </div>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <form action="@Url.Action("SensitiveData","Dashboard",new { actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype})" method="post" id="form">
+
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                        Client
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 ">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHREmail">
+                                                                        Client HR
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ClientHREmail" name="ClientHREmail" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="overflow-x:scroll;overflow-y:hidden" class="scrollbar unassigned-int" id="style-2">
+
+                                        <div id="tableID" class="second">
+                                            <table id="meetingTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Action</th>
+                                                        <th>IRF ID</th>
+                                                        <th>Interview Date</th>
+                                                        <th>Candidate</th>
+                                                        @if (ViewBag.actionstatus == "QCReport")
+                                                        {
+                                                            <th>Join Time</th>
+                                                        }
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                        {
+                                                            <th>Interviewer Issues found in the Transcript</th>
+                                                            <th>AI Transcript analysis score</th>
+                                                            <th>Interview Duration</th>
+                                                            <th>Deficit Duration</th>
+                                                            <th>Candidate Rating</th>
+                                                            if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                            {
+                                                                <th>Reason</th>
+                                                            }
+                                                            <th>Interviewer</th>
+                                                            <th>Interviewer Joinedon</th>
+                                                            <th>Interviewer Late join</th>
+                                                        }
+                                                        <th>Meeting Status</th>
+                                                        <th>Interview Status</th>
+                                                        @if (ViewBag.actionstatus == "QCReport")
+                                                        {
+                                                            <th>Red Flags</th>
+                                                        }
+                                                        <th>Channel Owner</th>
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+
+                                                        <th>Action</th>
+                                                        <th>IRF ID</th>
+                                                        <th>Interview Date</th>
+                                                        <th>Candidate Name</th>
+                                                        @if (ViewBag.actionstatus == "QCReport")
+                                                        {
+                                                            <th>Join Time</th>
+                                                        }
+
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                        {
+                                                            <th>Interviewer Issues found in the Transcript</th>
+                                                            <th>AI Transcript analysis score</th>
+                                                            <th>Interview Duration</th>
+                                                            <th>Deficit Duration</th>
+                                                            <th>Candidate Rating</th>
+                                                            if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                            {
+                                                                <th>Reason</th>
+                                                            }
+                                                            <th>Interviewer</th>
+                                                            <th>Interviewer Joinedon</th>
+                                                            <th>Interviewer Late join</th>
+
+                                                        }
+                                                        <th>Meeting Status</th>
+                                                        <th>Interview Status</th>
+                                                        @if (ViewBag.actionstatus == "QCReport")
+                                                        {
+                                                            <th>Red Flags</th>
+                                                        }
+
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                        {
+                                                            <th>Channel Owner</th>
+                                                        }
+                                                    </tr>
+                                                </tfoot>
+                                                <tbody>
+                                                    @foreach (var item in Model)
+                                                    {
+
+                                                        <tr id=@item.Interviewid>
+
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            {
+                                                                <td>
+                                                                    <span>
+                                                                        <a style="width:25px;height:25px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="ProxyFormDetails('@item.Interviewid',true,'QCPendingReport')">
+                                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Proxy Form" style=" position: relative; top: -1px;">
+                                                                                <i style="font-size: 16px; position: relative; top: -1px;" class="fa fa-wpforms"></i>
+                                                                            </button>
+                                                                        </a>
+                                                                    </span>
+
+
+                                                                    @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
+
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
+                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+
+                                                        </button>
+                                                        </a> *@
+
+                                                                    @if (item.IsAIInterview && item.AICandidateResponseVideoCount > 0)
+                                                                    {
+                                                                        <span class="interview_9">
+                                                                            <a style="text-decoration:none" title="Generate/View AI Report" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                    <span>
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                            <!-- Report/document shape -->
+                                                                                            <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                                                                            <path d="M15 2v5h5"></path>
+
+                                                                                            <!-- Brain-like AI/circuit element -->
+                                                                                            <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
+                                                                                            <line x1="12" y1="10" x2="12" y2="8"></line>
+                                                                                            <line x1="12" y1="14" x2="12" y2="16"></line>
+                                                                                            <line x1="10" y1="12" x2="8" y2="12"></line>
+                                                                                            <line x1="14" y1="12" x2="16" y2="12"></line>
+
+                                                                                            <!-- Text lines on report -->
+                                                                                            <line x1="7" y1="18" x2="17" y2="18"></line>
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </a>
+                                                                        </span>
+                                                                        @if (ViewBag.ProfileName == "Admin")
+                                                                        {
+                                                                            <span class="interview_9">
+                                                                                <a style="text-decoration:none" title="ReGenerate AI Report" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId, redo = true})'>
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                        <span>
+                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                                <!-- Report/document shape -->
+                                                                                                <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                                                                                <path d="M15 2v5h5"></path>
+
+                                                                                                <!-- Brain-like AI/circuit element -->
+                                                                                                <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
+                                                                                                <line x1="12" y1="10" x2="12" y2="8"></line>
+                                                                                                <line x1="12" y1="14" x2="12" y2="16"></line>
+                                                                                                <line x1="10" y1="12" x2="8" y2="12"></line>
+                                                                                                <line x1="14" y1="12" x2="16" y2="12"></line>
+
+                                                                                                <!-- Text lines on report -->
+                                                                                                <line x1="7" y1="18" x2="17" y2="18"></line>
+                                                                                            </svg>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </a>
+                                                                            </span>
+                                                                        }
+                                                                        //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                                <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                                                    }
+
+                                                                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller")
+                                                                    {
+
+                                                                        @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") || (ViewBag.ProfileName == "Quality Controller" && item.IsAIInterview))
+                                                                        {
+                                                                            <span class="interview_9">
+                                                                                <a target="_blank" href="@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Feedback Report" style="text-decoration:none;">
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                    </button>
+                                                                                </a>
+                                                                            </span>
+                                                                        }
+                                                                    }
+
+                                                                    @* <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
+                                                                        <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
+                                                                    </button>
+                                                                </a> *@
+
+                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
+                                                                        <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
+                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                                                                        </div>
+                                                                    </button>
+
+                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: 0px;">
+                                                                        <span onclick="OpenRedoRequestFormModel('@item.imid','@item.intervieweStatusStatDesc','QCPendingReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                                    {
+                                                                        <span>
+                                                                            <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                                <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                            </button>
+                                                                        </span>
+                                                                    }
+                                                                </td>
+
+                                                            }
+
+                                                            @if (ViewBag.actionstatus == "QCReport")
+                                                            {
+                                                                <td>
+
+                                                                    @* <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
+                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                        </button>
+                                                        </a> *@
+                                                                    @if (item.IsAIInterview)
+                                                                    {
+                                                                        <span class="interview_9">
+                                                                            <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                    <span>
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                            <!-- Report/document shape -->
+                                                                                            <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                                                                            <path d="M15 2v5h5"></path>
+
+                                                                                            <!-- Brain-like AI/circuit element -->
+                                                                                            <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
+                                                                                            <line x1="12" y1="10" x2="12" y2="8"></line>
+                                                                                            <line x1="12" y1="14" x2="12" y2="16"></line>
+                                                                                            <line x1="10" y1="12" x2="8" y2="12"></line>
+                                                                                            <line x1="14" y1="12" x2="16" y2="12"></line>
+
+                                                                                            <!-- Text lines on report -->
+                                                                                            <line x1="7" y1="18" x2="17" y2="18"></line>
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </a>
+                                                                        </span>
+                                                                        //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                                <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                                                    }
+                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                        <span onclick="OpenRedoRequestFormModel('@item.imid','@item.intervieweStatusStatDesc','QCPendingReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+
+                                                                </td>
+
+                                                            }
+
+
+                                                            <td title=@item.IRFId> @item.IRFId </td>
+                                                            <td> @item.interviewDate </td>
+                                                            <td>
+                                                                <span style="display:block;font-size:14px;">@item.candidateName</span>
+
+                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                                {
+                                                                    <div>
+
+                                                                        @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
+                                                                        {
+
+                                                                            <span aria-label="Click here to call the candidate">
+                                                                                <span onclick="CommonCallButtonClick('@item.candidateName','@item.InterviewerMobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" style="width: 16px;margin: 7px 0px 7px 0px;"></span>
+                                                                            </span>
+
+                                                                            @item.InterviewerMobileNumber
+
+                                                                        }
+                                                                    </div>
+
+                                                                    <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
+
+                                                                        @if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "yes")
+                                                                        {
+                                                                            <div><img src="~/img/not-acceptable.png" style="width: 26px!important;position: absolute;left:-2px;top:-1px;" /></div>
+
+                                                                            <div class="interviewer-apt">
+                                                                                <span>Transcript unacceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
+
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
+
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                    </tr>
+
+                                                                                                </table>
+
+
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
+                                                                        }
+                                                                        else if (!string.IsNullOrEmpty(@item.AITranscriptVerdict) && @item.AITranscriptVerdict.ToLower() == "no")
+                                                                        {
+
+                                                                            <div><img src="~/img/accept.png" style="width: 26px!important;position:absolute;left:-2px;top:-1px;" /></div>
+
+                                                                            <div class="interviewer-apt" style="background:#edf2c573;color:#2a9d36;">
+                                                                                <span>Transcript acceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
+
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
+
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
+                                                                                                    </tr>
+
+
+                                                                                                </table>
+
+
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span></span>
+                                                                        }
+
+                                                                    </div>
+                                                                    <div style="float: left;margin-top:3px;margin-bottom:5px;position: relative;left:0px;">
+
+
+                                                                        @if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower().Contains("yes"))
+                                                                        {
+                                                                            <div><img src="~/img/report-accepted.png" style="width: 20px!important;position:absolute;left:2px;top:4px;" /></div>
+
+                                                                            <div class="interviewer-apt" style="background: #f3f6f1;color:#2a9d36;position: relative;left: 20px;">
+                                                                                <span>Report acceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
+
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-30px;color:#000;top:-4px;font-size: 14px;">Recommended</font>
+
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff;width:10px;"><svg style="color: rgb(116, 167, 22);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" fill="#74a716"></path></svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Acceptable</td>
+                                                                                                    </tr>
+
+
+                                                                                                </table>
+
+
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
+
+
+                                                                        }
+                                                                        else if (!string.IsNullOrEmpty(@item.AIVerdict) && @item.AIVerdict.ToLower() == "no")
+                                                                        {
+
+                                                                            <div><img src="~/img/report-unaccepted.png" style="width: 20px!important;position: absolute;left:4px;top:4px;" /></div>
+
+                                                                            <div class="interviewer-apt">
+                                                                                <span>Report unacceptable quality based on AI</span>
+                                                                                <span>
+                                                                                    <a class="details" href="#">
+                                                                                        <svg style="color: rgb(43, 42, 39);position: relative;left:1px;top: -1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" fill="#2b2a27"></path> </svg>
+                                                                                        <span>
+                                                                                            <div class="bubble">
+
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
+
+                                                                                                <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
+                                                                                                    <tr>
+                                                                                                        <td style="padding:5px;text-align:left;background:#fff"><svg style="color: rgb(237, 70, 29);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" fill="#ed461d"></path> </svg></td>
+                                                                                                        <td style="padding:5px;text-align:left;font-size:13px;background:#fff;font-weight:500">Not Acceptable (Payment under review)</td>
+                                                                                                    </tr>
+
+                                                                                                </table>
+
+
+                                                                                            </div>
+                                                                                        </span>
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>
+
+
+                                                                        }
+
+                                                                        else
+                                                                        {
+                                                                            <span></span>
+                                                                        }
+
+                                                                    </div>
+
+
+                                                                }
+
+                                                            </td>
+                                                            @if (ViewBag.actionstatus == "QCReport")
+                                                            {
+                                                                <td>@item.Joinedon</td>
+                                                            }
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            {
+                                                                <td style="text-align:center">
+
+                                                                    @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
+                                                                    {
+                                                                        @if (@item.AITranscriptVerdict == "yes")
+                                                                        {
+                                                                            <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                        }
+                                                                    }
+                                                                    <br /><br />
+                                                                    @if (item.AIVerdict != null && item.AIVerdict != "")
+                                                                    {
+                                                                        @if (@item.AIVerdict.ToLower().Contains("yes"))
+                                                                        {
+                                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;"> check report quality details<svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                        }
+                                                                    }
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    @if (@item.AITranscriptAnalysisScore == 0)
+                                                                    {
+                                                                        <span>NA</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="count" style="width:26px;height:26px;line-height:26px;">@item.AITranscriptAnalysisScore</span>
+                                                                    }
+                                                                </td>
+                                                                @if (item.interviewDuration != null)
+                                                                {
+                                                                    <td>  @item.interviewDuration (mins)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td>@item.deficit (mins)</td>
+                                                                <td>
+                                                                    <div class="interviewer">
+                                                                        @if (@item.Rating != 0)
+                                                                        {
+                                                                            <label style="color:#42a5f5;font-size:15px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label style="font-size:15px;color:grey">NA</label>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+                                                                if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                                {
+                                                                    <td>@item.StatusValue</td>
+                                                                }
+                                                                <td>
+                                                                    @if (@item.interviewer != null || @item.interviewer != "")
+                                                                    {
+
+                                                                        <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer;color: #42a5f5;"> @item.InterviewerName</d>
+
+                                                                    }
+                                                                    else
+                                                                    {
+
+                                                                        <span style="color: #42a5f5"> @item.InterviewerName</span>
+
+
+
+                                                                    }
+                                                                </td>
+                                                                <td class="intime-on" style="padding-left:30px;">
+                                                                    @if (item.IsVideoRequired == true)
+                                                                    {
+                                                                        <div style="position:relative;z-index:10;width: fit-content">
+                                                                            <div class="absCenter">
+                                                                                <button class="infoButton" style="top:12px;left:-16px;">
+                                                                                    <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                        <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                        <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    <div style="float:left">@item.Joinedon </div>
+
+                                                                </td>
+                                                                <td>
+                                                                    <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
+
+                                                                        @if (item.InterviewerLateJoin != 0)
+                                                                        {
+                                                                            <span style="color:green">Yes</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span style="color:#000;font-weight:400">No</span>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                            @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                            {
+                                                                <td>Scheduled</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (item.MeetingStatusStatusDesc != "0")
+                                                                {
+                                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                            }
+                                                            @if (item.intervieweStatusStatDesc != "0")
+                                                            {
+                                                                <td> @item.intervieweStatusStatDesc</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if (ViewBag.actionstatus == "QCReport")
+                                                            {
+                                                                @if (item.Redflags > 0)
+                                                                {
+                                                                    <td class="text-center">
+                                                                        <a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>0</td>
+                                                                }
+                                                            }
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            {
+                                                                <td>@item.ChannelOwner</td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end content-->
+                            </div>
+                            <!-- end col-md-12 -->
+                        </div>
+                        <!-- end row -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
+
+<script src="~/js/assessmentgroupfunctionalities.js"></script>
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+
+    </div>
+</div>
+
+
+<div id="RedoRequestInterviewModel" class="modal modal-bg" style="z-index:5">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Redo Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeRedoRequestInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="divredoRequestInterview">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="RedFlagModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Red Flag</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="RedFlagPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="RedFlagTableBody">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="interviewerFlagDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+            </div>
+            <button onclick="closeinterviewerFlagDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="FlagDetailsTablebody" style="overflow:auto;max-height:30vw">
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
+@await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
+@await Html.PartialAsync("~/Views/IRF/AddAGInterviewerToIRFPartial.cshtml")
+
+<script src="~/js/TwilioCallMaker.js"></script>
+<script src="~/js/checkintervieweravailabilitybymail.js"></script>
+<script src="~/js/common.js"></script>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        $("#ResetFilter").click(function () {
+            ResetFilter('@ViewBag.ReturnBack');
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+    });
+
+    function ResetFilter(returnBack) {
+        var value = $("#hidactionstatus").val();
+        window.location.href = "/Dashboard/ResetSensitiveDataFilter?actionstatus=" + value;
+
+    }
+    function ApplySessionFilter() {
+
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var status = @Html.Raw(Json.Serialize(Status));
+        var client = @Html.Raw(Json.Serialize(Client));
+        var clientHREmail = @Html.Raw(Json.Serialize(ClientHREmail));
+
+
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        //$("#Status").val(status);
+        $("#Client").val(client);
+        $("#ClientHREmail").val(clientHREmail);
+
+        var form = $("#form").serialize();
+
+    }
+
+
+
+</script>
+
+
+<script>
+    function RefreshSearch() {
+        $('#meetingTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+    $(document).ready(function () {
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        $('#meetingTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+    }
+
+
+
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+</script>
+
+<script type="text/javascript">
+        //// script for loader starts here
+        $(".dataloading").hide();
+        $("#meetingTable").hide();
+        var loader;
+        function ShowProgress() {
+            $(".dataloading").hide();
+            $("#meetingTable").hide();
+            loader = document.getElementsByClassName("loader")[0];
+            loader.style.display = "block";
+            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+            loader.style.top = top + "px";
+            loader.style.left = left + "px";
+        };
+        ShowProgress();
+
+        window.onload = function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+                $(".dataloading").show();
+                $("#meetingTable").show();
+            }, 2000);
+        };
+        //// script for loader ends here
+
+
+    function Changeurldetails(type) {
+    var actiontype = $("#hidactiontype").val();
+    window.location.href = "/DashBoard/SensitiveData?actionstatus=" + type + "&actiontype=" + actiontype;
+    }
+
+</script>
+
+<script>
+    var closeRedFlag = document.getElementById("RedFlagPopUp");
+    closeRedFlag.onclick = function () {
+        var modal = document.getElementById("RedFlagModal");
+        modal.style.display = "none";
+    }
+    function GetRedFlagsModal(Interviewid) {
+
+        if (Interviewid != '') {
+            $.ajax({
+                url: '/DashBoard/GetRedFlagsQCReport',
+                data: { 'Interviewid': Interviewid },
+                success: function (data) {
+                    var modal = document.getElementById("RedFlagModal");
+                    modal.style.display = "block";
+                    $('#RedFlagTableBody').html('');
+                    $('#RedFlagTableBody').html(data);
+                }
+            });
+        }
+
+    }
+</script>
+<script>
+
+    function closeinterviewerFlagDetailsModal() {
+        var modal = document.getElementById("interviewerFlagDetailsModal");
+        modal.style.display = "none";
+    }
+</script>
+<script>
+    function OpenRedoRequestFormModel(interviewid, interviewstatus, type) {
+        $.ajax({
+            url: '/Interview/RedoInterviewDetails',
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus, 'type': type },
+            success: function (data) {
+                $('#divredoRequestInterview').html('');
+                $('#divredoRequestInterview').html(data);
+                openRedoRequestInterviewModel();
+            }
+        });
+    }
+    function openRedoRequestInterviewModel() {
+        var modal = document.getElementById("RedoRequestInterviewModel");
+        modal.style.display = "block";
+    }
+    function closeRedoRequestInterviewModel() {
+        var modal = document.getElementById("RedoRequestInterviewModel");
+        modal.style.display = "none";
+    }
+</script>
+<script>
+</script>
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
+    }
+</script>
+<script src="~/js/twiliocallmaker.js?v=2024"></script>
+@*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@

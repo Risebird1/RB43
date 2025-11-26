@@ -25,5 +25,6 @@
         public static readonly string QCUnderReview = "QCUnderReview";
         public static readonly string QCAIInterview = "QCAIInterview";
         public static readonly string AIMeetingStatus = "AIMeetingStatus";
+        public static readonly string FakeReport = "FakeReport";
     }
 }

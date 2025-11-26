@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using UglyToad.PdfPig.Actions;
 using static Dapper.SqlMapper;
 
 
@@ -2325,7 +2326,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company,string Type)
+        public async Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company, string Type)
         {
             try
             {
@@ -2352,6 +2353,36 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return false;
+        }
+        public async Task<List<MeetingVM>> FetchMissingParticipantFakeReporting(string emailid, string profileName, string actionstatus, UnassignedInterviewsFilter filters = null)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@actionstatus", actionstatus);
+                parameters.Add("@emailid", emailid);
+                parameters.Add("@currentdate", DateTime.Now);
+                if (filters != null)
+                {
+                    parameters.Add("@StartDate", filters.StartDate);
+                    parameters.Add("@EndDate", filters.EndDate);
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchMissingParticipantFakeReporting", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
         }
     }
 }
