@@ -248,7 +248,6 @@
 
                                                     @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
-
                                                         <th>
                                                             Action
                                                         </th>
@@ -260,9 +259,7 @@
                                                     }
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-
                                                         <th>IRF ID</th>
-
                                                     }
                                                     @if (ViewBag.actionstatus == "InterviewCount")
                                                     {
