@@ -5270,7 +5270,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
     }
 }
 
