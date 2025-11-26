@@ -203,6 +203,7 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                <input type="hidden" id="HdnReturnBackId" name="HdnReturnBack" value="@ViewBag.ReturnBack" />
 
                                                             <div class="form-group">
                                                                 <div>
@@ -229,517 +230,81 @@
                                         <table id="meetingTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
-                                                    {
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "RedoInterviewCount")
-                                                    {
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "CancelledInterviewCount")
-                                                    {
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
+                                                    @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
                                                     {
                                                         <th>Action</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
-                                                    {
-
-                                                        <th>
-                                                            Action
-                                                        </th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                    {
-
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
-
                                                         <th>IRF ID</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "InterviewCount")
-                                                    {
-                                                        <th>Assessment Group</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
-                                                    {
-                                                        <th>Skill Channel ID</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
                                                         <th>Interview Date</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "ReScheduleCount")
-                                                    {
-
-                                                        <th>Future Schedule Date</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                    {
-                                                        <th>Who Joined</th>
-                                                        <th>Meeting Link</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
                                                         <th>Candidate</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "QCReport")
-                                                    {
-                                                        <th>Join Time</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
-                                                    {
-                                                        <th>Interviewer Issues found in the Transcript</th>
-                                                        <th>AI Transcript analysis score</th>
-                                                        <th>Interview Duration</th>
-                                                        <th>Deficit Duration</th>
-                                                        <th>Candidate Rating</th>
-                                                        if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
-                                                            <th>Reason</th>
+                                                            <th>Join Time</th>
                                                         }
-                                                        <th>Interviewer</th>
-                                                        <th>Interviewer Joinedon</th>
-                                                        <th>Interviewer Late join</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                    {
-                                                        <th>Candidate Contact</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        <th>Candidate Email</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        <th>Interviewer</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                    {
-                                                        <th>Interviewer Contact</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
-                                                        //PotentialRiskInterviewCount not allow
-                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
+                                                            <th>Interviewer Issues found in the Transcript</th>
+                                                            <th>AI Transcript analysis score</th>
+                                                            <th>Interview Duration</th>
+                                                            <th>Deficit Duration</th>
+                                                            <th>Candidate Rating</th>
+                                                            if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                             {
-                                                                <th>Meeting Status</th>
+                                                                <th>Reason</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
-                                                            {
-                                                                <th>Interview Status</th>
-                                                            }
-
+                                                            <th>Interviewer</th>
+                                                            <th>Interviewer Joinedon</th>
+                                                            <th>Interviewer Late join</th>
                                                         }
-                                                    }
-
-
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        <th>Client Name</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PotentialRiskByClient")
-                                                    {
-                                                        <th>Red Flags</th>
-                                                    }
-                                                    @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                       @if (ViewBag.actionstatus == "QCReport")
                                                         {
-                                                            <th>Channel Owner</th>
+                                                            <th>Candidate Email</th>
+                                                            <th>Interviewer</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Interview Status</th>
+                                                            <th>Client Name</th>
+                                                            <th>Red Flags</th>
                                                         }
-                                                        else
-                                                        {
-                                                            <th>Co-ordinating HR</th>
-                                                        }
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "ReScheduleCount")
-                                                    {
-                                                        <th>Client Email</th>
-                                                        <th>Client HR Email</th>
-                                                    }
-
-
-                                                    @if (ViewBag.actionstatus == "InterviewCount")
-                                                    {
-                                                        <th>Candidate Response</th>
-                                                        <th>JD Title</th>
-                                                    }
-
-
-                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
-                                                    {
-
-                                                        <th>Name</th>
-                                                        <th>Email</th>
-                                                        <th>Interview Addedon</th>
-                                                        <th>Created By</th>
-                                                        <th>Resume</th>
-                                                        <th>Comment</th>
-                                                        <th>Suspicious Added By</th>
-                                                        <th>Suspicious AddedOn</th>
-                                                        <th>Mobile</th>
-                                                        <th>Active</th>
-                                                        <th>Red Marker</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "CancelledInterviewCount")
-                                                    {
-                                                        <th>Client Hr Contact </th>
-                                                        <th>Client</th>
-                                                        <th>Interviewer</th>
-                                                        <th>Billing Owner</th>
-                                                        <th>Cancellation Source</th>
-                                                        <th>Cancellation Reason</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "RedoInterviewCount")
-                                                    {
-                                                        <th>Type</th>
-                                                        <th>JD Title</th>
-                                                        <th>Meeting Link</th>
-                                                        <th>Company Name</th>
-
-                                                        <th>Interviewer</th>
-                                                        <th>Interviewer resume Link</th>
-                                                        <th>Confirmation Status</th>
-                                                        <th>Cancellation source</th>
-                                                        @* <th>Meeting Status</th>
-                                                    <th>Interview Status</th>*@
-                                                        <th>Candidate Response</th>
-                                                        <th>Resume</th>
-                                                        <th>JD Link</th>
-                                                        <th>Zoom ID</th>
-                                                        <th>Client HR</th>
-                                                        <th>Project Name</th>
-                                                        <th>Video Link</th>
-                                                        <th>Video Duration</th>
-                                                        @*<th>Emergency Interview</th>
-                                                    <th>Interview Slot</th>*@
-                                                        <th>Staffing Agency</th>
-                                                        <th>Interview Duration</th>
-                                                        <th>ID Verification</th>
-                                                        <th style="text-align:center">Call</th>
-                                                        <th>ReportId</th>
-                                                        <th>Has Distinct Participants</th>
-                                                        <th>Expected Joining Time</th>
-                                                        <th>Preferred Location</th>
-                                                        <th>Expected Salary</th>
-                                                        <th>Current Employer</th>
-                                                        <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
-                                                    {
-                                                        <th>Channel Owner</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
-                                                    {
-
-                                                        <th>Interviewer Details</th>
-                                                        <th>Interviewer Contact</th>
-                                                        <th>Resume</th>
-                                                        <th>Is Employed</th>
-                                                        <th>Company Name</th>
-                                                        <th>Employment Comment</th>
-                                                        <th>Current Status</th>
-                                                        <th>Availibility Response Date</th>
-                                                        @*<th>Mobile</th>*@
-
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
-                                                    {
-                                                        <th>Red Marker</th>
-                                                        <th>Rating</th>
-                                                        <th>Rated</th>
-                                                        <th>Action</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                    {
-                                                        <th>Payment Compliance</th>
-                                                        <th>Rating</th>
-                                                        <th>Comment</th>
-                                                        <th>Rated By</th>
-                                                        <th>Rated</th>
-                                                        <th>Payment SLA Status</th>
-                                                        <th>Red Marker</th>
-
                                                     }
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
-                                                    {
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "RedoInterviewCount")
-                                                    {
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "CancelledInterviewCount")
-                                                    {
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                    {
-
-                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                    @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
                                                     {
                                                         <th>Action</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
-                                                    {
-                                                        <th>
-                                                            Action
-                                                        </th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
-
                                                         <th>IRF ID</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "InterviewCount")
-                                                    {
-                                                        <th>Assessment Group</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
-                                                    {
-                                                        <th>Skill Channel ID</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
                                                         <th>Interview Date</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "ReScheduleCount")
-                                                    {
-                                                        <th>Future Schedule Date</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                    {
-                                                        <th>Who Joined</th>
-                                                        <th>Meeting Link</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
                                                         <th>Candidate Name</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "QCReport")
-                                                    {
-                                                        <th>Join Time</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
-                                                    {
-                                                        <th>Interviewer Issues found in the Transcript</th>
-                                                        <th>AI Transcript analysis score</th>
-                                                        <th>Interview Duration</th>
-                                                        <th>Deficit Duration</th>
-                                                        <th>Candidate Rating</th>
-                                                        if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
-                                                            <th>Reason</th>
+                                                            <th>Join Time</th>
                                                         }
-                                                        <th>Interviewer</th>
-                                                        <th>Interviewer Joinedon</th>
-                                                        <th>Interviewer Late join</th>
-
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                    {
-                                                        <th>Candidate Contact</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        <th>Candidate Email</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        <th>Interviewer</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                    {
-                                                        <th>Interviewer Contact</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                    {
-                                                        //PotentialRiskInterviewCount not allow
-                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
+                                                            <th>Interviewer Issues found in the Transcript</th>
+                                                            <th>AI Transcript analysis score</th>
+                                                            <th>Interview Duration</th>
+                                                            <th>Deficit Duration</th>
+                                                            <th>Candidate Rating</th>
+                                                            if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                             {
-                                                                <th>Meeting Status</th>
+                                                                <th>Reason</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
-                                                            {
-                                                                <th>Interview Status</th>
-                                                            }
+                                                            <th>Interviewer</th>
+                                                            <th>Interviewer Joinedon</th>
+                                                            <th>Interviewer Late join</th>
                                                         }
-                                                    }
-
-
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        <th>Client Name</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PotentialRiskByClient")
-                                                    {
-                                                        <th>Red Flags</th>
-                                                    }
-
-                                                    @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                    {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
-                                                            <th>Channel Owner</th>
+                                                            <th>Candidate Email</th>
+                                                            <th>Interviewer</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Interview Status</th>
+                                                            <th>Client Name</th>
+                                                            <th>Red Flags</th>
                                                         }
-                                                        else
-                                                        {
-                                                            <th>Co-ordinating HR</th>
-                                                        }
-                                                    }
-                                                    @if (ViewBag.actionstatus == "ReScheduleCount")
-                                                    {
-                                                        <th>Client Email</th>
-                                                        <th>Client HR Email</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "InterviewCount")
-                                                    {
-                                                        <th>Candidate Response</th>
-
-                                                        <th>JD Title</th>
-                                                    }
-
-
-                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
-                                                    {
-
-                                                        <th>Name</th>
-                                                        <th>Email</th>
-                                                        <th>Interview Addedon</th>
-                                                        <th>Created By</th>
-                                                        <th>Resume</th>
-                                                        <th>Comment</th>
-                                                        <th>Suspicious Added By</th>
-                                                        <th>Suspicious AddedOn</th>
-                                                        <th>Mobile</th>
-                                                        <th>Active</th>
-                                                        <th>Red Marker</th>
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "CancelledInterviewCount")
-                                                    {
-                                                        <th>Client Hr Contact</th>
-                                                        <th>Client</th>
-                                                        <th>Interviewer</th>
-                                                        <th>Billing Owner</th>
-                                                        <th>Cancellation Source</th>
-                                                        <th>Cancellation Reason</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "RedoInterviewCount")
-                                                    {
-                                                        <th>Type</th>
-                                                        <th>JD Title</th>
-                                                        <th>Meeting Link</th>
-                                                        <th>Company Name</th>
-
-                                                        <th>Interviewer</th>
-                                                        <th>Interviewer resume Link</th>
-                                                        <th>Confirmation Status</th>
-                                                        <th>Cancellation source</th>
-                                                        @*<th>Meeting Status</th>
-                                                    <th>Interview Status</th>*@
-                                                        <th>Candidate Response</th>
-                                                        <th>Resume</th>
-                                                        <th>JD Link</th>
-                                                        <th>Zoom ID</th>
-                                                        <th>Client HR</th>
-                                                        <th>Project Name</th>
-                                                        <th>Video Link</th>
-                                                        <th>Video Duration</th>
-                                                        @* <th>Emergency Interview</th>
-                                                    <th>Interview Slot</th>*@
-                                                        <th>Staffing Agency</th>
-                                                        <th>Interview Duration</th>
-                                                        <th>ID Verification</th>
-                                                        <th style="text-align:center">Call</th>
-                                                        <th>ReportId</th>
-                                                        <th>Has Distinct Participants</th>
-                                                        <th>Expected Joining Time</th>
-                                                        <th>Preferred Location</th>
-                                                        <th>Expected Salary</th>
-                                                        <th>Current Employer</th>
-                                                        <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
-                                                    {
-                                                        <th>Channel Owner</th>
-                                                    }
-
-
-                                                    @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
-                                                    {
-
-
-                                                        <th>Interviewer Details</th>
-                                                        <th>Interviewer Contact</th>
-                                                        <th>Resume</th>
-                                                        <th>Is Employed</th>
-                                                        <th>Company Name</th>
-                                                        <th>Employment Comment</th>
-                                                        <th>Current Status</th>
-                                                        <th>Availibility Response Date</th>
-                                                        @*<th>Mobile</th>*@
-
-                                                    }
-
-                                                    @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
-                                                    {
-                                                        <th>Red Marker</th>
-                                                        <th>Rating</th>
-                                                        <th>Rated</th>
-                                                        <th>Action</th>
-                                                    }
-                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                    {
-                                                        <th>Payment Compliance</th>
-                                                        <th>Rating</th>
-                                                        <th>Comment</th>
-                                                        <th>Rated By</th>
-                                                        <th>Rated</th>
-                                                        <th>Payment SLA Status</th>
-                                                        <th>Red Marker</th>
-
                                                     }
                                                 </tr>
                                             </tfoot>
@@ -751,186 +316,8 @@
                                                 {
 
                                                     <tr id=@item.Interviewid>
-                                                        @if (ViewBag.actionstatus == "RedoInterviewCount")
-                                                        {
-                                                            <td>
-                                                                @if (item.IsAadhaarVerificationRequired == true)
-                                                                {
-
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
-                                                                        <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
-                                                                            <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
-                                                                        </span>
-                                                                    </button>
-
-                                                                }
-                                                                @if (ViewBag.ProfileName == "Admin")
-                                                                {
-                                                                    <span class="interview_9">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-
-                                                                @if (item.IsAIInterview)
-                                                                {
-                                                                    <span class="interview_9">
-                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
-                                                                                <span>
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                                                                        <!-- Report/document shape -->
-                                                                                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                                                                        <path d="M15 2v5h5"></path>
-
-                                                                                        <!-- Brain-like AI/circuit element -->
-                                                                                        <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
-                                                                                        <line x1="12" y1="10" x2="12" y2="8"></line>
-                                                                                        <line x1="12" y1="14" x2="12" y2="16"></line>
-                                                                                        <line x1="10" y1="12" x2="8" y2="12"></line>
-                                                                                        <line x1="14" y1="12" x2="16" y2="12"></line>
-
-                                                                                        <!-- Text lines on report -->
-                                                                                        <line x1="7" y1="18" x2="17" y2="18"></line>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </button>
-                                                                        </a>
-                                                                    </span>
-                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                }
-                                                                else
-                                                                {
-                                                                    <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                        </button>
-                                                                    </a>
-                                                                }
-                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top: -3px;">
-                                                                    <span onclick="OpenRedoFormModel('@item.imid')" title="ReDo Reject Interview" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                                                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-
-
-
-                                                            </td>
-                                                        }
-
-                                                        @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                        {
-
-                                                            <td align="center">
-
-                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
-                                                                {
-                                                                    <span>
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-
-                                                                @if (item.IsAIInterview)
-                                                                {
-                                                                    <span class="interview_9">
-                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
-                                                                                <span>
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                                                                        <!-- Report/document shape -->
-                                                                                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                                                                        <path d="M15 2v5h5"></path>
-
-                                                                                        <!-- Brain-like AI/circuit element -->
-                                                                                        <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
-                                                                                        <line x1="12" y1="10" x2="12" y2="8"></line>
-                                                                                        <line x1="12" y1="14" x2="12" y2="16"></line>
-                                                                                        <line x1="10" y1="12" x2="8" y2="12"></line>
-                                                                                        <line x1="14" y1="12" x2="16" y2="12"></line>
-
-                                                                                        <!-- Text lines on report -->
-                                                                                        <line x1="7" y1="18" x2="17" y2="18"></line>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </button>
-                                                                        </a>
-                                                                    </span>
-                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                }
-                                                                else
-                                                                {
-
-                                                                    <a target="_blank" style="text-decoration:none;" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                        </button>
-                                                                    </a>
-                                                                }
-                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
-                                                                    <div onclick="PaymentSLADetails('@item.id','@item.candidateEmail','@item.interviewer',false,'PotentailRiskClient',false)" title="Palyment SLA" class="mdc-fab__icon material-icons">
-                                                                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
-                                                                    </div>
-                                                                </button>
-                                                            </td>
-
-
-                                                        }
-                                                        @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                        {
-                                                            <td>
-                                                                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
-                                                                {
-                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Report" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#42a5f5;color:#fff;">
-                                                                        <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
-                                                                    </button>
-                                                                    @if (ViewBag.actionstatus == "AIMeetingStatus" && item.AICandidateResponseVideoCount > 0)
-                                                                    {
-                                                                        <span class="interview_9">
-                                                                            <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
-                                                                                    <span>
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                                                                            <!-- Report/document shape -->
-                                                                                            <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                                                                            <path d="M15 2v5h5"></path>
-
-                                                                                            <!-- Brain-like AI/circuit element -->
-                                                                                            <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
-                                                                                            <line x1="12" y1="10" x2="12" y2="8"></line>
-                                                                                            <line x1="12" y1="14" x2="12" y2="16"></line>
-                                                                                            <line x1="10" y1="12" x2="8" y2="12"></line>
-                                                                                            <line x1="14" y1="12" x2="16" y2="12"></line>
-
-                                                                                            <!-- Text lines on report -->
-                                                                                            <line x1="7" y1="18" x2="17" y2="18"></line>
-                                                                                        </svg>
-                                                                                    </span>
-                                                                                </button>
-                                                                            </a>
-                                                                        </span>
-                                                                    }
-                                                                }
-
-
-                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
-                                                                {
-                                                                    <span>
-                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Suspicious Interviwer" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#42a5f5;color:#fff;">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-
-                                                            </td>
-                                                        }
-
-                                                        @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                       
+                                                        @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" ||  ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
                                                         {
                                                             <td>
                                                                 <span>
@@ -942,13 +329,7 @@
                                                                 </span>
 
 
-                                                                @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
-
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
-                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-
-                                                        </button>
-                                                        </a> *@
+                  
 
                                                                 @if (item.IsAIInterview && item.AICandidateResponseVideoCount > 0)
                                                                 {
@@ -1027,11 +408,7 @@
                                                                     }
                                                                 }
 
-                                                                @* <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
-                                                                        <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
-                                                                    </button>
-                                                                </a> *@
+                                                               
 
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
                                                                     <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
@@ -1062,11 +439,7 @@
                                                         {
                                                             <td>
 
-                                                                @* <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
-                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                        </button>
-                                                        </a> *@
+                                                               
                                                                 @if (item.IsAIInterview)
                                                                 {
                                                                     <span class="interview_9">
@@ -1116,70 +489,10 @@
                                                         }
 
 
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "InterviewCount")
-                                                        {
-                                                            <td>@item.AssessmentGroup</td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
-                                                        {
-                                                            <td title=@item.IRFId> @item.IRFId </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                        {
                                                             <td> @item.interviewDate </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "ReScheduleCount")
-                                                        {
-                                                            <td title=@item.IRFId> @item.FutureSchduleDate </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                        {
-                                                            <td style="color: #0b8c0b;">
-                                                                <div id="section">
-                                                                    @if (item.WhoJoined != null && item.WhoJoined != "")
-                                                                    {
-                                                                        @if (item.WhoJoined.Length > 30)
-                                                                        {
-                                                                            <div class="article">
-                                                                                <p style="margin-bottom:0px;">
-                                                                                    @item.WhoJoined.Substring(0, 30)
-                                                                                </p>
-                                                                                <p class="moretext_@item.Interviewid moretext">
-                                                                                    @item.WhoJoined.Substring(30, @item.WhoJoined.Length - 30)
-                                                                                </p>
-                                                                                <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
-
-                                                                            </div>
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <div class="article">
-                                                                                <p>
-                                                                                    @item.WhoJoined.Substring(0, @item.WhoJoined.Length)
-                                                                                </p>
-                                                                            </div>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div></div>
-                                                                    }
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                @if (!string.IsNullOrWhiteSpace(item.zoomLink))
-                                                                {
-                                                                    <a target="_blank" href=@item.zoomLink>Meeting link</a>
-                                                                }
-                                                            </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                        {
                                                             <td>
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
@@ -1344,18 +657,6 @@
 
 
                                                                 }
-                                                                @if (ViewBag.actionstatus == "InterviewCount")
-                                                                {
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-
-                                                                        <button aria-label="Click here to call the candidate" style="background:none;border:0px;padding:0px;">
-                                                                            <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="18"></span>
-                                                                        </button>
-                                                                        @item.MobileNumber
-
-                                                                    }
-                                                                }
                                                             </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
@@ -1474,117 +775,36 @@
                                                                 </div>
                                                             </td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
-                                                            <td>@item.MobileNumber </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "NeedClarity")
-                                                        {
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <td>
-                                                                    <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
-                                                                        <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-                                                                    @item.MobileNumber
-                                                                </td>
-                                                            }
-                                                        }
-                                                        @if (ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                        {
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <td>
-                                                                    <span aria-label="Click here to call the candidate">
-                                                                        <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
-                                                                    </span>@item.MobileNumber
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                        }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                        {
-                                                            <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
-                                                        }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                        {
+                                                        <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+
                                                             @if (@item.interviewer != null || @item.interviewer != "")
-                                                            {
+                                                                {
                                                                 <td>
                                                                     <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer"> @item.interviewer</d>
                                                                 </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
-                                                                        not
-                                                                    </d>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus")
-                                                        {
-
-                                                            <td>
-                                                                <span aria-label="Click here to call the interviewer">
-                                                                    <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.interviewer',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer."><img src="/img/calling.png" width="20"></span>
-                                                                </span>@item.InterviewerMobileNumber
-                                                            </td>
-
-                                                        }
-
-
-
-
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
-                                                        {
-                                                            //PotentialRiskInterviewCount not allow
-                                                            @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
-                                                            {
-                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
-                                                                {
-                                                                    @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                                                                    {
-                                                                        <td>Scheduled</td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @if (item.MeetingStatusStatusDesc != "0")
-                                                                        {
-                                                                            <td> @item.MeetingStatusStatusDesc</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-                                                                    }
                                                                 }
-                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus" && ViewBag.actionstatus != "AIMeetingStatus")
+                                                                
+                                                              @if (item.MeetingStatusStatusDesc != "0")
                                                                 {
-                                                                    @if (item.intervieweStatusStatDesc != "0")
-                                                                    {
-                                                                        <td> @item.intervieweStatusStatDesc</td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td></td>
-                                                                    }
+                                                                <td> @item.MeetingStatusStatusDesc</td>
                                                                 }
-                                                            }
+                                                                else
+                                                                {
+                                                                <td></td>
+                                                                }
 
-                                                        }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                        {
-                                                            <td>@item.Name</td>
-                                                        }
+                                                             @if (item.intervieweStatusStatDesc != "0")
+                                                                {
+                                                                <td> @item.intervieweStatusStatDesc</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                <td></td>
+                                                                }
 
-                                                        @if (ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PotentialRiskByClient")
-                                                        {
+                                                             <td>@item.Name</td>
                                                             @if (item.Redflags > 0)
                                                             {
                                                                 <td class="text-center">
@@ -1593,651 +813,16 @@
                                                             }
                                                             else
                                                             {
-                                                                <td>0</td>
-
+                                                                <td  class="text-center">0</td>
                                                             }
                                                         }
-                                                        @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "SensitiveData" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
-                                                        {
-                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "AIMeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
-                                                            {
-                                                                <td>@item.ChannelOwner</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>@item.HRCoordinatorEmailId</td>
-                                                            }
-                                                        }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                        {
-                                                            <td class="meeting-detail-icon">
-                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Edit" style="position:relative;top:3px;width:25px!important;height:25px!important;">
-                                                                    <span onclick="javascript:FetchHistory('@item.ZoomMeetingId');" title="Meeting Details" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
-                                                                            <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z" />
-                                                                            <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z" />
-                                                                            <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members" style="position:relative;top:-3px;">
-                                                                    <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
-                                                                        <i class="fas fa-users fa-xs" style="font-size: 13px;"></i>
-                                                                    </span>
-                                                                </button>
-
-                                                            </td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "ReScheduleCount")
-                                                        {
-
-                                                            <td>@item.ClientEmail</td>
-                                                            <td>@item.ClientHrContact</td>
-
-
-                                                        }
-
-                                                        @if (ViewBag.actionstatus == "InterviewCount")
-                                                        {
-                                                            @if (item.IsCandidateResponsed)
-                                                            {
-                                                                @if (item.CandidateResponse == 1)
-                                                                {
-                                                                    <td>Responded (Yes)</td>
-                                                                }
-                                                                else if (item.CandidateResponse == 3)
-                                                                {
-                                                                    <td title="Candidate Request to Reschedule">Responded (Reschedule)</td>
-                                                                }
-                                                                else if (item.CandidateResponse == 4)
-                                                                {
-                                                                    <td>Responded (Need More Clarity)</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>Responded (No)</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Response</td>
-                                                            }
-                                                            <td>@item.JDTiltle</td>
-                                                        }
-                                                        @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
-                                                        {
-
-                                                            <td>@item.SuspiciousName</td>
-                                                            <td>@item.SuspiciousEmail</td>
-                                                            <td>@item.InterviewAddedOn</td>
-
-                                                            <td>@item.CreatedBy</td>
-
-                                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                                            {
-                                                                <td>
-
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink.Replace(" ","%20")>Resume</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }
-
-
-                                                            <td><span class="white-space">@item.SuspiciousComment</span></td>
-                                                            <td>@item.SuspiciousAddedBy</td>
-                                                            <td>@item.SuspiciousAddOn</td>
-                                                            <td>@item.SuspiciousMobileNumber</td>
-                                                            @if (item.IsActive)
-                                                            {
-                                                                <td>Active</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>Inactive</td>
-                                                            }
-                                                            @if (item.interviewer != null || item.interviewer != "")
-                                                            {
-                                                                <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.SuspiciousEmail')" style="cursor:pointer">@item.RedMarker</d></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td style="color:red;text-align:center">@item.RedMarker</td>
-                                                            }
-                                                        }
-
-
-                                                        @if (ViewBag.actionstatus == "CancelledInterviewCount")
-                                                        {
-                                                            <td>@item.ClientHrContact</td>
-
-                                                            <td>@item.Client </td>
-
-                                                            <td>@item.interviewer </td>
-                                                            <td>@item.BillingOwner</td>
-                                                            <td>@item.Cancellationsource</td>
-                                                            <td>@item.Cancellationreason</td>
-                                                        }
-
-
-
-                                                        @if (ViewBag.actionstatus == "RedoInterviewCount")
-                                                        {
-
-                                                            @if (item.IsProctor)
-                                                            {
-                                                                <td>Proctor</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>Interview</td>
-                                                            }
-
-                                                            <td> @item.JDTiltle.Split("|")[0] </td>
-
-
-                                                            @if (item.zoomLink != null && item.zoomLink != "")
-                                                            {
-                                                                <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td><span style="color:red">No Meeting Link</span></td>
-                                                            }
-
-                                                            @if (!string.IsNullOrWhiteSpace(item.CompanyName))
-                                                            {
-                                                                @if (item.CompanyName.Length > 30)
-                                                                {
-                                                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>@item.CompanyName</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-
-                                                            @if (@item.interviewer != null || @item.interviewer != "")
-                                                            {
-                                                                @if (item.IsInterviewerOnline == 1)
-                                                                {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>
-                                                                        @item.interviewer
-                                                                    </td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if (@item.encodedresumeLink != null || @item.encodedresumeLink != "")
-                                                            {
-
-                                                                <td>
-
-                                                                    <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.encodedresumeLink>Resume</a>
-                                                                </td>
-
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-
-                                                                    <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink>Resume</a>
-                                                                </td>
-
-                                                            }
-
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
-                                                                <td class="text-center">
-
-                                                                    <a style="color:red"> @item.confirmationStatus</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-center"> @item.confirmationStatus</td>
-                                                            }
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
-                                                                <td>@item.Cancellationsource</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                            @*@if (item.MeetingStatusStatusDesc == "Status Pending")
-                                                    {
-                                                    <td>
-                                                    <span class="status mpending">@item.MeetingStatusStatusDesc</span>
-                                                    </td>
-                                                    }
-                                                    else if (item.MeetingStatusStatusDesc == "Completed")
-                                                    {
-
-                                                    <td>
-                                                    <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
-                                                    </td>
-                                                    }
-                                                    else if (item.MeetingStatusStatusDesc == "Scheduled")
-                                                    {
-
-                                                    <td>
-                                                    <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
-                                                    </td>
-                                                    }
-
-                                                    else if (item.MeetingStatusStatusDesc == "Dropped")
-                                                    {
-
-                                                    <td>
-                                                    <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
-                                                    </td>
-                                                    }
-                                                    else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
-                                                    {
-
-                                                    <td>
-                                                    <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
-                                                    </td>
-                                                    }
-                                                    else
-                                                    {
-                                                    <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
-
-                                                    }*@
-
-                                                            @* @if (item.InterviewStatus == 2)
-                                                    {
-                                                    <td class="text-center">
-                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                    </td>
-                                                    }
-                                                    else if (item.InterviewStatus == 4)
-                                                    {
-                                                    <td class="text-center">
-                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                    </td>
-                                                    }
-                                                    else
-                                                    {
-                                                    <td class="text-center">@item.intervieweStatusStatDesc</td>
-                                                    }*@
-
-                                                            @if (item.IsCandidateResponsed)
-                                                            {
-                                                                @if (item.CandidateResponse == 1)
-                                                                {
-                                                                    <td>Responded (Yes)</td>
-                                                                }
-                                                                else if (item.CandidateResponse == 3)
-                                                                {
-                                                                    <td title="Candidate Request to Reschedule">Responded (Reschedule)</td>
-                                                                }
-                                                                else if (item.CandidateResponse == 4)
-                                                                {
-                                                                    <td>Responded (Need More Clarity)</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>Responded (No)</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Response</td>
-                                                            }
-
-                                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                                            {
-                                                                <td>
-
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }
-                                                            @if (item.JDLink != null && item.JDLink != "")
-                                                            {
-                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No JD</td>
-                                                            }
-
-
-                                                            <td> @item.risebirdHR</td>
-
-
-                                                            @if (item.IsHrOnline == 1)
-                                                            {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    @item.CandidateClientHR
-                                                                </td>
-                                                            }
-
-
-                                                            <td> @item.ClientName </td>
-
-                                                            @if (item.VideoLink != null && item.VideoLink != "")
-                                                            {
-                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink.Replace(" "," %20")>Video</a> </td>
-                                                                @if (item.VideoDuration > 0)
-                                                                {
-                                                                    <td>@item.VideoDuration</td>
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Video</td>
-                                                                <td>NA</td>
-                                                            }
-                                                            @* @if (item.IsEmergency)
-                                                    {
-                                                    <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                    <td>No</td>
-                                                    }
-                                                    <td>@item.interviewSlot</td>*@
-
-
-                                                            <td>@item.staffingAgency</td>
-                                                            <td> @item.interviewDuration Min.</td>
-                                                            @if (item.IsAadhaarVerificationRequired == null)
-                                                            {
-                                                                <td>Not Mandatory</td>
-                                                            }
-                                                            else if (item.IsAadhaarVerificationRequired == true)
-                                                            {
-                                                                <td>Yes</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No</td>
-                                                            }
-                                                            <td>
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-                                                                    <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
-                                                                }
-                                                            </td>
-                                                            <td>@item.imid</td>
-                                                            @if (item.HasDistinctParticipants)
-                                                            {
-                                                                <td>Yes</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No</td>
-                                                            }
-                                                            <td> @item.joiningTime</td>
-                                                            <td> @item.preferredLocation</td>
-                                                            <td> @item.expectedPerHourRate</td>
-                                                            <td> @item.currentEmployerName</td>
-                                                            <td>
-                                                                @item.IsEmergency
-                                                            </td>
-                                                            <td>@item.ChannelOwner</td>
-
-
-                                                        }
-                                                        @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "SensitiveData" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
                                                         {
                                                             <td>@item.ChannelOwner</td>
                                                         }
-
-
-
-
-                                                        @*@if ((ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))*@
-
-
-
-
-                                                        @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
-                                                        {
-                                                            <td>
-                                                                <span class="name-field" style="display:block">@item.InterviewerName</span>
-                                                                <span class="email-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:1px; padding-right:6px;"></i>@item.InterviewerEmailId</span>
-                                                            </td>
-
-
-                                                            @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
-                                                            {
-                                                                <td>
-
-                                                                    <span class="call-area">
-                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" data-bs-original-title="Click here to call the interviewer." aria-label="Click here to call the interviewer."><img src="/img/calling.png" width="18"></span>
-                                                                    </span>@item.InterviewerMobileNumber
-
-
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if (item.InterviewerResume != null && item.InterviewerResume != "")
-                                                            {
-                                                                <td>
-
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.InterviewerResume.Replace(" ","%20")>Resume</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }
-
-                                                            @if (item.IsEmployed)
-                                                            {
-                                                                <td>Yes</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No</td>
-                                                            }
-                                                            @if (!string.IsNullOrEmpty(item.CompanyName))
-                                                            {
-                                                                <td>@item.CompanyName</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                            @if (!string.IsNullOrEmpty(item.EmploymentComment))
-                                                            {
-                                                                <td>@item.EmploymentComment</td>
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if (item.Isavailable == 3)
-                                                            {
-                                                                <td>Need Clarity</td>
-                                                            }
-                                                            else if (item.Isavailable == 4)
-                                                            {
-                                                                <td>Drop my profile</td>
-                                                            }
-                                                            @if (item.AvailabilityResponseDate != null)
-                                                            {
-                                                                <td>@item.AvailabilityResponseDate</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                        }
-                                                        @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
-                                                        {
-
-                                                            @if (item.interviewer != null || item.interviewer != "")
-                                                            {
-                                                                <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td style="color:red;text-align:center">@item.RedMarker</td>
-                                                            }
-
-
-                                                            <td class="interviewer">
-
-                                                                @*  <input type="hidden" id="Rating_@i" value="@item.Rating" />
-                                                        <div class="star-rating" style="pointer-events:none;">
-                                                        <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
-                                                        <label for="Rating_5_@i" class="star">&#9733;</label>
-                                                        <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
-                                                        <label for="Rating_4_@i" class="star">&#9733;</label>
-                                                        <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
-                                                        <label for="Rating_3_@i" class="star">&#9733;</label>
-                                                        <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
-                                                        <label for="Rating_2_@i" class="star">&#9733;</label>
-                                                        <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
-                                                        <label for="Rating_1_@i" class="star">&#9733;</label></div>*@
-                                                                @item.Rating
-
-                                                            </td>
-
-                                                            <td>@item.RatingAddedOn</td>
-                                                            <td align="center">
-                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
-                                                                {
-                                                                    <span>
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-                                                            </td>
-                                                        }
-
-                                                        @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                        {
-                                                            <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
-
-
-                                                            <td class="interviewer">
-                                                                <div style="display:flex">
-                                                                    @for (int i = 1; i <= 5; i++)
-                                                                    {
-                                                                        if (i <= @item.Rating)
-                                                                        {
-                                                                            <div style="color:#f90;float:left;font-size: 2.0em;padding:0px 10px;">★</div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <div style="color:#b7b7b7;float:left;font-size: 2.0em;padding:0px 10px;">★</div>
-                                                                        }
-                                                                    }
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                @if (item.Comment != null && item.Comment != "")
-                                                                {
-                                                                    @if (item.Comment.Length > 30)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.Comment.Substring(0, 30)
-                                                                            </p>
-                                                                            <p class="moretext_comment_@item.Interviewid moretext">
-                                                                                @item.Comment.Substring(30, @item.Comment.Length - 30)
-                                                                            </p>
-                                                                            <a onclick="morelesscomment(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_comment_@item.Interviewid" href="#">Read more</a>
-
-                                                                        </div>
-
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p>
-                                                                                @item.Comment.Substring(0, @item.WhoJoined.Length)
-                                                                            </p>
-                                                                        </div>
-                                                                    }
-                                                                }
-                                                            </td>
-                                                            <td>@item.RateAddedBy</td>
-                                                            <td>@item.RateAddedOn</td>
-                                                            @if (item.IsApproved == 1)
-                                                            {
-                                                                <td>Approved</td>
-                                                            }
-                                                            else if (item.IsApproved == 2)
-                                                            {
-                                                                <td>Not Approved</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if (item.RedMarker > 0)
-                                                            {
-                                                                if (item.interviewer != null || item.interviewer != "")
-                                                                {
-                                                                    <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td style="color:red;text-align:center">
-                                                                        item.RedMarker
-                                                                    </td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td style="color:red;text-align:center">
-                                                                    @item.RedMarker
-                                                                </td>
-                                                            }
-
-
-                                                        }
-
+                                                     
                                                     </tr>
-                                                    // i++;
+                                                    
                                                 }
 
                                             </tbody>
@@ -2266,7 +851,6 @@
     </div>
 </div>
 
-@await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
 
 <script src="~/js/assessmentgroupfunctionalities.js"></script>
 <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
@@ -2491,40 +1075,16 @@
         });
     }
 
-    $(document).ready(function () {
-
+     $(document).ready(function () {
         $("#ResetFilter").click(function () {
-            ResetFilter();
+            ResetFilter('@ViewBag.ReturnBack');
         })
-
         if ('@filter' != "") {
-
             ApplySessionFilter();
         }
-        //$("#Status").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-        //$("#Client").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-        //$("#ClientHREmail").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-
-
-
     });
 
-    function ResetFilter() {
+    function ResetFilter(returnBack) {
         var value = $("#hidactionstatus").val();
         window.location.href = "/Dashboard/ResetSensitiveDataFilter?actionstatus=" + value;
 
@@ -2716,6 +1276,9 @@
         var actiontype = $("#hidactiontype").val();
         window.location.href = "/DashBoard/SensitiveData?actionstatus=" + type + "&actiontype=" + actiontype + "&returnBack=" + returnBack;
     }
+
+
+
 
     function Sendinvite(id, IRFId, CandidateEmail) {
         $.ajax({
