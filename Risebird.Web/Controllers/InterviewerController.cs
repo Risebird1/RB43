@@ -4447,16 +4447,22 @@ namespace Risebird.Web.Controllers
                     {
                         var file = Request.Form.Files[0];
                         var filename = emailId.Replace(".", "_").Replace("@", "a").ToString() + ".mp4";
-                        await _azureStorageHelper.InsertBlob(filename, "videokyc", file);
+                        //await _azureStorageHelper.InsertBlob(filename, "videokyc", file);
+                        await _azureStorageHelper.InsertImageBlob(filename, "videokyc", file, "video/mp4");
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("videokyc");
                         var blob = containerRef.GetBlockBlobReference(filename);
                         string uploadedvideoFileURL = blob.Uri.ToString();
-                        var sas = _sasUrlHelper.CreateSasUrl("videokyc");
+                        //var sas = _sasUrlHelper.CreateSasUrl("videokyc");
                         var VideoLink = string.Empty;
-                        if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        //if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        //{
+                        //    VideoLink = uploadedvideoFileURL + "?" + sas;
+                        //}
+                        if (!string.IsNullOrEmpty(uploadedvideoFileURL))
                         {
-                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                            VideoLink = uploadedvideoFileURL;
                         }
+
                         var result = await _interviewerService.UpdateVideoKYCDetails(VideoLink, emailId);
                         return Json("Video KYC uploaded successfully.");
                     }
