@@ -234,6 +234,19 @@
                                                     {
                                                         <th>Action</th>
                                                         <th>IRF ID</th>
+
+                                                    }
+                                                    @if (ViewBag.actionstatus == "InterviewCount")
+                                                    {
+                                                        <th>Assessment Group</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
+                                                    {
+                                                        <th>Skill Channel ID</th>
+
+                                                    }
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    {
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
                                                         @if (ViewBag.actionstatus == "QCReport")
