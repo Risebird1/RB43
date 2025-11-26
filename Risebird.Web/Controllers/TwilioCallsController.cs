@@ -27,13 +27,13 @@ namespace Risebird.Web.Controllers
             return View();
         }
         // GET: TwilioCalls/Generate
-        [HttpPost]
-        public JsonResult Generate(string page)
-        {
-            var token = GenerateToken();
-            //return Json;
-            return Json(new { token });
-        }
+        //[HttpPost]
+        //public JsonResult Generate(string page)
+        //{
+        //    var token = GenerateToken();
+        //    //return Json;
+        //    return Json(new { token });
+        //}
 
 
         //public string GenerateToken()

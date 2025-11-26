@@ -770,6 +770,12 @@
                                                                             <div class="btn btn-record shadow btn-xs sharp me-1" aria-label="Call Record" style="position: relative;cursor: pointer; width:22px!important;height:22px!important;left:-6px">
                                                                                 <span onclick="FetchRecording('@item.EmailId')" title="Call Record"><i style="left: 0px;top:-1px;position:relative;font-size:12px;font-size:12px;" class='fa fa-dot-circle'></i></span>
                                                                             </div>
+
+                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Candidate Resume Summary" style="width:22px!important;height:22px!important;left:-4px;position:relative;background: #2e97b0;    border-color: #2e97b0;">
+                                                                                <span onclick="GetCandidateResumeSummary('@item.id')" title="Candidate Resume Summary">
+                                                                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 11px;position: relative;left: -4px;"></i><i class="fa fa-file" aria-hidden="true" style="font-size: 9px;position: relative;left: -8px;"></i>
+                                                                                </span>
+                                                                            </button>
                                                                         }
 
 
@@ -1189,6 +1195,8 @@
             @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
             @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+
+            @await Html.PartialAsync("~/Views/Candidate/_CandidateResumeSummaryModalPartial.cshtml")
 
             <script src="~/js/markcoldcandidate.js?2024"></script>
 

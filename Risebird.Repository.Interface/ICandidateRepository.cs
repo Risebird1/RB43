@@ -53,5 +53,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateExcelData>> GetCandidateStatusDataWithoutColdDate(DateTime startDate, DateTime endDate, int clientId);
         Task<bool> UpdateCandidateAcknowledge(int interviewid, string interviewchecks);
         Task<AddCandidatesResponse> AddMCQSkillChannelCandidateList(List<CandidateQuickAddModel> candidateList);
+        Task<Candidate> GetCandidateResumeSummaryById(int candidateId);
+        Task<bool> SaveCandidateResumeSummaryAsJsonStringById(int candidateId, string resumeSummaryAsJsonString);
     }
 }
