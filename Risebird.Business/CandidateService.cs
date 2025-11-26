@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
+//using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
@@ -12,6 +14,10 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
+//using static SkiaSharp.HarfBuzz.SKShaper;
+//using UglyToad.PdfPig.Logging;
+//using Amazon.Rekognition.Model;
+using Newtonsoft.Json.Linq;
 
 namespace Risebird.Business
 {
@@ -30,9 +36,17 @@ namespace Risebird.Business
         private readonly string twilioVoiceCallNumber;
         private readonly IEvaluatorRepository _evaluatorRespository;
         private readonly IMeetingRespository _meetingRespository;
+        private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
 
 
-        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IIRFService irfService, IIRFRepository irfRepository, ITwilioHelper twilioHelper, IEvaluatorRepository evaluatorRespository, IMeetingRespository meetingRespository)
+        public CandidateService(ICandidateRepository candidateRepository, 
+            IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, 
+            IIRFService irfService, IIRFRepository irfRepository, ITwilioHelper twilioHelper, 
+            IEvaluatorRepository evaluatorRespository, IMeetingRespository meetingRespository, 
+            IOpenAIInterviewerAssistantHelper ai, IAzureStorageHelper azureStorageHelper, 
+            IPdfReaderHelper pdfReaderHelper)
         {
             _candidateRepository = candidateRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +59,9 @@ namespace Risebird.Business
             _twilioHelper = twilioHelper;
             _evaluatorRespository = evaluatorRespository;
             _meetingRespository = meetingRespository;
+            _ai = ai;
+            _azureStorageHelper = azureStorageHelper;
+            _pdfReaderHelper = pdfReaderHelper;
         }
 
         public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
@@ -659,5 +676,252 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<ResumeSummaryVM> CandidateResumeSummary(int candidateId)
+        {
+            try
+            {
+                //check in db if the summary already exists
+                ResumeSummaryVM candidateResumeSummary = null;
+
+                var candidate = await _candidateRepository.GetCandidateResumeSummaryById(candidateId);
+
+                if(candidate != null && !string.IsNullOrEmpty(candidate.ResumeLink))
+                {
+                    string summary = string.Empty;
+                    if(string.IsNullOrEmpty(candidate.ResumeSummary))
+                    {
+
+
+                        string resumeLinkToParse = string.Empty;
+                        if (!candidate.ResumeLink.Contains(".pdf"))
+                        {
+                            resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(candidate.ResumeLink);
+                        }
+                        else
+                        {
+                            resumeLinkToParse = candidate.ResumeLink;
+                        }
+                        var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+
+                        if (!string.IsNullOrEmpty(resumeStringContent))
+                        {
+                            var threadId = await _ai.CreateThreadAsync();
+                            await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+
+                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+
+                            var runId = await _ai.CreateRunAsync(threadId, "asst_pbeYFi03nKIjbl2W1Am0ROQh"); //assistant id of the assistant named : Resume to Profile Summary  
+                            await _ai.WaitForRunAsync(threadId, runId);
+
+
+                            var replies = await _ai.GetMessagesAsync(threadId);
+
+                            try
+                            {
+                                candidateResumeSummary = TryParseResumeSummary(replies?.FirstOrDefault());
+                                if(candidateResumeSummary != null)
+                                {
+                                    //save the summary to the db
+                                    await _candidateRepository.SaveCandidateResumeSummaryAsJsonStringById(candidateId, replies?.FirstOrDefault());
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+                        return candidateResumeSummary;
+                    }
+                    else if(!string.IsNullOrEmpty(candidate.ResumeSummary))
+                    {
+                        candidateResumeSummary = JsonConvert.DeserializeObject<ResumeSummaryVM>(candidate.ResumeSummary);
+                        return candidateResumeSummary;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+                
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        private ResumeSummaryVM TryParseResumeSummary(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return null;
+
+            var cleaned = raw.Trim();
+
+            // Strip ```json ... ``` wrappers if present
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+            cleaned = cleaned.TrimStart('\n');
+
+            //
+            // 1. STRICT DESERIALIZATION
+            //
+            try
+            {
+                var strict = JsonConvert.DeserializeObject<ResumeSummaryVM>(cleaned);
+                if (strict != null &&
+                    (strict.Skills != null ||
+                     strict.Work_Experience != null ||
+                     strict.Academics != null ||
+                     strict.Certifications != null ||
+                     !string.IsNullOrEmpty(strict.Confidence)))
+                {
+                    return strict;
+                }
+            }
+            catch
+            {
+                // ignore and fall back
+            }
+
+            //
+            // 2. FALLBACK PARSING (LOOSE MODE)
+            //
+            try
+            {
+                var root = JsonConvert.DeserializeObject<JObject>(cleaned);
+                if (root == null) return null;
+
+                var result = new ResumeSummaryVM
+                {
+                    Confidence = root.Value<string>("confidence")
+                };
+
+                //
+                // Skills Node
+                //
+                var skillsNode = (JObject)(root["skills"] ?? root["Skills"]);
+                if (skillsNode != null)
+                {
+                    result.Skills = new SkillsSummary
+                    {
+                        Primary_Specialization = skillsNode.Value<string>("primary_specialization"),
+                        Secondary_Specializations = skillsNode["secondary_specializations"] is JArray ss
+                            ? ss.Select(x => x.ToString()).ToList()
+                            : new List<string>(),
+                        Technical_Skills = skillsNode["technical_skills"] is JArray ts
+                            ? ts.Select(x => x.ToString()).ToList()
+                            : new List<string>(),
+                        Soft_Skills = skillsNode["soft_skills"] is JArray so
+                            ? so.Select(x => x.ToString()).ToList()
+                            : new List<string>()
+                    };
+                }
+
+                //
+                // Work Experience
+                //
+                var workArr = (JArray)(root["work_experience"] ?? root["workExperience"]);
+                if (workArr != null)
+                {
+                    result.Work_Experience = workArr.Select(w => new WorkExperience
+                    {
+                        Job_Title = w.Value<string>("job_title"),
+                        Company_Name = w.Value<string>("company_name"),
+                        Employment_Type = w.Value<string>("employment_type"),
+                        Start_Date = w.Value<string>("start_date"),
+                        End_Date = w.Value<string>("end_date"),
+                        Location = w.Value<string>("location"),
+                        Domain_Or_Industry = w.Value<string>("domain_or_industry"),
+                        Tech_Stack = w["tech_stack"] is JArray t ? t.Select(x => x.ToString()).ToList() : new List<string>(),
+                        Responsibilities_Raw = w["responsibilities_raw"] is JArray r ? r.Select(x => x.ToString()).ToList() : new List<string>()
+                    }).ToList();
+                }
+
+                //
+                // Work Gaps
+                //
+                var gapsArr = (JArray)(root["work_gaps"] ?? root["workGaps"]);
+                if (gapsArr != null)
+                {
+                    result.Work_Gaps = gapsArr.Select(g => new WorkGap
+                    {
+                        Gap_Type = g.Value<string>("gap_type"),
+                        Start_Date = g.Value<string>("start_date"),
+                        End_Date = g.Value<string>("end_date"),
+                        Description_Raw = g.Value<string>("description_raw")
+                    }).ToList();
+                }
+
+                //
+                // Academics
+                //
+                var acadArr = (JArray)(root["academics"] ?? root["education"]);
+                if (acadArr != null)
+                {
+                    result.Academics = acadArr.Select(a => new Academic
+                    {
+                        Degree = a.Value<string>("degree"),
+                        Institution = a.Value<string>("institution"),
+                        Field_Of_Study = a.Value<string>("field_of_study"),
+                        Start_Date = a.Value<string>("start_date"),
+                        End_Date = a.Value<string>("end_date"),
+                        Location = a.Value<string>("location"),
+                        Achievements = a["achievements"] is JArray ac
+                            ? ac.Select(x => x.ToString()).ToList()
+                            : new List<string>()
+                    }).ToList();
+                }
+
+                //
+                // Academic Gaps
+                //
+                var acadGapArr = (JArray)(root["academic_gaps"] ?? root["academicGaps"]);
+                if (acadGapArr != null)
+                {
+                    result.Academic_Gaps = acadGapArr.Select(a => new AcademicGap
+                    {
+                        Start_Date = a.Value<string>("start_date"),
+                        End_Date = a.Value<string>("end_date"),
+                        Gap_Reason = a.Value<string>("gap_reason"),
+                        Description_Raw = a.Value<string>("description_raw")
+                    }).ToList();
+                }
+
+                //
+                // Certifications
+                //
+                var certArr = (JArray)(root["certifications"] ?? root["certs"]);
+                if (certArr != null)
+                {
+                    result.Certifications = certArr.Select(c => new Certification
+                    {
+                        Name = c.Value<string>("name"),
+                        Issuing_Organization = c.Value<string>("issuing_organization"),
+                        Issue_Date = c.Value<string>("issue_date"),
+                        Expiration_Date = c.Value<string>("expiration_date"),
+                        Credential_Id = c.Value<string>("credential_id"),
+                        Description_Raw = c.Value<string>("description_raw")
+                    }).ToList();
+                }
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
     }
 }
