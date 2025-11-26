@@ -1982,6 +1982,10 @@ namespace Risebird.Web.Controllers
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
+                        else if (actionstatus == RibbonActionType.FakeReport)
+                        {
+                            modelList = await _dashboardService.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, null);
+                        }
                         else
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
@@ -1994,9 +1998,13 @@ namespace Risebird.Web.Controllers
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
                         ViewBag.ProfileName = profileName;
-                        if (actionstatus == RibbonActionType.FakeReport || actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        if (actionstatus == RibbonActionType.FakeReport)
                         {
-                            ViewBag.PageHeader = "Sensitive Data";
+                            ViewBag.PageHeader = "Possible Fake Reporting";
+                        }
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        {
+                            ViewBag.PageHeader = "QC Report";
                         }
                         else if (actionstatus == RibbonActionType.PropableRedo)
                         {
@@ -2055,9 +2063,13 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                        if (actionstatus == RibbonActionType.FakeReport || actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        if (actionstatus == RibbonActionType.FakeReport)
                         {
-                            ViewBag.PageHeader = "Sensitive Data";
+                            ViewBag.PageHeader = "Possible Fake Reporting";
+                        }
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        {
+                            ViewBag.PageHeader = "QC Report";
                         }
                         else if (actionstatus == RibbonActionType.PropableRedo)
                         {
@@ -2076,6 +2088,10 @@ namespace Risebird.Web.Controllers
                         if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
+                        }
+                        else if (actionstatus == RibbonActionType.FakeReport)
+                        {
+                            modelList = await _dashboardService.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, filter);
                         }
                         else
                         {
@@ -2100,21 +2116,7 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
                         && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
 
-                        modelList = modelList.Select(x =>
-                        {
-                            x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                            return x;
-                        }).ToList();
-                        modelList = modelList.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription();
-                            return x;
-                        }).ToList();
-                        modelList = modelList.Select(x =>
-                        {
-                            x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
-                            return x;
-                        }).ToList();
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
                     }
@@ -5466,7 +5468,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.SessionId = sessionIdFromSession;
                     }
                 }
-                
+
                 return View();
             }
             catch (Exception ex)
