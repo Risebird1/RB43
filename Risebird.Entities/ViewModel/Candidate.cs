@@ -165,6 +165,7 @@ namespace Risebird.Entities.ViewModel
         public bool CandidateIdverification { get; set; }
         public string CandidateVideo { get; set; }
         public string ConsentForm { get; set; }
+        public string ResumeSummary { get; set; }
 
     }
 }

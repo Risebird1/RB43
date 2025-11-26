@@ -1963,5 +1963,62 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<Candidate> GetCandidateResumeSummaryById(int candidateId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@candidateId", candidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<Candidate>(con, "[usp_GetCandidateResumeSummaryById]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveCandidateResumeSummaryAsJsonStringById(int candidateId, string resumeSummaryAsJsonString)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@candidateId", candidateId);
+                parameters.Add("@resumeSummaryAsJsonString", resumeSummaryAsJsonString);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "[usp_SaveCandidateResumeSummaryAsJsonStringById]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

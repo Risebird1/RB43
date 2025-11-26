@@ -28,7 +28,7 @@ Begin
  outer Apply (Select Count(id) as TotalFuture from InterviewMeetings where IRFId=IRF.IRFId and interviewer=ul.EmailId and interviewDate>DATEADD(MINUTE,330,Getdate())) Fti        
  outer Apply (Select Count(id) as TotalInterview from InterviewMeetings where IRFId=IRF.IRFId and interviewDate>DATEADD(MINUTE,330,Getdate())) sti     
  outer Apply (Select Top 1 Comment as RedMarkerReviewComment from RedMarkerStatusDetails where InterviewerUserid=ul.id and IRFId=IRF.id and Type='NegativeAIVerdict' Order by CreatedOn desc) Rcd    
- where AIVerdict in ('No') and ti.IsActive = 1-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId    
+ where AIVerdict in ('No') --and ti.IsActive = 1-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId    
  and (irf.IsPaused = 0 or irf.IsPaused is null) and cast(irf.EndDate as date) >= cast(getdate() as date)  and Fti.TotalFuture>0  
  order by irf.CreatedOn desc    
     
