@@ -15,6 +15,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
@@ -7426,6 +7427,57 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> Unsubscribe(string emailid, int irfid)
         {
             return Json("Unsubscribed Successfully.");
+        }
+
+        public async Task<IActionResult> GetCandidateResumeSummary(int candidateId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        
+
+                        var summary = await _candidateService.CandidateResumeSummary(candidateId);
+                        //ViewBag.InterviewerEmail = aiEvaluation.EmailId;
+                        //ViewBag.ResumeLink = aiEvaluation.ResumeLink;
+                        //ViewBag.PrimarySpecialization = aiEvaluation.JDTiltle;
+                        //ViewBag.AIVerdict = aiEvaluation.AIVerdict;
+                        //ViewBag.AIScreeningScore = aiEvaluation.AIAnalysisScore;
+
+                        if (summary != null)
+                        {
+                            
+                            return View("_CandidateResumeSummaryBodyPartial", summary);
+
+                        }
+                        else
+                        {
+                            //return View("PreOnboardingAIVerdictDetails", new RunResult());
+                            return View("_CandidateResumeSummaryBodyPartial", null);
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("PreOnboardingAIVerdictDetails", new RunResult());
+            }
         }
     }
 }
