@@ -1994,7 +1994,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
                         ViewBag.ProfileName = profileName;
-                        if (actionstatus == RibbonActionType.SensitiveData || actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        if (actionstatus == RibbonActionType.FakeReport || actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
                             ViewBag.PageHeader = "Sensitive Data";
                         }
@@ -2055,7 +2055,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                        if (actionstatus == RibbonActionType.SensitiveData || actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        if (actionstatus == RibbonActionType.FakeReport || actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
                             ViewBag.PageHeader = "Sensitive Data";
                         }
