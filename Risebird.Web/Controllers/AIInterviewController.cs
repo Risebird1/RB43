@@ -666,6 +666,25 @@ namespace Risebird.Web.Controllers
                     {
                         using var stream = model.AudioFile.OpenReadStream();
                         userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+
+                        if (!IsTranscriptionValid(userMessage))
+                        {
+                            // Rewind the stream to re-run transcription
+                            var exitModel = new AIInterviewExitModalViewModel
+                            {
+                                Title = "Error with audio!",
+                                Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
+                                IconClass = "fa-check-circle",
+                                IconColor = "#28a745",
+                                ButtonText = "Close",
+                                ButtonClass = "btn-success",
+                                CandidateName = model.candidateName ?? "Candidate",
+                                InterviewDate = DateTime.Now,
+                                SessionId = model.SessionId.ToString(),
+                                IsFromIndex = true
+                            };
+                            return View("ExitModalPartial", exitModel);
+                        }
                     }
 
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
@@ -674,8 +693,26 @@ namespace Risebird.Web.Controllers
                     if (allQuestions?.Count() == 35)
                     //if (allQuestions?.Count() == 3)                                 
                     {
+                        bool iscandidateVideoSavedTodb =  await UploadBotInterviewVideo(model, question, userMessage);
+                        var exitModel = new AIInterviewExitModalViewModel();
+                        if (!iscandidateVideoSavedTodb)
+                        {
+                            exitModel = new AIInterviewExitModalViewModel
+                            {
+                                Title = "Error!",
+                                Message = "Error saving video Response. Please check your network's connectivity.",
+                                IconClass = "fa-check-circle",
+                                IconColor = "#28a745",
+                                ButtonText = "Close",
+                                ButtonClass = "btn-success",
+                                CandidateName = model.candidateName ?? "Candidate",
+                                InterviewDate = DateTime.Now,
+                                SessionId = model.SessionId.ToString(),
+                                IsFromIndex = true
+                            };
+                            return View("ExitModalPartial", exitModel);
+                        }
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
-                        await UploadBotInterviewVideo(model, question, userMessage);
 
                         // INTERVIEW COMPLETE - Return ExitModalPartial view
                         //update the db for MeetingStatus = 4 here.
@@ -683,7 +720,7 @@ namespace Risebird.Web.Controllers
                         _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Preset);
 
 
-                        var exitModel = new AIInterviewExitModalViewModel
+                        exitModel = new AIInterviewExitModalViewModel
                         {
                             Title = "Interview Complete",
                             Message = "The interviewer is through with all the questions. This interview is now closed.",
@@ -719,9 +756,26 @@ namespace Risebird.Web.Controllers
                         //        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
                         //    }
                         //}
-                        await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
-                        await UploadBotInterviewVideo(model, question, userMessage);
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        if (!iscandidateVideoSavedTodb)
+                        {
+                            var exitModel = new AIInterviewExitModalViewModel
+                            {
+                                Title = "Error!",
+                                Message = "Error saving video Response. Please check your network's connectivity.",
+                                IconClass = "fa-check-circle",
+                                IconColor = "#28a745",
+                                ButtonText = "Close",
+                                ButtonClass = "btn-success",
+                                CandidateName = model.candidateName ?? "Candidate",
+                                InterviewDate = DateTime.Now,
+                                SessionId = model.SessionId.ToString(),
+                                IsFromIndex = true
+                            };
+                            return View("ExitModalPartial", exitModel);
+                        }
+                        await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
 
@@ -795,8 +849,27 @@ namespace Risebird.Web.Controllers
                     if (allQuestions?.Count() == 35) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
                                                      //if (allQuestions?.Count() == 3)//&& !string.IsNullOrEmpty(model.CurrentQuestion)
                     {
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        var exitModel = new AIInterviewExitModalViewModel();
+                        if (!iscandidateVideoSavedTodb)
+                        {
+                            exitModel = new AIInterviewExitModalViewModel
+                            {
+                                Title = "Error!",
+                                Message = "Error saving video Response. Please check your network's connectivity.",
+                                IconClass = "fa-check-circle",
+                                IconColor = "#28a745",
+                                ButtonText = "Close",
+                                ButtonClass = "btn-success",
+                                CandidateName = model.candidateName ?? "Candidate",
+                                InterviewDate = DateTime.Now,
+                                SessionId = model.SessionId.ToString(),
+                                IsFromIndex = true
+                            };
+                            return View("ExitModalPartial", exitModel);
+                        }
+
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
-                        await UploadBotInterviewVideo(model, question, userMessage);
 
                         // INTERVIEW COMPLETE - Return ExitModalPartial view
                         //update the db for MeetingStatus = 4 here.
@@ -804,7 +877,7 @@ namespace Risebird.Web.Controllers
                         _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Adaptive);
 
 
-                        var exitModel = new AIInterviewExitModalViewModel
+                        exitModel = new AIInterviewExitModalViewModel
                         {
                             Title = "Interview Complete",
                             Message = "The interviewer is through with all the questions. This interview is now closed.",
@@ -821,6 +894,25 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        if (!iscandidateVideoSavedTodb)
+                        {
+                            var exitModel = new AIInterviewExitModalViewModel
+                            {
+                                Title = "Error!",
+                                Message = "Error saving video Response. Please check your network's connectivity.",
+                                IconClass = "fa-check-circle",
+                                IconColor = "#28a745",
+                                ButtonText = "Close",
+                                ButtonClass = "btn-success",
+                                CandidateName = model.candidateName ?? "Candidate",
+                                InterviewDate = DateTime.Now,
+                                SessionId = model.SessionId.ToString(),
+                                IsFromIndex = true
+                            };
+                            return View("ExitModalPartial", exitModel);
+                        }
+
                         var replies = new List<string>();
                         try
                         {
@@ -840,8 +932,6 @@ namespace Risebird.Web.Controllers
                                 model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
                             }
                         }
-
-                        await UploadBotInterviewVideo(model, question, userMessage);
 
                         var latestReply = CleanMessage(replies?.FirstOrDefault());
 
@@ -882,7 +972,30 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        private async Task UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
+
+        private bool IsTranscriptionValid(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            // Remove common punctuation and whitespace for validation
+            var cleaned = new string(text
+                .Where(c => char.IsLetter(c) || char.IsDigit(c))
+                .ToArray());
+
+            // Check if output contains too many unknown characters (�)
+            if (text.Count(c => c == '�') > 3)
+                return false;
+
+            // Check ratio of valid characters to overall text
+            double validRatio = (double)cleaned.Length / text.Length;
+            if (validRatio < 0.5) // Less than 50% recognizable text → bad transcription
+                return false;
+
+            return true;
+        }
+
+        private async Task<bool> UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
         {
             try
             {
@@ -909,12 +1022,23 @@ namespace Risebird.Web.Controllers
                         }
                         //Save in db with question.sessionid,videoLink,Datetime
                         var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
+                        return result;
                     }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
 
             }
         }
@@ -1094,8 +1218,12 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewId = meetingDetails.InterviewId;
                 reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
                 reportModel.resumeLink = meetingDetails.resumeLink;
-                reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
-                if(meetingDetails.CandidateAnswerVideoIdAI > 0)
+                if(reportModel.AIInterviewEvaluation!= null)
+                {
+                    reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
+
+                }
+                if (meetingDetails.CandidateAnswerVideoIdAI > 0)
                 {
                     reportModel.sentimentViewModel = await _aiinterviewerService.GetSentimentAnalysisById(meetingDetails.CandidateAnswerVideoIdAI);
 

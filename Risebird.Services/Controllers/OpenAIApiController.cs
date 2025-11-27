@@ -148,7 +148,19 @@ namespace Risebird.Services.Controllers
 
                     var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
 
-                    if (replies != null)
+                    int counter = 0;
+                    if(replies != null && replies.Count() == 0)
+                    {
+                        do
+                        {
+                            await Task.Delay(4000);
+                            replies = await _ai.GetMessagesAsync(threadId);
+                            counter++;
+                        }
+                        while (counter < 2 && replies != null && replies.Count() == 0);
+                        
+                    }
+                    if (replies != null)//&& replies.Count() > 0
                     {
                         var reportObject = new InterviewReportResult { SessionId = input.SessionId, ThreadId = threadId, Replies = replies };
                         //save the report in the database.
