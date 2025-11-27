@@ -253,7 +253,7 @@
 
     .empty-state {
         text-align: center;
-        padding: 40px 20px;
+        padding: 10px 20px;
         color: #a0aec0;
     }
 
@@ -421,9 +421,7 @@
                                     <i class="fas fa-building mr-1"></i>@(string.IsNullOrEmpty(item?.Company_Name) ? "Unknown company" : item.Company_Name)
                                 </div>
                             </div>
-                            <button class="experience-toggle" type="button">
-                                <i class="fas fa-chevron-down"></i> Details
-                            </button>
+                           
                         </div>
 
                         <div id="collapse@cardId" class="collapse" aria-labelledby="heading@cardId" data-bs-parent="#workExperienceAccordion">
@@ -570,9 +568,7 @@
                                     <i class="fas fa-university mr-1"></i>@(string.IsNullOrEmpty(a?.Institution) ? "Unknown institution" : a.Institution)
                                 </div>
                             </div>
-                            <button class="experience-toggle" type="button">
-                                <i class="fas fa-chevron-down"></i> Details
-                            </button>
+                         
                         </div>
                         <div id="collapse@aid" class="collapse" aria-labelledby="heading@aid" data-bs-parent="#academicsAccordion">
                             <div class="experience-body">
