@@ -1958,6 +1958,185 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SensitiveData(string actionstatus, int actiontype)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.emailid = emailid;
+                    ViewBag.PageFrom = "Completed";
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport" || profileName == "Finance")
+                    {
+                        if (HttpContext.Session.GetString("SensitiveDataFilters") != null)
+                            HttpContext.Session.Remove("SensitiveDataFilters");
+                        var modelList = new List<MeetingVM>();
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        {
+                            modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
+                        }
+                        else if (actionstatus == RibbonActionType.FakeReport)
+                        {
+                            modelList = await _dashboardService.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, null);
+                        }
+                        else
+                        {
+                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
+                        ViewBag.PageHeader = "";
+                        ViewBag.Actiontype = actiontype;
+                        ViewBag.actionstatus = actionstatus;
+                        ViewBag.ProfileName = profileName;
+                        if (actionstatus == RibbonActionType.FakeReport)
+                        {
+                            ViewBag.PageHeader = "Possible Fake Reporting";
+                        }
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        {
+                            ViewBag.PageHeader = "QC Report";
+                        }
+                        else if (actionstatus == RibbonActionType.PropableRedo)
+                        {
+                            ViewBag.PageHeader = "Propable Redo Interviews";
+                        }
+                        else if (actionstatus == RibbonActionType.QCUnderReview)
+                        {
+                            ViewBag.PageHeader = "Under Review Interviews";
+                        }
+                        else if (actionstatus == RibbonActionType.QCAIInterview)
+                        {
+                            ViewBag.PageHeader = "AI Interviews";
+                        }
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SensitiveData(UnassignedInterviewsFilter filter, string actionstatus, int actiontype)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.emailid = emailid;
+                    ViewBag.ProfileName = profileName;
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer" || profileName == "TechSupport")
+                    {
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("SensitiveDataFilters", JsonConvert.SerializeObject(filter));
+                        }
+                        ViewBag.PageHeader = "";
+                        ViewBag.Actiontype = actiontype;
+                        ViewBag.actionstatus = actionstatus;
+                        if (actionstatus == RibbonActionType.FakeReport)
+                        {
+                            ViewBag.PageHeader = "Possible Fake Reporting";
+                        }
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        {
+                            ViewBag.PageHeader = "QC Report";
+                        }
+                        else if (actionstatus == RibbonActionType.PropableRedo)
+                        {
+                            ViewBag.PageHeader = "Propable Redo Interviews";
+                        }
+                        else if (actionstatus == RibbonActionType.QCUnderReview)
+                        {
+                            ViewBag.PageHeader = "Under Review Interviews";
+                        }
+                        else if (actionstatus == RibbonActionType.QCAIInterview)
+                        {
+                            ViewBag.PageHeader = "AI Interviews";
+                        }
+
+                        var modelList = new List<MeetingVM>();
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        {
+                            modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
+                        }
+                        else if (actionstatus == RibbonActionType.FakeReport)
+                        {
+                            modelList = await _dashboardService.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, filter);
+                        }
+                        else
+                        {
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName, filter);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
+                        ViewBag.actionstatus = actionstatus;
+                        ViewBag.Actiontype = actiontype;
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            if (actionstatus == RibbonActionType.UnAttendedZoomLink)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                            }
+                            modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
+                        }
+                        filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
+                        filter.ClientHREmail = filter.ClientHREmail == null ? filter.ClientHREmail = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHREmail = filter.ClientHREmail;
+                        modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
+                        && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
+
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         /// <summary>
         /// List of all unassigned interviews clubbed together by Skill Channel, with action to send mail notification
         /// </summary>
@@ -2019,6 +2198,28 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("UnassignedInterviews");
+            }
+
+        }
+
+        public async Task<IActionResult> ResetSensitiveDataFilter(string actionstatus, int returnBack)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("SensitiveDataFilters");
+                    return RedirectToAction("SensitiveData", new { actionstatus = actionstatus, returnBack = returnBack });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SensitiveData");
             }
 
         }
@@ -5267,7 +5468,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.SessionId = sessionIdFromSession;
                     }
                 }
-                
+
                 return View();
             }
             catch (Exception ex)
