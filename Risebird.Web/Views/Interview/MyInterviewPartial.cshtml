@@ -33,7 +33,7 @@
                                                             {
                                                                     <th class="text-center" id="myinterview_7">Meeting Link</th>
                                                             }
-                                                                <th id="myinterview_6">Resume</th>
+                                                                @* <th id="myinterview_6">Resume</th> *@
                                                                 @* <th>Variable Pay</th>*@
                                                             
 
@@ -67,7 +67,7 @@
                                                                     <th class="text-center">Meeting Link</th>
                                                             }
 
-                                                                <th>Resume</th>
+                                                               @*  <th>Resume</th> *@
                                                                 @* <th>Variable Pay</th>*@
 
                                                                 
@@ -293,9 +293,13 @@
                                                                     </div>
                                                                     @* <div style="padding:10px 0px;color:#078706;font-weight:bold;width:100%;float:left"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>*@
                                                                     <div class="myInterview">
-                                                                            <button type="button" class="clickhere_btn pull-left" style="margin: 10px 0px 3px 0px;padding: 5px 8px;">
+                                                                            <button type="button" class="clickhere_btn pull-left" style="margin: 10px 0px 3px 0px;padding: 5px 8px;float:left">
                                                                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
                                                                         </button>
+                                                                         <span  style="float: left;width: 28px;padding: 10px;">|</span>
+                                                                          <span onclick="GetCandidateResumeSummary('@item.id')" title="Candidate Resume Summary" style="cursor:pointer;color: #5e94cc;float: left;padding: 10px 10px 10px 0px;">
+                                                                                <i class="fa fa-file" aria-hidden="true" style="font-size: 13px;position: relative;left: -2px;"></i> Resume Summary
+                                                                            </span>
                                                                         <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
                                                                          @*@if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled){
                                                                             <div style="width:100%;float:left"><span style="font-size: 14px;color: #898282;margin-top: 5px;display: inline-block">Client Name:</span>@item.ClientName</div>
@@ -430,7 +434,7 @@
                                                                    
                                                              
                                                                 }
-                                                                    @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
+                                                                   @*  @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
                                                                     {
                                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.CandidateCodedResumeLink>Resume</a> </td>
                                                                     }
@@ -441,7 +445,7 @@
                                                                     else
                                                                     {
                                                                         <td>No Resume</td>
-                                                                    }
+                                                                    } *@
                                                             </tr>
 
                                                             <tr class="collapse @item.id">

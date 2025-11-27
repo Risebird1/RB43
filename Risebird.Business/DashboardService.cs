@@ -1268,5 +1268,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<MeetingVM>> FetchMissingParticipantFakeReporting(string emailid, string profileName, string actionstatus, UnassignedInterviewsFilter filters = null)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, filters);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
