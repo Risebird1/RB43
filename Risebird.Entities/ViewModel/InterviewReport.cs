@@ -404,6 +404,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; } //applicable only if the interview is conducted by AI interviewer, i.e.: IsAIInterview is true
         public float TotalTechScore { get; set; }
+        public TranscriptSummaryVM TranscriptSummaryObject { get; set; }
 
     }
     public class RBInterviewDetails

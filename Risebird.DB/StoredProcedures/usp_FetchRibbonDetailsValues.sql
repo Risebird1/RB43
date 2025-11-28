@@ -231,34 +231,35 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			--	group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,ulc.EmailId, cr.AddedOn
 			--	order by cr.AddedOn desc
 			--end
+			
+
 			select IRF.Id as irfIntId,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite as PrimarySkill, irf.CreatedOn as SkillChannelCreatedOn,
-			cl.Name as Client, ulc.EmailId as ChannelOwner, count(cr.id) as TotalView, cr.ClientHREmailId as CandidateResumeClientHREmailId,
-			cr.AddedOn as ResumeAddedOn from IRF
+			cl.Name as Client, ulc.EmailId as ChannelOwner, count(cr.id) as TotalView,  cr.ClientHREmailId as CandidateResumeClientHREmailId
+			from IRF
 			join Client cl on cl.id=irf.ClientId join CandidateResume cr on cr.IRFId=IRF.id 
-			join UserList ulc on ulc.id=irf.RisebirdHr Where ISNULL(cr.IsProcessed,0)=0 
-			group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,ulc.EmailId, cr.AddedOn, 
+			join UserList ulc on ulc.id=irf.RisebirdHr Where ISNULL(cr.IsProcessed,0)=0 and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null)
+			group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,ulc.EmailId, --cr.AddedOn, 
 			irf.CreatedOn, cr.ClientHREmailId
-			order by cr.AddedOn desc
+			order by irf.CreatedOn desc
 		end
 		else
 		begin
 			Select CR.id as irfIntId,CR.IRFId,CR.JDTiltle,CR.Name as Client,Cr.PrimarySkillInvite as PrimarySkill,
-			Count(CR.Candidateid) as TotalView,CR.EmailId as ChannelOwner, 
-			cr.AddedOn as ResumeAddedOn, cr.SkillChannelCreatedOn, cr.CandidateResumeClientHREmailId from 
+			Count(CR.Candidateid) as TotalView,CR.EmailId as ChannelOwner, cr.SkillChannelCreatedOn, cr.CandidateResumeClientHREmailId from 
 			(select IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,cr.id as Candidateid,
-			ulc.EmailId, cr.AddedOn, irf.CreatedOn as SkillChannelCreatedOn, cr.ClientHREmailId as CandidateResumeClientHREmailId from  IRF 
+			ulc.EmailId, irf.CreatedOn as SkillChannelCreatedOn, cr.ClientHREmailId as CandidateResumeClientHREmailId from  IRF 
 			join Client cl on irf.ClientId=cl.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId 
 			join Userlist ul on ul.id=HR.UserId join CandidateResume cr on cr.IRFId=IRF.id 
-			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0 
+			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0  and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null)
 			union 
 			Select IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,cr.id as Candidateid,
-			ulc.EmailId, cr.AddedOn, irf.CreatedOn as SkillChannelCreatedOn, cr.ClientHREmailId as CandidateResumeClientHREmailId from IRF 
+			ulc.EmailId, irf.CreatedOn as SkillChannelCreatedOn, cr.ClientHREmailId as CandidateResumeClientHREmailId from IRF 
 			join Client cl on irf.ClientId=cl.id
 			join CandidateResume cr on cr.IRFId=IRF.id
-			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0 ) as Cr 
-			Group By CR.id,CR.IRFId,CR.JDTiltle,CR.Name,Cr.PrimarySkillInvite,Cr.EmailId, cr.AddedOn, 
+			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0 and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null) ) as Cr 
+			Group By CR.id,CR.IRFId,CR.JDTiltle,CR.Name,Cr.PrimarySkillInvite,Cr.EmailId, 
 			cr.SkillChannelCreatedOn, cr.CandidateResumeClientHREmailId
-			order by cr.AddedOn desc
+			order by cr.SkillChannelCreatedOn desc
 		end
 	end
 	else If(@actionstatus ='QCPendingReport')
