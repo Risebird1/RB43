@@ -259,6 +259,10 @@
                                                             <th>Red Flags</th>
                                                         }
                                                         <th>Channel Owner</th>
+                                                        @if (ViewBag.actionstatus == "FakeReport")
+                                                        {
+                                                            <th>Status</th>
+                                                        }
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
@@ -295,10 +299,10 @@
                                                         {
                                                             <th>Red Flags</th>
                                                         }
-
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                        <th>Channel Owner</th>
+                                                        @if (ViewBag.actionstatus == "FakeReport")
                                                         {
-                                                            <th>Channel Owner</th>
+                                                            <th>Status</th>
                                                         }
                                                     </tr>
                                                 </tfoot>
@@ -815,9 +819,10 @@
                                                                     <td>0</td>
                                                                 }
                                                             }
-                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            <td>@item.ChannelOwner</td>
+                                                            @if (ViewBag.actionstatus == "FakeReport")
                                                             {
-                                                                <td>@item.ChannelOwner</td>
+                                                                <td>@item.StatusValue</td>
                                                             }
                                                         </tr>
                                                     }
@@ -841,8 +846,7 @@
 
 <script src="~/js/assessmentgroupfunctionalities.js"></script>
 <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
-
-    </div>
+</div>
 </div>
 
 
