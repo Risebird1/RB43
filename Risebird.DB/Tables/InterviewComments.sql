@@ -63,6 +63,7 @@ CREATE TABLE [dbo].[InterviewComments](
     [AIReportQCAnalysisScore][int] NULL,
     [HasCandidateExited][bit] NULL,
     [CandidateExitedAt][datetime] NULL,
+    [TranscriptSummary][varchar](max) NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -427,6 +428,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewComments
     Add CandidateExitedAt datetime null
+END
+
+IF NOT EXISTS(
+	SELECT *
+	FROM sys.columns
+	WHERE Name IN (N'TranscriptSummary')
+		AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+	ALTER TABLE InterviewComments
+	Add TranscriptSummary varchar(max)
 END
 
 End

@@ -3,12 +3,15 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Risebird.AzureTimerFunctions
@@ -27,13 +30,15 @@ namespace Risebird.AzureTimerFunctions
         private readonly string ContainerName;
         private readonly string TranscriptsContainer;
         private readonly IZohoMeetingHelper _zoho;
+        private readonly IOpenAIInterviewerAssistantHelper _ai;
         //private readonly string SASConnectionString;
 
         public ZoomService(ILoggerFactory loggerFactory, IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository,
             IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper,
-            ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper, IZohoMeetingHelper zoho)
+            ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper, 
+            IZohoMeetingHelper zoho, IOpenAIInterviewerAssistantHelper ai)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +53,7 @@ namespace Risebird.AzureTimerFunctions
             _googleEventHelper = googleEventHelper;
             log = loggerFactory.CreateLogger<ZoomService>();
             _zoho = zoho;
+            _ai = ai;
         }
         [Function("ZoomService")]
         public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer) //after every 30 min
@@ -329,7 +335,7 @@ namespace Risebird.AzureTimerFunctions
                 if (pendingRBMeetings.Count() > 0)
                 {
                     log.LogInformation($"Zoho: AccessToken :{accesstoken}");
-                    Parallel.ForEach(pendingRBMeetings, meeting =>
+                    Parallel.ForEach(pendingRBMeetings, async meeting =>
                     {
                         try
                         {
@@ -406,6 +412,8 @@ namespace Risebird.AzureTimerFunctions
                                         }
                                     }
                                 }
+                                var transcriptSummaryCleanedJson = string.Empty;
+
                                 if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink))
                                 {
                                     var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
@@ -457,12 +465,43 @@ namespace Risebird.AzureTimerFunctions
                                             }
                                             log.LogInformation($"Client External Storage Video Upload : Video uploaded in client's storage for meeting with ZohoMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
                                         }
+
+                                        ///write code to generate transcript summary
+                                        var transcriptString = await DownloadTranscriptStringAsync(transcriptionDownloadUrl, accessToken);
+                                        if (!string.IsNullOrEmpty(transcriptString))
+                                        {
+                                            var transcriptSummary = new TranscriptSummaryVM();
+                                            var threadId = await _ai.CreateThreadAsync();
+                                            await _ai.AddMessageAsync(threadId, "user", transcriptString);
+
+                                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+
+                                            var runId = await _ai.CreateRunAsync(threadId, "asst_ebkDMtxPbZS8o6d6NabRGlrC"); //assistant id of the assistant named : AI Interviewee response extraction and analysis 
+                                            await _ai.WaitForRunAsync(threadId, runId);
+
+
+                                            var replies = await _ai.GetMessagesAsync(threadId);
+
+                                            try
+                                            {
+                                                transcriptSummary = TryParseTranscriptSummaryVM(replies?.FirstOrDefault());
+                                                if (transcriptSummary != null)
+                                                {
+                                                    transcriptSummaryCleanedJson = JsonConvert.SerializeObject(transcriptSummary);
+                                                }
+
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                            }
+                                        }
                                     }
                                 }
                                 //upload the video to azure blob using the download_Url
                                 if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
                                 {
-                                    var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink).Result;
+                                    var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink, transcriptSummaryCleanedJson).Result;
                                     if (result && recordinginfo.Count() == 1)
                                     {
                                         _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
@@ -839,6 +878,187 @@ namespace Risebird.AzureTimerFunctions
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+
+
         }
+
+        private async Task<string> DownloadTranscriptStringAsync(string url, string accessToken)
+        {
+            
+            using var myWebClient = new HttpClient();
+
+            myWebClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken);
+
+            using var myStream = await myWebClient.GetStreamAsync(url);
+            using var reader = new StreamReader(myStream);
+
+            string transcript = await reader.ReadToEndAsync();
+            return transcript;
+
+        }
+
+        private TranscriptSummaryVM TryParseTranscriptSummaryVM(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return null;
+
+            var cleaned = raw.Trim();
+
+            // Strip ```json ... ``` wrappers if present
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+            cleaned = cleaned.TrimStart('\n');
+
+            //
+            // 1. STRICT DESERIALIZATION
+            //
+            try
+            {
+                var strict = JsonConvert.DeserializeObject<TranscriptSummaryVM>(cleaned);
+                if (strict != null &&
+                    (!string.IsNullOrEmpty(strict.JobTitle) ||
+                     strict.IntervieweeAnalysis != null ||
+                     strict.Flags != null))
+                {
+                    return strict;
+                }
+            }
+            catch
+            {
+                // ignore and fall back
+            }
+
+            //
+            // 2. FALLBACK PARSING (LOOSE MODE)
+            //
+            try
+            {
+                var root = JsonConvert.DeserializeObject<JObject>(cleaned);
+                if (root == null) return null;
+
+                var result = new TranscriptSummaryVM
+                {
+                    JobTitle = root.Value<string>("job_title") ?? root.Value<string>("jobTitle")
+                };
+
+                //
+                // Interviewee Analysis
+                //
+                var iaNode = (JObject)(root["interviewee_analysis"] ?? root["intervieweeAnalysis"]);
+                if (iaNode != null)
+                {
+                    var analysis = new IntervieweeAnalysis();
+
+                    // QA Pairs
+                    var qaArr = (JArray)(iaNode["qa_pairs"] ?? iaNode["qaPairs"] ?? iaNode["qa"]);
+                    if (qaArr != null)
+                    {
+                        analysis.QaPairs = qaArr.Select(q => new QaPair
+                        {
+                            Timestamp = q.Value<string>("timestamp") ?? q.Value<string>("time"),
+                            Question = q.Value<string>("question") ?? q.Value<string>("q"),
+                            Answer = q.Value<string>("answer") ?? q.Value<string>("a"),
+                            AnswerRating = q.Value<int?>("answer_rating")
+                                           ?? q.Value<int?>("rating")
+                                           ?? 0,
+                            Comment = q.Value<string>("comment") ?? q.Value<string>("reason")
+                        }).ToList();
+                    }
+
+                    // Summary
+                    var summaryNode = (JObject)(iaNode["summary"] ?? iaNode["analysis_summary"] ?? iaNode["interview_summary"]);
+                    if (summaryNode != null)
+                    {
+                        analysis.Summary = new InterviewSummary
+                        {
+                            TotalQuestions =
+                                summaryNode.Value<int?>("total_questions")
+                                ?? summaryNode.Value<int?>("totalQuestions")
+                                ?? 0,
+
+                            AverageAnswerRating =
+                                summaryNode.Value<double?>("average_answer_rating")
+                                ?? summaryNode.Value<double?>("avg_answer_rating")
+                                ?? 0,
+
+                            Strengths =
+                                summaryNode["strengths"] is JArray strengthsArr
+                                    ? strengthsArr.Select(x => x.ToString()).ToList()
+                                    : new List<string>(),
+
+                            AreasOfImprovement =
+                                (summaryNode["areas_of_improvement"]
+                                 ?? summaryNode["weaknesses"]
+                                 ?? summaryNode["areasForImprovement"]) is JArray aoiArr
+                                    ? aoiArr.Select(x => x.ToString()).ToList()
+                                    : new List<string>()
+                        };
+                    }
+
+                    // Verdict
+                    var verdictNode = (JObject)(iaNode["verdict"] ?? iaNode["decision"]);
+                    if (verdictNode != null)
+                    {
+                        analysis.Verdict = new Verdict
+                        {
+                            FinalRecommendation =
+                                verdictNode.Value<string>("final_recommendation")
+                                ?? verdictNode.Value<string>("recommendation")
+                                ?? verdictNode.Value<string>("finalRecommendation"),
+
+                            Justification =
+                                verdictNode.Value<string>("justification")
+                                ?? verdictNode.Value<string>("reason")
+                                ?? verdictNode.Value<string>("explanation")
+                        };
+                    }
+
+                    result.IntervieweeAnalysis = analysis;
+                }
+
+                //
+                // Flags
+                //
+                var flagsNode = (JObject)(root["flags"] ?? root["Flags"]);
+                if (flagsNode != null)
+                {
+                    var flags = new Flags();
+
+                    var personalInfoArr = (JArray)(flagsNode["personal_info_shared"] ?? flagsNode["personalInfoShared"]);
+                    if (personalInfoArr != null)
+                    {
+                        flags.PersonalInfoShared = personalInfoArr.Select(f => new FlagInstance
+                        {
+                            Timestamp = f.Value<string>("timestamp") ?? f.Value<string>("time"),
+                            Content = f.Value<string>("content") ?? f.Value<string>("text") ?? f.Value<string>("statement")
+                        }).ToList();
+                    }
+
+                    var unethicalArr = (JArray)(flagsNode["unethical_behavior"] ?? flagsNode["unethicalBehavior"]);
+                    if (unethicalArr != null)
+                    {
+                        flags.UnethicalBehavior = unethicalArr.Select(f => new FlagInstance
+                        {
+                            Timestamp = f.Value<string>("timestamp") ?? f.Value<string>("time"),
+                            Content = f.Value<string>("content") ?? f.Value<string>("text") ?? f.Value<string>("statement")
+                        }).ToList();
+                    }
+
+                    result.Flags = flags;
+                }
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
     }
 }
