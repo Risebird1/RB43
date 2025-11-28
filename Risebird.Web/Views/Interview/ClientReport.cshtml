@@ -849,6 +849,44 @@
 
                                                         }
                                                     </div>
+                                                    @* AI Interview Questions and Answers from Transcript Summary *@
+                                                    @if (Model.TranscriptSummaryObject != null && Model.TranscriptSummaryObject.IntervieweeAnalysis != null && Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs != null && Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs.Any())
+                                                    {
+                                                        <h3 style="margin-top: 30px;"><img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">AI Interview Questions & Answers</h3>
+                                                        <div class="question ai-ques">
+                                                            <ul>
+                                                                @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
+                                                                {
+                                                                    <li style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                                                                        @if (!string.IsNullOrEmpty(qaPair.Timestamp))
+                                                                        {
+                                                                            <span style="color: #9A9A9A; font-size: 12px; display: block; margin-bottom: 5px;">Time: @qaPair.Timestamp</span>
+                                                                        }
+                                                                        <div style="margin-bottom: 10px;">
+                                                                            <strong style="color: #333; font-size: 16px;">Question:</strong>
+                                                                            <p style="margin: 5px 0; color: #555; font-size: 15px;">@qaPair.Question</p>
+                                                                        </div>
+                                                                        <div style="margin-bottom: 10px;">
+                                                                            <strong style="color: #333; font-size: 16px;">Answer:</strong>
+                                                                            <p style="margin: 5px 0; color: #555; font-size: 15px;">@qaPair.Answer</p>
+                                                                        </div>
+                                                                        @if (qaPair.AnswerRating > 0)
+                                                                        {
+                                                                            <div style="margin-bottom: 5px;">
+                                                                                <label style="font-size: 14px; color: #9A9A9A;">Rating: @qaPair.AnswerRating / 5</label>
+                                                                            </div>
+                                                                        }
+                                                                        @if (!string.IsNullOrEmpty(qaPair.Comment))
+                                                                        {
+                                                                            <div style="margin-top: 5px;">
+                                                                                <span style="font-size: 14px; color: #666; font-style: italic;">Comment: @qaPair.Comment</span>
+                                                                            </div>
+                                                                        }
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    }
                                                 </div>
                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                 {
