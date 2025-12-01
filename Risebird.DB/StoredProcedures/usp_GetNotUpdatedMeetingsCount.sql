@@ -70,7 +70,7 @@ declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetin
 declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open' and Requester in('Interviewer','Client'))        
         
 declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId                  
- left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr where ul.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))        
+ left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr where ul.Emailid= @Emailid and confirmationStatus=2 and CancellationReason like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))        
         
  declare @PotentialRiskInterviewCount int = (select Count(im.id) from CandidateFeedbackDetails cfd    
 inner join InterviewMeetings im  on cfd.interviewid=im.id    
@@ -249,7 +249,7 @@ set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im j
         
        
         
-set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))        
+set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and CancellationReason like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))        
         
 set @PotentialRiskInterviewCount = (select Count(im.id) from CandidateFeedbackDetails cfd    
 inner join InterviewMeetings im  on cfd.interviewid=im.id    

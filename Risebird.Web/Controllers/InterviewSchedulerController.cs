@@ -1960,6 +1960,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    //check able to reschedule or not
                     var oneTimeSchedulingLink = await _interviewSchedulerservice.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
                     if (schedulertype == 1)
                     {
