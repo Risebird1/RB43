@@ -351,44 +351,44 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
 				select distinct im.*, 
-				REPLACE(Cancellationsource,'Reschedule on','') as FutureSchduleDate,
+				REPLACE(CancellationReason,'Reschedule on','') as FutureSchduleDate,
 				cl.Name as Name
 				--ul.EmailId as ClientEmail
 				,ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id=  irf.RisebirdHr 
-				where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.Emailid= @Emailid
+				where confirmationStatus=2 and CancellationReason like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.Emailid= @Emailid
 			end
 			else
 			begin
 				select distinct im.*,
-				REPLACE(Cancellationsource,'Reschedule on','') as FutureSchduleDate,
+				REPLACE(CancellationReason,'Reschedule on','') as FutureSchduleDate,
 				 cl.Name as Name,
 				 --ul.EmailId as ClientEmail,
 				ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=irf.RisebirdHr
-				where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)
+				where confirmationStatus=2 and CancellationReason like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)
 			end
 		end
 		else
 		begin
 			select distinct im.*,
-			REPLACE(Cancellationsource,'Reschedule on','') as FutureSchduleDate,
+			REPLACE(CancellationReason,'Reschedule on','') as FutureSchduleDate,
 			cl.Name as Name,
 			ulc.EmailId as ClientEmail,
 			irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
 			join UserList ulc on ulc.id= irf.RisebirdHr
-			where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID 
+			where confirmationStatus=2 and CancellationReason like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID 
 			union 
 			select distinct im.*,
-			REPLACE(Cancellationsource,'Reschedule on','') as FutureSchduleDate,
+			REPLACE(CancellationReason,'Reschedule on','') as FutureSchduleDate,
 			cl.Name as Name,
 			ulc.EmailId as ClientEmail,
 			irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
-			where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID
+			where confirmationStatus=2 and CancellationReason like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID
 		end
 	end
 	else If(@actionstatus ='PotentialRiskInterviewCount')

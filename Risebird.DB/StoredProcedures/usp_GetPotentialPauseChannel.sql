@@ -25,13 +25,13 @@ WHERE NOT EXISTS (
     WHERE i2.IRFId = i1.IRFId
     AND i2.InterviewDate BETWEEN DATEADD(DAY, -7, CAST(GETDATE() AS DATE)) AND CAST(GETDATE() AS DATE) group by i2.IRFId
 ) group by i1.IRFId)
-select CTE.IRFId,ul.EmailId as ChannelOwner,(select count(im.candidateEmail) from InterviewMeetings im where im.IRFId=CTE.IRFId group by im.IRFId) TotalCandidate
+select CTE.IRFId,ul.EmailId as ChannelOwner,(select count(ca.id) from Candidate ca join IRF on IRF.id=ca.IRFId where IRF.IRFId=CTE.IRFId group by IRF.IRFId) TotalCandidate
 ,(select top 1 im.interviewDate from InterviewMeetings im where im.IRFId=CTE.IRFId  order by interviewDate desc) interviewDate
 ,(select top 1 im.candidateEmail from InterviewMeetings im where im.IRFId=CTE.IRFId  order by interviewDate desc) candidateEmail
 ,IRF.JDTiltle
 ,(Select ul.EmailId From IRF join UserList ul on ul.id=IRF.BillingOwner where IRFId=CTE.IRFId) BillingOwner
-,(select Count(ic.MeetingStatus) from InterviewMeetings im join [InterviewComments] ic on im.id= ic.InterviewId where im.IRFId=CTE.IRFId and ic.MeetingStatus in(3,6,7)) TotalCompletedInterview
-,IRF.id as irfIntId,IRF.IsPaused
+,(select Count(ic.MeetingStatus) from InterviewMeetings im join [InterviewComments] ic on im.id= ic.InterviewId where im.IRFId=CTE.IRFId and ic.MeetingStatus in(4,6,7,8)) TotalCompletedInterview
+,IRF.id as irfIntId,Case when IRF.EndDate<DateAdd(Minute,330,Getdate()) then 1 else IRF.IsPaused end  as IsPaused
 from CTE
 Join IRF on CTE.IRFId=IRF.IRFId
 Join UserList ul on ul.id  = irf.RisebirdHr
@@ -48,13 +48,13 @@ WHERE NOT EXISTS (
     WHERE i2.IRFId = i1.IRFId
     AND i2.InterviewDate BETWEEN DATEADD(DAY, -7, CAST(GETDATE() AS DATE)) AND CAST(GETDATE() AS DATE) group by i2.IRFId
 ) group by i1.IRFId)
-select CTE.IRFId,ul.EmailId as ChannelOwner,(select count(im.candidateEmail) from InterviewMeetings im where im.IRFId=CTE.IRFId group by im.IRFId) TotalCandidate
+select CTE.IRFId,ul.EmailId as ChannelOwner,(select count(ca.id) from Candidate ca join IRF on IRF.id=ca.IRFId where IRF.IRFId=CTE.IRFId group by IRF.IRFId) TotalCandidate
 ,(select top 1 im.interviewDate from InterviewMeetings im where im.IRFId=CTE.IRFId  order by interviewDate desc) interviewDate
 ,(select top 1 im.candidateEmail from InterviewMeetings im where im.IRFId=CTE.IRFId  order by interviewDate desc) candidateEmail
 ,IRF.JDTiltle
 ,(Select ul.EmailId From IRF join UserList ul on ul.id=IRF.BillingOwner where IRFId=CTE.IRFId) BillingOwner
-,(select Count(ic.MeetingStatus) from InterviewMeetings im join [InterviewComments] ic on im.id= ic.InterviewId where im.IRFId=CTE.IRFId and ic.MeetingStatus in(3,6,7)) TotalCompletedInterview
-,IRF.id as irfIntId,IRF.IsPaused
+,(select Count(ic.MeetingStatus) from InterviewMeetings im join [InterviewComments] ic on im.id= ic.InterviewId where im.IRFId=CTE.IRFId and ic.MeetingStatus in(4,6,7,8)) TotalCompletedInterview
+,IRF.id as irfIntId,Case when IRF.EndDate<DateAdd(Minute,330,Getdate()) then 1 else IRF.IsPaused end  as IsPaused
 from CTE
 Join IRF on CTE.IRFId=IRF.IRFId
 Join UserList ul on ul.id  = irf.RisebirdHr
