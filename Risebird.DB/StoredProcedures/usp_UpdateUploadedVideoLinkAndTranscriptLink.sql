@@ -16,7 +16,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateUploadedVideoLinkAndTranscriptLink]
 @videoDuration int = null,
 @transcriptLink varchar(2500) = null,
 @clientExternalVideoUploadedUrl varchar(2500) = null,
-@clientExternalTranscriptUploadedUrl varchar(2500) = null
+@clientExternalTranscriptUploadedUrl varchar(2500) = null,
+@transcriptSummaryJson varchar(max) = null
 AS          
 Begin         
 
@@ -47,7 +48,8 @@ ClientExternalTranscriptUploadedUrl = case
 						when
 						(@clientExternalTranscriptUploadedUrl  is not null  and @clientExternalTranscriptUploadedUrl  != '') then @clientExternalTranscriptUploadedUrl  
 						else ClientExternalTranscriptUploadedUrl 
-						end
+						end,
+TranscriptSummary = @transcriptSummaryJson						
 where InterviewId=@interviewId        
         
 declare @meetingStatus int

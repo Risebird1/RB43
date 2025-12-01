@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -1289,6 +1290,11 @@ namespace Risebird.Business
                 reportModel.IsAIInterview = interviewDetails.IsAIInterview;
                 reportModel.SessionId = interviewDetails.SessionId;
                 reportModel.AssistantId = interviewDetails.AssistantId;
+                if(!string.IsNullOrEmpty(interviewDetails.TranscriptSummary))
+                {
+                    reportModel.TranscriptSummaryObject = JsonConvert.DeserializeObject<TranscriptSummaryVM>(interviewDetails.TranscriptSummary);
+
+                }
                 return reportModel;
             }
             catch (Exception e)
