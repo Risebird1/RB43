@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.InterviewReport
+@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
@@ -915,8 +915,8 @@
                                                                                         </p>
                                                                                     </div>
 
-                                                                                    <a onclick="moreless(@answerId)" class="moreless-btn" id="read_@(answerId)"
-                                                                                       href="#" style="font-size: 14px; color: #0066cc!important;background:none!important;margin:0px;padding:0px; text-decoration: none;">
+                                                                                    <a onclick="return moreless(@answerId, event);" class="moreless-btn" id="read_@(answerId)"
+                                                                                       href="javascript:void(0);" style="font-size: 14px; color: #0066cc!important;background:none!important;margin:0px;padding:0px; text-decoration: none;">
                                                                                         Read more
                                                                                     </a>
                                                                                 }
@@ -952,8 +952,8 @@
                                                                                             </span>
                                                                                         </div>
 
-                                                                                        <a onclick="moreless(@commentId)" class="moreless-btn" id="read_@(commentId)"
-                                                                                           href="#" style="font-size: 14px; color: #0066cc; text-decoration: none; margin-left: 5px;">
+                                                                                        <a onclick="return moreless(@commentId, event);" class="moreless-btn" id="read_@(commentId)"
+                                                                                           href="javascript:void(0);" style="font-size: 14px; color: #0066cc; text-decoration: none; margin-left: 5px;">
                                                                                             Read more
                                                                                         </a>
                                                                                     }
@@ -1002,7 +1002,7 @@
                                                                         <p id="read-int-cmnt" class="moretext_@Model.id moretext">
                                                                             @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
                                                                         </p>
-                                                                    </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
+                                                                    </div> <a onclick="return moreless(@Model.id, event);" class="moreless-btn" value="Readmore" id="read_@Model.id" href="javascript:void(0);">Read more</a>
                                                                 }
                                                                 else
                                                                 {
@@ -1215,7 +1215,7 @@
                                                                                 <p id="read-int-cmntTwo" class="moretext_1001 moretext">
                                                                                     @Model.InterviewerCommentTwo.Substring(440, @Model.InterviewerCommentTwo.Length - 440)
                                                                                 </p>
-                                                                            </div> <a onclick="moreless(1001)" class="moreless-btn" value="Readmore" id="read_1001" href="#">Read more</a>
+                                                                            </div> <a onclick="return moreless(1001, event);" class="moreless-btn" value="Readmore" id="read_1001" href="javascript:void(0);">Read more</a>
                                                                         }
                                                                         else
                                                                         {
@@ -1837,8 +1837,11 @@
 
 
 <script>
-    function moreless(id) {
-
+    function moreless(id, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         $('.moretext_' + id).slideToggle();
         if ($('#read_' + id).val() == 'Readmore') {
             $('#read_' + id).empty().html('Read more');
@@ -1847,6 +1850,7 @@
             $('#read_' + id).empty().html('Read less');
             $('#read_' + id).val('Readmore');
         }
+        return false;
     }
 
 </script>
