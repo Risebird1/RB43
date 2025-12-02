@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.InterviewReport
+@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
@@ -849,6 +849,8 @@
 
                                                         }
                                                     </div>
+                                                    
+                                                
                                                 </div>
                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                 {
@@ -878,7 +880,7 @@
                                                                         <p id="read-int-cmnt" class="moretext_@Model.id moretext">
                                                                             @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
                                                                         </p>
-                                                                    </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
+                                                                    </div> <a onclick="return moreless(@Model.id, event);" class="moreless-btn" value="Readmore" id="read_@Model.id" href="javascript:void(0);">Read more</a>
                                                                 }
                                                                 else
                                                                 {
@@ -1091,7 +1093,7 @@
                                                                                 <p id="read-int-cmntTwo" class="moretext_1001 moretext">
                                                                                     @Model.InterviewerCommentTwo.Substring(440, @Model.InterviewerCommentTwo.Length - 440)
                                                                                 </p>
-                                                                            </div> <a onclick="moreless(1001)" class="moreless-btn" value="Readmore" id="read_1001" href="#">Read more</a>
+                                                                            </div> <a onclick="return moreless(1001, event);" class="moreless-btn" value="Readmore" id="read_1001" href="javascript:void(0);">Read more</a>
                                                                         }
                                                                         else
                                                                         {
@@ -1713,8 +1715,11 @@
 
 
 <script>
-    function moreless(id) {
-
+    function moreless(id, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         $('.moretext_' + id).slideToggle();
         if ($('#read_' + id).val() == 'Readmore') {
             $('#read_' + id).empty().html('Read more');
@@ -1723,6 +1728,7 @@
             $('#read_' + id).empty().html('Read less');
             $('#read_' + id).val('Readmore');
         }
+        return false;
     }
 
 </script>
