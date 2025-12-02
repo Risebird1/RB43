@@ -4597,6 +4597,31 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<bool> UpdateTranscriptSummary(int interviewId, string transcriptSummary = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@transcriptSummary", transcriptSummary);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateTranscriptSummary", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
         public async Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id)
         {
             try
