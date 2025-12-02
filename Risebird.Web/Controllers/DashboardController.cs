@@ -263,7 +263,7 @@ namespace Risebird.Web.Controllers
                                             {
                                                 transcriptSummaryCleanedJson = JsonConvert.SerializeObject(transcriptSummary);
                                             }
-
+                                            await _meetingRespository.UpdateTranscriptSummary(539654, transcriptSummaryCleanedJson);
                                         }
                                         catch (Exception ex)
                                         {
