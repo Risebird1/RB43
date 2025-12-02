@@ -383,7 +383,7 @@ text-shadow: 0 0 15px #bfb8da;
                                                                         <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId,@Model.CandidateDetails.CandidateMasterId)">Not Available</div>
                                                                     </div>
                                                                     <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Need Clarity',@item.Interviewid)" style="margin-top:0px;">
-                                                                        <div class="interviewresponsebtn redbtn" onclick="openNeedClarityFromPage(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId','@Model.CandidateDetails.IRFId','@Model.Uniqueid')">Need Clarity</div>
+                                                                        <div class="interviewresponsebtn redbtn" onclick="openNeedClarityFromPage(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId','@Model.CandidateDetails.IRFId','@ViewBag.id')">Need Clarity</div>
                                                                     </div>
                                                                 </div>
 
@@ -1704,10 +1704,10 @@ text-shadow: 0 0 15px #bfb8da;
             url: '/Interview/CandidateMeetingsStatus',
             method: 'GET',
             data: {
-                'meetingid': interviewid,
+                'meetingid': interviewId,
                 'status': 4,
                 'uniqueid': uniqueid,
-                'Irfid': irfid
+                'Irfid': irfId
             },
             success: function (result) {
             }
