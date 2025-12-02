@@ -1,4 +1,4 @@
-@model Risebird.Entities.ViewModel.InterviewReport
+﻿@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
@@ -139,11 +139,11 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     @* <button id="selectedcandidate_9" class="mdc-button mdc-button--raised mdc-ripple-upgraded" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;border-color:#72ade8;z-index: 100;position:relative;top:3px;left:20px;">
-                            <span onclick="OpenL2Model(@Model.InterviewId)">
-                                <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
-                                L2 Feedback
-                            </span>
-                        </button> *@
+                    <span onclick="OpenL2Model(@Model.InterviewId)">
+                    <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                    L2 Feedback
+                    </span>
+                    </button> *@
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
 
                 </div>
@@ -365,9 +365,12 @@
                                                     }
                                                 }
 
-                                                  @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer"){
-                                                    @if (Model.resumeLink != null && Model.resumeLink != ""){
-                                                        <div class="report-heading">Resume Link :<a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink><img style="position:relative;left: -2px;width: 18px;" src="/img/resume-icon.png">Click here</a>
+                                                @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                {
+                                                    @if (Model.resumeLink != null && Model.resumeLink != "")
+                                                    {
+                                                        <div class="report-heading">
+                                                            Resume Link :<a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink><img style="position:relative;left: -2px;width: 18px;" src="/img/resume-icon.png">Click here</a>
                                                         </div>
                                                     }
                                                 }
@@ -379,7 +382,7 @@
 
                                                     <h4>@Model.CandidateEmail</h4>
                                                 }
-                                              
+
                                                 @*<div class="report-heading">
                                             Position
                                             </div>
@@ -410,7 +413,7 @@
                                                 }
 
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
-                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" >( @Model.NickName )</c>
+                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;">( @Model.NickName )</c>
                                                 @if (Model.CommunicationalProficiency != 0)
                                                 {
                                                     <div style="margin-top:10px">
@@ -855,7 +858,9 @@
                                                         <h3 style="margin-top: 30px;"><img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">AI Interview Questions & Answers</h3>
                                                         <div class="question ai-ques">
                                                             <ul>
-                                                                @{ int answerIndex = 0; int commentIndex = 0; }
+                                                                @{
+                                                                    int answerIndex = 0; int commentIndex = 0;
+                                                                }
                                                                 @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
                                                                 {
                                                                     <li style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
@@ -869,12 +874,12 @@
                                                                         </div>
                                                                         <div style="margin-bottom: 10px;">
                                                                             <strong style="color: #333; font-size: 16px;float:left">Answer:</strong> @if (qaPair.AnswerRating > 0)
-                                                                        {
-                                                                            <div style="margin-bottom: 5px;">
-                                                                                <label style="font-size: 14px; color: #9A9A9A;float:right;">Rating: @qaPair.AnswerRating / 5</label>
-                                                                            </div>
-                                                                        }
-                                                                        <div style="clear:both"></div>
+                                                                            {
+                                                                                <div style="margin-bottom: 5px;">
+                                                                                    <label style="font-size: 14px; color: #9A9A9A;float:right;">Rating: @qaPair.AnswerRating / 5</label>
+                                                                                </div>
+                                                                            }
+                                                                            <div style="clear:both"></div>
                                                                             @{
                                                                                 int answerId = Model.id * 10000 + answerIndex;
                                                                                 answerIndex++;
@@ -896,7 +901,7 @@
                                                                                 <p style="margin: 5px 0;color: #555;font-size: 15px;border-top: 1px #bfb5b5e6 dotted;padding-top: 10px;">@qaPair.Answer</p>
                                                                             }
                                                                         </div>
-                                                                       
+
                                                                         @if (!string.IsNullOrEmpty(qaPair.Comment))
                                                                         {
                                                                             <div style="margin-top: 5px;">
