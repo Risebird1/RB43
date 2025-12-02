@@ -1003,13 +1003,12 @@
 
                                                                             @* Question *@
                                                                             <div style="margin-bottom: 10px;">
-                                                                                <strong style="color: #333; font-size:17px;font-weight:500">Question:</strong>
+                                                                                <strong style="color: #333; font-size:16px;font-weight:500">Question:</strong>
                                                                                 <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">@qaPair.Question</p>
                                                                             </div>
-
                                                                             @*Answer*@
                                                                             <div style="margin-bottom: 10px;">
-                                                                                <strong style="color: #333; font-size: 17px;font-weight:500; float:left">Answer:</strong>
+                                                                                <strong style="color: #333; font-size:16px;font-weight:500; float:left">Answer:</strong>
 
                                                                                 @if (qaPair.AnswerRating > 0)
                                                                                 {
@@ -1103,6 +1102,7 @@
                                                 </div>
                                                     <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
                                                     @* Display Verdict *@
+                                                     @if (Model.TranscriptSummaryObject != null){
                                                     @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Verdict != null)
                                                     {
                                                         var verdict = Model.TranscriptSummaryObject.IntervieweeAnalysis.Verdict;
@@ -1133,7 +1133,7 @@
                                                         </div>
                                                     }
 
-                                                    
+                                                     }
                                                     </div>
                                                     </div>
 
