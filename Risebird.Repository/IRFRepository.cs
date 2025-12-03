@@ -5828,7 +5828,8 @@ namespace Risebird.Repository
                                 DynamicParameters parameters = new DynamicParameters();
                                 if (!isApi)
                                 {
-                                    parameters.Add("@IRFId", obj.IRFId);                                }
+                                    parameters.Add("@IRFId", obj.IRFId);
+                                }
                                 else
                                 {
                                     parameters.Add("@jobId", jobId);
@@ -10178,7 +10179,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@emailid", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query(con, "usp_UpdateIRFInterviewerBillingCycle", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateIRFInterviewerBillingCycle", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -10188,6 +10189,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<int> FetchIRFInterviewerBillingCycle(int irfId)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_FetchIRFInterviewerBillingCycle", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
         }
     }
 }

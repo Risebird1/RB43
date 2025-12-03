@@ -11450,6 +11450,12 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
+        public async Task<JsonResult> FetchIRFInterviewerBillingCycle(int irfId)
+        {
+            var billingCycle = await _irfService.FetchIRFInterviewerBillingCycle(irfId);
+            return Json(billingCycle);
+        }
+        [HttpPost]
         public async Task<JsonResult> SaveIRFInterviewerBillingCycle(int irfId, int billingCycle)
         {
             if (HttpContext.Session.GetString("email") != null)

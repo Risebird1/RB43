@@ -2500,6 +2500,14 @@
     function BillingCycleInterviewers(id,billingcycle) {
         try {
             billingCycleIrfId = id;
+            $.ajax({
+             type: "POST",
+             url: "/IRF/FetchIRFInterviewerBillingCycle",
+             data: { 'irfId': billingCycleIrfId },
+             success: function (data) {
+                  billingcycle=data;
+             }
+            });
             if(billingcycle==0){
                 billingcycle=3;
             }
