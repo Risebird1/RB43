@@ -57,6 +57,15 @@ BEGIN
     ALTER TABLE IRFHistory
     Add InterviewDuration int
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerBillingCycle')
+      AND Object_ID = Object_ID(N'IRFHistory'))
+BEGIN
+    ALTER TABLE IRFHistory
+    Add InterviewerBillingCycle int
+END
 
 End
 

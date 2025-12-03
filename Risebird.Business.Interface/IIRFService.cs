@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business.Interface
 {
@@ -214,5 +215,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink);
         Task<List<CandidateCancelStatus>> CancelInterviewViaApi(List<string> candidateList, string requestedBy, string jobId, string SkillChannelId);
         Task<bool> FlagQuestionForSentimentAnalysis(int id);
+        Task<bool> UpdateIRFInterviewerBillingCycle(int irfId,int billingCycle,string emailid);
+        Task<int> FetchIRFInterviewerBillingCycle(int irfId);
     }
 }
