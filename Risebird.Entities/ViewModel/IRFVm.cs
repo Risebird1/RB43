@@ -417,6 +417,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
         public string OpenAIAssistantId { get; set; }
+        public int InterviewerBillingCycle { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

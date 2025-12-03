@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.IRFViewModel
+@model Risebird.Entities.ViewModel.IRFViewModel
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -53,20 +53,20 @@
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
-        border-right: 1px solid #2196f3a3 !important;\
-        border-bottom: 1px solid #2196f3a3 !important;
+        border-right: 1px solid #2196f3a3 !important;
+        \ border-bottom: 1px solid #2196f3a3 !important;
         border-top: 1px solid #2196f3a3 !important;
         border-left: 4px solid #2196F3 !important; /* Blue left border to indicate AI interview */
     }
 
-    .card-ai-interview  .card-body .client-field {
-        display: block;
-        float: left;
-        font-weight: bold;
-        padding-right: 4px;
-        margin-bottom: 10px;
-        line-height: 18px;
-    }
+        .card-ai-interview .card-body .client-field {
+            display: block;
+            float: left;
+            font-weight: bold;
+            padding-right: 4px;
+            margin-bottom: 10px;
+            line-height: 18px;
+        }
 
         .card-ai-interview .card-header h6 {
             font-size: 13px;
@@ -82,7 +82,7 @@
             margin: 0px;
             padding: 12px 5px 10px 5px;
             background-color: #e2f1fd94 !important;
-               border-top: 2px #2196f3a3 solid !important;
+            border-top: 2px #2196f3a3 solid !important;
             border-bottom: 2px #2196f3a3 solid !important;
         }
 
@@ -146,13 +146,13 @@
                                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Skill Channel</font></span>
                                             </button>
 
-                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
-                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Groups</font></span>
-                                </button> 
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Groups</font></span>
+                                            </button>
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer",new { uniqueid="74206543283756"})'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
                                             </button>
-                                        } 
+                                        }
                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile == "InterviewerManagement")
                                         {
 
@@ -160,7 +160,7 @@
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Groups</font></span>
                                             </button>
 
-                                        } 
+                                        }
 
 
                                     }
@@ -470,7 +470,7 @@
                                                                     </button>
                                                                     <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Interviewers'' Application Url" style="width:25px!important;height:25px!important; background:#9e8c9c7a!important; border-color:#9e8c9c7a!important">
                                                                         <span onclick="javascript:CopyInterviewerApplicationLink('@item.id', '@item.IRFId');" title="Generate Interviewers' Application Url">
-                                                                        <img style="position:relative;top:-1px;" src="~/img/generate-icon.png">
+                                                                            <img style="position:relative;top:-1px;" src="~/img/generate-icon.png">
 
                                                                         </span>
                                                                     </button>
@@ -539,19 +539,22 @@
                                                                     <button id="btn_more" class="btn">
                                                                         <span class="tripledot"></span>
                                                                     </button>
-                                                                    <div class="dropdown-content"  style="top:15px !important;">
+                                                                    <div class="dropdown-content" style="top:15px !important;">
 
                                                                         <div class="scrollbar" id="style-2" style="height:170px;margin: 0px 10px 0px 0px;">
-                                                                        @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile == "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
-                                                                        {
-  <div class="dropdown-content-menu" onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');"><span class="fas fa-edit" style="left:2px;top:-1px;position: relative;font-size:13px; margin-right: 8px; color: #6e7fa9;"></span>Edit IRF</div>                                                                           
-
-                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditIRFInterviewers('@item.id');" title="Edit IRF Interviewers"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
-                                                                                    
-
-                                                                            @if (Model.Profile != "SeniorInterviewerManagement")
+                                                                            @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile == "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
                                                                             {
-                                                                                @*<button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
+                                                                                <div class="dropdown-content-menu" onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');"><span class="fas fa-edit" style="left:2px;top:-1px;position: relative;font-size:13px; margin-right: 8px; color: #6e7fa9;"></span>Edit IRF</div>
+                                                                                <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditIRFInterviewers('@item.id');" title="Edit IRF Interviewers"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
+                                                                                @if (Model.Profile == "Finance" || Model.Profile == "Admin")
+                                                                                {
+                                                                                    <div style="width:100%;float:left" class="dropdown-content-menu" onclick="event.stopPropagation(); javascript:BillingCycleInterviewers('@item.id','@item.InterviewerBillingCycle');" title="Interviewer Billing Cycle">
+                                                                                        <i style="font-size:14px;font-size: 13px; margin-right:7px;color: #6e7fa9;" class="fa fa-clone"></i>Interviewer Billing Cycle
+                                                                                    </div>
+                                                                                }
+                                                                                @if (Model.Profile != "SeniorInterviewerManagement")
+                                                                                {
+                                                                                    @*<button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
                                                                 <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
                                                                 </button>
                                                                 <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
@@ -561,73 +564,70 @@
                                                                 <button id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
                                                                 <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
                                                                 </button>*@
-                                                                   //getIRFMembers
-                                                                                @if (Model.Profile != "Client")
-                                                                                {
-
-
+                                                                                    //getIRFMembers
+                                                                                    @if (Model.Profile != "Client")
+                                                                                    {
                                                                                         <div class="dropdown-content-menu" onclick="javascript:getClientFeedback('@item.id', '@item.IRFId');"><i class="fa fa-user" style="font-size: 13px; margin-right:4px;color: #6e7fa9;"></i><i style="position:relative;top:-5px;font-size:10px;left:-4px;color: #6e7fa9;" class='fa fa-comment'></i>Client Feedback</div>
 
+                                                                                        <div class="dropdown-content-menu" onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members"><i style="font-size: 15px; margin-right:7px;color: #6e7fa9;" class='fas fa-users'></i>Interviewing Members</div>
 
+                                                                                        <div class="dropdown-content-menu">
+                                                                                            @*<span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>*@
 
+                                                                                            <a style="padding:0px;" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                                                <svg fill="#6e7fa9" style="position:relative;top: -3px;left: -2px;margin-right: 7px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg>Interviewer Stats
+                                                                                            </a>
+                                                                                        </div>
 
-                                                                                    <div class="dropdown-content-menu" onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members"><i style="font-size: 15px; margin-right:7px;color: #6e7fa9;" class='fas fa-users'></i>Interviewing Members</div>
-                                                                                   
-
-                                                                                    <div class="dropdown-content-menu">
-                                                                                        @*<span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>*@
-
-                                                                                        <a style="padding:0px;" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                                         <svg fill="#6e7fa9" style="position:relative;top: -3px;left: -2px;margin-right: 7px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg>Interviewer Stats
-                                                                                        </a></div>
-                                                                                   
 
                                                                                         <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:CheckIntervieweravailbility('@item.id', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability">
                                                                                             <i class='fas fa-user-check' style="font-size: 13px; margin-right:7px;color: #6e7fa9;float:left;position:relative;top:4px;"></i><div style="float:left;width:85%;font-size:13px;font-weight:400;">Share Email to check Interviewer availability</div>
                                                                                         </div>
 
                                                                                         <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu">
-                                                                                        <a style="padding:0px;" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                                        <svg fill="#6e7fa9" style="top:3px;left:0px;position: relative;float:left;margin-right:10px;" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 8V7l-3 2-3-2v1l3 2 3-2zm1-5H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm8-6h-8V6h8v6z"></path></svg><div style="float:left;width:83%;font-size:13px;font-weight:400;">Interviewer Mail Activity(open)</div></a>
-                                                                                      </div>
+                                                                                            <a style="padding:0px;" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                                                <svg fill="#6e7fa9" style="top:3px;left:0px;position: relative;float:left;margin-right:10px;" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 8V7l-3 2-3-2v1l3 2 3-2zm1-5H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm8-6h-8V6h8v6z"></path></svg><div style="float:left;width:83%;font-size:13px;font-weight:400;">Interviewer Mail Activity(open)</div>
+                                                                                            </a>
+                                                                                        </div>
 
-                                                                                      
-                                                                                   
+
+
+                                                                                    }
                                                                                 }
                                                                             }
-                                                                        }
 
 
 
-                                                                        @if (Model.Profile != "SeniorInterviewerManagement")
-                                                                        {
-                                                                            @if (Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
+                                                                            @if (Model.Profile != "SeniorInterviewerManagement")
                                                                             {
-                                                                                if (!item.IsDeleted)
+                                                                                @if (Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
                                                                                 {
-                                                                                   <div style="width:100%;float:left" class="dropdown-content-menu" id="btnArchive_@item.id" onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive"><i class='fa fa-archive' style="font-size: 13px; margin-right:10px;color: #6e7fa9;"></i>Archive
-                                                                                    </div>
+                                                                                    if (!item.IsDeleted)
+                                                                                    {
+                                                                                        <div style="width:100%;float:left" class="dropdown-content-menu" id="btnArchive_@item.id" onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive">
+                                                                                            <i class='fa fa-archive' style="font-size: 13px; margin-right:10px;color: #6e7fa9;"></i>Archive
+                                                                                        </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+
+                                                                                        <div class="dropdown-content-menu" id="btnUnArchive_@item.id" onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive">@*<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg>*@UnArchive
+                                                                                        </div>
+                                                                                    }
                                                                                 }
-                                                                                else
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                                 {
-                                                                                    
-                                                                                    <div class="dropdown-content-menu" id="btnUnArchive_@item.id"  onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive">@*<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg>*@UnArchive
-                                                                                    </div>
-                                                                                }
-                                                                            }
-                                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
-                                                                            {
-                                                                                
+
                                                                                     <div style="width:100%;float:left" class="dropdown-content-menu" onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel">
-                                                                                      <i style="font-size:14px;font-size: 13px; margin-right:7px;color: #6e7fa9;" class="fa fa-clone"></i>Clone the Skills Channel
-                                                                                      </div>
+                                                                                        <i style="font-size:14px;font-size: 13px; margin-right:7px;color: #6e7fa9;" class="fa fa-clone"></i>Clone the Skills Channel
+                                                                                    </div>
 
 
 
 
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -762,117 +762,117 @@
                                                                         </button>
                                                                         <div class="dropdown-content">
                                                                             <div class="scrollbar" id="style-2" style="height:170px;margin: 0px 10px 0px 0px;">
-                                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
-                                                                            {
-                                                                                <div class="dropdown-content-menu" id="not_schedule"  aria-label="Not Scheduled Candidate">
-                                                                                    <span onclick="javascript:NotScheduledCandidate('@item.IRFId');" style="font-weight:400;display:flex;width:100%;transform:none;">
-                                                                                        <svg style="position:relative;left:2px; top:5px;color: #6e7fa9;margin-right: 8px;float:left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-x" viewBox="0 0 18 18">
-                                                                                            <path d="M6.146 7.146a.5.5 0 0 1 .708 0L8 8.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 9l1.147 1.146a.5.5 0 0 1-.708.708L8 9.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 9 6.146 7.854a.5.5 0 0 1 0-.708z" />
-                                                                                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
-                                                                                        </svg><div style="float:left;width:85%;font-size:13px;font-weight:400;">Not Scheduled Candidate</div>
-                                                                                    </span>
-                                                                           </div>
-                                                                            }
-                                                                            @if (Model.Profile != "Recruiter")
-                                                                            {
-                                                                                <div class="dropdown-content-menu" id="skill_11" aria-label="Meetings">
-                                                                                    <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" style="font-weight:400;"><svg fill="#6e7fa9" style="position:relative;left:0px; top: -1px;margin-right: 8px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg>Meetings</span>
-                                                                                </div>
-
-                                                                                <div class="dropdown-content-menu" id="skill_12" aria-label="Selected Candidates">
-                                                                                    <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" style="font-weight:400;"><i class='fa fa-user-check' style="color: #6e7fa9;top: -1px;left: 2px; position: relative;    margin-right: 8px;"></i>Selected Candidates</span>
-                                                                                </div>
-                                                                            }
-
-                                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
-                                                                            {
-                                                                                <div  class="dropdown-content-menu" aria-label="Candidate Feedback">
-                                                                                    <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" style="font-weight:400;">
-                                                                                        <i style="position:relative;left:2px; top: -1px;color: #6e7fa9;margin-right: 8px;" class="far fa-comment-dots"></i>Candidates Feedback
-                                                                                    </span>
-                                                                                </div>
-
-                                                                                <div style="width:100%;float:left;clear:both;font-weight:400;" class="dropdown-content-menu" onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');">
-                                                                                        <i class="fa fa-bell-exclamation" style="position:relative;left:2px; top:4px;color: #6e7fa9;margin-right:10px;float:left;font-size:15px;"></i><div style="float:left;width:85%;font-size:13px;font-weight:400;">Send reminder to Candidate for Feedback</div>
-                                                                                    </div>
-                                                                             
-
-                                                                            }
-                                                                            @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
-                                                                            {
-                                                                                <span class="laptop-view"> <br /></span>
-                                                                            }
-                                                                            @if (Model.Profile != "CuratedUser")
-                                                                            {
-                                                                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                                 {
-
-                                                                                    <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:AddComments('@item.id', '@item.IRFId');" title="Questions"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Questions</div>
-                                                                                    
+                                                                                    <div class="dropdown-content-menu" id="not_schedule" aria-label="Not Scheduled Candidate">
+                                                                                        <span onclick="javascript:NotScheduledCandidate('@item.IRFId');" style="font-weight:400;display:flex;width:100%;transform:none;">
+                                                                                            <svg style="position:relative;left:2px; top:5px;color: #6e7fa9;margin-right: 8px;float:left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-x" viewBox="0 0 18 18">
+                                                                                                <path d="M6.146 7.146a.5.5 0 0 1 .708 0L8 8.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 9l1.147 1.146a.5.5 0 0 1-.708.708L8 9.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 9 6.146 7.854a.5.5 0 0 1 0-.708z" />
+                                                                                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                                                                                            </svg><div style="float:left;width:85%;font-size:13px;font-weight:400;">Not Scheduled Candidate</div>
+                                                                                        </span>
+                                                                                    </div>
                                                                                 }
-
-
                                                                                 @if (Model.Profile != "Recruiter")
                                                                                 {
-                                                                                    <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings">
-                                                                                        <svg style="position:relative;left:2px; top:0px;margin-right:10px;float:left" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><div style="float:left;width:81%;font-size:13px;font-weight:400;">Multiple Candidate Meetings</div>
-                                                                                        </div>
-
-
-
-                                                                                    <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats">
-                                                                                        <svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg>Stats
-                                                                                        </div>
-                                                                                  
-
-
-
-                                                                                    if (item.IsPaused)
-                                                                                    {
-
-                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play">
-                                                                                            <svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>Play
-                                                                                            </div>
-                                                                                       
-
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause">
-                                                                                            <svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>Pause
-                                                                                            </div>
-                                                                                      
-                                                                                        @*<button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
-                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                                </button>*@
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                            @if (Model.Profile != "Client" && item.CalendlyLink != null && item.CalendlyLink.Contains("InterviewScheduler"))
-                                                                            {
-
-                                                                                <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event">
-                                                                                    <i style="font-size:14px;color:#6e7fa9;position:relative;top:2px;" class="fa fa-calendar-check-o"></i>
-                                                                                    <svg fill="#6e7fa9" style="position:relative;top:4px;right:8px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>Edit Scheduler Event
+                                                                                    <div class="dropdown-content-menu" id="skill_11" aria-label="Meetings">
+                                                                                        <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" style="font-weight:400;"><svg fill="#6e7fa9" style="position:relative;left:0px; top: -1px;margin-right: 8px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg>Meetings</span>
                                                                                     </div>
 
-                                                                            }
-                                                                            @if (Model.Profile == "CuratedUser")
-                                                                            {
-                                                                                @if (item.SubId != null)
+                                                                                    <div class="dropdown-content-menu" id="skill_12" aria-label="Selected Candidates">
+                                                                                        <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" style="font-weight:400;"><i class='fa fa-user-check' style="color: #6e7fa9;top: -1px;left: 2px; position: relative;    margin-right: 8px;"></i>Selected Candidates</span>
+                                                                                    </div>
+                                                                                }
+
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                                 {
-                                                                                    
-                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="All Selected Candidates">
-                                                                                                <svg style="position:relative;left:2px; top:-2px;margin-right: 8px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>All Selected Candidates
+                                                                                    <div class="dropdown-content-menu" aria-label="Candidate Feedback">
+                                                                                        <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" style="font-weight:400;">
+                                                                                            <i style="position:relative;left:2px; top: -1px;color: #6e7fa9;margin-right: 8px;" class="far fa-comment-dots"></i>Candidates Feedback
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                    <div style="width:100%;float:left;clear:both;font-weight:400;" class="dropdown-content-menu" onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');">
+                                                                                        <i class="fa fa-bell-exclamation" style="position:relative;left:2px; top:4px;color: #6e7fa9;margin-right:10px;float:left;font-size:15px;"></i><div style="float:left;width:85%;font-size:13px;font-weight:400;">Send reminder to Candidate for Feedback</div>
+                                                                                    </div>
+
+
+                                                                                }
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
+                                                                                {
+                                                                                    <span class="laptop-view"> <br /></span>
+                                                                                }
+                                                                                @if (Model.Profile != "CuratedUser")
+                                                                                {
+                                                                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                                                    {
+
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:AddComments('@item.id', '@item.IRFId');" title="Questions"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Questions</div>
+
+                                                                                    }
+
+
+                                                                                    @if (Model.Profile != "Recruiter")
+                                                                                    {
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings">
+                                                                                            <svg style="position:relative;left:2px; top:0px;margin-right:10px;float:left" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><div style="float:left;width:81%;font-size:13px;font-weight:400;">Multiple Candidate Meetings</div>
                                                                                         </div>
-                                                                                    
-                                                                                   
+
+
+
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats">
+                                                                                            <svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg>Stats
+                                                                                        </div>
+
+
+
+
+                                                                                        if (item.IsPaused)
+                                                                                        {
+
+                                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play">
+                                                                                                <svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>Play
+                                                                                            </div>
+
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause">
+                                                                                                <svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>Pause
+                                                                                            </div>
+
+                                                                                            @*<button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
+                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                </button>*@
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                @if (Model.Profile != "Client" && item.CalendlyLink != null && item.CalendlyLink.Contains("InterviewScheduler"))
+                                                                                {
+
+                                                                                    <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event">
+                                                                                        <i style="font-size:14px;color:#6e7fa9;position:relative;top:2px;" class="fa fa-calendar-check-o"></i>
+                                                                                        <svg fill="#6e7fa9" style="position:relative;top:4px;right:8px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>Edit Scheduler Event
+                                                                                    </div>
+
+                                                                                }
+                                                                                @if (Model.Profile == "CuratedUser")
+                                                                                {
+                                                                                    @if (item.SubId != null)
+                                                                                    {
+
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="All Selected Candidates">
+                                                                                            <svg style="position:relative;left:2px; top:-2px;margin-right: 8px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>All Selected Candidates
+                                                                                        </div>
+
+
                                                                                         <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates">
                                                                                             <svg style="position:relative;left:2px; top:0px;margin-right: 8px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>Shortlisted Candidates
                                                                                         </div>
-                                                                                   
-                                                                                    
-                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu"  onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent Candidates">
+
+
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent Candidates">
                                                                                             <svg fill="#6e7fa9" style="position:relative;left:2px; top:5px;margin-right: 8px;float:left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg><div style="float:left;width:81%;font-size:13px;font-weight:400;">Interest-Sent Candidates</div>
                                                                                         </div>
 
@@ -882,22 +882,22 @@
                                                                                         </div>
 
 
-                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu"  onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe">
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe">
                                                                                             <i style="font-size:16px;color:#6e7fa9;position:relative;left:0px; top:1px;margin-right:8px;" class="far fa-bell-slash"></i>Unsubscribe
                                                                                         </div>
-                                                                                
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    
-                                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu subc"  onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe"><i style="font-size:16px;color:#6e7fa9;position:relative;left:0px; top:1px;margin-right:8px;" class="fas fa-bell"></i>Subscribe</div>
-                                                                                    
-                                                                                }
 
-                                                                            }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+
+                                                                                        <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu subc" onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe"><i style="font-size:16px;color:#6e7fa9;position:relative;left:0px; top:1px;margin-right:8px;" class="fas fa-bell"></i>Subscribe</div>
+
+                                                                                    }
+
+                                                                                }
+                                                                            </div>
                                                                         </div>
-                                                                        </div>
-                                                                   </div>
+                                                                    </div>
 
                                                                 }
 
@@ -1104,6 +1104,48 @@
                                             </div>
                                         </div>
 
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="billingCycleModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1050; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(250, 250, 250)" d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>
+                                            </div>
+                                            <h5 class="modal-title pull-left">Interviewer Billing Cycle</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="billingCyclePopUp">&times;</span>
+                                        </button>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="billingCycleMonth">
+                                                            Select Billing Cycle Month
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="billingCycleMonth" name="billingCycleMonth" class="form-control">
+                                                                <option value="">-- Select Billing Cycle Month --</option>
+                                                                <option value="1">1 Month</option>
+                                                                <option value="2">2 Month</option>
+                                                                <option value="3">3 Month</option>
+                                                            </select>
+                                                            <label class="text-danger" id="billingCycle_Error" style="color:red"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label class="text-danger" id="billingCyclePopUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+                                            <hr />
+                                            <div class="col-md-12 mc-button-area">
+                                                <input style="box-shadow:none!important" type="button" onclick="SaveBillingCycle()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSaveBillingCycle" value="Save">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2437,15 +2479,98 @@
 <script>
     var irfId = "";
     var irfName = "";
+    var billingCycleIrfId = "";
     var span = document.getElementById("invoicePopUp");
     span.onclick = function () {
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
 
+    var billingCycleSpan = document.getElementById("billingCyclePopUp");
+    if (billingCycleSpan) {
+        billingCycleSpan.onclick = function () {
+            var modal = document.getElementById("billingCycleModal");
+            modal.style.display = "none";
+        }
+    }
+
 
 </script>
 <script>
+    function BillingCycleInterviewers(id,billingcycle) {
+        try {
+            billingCycleIrfId = id;
+            $.ajax({
+             type: "POST",
+             url: "/IRF/FetchIRFInterviewerBillingCycle",
+             data: { 'irfId': billingCycleIrfId },
+             success: function (data) {
+                  billingcycle=data;
+                   if(billingcycle==0){
+                        billingcycle=3;
+                    }
+                document.getElementById("billingCycleMonth").value=billingcycle;
+             }
+            });
+
+            // Get the modal
+            var modal = document.getElementById("billingCycleModal");
+            if (!modal) {
+                console.error("Modal 'billingCycleModal' not found");
+                alert("Error: Modal not found. Please refresh the page.");
+                return;
+            }
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            // Reset form
+            //var billingCycleSelect = document.getElementById("billingCycleMonth");
+            var errorMsg = document.getElementById("billingCyclePopUp_Error");
+            var fieldError = document.getElementById("billingCycle_Error");
+
+            //if (billingCycleSelect) billingCycleSelect.value = "";
+            if (errorMsg) errorMsg.innerHTML = "";
+            if (fieldError) fieldError.innerHTML = "";
+        } catch (error) {
+            console.error("Error in BillingCycleInterviewers:", error);
+            alert("Error opening billing cycle popup: " + error.message);
+        }
+    }
+
+    function SaveBillingCycle() {
+        var billingCycle = document.getElementById("billingCycleMonth").value;
+
+        if (billingCycle == "" || billingCycle == null) {
+            document.getElementById("billingCyclePopUp_Error").innerHTML = "Please select a billing cycle.";
+            document.getElementById("billingCycle_Error").innerHTML = "This field is required.";
+            return;
+        }
+        else {
+            document.getElementById("billingCyclePopUp_Error").innerHTML = "";
+            document.getElementById("billingCycle_Error").innerHTML = "";
+        }
+
+        // TODO: Add your save logic here - make an AJAX call or redirect to save the billing cycle
+         $.ajax({
+             type: "POST",
+             url: "/IRF/SaveIRFInterviewerBillingCycle",
+             data: { 'irfId': billingCycleIrfId, 'billingCycle': billingCycle },
+             success: function (data) {
+                 // Handle success
+                 var modal = document.getElementById("billingCycleModal");
+                 modal.style.display = "none";
+                 alert(data);
+             },
+             error: function () {
+                 document.getElementById("billingCyclePopUp_Error").innerHTML = "Error saving billing cycle. Please try again.";
+             }
+         });
+
+        // For now, just close the modal
+    @* var modal = document.getElementById("billingCycleModal");
+        modal.style.display = "none"; *@
+
+    }
+
     function InvoicePopUp(id, irfName) {
         irfId = id;
         irfName = irfName;
@@ -3268,7 +3393,7 @@
             $('.dropdown-content').not(relatedDiv).hide('fast');
 
         }
-        
+
 
     });
 </script>
