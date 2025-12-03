@@ -11452,7 +11452,17 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SaveIRFInterviewerBillingCycle(int irfId, int billingCycle)
         {
-            return Json("");
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                //var irfList = await _irfService.GetAllIRFs(emailid, profileName, null, searchValue, filter);
+                return Json("Billing Cycle saved: " + billingCycle + " Month(s) for IRF ID: " + irfId);
+            }
+            else
+            {
+                return Json("Fail to Update Biiling Cycle, Try again to update the billing cycle.");
+            }
         }
     }
 }

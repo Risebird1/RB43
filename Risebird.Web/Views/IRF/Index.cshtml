@@ -2549,7 +2549,7 @@
                  // Handle success
                  var modal = document.getElementById("billingCycleModal");
                  modal.style.display = "none";
-                 alert("Billing Cycle saved: " + billingCycle + " Month(s) for IRF ID: " + billingCycleIrfId);
+                 alert(data);
              },
              error: function () {
                  document.getElementById("billingCyclePopUp_Error").innerHTML = "Error saving billing cycle. Please try again.";
@@ -2557,9 +2557,9 @@
          });
 
         // For now, just close the modal
-        @* var modal = document.getElementById("billingCycleModal");
+    @* var modal = document.getElementById("billingCycleModal");
         modal.style.display = "none"; *@
-        
+
     }
 
     function InvoicePopUp(id, irfName) {
