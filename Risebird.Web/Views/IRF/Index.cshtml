@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.IRFViewModel
+@model Risebird.Entities.ViewModel.IRFViewModel
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -546,10 +546,12 @@
                                                                         {
   <div class="dropdown-content-menu" onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');"><span class="fas fa-edit" style="left:2px;top:-1px;position: relative;font-size:13px; margin-right: 8px; color: #6e7fa9;"></span>Edit IRF</div>                                                                           
 
-                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="javascript:EditIRFInterviewers('@item.id');" title="Edit IRF Interviewers"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
-                                                                                    
+                                                                            <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="event.stopPropagation(); javascript:BillingCycleInterviewers('@item.id');" title="Interviewer Billing Cycle"><svg style="position:relative;left:2px; top:0px;margin-right:10px;" fill="#6e7fa9" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>Edit Interviewer</div>
+                                                                                <div style="width:100%;float:left" class="dropdown-content-menu" onclick="event.stopPropagation(); javascript:BillingCycleInterviewers('@item.id');" title="Interviewer Billing Cycle">
+                                                                                    <i style="font-size:14px;font-size: 13px; margin-right:7px;color: #6e7fa9;" class="fa fa-clone"></i>Interviewer Billing Cycle
+                                                                                </div>
 
-                                                                            @if (Model.Profile != "SeniorInterviewerManagement")
+                                                                                @if (Model.Profile != "SeniorInterviewerManagement")
                                                                             {
                                                                                 @*<button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
                                                                 <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
@@ -1101,6 +1103,58 @@
                                             <hr />
                                             <div class="col-md-12 mc-button-area">
                                                 <input style="box-shadow:none!important" type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="billingCycleModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1050; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(250, 250, 250)" d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>
+                                            </div>
+                                            <h5 class="modal-title pull-left">Interviewer Billing Cycle</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="billingCyclePopUp">&times;</span>
+                                        </button>
+
+
+
+
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="billingCycleMonth">
+                                                            Select Billing Cycle Month
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="billingCycleMonth" name="billingCycleMonth" class="form-control">
+                                                                <option value="">-- Select Billing Cycle Month --</option>
+                                                                <option value="1">1 Month</option>
+                                                                <option value="2">2 Month</option>
+                                                                <option value="3">3 Month</option>
+                                                            </select>
+                                                            <label class="text-danger" id="billingCycle_Error" style="color:red"></label>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label class="text-danger" id="billingCyclePopUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+
+
+                                            <hr />
+                                            <div class="col-md-12 mc-button-area">
+                                                <input style="box-shadow:none!important" type="button" onclick="SaveBillingCycle()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSaveBillingCycle" value="Save">
                                             </div>
                                         </div>
 
@@ -2437,15 +2491,85 @@
 <script>
     var irfId = "";
     var irfName = "";
+    var billingCycleIrfId = "";
     var span = document.getElementById("invoicePopUp");
     span.onclick = function () {
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
 
+    var billingCycleSpan = document.getElementById("billingCyclePopUp");
+    if (billingCycleSpan) {
+        billingCycleSpan.onclick = function () {
+            var modal = document.getElementById("billingCycleModal");
+            modal.style.display = "none";
+        }
+    }
+
 
 </script>
 <script>
+    function BillingCycleInterviewers(id) {
+        try {
+            billingCycleIrfId = id;
+            // Get the modal
+            var modal = document.getElementById("billingCycleModal");
+            if (!modal) {
+                console.error("Modal 'billingCycleModal' not found");
+                alert("Error: Modal not found. Please refresh the page.");
+                return;
+            }
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            // Reset form
+            var billingCycleSelect = document.getElementById("billingCycleMonth");
+            var errorMsg = document.getElementById("billingCyclePopUp_Error");
+            var fieldError = document.getElementById("billingCycle_Error");
+            
+            if (billingCycleSelect) billingCycleSelect.value = "";
+            if (errorMsg) errorMsg.innerHTML = "";
+            if (fieldError) fieldError.innerHTML = "";
+        } catch (error) {
+            console.error("Error in BillingCycleInterviewers:", error);
+            alert("Error opening billing cycle popup: " + error.message);
+        }
+    }
+
+    function SaveBillingCycle() {
+        var billingCycle = document.getElementById("billingCycleMonth").value;
+        
+        if (billingCycle == "" || billingCycle == null) {
+            document.getElementById("billingCyclePopUp_Error").innerHTML = "Please select a billing cycle.";
+            document.getElementById("billingCycle_Error").innerHTML = "This field is required.";
+            return;
+        }
+        else {
+            document.getElementById("billingCyclePopUp_Error").innerHTML = "";
+            document.getElementById("billingCycle_Error").innerHTML = "";
+        }
+        
+        // TODO: Add your save logic here - make an AJAX call or redirect to save the billing cycle
+        // Example:
+        // $.ajax({
+        //     type: "POST",
+        //     url: "/IRF/SaveBillingCycle",
+        //     data: { 'irfId': billingCycleIrfId, 'billingCycle': billingCycle },
+        //     success: function (data) {
+        //         // Handle success
+        //         var modal = document.getElementById("billingCycleModal");
+        //         modal.style.display = "none";
+        //     },
+        //     error: function () {
+        //         document.getElementById("billingCyclePopUp_Error").innerHTML = "Error saving billing cycle. Please try again.";
+        //     }
+        // });
+        
+        // For now, just close the modal
+        var modal = document.getElementById("billingCycleModal");
+        modal.style.display = "none";
+        alert("Billing Cycle saved: " + billingCycle + " Month(s) for IRF ID: " + billingCycleIrfId);
+    }
+
     function InvoicePopUp(id, irfName) {
         irfId = id;
         irfName = irfName;
