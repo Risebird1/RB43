@@ -11456,7 +11456,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                //var irfList = await _irfService.GetAllIRFs(emailid, profileName, null, searchValue, filter);
+                await _irfService.UpdateIRFInterviewerBillingCycle(irfId, billingCycle, emailid);
                 return Json("Billing Cycle saved: " + billingCycle + " Month(s) for IRF ID: " + irfId);
             }
             else

@@ -10167,6 +10167,28 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> UpdateIRFInterviewerBillingCycle(int irfId, int billingCycle, string emailid)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", irfId);
+                dynamicParameters.Add("@billingCycle", billingCycle);
+                dynamicParameters.Add("@emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query(con, "usp_UpdateIRFInterviewerBillingCycle", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 

@@ -4752,5 +4752,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateIRFInterviewerBillingCycle(int irfId, int billingCycle, string emailid)
+        {
+            try
+            {
+                return await _irfRepository.UpdateIRFInterviewerBillingCycle(irfId, billingCycle, emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
