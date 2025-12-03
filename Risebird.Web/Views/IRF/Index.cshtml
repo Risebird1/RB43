@@ -2506,12 +2506,13 @@
              data: { 'irfId': billingCycleIrfId },
              success: function (data) {
                   billingcycle=data;
+                   if(billingcycle==0){
+                        billingcycle=3;
+                    }
+                document.getElementById("billingCycleMonth").value=billingcycle;
              }
             });
-            if(billingcycle==0){
-                billingcycle=3;
-            }
-            document.getElementById("billingCycleMonth").value=billingcycle;
+
             // Get the modal
             var modal = document.getElementById("billingCycleModal");
             if (!modal) {
