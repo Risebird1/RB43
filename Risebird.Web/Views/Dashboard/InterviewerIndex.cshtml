@@ -82,7 +82,28 @@
         </div>
     </div>
 </div>
+<marquee behavior="scroll" direction="left" scrollamount="5">
+    <b>
+        <span style="color:#5A2DFF; font-size:18px; font-weight:600; animation: fadeGlow 1s ease-in-out infinite;">
+            🔔 For any queries, contact us at Interviewer Support WhatsApp Number : 9667262444 or email us at
+            <span style="color:#FFD700;">support@risebird.io</span>
+        </span>
+    </b>
+</marquee>
 
+<style>
+    @@keyframes fadeGlow {
+        0%, 100% {
+            opacity: 1;
+            text-shadow: 0 0 2px #dedbe4;
+        }
+
+        50% {
+            opacity: 0.5;
+            text-shadow: 0 0 15px #bfb8da;
+        }
+    }
+</style>
 
 <div class="pt30">
 
@@ -878,6 +899,7 @@
         </div>
     </div>
 </div>
+
 @await Html.PartialAsync("~/Views/Common/_VideoRecording.cshtml")
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
