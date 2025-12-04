@@ -1,4 +1,4 @@
-﻿using ExcelDataReader.Log;
+using ExcelDataReader.Log;
 using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -119,6 +119,7 @@ namespace Risebird.Web.Controllers
                                 model.candidateName = meetingDetails.candidateName;
                                 model.AssistantId = meetingDetails.AssistantId;
                                 model.AIInterviewType = meetingDetails.AIInterviewType;
+                                model.showChatMessage = meetingDetails.showChatMessage;
                                 return View(model);
                             }
                             else
@@ -999,12 +1000,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                string VideoLink = string.Empty;
+                
+                // If there's a video file, upload it
                 if (model.VideoFile != null && model.VideoFile.Length > 0)
                 {
                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
                     if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska" || fileMimeType == "video/webm")
                     {
-
                         //var key = await _aWSRekognitionService.UploadVideoAsync(model.VideoFile);
                         //var faceDetection = await _aWSRekognitionService.AnalyzeVideoAsync(key);
                         var file = model.VideoFile;
@@ -1015,25 +1018,23 @@ namespace Risebird.Web.Controllers
                         var blob = containerRef.GetBlockBlobReference(filename);
                         string uploadedvideoFileURL = blob.Uri.ToString();
                         var sas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
-                        var VideoLink = string.Empty;
                         if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
                         {
                             VideoLink = uploadedvideoFileURL + "?" + sas;
                         }
-                        //Save in db with question.sessionid,videoLink,Datetime
-                        var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
-                        return result;
                     }
                     else
                     {
-                        return false;
+                        // Invalid video file type - still save the text response
+                        VideoLink = string.Empty;
                     }
-
                 }
-                else
-                {
-                    return false;
-                }
+                // If no video file but there's a text/code response, save it with empty VideoLink
+                // This allows text/code submissions to be saved successfully
+                
+                // Save in db with question.sessionid,videoLink,Datetime (VideoLink can be empty for text responses)
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
+                return result;
             }
             catch (Exception ex)
             {

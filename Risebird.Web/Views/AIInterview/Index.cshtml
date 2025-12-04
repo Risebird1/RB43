@@ -1,11 +1,24 @@
-﻿@using Risebird.Entities.ViewModel
+@using Risebird.Entities.ViewModel
 @using System.Text.Json
 @model ChatMessageViewModel
 @{
     ViewData["Title"] = "AI Interview";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 }
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
+   .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
+    padding:0 8px;
+    height: auto;
+    min-height: 70px;
+    }
+    .CodeMirror-lines {
+    padding: 0px 0;
+}
+.CodeMirror-code{
+    width:325px;
+}
     .rb-chatgpt-welcome {
         text-align: center;
         font-size: 1.8rem;
@@ -250,6 +263,119 @@
         color: #222;
         overflow-y: hidden;
         transition: height 0.1s ease;
+    }
+
+    /* CodeMirror Editor Styles */
+    .CodeMirror {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 1.1rem;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        height: auto;
+        min-height: 36px;
+        max-height: 300px;
+        color: #222;
+        line-height: 1.5;
+    }
+
+    /* Disabled CodeMirror styles */
+    .CodeMirror-readonly {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #f5f5f5;
+    }
+
+    .CodeMirror-readonly .CodeMirror-cursor {
+        display: none !important;
+    }
+
+    .CodeMirror-scroll {
+        max-height: 300px;
+        overflow-y: auto !important;
+        overflow-x: hidden;
+    }
+
+    .CodeMirror-focused {
+        outline: none !important;
+        border: 0px !important;
+        box-shadow: none !important;
+    }
+
+    .rb-chatbox-inputrow .CodeMirror {
+        padding: 0px 0;
+    }
+
+    /* Language selector button */
+    .code-lang-selector {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 0.85rem;
+        color: #666;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: all 0.2s;
+    }
+
+    CodeMirror-linenumber{
+        left:-4px;
+    }
+    .code-lang-selector:hover {
+        background: #e6f9f2;
+        border-color: #4eda92;
+        color: #333;
+    }
+
+    .code-lang-selector:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f0f0f0;
+        color: #999;
+    }
+
+    /* Language warning message */
+    .code-lang-warning {
+        position: absolute;
+        top: -45px;
+        left: 0;
+        right: 0;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        color: #856404;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        animation: slideDown 0.3s ease;
+        max-width: 100%;
+    }
+
+    .code-lang-warning.show {
+        display: block;
+    }
+
+    .code-lang-warning i {
+        margin-right: 6px;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .rb-chatbox-inputrow {
+        /* position: relative; */
     }
 
         .rb-chatbox-textarea:focus {
@@ -1071,20 +1197,47 @@
                         <input type="hidden" asp-for="AssistantId" />
                         <input type="hidden" asp-for="AIInterviewType" value="@Model.AIInterviewType" />
                         <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
-
+                        <input type="hidden" asp-for="showChatMessage" value="@Model.showChatMessage" />
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
-                        <div class="rb-chatbox-inputrow" style="display:none">
-                            <textarea asp-for="Message" class="rb-chatbox-textarea" placeholder="Answer anything..." rows="1" autocomplete="off" onpaste="return false;"></textarea>
+                        @if (Model.showChatMessage != true)
+                        {
+                            <div class="rb-chatbox-inputrow">
+                                <!-- Language warning message -->
+                                <div id="codeLangWarning" class="code-lang-warning">
+                                    <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
+                                </div>
+                                
+                                <!-- Hidden textarea for form submission -->
+                                <textarea asp-for="Message" id="messageTextarea" style="display: none;"></textarea>
+                                
+                                <!-- CodeMirror editor container -->
+                                <div id="codeEditor" style="flex: 1; min-height: 36px;"></div>
+                                
+                                <!-- Language selector -->
+                                <select id="codeLanguage" class="code-lang-selector" title="Select Programming Language">
+                                    <option value="text">Plain Text</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="java">Java</option>
+                                    <option value="csharp">C#</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="htmlmixed">HTML</option>
+                                    <option value="css">CSS</option>
+                                    <option value="sql">SQL</option>
+                                    <option value="xml">XML</option>
+                                    <option value="json">JSON</option>
+                                </select>
 
-                            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+                                <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                                <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
 
-                            <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
-                                <i class="fa fa-arrow-up"></i>
-                                <div class="rb-loading-spinner"></div>
-                            </button>
-                        </div>
+                                <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
+                                    <i class="fa fa-arrow-up"></i>
+                                    <div class="rb-loading-spinner"></div>
+                                </button>
+                            </div>
+                        }
                         <div class="min-vh">
                             @if (Model.IsAdaptive == true)
                             {
@@ -1398,12 +1551,33 @@
                 recordBtn.setAttribute('data-tooltip', 'Record Audio');
                 overlay.style.display = "flex";
                 stopRecording();
+                // Disable CodeMirror editor when audio recording stops
+                if (typeof codeEditor !== 'undefined' && codeEditor) {
+                    codeEditor.setOption('readOnly', true);
+                    codeEditor.setOption('placeholder', 'Start recording to enable code editor...');
+                }
+                // Disable language selector when audio recording stops
+                const langSelector = document.getElementById('codeLanguage');
+                if (langSelector) {
+                    langSelector.disabled = true;
+                }
                 // 🔥 Submit the form automatically
                 form.submit();
             };
 
             mediaRecorderAudio.start();
             startRecording();
+            // Enable CodeMirror editor when recording starts
+            if (typeof codeEditor !== 'undefined' && codeEditor) {
+                codeEditor.setOption('readOnly', false);
+                codeEditor.setOption('placeholder', 'Write your code here... (Select language or use Plain Text for any language)');
+                codeEditor.focus();
+            }
+            // Enable language selector when recording starts
+            const langSelector = document.getElementById('codeLanguage');
+            if (langSelector) {
+                langSelector.disabled = false;
+            }
             recordBtn.textContent = "☐";
             recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
         }
@@ -1449,28 +1623,38 @@
 
 
 <script>
-    // Chatbox textarea and send button logic (auto-resize, loading, submit, etc.)
-    document.addEventListener('DOMContentLoaded', function () {
-        const textarea = document.querySelector('.rb-chatbox-textarea');
+    // Update send button state based on editor content (defined early for use in other scripts)
+    function updateSendButton() {
         const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
-        const form = document.querySelector('.rb-chatbox-form');
-
-        function autoResizeTextarea() {
-            if (textarea) {
-                textarea.style.height = 'auto';
-                const newHeight = Math.min(Math.max(textarea.scrollHeight, 36), 120);
-                textarea.style.height = newHeight + 'px';
+        const messageTextarea = document.getElementById('messageTextarea');
+        
+        if (sendBtn && messageTextarea) {
+            const hasContent = messageTextarea.value.trim().length > 0;
+            sendBtn.disabled = !hasContent;
+            if (hasContent) {
+                sendBtn.style.opacity = '1';
+                sendBtn.style.transform = 'scale(1)';
+            } else {
+                sendBtn.style.opacity = '0.5';
+                sendBtn.style.transform = 'scale(1)';
             }
         }
+    }
+
+    // Chatbox CodeMirror editor and send button logic
+    document.addEventListener('DOMContentLoaded', function () {
+        const messageTextarea = document.getElementById('messageTextarea');
+        const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+        const form = document.querySelector('.rb-chatbox-form');
 
         function showLoading() {
             if (sendBtn) {
                 sendBtn.classList.add('loading');
                 sendBtn.disabled = true;
             }
-            if (textarea) {
-                textarea.classList.add('loading');
-                textarea.disabled = true;
+            // codeEditor will be set later, check if it exists
+            if (typeof codeEditor !== 'undefined' && codeEditor) {
+                codeEditor.setOption('readOnly', true);
             }
         }
 
@@ -1479,18 +1663,22 @@
                 sendBtn.classList.remove('loading');
                 sendBtn.disabled = false;
             }
-            if (textarea) {
-                textarea.classList.remove('loading');
-                textarea.disabled = false;
+            if (typeof codeEditor !== 'undefined' && codeEditor) {
+                codeEditor.setOption('readOnly', false);
             }
         }
 
         function submitForm() {
-            if (textarea && textarea.value.trim().length > 0 && form) {
+            // Sync CodeMirror content to textarea before submission
+            if (typeof codeEditor !== 'undefined' && codeEditor && messageTextarea) {
+                messageTextarea.value = codeEditor.getValue();
+            }
+            
+            if (messageTextarea && messageTextarea.value.trim().length > 0 && form) {
                 // Show confirmation dialog before submitting text answer
                 Swal.fire({
                     title: 'Submit Answer?',
-                    text: 'Are you sure you want to submit your text answer?',
+                    text: 'Are you sure you want to submit your answer?',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#4eda92',
@@ -1502,36 +1690,23 @@
                 }).then((result) => {
                     if (result.isConfirmed || result.value === true) {
                         // User confirmed - submit the form
-                showLoading();
-                if (sendBtn) {
-                    sendBtn.style.opacity = '0.7';
-                    sendBtn.style.transform = 'scale(0.95)';
-                }
-                form.submit();
+                        showLoading();
+                        if (sendBtn) {
+                            sendBtn.style.opacity = '0.7';
+                            sendBtn.style.transform = 'scale(0.95)';
+                        }
+                        form.submit();
                     } else {
                         // User cancelled - do nothing
-                        console.log("Text answer submission cancelled");
+                        console.log("Answer submission cancelled");
                     }
                 });
             }
         }
 
-        if (textarea && sendBtn) {
-            function toggleSendBtn() {
-                const hasContent = textarea.value.trim().length > 0;
-                sendBtn.disabled = !hasContent;
-                if (hasContent) {
-                    sendBtn.style.opacity = '1';
-                    sendBtn.style.transform = 'scale(1)';
-                } else {
-                    sendBtn.style.opacity = '0.5';
-                    sendBtn.style.transform = 'scale(1)';
-                }
-            }
-            textarea.addEventListener('input', toggleSendBtn);
-            textarea.addEventListener('input', autoResizeTextarea);
-            toggleSendBtn();
-            autoResizeTextarea();
+        // Initialize send button state
+        if (sendBtn) {
+            updateSendButton();
             hideLoading();
         }
 
@@ -1542,14 +1717,13 @@
             });
         }
 
-        if (textarea && form) {
-            textarea.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    submitForm();
-                }
-            });
+        // Handle form submission - will be set up after codeEditor is initialized
+        if (form) {
             form.addEventListener('submit', function () {
+                // Sync editor content before form submission
+                if (typeof codeEditor !== 'undefined' && codeEditor && messageTextarea) {
+                    messageTextarea.value = codeEditor.getValue();
+                }
                 // Keep loading state active during form submission
             });
             form.addEventListener('error', function () {
@@ -1614,6 +1788,17 @@
         mediaRecorder.start();
         isRecording = true;
         showRecordingOverlay();
+        // Enable CodeMirror editor when recording starts
+        if (typeof codeEditor !== 'undefined' && codeEditor) {
+            codeEditor.setOption('readOnly', false);
+            codeEditor.setOption('placeholder', 'Write your code here... (Select language or use Plain Text for any language)');
+            codeEditor.focus();
+        }
+        // Enable language selector when recording starts
+        const langSelector = document.getElementById('codeLanguage');
+        if (langSelector) {
+            langSelector.disabled = false;
+        }
         btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
         btnRecordToggle.className = 'rb-record-btn rb-recording';
         btnRecord.style.display = 'block';
@@ -1625,6 +1810,16 @@
         }
         isRecording = false;
         hideRecordingOverlay();
+        // Disable CodeMirror editor when recording stops
+        if (typeof codeEditor !== 'undefined' && codeEditor) {
+            codeEditor.setOption('readOnly', true);
+            codeEditor.setOption('placeholder', 'Start recording to enable code editor...');
+        }
+        // Disable language selector when recording stops
+        const langSelector = document.getElementById('codeLanguage');
+        if (langSelector) {
+            langSelector.disabled = true;
+        }
         btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
         btnRecordToggle.className = 'rb-record-btn';
         btnRecord.style.display = 'none';
@@ -1945,4 +2140,328 @@
             }
         });
     }
+</script>
+
+<!-- CodeMirror JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- CodeMirror Mode Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    // Initialize CodeMirror Editor
+    let codeEditor;
+    let currentLanguage = 'text';
+    let languageValidationEnabled = true;
+    let validationTimeout;
+    
+    // Language-specific patterns for validation
+    const languagePatterns = {
+        'javascript': {
+            keywords: ['function', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'return', 'class', 'import', 'export', 'async', 'await'],
+            operators: ['===', '!==', '&&', '||', '=>'],
+            syntax: ['{', '}', '(', ')', '[', ']', ';', '=', '==']
+        },
+        'python': {
+            keywords: ['def', 'class', 'if', 'elif', 'else', 'for', 'while', 'import', 'from', 'return', 'try', 'except', 'with', 'as', 'lambda'],
+            operators: ['==', '!=', 'and', 'or', 'not', 'in', 'is'],
+            syntax: [':', '(', ')', '[', ']', '{', '}', '=', '#']
+        },
+        'java': {
+            keywords: ['public', 'private', 'class', 'interface', 'extends', 'implements', 'static', 'void', 'return', 'if', 'else', 'for', 'while'],
+            operators: ['==', '!=', '&&', '||', 'instanceof'],
+            syntax: ['{', '}', '(', ')', '[', ']', ';', '=', '.', '@@']
+        },
+        'csharp': {
+            keywords: ['public', 'private', 'class', 'interface', 'namespace', 'using', 'static', 'void', 'return', 'if', 'else', 'for', 'foreach', 'while'],
+            operators: ['==', '!=', '&&', '||', '=>'],
+            syntax: ['{', '}', '(', ')', '[', ']', ';', '=', '.', '@@']
+        },
+        'cpp': {
+            keywords: ['#include', 'using', 'namespace', 'class', 'public', 'private', 'int', 'void', 'return', 'if', 'else', 'for', 'while'],
+            operators: ['==', '!=', '&&', '||', '::', '->'],
+            syntax: ['{', '}', '(', ')', '[', ']', ';', '=', '<', '>', '#']
+        },
+        'sql': {
+            keywords: ['SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'TABLE', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'GROUP BY', 'ORDER BY'],
+            operators: ['=', '!=', '<>', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN'],
+            syntax: ['(', ')', ',', ';', "'", '"']
+        },
+        'htmlmixed': {
+            keywords: ['<html', '<head', '<body', '<div', '<span', '<p', '<a', '<img', '<script', '<style'],
+            operators: [],
+            syntax: ['<', '>', '/', '=', '"', "'"]
+        },
+        'css': {
+            keywords: ['@@media', '@@import', '@@keyframes', 'margin', 'padding', 'color', 'background', 'font', 'display', 'position'],
+            operators: [':', ';', '{', '}', '!important'],
+            syntax: [':', ';', '{', '}', '(', ')', '#', '.']
+        },
+        'xml': {
+            keywords: [],
+            operators: [],
+            syntax: ['<', '>', '/', '=', '"', "'", '<?', '?>']
+        },
+        'json': {
+            keywords: [],
+            operators: [],
+            syntax: ['{', '}', '[', ']', ':', ',', '"']
+        }
+    };
+
+    // Validate code against selected language
+    function validateCodeLanguage(code, language) {
+        if (language === 'text' || !languageValidationEnabled) {
+            return { valid: true, message: '' };
+        }
+
+        const patterns = languagePatterns[language];
+        if (!patterns) {
+            return { valid: true, message: '' };
+        }
+
+        const codeLower = code.toLowerCase();
+        let foundKeywords = 0;
+        let foundSyntax = 0;
+
+        // Check for language-specific keywords
+        patterns.keywords.forEach(keyword => {
+            const regex = new RegExp('\\b' + keyword.toLowerCase() + '\\b', 'g');
+            if (regex.test(codeLower)) {
+                foundKeywords++;
+            }
+        });
+
+        // Check for language-specific syntax
+        patterns.syntax.forEach(syntax => {
+            if (code.includes(syntax)) {
+                foundSyntax++;
+            }
+        });
+
+        // If no language-specific patterns found, it might be wrong language
+        if (foundKeywords === 0 && foundSyntax === 0 && code.trim().length > 10) {
+            return {
+                valid: false,
+                message: `Code doesn't appear to be ${language.toUpperCase()}. Switch to "Plain Text" to use any language.`
+            };
+        }
+
+        // Check for patterns from other languages (conflict detection)
+        const otherLanguages = Object.keys(languagePatterns).filter(lang => lang !== language);
+        for (let otherLang of otherLanguages) {
+            const otherPatterns = languagePatterns[otherLang];
+            let otherKeywordsFound = 0;
+            
+            otherPatterns.keywords.slice(0, 3).forEach(keyword => {
+                const regex = new RegExp('\\b' + keyword.toLowerCase() + '\\b', 'g');
+                if (regex.test(codeLower)) {
+                    otherKeywordsFound++;
+                }
+            });
+
+            // If found multiple keywords from another language, warn user
+            if (otherKeywordsFound >= 2 && foundKeywords < 2) {
+                return {
+                    valid: false,
+                    message: `Code appears to be ${otherLang.toUpperCase()} but ${language.toUpperCase()} is selected. Switch to "Plain Text" or select the correct language.`
+                };
+            }
+        }
+
+        return { valid: true, message: '' };
+    }
+
+    // Show/hide language warning
+    function showLanguageWarning(message) {
+        const warning = document.getElementById('codeLangWarning');
+        if (warning) {
+            warning.textContent = '⚠️ ' + message;
+            warning.classList.add('show');
+        }
+    }
+
+    function hideLanguageWarning() {
+        const warning = document.getElementById('codeLangWarning');
+        if (warning) {
+            warning.classList.remove('show');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const editorContainer = document.getElementById('codeEditor');
+        const messageTextarea = document.getElementById('messageTextarea');
+        const langSelector = document.getElementById('codeLanguage');
+        
+        // Check if CodeMirror is loaded
+        if (typeof CodeMirror === 'undefined') {
+            console.error('CodeMirror library not loaded. Please check CDN links.');
+            return;
+        }
+        
+        if (editorContainer && messageTextarea) {
+            try {
+                // Initialize CodeMirror - disabled by default until recording starts
+                codeEditor = CodeMirror(editorContainer, {
+                value: messageTextarea.value || '',
+                mode: 'text',
+                theme: 'default',
+                lineNumbers: true,
+                lineWrapping: true,
+                indentUnit: 4,
+                indentWithTabs: false,
+                smartIndent: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                styleActiveLine: true,
+                readOnly: true, // Disabled by default - will be enabled when recording starts
+                placeholder: 'Start recording to enable code editor...',
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete",
+                    "Tab": function(cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection("add");
+                        } else {
+                            cm.replaceSelection("    ", "end");
+                        }
+                    },
+                    "Shift-Tab": function(cm) {
+                        cm.indentSelection("subtract");
+                    }
+                }
+            });
+
+            // Sync CodeMirror content to hidden textarea on change
+            codeEditor.on('change', function() {
+                const code = codeEditor.getValue();
+                messageTextarea.value = code;
+                updateSendButton();
+                
+                // Debounce validation to avoid performance issues
+                clearTimeout(validationTimeout);
+                validationTimeout = setTimeout(function() {
+                    // Validate language if not plain text
+                    if (currentLanguage !== 'text' && languageValidationEnabled && code.trim().length > 10) {
+                        const validation = validateCodeLanguage(code, currentLanguage);
+                        if (!validation.valid) {
+                            showLanguageWarning(validation.message);
+                        } else {
+                            hideLanguageWarning();
+                        }
+                    } else if (code.trim().length === 0) {
+                        hideLanguageWarning();
+                    }
+                }, 500); // Wait 500ms after user stops typing
+            });
+
+            // Disable language selector by default (will be enabled when recording starts)
+            if (langSelector) {
+                langSelector.disabled = true;
+            }
+
+            // Language selector change handler
+            if (langSelector) {
+                langSelector.addEventListener('change', function() {
+                    const mode = this.value;
+                    currentLanguage = mode;
+                    
+                    // Map language names to CodeMirror modes
+                    const modeMap = {
+                        'javascript': 'javascript',
+                        'python': 'python',
+                        'java': 'text/x-java',
+                        'csharp': 'text/x-csharp',
+                        'cpp': 'text/x-c++src',
+                        'htmlmixed': 'htmlmixed',
+                        'css': 'css',
+                        'sql': 'sql',
+                        'xml': 'xml',
+                        'json': { name: 'javascript', json: true },
+                        'text': 'text'
+                    };
+                    
+                    if (modeMap[mode]) {
+                        codeEditor.setOption('mode', modeMap[mode]);
+                    }
+                    
+                    // Clear warning when switching languages
+                    hideLanguageWarning();
+                    
+                    // Validate existing code when language changes
+                    const code = codeEditor.getValue();
+                    if (mode !== 'text' && languageValidationEnabled && code.trim().length > 0) {
+                        const validation = validateCodeLanguage(code, mode);
+                        if (!validation.valid) {
+                            showLanguageWarning(validation.message);
+                        }
+                    }
+                });
+            }
+
+            // Auto-resize editor
+            function autoResizeEditor() {
+                codeEditor.setSize(null, 'auto');
+                const scrollHeight = codeEditor.getScrollInfo().height;
+                const newHeight = Math.min(Math.max(scrollHeight, 36), 300);
+                codeEditor.getWrapperElement().style.height = newHeight + 'px';
+                codeEditor.refresh();
+            }
+
+            codeEditor.on('change', autoResizeEditor);
+            codeEditor.on('focus', autoResizeEditor);
+            
+            // Initial resize
+            setTimeout(autoResizeEditor, 100);
+
+            // Set up Ctrl+Enter to submit after editor is initialized
+            const form = document.querySelector('.rb-chatbox-form');
+            if (form) {
+                codeEditor.setOption('extraKeys', {
+                    ...codeEditor.getOption('extraKeys'),
+                    "Ctrl-Enter": function() {
+                        const messageTextarea = document.getElementById('messageTextarea');
+                        if (messageTextarea) {
+                            messageTextarea.value = codeEditor.getValue();
+                        }
+                        const submitBtn = document.querySelector('.rb-chatbox-sendbtn');
+                        if (submitBtn) {
+                            submitBtn.click();
+                        }
+                    },
+                    "Cmd-Enter": function() {
+                        const messageTextarea = document.getElementById('messageTextarea');
+                        if (messageTextarea) {
+                            messageTextarea.value = codeEditor.getValue();
+                        }
+                        const submitBtn = document.querySelector('.rb-chatbox-sendbtn');
+                        if (submitBtn) {
+                            submitBtn.click();
+                        }
+                    }
+                });
+            }
+            } catch (error) {
+                console.error('Error initializing CodeMirror:', error);
+                // Fallback: show textarea if CodeMirror fails
+                if (editorContainer) {
+                    editorContainer.innerHTML = '<textarea id="fallbackTextarea" style="width:100%;min-height:36px;border:none;outline:none;padding:10px 0;font-size:1.1rem;" placeholder="Write your code here..."></textarea>';
+                    const fallbackTextarea = document.getElementById('fallbackTextarea');
+                    if (fallbackTextarea && messageTextarea) {
+                        fallbackTextarea.addEventListener('input', function() {
+                            messageTextarea.value = fallbackTextarea.value;
+                            updateSendButton();
+                        });
+                    }
+                }
+            }
+        }
+    });
 </script>
