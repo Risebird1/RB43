@@ -1517,6 +1517,9 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
 
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsTechQC", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsTechQC"].Value = irfDetails.IsTechQC;
+
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
                     cmdCreateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;
 
@@ -2540,6 +2543,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsTechQC", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsTechQC"].Value = irfDetails.IsTechQC;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechRubricType", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@TechRubricType"].Value = irfDetails.TechRubricType;

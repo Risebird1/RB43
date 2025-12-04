@@ -70,6 +70,7 @@ CREATE TABLE [dbo].[IRF](
             [AIInterviewType] [int] null,
             [OpenAIAssistantId]  [VARCHAR](60) null,
             [InterviewerBillingCycle]  [int] null,
+            [IsTechQC]  [bit] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -639,6 +640,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add InterviewerBillingCycle int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsTechQC')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsTechQC bit
 END
 
 END
