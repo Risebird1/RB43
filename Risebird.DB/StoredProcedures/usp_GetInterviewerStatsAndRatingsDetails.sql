@@ -72,13 +72,14 @@ DECLARE @tbl_ResultInterviews TABLE (
 	irfId int,
 	isTechQC bit,
 	JDTiltle Varchar(200),
-	ProjectUniqueid Varchar(200)
+	ProjectUniqueid Varchar(200),
+	TechQCRequired bit
 )
 
 
 INSERT INTO @tbl_ResultInterviews    
 select im.id, im.interviewDate, im.candidateEmail, im.SkillChannel, cl.[Name], ic.MeetingStatus, 
-ic.InterviewStatus, @type, tijt.JoiningTime,IRF.id as irfId,ISNULL(tqd.IsActive,0) as isTechQC,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,pr.ProjectUniqueid
+ic.InterviewStatus, @type, tijt.JoiningTime,IRF.id as irfId,ISNULL(tqd.IsActive,0) as isTechQC,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,pr.ProjectUniqueid,ISNULL(IRF.IsTechQC,0) as TechQCRequired
 from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
 join IRF on irf.IRFId = im.SkillChannel
