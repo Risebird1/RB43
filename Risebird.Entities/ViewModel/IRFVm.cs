@@ -207,7 +207,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Auto cancel candidate interview")]
         public bool IsMeetingAutoCancelled { get; set; }
 
-        public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.Zoho };
+        public string[] MeetingPlatformOptions = new[] { /*MeetingPlatforms.Zoom,*/ MeetingPlatforms.Zoho };
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
         public string SMEAudioCommentLink { get; set; }
@@ -279,6 +279,8 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }
+        [DisplayName("Tech QC Required")]
+        public bool IsTechQC { get; set; }
 
     }
     public class InterviewerIds
@@ -417,6 +419,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
         public string OpenAIAssistantId { get; set; }
+        public int InterviewerBillingCycle { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

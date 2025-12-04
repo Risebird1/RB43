@@ -61,7 +61,8 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 --@FixedAmount int = null,  
 @IsNewSkillChannel bit = null,  
 @FlatRate int,  
-@IsVideoRequired bit,  
+@IsVideoRequired bit, 
+@IsTechQC bit,
 @TechRubricType varchar(20) = null,  
 @IsAIInterview bit,
 @AIInterviewType int,
@@ -116,7 +117,8 @@ Begin
        ,[TechRubricType]
 	   ,[IsAIInterview]
 	   ,[AIInterviewType]
-	   ,[MeetingPlatform])  
+	   ,[MeetingPlatform]
+	   ,[IsTechQC])  
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -161,7 +163,8 @@ Begin
        @TechRubricType,
 	   @IsAIInterview,
 	   @AIInterviewType,
-	   @MeetingPlatform)  
+	   @MeetingPlatform,
+	   @IsTechQC)  
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        

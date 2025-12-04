@@ -902,7 +902,7 @@ namespace Risebird.Web.Controllers
                         irfDetails.EndDate = DateTime.Now.AddMonths(3);
 
                         //Start: Auto Generate Scheduling Link 
-                        var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF", isAIInterview : irfDetails.IsAIInterview);
+                        var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF", isAIInterview: irfDetails.IsAIInterview);
                         irfDetails.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         await checkSkillSetandCombine(irfDetails);
@@ -4889,7 +4889,7 @@ namespace Risebird.Web.Controllers
             //List<Skill> skills = await _skillService.GetSkills();
             //List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
             //model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
-            if(string.IsNullOrEmpty(model._skilldetails.PrimarySkill))
+            if (string.IsNullOrEmpty(model._skilldetails.PrimarySkill))
             {
                 model._skilldetails.PrimarySkill = "misc";
 
@@ -6727,7 +6727,7 @@ namespace Risebird.Web.Controllers
             model_Second.Add(new daytimes_second { Daytype = "saturday", dayCheck = true, dayvalue = sun });
             var model_report = new daytimes_report();
             model_report.setvalue = model_Second;
-            if(isAIInterview.HasValue && isAIInterview.Value)
+            if (isAIInterview.HasValue && isAIInterview.Value)
             {
                 model_report.StartDate = eventStartdate;
                 model_report.duration = 15;
@@ -6744,7 +6744,7 @@ namespace Risebird.Web.Controllers
             model_report.EndDate = eventStartdate.AddDays(60);
             model_report.EventName = EventName;
             model_report.SkillChannel = SkillChannel;
-            
+
             model_report.Concurrency = 10;
             model_report.TimeSlotDays = 6;
             model_report.MeetingPlatform = meetingPlatform;
@@ -7788,7 +7788,7 @@ namespace Risebird.Web.Controllers
                     {
                         var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
-                        if(!model.IsAIInterview)
+                        if (!model.IsAIInterview)
                         {
                             FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
 
@@ -7891,7 +7891,7 @@ namespace Risebird.Web.Controllers
                         {
                             var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
-                            if(!model.IsAIInterview)
+                            if (!model.IsAIInterview)
                             {
                                 FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
                             }
@@ -7900,7 +7900,7 @@ namespace Risebird.Web.Controllers
                             //    //proctor: same mail only to interviewers with IsProctor set to true
                             //}
 
-                                TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorCloneTemplateMessage2"] = model.CalendlyLink;
                             //TempData["SuccessErrorCloneTemplateMessage3"] = "https://portal.risebird.io/IRF/Index";
                             //return RedirectToAction("List", "Template");
@@ -8687,7 +8687,7 @@ namespace Risebird.Web.Controllers
                     return View(model);
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
-                
+
                 model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfid);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
@@ -11449,6 +11449,26 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [HttpPost]
+        public async Task<JsonResult> FetchIRFInterviewerBillingCycle(int irfId)
+        {
+            var billingCycle = await _irfService.FetchIRFInterviewerBillingCycle(irfId);
+            return Json(billingCycle);
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveIRFInterviewerBillingCycle(int irfId, int billingCycle)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                await _irfService.UpdateIRFInterviewerBillingCycle(irfId, billingCycle, emailid);
+                return Json("Billing Cycle saved: " + billingCycle + " Month(s) for IRF ID: " + irfId);
+            }
+            else
+            {
+                return Json("Fail to Update Biiling Cycle, Try again to update the billing cycle.");
+            }
+        }
     }
 }

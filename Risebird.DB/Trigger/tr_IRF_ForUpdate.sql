@@ -29,7 +29,7 @@ BEGIN
  AssessmentGroupId,	IsQCRequired,	IsJoinabilitySelectabilityRequired,	IsGeneralSkillRequired,
  AudioComment,	CreatedFromTemplateId,	ModifiedOn,	MeetingPlatform,
  SendIntervieweravailbilityOn,	IsAadhaarVerificationRequired,	IsCandidateavailability,	IsMeetingNotificationSend, IsMeetingAutoCancelled,id,
- ActionType, PerformedAt,InterviewDuration)
+ ActionType, PerformedAt,InterviewDuration,InterviewerBillingCycle)
 
  (select IRFId,	ClientName,	JDTiltle,	CompanyType,	ClientId,	JobCountry, StartDate,
  EndDate,	JDLink,	NoOfPosition,	NoOfIntterview,	RisebirdHr,	PerMintuteRate,
@@ -39,7 +39,7 @@ BEGIN
  AssessmentGroupId,	IsQCRequired,	IsJoinabilitySelectabilityRequired,	IsGeneralSkillRequired,
  AudioComment,	CreatedFromTemplateId,	ModifiedOn,	MeetingPlatform,
  SendIntervieweravailbilityOn,	IsAadhaarVerificationRequired,	IsCandidateavailability,	IsMeetingNotificationSend, IsMeetingAutoCancelled,id,
- 'Updated', DATEADD(MINUTE, 330, getdate()),InterviewDuration
+ 'Updated', DATEADD(MINUTE, 330, getdate()),InterviewDuration,InterviewerBillingCycle
  from IRF where id = @id) 
  
 
