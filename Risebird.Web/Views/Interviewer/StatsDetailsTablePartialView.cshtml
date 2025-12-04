@@ -125,23 +125,26 @@
                             @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                             {
                                 <td>
-                                    <div class="form-group">
-                                        <div class="switch-btn">
-                                            @* <span class="on-off">Off</span> *@
-                                            <div class="material-toggle">
-                                                @if (item.isTechQC)
-                                                {
-                                                    <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,false)" checked="checked" value="false" name="Move To Tech QC">
-                                                }
-                                                else
-                                                {
-                                                    <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,true)" value="false" name="Move To Tech QC">
-                                                }
-                                                <label for="MoveToCP_@item.interviewId" class=""></label>
+                                    @if (item.TechQCRequired)
+                                    {
+                                        <div class="form-group">
+                                            <div class="switch-btn">
+                                                @* <span class="on-off">Off</span> *@
+                                                <div class="material-toggle">
+                                                    @if (item.isTechQC)
+                                                    {
+                                                        <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,false)" checked="checked" value="false" name="Move To Tech QC">
+                                                    }
+                                                    else
+                                                    {
+                                                        <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,true)" value="false" name="Move To Tech QC">
+                                                    }
+                                                    <label for="MoveToCP_@item.interviewId" class=""></label>
+                                                </div>
+                                                @* <span class="on-off">On</span> *@
                                             </div>
-                                            @* <span class="on-off">On</span> *@
                                         </div>
-                                    </div>
+                                    }
                                 </td>
                             }
 
