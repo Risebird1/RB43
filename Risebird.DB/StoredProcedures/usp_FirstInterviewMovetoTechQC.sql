@@ -13,17 +13,17 @@ AS
 BEGIN
 Declare @IRFId varchar(15)
 Declare @interviewer varchar(150)
-Declare @firstinterviewid int
-Select @IRFId=IRFId,@interviewer=interviewer From InterviewMeetings where id=@interviewid
+Declare @firstinterviewid int,@IRFTechQC bit
+Select @IRFId=im.IRFId,@interviewer=im.interviewer,@IRFTechQC=ISNULL(IRF.IsTechQC,0) From InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewid
 ;with CTE as(Select top 1 im.id,im.IRFId,im.interviewer,im.Interviewdate,ic.MeetingStatus from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId where IRFId=@IRFId and interviewer=@interviewer and confirmationStatus=1 
 and (InterviewStatus=2 or InterviewStatus=3 or InterviewStatus=4 or InterviewStatus=5) 
 order by interviewdate)
 Select @firstinterviewid=id From CTE
 
-if(@interviewid=@firstinterviewid)
+if(@interviewid=@firstinterviewid and @IRFTechQC=1)
 begin
 declare @Createdon datetime=DateAdd(MInute,330,Getdate())
 Exec usp_SaveTechQCDetails 'System',@interviewid,1,@Createdon
 end
-END
+END    
 GO
