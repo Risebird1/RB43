@@ -1,0 +1,1989 @@
+@model Risebird.Entities.ViewModel.InterviewReport
+@using System.Text.RegularExpressions
+@using Risebird.CommonHelper;
+@using Risebird.Entities.Enum
+@using Microsoft.Extensions.Configuration;
+@using Risebird.Entities.Data
+@inject IConfiguration configuration
+@{
+    ViewData["Title"] = "Interview Report";
+    ViewBag.PageHeader = "Interview Report";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+
+    var meetingStatusList = new List<SelectListItem>();
+    meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
+    var interviewStatusList = new List<SelectListItem>();
+    var hasDistinctParticipants = Model.HasDistinctParticipants;
+
+    bool? isClient = ViewBag.IsClient as bool?;
+    bool? isClientSelected = ViewBag.IsClientSelected as bool?;
+}
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
+<link href="~/newassets/css/report.css?v=2024" rel="stylesheet" />
+
+<style>
+    .tox-notifications-container {
+        display: none
+    }
+
+    .navbar {
+        z-index: 1 !important;
+    }
+
+    .less {
+        color: red !important
+    }
+
+    .more {
+        color: green !important;
+    }
+
+    .interviewercomment {
+        width: auto;
+        overflow: hidden;
+    }
+
+    .readmore {
+        height: auto !important;
+    }
+
+    input[type=number]::-webkit-inner-spin-button {
+        opacity: 1
+    }
+
+    #InterviewerInsightsModel {
+        margin-top: 30px !important;
+    }
+
+    #ReliabilityModel {
+        margin-top: 30px !important;
+    }
+
+    #ReliabilityModel {
+        margin-top: 30px !important;
+    }
+
+    #InsightsDetailsView {
+        margin-top: 30px !important;
+    }
+
+</style>
+
+@if (ViewBag.PageStatus == "Public")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageReport == "Insta")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageReport == "PublicExternal")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+
+    </style>
+
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+
+<input type="text" hidden id="id_SecurelyShared" value="@ViewBag.SecurelyShared" />
+<input type="text" hidden id="id_UniqueId" value="@ViewBag.UniqueId" />
+<input type="text" hidden id="id_IsMatched" value="@ViewBag.IsMatched" />
+<input type="text" hidden id="hidtxtinterviewid" value="@ViewBag.InterviewId" />
+<input type="text" hidden id="hidtxtirfid" value="@ViewBag.IrfId" />
+
+<div id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12">
+            @*<span class="discretion"><strong style="font-size:15px;">Report discretion:</strong> Till the time QC is passed, Risebird can not ensure that all quality standards are met on this report. Use this report at your own discretion.</span>*@
+        </div>
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix" style="height:50px;">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    @* <button id="selectedcandidate_9" class="mdc-button mdc-button--raised mdc-ripple-upgraded" aria-label="L2 Feedback" title="L2 Feedback" style="background: #54a5f6;border-color:#72ade8;z-index: 100;position:relative;top:3px;left:20px;">
+                    <span onclick="OpenL2Model(@Model.InterviewId)">
+                    <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                    L2 Feedback
+                    </span>
+                    </button> *@
+                    <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
+
+                </div>
+
+                <div class="pull-right">
+
+                    <div class="pull-left">
+                    </div>
+
+                    <div class="pull-right">
+
+                        @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
+                        {
+                            <div class="rate-wrap" style="display:inline-block">
+                                <div class="rate-interview" style="top:-8px;">
+                                    <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
+                                    <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
+                                </div>
+                            </div>
+
+
+                        }
+                        else if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 2)
+                        {
+                            <div class="rate-wrap" style="display:inline-block">
+                                <div class="rate-interview" style="top:-8px">
+                                    <h1>Please rate this interview to Generate PDF & Shareable link: </h1>
+                                    <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
+                                </div>
+                            </div>
+
+
+                        }
+
+                        @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
+                        {
+                            <div class="pull-right">
+
+                                <div class="reportdropdown">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" type="button" style="padding:0px 5px;">
+                                        <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg> HM Instruction</text></span>
+                                    </button>
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
+                                        <text>Rate Interviewer</text>
+                                    </button>
+
+                                    @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                    {
+                                        <button class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                            <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                                        </button>
+                                    }
+                                    @*  <button class="reportdropbtn">Report Quality Issue</button>
+                                <div class="reportdropdown-content">
+
+                                <button class="dropdown-btn" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
+                                <text>Rate Interviewer</text>
+                                </button>
+                                <button class="dropdown-btn" type="button">
+                                <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text>Edit HM Instruction</text></span>
+                                </button>
+                                @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                {
+                                <button class="dropdown-btn">
+                                <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                                </button>
+                                }
+                                </div>*@
+
+                                </div>
+                            </div>
+                            @if (Model.IRFInterviewerActive)
+                            {
+                                <div class="pull-right"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
+
+                                <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
+                            }
+                        }
+
+                        @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
+                        {
+                            @if (ViewBag.profile != "Interviewer" && ViewBag.profile != "Quality Controller")
+                            {
+                                <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px" value="Generate PDF" onclick="getPDF()"></div>
+                            }}
+                        @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
+                        {
+                            <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" value="Generate Secure URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="loader text-center">
+            <img src="~/Newassets/img/lazyload.gif" />
+        </div>
+        @if (ViewBag.SecurelyShared == null || ViewBag.SecurelyShared == "" || (ViewBag.SecurelyShared == "True" && ViewBag.UniqueId != null && ViewBag.IsMatched == "True"))
+        {
+            <div class="content dataloading client">
+                <div class="row bl-bg">
+                    <div class="col-md-12">
+                    </div>
+                </div>
+
+                <div class="row bl-bg" id="pdfdownload">
+                    <div class="col-md-12">
+                        <div class="mdc-card card bl-bg">
+                            <div>
+                                <div>
+                                    @if (!string.IsNullOrEmpty(Model.ClientAction))
+                                    {
+                                        if (Model.ClientAction == "Shortlisted")
+                                        {
+                                            <span style="color:green; width: 100%;font-size:15px;background: #c9f6c9;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer shortlisted by you</span>
+                                        }
+                                        else if (Model.ClientAction == "Rejected")
+                                        {
+                                            <span style="color: #e21c1c;width: 100%;font-size:15px;background: #f4433633;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer removed by you</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                </div>
+                                <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+                                    @Html.AntiForgeryToken()
+                                    <div class="canvas_div_pdf" style="padding:10px 10px 0px 10px">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-5 clientnfo">
+                                                @*@if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                            {
+                                            <div>
+
+                                            @{
+                                            var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
+                                            var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
+                                            }
+                                            @if (Model.MeetingStatus == 4)
+                                            {
+                                            var meetingcolor = "";
+
+                                            @if (Model.InterviewStatus == 2)
+                                            {
+                                            meetingcolor = "green";
+                                            }
+                                            else if (Model.InterviewStatus == 3)
+                                            {
+                                            meetingcolor = "red";
+                                            }
+                                            else if (Model.InterviewStatus == 5)
+                                            {
+                                            meetingcolor = "red";
+                                            }
+
+                                            else if (Model.InterviewStatus == 1)
+                                            {
+                                            meetingcolor = "darkorange";
+                                            }
+                                            <div class="interview-status"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong></div>
+                                            }
+                                            else
+                                            {
+                                            <div class="interview-status"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></div>
+                                            }
+                                            </div>
+                                            }
+                                            *@
+                                                @if (ViewBag.profile != "Interviewer")
+                                                {
+                                                    @if (Model.resumeLink != null && Model.resumeLink != "")
+
+                                                    {
+                                                        @*Turing*@
+                                                        @if (!Model.IsQCDone)
+                                                        {
+                                                            <div style="height:40px;"></div>
+                                                            <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                <span class="error-badge">
+                                                                    <span class="pull-left" style="padding-left:15px;"> QC Pending</span>
+                                                                    <i class="fa fa-clock pull-left blink" style="color: red"></i>
+                                                                    <div class="report-tooltiptext" style="bottom:-50px;left: 150%;">
+                                                                        <p style="font-weight:500;line-height:20px;color:grey">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+
+                                                        }
+                                                        @*Turing*@
+                                                        @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                        {
+                                                            <div class="report-heading">Candidate Name</div>
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @*Turing*@
+                                                        @if (!Model.IsQCDone)
+                                                        {
+                                                            <div style="height:40px;"></div>
+                                                            <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                <span class="error-badge">
+                                                                    <span class="pull-left" style="padding-left:15px;"> QC Pending</span>
+                                                                    <i class="fa fa-clock pull-left blink" style="color: red"></i>
+                                                                    <div class="report-tooltiptext" style="bottom:-50px;left: 150%;">
+                                                                        <p style="font-weight:500;line-height:20px;color:grey">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        }
+                                                        @*Turing*@
+                                                        @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                        {
+                                                            <div class="report-heading">Candidate Name</div>
+                                                            <h2>@Model.CandidateName</h2>
+                                                        }
+                                                    }
+                                                }
+
+                                                @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                {
+                                                    @if (Model.resumeLink != null && Model.resumeLink != "")
+                                                    {
+                                                        <div class="report-heading">
+                                                            Resume Link :<a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink><img style="position:relative;left: -2px;width: 18px;" src="/img/resume-icon.png">Click here</a>
+                                                        </div>
+                                                    }
+                                                }
+                                                @if (ViewBag.profile != "Quality Controller" && ViewBag.profile != "Interviewer")
+                                                {
+                                                    <div class="report-heading">
+                                                        Email Id:
+                                                    </div>
+
+                                                    <h4>@Model.CandidateEmail</h4>
+                                                }
+
+                                                @*<div class="report-heading">
+                                            Position
+                                            </div>
+
+                                            <h4>@Model.JDTiltle</h4>*@
+                                                <div class="report-heading">
+                                                    Date of Interview:
+                                                </div>
+
+                                                <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
+
+                                                <div class="" style="color:green;font-weight:bold;margin: 10px 0px 0px 0px;">Candidate ID Verification Status: </div>
+                                                @{
+                                                    var candidateidverification = Model.CandidateIDVerificationStatus.HasValue ? ((CandidateIDVerificationOptionEnum)Convert.ToInt32(Model.CandidateIDVerificationStatus)).GetDescription() : string.Empty;
+                                                }
+                                                <h5 style="color:#445346;font-size:15px;padding: 10px 0px 0px 0px;">@candidateidverification</h5>
+                                                @if (Model.ConsentRequired)
+                                                {
+                                                    <div class="" style="color:green;font-weight:bold;margin: 10px 0px 0px 0px;">Candidate Job Consent Acknowledgement: </div>
+                                                    @if (Model.Candidateconsent)
+                                                    {
+                                                        <h5 style="color:forestgreen;font-size:15px;padding: 10px 0px 0px 0px;">Yes</h5>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h5 style="color:red;font-size:15px;padding: 10px 0px 0px 0px;">No</h5>
+                                                    }
+                                                }
+
+                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
+                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;">( @Model.NickName )</c>
+                                                @if (Model.CommunicationalProficiency != 0)
+                                                {
+                                                    <div style="margin-top:10px">
+                                                        <h3 class="pull-left" style="font-size:16px!important;">
+                                                            <img style="width:20px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communication Score:
+                                                        </h3>
+                                                        <div class="pull-left">
+                                                            @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
+                                                            <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                <div class="note-skill">
+                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
+                                                </div>
+
+
+
+                                                @* <hr style="margin-top:10px;height:0.3px!important;border-bottom:1px #dab3b321 solid" />*@
+                                            </div>
+
+                                            <div class="col-lg-9 col-md-7">
+                                                @if (Model.MeetingStatus == 1)
+                                                {
+                                                    <div class="row"><div class="nodata-wrapper"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <h3><span class="pull-left"><img style="width:30px;left:-11px; top:-4px; position:relative;background: #f5f5f5;padding:12px 4px 4px 4px;" src="/img/detail-icon.png">Interview Video</span></h3>
+                                                        <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
+                                                            <div>
+                                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                                {
+                                                                    int appendTime = 0;
+                                                                    if (Model.ThumbnailTimeSeconds == 0)
+                                                                    {
+                                                                        appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                                        if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                                        {
+                                                                            appendTime = (Model.VideoDuration * 60) - 60;
+                                                                        }
+                                                                        else if ((Model.VideoDuration * 60) < 120)
+                                                                        {
+                                                                            appendTime = 0;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        appendTime = Model.ThumbnailTimeSeconds;
+                                                                    }
+                                                                    var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                                    <video id="video" controls="controls" controlsList="nodownload" preload="metadata" class="vjs-tech interview">
+                                                                        <source src='@Model.VideoLink' type="video/mp4">
+                                                                    </video>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                                }
+
+                                                                @* @if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                        {
+                                                        <div class="transcript">
+                                                        <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
+                                                        <h4 class="accordion-title js-accordion-title"></h4>
+                                                        <div class="accordion-content">
+                                                        <p id="id_transcript" style="margin-bottom:10px;">
+
+                                                        </p>
+                                                        <div style="width: 100%;float:left;background: #cccccc17;padding: 5px;">
+                                                        <div class="transcript-btn">
+
+                                                        <a id="idbtnPrevious" style="margin-right:10px;height:30px;pointer-events: none; opacity:0.5" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('p')"><i class="fa fa-chevron-left" aria-hidden="true"></i>  Previous</a>
+                                                        <a id="idbtnNext" style="height:30px;" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('n')"> Next  <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
+                                                        </div>
+                                                        </div>
+                                                        </div>
+                                                        </div>
+                                                        }*@
+                                                            </div>
+                                                        </div>
+
+                                                        @if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                        {
+                                                            <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="transcript">
+                                                                    <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
+                                                                    <h4 class="accordion-title js-accordion-title"></h4>
+                                                                    <div class="accordion-content">
+                                                                        <p id="id_transcript" style="margin-bottom:10px;">
+
+                                                                        </p>
+                                                                        <div style="width: 100%;float:left;background: #cccccc17;padding: 5px;">
+                                                                            <div class="transcript-btn">
+
+                                                                                <a id="idbtnPrevious" style="margin-right:10px;height:30px;pointer-events: none; opacity:0.5" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('p')"><i class="fa fa-chevron-left" aria-hidden="true"></i>  Previous</a>
+                                                                                <a id="idbtnNext" style="height:30px;" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('n')"> Next  <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        @if (Model.QOSData != null && Model.QOSData.Count() > 0 && ViewBag.profile != "Client" && (!isClient.HasValue || isClient.Value == false) && (!isClientSelected.HasValue || isClientSelected.Value == false))
+                                                        {
+                                                            <div class="col-md-12 jitter-table">
+                                                                <h3>
+                                                                    <svg style="color: #f3da35;width:33px;position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                                        <defs>
+                                                                            <style>
+                                                                                .cls-1 {
+                                                                                    fill: #fff;
+                                                                                    opacity: 0;
+                                                                                }
+
+                                                                                .cls-2 {
+                                                                                    fill: #969191;
+                                                                                }</style>
+                                                                        </defs>
+                                                                        <title>video</title>
+                                                                        <g id="Layer_2" data-name="Layer 2"><g id="video"><g id="video-2" data-name="video"><rect class="cls-1" width="24" height="24"></rect><path class="cls-2" d="M21,7.15a1.7,1.7,0,0,0-1.85.3L17,9.45V8a3,3,0,0,0-3-3H5A3,3,0,0,0,2,8v8a3,3,0,0,0,3,3h9a3,3,0,0,0,3-3V14.55l2.16,2a1.74,1.74,0,0,0,1.16.45,1.68,1.68,0,0,0,.69-.15,1.6,1.6,0,0,0,1-1.48V8.63A1.6,1.6,0,0,0,21,7.15ZM15,16a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V8A1,1,0,0,1,5,7h9a1,1,0,0,1,1,1Zm5-1.4L17.19,12,20,9.4Z" fill="#969191"></path></g></g></g>
+                                                                    </svg>Video Quality Indicator
+                                                                </h3>
+                                                                <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                                                    <tr style="background: #e3eceb;box-shadow: none;">
+                                                                        <td colspan="2" align="right"><span style="font-size:15px;color: #42736f;">Candidate Email id: <b>@Model.CandidateEmail</b></span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="scroller" id="style-2" style="height:200px;overflow:auto;">
+                                                                                <table class="table" cellspacing="0" width="100%">
+                                                                                    <tr>
+                                                                                        <td width="20%" style="text-align:center; font-weight: 600; background: #ffe4c43d;font-size:15px;color: #da6563;">Suspicious Proxy<span style="display:block;font-size:13px;font-weight: 500;    line-height: 36px;    color: #823737;">(If the Jitter value exceeds 40ms)<br /></span></td>
+                                                                                        <td style="padding:0px;">
+                                                                                            <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%" style="margin:0px;">
+                                                                                                <tr>
+                                                                                                    <td style="background: #009688;color: #fff;padding: 4px;">User Name</td>
+                                                                                                    <td style="    background: #009688;color: #fff; padding: 4px;">Jitter Value</td>
+                                                                                                    <td style="    background: #009688;color: #fff; padding: 4px;">Type</td>
+                                                                                                </tr>
+                                                                                                @foreach (var item in Model.QOSData)//.Where(x=>x.qosType == "audio_output")
+                                                                                                {
+                                                                                                    if (!string.IsNullOrEmpty(item.max_jitter) && !string.IsNullOrEmpty(item.user_name))
+                                                                                                    {
+                                                                                                        Match match = Regex.Match(item.max_jitter, @"\d+");
+                                                                                                        if (match.Success)
+                                                                                                        {
+                                                                                                            string color = "black";
+                                                                                                            int jitterValue = int.Parse(match.Value);
+                                                                                                            if (jitterValue > 40)
+                                                                                                            {
+                                                                                                                color = "red";
+                                                                                                            }
+
+
+                                                                                                            <tr>
+                                                                                                                <td>@item.user_name</td>
+                                                                                                                <td><span style="color:@color">@item.max_jitter</span></td>
+                                                                                                                <td>Audio Output</td>
+                                                                                                            </tr>
+
+                                                                                                        }
+                                                                                                    }
+
+                                                                                                }
+                                                                                                @* @foreach (var item in Model.QOSData.Where(x => x.qosType == "video_output"))
+                                                                                    {
+                                                                                    if (!string.IsNullOrEmpty(item.max_jitter) && !string.IsNullOrEmpty(item.user_name))
+                                                                                    {
+                                                                                    Match match = Regex.Match(item.max_jitter, @"\d+");
+                                                                                    if (match.Success)
+                                                                                    {
+                                                                                    string color = "black";
+                                                                                    int jitterValue = int.Parse(match.Value);
+                                                                                    if (jitterValue > 40)
+                                                                                    {
+                                                                                    color = "red";
+                                                                                    }
+
+
+                                                                                    <tr>
+                                                                                    <td>@item.user_name</td>
+                                                                                    <td><span style="color:@color">@item.max_jitter</span></td>
+                                                                                    <td>Video Output</td>
+                                                                                    </tr>
+
+                                                                                    }
+                                                                                    }
+
+                                                                                    } *@
+
+
+                                                                                            </table>
+                                                                                        </td>
+
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+
+                                                                </table>
+                                                            </div>
+
+                                                        }
+
+                                                    </div>
+
+
+
+                                                }
+
+
+                                            </div>
+
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Primary Skill:</span> @Model.JDTiltle</h2></div>
+                                            <div class="col-lg-12 col-md-12">
+                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                {
+                                                    <div>
+                                                        @*<label>REPORT DETAILS</label>*@
+                                                        @{
+                                                            var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
+                                                            var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
+                                                        }
+                                                        @if (Model.MeetingStatus == 4)
+                                                        {
+                                                            var meetingcolor = "";
+
+                                                            @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
+                                                            {
+                                                                meetingcolor = "green";
+                                                            }
+                                                            else if (Model.InterviewStatus == 3)
+                                                            {
+                                                                meetingcolor = "red";
+                                                            }
+                                                            else if (Model.InterviewStatus == 5)
+                                                            {
+                                                                meetingcolor = "red";
+                                                            }
+
+                                                            else if (Model.InterviewStatus == 1)
+                                                            {
+                                                                meetingcolor = "darkorange";
+                                                            }
+                                                            <div class="interview-status" style="font-size:16px;">
+                                                                <span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong>
+
+                                                                @if (Model.InterviewStatus == 1)
+                                                                {
+                                                                    <button style="font-size: 12px;color: #fff;border: 0px;background: #8f8a8a;border-radius:4px;line-height: 18px;height: 21px;padding: 0px 4px;" type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
+                                                                }
+
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="interview-status" style="font-size:16px;"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></div>
+                                                        }
+                                                        @*                                                        <button type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
+                                                *@
+                                                    </div>
+                                                }
+
+                                            </div>
+                                            <div class="col-lg-3 col-md-5 clientnfo">
+                                                @if (!string.IsNullOrEmpty(Model.CodeSnippet))
+                                                {
+                                                    <div class="clearfix" style="margin: 20px 0px 0px 0px;padding-bottom: 20px;">
+                                                        <h3>
+                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Candidate Solution:
+                                                        </h3>
+                                                        <div style="margin:15px 0px 10px 0px;">
+
+                                                            <div><a style="text-decoration:none!important;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;text-decoration:none">Click here to view candidate solution file</span></a></div>
+                                                        </div>
+                                                    </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="clearfix" style="margin: 20px 0px 0px 0px;padding-bottom: 20px;">
+                                                        <h3>
+                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Candidate Solution:
+                                                        </h3>
+                                                        <div>
+
+                                                            <div>No file is available</div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div class="clearfix">
+                                                    <h3>
+                                                        @* <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>*@<img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
+                                                        <span class="totScore">
+                                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                            {
+
+
+                                                                <strong id="totTechScore"></strong>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <strong id="totTechScore" style="display:none"></strong>
+                                                            }
+                                                        </span>
+                                                    </h3>
+                                                </div>
+                                                <div>
+                                                    @{
+                                                        string rubricDisplayStatus = Model.TechRubricType == TechRubricTypes.Advanced ? "block" : "none";
+                                                    }
+                                                    @if (Model.TechSkillReportCollection != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                        {
+                                                            <div class="tech-skill-wrapper" style="margin-bottom:20px;clear:both">
+                                                                <div style="font-weight:700;">@Model.TechSkillReportCollection[i].SkillName</div>
+                                                                @{
+                                                                    var TechSkill_Score = 0.0;
+                                                                    if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                    {
+                                                                        TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
+                                                                    }
+                                                                }
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
+                                                                    {
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
+                                                                    }
+                                                                    else if (@Model.TechSkillReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillReportCollection[i].WeightageActual)
+                                                                    {
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+
+                                                                    }
+
+                                                                    <span class="rqlevel" style="margin:25px 0px 0px 0px;width:100%;float:left">
+
+                                                                        @if (@Model.TechSkillReportCollection[i].Concepts != null && @Model.TechSkillReportCollection[i].Concepts != "")
+                                                                        {
+                                                                            @if (@Model.TechSkillReportCollection[i].Concepts.Length > 30)
+                                                                            {
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b> <a href="#" data-tooltip="@Model.TechSkillReportCollection[i].Concepts"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Concepts: </b>  <span style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Concepts</span>
+                                                                            }
+
+                                                                        }
+                                                                    </span>
+
+
+
+                                                                    @*    <span class="techinfocontainer pull-left">
+                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                        <span class="tooltiptext">
+                                                        <p style="margin-bottom:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+
+                                                        </span>
+                                                        </i>
+                                                        </span>*@
+
+                                                                    @*                                                                        <b>@Model.TechSkillReportCollection[i].Concepts</b></span>
+
+                                                        *@                                                                    <br />  <span class="rqlevel" style="margin:5px 0px 0px 0px;width:100%;float:left">
+                                                                        @if (@Model.TechSkillReportCollection[i].Natureofquestion != null && @Model.TechSkillReportCollection[i].Natureofquestion != "")
+                                                                        {
+                                                                            @if (@Model.TechSkillReportCollection[i].Natureofquestion.Length > 30)
+                                                                            {
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <a href="#" data-tooltip="@Model.TechSkillReportCollection[i].Natureofquestion"> <span class="pull-left" style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion.Substring(0, 30)..  <i class="fa fa-info-circle" style="color:#c5c0c0"></i></span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <b style="float:left;font-weight:normal;padding-right:5px;">Expectation:</b>  <span style="font-weight:bold; color: #a2a0a0;">@Model.TechSkillReportCollection[i].Natureofquestion</span>
+                                                                            }
+
+                                                                        }
+
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+
+                                            </div>
+                                            <div class="col-lg-9 col-md-7">
+                                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                    <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
+
+                                                    <div class="question">
+                                                        @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                        {
+                                                            <ul>
+                                                                @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                                {
+                                                                    var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                    @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                                    {
+                                                                        <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                    }
+                                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                    {
+                                                                        <label>Rating : @valueslist</label>
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                {
+                                                    <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                        <h3>
+                                                            <img style="width:34px;left:-11px; top:-1px; position:relative;background: #f5f5f5;padding: 3px;" src="/img/interviewer-comment.png">Interviewer Comment
+                                                            @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
+                                                            {
+                                                                <span class="fa fa-edit" style="padding-left:0px;font-size:19px;color:blue;cursor:pointer" onclick="EditReport()"></span>
+                                                            }
+                                                        </h3>
+                                                        <div>
+                                                            @if (Model.FeedbackAudioLink != null)
+                                                            {
+                                                                <audio style="margin-bottom:10px;height:30px" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                            }
+                                                            @if (Model.InterviewerComment != null)
+                                                            {
+                                                                @Html.HiddenFor(m => m.InterviewerComment, new { @id = "hidinterviewerComment" })
+
+                                                                @if (Model.InterviewerComment.Length > 440)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p id="int-cmnt" style="margin-bottom:0px;">
+                                                                            @Model.InterviewerComment.Substring(0, 440)
+                                                                        </p>
+                                                                        <p id="read-int-cmnt" class="moretext_@Model.id moretext">
+                                                                            @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
+                                                                        </p>
+                                                                    </div> <a onclick="return moreless(@Model.id, event);" class="moreless-btn" value="Readmore" id="read_@Model.id" href="javascript:void(0);">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+                                                                        <p id="int-cmnt">
+                                                                            @Model.InterviewerComment.Substring(0, @Model.InterviewerComment.Length)
+                                                                        </p>
+                                                                        <p id="read-int-cmnt"></p>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                       
+                                          <div class="col-lg-3 col-md-5 clientnfo">
+                                              @if (Model.TranscriptSummaryObject != null){
+                                                @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Summary != null)
+                                                {
+                                                    var summary = Model.TranscriptSummaryObject.IntervieweeAnalysis.Summary;
+                                                    <div style="margin-top:30px;">
+                                                       
+                                                        @* Strengths *@
+                                                        @if (summary.Strengths != null && summary.Strengths.Any())
+                                                        {
+                                                            <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
+                                                                <h4 style="margin: 0 0 15px 0; color: #2e7d32; font-size: 18px;">
+                                                                    <i class="fa fa-check-circle" style="margin-right: 8px;"></i>Strengths
+                                                                </h4>
+                                                                <ul style="margin: 0; padding-left: 20px; color: #555;">
+                                                                    @foreach (var strength in summary.Strengths)
+                                                                    {
+                                                                        <li style="margin-bottom: 8px; font-size: 15px;">@strength</li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        }
+
+                                                        @* Areas of Improvement *@
+                                                        @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
+                                                        {
+                                                            <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid #ff9800;">
+                                                                <h4 style="margin: 0 0 15px 0; color: #e65100; font-size: 18px;">
+                                                                    <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>Areas of Improvement
+                                                                </h4>
+                                                                <ul style="margin: 0; padding-left: 20px; color: #555;">
+                                                                    @foreach (var improvement in summary.AreasOfImprovement)
+                                                                    {
+                                                                        <li style="margin-bottom: 8px; font-size: 15px;">@improvement</li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                                }
+                                            </div>
+                                            <div class="col-lg-9 col-md-7">
+                                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                    @* AI Interview Questions and Answers from Transcript Summary *@
+                                                    @if (Model.TranscriptSummaryObject != null)
+                                                    {
+                                                        @* Display Interview Summary *@
+                                                        @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Summary != null)
+                                                        {
+                                                            var summary = Model.TranscriptSummaryObject.IntervieweeAnalysis.Summary;
+                                                            <div style="margin-top: 30px;">
+                                                                <h3 style="border-bottom:0px;color: #333; font-size: 20px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
+                                                                    <i class="fa fa-chart-bar" style="margin-right: 8px; color: #4a90e2;"></i>AI Interview Summary
+                                                                </h3>
+
+                                                                <div style="box-shadow: 0 1px 15px 1px rgb(169 158 158 / 11%);display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                                                                    @if (summary.TotalQuestions > 0)
+                                                                    {
+                                                                        <div style="padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">
+                                                                            <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Total Questions</div>
+                                                                            <div style="font-size: 24px; font-weight: bold; color: #28a745;">@summary.TotalQuestions</div>
+                                                                        </div>
+                                                                    }
+
+                                                                    @if (summary.AverageAnswerRating > 0)
+                                                                    {
+                                                                        <div style="padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #ffc107;">
+                                                                            <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Average Rating</div>
+                                                                            <div style="font-size: 24px; font-weight: bold; color: #ffc107;">@summary.AverageAnswerRating.ToString("F2") / 5</div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        <h3 style="margin-top: 30px;">
+                                                            <img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">
+                                                            AI Interview Questions & Answers
+                                                        </h3>
+                                                        <div class="question ai-ques" style="font-size:16px;">
+                                                            <ul>
+                                                                @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null)
+                                                                {
+                                                                    int answerIndex = 0;
+                                                                    int commentIndex = 0;
+
+                                                                    @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
+                                                                    {
+                                                                        <li style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+
+                                                                            @* Timestamp *@
+                                                                            @if (!string.IsNullOrEmpty(qaPair.Timestamp))
+                                                                            {
+                                                                                <span style="color: #9A9A9A; font-size: 14px; display: block; margin-bottom: 5px;">
+                                                                                    Time: @qaPair.Timestamp
+                                                                                </span>
+                                                                            }
+
+                                                                            @* Question *@
+                                                                            <div style="margin-bottom: 10px;">
+                                                                                <strong style="color: #333; font-size:17px;font-weight:500">Question:</strong>
+                                                                                <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">@qaPair.Question</p>
+                                                                            </div>
+
+                                                                            @*Answer*@
+                                                                            <div style="margin-bottom: 10px;">
+                                                                                <strong style="color: #333; font-size: 17px;font-weight:500; float:left">Answer:</strong>
+
+                                                                                @if (qaPair.AnswerRating > 0)
+                                                                                {
+                                                                                    <div style="margin-bottom: 5px;">
+                                                                                        <label style="font-size: 14px; color: #9A9A9A; float:right;">
+                                                                                            Rating: @qaPair.AnswerRating / 5
+                                                                                        </label>
+                                                                                    </div>
+                                                                                }
+
+                                                                                <div style="clear:both"></div>
+
+                                                                                @{
+                                                                                    int answerId = Model.id * 10000 + answerIndex;
+                                                                                    answerIndex++;
+                                                                                }
+
+                                                                                @if (!string.IsNullOrEmpty(qaPair.Answer) && qaPair.Answer.Length > 300)
+                                                                                {
+                                                                                    <div class="article" style="border-top: 1px #bfb5b5e6 dotted; padding-top: 10px;">
+                                                                                        <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">
+                                                                                            @qaPair.Answer.Substring(0, 300)
+                                                                                        </p>
+
+                                                                                        <p class="moretext_@(answerId) moretext"
+                                                                                           style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; display: none;">
+                                                                                            @qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)
+                                                                                        </p>
+                                                                                    </div>
+
+                                                                                    <a onclick="return moreless(@answerId, event);" class="moreless-btn" id="read_@(answerId)"
+                                                                                       href="javascript:void(0);" style="font-size: 14px; color: #0066cc!important;background:none!important;margin:0px;padding:0px; text-decoration: none;">
+                                                                                        Read more
+                                                                                    </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <p style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; border-top: 1px #bfb5b5e6 dotted; padding-top: 10px;">
+                                                                                        @qaPair.Answer
+                                                                                    </p>
+                                                                                }
+                                                                            </div>
+
+                                                                            @* Comment *@
+                                                                            @if (!string.IsNullOrEmpty(qaPair.Comment))
+                                                                            {
+                                                                                <div style="margin-top: 5px;">
+                                                                                    <span style="font-size: 14px; color: #666; font-style: italic;">Comment: </span>
+
+                                                                                    @{
+                                                                                        int commentId = Model.id * 1000 + commentIndex;
+                                                                                        commentIndex++;
+                                                                                    }
+
+                                                                                    @if (qaPair.Comment.Length > 150)
+                                                                                    {
+                                                                                        <div class="article">
+                                                                                            <span style="font-size: 14px; color: #666; font-style: italic;">
+                                                                                                @qaPair.Comment.Substring(0, 150)
+                                                                                            </span>
+
+                                                                                            <span class="moretext_@(commentId) moretext"
+                                                                                                  style="font-size: 14px; color: #666; font-style: italic; display: none;">
+                                                                                                @qaPair.Comment.Substring(150, qaPair.Comment.Length - 150)
+                                                                                            </span>
+                                                                                        </div>
+
+                                                                                        <a onclick="return moreless(@commentId, event);" class="moreless-btn" id="read_@(commentId)"
+                                                                                           href="javascript:void(0);" style="font-size: 14px; color: #0066cc; text-decoration: none; margin-left: 5px;">
+                                                                                            Read more
+                                                                                        </a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span style="font-size: 14px; color: #666; font-style: italic;">
+                                                                                            @qaPair.Comment
+                                                                                        </span>
+                                                                                    }
+                                                                                </div>
+                                                                            }
+
+                                                                        </li>
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        </div>
+
+
+                                                    }
+
+                                                </div>
+                                                    <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                    @if (Model.TranscriptSummaryObject != null){
+                                                    @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null){
+                                                    @* Display Verdict *@
+                                                    @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Verdict != null)
+                                                    {
+                                                        var verdict = Model.TranscriptSummaryObject.IntervieweeAnalysis.Verdict;
+                                                        <div style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border: 2px solid #4a90e2;">
+                                                            <h3 style="margin: 0 0 15px 0; color: #333; font-size: 20px;">
+                                                                <i class="fa fa-gavel" style="margin-right: 8px; color: #4a90e2;"></i>Final Verdict
+                                                            </h3>
+
+                                                            @if (!string.IsNullOrEmpty(verdict.FinalRecommendation))
+                                                            {
+                                                                <div style="margin-bottom: 15px;">
+                                                                    <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Recommendation</div>
+                                                                    <div style="font-size: 22px; font-weight: bold; color: #4a90e2;">
+                                                                        @verdict.FinalRecommendation
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                            @if (!string.IsNullOrEmpty(verdict.Justification))
+                                                            {
+                                                                <div>
+                                                                    <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Justification</div>
+                                                                    <div style="font-size: 15px; color: #555; line-height: 1.6;">
+                                                                        @verdict.Justification
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                      }
+                                                      }
+                                                    </div>
+                                                    </div>
+                                        
+                                        
+                                        </div>
+
+                                        <!--Start: secondary skill-->
+                                        @if (Model.SkillSetsevaluate > 1)
+                                        {
+                                            <div class="row">
+
+
+                                                <div id="next-skill">
+                                                    <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Other Skills: @Model.JDTitleTwo </span></h2></div>
+                                                    <div class="col-lg-12 col-md-12">
+                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                        {
+                                                            <div>
+
+                                                                @*<label>REPORT DETAILS</label>*@
+                                                                @{
+                                                                    var meestingstatusvalue = Model.MeetingStatusTwo.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatusTwo)).GetDescription() : string.Empty;
+                                                                    var interviewtatusvalue = Model.InterviewStatusTwo.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatusTwo)).GetDescription() : string.Empty;
+                                                                }
+                                                                @if (Model.MeetingStatusTwo == 4)
+                                                                {
+                                                                    var meetingcolor = "";
+
+                                                                    @if (Model.InterviewStatusTwo == 2 || Model.InterviewStatusTwo == 4)
+                                                                    {
+                                                                        meetingcolor = "green";
+                                                                    }
+                                                                    else if (Model.InterviewStatusTwo == 3)
+                                                                    {
+                                                                        meetingcolor = "red";
+                                                                    }
+                                                                    else if (Model.InterviewStatusTwo == 5)
+                                                                    {
+                                                                        meetingcolor = "red";
+                                                                    }
+
+                                                                    else if (Model.InterviewStatusTwo == 1)
+                                                                    {
+                                                                        meetingcolor = "darkorange";
+                                                                    }
+                                                                    <div class="interview-status" style="font-size:16px;"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong></div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="interview-status" style="font-size:16px;"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></div>
+                                                                }
+                                                            </div>
+                                                        }
+
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-5 clientnfo">
+                                                        @if (!string.IsNullOrEmpty(Model.CodeSnippetTwo))
+                                                        {
+                                                            <div class="clearfix" style="margin: 20px 0px 10px 0px;padding-bottom: 20px;">
+                                                                <h3 style="border:none">
+                                                                    <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Code Output:
+                                                                </h3>
+                                                                <div>
+
+                                                                    <div><a style="text-decoration:none!important;" href="@Model.CodeSnippetTwo" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;text-decoration:none">Click here to view code snippet</span></a></div>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="clearfix" style="margin: 20px 0px;padding-bottom: 20px;">
+                                                                <h3 style="border:none">
+                                                                    <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Code Output:
+                                                                </h3>
+                                                                <div>
+
+                                                                    <div>No code snippet is available</div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        <div class="clearfix">
+                                                            <h3>
+                                                                <img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skills Score:
+                                                                <span class="totScore">
+                                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                    {
+                                                                        <strong id="totTechScore2"></strong>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <strong id="totTechScore2" style="display:none"></strong>
+                                                                    }
+                                                                </span>
+                                                            </h3>
+                                                        </div>
+                                                        <div>
+                                                            @if (Model.TechSkillTwoReportCollection != null)
+                                                            {
+                                                                @for (int i = 0; i < Model.TechSkillTwoReportCollection.Count(); i++)
+                                                                {
+                                                                    <div class="tech-skill-wrapper">
+                                                                        <div style="font-weight:500;">@Model.TechSkillTwoReportCollection[i].SkillName</div>
+                                                                        @{
+                                                                            var TechSkill_Score = 0.0;
+                                                                            if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                            {
+                                                                                TechSkill_Score = Model.TechSkillTwoReportCollection[i].WeightageActual * 100 / Model.TechSkillTwoReportCollection[i].WeightageRequired;
+                                                                            }
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
+                                                                        <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId)
+                                                                        @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
+                                                                        @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
+                                                                        <div class="skillBackground skill-round-xlarge skill-small">
+                                                                            @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
+                                                                            {
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
+                                                                            }
+                                                                            else if (@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillTwoReportCollection[i].WeightageActual)
+                                                                            {
+
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-7">
+                                                        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                            <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
+
+                                                            <div class="question">
+                                                                @if (Model.QuestionsTwoCollection != null && Model.QuestionsTwoCollection.Count() != 0)
+                                                                {
+                                                                    <ul>
+                                                                        @for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
+                                                                        {
+                                                                            var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsTwoCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                            @if (Model.QuestionsTwoCollection[i].Timing != null && Model.QuestionsTwoCollection[i].Timing > 0)
+                                                                            {
+                                                                                <li onclick="switchtoquestionVedio(@Model.QuestionsTwoCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsTwoCollection[i].Comment [@Model.QuestionsTwoCollection[i].SkillName]</li>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <li>@Model.QuestionsTwoCollection[i].Comment [@Model.QuestionsTwoCollection[i].SkillName]</li>
+                                                                            }
+                                                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                            {
+                                                                                <label>Rating : @valueslist</label>
+                                                                            }
+                                                                        }
+                                                                    </ul>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                        {
+                                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                                <h3>
+                                                                    <img style="width:34px;left:-11px; top:-1px; position:relative;background: #f5f5f5;padding: 3px;" src="/img/interviewer-comment.png">Interviewer Comment
+                                                                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
+                                                                    {
+                                                                        <span class="fa fa-edit" style="padding-left:0px;font-size:19px;color:blue;cursor:pointer" onclick="EditReport()"></span>
+                                                                    }
+                                                                </h3>
+                                                                <div>
+                                                                    @if (Model.FeedbackAudioLink != null)
+                                                                    {
+                                                                        <audio style="margin-bottom:10px;height:30px" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                    }
+                                                                    @if (Model.InterviewerCommentTwo != null)
+                                                                    {
+                                                                        @Html.HiddenFor(m => m.InterviewerCommentTwo, new { @id = "hidinterviewerCommentTwo" })
+
+                                                                        @if (Model.InterviewerCommentTwo.Length > 440)
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p id="int-cmntTwo" style="margin-bottom:0px;">
+                                                                                    @Model.InterviewerCommentTwo.Substring(0, 440)
+                                                                                </p>
+                                                                                <p id="read-int-cmntTwo" class="moretext_1001 moretext">
+                                                                                    @Model.InterviewerCommentTwo.Substring(440, @Model.InterviewerCommentTwo.Length - 440)
+                                                                                </p>
+                                                                            </div> <a onclick="return moreless(1001, event);" class="moreless-btn" value="Readmore" id="read_1001" href="javascript:void(0);">Read more</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p id="int-cmntTwo">
+                                                                                    @Model.InterviewerCommentTwo.Substring(0, @Model.InterviewerCommentTwo.Length)
+                                                                                </p>
+                                                                                <p id="read-int-cmntTwo"></p>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="next-skillHide">HIDE OTHER SKILLS</div>
+                                                <div class="next-skillShow" style="display:none">VIEW MORE SKILLS</div>
+                                            </div>
+                                        }
+                                        <!--End: secondary skill-->
+                                        @Html.HiddenFor(m => m.IsGeneralSkillRequired)
+                                    </div>
+
+                                    @* <div>
+                                @if(Model.QOSData != null && Model.QOSData.Count()>0)
+                                {
+                                foreach (var item in Model.QOSData)
+                                {
+                                if (!string.IsNullOrEmpty(item.max_jitter) && !string.IsNullOrEmpty(item.user_name))
+                                {
+                                Match match = Regex.Match(item.max_jitter, @"\d+");
+                                if (match.Success)
+                                {
+                                string color = "black";
+                                int jitterValue = int.Parse(match.Value);
+                                if(jitterValue > 40)
+                                {
+                                color = "red";
+                                }
+
+                                <p>Video Quality indicator : Jitter data for @item.user_name is <span style="color:@color">@item.max_jitter</span></p>
+                                <br />
+                                }
+                                }
+
+                                }
+                                }
+                                </div>*@
+
+
+                                    @Html.HiddenFor(m => m.id)
+                                    @Html.HiddenFor(m => m.IRFId)
+                                    @Html.HiddenFor(m => m.InterviewId)
+                                    @Html.HiddenFor(m => m.IsEdited)
+                                    @Html.HiddenFor(m => m.IsQC)
+                                    @Html.HiddenFor(m => m.IRFName)
+                                    @Html.HiddenFor(m => m.PrimarySkill)
+                                    @Html.HiddenFor(m => m.IsQCRequired)
+
+                                    @Html.HiddenFor(x => x.CandidateId)
+                                    @Html.HiddenFor(x => x.OldInterviewStatus)
+                                    @Html.HiddenFor(x => x.OldMeetingStatus)
+                                    @Html.HiddenFor(x => x.OverallScore)
+                                    @if (ViewBag.profile == "Interviewer" || ViewBag.profile == "Quality Controller")
+                                    {
+                                        @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
+                                        @Html.HiddenFor(x => x.VideoDuration)
+                                    }
+                                    @Html.HiddenFor(x => x.OldInterviewerComment)
+                                    @Html.HiddenFor(x => x.IsEdited)
+                                    @Html.HiddenFor(x => x.ResourceUrl)
+                                </form>
+                            </div>
+
+                            <!-- end content-->
+                        </div>
+                        <!--  end card  -->
+                    </div>
+                    <!-- end col-md-12 -->
+                </div>
+                <!-- end row -->
+
+            </div>
+        }
+
+
+    </div>
+</div>
+<div id="modal_clientComment_placeholder"></div>
+
+@*<div id="modal_clientAudio_placeholder"></div>*@
+
+<div id="modal_clientAudioFeedback_placeholder"></div>
+
+
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Verified Data</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="PublicShareVideo" class="modal modal-bg">
+
+    <div class="blk-bg"></div>
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
+                        <input type="text" id="txtEmailid" class="form-control" />
+                    </div>
+                    <div class="mt-10 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="EditReportModel" class="modal modal-bg" style="overflow:auto;">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width:680px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-pencil"></span>
+                </div>
+                <h5 class="modal-title pull-left">Edit Interviewer Comment</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeEditReportModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;">
+                @Html.TextArea("edinterviewerComment", @Model.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false" })
+                <div class="col-md-12 " style="padding-top:10px">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="SaveEditReport()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Update">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
+@await Html.PartialAsync("~/Views/Common/_ProxyReportDetails.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewRating.cshtml")
+@await Html.PartialAsync("~/Views/Common/_L2StatusUpdate.cshtml")
+<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/BroadcastMessage.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ($("#id_SecurelyShared").val() == "True" && ($("#id_UniqueId").val() != null || $("#id_UniqueId").val() != "") && $("#id_IsMatched").val() != "True") {
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
+
+    })
+
+    function SubmitEmail() {
+        if ($("#txtEmailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/Interview/VerifySharedEmail",
+                data: { uniqueid: $("#id_UniqueId").val(), Emailid: $("#txtEmailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Interview/ClientReport?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+
+<script src="~/js/transcriptfunctionalities.js?v=2024"></script>
+
+@if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))//&& ViewBag.profile == "Client"
+{
+    <script>
+
+        $(document).ready(function () {
+            GetMeetingAudioText('@Model.InterviewId', '@Model.AudioTranscriptFileLink');
+        });
+
+    </script>
+}
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+    $(function () {
+        $('[aria-label="Font Family"]').css('color', 'red')
+    })
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var meetingStatusElem = document.getElementById('MeetingStatus');
+        if (meetingStatusElem != null) {
+            var meetingStatus = document.getElementById('MeetingStatus').value;
+            if (meetingStatus == null || meetingStatus == '') {
+                document.getElementById('InterviewerComment').disabled = true;
+                document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+                document.getElementById("InterviewStatus").disabled = true;
+            }
+            else {
+                document.getElementById('InterviewerComment').disabled = false;
+                document.getElementById("interviewerComment_Error").innerHTML = "";
+                if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                    document.getElementById("InterviewStatus").disabled = true;
+                }
+            }
+        }
+
+        var hasDistinctParticipants = '@hasDistinctParticipants';
+        if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+    })
+    $(document).ready(function () {
+        document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
+        document.getElementById("read-int-cmnt").innerHTML = $('#read-int-cmnt').text();
+        document.getElementById("int-cmntTwo").innerHTML = $('#int-cmntTwo').text();
+        document.getElementById("read-int-cmntTwo").innerHTML = $('#read-int-cmntTwo').text();
+    })
+</script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+    function getPDF() {
+        var interviewid = $("#InterviewId").val();
+        var irfid = $("#IRFId").val();
+        var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+        window.open(url, "_blank");
+    }
+
+</script>
+
+<script src="~/js/ScoreChart/SetScoreChartValues.js?v=2024"></script>
+<script>
+
+    function switchtoquestionVedio(questiontime) {
+        var time = 1.0;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+    }
+
+    $(document).ready(function () {
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
+
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+
+            var actualWeightage;
+            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
+            if (reqLevel <= actLevel) {
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            }
+            else {
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+            }
+        }
+
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        SetTechReportCalculation('TechSkillReportCollection');
+
+        SetTechTwoReportCalculation('TechSkillTwoReportCollection');
+
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+            average = totalCount / 4;
+        }
+        else {
+            average = totalCount / 2;
+        }
+        $("#OverallScore").val(average);
+
+    });
+
+    function SetTechReportCalculation(techCollectionIdStartsWith) {
+        var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+        var techItems = $(idSelector);
+        var totalTechSkillScore = 0;
+        if (techItems != null) {
+            var techItemsLength = 0;
+            if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
+                techItemsLength = techItems.length / 2;
+            }
+            else {
+                techItemsLength = techItems.length;
+            }
+            for (i = 0; i < techItemsLength; i++) {
+                var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+                var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+
+                if (actualWeightage != null && actualWeightage != '') {
+                    totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                }
+            }
+            var score1 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
+            document.getElementById("totTechScore").innerHTML = score1 + '%';
+            if (score1 < 60) {
+                $('#totTechScore').addClass('less')
+            }
+            else {
+                $('#totTechScore').addClass('more')
+            }
+
+        }
+    }
+    function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
+        var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+        var techItems = $(idSelector);
+        var totalTechSkillScore = 0;
+        if (techItems != null) {
+            var techItemsLength = 0;
+            techItemsLength = techItems.length;
+            for (i = 0; i < techItemsLength; i++) {
+                var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+                var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+
+                if (actualWeightage != null && actualWeightage != '') {
+                    totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                }
+            }
+            var score2 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
+            document.getElementById("totTechScore2").innerHTML = score2 + '%';
+            if (score2 < 60) {
+                $('#totTechScore2').addClass('less')
+            }
+            else {
+                $('#totTechScore2').addClass('more')
+            }
+        }
+    }
+</script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
+<script src="~/js/Aadhaar.js?v=2024"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js?v=2024"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+        $(".accordion-content:not(:first-of-type)").css("display", "none");
+        $(".js-accordion-title:first-of-type").addClass("open");
+        $(".js-accordion-title:first-of-type").addClass("open");
+        $(".js-accordion-title").click(function () {
+            $(".open").not(this).removeClass("open").next().slideUp(300);
+            $(this).toggleClass("open").next().slideToggle(300);
+        });
+    });
+</script>
+
+@if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
+{
+    <script>
+        var video = document.getElementById('video');
+        var startTime = 0;
+        var endTime = 15 * 60;
+        function checkTime() {
+            if (video.currentTime >= endTime) {
+                video.pause();
+                ClientInterviewRating($("#hidtxtinterviewid").val());
+            }
+            setTimeout(checkTime, 100);
+        }
+        video.currentTime = startTime;
+        checkTime();
+    </script>
+}
+@if ((ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink)) && (Model.ReportAccepted || Model.Reportsnippet == 0))
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
+<script>
+    function removeOrShortlistInterviewer(interviewid, action) {
+        var bodyText;
+        var confirmationButtonText;
+        var successHtmlText;
+        if (action == 'Rejected') {
+            bodyText = 'Do you want to terminate this interviewer from taking further interviews for this Skill Channel?';
+            confirmationButtonText = 'Yes, Remove it!';
+            successHtmlText = '<p>The Interviewer has been removed.</p>';
+        }
+        else {
+            bodyText = 'Do you want to shortlist this interviewer?';
+            confirmationButtonText = 'Yes Shorlist it';
+            successHtmlText = '<p>The Interviewer has been shortlisted.</p>';
+        }
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: bodyText,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmationButtonText,
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    captureclick('Interviewer Status', action, interviewid);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Interview/RemoveOrShortlistInterviewer",
+                        data: { 'interviewid': interviewid, 'action': action },
+                        success: function (result) {
+                            resolve(result);
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Successful!',
+                    type: 'success',
+                    html: successHtmlText,
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Operation cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+<script>
+    var actionclick = 1;
+    function captureclick(type, buttonaction, interviewid) {
+        var currenturl = window.location.href;
+        if (actionclick == 1) {
+            actionclick = 0;
+            $.ajax({
+                url: '/ActivityTracker/CapturePageClick',
+                method: 'POST',
+                async: true,
+                data: {
+                    'type': type,
+                    'currenturl': currenturl,
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
+                },
+                success: function (result) {
+                    actionclick = 1;
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    function EditReport() {
+        var modal = document.getElementById("EditReportModel");
+        modal.style.display = "block";
+        $("#edinterviewerComment").val($("#hidinterviewerComment").val());
+    }
+    function closeEditReportModel() {
+        var modal = document.getElementById("EditReportModel");
+        modal.style.display = "none";
+    }
+    function SaveEditReport() {
+        var comment = $("#edinterviewerComment").val();
+        if (comment != '') {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/UpdateInterviewReport",
+                data: { comment: comment, interviewid: $("#hidtxtinterviewid").val() },
+                success: function (data) {
+                    closeEditReportModel();
+                    location.reload();
+                    swal.fire(data);
+                }
+            });
+        } else {
+            swal.fire('Comment is required.');
+        }
+    }
+</script>
+
+@*       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+          $(document).ready(function(){
+        $('.interviewercomment').removeClass("readmore");
+          $('#expandbtn').click(function(){
+
+        if($('.interviewercomment').hasClass("readmore")) {
+          $('#expandbtn').html('Read more');
+          $('.interviewercomment').removeClass("readmore");
+        } else {
+          $('#expandbtn').html('Read less');
+          $('.interviewercomment').addClass("readmore");
+        }
+      });
+
+
+
+    });
+</script>*@
+@*<link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
+<script src="~/Newassets/js/summernote.min.js"></script>
+<script>
+             $(document).ready(function() {
+        $('#edinterviewerComment').summernote();
+    });
+</script>*@
+
+
+<script>
+    function moreless(id, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+        return false;
+    }
+
+</script>
+
+<script>
+
+    $('.next-skillHide').click(function () {
+        $('#next-skill').hide(0);
+        $('.next-skillShow').show(0);
+        $('.next-skillHide').hide(0);
+    });
+    $('.next-skillShow').click(function () {
+        $('#next-skill').show(0);
+        $('.next-skillShow').hide(0);
+        $('.next-skillHide').show(0);
+    });
+</script>
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
