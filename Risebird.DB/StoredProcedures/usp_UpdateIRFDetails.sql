@@ -68,7 +68,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @IsNewSkillChannel bit = null,  
  @TechRubricType varchar(20) = null,  
  @OpenAIAssistantId varchar(60) = null,
- @IsVideoRequired bit  
+ @IsVideoRequired bit,
+ @IsTechQC bit
  --@FixedAmount int = null  
  --@idRecommendation int,  
  --@RecommendationStatus bit,  
@@ -134,6 +135,7 @@ BEGIN
  ,[IsAIInterview]=@IsAIInterview
  ,[AIInterviewType]=@AIInterviewType
  ,[OpenAIAssistantId] = @OpenAIAssistantId
+ ,[IsTechQC]=@IsTechQC
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  
