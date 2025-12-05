@@ -16,7 +16,7 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 @secondsLeft int,
 @interviewId int,
 @BotSynthesizedVideoLink varchar(2000) = null,
-@CandidateResponse varchar(2000),
+@CandidateResponse nvarchar(4000),
 @BotAudioLink varchar(2000) = null,
 @DeliveryHeadQuestionId int = null
 AS
