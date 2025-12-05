@@ -124,6 +124,10 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        //var list = new List<string>();
+                        //list.Add("harshitjajoo95@gmail.com");
+                        //await _notificationHelper.SendIRFBasedInterviewerMail(list, DateTime.Now.ToString(), string.Empty, 100, 100);
+                        //await _notificationHelper.EmergencyInterviewerMail("harshitjajoo95@gmail.com", DateTime.Now.ToString(), string.Empty, 100, 100);
                         //await GenerateTranscriptSummary();
                         //var videoUrl = "https://risebirdportal.blob.core.windows.net/botinterviewvideo/dbf97ddf-838d-439c-94e5-c079863e5f7f202510241703490521.mp4?sv=2024-11-04&spr=https&st=2025-10-24T11%3A33%3A49Z&se=2026-05-24T11%3A33%3A49Z&sr=c&sp=r&sig=iY%2BfFYOJ%2Fm0kVU0Llg0tsau9WUUInSAAlarLm7UkkYg%3D";
                         //var key = await _aWSRekognitionService.UploadVideoAsync(videoUrl);
