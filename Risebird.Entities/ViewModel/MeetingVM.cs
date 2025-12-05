@@ -413,6 +413,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime SkillChannelCreatedOn { get; set; }
         public string CandidateResumeClientHREmailId { get; set; }//used in Emergency dashboards's unprocessed resumes page
         public string TranscriptSummary { get; set; }
+        public bool showChatBox { get; set; }
     }
 
     public class VedioComments
