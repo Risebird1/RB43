@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[BotInterviewQuestionVideos](
 	[question] [varchar](1000) NULL,
 	[CreatedAt] [datetime] NULL,
 	[BotSynthesizedVideoLink] [varchar](2000) NULL,
-	[CandidateAnswer] [varchar](2000) NULL,
+	[CandidateAnswer] [nvarchar](4000) NULL,
 	[BotAudioLink] [varchar](2000) NULL,
 	[DeliveryHeadQuestionId] [int] NULL,
 	[AnswerModifiedAt] [datetime] NULL,
@@ -40,7 +40,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
 BEGIN
     ALTER TABLE BotInterviewQuestionVideos
-    Add CandidateAnswer varchar(2000)
+    Add CandidateAnswer nvarchar(4000)
 END
 
 IF NOT EXISTS(
