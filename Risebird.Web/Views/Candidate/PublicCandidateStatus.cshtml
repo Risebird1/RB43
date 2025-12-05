@@ -856,7 +856,7 @@
                                                                                 {
                                                                                     @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                     {
-                                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                        @if (@* ViewBag.ClientRole != "HRs" && *@ ViewBag.ClientRole != "Staffing Agency")
                                                                                         {
                                                                                             <th>Report</th>
                                                                                         }
@@ -888,7 +888,7 @@
                                                                                 {
                                                                                     @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                     {
-                                                                                        @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                        @if (@* ViewBag.ClientRole != "HRs" && *@ ViewBag.ClientRole != "Staffing Agency")
                                                                                         {
                                                                                             <th>Report</th>
                                                                                         }
@@ -1125,7 +1125,7 @@
                                                                                     {
                                                                                         @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                         {
-                                                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
+                                                                                            @if (@* ViewBag.ClientRole != "HRs" && *@ ViewBag.ClientRole != "Staffing Agency")
                                                                                             {
                                                                                                 <td>
                                                                                                     @if (item.RedoInterview == true)
