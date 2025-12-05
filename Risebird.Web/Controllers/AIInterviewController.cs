@@ -721,7 +721,7 @@ namespace Risebird.Web.Controllers
                             //}
                             if(!string.IsNullOrEmpty(model.Message))
                             {
-                                userMessage = $"Verbal Explanation of Written Code : {tranScribedResponse}  <br/>  Written Code : {model.Message}";
+                                userMessage = $"Verbal Explanation of Written Code : {tranScribedResponse}{Environment.NewLine}Written Code :{Environment.NewLine}{model.Message}";
 
                             }
                             else
