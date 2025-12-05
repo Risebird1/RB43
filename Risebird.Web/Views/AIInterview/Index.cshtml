@@ -1198,10 +1198,10 @@
                         <input type="hidden" asp-for="AssistantId" />
                         <input type="hidden" asp-for="AIInterviewType" value="@Model.AIInterviewType" />
                         <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
-                        <input type="hidden" asp-for="showChatMessage" value="@Model.showChatMessage" />
+                        <input type="hidden" asp-for="showChatBox" value="@Model.showChatBox" />
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
-                        @if (Model.showChatMessage == true)
+                        @if (Model.showChatBox == true)
                         {
                             <div class="rb-chatbox-inputrow">
                                 <!-- Language warning message -->
@@ -1210,7 +1210,7 @@
                                 </div>
                                 
                                 <!-- Hidden textarea for form submission -->
-                                <textarea asp-for="Message" id="messageTextarea" style="display: none;"></textarea>
+                                <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
                                 
                                 <!-- CodeMirror editor container -->
                                 <div id="codeEditor" style="flex: 1; min-height: 36px;"></div>
@@ -1520,15 +1520,15 @@
     const form = document.querySelector("form"); // 🔥 grabs the first form on the page
     const overlay = document.getElementById("waitOverlay");
     const recordingOverlay = document.getElementById("recordingOverlay");
-    const showChatMessage = @Json.Serialize(Model.showChatMessage);
+    const showChatBox = @Json.Serialize(Model.showChatBox);
     
     function showRecordingOverlay() {
         if (recordingOverlay) {
             recordingOverlay.style.display = "flex";
-            // Update message text based on showChatMessage
+            // Update message text based on showChatBox
             const recordingMessage = document.getElementById("recordingMessage");
             if (recordingMessage) {
-                if (showChatMessage === true) {
+                if (showChatBox === true) {
                     recordingMessage.textContent = "You may write the code in the editor and explain it, and your entire response will be recorded.";
                 } else {
                     recordingMessage.textContent = "Your answer is being recorded...";
@@ -1657,6 +1657,7 @@
 
     // Chatbox CodeMirror editor and send button logic
     document.addEventListener('DOMContentLoaded', function () {
+        debugger;
         const messageTextarea = document.getElementById('messageTextarea');
         const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
         const form = document.querySelector('.rb-chatbox-form');
@@ -2311,6 +2312,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        debugger;
         const editorContainer = document.getElementById('codeEditor');
         const messageTextarea = document.getElementById('messageTextarea');
         const langSelector = document.getElementById('codeLanguage');
@@ -2325,7 +2327,8 @@
             try {
                 // Initialize CodeMirror - disabled by default until recording starts
                 codeEditor = CodeMirror(editorContainer, {
-                value: messageTextarea.value || '',
+                //value: messageTextarea.value || '',
+                value: '@Model.Message' || '',
                 mode: 'text',
                 theme: 'default',
                 lineNumbers: true,

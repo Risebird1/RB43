@@ -23,7 +23,7 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public int CurrentQuestionId { get; set; }
         public int IRFId { get; set; }
-        public bool showChatMessage { get; set; }
+        public bool showChatBox { get; set; }
 
     }
 

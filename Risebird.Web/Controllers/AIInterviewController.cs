@@ -119,7 +119,7 @@ namespace Risebird.Web.Controllers
                                 model.candidateName = meetingDetails.candidateName;
                                 model.AssistantId = meetingDetails.AssistantId;
                                 model.AIInterviewType = meetingDetails.AIInterviewType;
-                                model.showChatMessage = meetingDetails.showChatMessage;
+                                model.showChatBox = meetingDetails.showChatBox;
                                 return View(model);
                             }
                             else
@@ -307,6 +307,7 @@ namespace Risebird.Web.Controllers
                             model.IsAdaptive = meetingDetails.IsAdaptive;
                             model.AssistantId = meetingDetails.AssistantId;
                             model.AIInterviewType = meetingDetails.AIInterviewType;
+                            model.showChatBox = meetingDetails.showChatBox;
                             return View(model);
 
                         }
@@ -381,6 +382,7 @@ namespace Risebird.Web.Controllers
                             model.candidateName = meetingDetails.candidateName;
                             model.AssistantId = meetingDetails.AssistantId;
                             model.AIInterviewType = meetingDetails.AIInterviewType;
+                            model.showChatBox = meetingDetails.showChatBox;
                             return View(model);
                         }
                         else
@@ -613,7 +615,7 @@ namespace Risebird.Web.Controllers
                             model.candidateName = meetingDetails.candidateName;
                             model.IsAdaptive = meetingDetails.IsAdaptive;
                             model.AssistantId = meetingDetails.AssistantId;
-                            model.AIInterviewType = meetingDetails.AIInterviewType;
+                            model.showChatBox = meetingDetails.showChatBox;
                             return View(model);
 
                         }
@@ -663,30 +665,90 @@ namespace Risebird.Web.Controllers
                 {
                     string question = model.CurrentQuestion;
                     string userMessage = model.Message;
-                    if (model.AudioFile != null && model.AudioFile.Length > 0)
+                    string tranScribedResponse = string.Empty;
+                    string codeResponse = string.Empty;
+                    if(!model.showChatBox)
                     {
-                        using var stream = model.AudioFile.OpenReadStream();
-                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
-
-                        if (!IsTranscriptionValid(userMessage))
+                        if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
-                            // Rewind the stream to re-run transcription
-                            var exitModel = new AIInterviewExitModalViewModel
+                            using var stream = model.AudioFile.OpenReadStream();
+                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+
+                            if (!IsTranscriptionValid(userMessage))
                             {
-                                Title = "Error with audio!",
-                                Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
-                                IconClass = "fa-exclamation-triangle",
-                                IconColor = "#dc3545",
-                                ButtonText = "Close",
-                                ButtonClass = "btn-danger",
-                                CandidateName = model.candidateName ?? "Candidate",
-                                InterviewDate = DateTime.Now,
-                                SessionId = model.SessionId.ToString(),
-                                IsFromIndex = true
-                            };
-                            return View("ExitModalPartial", exitModel);
+                                // Rewind the stream to re-run transcription
+                                var exitModel = new AIInterviewExitModalViewModel
+                                {
+                                    Title = "Error with audio!",
+                                    Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
+                                    IconClass = "fa-exclamation-triangle",
+                                    IconColor = "#dc3545",
+                                    ButtonText = "Close",
+                                    ButtonClass = "btn-danger",
+                                    CandidateName = model.candidateName ?? "Candidate",
+                                    InterviewDate = DateTime.Now,
+                                    SessionId = model.SessionId.ToString(),
+                                    IsFromIndex = true
+                                };
+                                return View("ExitModalPartial", exitModel);
+                            }
                         }
                     }
+                    else
+                    {
+                        if (model.AudioFile != null && model.AudioFile.Length > 0)
+                        {
+                            using var stream = model.AudioFile.OpenReadStream();
+                            tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+
+                            //if (!IsTranscriptionValid(tranScribedResponse))
+                            //{
+                            //    // Rewind the stream to re-run transcription
+                            //    var exitModel = new AIInterviewExitModalViewModel
+                            //    {
+                            //        Title = "Error with audio!",
+                            //        Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
+                            //        IconClass = "fa-exclamation-triangle",
+                            //        IconColor = "#dc3545",
+                            //        ButtonText = "Close",
+                            //        ButtonClass = "btn-danger",
+                            //        CandidateName = model.candidateName ?? "Candidate",
+                            //        InterviewDate = DateTime.Now,
+                            //        SessionId = model.SessionId.ToString(),
+                            //        IsFromIndex = true
+                            //    };
+                            //    return View("ExitModalPartial", exitModel);
+                            //}
+                            if(!string.IsNullOrEmpty(model.Message))
+                            {
+                                userMessage = $"Verbal Explanation of Written Code : {tranScribedResponse}  <br/>  Written Code : {model.Message}";
+
+                            }
+                            else
+                            {
+                                userMessage = tranScribedResponse;
+                                if (!IsTranscriptionValid(userMessage))
+                                {
+                                    // Rewind the stream to re-run transcription
+                                    var exitModel = new AIInterviewExitModalViewModel
+                                    {
+                                        Title = "Error with audio!",
+                                        Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
+                                        IconClass = "fa-exclamation-triangle",
+                                        IconColor = "#dc3545",
+                                        ButtonText = "Close",
+                                        ButtonClass = "btn-danger",
+                                        CandidateName = model.candidateName ?? "Candidate",
+                                        InterviewDate = DateTime.Now,
+                                        SessionId = model.SessionId.ToString(),
+                                        IsFromIndex = true
+                                    };
+                                    return View("ExitModalPartial", exitModel);
+                                }
+                            }
+                        }
+                    }
+
 
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
                     var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
