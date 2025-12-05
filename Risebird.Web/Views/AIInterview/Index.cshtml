@@ -15,7 +15,7 @@
    .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
     padding:0 8px;
     height: auto;
-    min-height: 70px;
+    min-height: 200px;
     }
     .CodeMirror-lines {
     padding: 0px 0;
@@ -157,21 +157,25 @@
         top: calc(100% + 20px);
         /* left: 50%; */
         transform: translateX(-115%);
-        display: flex;
+        display: inline;
         align-items: center;
+        
+    }
+    .rb-chatbox-inputrow-box{
         background: #fff;
         border-radius: 24px;
         border: 1.5px solid #eee;
         padding: 6px 15px;
+        display: flex;
+        align-items: flex-start;
         gap: 8px;
         width: 100%;
         max-width: 550px;
-        min-height: 100px;
+        min-height: 215px;
         margin-top: 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         z-index: 10;
     }
-
     .rb-footer {
         position: relative;
     }
@@ -282,6 +286,7 @@
         max-height: 300px;
         color: #222;
         line-height: 1.5;
+        float:left;
     }
 
     /* Disabled CodeMirror styles */
@@ -320,8 +325,11 @@
         font-size: 0.85rem;
         color: #666;
         cursor: pointer;
-        margin-right: 8px;
+        margin-left: 8px;
         transition: all 0.2s;
+        flex-shrink: 0;
+        align-self: flex-start;
+        margin-top: 8px;
     }
 
     CodeMirror-linenumber{
@@ -338,7 +346,10 @@
         cursor: not-allowed;
         background: #f0f0f0;
         color: #999;
-        margin-left:-10px;
+        margin-left: 8px;
+        flex-shrink: 0;
+        align-self: flex-start;
+        margin-top: 8px;
     }
 
     /* Language warning message */
@@ -381,6 +392,41 @@
 
     .rb-chatbox-inputrow {
         /* position: relative; */
+    }
+
+    /* Note text styling */
+    .note-text {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff3cd 100%);
+    border-left: 4px solid #ffc107;
+    border-radius: 8px;
+    padding: 9px 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #2d5016;
+    box-shadow: 0 2px 8px rgba(78, 218, 146, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+    .note-text:hover {
+        box-shadow: 0 4px 12px rgba(78, 218, 146, 0.25);
+        transform: translateY(-1px);
+    }
+
+    .note-text i {
+        color: #4eda92;
+        font-size: 1.2rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .note-text strong {
+        color: #2d5016;
+        font-weight: 600;
+        margin-right: 4px;
     }
 
         .rb-chatbox-textarea:focus {
@@ -1035,6 +1081,10 @@
         .rb-chatbox-container {
             padding: 12px 4px 8px 4px;
         }
+        .shift-Chat{
+        margin-left:0px;
+        max-width:300px;
+    }
 
         .rb-chatbox-inputrow {
             padding: 4px 6px;
@@ -1212,6 +1262,12 @@
                         @if (Model.showChatBox == true)
                         {
                             <div class="rb-chatbox-inputrow">
+                                <div class="note-text">
+                                    <i style="color:#ffc107;" class="fa fa-info-circle"></i>
+                                    <strong>Note:</strong> You can write your code directly in the chat box, it is enabled once the start recording button is clicked. You have to explain your understanding of the code as if you were presenting it to a human expert.
+                                </div>
+
+                                <div class="rb-chatbox-inputrow-box">
                                 <!-- Language warning message -->
                                 <div id="codeLangWarning" class="code-lang-warning">
                                     <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
@@ -1243,6 +1299,8 @@
                                     <div class="rb-loading-spinner"></div>
                                 </button>
                             </div>
+                        </div>
+                        
                         }
                         else
                         {
@@ -2383,8 +2441,39 @@
                     },
                     "Shift-Tab": function(cm) {
                         cm.indentSelection("subtract");
-                    }
+                    },
+                    // Disable copy-paste shortcuts
+                    "Ctrl-C": function() { return false; },
+                    "Ctrl-V": function() { return false; },
+                    "Ctrl-X": function() { return false; },
+                    "Cmd-C": function() { return false; },
+                    "Cmd-V": function() { return false; },
+                    "Cmd-X": function() { return false; }
                 }
+            });
+            
+            // Disable right-click context menu (which contains copy/paste options)
+            codeEditor.on('contextmenu', function(cm, event) {
+                event.preventDefault();
+                return false;
+            });
+            
+            // Prevent paste events
+            codeEditor.on('paste', function(cm, event) {
+                event.preventDefault();
+                return false;
+            });
+            
+            // Prevent copy events
+            codeEditor.on('copy', function(cm, event) {
+                event.preventDefault();
+                return false;
+            });
+            
+            // Prevent cut events
+            codeEditor.on('cut', function(cm, event) {
+                event.preventDefault();
+                return false;
             });
 
             // Sync CodeMirror content to hidden textarea on change
@@ -2410,6 +2499,38 @@
                 }, 500); // Wait 500ms after user stops typing
             });
 
+            // Additional DOM-level protection against paste
+            const editorWrapper = codeEditor.getWrapperElement();
+            if (editorWrapper) {
+                // Prevent paste via keyboard shortcuts
+                editorWrapper.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
+                
+                // Prevent paste via context menu
+                editorWrapper.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
+                
+                // Prevent copy
+                editorWrapper.addEventListener('copy', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
+                
+                // Prevent cut
+                editorWrapper.addEventListener('cut', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
+            }
+            
             // Disable language selector by default (will be enabled when recording starts)
             if (langSelector) {
                 langSelector.disabled = true;
