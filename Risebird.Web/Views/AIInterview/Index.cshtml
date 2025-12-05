@@ -1,4 +1,4 @@
-@using Risebird.Entities.ViewModel
+﻿@using Risebird.Entities.ViewModel
 @using System.Text.Json
 @model ChatMessageViewModel
 @{
@@ -1200,6 +1200,10 @@
                         <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
                         <input type="hidden" asp-for="showChatBox" value="@Model.showChatBox" />
 
+                        <!-- Audio and Video file inputs - Always available for recording functionality -->
+                        <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+                        <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         @if (Model.showChatBox == true)
                         {
@@ -1230,14 +1234,16 @@
                                     <option value="json">JSON</option>
                                 </select>
 
-                                <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
-                                <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
-
                                 <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
                                     <i class="fa fa-arrow-up"></i>
                                     <div class="rb-loading-spinner"></div>
                                 </button>
                             </div>
+                        }
+                        else
+                        {
+                            <!-- Hidden Message field for when showChatBox is false -->
+                            <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
                         }
                         <div class="min-vh">
                             @if (Model.IsAdaptive == true)
@@ -1319,7 +1325,7 @@
     <!-- Recording Indicator Overlay -->
     <div id="recordingOverlay" style="display: none; position: fixed; top: 0; left: 0px; width: 100%; height: 100%;
     background-color: rgba(255, 81, 107, 0.1); z-index: 999; align-items: center; justify-content: center; pointer-events: none;">
-        <div style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:10px;
+        <div class="shift-Chat" style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:200px;
         text-align: center; box-shadow: 0 8px 32px rgba(255, 81, 107, 0.3); animation: recordingPulse 2s infinite; ">
             <div style="font-size:2rem;">
                 <i class="fa fa-circle" style="color: #fff; animation: recordingBlink 1s infinite;"></i>
@@ -1555,28 +1561,37 @@
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
 
-                // populate the file input with blob data
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                audioInput.files = dataTransfer.files;
+                // populate the file input with blob data (check if audioInput exists)
+                if (audioInput) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    audioInput.files = dataTransfer.files;
+                } else {
+                    console.error("audioInput element not found. Cannot submit audio recording.");
+                    return;
+                }
 
                 audioChunks = [];
                 recordBtn.textContent = "⭕";
                 recordBtn.setAttribute('data-tooltip', 'Record Audio');
-                overlay.style.display = "flex";
+                if (overlay) overlay.style.display = "flex";
                 stopRecording();
-                // Disable CodeMirror editor when audio recording stops
+                // Disable CodeMirror editor when audio recording stops (only if it exists)
                 if (typeof codeEditor !== 'undefined' && codeEditor) {
                     codeEditor.setOption('readOnly', true);
                     codeEditor.setOption('placeholder', 'Start recording to enable code editor...');
                 }
-                // Disable language selector when audio recording stops
+                // Disable language selector when audio recording stops (only if it exists)
                 const langSelector = document.getElementById('codeLanguage');
                 if (langSelector) {
                     langSelector.disabled = true;
                 }
                 // 🔥 Submit the form automatically
-                form.submit();
+                if (form) {
+                    form.submit();
+                } else {
+                    console.error("Form element not found. Cannot submit answer.");
+                }
             };
 
             mediaRecorderAudio.start();
@@ -1793,12 +1808,24 @@
             let blob = new Blob(chunks, { 'type': 'video/mp4;' });
             let videoURL = window.URL.createObjectURL(blob);
             const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
-            const dataTransfervideo = new DataTransfer();
-            dataTransfervideo.items.add(filevideo);
-            videoInput.files = dataTransfervideo.files;
+            
+            // Check if videoInput exists before setting files
+            if (videoInput) {
+                const dataTransfervideo = new DataTransfer();
+                dataTransfervideo.items.add(filevideo);
+                videoInput.files = dataTransfervideo.files;
+            } else {
+                console.error("videoInput element not found. Cannot submit video recording.");
+                return;
+            }
+            
             chunks = [];
           // hideRecordingOverlay();
-            form.submit();
+            if (form) {
+                form.submit();
+            } else {
+                console.error("Form element not found. Cannot submit answer.");
+            }
         }
         mediaRecorder.start();
         isRecording = true;
