@@ -19,6 +19,9 @@
     }
     .CodeMirror-lines {
     padding: 0px 0;
+        height: 238px;
+        background: #e8f2ff;
+
 }
 .CodeMirror-code{
     width:325px;
@@ -180,10 +183,196 @@
         gap: 8px;
         width: 100%;
         max-width: 550px;
-        min-height: 215px;
+        height:190px;
+       /*  min-height: 260px; */
         margin-top: 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         z-index: 10;
+        position: relative;
+    }
+
+    /* Expand button for chat box */
+    .rb-chatbox-expand-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: #f5f5f5;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 20;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .rb-chatbox-expand-btn:hover {
+        background: #e6f9f2;
+        color: #4eda92;
+        transform: scale(1.1);
+    }
+
+    /* Chat box popup overlay */
+    .rb-chatbox-popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        animation: fadeInPopup 0.3s ease;
+       
+    }
+
+    .rb-chatbox-popup-overlay.show {
+        display: flex;
+    }
+
+    /* Chat box popup container */
+    .rb-chatbox-popup {
+        background: #fff;
+        border-radius: 24px;
+        border: 1.5px solid #eee;
+        padding: 20px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        animation: slideUpPopup 0.3s ease;
+    }
+
+    .rb-chatbox-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .rb-chatbox-popup-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .rb-chatbox-popup-close {
+        background: #f5f5f5;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #666;
+        font-size: 16px;
+    }
+
+    .rb-chatbox-popup-close:hover {
+        background: #ff516b;
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    .rb-chatbox-popup-content {
+        flex: 1;
+        overflow: hidden;
+        min-height: 400px;
+        max-height: calc(90vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rb-chatbox-popup .rb-chatbox-inputrow-box {
+        max-width: 100%;
+        min-height: 400px;
+        margin-top: 15px;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        flex: 1;
+    }
+
+    .rb-chatbox-popup .CodeMirror {
+        min-height: 400px !important;
+        max-height: calc(90vh - 250px) !important;
+        height: calc(90vh - 250px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .rb-chatbox-popup .CodeMirror-lines {
+        min-height: 400px !important;
+        padding: 4px 0 !important;
+    }
+
+    .rb-chatbox-popup .CodeMirror-sizer {
+        min-height: 400px !important;
+    }
+
+    .rb-chatbox-popup .CodeMirror-code {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .rb-chatbox-popup .CodeMirror-scroll {
+        max-height: calc(90vh - 250px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: 100% !important;
+        position: relative !important;
+    }
+
+    .rb-chatbox-popup .CodeMirror-scrollbar-filler {
+        background: transparent !important;
+    }
+
+    .rb-chatbox-popup .CodeMirror-gutter-wrapper {
+        position: absolute !important;
+    }
+
+    .rb-chatbox-popup .code-lang-selector {
+        margin-top: 10px;
+        align-self: flex-start;
+    }
+
+    @@keyframes fadeInPopup {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideUpPopup {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     }
     .rb-footer {
         position: relative;
@@ -283,6 +472,9 @@
     }
 
     /* CodeMirror Editor Styles */
+    .CodeMirror-sizer{
+        height:240px
+    }
     .CodeMirror {
         flex: 1;
         border: none;
@@ -292,7 +484,8 @@
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
         height: auto;
         min-height: 36px;
-        max-height: 300px;
+        max-height:175px;
+        /* max-height: 300px; */
         color: #222;
         line-height: 1.5;
         float:left;
@@ -323,6 +516,8 @@
 
     .rb-chatbox-inputrow .CodeMirror {
         padding: 0px 0;
+        height:238px!important;
+       /*  overflow-y:scroll; */
     }
 
     /* Language selector button */
@@ -1277,6 +1472,11 @@
                                 </div>
 
                                 <div class="rb-chatbox-inputrow-box">
+                                <!-- Expand button -->
+                                <button type="button" class="rb-chatbox-expand-btn" id="expandChatBtn" title="Expand Chat Box">
+                                    <i class="fa fa-expand"></i>
+                                </button>
+                                
                                 <!-- Language warning message -->
                                 <div id="codeLangWarning" class="code-lang-warning">
                                     <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
@@ -1316,6 +1516,58 @@
                             <!-- Hidden Message field for when showChatBox is false -->
                             <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
                         }
+                        
+                        <!-- Chat Box Popup (only shown when showChatBox is true) -->
+                        @if (Model.showChatBox == true)
+                        {
+                            <div class="rb-chatbox-popup-overlay" id="chatBoxPopup">
+                                <div class="rb-chatbox-popup">
+                                    <div class="rb-chatbox-popup-header">
+                                        <div class="rb-chatbox-popup-title">Code Editor</div>
+                                        <button type="button" class="rb-chatbox-popup-close" id="closeChatPopup" title="Close">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="rb-chatbox-popup-content">
+                                        <div class="note-text">
+                                            <i style="color:#ffc107;" class="fa fa-info-circle"></i>
+                                            <strong>Note:</strong> You can write your code directly in the editor, it is enabled once the start recording button is clicked. You have to explain your understanding of the code as if you were presenting it to a human expert.
+                                        </div>
+                                        <div class="rb-chatbox-inputrow-box">
+                                            <!-- Language warning message -->
+                                            <div id="codeLangWarningPopup" class="code-lang-warning">
+                                                <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
+                                            </div>
+                                            
+                                            <!-- CodeMirror editor container for popup -->
+                                            <div id="codeEditorPopup" style="flex: 1; min-height: 400px; width: 100%;"></div>
+                                            
+                                            <!-- Language selector for popup -->
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                                                <select id="codeLanguagePopup" class="code-lang-selector" title="Select Programming Language">
+                                                    <option value="text">Plain Text</option>
+                                                    <option value="javascript">JavaScript</option>
+                                                    <option value="python">Python</option>
+                                                    <option value="java">Java</option>
+                                                    <option value="csharp">C#</option>
+                                                    <option value="cpp">C++</option>
+                                                    <option value="htmlmixed">HTML</option>
+                                                    <option value="css">CSS</option>
+                                                    <option value="sql">SQL</option>
+                                                    <option value="xml">XML</option>
+                                                    <option value="json">JSON</option>
+                                                </select>
+                                                <button type="submit" class="rb-chatbox-sendbtn" title="Send" id="sendBtnPopup" style="display: none;">
+                                                    <i class="fa fa-arrow-up"></i>
+                                                    <div class="rb-loading-spinner"></div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
                         <div class="min-vh">
                             @if (Model.IsAdaptive == true)
                             {
@@ -1662,6 +1914,16 @@
                 if (langSelector) {
                     langSelector.disabled = true;
                 }
+                // Sync popup editor state
+                if (typeof syncEditorStateToPopup === 'function') {
+                    syncEditorStateToPopup();
+                }
+                // Show loading state to indicate response is being submitted
+                const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+                if (sendBtn) {
+                    sendBtn.classList.add('loading');
+                    sendBtn.disabled = true;
+                }
                 // 🔥 Submit the form automatically
                 if (form) {
                     form.submit();
@@ -1682,6 +1944,10 @@
             const langSelector = document.getElementById('codeLanguage');
             if (langSelector) {
                 langSelector.disabled = false;
+            }
+            // Sync popup editor state
+            if (typeof syncEditorStateToPopup === 'function') {
+                syncEditorStateToPopup();
             }
             recordBtn.textContent = "☐";
             recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
@@ -1762,6 +2028,10 @@
             if (typeof codeEditor !== 'undefined' && codeEditor) {
                 codeEditor.setOption('readOnly', true);
             }
+            // Sync popup editor state
+            if (typeof syncEditorStateToPopup === 'function') {
+                syncEditorStateToPopup();
+            }
         }
 
         function hideLoading() {
@@ -1771,6 +2041,10 @@
             }
             if (typeof codeEditor !== 'undefined' && codeEditor) {
                 codeEditor.setOption('readOnly', false);
+            }
+            // Sync popup editor state
+            if (typeof syncEditorStateToPopup === 'function') {
+                syncEditorStateToPopup();
             }
         }
 
@@ -1897,6 +2171,12 @@
             
             chunks = [];
           // hideRecordingOverlay();
+            // Show loading state to indicate response is being submitted
+            const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+            if (sendBtn) {
+                sendBtn.classList.add('loading');
+                sendBtn.disabled = true;
+            }
             if (form) {
                 form.submit();
             } else {
@@ -1916,6 +2196,10 @@
         const langSelector = document.getElementById('codeLanguage');
         if (langSelector) {
             langSelector.disabled = false;
+        }
+        // Sync popup editor state
+        if (typeof syncEditorStateToPopup === 'function') {
+            syncEditorStateToPopup();
         }
         btnRecordToggle.innerHTML = '<i class="fa fa-stop"></i> Rec';
         btnRecordToggle.className = 'rb-record-btn rb-recording';
@@ -1937,6 +2221,10 @@
         const langSelector = document.getElementById('codeLanguage');
         if (langSelector) {
             langSelector.disabled = true;
+        }
+        // Sync popup editor state
+        if (typeof syncEditorStateToPopup === 'function') {
+            syncEditorStateToPopup();
         }
         btnRecordToggle.innerHTML = '<i class="fa fa-circle"></i>  Rec';
         btnRecordToggle.className = 'rb-record-btn';
@@ -2575,6 +2863,15 @@
                         codeEditor.setOption('mode', modeMap[mode]);
                     }
                     
+                    // Sync to popup editor if it exists
+                    const popupLangSelector = document.getElementById('codeLanguagePopup');
+                    if (popupLangSelector) {
+                        popupLangSelector.value = mode;
+                    }
+                    if (typeof codeEditorPopupInstance !== 'undefined' && codeEditorPopupInstance) {
+                        codeEditorPopupInstance.setOption('mode', modeMap[mode]);
+                    }
+                    
                     // Clear warning when switching languages
                     hideLanguageWarning();
                     
@@ -2654,5 +2951,311 @@
         if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 's', 'u'].includes(e.key.toLowerCase())) {
             e.preventDefault();
         }
+    });
+</script>
+
+<script>
+    // Chat Box Popup Expand/Collapse Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const expandBtn = document.getElementById('expandChatBtn');
+        const chatBoxPopup = document.getElementById('chatBoxPopup');
+        const closeChatPopup = document.getElementById('closeChatPopup');
+        const codeEditorPopup = document.getElementById('codeEditorPopup');
+        const codeLanguagePopup = document.getElementById('codeLanguagePopup');
+        const messageTextarea = document.getElementById('messageTextarea');
+        let codeEditorPopupInstance = null;
+        
+        // Only proceed if popup elements exist (when showChatBox is true)
+        if (!expandBtn || !chatBoxPopup) {
+            return;
+        }
+        
+        // Initialize popup CodeMirror editor if it doesn't exist
+        function initializePopupEditor() {
+            if (!codeEditorPopupInstance && codeEditorPopup && typeof CodeMirror !== 'undefined') {
+                // Clear any existing content
+                codeEditorPopup.innerHTML = '';
+                const existingCode = typeof codeEditor !== 'undefined' && codeEditor ? codeEditor.getValue() : '';
+                
+                codeEditorPopupInstance = CodeMirror(codeEditorPopup, {
+                    value: existingCode || messageTextarea.value || '',
+                    mode: typeof codeEditor !== 'undefined' && codeEditor ? codeEditor.getOption('mode') : 'text',
+                    theme: 'default',
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    indentUnit: 4,
+                    indentWithTabs: false,
+                    smartIndent: true,
+                    autoCloseBrackets: true,
+                    matchBrackets: true,
+                    styleActiveLine: true,
+                    readOnly: typeof codeEditor !== 'undefined' && codeEditor ? codeEditor.getOption('readOnly') : true,
+                    placeholder: typeof codeEditor !== 'undefined' && codeEditor ? codeEditor.getOption('placeholder') : 'Start recording to enable code editor...',
+                    viewportMargin: Infinity,
+                    extraKeys: {
+                        "Ctrl-Space": "autocomplete",
+                        "Tab": function(cm) {
+                            if (cm.somethingSelected()) {
+                                cm.indentSelection("add");
+                            } else {
+                                cm.replaceSelection("    ", "end");
+                            }
+                        },
+                        "Shift-Tab": function(cm) {
+                            cm.indentSelection("subtract");
+                        },
+                        "Ctrl-C": function() { return false; },
+                        "Ctrl-V": function() { return false; },
+                        "Ctrl-X": function() { return false; },
+                        "Cmd-C": function() { return false; },
+                        "Cmd-V": function() { return false; },
+                        "Cmd-X": function() { return false; },
+                        "Ctrl-Enter": function() {
+                            syncPopupToMain();
+                            const submitBtn = document.querySelector('.rb-chatbox-sendbtn');
+                            if (submitBtn) {
+                                submitBtn.click();
+                            }
+                        },
+                        "Cmd-Enter": function() {
+                            syncPopupToMain();
+                            const submitBtn = document.querySelector('.rb-chatbox-sendbtn');
+                            if (submitBtn) {
+                                submitBtn.click();
+                            }
+                        }
+                    }
+                });
+                
+                // Sync popup editor to main editor and textarea
+                codeEditorPopupInstance.on('change', function() {
+                    syncPopupToMain();
+                });
+                
+                // Auto-resize popup editor
+                codeEditorPopupInstance.on('change', function() {
+                    setTimeout(function() {
+                        if (codeEditorPopupInstance) {
+                            codeEditorPopupInstance.setSize('100%', 'auto');
+                            const scrollHeight = codeEditorPopupInstance.getScrollInfo().height;
+                            const newHeight = Math.min(Math.max(scrollHeight, 400), window.innerHeight - 250);
+                            codeEditorPopupInstance.getWrapperElement().style.height = newHeight + 'px';
+                            codeEditorPopupInstance.refresh();
+                        }
+                    }, 50);
+                });
+                
+                // Language selector change handler for popup
+                if (codeLanguagePopup) {
+                    codeLanguagePopup.addEventListener('change', function() {
+                        const mode = this.value;
+                        const modeMap = {
+                            'javascript': 'javascript',
+                            'python': 'python',
+                            'java': 'text/x-java',
+                            'csharp': 'text/x-csharp',
+                            'cpp': 'text/x-c++src',
+                            'htmlmixed': 'htmlmixed',
+                            'css': 'css',
+                            'sql': 'sql',
+                            'xml': 'xml',
+                            'json': { name: 'javascript', json: true },
+                            'text': 'text'
+                        };
+                        
+                        if (modeMap[mode]) {
+                            codeEditorPopupInstance.setOption('mode', modeMap[mode]);
+                        }
+                        
+                        // Sync language selection to main editor
+                        const mainLangSelector = document.getElementById('codeLanguage');
+                        if (mainLangSelector && typeof codeEditor !== 'undefined' && codeEditor) {
+                            mainLangSelector.value = mode;
+                            codeEditor.setOption('mode', modeMap[mode]);
+                        }
+                    });
+                }
+            }
+        }
+        
+        // Sync popup editor content to main editor and textarea
+        function syncPopupToMain() {
+            if (codeEditorPopupInstance && messageTextarea) {
+                const popupContent = codeEditorPopupInstance.getValue();
+                messageTextarea.value = popupContent;
+                
+                // Sync to main editor if it exists
+                if (typeof codeEditor !== 'undefined' && codeEditor) {
+                    codeEditor.setValue(popupContent);
+                }
+                
+                if (typeof updateSendButton === 'function') {
+                    updateSendButton();
+                }
+            }
+        }
+        
+        // Sync main editor to popup editor
+        function syncMainToPopup() {
+            if (codeEditorPopupInstance && typeof codeEditor !== 'undefined' && codeEditor) {
+                const mainContent = codeEditor.getValue();
+                codeEditorPopupInstance.setValue(mainContent);
+                
+                // Sync language selection
+                const mainLangSelector = document.getElementById('codeLanguage');
+                const popupLangSelector = document.getElementById('codeLanguagePopup');
+                if (mainLangSelector && popupLangSelector) {
+                    popupLangSelector.value = mainLangSelector.value;
+                }
+                
+                // Sync read-only state
+                const isReadOnly = codeEditor.getOption('readOnly');
+                codeEditorPopupInstance.setOption('readOnly', isReadOnly);
+                
+                // Sync language mode
+                const currentMode = codeEditor.getOption('mode');
+                codeEditorPopupInstance.setOption('mode', currentMode);
+                
+                // Sync placeholder
+                const placeholder = codeEditor.getOption('placeholder');
+                codeEditorPopupInstance.setOption('placeholder', placeholder);
+            }
+        }
+        
+        // Open popup
+        function openChatPopup() {
+            if (!chatBoxPopup) {
+                return;
+            }
+            
+            // Show popup first
+            chatBoxPopup.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            // Initialize editor if not already initialized
+            if (!codeEditorPopupInstance) {
+                initializePopupEditor();
+            }
+            
+            // Sync content from main editor
+            syncMainToPopup();
+            
+            // Refresh popup editor after a short delay to ensure proper rendering
+            setTimeout(function() {
+                if (codeEditorPopupInstance) {
+                    codeEditorPopupInstance.refresh();
+                    codeEditorPopupInstance.setSize('100%', 'auto');
+                    const scrollHeight = codeEditorPopupInstance.getScrollInfo().height;
+                    const newHeight = Math.min(Math.max(scrollHeight, 400), window.innerHeight - 250);
+                    codeEditorPopupInstance.getWrapperElement().style.height = newHeight + 'px';
+                    codeEditorPopupInstance.refresh();
+                    codeEditorPopupInstance.focus();
+                } else if (codeEditorPopup && typeof CodeMirror !== 'undefined') {
+                    // Retry initialization if it failed
+                    initializePopupEditor();
+                    setTimeout(function() {
+                        if (codeEditorPopupInstance) {
+                            codeEditorPopupInstance.refresh();
+                            codeEditorPopupInstance.focus();
+                        }
+                    }, 100);
+                }
+            }, 150);
+        }
+        
+        // Close popup
+        function closeChatPopupFunc() {
+            if (chatBoxPopup) {
+                syncPopupToMain();
+                chatBoxPopup.classList.remove('show');
+                // Restore body scroll
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Event listeners
+        if (expandBtn) {
+            expandBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    openChatPopup();
+                } catch (error) {
+                    console.error('Error opening chat popup:', error);
+                    // Fallback: try to show popup anyway
+                    if (chatBoxPopup) {
+                        chatBoxPopup.classList.add('show');
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+            });
+        }
+        
+        if (closeChatPopup) {
+            closeChatPopup.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeChatPopupFunc();
+            });
+        }
+        
+        // Close popup when clicking outside
+        if (chatBoxPopup) {
+            chatBoxPopup.addEventListener('click', function(e) {
+                if (e.target === chatBoxPopup) {
+                    closeChatPopupFunc();
+                }
+            });
+        }
+        
+        // Close popup on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && chatBoxPopup && chatBoxPopup.classList.contains('show')) {
+                closeChatPopupFunc();
+            }
+        });
+        
+        // Handle window resize for popup editor
+        window.addEventListener('resize', function() {
+            if (chatBoxPopup && chatBoxPopup.classList.contains('show') && codeEditorPopupInstance) {
+                setTimeout(function() {
+                    if (codeEditorPopupInstance) {
+                        codeEditorPopupInstance.setSize('100%', 'auto');
+                        const scrollHeight = codeEditorPopupInstance.getScrollInfo().height;
+                        const newHeight = Math.min(Math.max(scrollHeight, 400), window.innerHeight - 250);
+                        codeEditorPopupInstance.getWrapperElement().style.height = newHeight + 'px';
+                        codeEditorPopupInstance.refresh();
+                    }
+                }, 100);
+            }
+        });
+        
+        // Sync popup editor state when main editor state changes (e.g., when recording starts/stops)
+        // This will be called from the recording start/stop functions
+        window.syncEditorStateToPopup = function() {
+            if (codeEditorPopupInstance && typeof codeEditor !== 'undefined' && codeEditor) {
+                const isReadOnly = codeEditor.getOption('readOnly');
+                codeEditorPopupInstance.setOption('readOnly', isReadOnly);
+                
+                const placeholder = codeEditor.getOption('placeholder');
+                codeEditorPopupInstance.setOption('placeholder', placeholder);
+                
+                // Sync language selector state
+                const mainLangSelector = document.getElementById('codeLanguage');
+                const popupLangSelector = document.getElementById('codeLanguagePopup');
+                if (mainLangSelector && popupLangSelector) {
+                    popupLangSelector.disabled = mainLangSelector.disabled;
+                    popupLangSelector.value = mainLangSelector.value;
+                }
+                
+                // Sync editor content
+                const mainContent = codeEditor.getValue();
+                codeEditorPopupInstance.setValue(mainContent);
+                
+                // Sync language mode
+                const currentMode = codeEditor.getOption('mode');
+                codeEditorPopupInstance.setOption('mode', currentMode);
+            }
+        };
     });
 </script>
