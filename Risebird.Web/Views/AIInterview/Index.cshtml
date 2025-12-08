@@ -15,7 +15,8 @@
    .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
     padding:0 8px;
     height: auto;
-    min-height: 200px;
+    min-height: auto;
+    line-height: 1.5;
     }
     .CodeMirror-lines {
     padding: 0px 0;
@@ -500,6 +501,16 @@
 
     .CodeMirror-readonly .CodeMirror-cursor {
         display: none !important;
+    }
+
+    /* Fix cursor height to normal size */
+    .CodeMirror-cursor {
+        height: 1.5em !important;
+        border-left-width: 2px !important;
+    }
+
+    .CodeMirror-cursor:after {
+        height: 1.5em !important;
     }
 
     .CodeMirror-scroll {
