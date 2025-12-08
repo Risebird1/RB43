@@ -85,7 +85,7 @@ left join UserList ulc on ulc.EmailId=im.candidateEmail
 join CandidatesMaster cm on cm.UserId=ulc.id     
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= GETDATE() and interviewDate>=DATEADD(Day,-30,GETDATE()) AND ul.EmailId=@Emailid)        
   
- declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where  si.SuspiciousStatus=1)        
+ declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where  si.SuspiciousStatus=1 and ISNULL(ip.Isdeleted,0)=0)        
          
  declare @CancelledInterviewCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId                  
  left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr  where ul.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)        
@@ -263,7 +263,7 @@ left join PaymentSLADetails ps on im.id=ps.Interviewid
 left join UserList ulc on ulc.EmailId=im.candidateEmail                
 join CandidatesMaster cm on cm.UserId=ulc.id     
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= GETDATE() and interviewDate>=DATEADD(Day,-30,GETDATE()))        
-set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.SuspiciousStatus=1)        
+set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.SuspiciousStatus=1 and ISNULL(ip.Isdeleted,0)=0)        
 set @CancelledInterviewCount=(select Count(im.id) from InterviewMeetings im  where confirmationStatus=2  and CAST(interviewDate as DATE) >=CAST(GETDATE() as DATE) and im.RedoInterview=0)        
         
 set @RedoInterviewCount=(select Count(im.id)  from InterviewMeetings im                                      
