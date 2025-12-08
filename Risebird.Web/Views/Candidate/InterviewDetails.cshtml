@@ -242,6 +242,95 @@
 text-shadow: 0 0 15px #bfb8da;
  }
 }
+
+/* Candidate Advisory Popup Styles */
+#rb-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    font-family: "Segoe UI", Arial, sans-serif;
+    animation: fadeIn 0.3s ease;
+}
+
+#rb-popup {
+    background: #ffffff;
+    width: 92%;
+    max-width: 460px;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.35s ease-out;
+    border-top: 6px solid #42a5f5; /* Risebird Blue */
+}
+
+#rb-popup-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #42a5f5;
+    margin-bottom: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rb-highlight-box {
+    background: #E8F1FF; /* Soft Risebird Blue */
+    border-left: 5px solid #42a5f5;
+    padding: 14px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+}
+
+#rb-popup-text {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.55;
+}
+
+a.rb-link {
+    color: #0066FF;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a.rb-link:hover {
+    text-decoration: underline;
+}
+
+#rb-popup-ok {
+    width: 100%;
+    margin-top: 22px;
+    background: #42a5f5;
+    border: none;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: 0.2s ease-in-out;
+}
+
+#rb-popup-ok:hover {
+    background: #0047B3;
+    transform: translateY(-1px);
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@@keyframes slideUp {
+    from { transform: translateY(25px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
 </style>
         <div class="content-wrappers">
 
@@ -688,6 +777,32 @@ text-shadow: 0 0 15px #bfb8da;
                 <div class="modal-body" style="padding: 2px 16px;" id="divInterviewRatingRedo">
                 </div>
             </div>
+        </div>
+    </div>
+    <!-- Candidate Advisory Popup -->
+    <div id="rb-popup-overlay">
+        <div id="rb-popup">
+            <div id="rb-popup-title">⚠ Important Candidate Advisory</div>
+
+            <div class="rb-highlight-box">
+                <div id="rb-popup-text">
+                    Dear Candidate,<br><br>
+
+                    If you observe any <strong>unprofessional behaviour, malpractice, or fraudulent activity</strong> at any time
+                    <strong>before the interview, during the interview, or after the interview</strong> by the interviewer and/or any Risebird coordinator,
+                    through any means of communication, please report it immediately using the channels below:<br><br>
+
+                    📧 Email:
+                    <a class="rb-link" href="mailto:candidatesupport@risebird.io">candidatesupport@risebird.io</a><br>
+
+                    📞 Phone:
+                    <a class="rb-link" href="tel:+919667262444">+91 96672 62444</a><br><br>
+
+                    Your timely reporting helps us maintain a safe, fair, and professional interview experience for all candidates.
+                </div>
+            </div>
+
+            <button id="rb-popup-ok">Okay, I Understand</button>
         </div>
     </div>
     <div id="InterviewerAlert" class="modal modal-bg">
@@ -1441,8 +1556,37 @@ text-shadow: 0 0 15px #bfb8da;
 </script>
 <script>
     $(document).ready(function () {
-        openInterviewerAlert()
+        // Show the Candidate Advisory popup first
+        openCandidateAdvisoryPopup();
     })
+
+    // Function to open the Candidate Advisory popup
+    function openCandidateAdvisoryPopup() {
+        var overlay = document.getElementById("rb-popup-overlay");
+        if (overlay) {
+            overlay.style.display = "flex";
+        }
+    }
+
+    // Function to close the Candidate Advisory popup and show Mandatory Instructions
+    function closeCandidateAdvisoryPopup() {
+        var overlay = document.getElementById("rb-popup-overlay");
+        if (overlay) {
+            overlay.style.display = "none";
+        }
+        // After closing, show the Mandatory Instructions popup
+        openInterviewerAlert();
+    }
+
+    // Add event listener for the OK button
+    $(document).ready(function() {
+        var okBtn = document.getElementById("rb-popup-ok");
+        if (okBtn) {
+            okBtn.addEventListener("click", function () {
+                closeCandidateAdvisoryPopup();
+            });
+        }
+    });
 </script>
 
 <script>
