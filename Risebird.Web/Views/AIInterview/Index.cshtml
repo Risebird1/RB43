@@ -1935,9 +1935,20 @@
                     sendBtn.classList.add('loading');
                     sendBtn.disabled = true;
                 }
+                // Sync editor content to textarea before submitting (if editor exists)
+                if (typeof codeEditor !== 'undefined' && codeEditor) {
+                    const messageTextarea = document.getElementById('messageTextarea');
+                    if (messageTextarea) {
+                        messageTextarea.value = codeEditor.getValue();
+                    }
+                }
                 // 🔥 Submit the form automatically
                 if (form) {
                     form.submit();
+                    // Clear editor content after form submission starts
+                    setTimeout(function() {
+                        clearEditorContent();
+                    }, 0);
                 } else {
                     console.error("Form element not found. Cannot submit answer.");
                 }
@@ -2023,6 +2034,25 @@
         }
     }
 
+    // Global function to clear editor content - accessible from all handlers
+    function clearEditorContent() {
+        // Clear main CodeMirror editor
+        if (typeof codeEditor !== 'undefined' && codeEditor) {
+            codeEditor.setValue('');
+        }
+        // Clear popup CodeMirror editor
+        if (typeof codeEditorPopupInstance !== 'undefined' && codeEditorPopupInstance) {
+            codeEditorPopupInstance.setValue('');
+        }
+        // Clear textarea
+        const messageTextarea = document.getElementById('messageTextarea');
+        if (messageTextarea) {
+            messageTextarea.value = '';
+        }
+        // Set flag to clear editor on next page load (in case page reloads)
+        sessionStorage.setItem('clearEditorOnLoad', 'true');
+    }
+
     // Chatbox CodeMirror editor and send button logic
     document.addEventListener('DOMContentLoaded', function () {
         debugger;
@@ -2086,7 +2116,12 @@
                             sendBtn.style.opacity = '0.7';
                             sendBtn.style.transform = 'scale(0.95)';
                         }
+                        // Submit form (textarea value is already synced)
                         form.submit();
+                        // Clear editor content after form submission starts
+                        setTimeout(function() {
+                            clearEditorContent();
+                        }, 0);
                     } else {
                         // User cancelled - do nothing
                         console.log("Answer submission cancelled");
@@ -2115,6 +2150,10 @@
                 if (typeof codeEditor !== 'undefined' && codeEditor && messageTextarea) {
                     messageTextarea.value = codeEditor.getValue();
                 }
+                // Clear editor content after syncing - use setTimeout to ensure form submission has started
+                setTimeout(function() {
+                    clearEditorContent();
+                }, 0);
                 // Keep loading state active during form submission
             });
             form.addEventListener('error', function () {
@@ -2188,8 +2227,19 @@
                 sendBtn.classList.add('loading');
                 sendBtn.disabled = true;
             }
+            // Sync editor content to textarea before submitting (if editor exists)
+            if (typeof codeEditor !== 'undefined' && codeEditor) {
+                const messageTextarea = document.getElementById('messageTextarea');
+                if (messageTextarea) {
+                    messageTextarea.value = codeEditor.getValue();
+                }
+            }
             if (form) {
                 form.submit();
+                // Clear editor content after form submission starts
+                setTimeout(function() {
+                    clearEditorContent();
+                }, 0);
             } else {
                 console.error("Form element not found. Cannot submit answer.");
             }
@@ -2911,6 +2961,17 @@
             
             // Initial resize
             setTimeout(autoResizeEditor, 100);
+
+            // Clear editor on page load if we just submitted (to prevent persistence of previous answer)
+            // Check sessionStorage to see if we should clear
+            if (sessionStorage.getItem('clearEditorOnLoad') === 'true') {
+                codeEditor.setValue('');
+                const messageTextarea = document.getElementById('messageTextarea');
+                if (messageTextarea) {
+                    messageTextarea.value = '';
+                }
+                sessionStorage.removeItem('clearEditorOnLoad');
+            }
 
             // Set up Ctrl+Enter to submit after editor is initialized
             const form = document.querySelector('.rb-chatbox-form');
