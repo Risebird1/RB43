@@ -4535,6 +4535,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId)
+        {
+            try
+            {
+                return await _meetingRespository.GetQuestionSkillById(questionText, irfId, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

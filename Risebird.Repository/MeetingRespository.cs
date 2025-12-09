@@ -7813,5 +7813,33 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
+        public async Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId)//int techSkillCommentId
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    //parameters.Add("@techSkillCommentId", techSkillCommentId);
+                    parameters.Add("@questionText", questionText);
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@emailId", emailId);
+                    var data = await SqlMapper.QueryAsync<string>(con, "usp_GetQuestionSkillById", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data?.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -304,5 +304,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();
         Task SaveZohoMeetingParticipantDetails(List<ZohoParticipantList> _participantlist);
         Task<bool> UpdateTranscriptSummary(int interviewId, string transcriptSummary = null);
+        Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
     }
 }
