@@ -9480,5 +9480,21 @@ namespace Risebird.Web.Controllers
         //        return RedirectToAction("MyInterview");
         //    }
         //}
+
+        public async Task<JsonResult> GetQuestionSkillById(string questionText, int irfId)//,int techSkillCommentId
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+                var result = await _meetingService.GetQuestionSkillById(questionText, irfId, Emailid);
+                //if (string)
+                //{
+                //    return Json("Successfully updated.");
+                //}
+                return Json(result);
+            }
+            return Json("");
+        }
     }
 }
