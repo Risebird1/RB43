@@ -78,6 +78,8 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string ClientCompName { get; set; }
         public string JDTiltle { get; set; }
+        public int JobLevel { get; set; }
+        public int CompanyType { get; set; }
         public string JDLink { get; set; }
         public string JoinabilityComments { get; set; }
         public string SelectabilityComments { get; set; }
@@ -166,6 +168,8 @@ namespace Risebird.Entities.ViewModel
         public string CandidateVideo { get; set; }
         public string ConsentForm { get; set; }
         public string ResumeSummary { get; set; }
+        public string AIResumeScreeningVerdict { get; set; }
+        public string AIScreeningResultJsonV2 { get; set; }
 
     }
 }

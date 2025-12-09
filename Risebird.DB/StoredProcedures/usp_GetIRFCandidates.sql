@@ -47,7 +47,7 @@ ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
 ,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
-cci.IsColdCandidate  
+cci.IsColdCandidate, ca.AIResumeScreeningVerdict   
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
 join UserList ul on ul.id = cm.UserId  
@@ -82,7 +82,7 @@ ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
 ,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
-cci.IsColdCandidate  
+cci.IsColdCandidate, ca.AIResumeScreeningVerdict    
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
 join UserList ul on ul.id = cm.UserId  
@@ -117,8 +117,9 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail  
-,cci.IsColdCandidate  
+,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,
+ulcho.EmailId as ChannelOwnerEmail  
+,cci.IsColdCandidate, ca.AIResumeScreeningVerdict  
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
 join UserList ul on ul.id = cm.UserId  

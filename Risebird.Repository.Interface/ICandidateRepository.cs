@@ -55,5 +55,7 @@ namespace Risebird.Repository.Interface
         Task<AddCandidatesResponse> AddMCQSkillChannelCandidateList(List<CandidateQuickAddModel> candidateList);
         Task<Candidate> GetCandidateResumeSummaryById(int candidateId);
         Task<bool> SaveCandidateResumeSummaryAsJsonStringById(int candidateId, string resumeSummaryAsJsonString);
+        Task<Candidate> GetDetailsForCandidateResumeScreeningByAI(int irfId, int candidateId);
+        Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict);
     }
 }

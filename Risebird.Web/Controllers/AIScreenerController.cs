@@ -26,6 +26,10 @@ using static iTextSharp.text.pdf.AcroFields;
 //using System.Web.Mvc;
 using UglyToad.PdfPig;
 using Microsoft.Graph.Models.Security;
+using ExcelDataReader.Log;
+using Risebird.CommonHelper;
+using static SkiaSharp.HarfBuzz.SKShaper;
+using Newtonsoft.Json.Linq;
 
 namespace Risebird.Web.Controllers
 {
@@ -42,13 +46,16 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IIRFRepository _irfRepository;
         private readonly IActivityTrackerService _activityTrackerService;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
+        private readonly IOpenAIInterviewerAssistantHelper _ai;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
             IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper,
             IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
             IIRFRepository irfRepository, IMeetingService meetingService,
-            IActivityTrackerService activityTrackerService)
+            IActivityTrackerService activityTrackerService, IPdfReaderHelper pdfReaderHelper,
+            IOpenAIInterviewerAssistantHelper ai)
         {
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -60,6 +67,8 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _meetingService = meetingService;
             _activityTrackerService = activityTrackerService;
+            _pdfReaderHelper = pdfReaderHelper;
+            _ai = ai;
         }
 
 
@@ -157,6 +166,237 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(null);
+            }
+        }
+
+
+        public async Task<IActionResult> ScreenCandidateV2(string emailId, int irfId, int candidateMasterId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        var details = await _candidateService.GetDetailsForCandidateResumeScreeningByAI(irfId, candidateMasterId);
+                        //check if the candidate's screening is already done and saved in db(as json string)
+
+                        //var candidate = await _candidateService.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
+
+                        ViewBag.CandidateEmail = emailId;
+                        ViewBag.JobTitle = details.JDTiltle;
+                        ViewBag.ResumeLink = details?.ResumeLink;
+                        ViewBag.IRFName = details.IRFName;
+                        ViewBag.SaveOperationResult = "NA";
+
+                        if (details != null && !string.IsNullOrEmpty(details.AIScreeningResultJsonV2))
+                        {
+                            return View(JsonConvert.DeserializeObject<CandidateResumeScreeningVM>(details.AIScreeningResultJsonV2));
+                        }
+
+                        #region
+                        CandidateResumeScreeningVM candidateResumeScreeningData = null;
+
+                        if (!string.IsNullOrEmpty(details.ResumeLink))
+                        {
+                            //undo the following comments that parsed the resume using open ai and initiated the variable candidateParsedData when you iron out the bugs/erratics of open ai and are ready to switch back to it as the first choice resume parser.
+
+                            string jobLevel = ((JobLevels)details.JobLevel).GetDescription();
+                            string companyType = ((CompanyType)details.CompanyType).GetDescription();
+
+                            string resumeLinkToParse = string.Empty;
+                            if (!details.ResumeLink.Contains(".pdf"))
+                            {
+                                resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(details.ResumeLink);
+                            }
+                            else
+                            {
+                                resumeLinkToParse = details.ResumeLink;
+                            }
+                            var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+
+                            if (!string.IsNullOrEmpty(resumeStringContent))
+                            {
+                                var threadId = await _ai.CreateThreadAsync();
+
+                                var queryContent = $"Generate an output as per the instructions fed to the assistant. The job level is {jobLevel}, company type is {companyType} and the resume string is {resumeStringContent}";
+
+
+                                await _ai.AddMessageAsync(threadId, "user", queryContent);
+
+                                //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+
+                                var runId = await _ai.CreateRunAsync(threadId, "asst_xpUcZZCWpAYTn2aDpBBClXtf"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g 
+                                await _ai.WaitForRunAsync(threadId, runId);
+
+
+                                var replies = await _ai.GetMessagesAsync(threadId);
+
+                                try
+                                {
+                                    //candidateResumeScreeningData = JsonConvert.DeserializeObject<CandidateResumeScreeningVM>(replies?.FirstOrDefault());
+                                    candidateResumeScreeningData = TryParseCandidateResumeScreeningEvaluation(replies?.FirstOrDefault());
+
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                                }
+                                var responseInJson = JsonConvert.SerializeObject(candidateResumeScreeningData);
+                                //save the response in db
+                                bool saveOperationResult = true;
+                                if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                                {
+                                    saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, responseInJson, candidateResumeScreeningData.Verdict);
+                                }
+
+                                if (saveOperationResult)
+                                {
+                                    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                                }
+                                else
+                                {
+                                    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            //candidateResumeScreeningData.ErrorMessage = "Resume Link missing!";
+                            ViewBag.ErrorMessage = "Resume Link missing!";
+                        }
+                        return View(candidateResumeScreeningData);
+
+                        #endregion
+
+
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(null);
+            }
+        }
+
+
+        private CandidateResumeScreeningVM TryParseCandidateResumeScreeningEvaluation(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return null;
+
+            var cleaned = raw.Trim();
+
+            // Strip ```json ... ``` wrappers if present
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+            cleaned = cleaned.TrimStart('\n');
+
+            //
+            // 1️⃣ Strict Deserialize
+            //
+            try
+            {
+                var strict = JsonConvert.DeserializeObject<CandidateResumeScreeningVM>(cleaned);
+                if (strict != null &&
+                    (strict.MustHaveTechnicalCriteria != null ||
+                     strict.EvaluationCriteriaScores != null ||
+                     strict.SectionScores != null))
+                {
+                    return strict;
+                }
+            }
+            catch
+            {
+                // fallback mode below
+            }
+
+            //
+            // 2️⃣ Loose Fallback Parsing
+            //
+            try
+            {
+                var root = JsonConvert.DeserializeObject<JObject>(cleaned);
+                if (root == null) return null;
+
+                var result = new CandidateResumeScreeningVM
+                {
+                    TotalScore = root.Value<int?>("totalScore") ?? 0,
+                    MaxScore = root.Value<int?>("maxScore") ?? 0,
+                    StabilityNotes = root.Value<string>("stabilityNotes"),
+                    EmployerFraudNotes = root.Value<string>("employerFraudNotes"),
+                    FitmentSummary = root.Value<string>("fitmentSummary"),
+                    Verdict = root.Value<string>("verdict")
+                };
+
+                // Must Have Criteria
+                var mustArr = (JArray)root["mustHaveTechnicalCriteria"];
+                if (mustArr != null)
+                {
+                    result.MustHaveTechnicalCriteria = mustArr.Select(m => new MustHaveTechnicalCriterion
+                    {
+                        CriterionId = m.Value<string>("criterionId"),
+                        TechnicalSkill = m.Value<string>("technicalSkill"),
+                        DepthExpected = m.Value<string>("depthExpected"),
+                        ComplexityExpected = m.Value<string>("complexityExpected"),
+                        IsPrimarySkill = m.Value<bool?>("isPrimarySkill") ?? false
+                    }).ToList();
+                }
+
+                // Evaluation Criteria Scores
+                var scoresArr = (JArray)root["evaluationCriteriaScores"];
+                if (scoresArr != null)
+                {
+                    result.EvaluationCriteriaScores = scoresArr.Select(s => new EvaluationCriteriaScore
+                    {
+                        CriterionId = s.Value<string>("criterionId"),
+                        TechnicalSkill = s.Value<string>("technicalSkill"),
+                        Score = s.Value<int?>("score") ?? 0,
+                        MaxScore = s.Value<int?>("maxScore") ?? 0,
+                        Reason = s.Value<string>("reason")
+                    }).ToList();
+                }
+
+                // Section Scores
+                var secScoresNode = (JObject)root["sectionScores"];
+                if (secScoresNode != null)
+                {
+                    result.SectionScores = secScoresNode.ToObject<SectionScores>();
+                }
+
+                // Disqualification Flags
+                var flagsNode = (JObject)root["disqualificationFlags"];
+                if (flagsNode != null)
+                {
+                    result.DisqualificationFlags = flagsNode.ToObject<DisqualificationFlags>();
+                }
+
+                return result;
+            }
+            catch
+            {
+                return null;
             }
         }
 
