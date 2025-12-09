@@ -20,15 +20,23 @@ AS
 Begin
 
 	--select SkillName from TechSkillComments where id = @techSkillCommentId
-	declare @userId int
+	declare @userId int, @profileId int
 
 	set @userId = (select id from UserList where EmailId = @emailId)
+	set @profileId = (select idProfile from UserList where id = @userId)
+	if(@profileId = 1 or @profileId = 32)
+	begin
+		select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment like @questionText
+		order by id desc
+	end
+	else
+	begin 
+		select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment like @questionText and UserId = @userId
+		order by id desc
+	end
 
-	select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment like @questionText and UserId = @userId
-	order by id desc
+	
 
 END
 
 GO
-
-

@@ -613,6 +613,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict)
+        {
+            try
+            {
+                return await _candidateRepository.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, screeningResponseJson, verdict);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId)
         {
             try
@@ -921,6 +933,19 @@ namespace Risebird.Business
             {
                 return null;
             }
+        }
+
+        public async Task<Candidate> GetDetailsForCandidateResumeScreeningByAI(int irfId, int candidateMasterId)
+        {
+            try
+            {
+                return await _candidateRepository.GetDetailsForCandidateResumeScreeningByAI(irfId, candidateMasterId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
     }
