@@ -13,6 +13,33 @@ Create PROCEDURE [dbo].[usp_GetQCPendingReportsForAIQC]
 As
 Begin
 
+INSERT INTO dbo.TechSkillComments (IRFId, Comment, UserId, SkillName)  
+SELECT distinct  
+    irf.id,  
+    --IM.IRFId,                          -- maps InterviewMeetings.IRFId ? TechSkillComments.IRFId  
+    QD.Comment,                        -- maps QuestionsDiscussed.Comment ? TechSkillComments.Comment  
+    UL.id AS UserId,                   -- UserList.id ? TechSkillComments.UserId  
+    QD.SkillName                       -- maps QuestionsDiscussed.SkillName ? TechSkillComments.SkillName  
+FROM dbo.QuestionsDiscussed QD  
+INNER JOIN dbo.InterviewMeetings IM   
+    ON QD.InterviewId = IM.id  
+ inner join irf on irf.irfid = im.irfid  
+INNER JOIN dbo.UserList UL  
+    ON IM.Interviewer = UL.EmailId  
+WHERE NOT EXISTS (  
+    SELECT 1  
+    FROM dbo.TechSkillComments TSC  
+ join IRF on irf.id = tsc.IRFId  
+    WHERE irf.IRFId = IM.IRFId  
+      AND ISNULL(TSC.Comment, '') = ISNULL(QD.Comment, '')  
+      AND ISNULL(TSC.SkillName, '') = ISNULL(QD.SkillName, '')  
+      AND TSC.UserId = UL.id  
+) and cast(IM.interviewDate as date) > cast(dateadd(day, -60, getdate()) as date) 
+
+
+----------
+
+
 Select distinct top 2 im.id, IRF.id as irfIntId
 into #TempTable from 
 InterviewMeetings im join IRF on im.IRFId=irf.IRFId 

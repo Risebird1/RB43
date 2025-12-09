@@ -38,7 +38,7 @@ left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and 
 --left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId    
 --left join AGLevelAvailability agla on agla.InterviewerProfileId = cte.id    
 outer apply ((select top 1 CreatedOn, IsAvailable, ModifiedAt from AGLevelAvailability where AssessmentGroupId = @Assessmentid and InterviewerProfileId = (select id from InterviewerProfile where UserId = CTE.UserId) order by id desc)) agla  
-where ul.IsActive=1 and CTE.IsAvailable != 4 and ISNULL(CTE.IsDeleted,0)=0  
+where ul.IsActive=1 and (CTE.IsAvailable != 4 or CTE.Isavailable is null) and ISNULL(CTE.IsDeleted,0)=0  
 group by CTE.id, CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,   
 CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker ,agla.IsAvailable, agla.CreatedOn, agla.ModifiedAt      
 order by ul.EmailId   
@@ -64,7 +64,7 @@ left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and 
 left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId    
 --left join AGLevelAvailability agla on agla.InterviewerProfileId = cte.id    
 outer apply ((select top 1 CreatedOn, IsAvailable, ModifiedAt from AGLevelAvailability where AssessmentGroupId = @Assessmentid and InterviewerProfileId = (select id from InterviewerProfile where UserId = CTE.UserId) order by id desc)) agla  
-where CTE.value = @Assessmentid and ul.IsActive=1 and CTE.IsAvailable != 4  and ISNULL(CTE.IsDeleted,0)=0     
+where CTE.value = @Assessmentid and ul.IsActive=1 and (CTE.IsAvailable != 4 or CTE.Isavailable is null)  and ISNULL(CTE.IsDeleted,0)=0     
 group by CTE.id, CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.MCQCandidateid,ag.AssessmentVerificationType,    
 ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker, agla.IsAvailable, agla.CreatedOn, agla.ModifiedAt      
 order by EmailId  
