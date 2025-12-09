@@ -50,6 +50,8 @@ CREATE TABLE [dbo].[Candidate](
     [PreReportPassword] [varchar](50) NULL,
     [OpenAIScreeningResponseJson] [varchar](max) NULL,
     [ResumeSummary] [varchar](max) NULL,
+    [AIResumeScreeningVerdict] [varchar](30) NULL,
+    [AIScreeningResultJsonV2] [varchar](max) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -474,6 +476,26 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add ResumeSummary VARCHAR(max) -- redacted resume summary, using ai, that hides out all personal details 
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIResumeScreeningVerdict')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add AIResumeScreeningVerdict VARCHAR(30)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIScreeningResultJsonV2')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add AIScreeningResultJsonV2 VARCHAR(max) 
 END
 
 End

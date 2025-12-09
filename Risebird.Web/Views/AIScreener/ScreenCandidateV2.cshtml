@@ -1,0 +1,323 @@
+﻿@model Risebird.Entities.ViewModel.CandidateResumeScreeningVM
+
+@{
+    ViewData["Title"] = "Candidate Resume Screener";
+    ViewBag.PageHeader = "Candidate Resume Screener";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="container mt-3">
+    <h2>Resume Screening for: @ViewBag.CandidateEmail</h2>
+
+    <!-- Overall scores -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Overall Score
+        </div>
+        <div class="card-body">
+            <p><strong>Total Score:</strong> @Model.TotalScore</p>
+            <p><strong>Max Score:</strong> @Model.MaxScore</p>
+            <p><strong>Verdict:</strong> @Model.Verdict</p>
+        </div>
+    </div>
+
+    <!-- Must Have Technical Criteria -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Must Have Technical Criteria
+        </div>
+        <div class="card-body">
+            @if (Model.MustHaveTechnicalCriteria == null || !Model.MustHaveTechnicalCriteria.Any())
+            {
+                <p><em>No criteria defined.</em></p>
+            }
+            else
+            {
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Criterion ID</th>
+                            <th>Technical Skill</th>
+                            <th>Depth Expected</th>
+                            <th>Complexity Expected</th>
+                            <th>Is Primary Skill</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.MustHaveTechnicalCriteria)
+                        {
+                            <tr>
+                                <td>@c.CriterionId</td>
+                                <td>@c.TechnicalSkill</td>
+                                <td>@c.DepthExpected</td>
+                                <td>@c.ComplexityExpected</td>
+                                <td>@(c.IsPrimarySkill ? "Yes" : "No")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- Evaluation Criteria Scores -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Evaluation Criteria Scores
+        </div>
+        <div class="card-body">
+            @if (Model.EvaluationCriteriaScores == null || !Model.EvaluationCriteriaScores.Any())
+            {
+                <p><em>No evaluation scores available.</em></p>
+            }
+            else
+            {
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Criterion ID</th>
+                            <th>Technical Skill</th>
+                            <th>Score</th>
+                            <th>Max Score</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.EvaluationCriteriaScores)
+                        {
+                            <tr>
+                                <td>@s.CriterionId</td>
+                                <td>@s.TechnicalSkill</td>
+                                <td>@s.Score</td>
+                                <td>@s.MaxScore</td>
+                                <td>@s.Reason</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- Section Scores -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Section Scores
+        </div>
+        <div class="card-body">
+            @if (Model.SectionScores == null)
+            {
+                <p><em>No section scores available.</em></p>
+            }
+            else
+            {
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Score</th>
+                            <th>Max Score</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.SectionScores.TechnicalSkillsMatch != null)
+                        {
+                            <tr>
+                                <td>Technical Skills Match</td>
+                                <td>@Model.SectionScores.TechnicalSkillsMatch.Score</td>
+                                <td>@Model.SectionScores.TechnicalSkillsMatch.MaxScore</td>
+                                <td>@Model.SectionScores.TechnicalSkillsMatch.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.RealTimeImplementationExperience != null)
+                        {
+                            <tr>
+                                <td>Real-time Implementation Experience</td>
+                                <td>@Model.SectionScores.RealTimeImplementationExperience.Score</td>
+                                <td>@Model.SectionScores.RealTimeImplementationExperience.MaxScore</td>
+                                <td>@Model.SectionScores.RealTimeImplementationExperience.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.EmployerCredibility != null)
+                        {
+                            <tr>
+                                <td>Employer Credibility</td>
+                                <td>@Model.SectionScores.EmployerCredibility.Score</td>
+                                <td>@Model.SectionScores.EmployerCredibility.MaxScore</td>
+                                <td>@Model.SectionScores.EmployerCredibility.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.PrimarySpecialization != null)
+                        {
+                            <tr>
+                                <td>Primary Specialization</td>
+                                <td>@Model.SectionScores.PrimarySpecialization.Score</td>
+                                <td>@Model.SectionScores.PrimarySpecialization.MaxScore</td>
+                                <td>@Model.SectionScores.PrimarySpecialization.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.RecentHandsOnExperience != null)
+                        {
+                            <tr>
+                                <td>Recent Hands-on Experience</td>
+                                <td>@Model.SectionScores.RecentHandsOnExperience.Score</td>
+                                <td>@Model.SectionScores.RecentHandsOnExperience.MaxScore</td>
+                                <td>@Model.SectionScores.RecentHandsOnExperience.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.EducationalBackground != null)
+                        {
+                            <tr>
+                                <td>Educational Background</td>
+                                <td>@Model.SectionScores.EducationalBackground.Score</td>
+                                <td>@Model.SectionScores.EducationalBackground.MaxScore</td>
+                                <td>@Model.SectionScores.EducationalBackground.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.CertificationsAndTraining != null)
+                        {
+                            <tr>
+                                <td>Certifications & Training</td>
+                                <td>@Model.SectionScores.CertificationsAndTraining.Score</td>
+                                <td>@Model.SectionScores.CertificationsAndTraining.MaxScore</td>
+                                <td>@Model.SectionScores.CertificationsAndTraining.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.MultipleSpecializationsAdjustment != null)
+                        {
+                            <tr>
+                                <td>Multiple Specializations Adjustment</td>
+                                <td>@Model.SectionScores.MultipleSpecializationsAdjustment.Score</td>
+                                <td>@Model.SectionScores.MultipleSpecializationsAdjustment.MaxScore</td>
+                                <td>@Model.SectionScores.MultipleSpecializationsAdjustment.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.TeachingRoleAdjustment != null)
+                        {
+                            <tr>
+                                <td>Teaching Role Adjustment</td>
+                                <td>@Model.SectionScores.TeachingRoleAdjustment.Score</td>
+                                <td>@Model.SectionScores.TeachingRoleAdjustment.MaxScore</td>
+                                <td>@Model.SectionScores.TeachingRoleAdjustment.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.EmploymentEducationGapsAdjustment != null)
+                        {
+                            <tr>
+                                <td>Employment/Education Gaps Adjustment</td>
+                                <td>@Model.SectionScores.EmploymentEducationGapsAdjustment.Score</td>
+                                <td>@Model.SectionScores.EmploymentEducationGapsAdjustment.MaxScore</td>
+                                <td>@Model.SectionScores.EmploymentEducationGapsAdjustment.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.FreelancingRoleAdjustment != null)
+                        {
+                            <tr>
+                                <td>Freelancing Role Adjustment</td>
+                                <td>@Model.SectionScores.FreelancingRoleAdjustment.Score</td>
+                                <td>@Model.SectionScores.FreelancingRoleAdjustment.MaxScore</td>
+                                <td>@Model.SectionScores.FreelancingRoleAdjustment.Reason</td>
+                            </tr>
+                        }
+
+                        @if (Model.SectionScores.PrimarySpecializationCurrentJobAdjustment != null)
+                        {
+                            <tr>
+                                <td>Primary Specialization Current Job Adjustment</td>
+                                <td>@Model.SectionScores.PrimarySpecializationCurrentJobAdjustment.Score</td>
+                                <td>@Model.SectionScores.PrimarySpecializationCurrentJobAdjustment.MaxScore</td>
+                                <td>@Model.SectionScores.PrimarySpecializationCurrentJobAdjustment.Reason</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- Disqualification Flags -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Disqualification Flags
+        </div>
+        <div class="card-body">
+            @if (Model.DisqualificationFlags == null)
+            {
+                <p><em>No disqualification flag data available.</em></p>
+            }
+            else
+            {
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Zero Real-time & Recent Hands-on:</strong>
+                        @(Model.DisqualificationFlags.ZeroRealTimeAndRecentHandsOn ? "Yes" : "No")
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Employer Fraud Suspected:</strong>
+                        @(Model.DisqualificationFlags.EmployerFraudSuspected ? "Yes" : "No")
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Stability Concerns:</strong>
+                        @(Model.DisqualificationFlags.StabilityConcerns ? "Yes" : "No")
+                    </li>
+                </ul>
+            }
+        </div>
+    </div>
+
+    <!-- Notes & Summary -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Notes & Summary
+        </div>
+        <div class="card-body">
+            <div class="mb-2">
+                <strong>Stability Notes:</strong>
+                @if (string.IsNullOrWhiteSpace(Model.StabilityNotes))
+                {
+                    <div><em>None</em></div>
+                }
+                else
+                {
+                    <div>@Model.StabilityNotes</div>
+                }
+            </div>
+
+            <div class="mb-2">
+                <strong>Employer Fraud Notes:</strong>
+                @if (string.IsNullOrWhiteSpace(Model.EmployerFraudNotes))
+                {
+                    <div><em>None</em></div>
+                }
+                else
+                {
+                    <div>@Model.EmployerFraudNotes</div>
+                }
+            </div>
+
+            <div class="mb-2">
+                <strong>Fitment Summary:</strong>
+                @if (string.IsNullOrWhiteSpace(Model.FitmentSummary))
+                {
+                    <div><em>None</em></div>
+                }
+                else
+                {
+                    <div>@Model.FitmentSummary</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
