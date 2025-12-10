@@ -26,7 +26,7 @@ INNER JOIN dbo.InterviewMeetings IM
  inner join irf on irf.irfid = im.irfid  
 INNER JOIN dbo.UserList UL  
     ON IM.Interviewer = UL.EmailId  
-join TransTechSkill tts on tts.SkillName = qd.SkillName
+join TransTechSkill tts on (tts.SkillName = qd.SkillName and tts.irfid = irf.id )
 
 WHERE NOT EXISTS (  
     SELECT 1  
