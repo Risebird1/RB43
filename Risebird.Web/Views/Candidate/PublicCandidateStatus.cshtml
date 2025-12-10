@@ -1141,18 +1141,32 @@
                                                                                                             {
                                                                                                                 <div style="height:40px;"></div>
                                                                                                                 <div class="report-tooltip" style="border:0px;display:block!important">
-                                                                                                                    <span style=" position: relative;left: 0px; top: -5px;">
+                                                                                                                    <span style="position:relative;left:0px;top: -30px;">
 
-                                                                                                                        <i class="fa fa-clock pull-left blink" style="color: red"></i><span style="padding-left: 24px;position: relative;top: -2px;">QC Pending</span>
+                                                                                                                        <i class="fa fa-clock pull-left blink" style="color:#f13333;position:relative;left:55px;top:0px;"></i><span style="padding-left: 24px;position: relative;top: -4px;color:#f13333">QC Pending</span>
                                                                                                                         <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
-                                                                                                                            <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
+                                                                                                                            <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">"<b>Viewer Discretion Notice:</b> The candidate's report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience."</p>
                                                                                                                         </div>
                                                                                                                     </span>
                                                                                                                 </div>
                                                                                                             }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <div style="height:40px;"></div>
+                                                                                                                <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                                                                    <span style="position:relative;left:0px;top: -30px;">
+
+                                                                                                                        <i class="fa fa-check-circle pull-left" style="color: green;position:relative;left:55px;top:0px;"></i><span style="padding: 0px 3px;position: relative;top: -4px;color:darkgreen;font-weight:600;">QC Pass</span>
+                                                                                                                        <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
+                                                                                                                            <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">"<b>Quality Check Complete:</b> The candidate's report has successfully passed all quality checks and is approved for review."</p>
+                                                                                                                        </div>
+                                                                                                                    </span>
+                                                                                                                </div>
+                                                                                                            }
+                                                                                                            
                                                                                                             @*Turing*@
 
-                                                                                                            <div stye="width:100%;float:left">
+                                                                                                            <div style="width:100%;float:left;position:relative;top:-30px">
 
                                                                                                                 @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
                                                                                                                 @* <a style="text-decoration:none;" target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
