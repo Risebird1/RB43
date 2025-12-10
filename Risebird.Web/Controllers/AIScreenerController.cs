@@ -170,7 +170,7 @@ namespace Risebird.Web.Controllers
         }
 
 
-        public async Task<IActionResult> ScreenCandidateV2(string emailId, int irfId, int candidateMasterId)
+        public async Task<IActionResult> ScreenCandidateV2(string emailId, int irfId, int candidateMasterId, string accessType = null)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || (!string.IsNullOrEmpty(accessType) && accessType.ToLower() == "public" && profileName == ProfileNames.Client))
                     {
                         var details = await _candidateService.GetDetailsForCandidateResumeScreeningByAI(irfId, candidateMasterId);
                         //check if the candidate's screening is already done and saved in db(as json string)
