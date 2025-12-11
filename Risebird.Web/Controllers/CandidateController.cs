@@ -4737,6 +4737,11 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 if (model != null && Request.Form.Files.Count() > 0)
                 {
+                    var clienthrcontact = model.ClientHREmailId;
+                    if (string.IsNullOrWhiteSpace(model.ClientHREmailId))
+                    {
+                        clienthrcontact = emailId;
+                    }
                     // model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
                     // model.IRFName = Request.Form["IRFName"].ToString();
                     var addedByUserId = _irfService.GetUserId(emailId);
@@ -4766,7 +4771,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                         sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = emailId });
+                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = clienthrcontact });
                                     }
                                 }
                                 else
