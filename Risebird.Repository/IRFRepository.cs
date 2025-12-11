@@ -10216,6 +10216,26 @@ namespace Risebird.Repository
             }
             return 0;
         }
+        public async Task<IEnumerable<Users>> GetClientUsersByIRFandAdmin(int irfId)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Users>(con, "usp_GetClientUsersByIRFandAdmin", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 
