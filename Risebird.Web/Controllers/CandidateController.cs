@@ -7439,7 +7439,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "QualityController" || profileName == "Interviewer")
                     {
-                        
+
 
                         var summary = await _candidateService.CandidateResumeSummary(candidateId);
                         //ViewBag.InterviewerEmail = aiEvaluation.EmailId;
@@ -7450,7 +7450,7 @@ namespace Risebird.Web.Controllers
 
                         if (summary != null)
                         {
-                            
+
                             return View("_CandidateResumeSummaryBodyPartial", summary);
 
                         }
@@ -7479,5 +7479,16 @@ namespace Risebird.Web.Controllers
                 return View("PreOnboardingAIVerdictDetails", new RunResult());
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> GetClientUsersByIRFandAdmin(int irfid)
+        {
+            var _list = await _irfService.GetClientUsersByIRFandAdmin(irfid);
+            return Json(_list.Select(x => new
+            {
+                Value = x.EmailId,
+                Description = x.EmailId
+            }).ToList());
+        }
+
     }
 }

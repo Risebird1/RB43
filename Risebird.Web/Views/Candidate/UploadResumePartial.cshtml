@@ -2,22 +2,36 @@
 
 <script>
 
-        function OpenUploadResumeModal(irfid, Irfname, type = null) {
-            var modalBct = document.getElementById("uploadResumesModal");
-            modalBct.style.display = "block";
-            $('#IRFId').val(irfid);
-        $('#IRFName').val(Irfname);
-        $('#IRFType').val(type);
-        
+    function OpenUploadResumeModal(irfid, Irfname, type = null,profiletype=null) {
+    var modalBct = document.getElementById("uploadResumesModal");
+    modalBct.style.display = "block";
+    $('#IRFId').val(irfid);
+    $('#IRFName').val(Irfname);
+    $('#IRFType').val(type);
+    $('#IRFprofiletype').val(profiletype);
+        if(profiletype=="Client Admin"){
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/GetClientUsersByIRFandAdmin",
+                data: {'irfid':irfid},
+                success: function (result) {
+                    var s = '';
+                    for (var i = 0; i < result.length; i++) {
+                        s += '<option value="' + result[i].value + '">' + result[i].description + '</option>';
+                    }
+                    $("#drpClienthruser").html(s);
+                }
+            });
         }
+    }
 
     function closeUploadResumeModal() {
-        var modalBct = document.getElementById("uploadResumesModal");
-        modalBct.style.display = "none"
+    var modalBct = document.getElementById("uploadResumesModal");
+    modalBct.style.display = "none"
     }
 </script>
 
-<div id="uploadResumesModal" class="modal modal-bg" style="z-index:999"> 
+<div id="uploadResumesModal" class="modal modal-bg" style="z-index:999">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="upload_resume">
@@ -40,6 +54,11 @@
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
                             <div class="col-sm-12">
+                                @if (ViewBag.ClientRole == "Client Admin")
+                                {
+                                    <select id="drpClienthruser">
+                                    </select>
+                                }
                                 <div class="drop-box">
                                     <header>
                                         <h4>Select File here</h4>
@@ -67,6 +86,7 @@
                 <input type="hidden" name="IRFId" id="IRFId" />
                 <input type="hidden" name="IRFName" id="IRFName" />
                 <input type="hidden" name="IRFType" id="IRFType" />
+                <input type="hidden" name="IRFprofiletype" id="IRFprofiletype" />
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 <div class="card-footer">
@@ -76,7 +96,7 @@
 
                         <button style="margin:3px 10px;" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="uploadResume();">
                             <i style="font-size:14px; padding-right:10px;" class="fa fa-cloud-upload" aria-hidden="true"></i>
-                             Upload
+                            Upload
                         </button>
 
 
@@ -97,7 +117,7 @@
 
     const dt = new DataTransfer();
 
-    $("#ResumeFiles").on('change', function (e) 
+    $("#ResumeFiles").on('change', function (e)
     {
         for (var i = 0; i < this.files.length; i++) {
             let fileBloc = $('<span/>', { class: 'file-block' }),
@@ -137,6 +157,8 @@
         var IRFId=  $('#IRFId').val();
         var IRFName= $('#IRFName').val();
         var IRFType = $('#IRFType').val();
+        var clienthr = $('#drpClienthruser').val();
+        var IRFprofiletype = $('#IRFprofiletype').val();
         var form_data = new FormData();
         var filesInput = document.getElementsByName('ResumeFiles')[0];
         for (var i = 0; i < filesInput.files.length; i++) {
@@ -144,6 +166,9 @@
         }
         form_data.append("IRFId", IRFId);
         form_data.append("IRFName", IRFName);
+        if(IRFprofiletype=="Client Admin"){
+        form_data.append("ClientHREmailId", clienthr);
+        }
         if (IRFType != null && IRFType.toLowerCase() == 'public') {
             $.ajax({
                 type: "POST",

@@ -228,7 +228,7 @@
                                                                                             <span title="Add Candidate" onclick="AddClientCandidate('@item.id', '@item.IRFId','@ViewBag.emailid', '@ViewBag.id','@ViewBag.Type')">  <span style="color:#fff;font-size:12px;" class="fa fa-user-plus"></span></span>
                                                                                         </button>
                                                                                         <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
-                                                                                            <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public');" title="Upload Resumes">
+                                                                                <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public','@ViewBag.ClientRole');" title="Upload Resumes">
                                                                                                 <span class="fas fa-upload"></span>
                                                                                             </span>
                                                                                         </button>
