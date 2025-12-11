@@ -332,18 +332,18 @@ begin
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				Select distinct im.*,im.id as InterviewId,cl.Name,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ulsh.Emailid= @Emailid and interviewDate between @StartDate and @EndDate
+				Select distinct im.*,im.id as InterviewId,cl.Name,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where CandidateResponse=4 and ulsh.Emailid= @Emailid and interviewDate between @StartDate and @EndDate
 			end
 			else
 			begin
-				Select distinct im.*,im.id as InterviewId,cl.Name,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join UserList ul on ul.id=  irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and interviewDate between @StartDate and @EndDate
+				Select distinct im.*,im.id as InterviewId,cl.Name,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join UserList ul on ul.id=  irf.RisebirdHr where CandidateResponse=4 and interviewDate between @StartDate and @EndDate
 			end
 		end
 		else
 		begin
-			select distinct im.*,irf.*,cl.*,ic.*,uli.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId left join UserList uli on uli.id=  irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate  and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate
+			select distinct im.*,irf.*,cl.*,ic.*,uli.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId left join UserList uli on uli.id=  irf.RisebirdHr where CandidateResponse=4 and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate
 			union 
-			select distinct im.*,irf.*,cl.*,ic.*,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate
+			select distinct im.*,irf.*,cl.*,ic.*,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where CandidateResponse=4 and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate
 		end
 	end
 		else If(@actionstatus ='CancelledInterviewCount')
