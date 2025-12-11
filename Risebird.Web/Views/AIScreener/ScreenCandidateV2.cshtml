@@ -294,13 +294,14 @@
     }
 
     .professional-card-body {
-        padding: 15px 18px;
+        /* padding: 0 18px 15px 18px */; /* top, right, bottom, left - no top padding to align with header */
     }
 
     .enhanced-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
         font-size: 14px;
     }
 
@@ -460,6 +461,251 @@
         font-size: 13px;
         letter-spacing: 0.5px;
     }
+
+    /* PDF-specific styles */
+    #pdfdownload {
+        /* background: white; */
+        padding: 12px 8px 12px 6px; /* top, right, bottom, left - minimal left padding */
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+    }
+
+    /* Ensure all child elements respect container width */
+    #pdfdownload * {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    /* Prevent content from overflowing */
+    #pdfdownload .container,
+    #pdfdownload .row,
+    #pdfdownload .col-lg-12,
+    #pdfdownload .col-md-12 {
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Ensure tables fit in PDF and align with headers */
+    #pdfdownload .enhanced-table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: auto;
+        font-size: 11px;
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    /* Align table containers with header */
+    #pdfdownload .professional-card-body {
+        padding-top: 0 !important;
+        /* padding-left: 18px !important;
+        padding-right: 18px !important; */
+    }
+
+    /* Remove margin from overflow containers to align tables */
+    #pdfdownload [style*="overflow-x"] {
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #pdfdownload .enhanced-table th,
+    #pdfdownload .enhanced-table td {
+        padding: 8px 6px !important;
+        font-size: 11px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Remove gaps after tables */
+    #pdfdownload .enhanced-table + *,
+    #pdfdownload .enhanced-table-wrapper {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Reduce spacing in table containers */
+    #pdfdownload [style*="overflow-x"] {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    #pdfdownload .section-score-row {
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+
+    #pdfdownload .professional-card {
+        margin-bottom: 15px !important;
+        page-break-inside: avoid;
+        page-break-after: auto;
+        page-break-before: auto;
+    }
+
+    #pdfdownload .professional-card-body {
+       /*  padding: 18px !important */; /* top, right, bottom, left - no top padding to align with header */
+    }
+
+    #pdfdownload .professional-card-header {
+        padding: 8px 10px !important; /* Match horizontal padding with body */
+    }
+
+    #pdfdownload .professional-card-header {
+        padding: 10px 15px !important;
+        font-size: 14px !important;
+    }
+
+    #pdfdownload .combined-header-section {
+        padding: 12px 18px !important;
+        margin-bottom: 6px !important;
+    }
+
+    #pdfdownload .candidate-email {
+        font-size: 20px;
+    }
+
+    #pdfdownload .score-info-value {
+        font-size: 20px;
+    }
+
+    /* Reduce spacing for notes sections in PDF */
+    #pdfdownload .notes-section {
+        margin-bottom: 8px !important;
+        padding: 10px !important;
+    }
+
+    #pdfdownload .notes-label {
+        margin-bottom: 5px !important;
+        font-size: 12px !important;
+    }
+
+    #pdfdownload .notes-content {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Reduce spacing for flag items */
+    #pdfdownload .flag-item {
+        padding: 8px 10px !important;
+        margin-bottom: 6px !important;
+    }
+
+    /* Reduce spacing for section score rows */
+    #pdfdownload .section-score-row {
+        padding: 8px 6px !important;
+    }
+
+    #pdfdownload .section-header-row {
+        padding: 8px 6px !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* Reduce empty state padding */
+    #pdfdownload .empty-state {
+        padding: 15px 10px !important;
+    }
+
+    /* Remove overflow and min-width constraints for PDF */
+    #pdfdownload [style*="overflow-x: auto"],
+    #pdfdownload [style*="overflow-x:auto"] {
+        overflow-x: visible !important;
+        overflow: visible !important;
+    }
+
+    #pdfdownload [style*="min-width"] {
+        min-width: auto !important;
+    }
+
+    #pdfdownload .section-header-row,
+    #pdfdownload .section-score-row {
+        min-width: auto !important;
+        width: 100% !important;
+    }
+
+    #pdfdownload .enhanced-table th[style*="min-width"],
+    #pdfdownload .enhanced-table td[style*="min-width"] {
+        min-width: auto !important;
+    }
+
+    @@media print {
+        .resume-screen-container {
+            background: white;
+            padding: 0;
+        }
+        
+        .professional-card {
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+            box-shadow: none;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .combined-header-section {
+            page-break-after: avoid;
+            box-shadow: none;
+            border: 1px solid #e0e0e0;
+        }
+
+        .enhanced-table {
+            border: 1px solid #ddd;
+        }
+
+        .enhanced-table th,
+        .enhanced-table td {
+            border: 1px solid #ddd;
+        }
+    }
+
+    /* Hide download button in PDF */
+    .pdf-hide {
+        display: block;
+    }
+
+    @@media print {
+        .pdf-hide {
+            display: none !important;
+        }
+    }
+
+    /* PDF Download Button Styles */
+    .pdf-download-btn {
+        background: #42a5f5;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(66, 165, 245, 0.3);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .pdf-download-btn:hover {
+        background: #1e88e5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
+    }
+
+    .pdf-download-btn:active {
+        transform: translateY(0);
+    }
+
+    .pdf-download-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -472,6 +718,18 @@
                             <div class="container resume-screen-con">
                                 <div class="row">
                                     <div class="col-lg-12">
+                                        <!-- PDF Download Button -->
+                                        <div class="pdf-hide" style="text-align: right; margin-bottom: 15px;">
+                                            <button type="button" class="pdf-download-btn" onclick="getPDF()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                                </svg>
+                                                Download PDF
+                                            </button>
+                                        </div>
+
+                                        <!-- PDF Content Container -->
+                                        <div id="pdfdownload">
                                         <!-- Combined Candidate Header & Score Summary Section -->
                                         <div class="combined-header-section">
                                             <div class="combined-header-content">
@@ -852,6 +1110,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        </div>
+                                        <!-- End PDF Content Container -->
                                     </div>
                                 </div>
                             </div>
@@ -862,3 +1122,277 @@
         </div>
     </div>
 </div>
+
+<!-- HTML2PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<script>
+    function getPDF() {
+        var d = new Date();
+        var candidateEmail = '@ViewBag.CandidateEmail';
+        var filename = 'Candidate_Screening_Report_' + candidateEmail.replace(/[^a-zA-Z0-9]/g, '_') + '_' + d.getDate() + '_' + (d.getMonth() + 1) + '_' + d.getFullYear() + '.pdf';
+        var element = document.getElementById("pdfdownload");
+        
+        // Show loading indicator
+        var originalButton = event.target.closest('button');
+        var originalText = originalButton.innerHTML;
+        originalButton.disabled = true;
+        originalButton.innerHTML = '<span>Generating PDF...</span>';
+        
+        // Add professional header for PDF with reduced spacing
+        var pdfHeader = '<div style="text-align: center; margin-bottom: 8px; padding: 12px; background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%); color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(66, 165, 245, 0.3);"><h2 style="color: white; margin: 0 0 6px 0; font-size: 22px; font-weight: 700;">Candidate Resume Screening Report</h2><p style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 11px;">Generated on ' + d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + '</p></div>';
+        var originalContent = element.innerHTML;
+        
+        // Store original for restoration
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = originalContent;
+        element.innerHTML = pdfHeader + originalContent;
+        
+        // Temporarily adjust styles for PDF
+        var originalStyles = {
+            overflow: element.style.overflow,
+            maxWidth: element.style.maxWidth,
+            width: element.style.width,
+            padding: element.style.padding
+        };
+        
+        // Set container to fit A4 width (210mm = ~794px at 96 DPI)
+        // With reduced left margin (3mm) and padding, we have more room for content
+        var a4Width = 794; // A4 width in pixels
+        
+        element.style.overflow = 'visible'; // Changed to visible to capture full content
+        element.style.maxWidth = a4Width + 'px';
+        element.style.width = a4Width + 'px';
+        element.style.padding = '12px 8px 12px 6px'; // top, right, bottom, left - minimal left padding
+        element.style.margin = '0';
+        element.style.boxSizing = 'border-box';
+        element.style.height = 'auto';
+        element.style.minHeight = 'auto';
+        element.style.position = 'relative';
+        
+        // Force tables and containers to be responsive
+        var tables = element.querySelectorAll('.enhanced-table');
+        tables.forEach(function(table) {
+            table.style.width = '100%';
+            table.style.maxWidth = '100%';
+            table.style.tableLayout = 'auto';
+        });
+
+        // Remove overflow-x and min-width constraints
+        var overflowDivs = element.querySelectorAll('[style*="overflow-x"]');
+        overflowDivs.forEach(function(div) {
+            div.style.overflowX = 'visible';
+            div.style.overflow = 'visible';
+        });
+
+        var minWidthElements = element.querySelectorAll('[style*="min-width"]');
+        minWidthElements.forEach(function(el) {
+            var style = el.getAttribute('style') || '';
+            if (style.includes('min-width')) {
+                el.style.minWidth = 'auto';
+            }
+        });
+
+        // Fix section rows
+        var sectionRows = element.querySelectorAll('.section-header-row, .section-score-row');
+        sectionRows.forEach(function(row) {
+            row.style.minWidth = 'auto';
+            row.style.width = '100%';
+        });
+
+        // Reduce spacing between sections for PDF
+        var professionalCards = element.querySelectorAll('.professional-card');
+        professionalCards.forEach(function(card) {
+            card.style.marginBottom = '4px';
+            card.style.pageBreakInside = 'avoid';
+            card.style.pageBreakAfter = 'auto';
+        });
+
+        var cardBodies = element.querySelectorAll('.professional-card-body');
+        cardBodies.forEach(function(body) {
+            body.style.padding = '0 10px 6px 10px'; // top, right, bottom, left - no top padding
+            body.style.marginBottom = '0';
+        });
+
+        // Remove top margin from tables and align with header
+        var tables = element.querySelectorAll('.enhanced-table');
+        tables.forEach(function(table) {
+            table.style.marginTop = '0';
+            table.style.marginBottom = '0';
+        });
+
+        // Remove padding/margin from overflow containers
+        var overflowContainers = element.querySelectorAll('[style*="overflow-x"]');
+        overflowContainers.forEach(function(container) {
+            container.style.marginTop = '0';
+            container.style.marginLeft = '0';
+            container.style.marginRight = '0';
+            container.style.paddingLeft = '0';
+            container.style.paddingRight = '0';
+        });
+        
+
+        var cardHeaders = element.querySelectorAll('.professional-card-header');
+        cardHeaders.forEach(function(header) {
+            header.style.padding = '8px 10px'; // Match horizontal padding with body
+            header.style.fontSize = '14px';
+        });
+
+        // Reduce combined header section spacing
+        var combinedHeader = element.querySelector('.combined-header-section');
+        if (combinedHeader) {
+            combinedHeader.style.marginBottom = '6px';
+            combinedHeader.style.padding = '12px 18px';
+        }
+
+        // Force a reflow to ensure all styles are applied
+        element.offsetHeight;
+
+        html2pdf()
+            .from(element)
+            .set({
+                margin: [5, 5, 5, 3], // top, right, bottom, left - reduced left margin to prevent right cutoff
+                padding: [0, 0, 0, 0], // No padding to maximize content area
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 1.2, // Reduced scale to ensure full content capture
+                    logging: false, 
+                    dpi: 150, 
+                    letterRendering: true,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    // Let html2canvas calculate dimensions automatically
+                    // windowWidth and windowHeight removed to allow auto-calculation
+                    allowTaint: false,
+                    removeContainer: false,
+                    imageTimeout: 15000,
+                    onclone: function(clonedDoc) {
+                        // Ensure cloned document has proper styling
+                        var clonedElement = clonedDoc.getElementById('pdfdownload');
+                        if (clonedElement) {
+                            clonedElement.style.width = '794px';
+                            clonedElement.style.maxWidth = '794px';
+                            clonedElement.style.margin = '0';
+                            clonedElement.style.padding = '12px 8px 12px 6px'; // top, right, bottom, left - minimal left padding
+                            clonedElement.style.boxSizing = 'border-box';
+                            clonedElement.style.position = 'relative';
+                            clonedElement.style.overflow = 'visible';
+                            clonedElement.style.height = 'auto';
+                            clonedElement.style.minHeight = 'auto';
+                        }
+                        
+                        // Reduce spacing between sections in cloned document
+                        var clonedCards = clonedDoc.querySelectorAll('.professional-card');
+                        clonedCards.forEach(function(card) {
+                            card.style.marginBottom = '4px';
+                            card.style.pageBreakInside = 'avoid';
+                            card.style.pageBreakAfter = 'auto';
+                            card.style.pageBreakBefore = 'auto';
+                        });
+                        
+                        var clonedCardBodies = clonedDoc.querySelectorAll('.professional-card-body');
+                        clonedCardBodies.forEach(function(body) {
+                            body.style.padding = '0 10px 6px 10px'; // top, right, bottom, left - no top padding
+                            body.style.marginBottom = '0';
+                        });
+
+                        // Remove top margin from tables and align with header
+                        var clonedTables = clonedDoc.querySelectorAll('.enhanced-table');
+                        clonedTables.forEach(function(table) {
+                            table.style.marginTop = '0';
+                            table.style.marginBottom = '0';
+                        });
+
+                        // Remove padding/margin from overflow containers
+                        var clonedOverflowContainers = clonedDoc.querySelectorAll('[style*="overflow-x"]');
+                        clonedOverflowContainers.forEach(function(container) {
+                            container.style.marginTop = '0';
+                            container.style.marginLeft = '0';
+                            container.style.marginRight = '0';
+                            container.style.paddingLeft = '0';
+                            container.style.paddingRight = '0';
+                        });
+                        
+                        var clonedCardHeaders = clonedDoc.querySelectorAll('.professional-card-header');
+                        clonedCardHeaders.forEach(function(header) {
+                            header.style.padding = '8px 10px'; // Match horizontal padding with body
+                            header.style.fontSize = '14px';
+                        });
+                        
+                        var clonedCombinedHeader = clonedDoc.querySelector('.combined-header-section');
+                        if (clonedCombinedHeader) {
+                            clonedCombinedHeader.style.marginBottom = '6px';
+                            clonedCombinedHeader.style.padding = '12px 18px';
+                        }
+                        
+                        var clonedNotesSections = clonedDoc.querySelectorAll('.notes-section');
+                        clonedNotesSections.forEach(function(section) {
+                            section.style.marginBottom = '6px';
+                            section.style.padding = '8px';
+                        });
+                    }
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { 
+                    mode: ['avoid-all', 'css'],
+                    avoid: ['.professional-card', '.combined-header-section'],
+                    // Remove before/after to prevent extra spacing
+                }
+            })
+            .toPdf()
+            .get('pdf')
+            .then(function (pdf) {
+                var totalPages = pdf.internal.getNumberOfPages();
+                var pageWidth = pdf.internal.pageSize.getWidth();
+                var pageHeight = pdf.internal.pageSize.getHeight();
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    
+                    // Footer with page numbers - centered, minimal margin from bottom
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(120);
+                    pdf.text('Page ' + i + ' of ' + totalPages, pageWidth / 2, pageHeight - 3, { align: 'center' });
+                    
+                    // Optional: Add company name or watermark - right aligned with minimal margin
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(200);
+                    pdf.text('© ' + new Date().getFullYear() + ' Risebird', pageWidth - 10, pageHeight - 3, { align: 'right' });
+                }
+            })
+            .save()
+            .then(function() {
+                // Restore original content
+                element.innerHTML = originalContent;
+                // Restore original styles
+                element.style.overflow = originalStyles.overflow || '';
+                element.style.maxWidth = originalStyles.maxWidth || '';
+                element.style.width = originalStyles.width || '';
+                element.style.padding = originalStyles.padding || '';
+                element.style.margin = '';
+                // Restore button
+                originalButton.disabled = false;
+                originalButton.innerHTML = originalText;
+            })
+            .catch(function(error) {
+                console.error('PDF generation error:', error);
+                // Restore original content on error
+                element.innerHTML = originalContent;
+                // Restore original styles
+                element.style.overflow = originalStyles.overflow || '';
+                element.style.maxWidth = originalStyles.maxWidth || '';
+                element.style.width = originalStyles.width || '';
+                element.style.padding = originalStyles.padding || '';
+                element.style.margin = '';
+                alert('Error generating PDF. Please try again.');
+                originalButton.disabled = false;
+                originalButton.innerHTML = originalText;
+            });
+    }
+</script>
