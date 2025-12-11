@@ -1139,9 +1139,25 @@
         originalButton.disabled = true;
         originalButton.innerHTML = '<span>Generating PDF...</span>';
         
+        // Verify element exists and has content
+        if (!element) {
+            alert('Error: PDF content element not found.');
+            originalButton.disabled = false;
+            originalButton.innerHTML = originalText;
+            return;
+        }
+        
         // Add professional header for PDF with reduced spacing
         var pdfHeader = '<div style="text-align: center; margin-bottom: 8px; padding: 12px; background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%); color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(66, 165, 245, 0.3);"><h2 style="color: white; margin: 0 0 6px 0; font-size: 22px; font-weight: 700;">Candidate Resume Screening Report</h2><p style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 11px;">Generated on ' + d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + '</p></div>';
         var originalContent = element.innerHTML;
+        
+        // Check if content exists
+        if (!originalContent || originalContent.trim() === '') {
+            alert('Error: No content found to generate PDF.');
+            originalButton.disabled = false;
+            originalButton.innerHTML = originalText;
+            return;
+        }
         
         // Store original for restoration
         var tempDiv = document.createElement('div');
@@ -1245,42 +1261,58 @@
             combinedHeader.style.padding = '12px 18px';
         }
 
+        // Ensure element is visible and properly styled before capture
+        element.style.display = 'block';
+        element.style.visibility = 'visible';
+        element.style.opacity = '1';
+        
         // Force a reflow to ensure all styles are applied
         element.offsetHeight;
-
-        html2pdf()
-            .from(element)
-            .set({
-                margin: [5, 5, 5, 3], // top, right, bottom, left - reduced left margin to prevent right cutoff
-                padding: [0, 0, 0, 0], // No padding to maximize content area
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 1.2, // Reduced scale to ensure full content capture
-                    logging: false, 
-                    dpi: 150, 
-                    letterRendering: true,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    // Let html2canvas calculate dimensions automatically
-                    // windowWidth and windowHeight removed to allow auto-calculation
-                    allowTaint: false,
-                    removeContainer: false,
-                    imageTimeout: 15000,
-                    onclone: function(clonedDoc) {
-                        // Ensure cloned document has proper styling
-                        var clonedElement = clonedDoc.getElementById('pdfdownload');
-                        if (clonedElement) {
-                            clonedElement.style.width = '794px';
-                            clonedElement.style.maxWidth = '794px';
-                            clonedElement.style.margin = '0';
-                            clonedElement.style.padding = '12px 8px 12px 6px'; // top, right, bottom, left - minimal left padding
-                            clonedElement.style.boxSizing = 'border-box';
-                            clonedElement.style.position = 'relative';
-                            clonedElement.style.overflow = 'visible';
-                            clonedElement.style.height = 'auto';
-                            clonedElement.style.minHeight = 'auto';
-                        }
+        
+        // Small delay to ensure DOM is fully updated
+        setTimeout(function() {
+            html2pdf()
+                .from(element)
+                .set({
+                    margin: [5, 5, 5, 3], // top, right, bottom, left - reduced left margin to prevent right cutoff
+                    padding: [0, 0, 0, 0], // No padding to maximize content area
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 1.5, // Increased scale for better quality
+                        logging: true, // Enable logging to debug
+                        dpi: 192, 
+                        letterRendering: true,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        allowTaint: false,
+                        removeContainer: false,
+                        imageTimeout: 15000,
+                        windowWidth: element.scrollWidth || 794,
+                        windowHeight: element.scrollHeight,
+                        width: element.offsetWidth || 794,
+                        height: element.scrollHeight,
+                        x: 0,
+                        y: 0,
+                        scrollX: 0,
+                        scrollY: 0,
+                        onclone: function(clonedDoc) {
+                            // Ensure cloned document has proper styling
+                            var clonedElement = clonedDoc.getElementById('pdfdownload');
+                            if (clonedElement) {
+                                clonedElement.style.width = '794px';
+                                clonedElement.style.maxWidth = '794px';
+                                clonedElement.style.margin = '0';
+                                clonedElement.style.padding = '12px 8px 12px 6px'; // top, right, bottom, left - minimal left padding
+                                clonedElement.style.boxSizing = 'border-box';
+                                clonedElement.style.position = 'relative';
+                                clonedElement.style.overflow = 'visible';
+                                clonedElement.style.height = 'auto';
+                                clonedElement.style.minHeight = 'auto';
+                                clonedElement.style.display = 'block';
+                                clonedElement.style.visibility = 'visible';
+                                clonedElement.style.opacity = '1';
+                            }
                         
                         // Reduce spacing between sections in cloned document
                         var clonedCards = clonedDoc.querySelectorAll('.professional-card');
@@ -1376,6 +1408,9 @@
                 element.style.width = originalStyles.width || '';
                 element.style.padding = originalStyles.padding || '';
                 element.style.margin = '';
+                element.style.display = '';
+                element.style.visibility = '';
+                element.style.opacity = '';
                 // Restore button
                 originalButton.disabled = false;
                 originalButton.innerHTML = originalText;
@@ -1390,9 +1425,13 @@
                 element.style.width = originalStyles.width || '';
                 element.style.padding = originalStyles.padding || '';
                 element.style.margin = '';
-                alert('Error generating PDF. Please try again.');
+                element.style.display = '';
+                element.style.visibility = '';
+                element.style.opacity = '';
+                alert('Error generating PDF: ' + (error.message || 'Please try again.'));
                 originalButton.disabled = false;
                 originalButton.innerHTML = originalText;
             });
+        }, 100); // Small delay to ensure DOM is ready
     }
 </script>
