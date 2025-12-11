@@ -18,7 +18,14 @@ select intp.*,intp.IsInterest as IsInterested, ul.FirstName, ul.LastName,ul.IsAc
    STUFF((SELECT distinct  ', ' + Name      
    FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b      
    WHERE b.InterviewerProfileId = intp.Id      
-   FOR XML PATH('')), 1, 1, '') ,irc.Senioritylevel,irc.PerHourRateIndia,irc.PerHourRateOutside,irc.CompentencyLevel,irc.ProfileType,intp.Isavailable      
+   FOR XML PATH('')), 1, 1, '') ,irc.Senioritylevel,irc.PerHourRateIndia,irc.PerHourRateOutside,irc.CompentencyLevel,irc.ProfileType, intp.Isavailable,
+   CASE
+		WHEN intp.Isavailable =1 THEN 'Available'
+		WHEN intp.Isavailable =2 THEN 'Not Available'
+		WHEN intp.Isavailable =3 THEN 'Need Clarity'
+		WHEN intp.Isavailable =4 THEN 'Drop My Profile'
+		ELSE 'no data'
+	END AS AvailabilityStatusValue
 FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId      
 left join InterviewerRecommendation irc on irc.Userid=intp.Userid    
 Where ISNULL(intp.IsDeleted,0)=0 
