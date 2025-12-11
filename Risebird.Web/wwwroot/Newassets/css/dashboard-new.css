@@ -407,8 +407,13 @@ a.infos span {
         flex-direction: column;
         box-sizing: border-box;
     }
-
-.intime-on a.infos:hover span, .ctime-on a.infos:hover span, .interviewer-apt a.details span {
+.d-hotline {
+    background-color: #B2EBF2 !important;
+}
+    .d-hotline.h-btn .custom-icon {
+        width: 75%!important;
+    }
+    .intime-on a.infos:hover span, .ctime-on a.infos:hover span, .interviewer-apt a.details span {
     bottom: 23px;
 }
 
