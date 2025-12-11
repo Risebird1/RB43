@@ -5364,40 +5364,40 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-        public async Task<IActionResult> CandidateResumeUpdate(int id, string resumeLink = null)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
+        //public async Task<IActionResult> CandidateResumeUpdate(int id, string resumeLink = null)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
 
-                    if (!string.IsNullOrEmpty(resumeLink) && id != 0)
-                    {
-                        //call method to redact resume and save the redacted resume
-                        var redactedResumeLink = await RedactResume(resumeLink, id);
-                        if (!string.IsNullOrEmpty(redactedResumeLink))
-                        {
-                            return Json(redactedResumeLink);
-                        }
-                        else
-                        {
-                            return Json("failed");
-                        }
-                    }
-                    else
-                        return Json(null);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+        //            if (!string.IsNullOrEmpty(resumeLink) && id != 0)
+        //            {
+        //                //call method to redact resume and save the redacted resume
+        //                var redactedResumeLink = await RedactResume(resumeLink, id);
+        //                if (!string.IsNullOrEmpty(redactedResumeLink))
+        //                {
+        //                    return Json(redactedResumeLink);
+        //                }
+        //                else
+        //                {
+        //                    return Json("failed");
+        //                }
+        //            }
+        //            else
+        //                return Json(null);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
 
         private async Task<string> RedactResume(string resumeLink, int id)
         {
