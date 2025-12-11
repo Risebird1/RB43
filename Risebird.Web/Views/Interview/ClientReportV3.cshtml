@@ -914,7 +914,7 @@
                                                     <div style="margin-top:30px;">
                                                        
                                                         @* Strengths *@
-                                                        @if (summary.Strengths != null && summary.Strengths.Any())
+                   @* @if (summary.Strengths != null && summary.Strengths.Any())
                                                         {
                                                             <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
                                                                 <h4 style="margin: 0 0 15px 0; color: #2e7d32; font-size: 18px;">
@@ -927,10 +927,9 @@
                                                                     }
                                                                 </ul>
                                                             </div>
-                                                        }
-
+                                                        }*@
                                                         @* Areas of Improvement *@
-                                                        @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
+                                                        @* @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
                                                         {
                                                             <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid #ff9800;">
                                                                 <h4 style="margin: 0 0 15px 0; color: #e65100; font-size: 18px;">
@@ -943,7 +942,7 @@
                                                                     }
                                                                 </ul>
                                                             </div>
-                                                        }
+                                                        } *@
                                                     </div>
                                                 }
                                                 }
@@ -1028,43 +1027,7 @@
                                                                                 }
                                                                             </div>
 
-                                                                            @* Comment *@
-                                                                            @if (!string.IsNullOrEmpty(qaPair.Comment))
-                                                                            {
-                                                                                <div style="margin-top:5px;box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);padding: 5px 9px;">
-                                                                                    <span style="font-size: 14px; color: #666; font-style: italic;">Comment: </span>
-
-                                                                                    @{
-                                                                                        int commentId = Model.id * 1000 + commentIndex;
-                                                                                        commentIndex++;
-                                                                                    }
-
-                                                                                    @if (qaPair.Comment.Length > 150)
-                                                                                    {
-                                                                                        <div class="article">
-                                                                                            <span style="font-size: 14px; color: #666; font-style: italic;">
-                                                                                                @qaPair.Comment.Substring(0, 150)
-                                                                                            </span>
-
-                                                                                            <span class="moretext_@(commentId) moretext"
-                                                                                                  style="font-size: 14px; color: #666; font-style: italic; display: none;">
-                                                                                                @qaPair.Comment.Substring(150, qaPair.Comment.Length - 150)
-                                                                                            </span>
-                                                                                        </div>
-
-                                                                                        <a onclick="return moreless(@commentId, event);" class="moreless-btn" id="read_@(commentId)"
-                                                                                           href="javascript:void(0);" style="font-size: 14px; color: #0066cc; text-decoration: none; margin-left: 5px;">
-                                                                                            Read more
-                                                                                        </a>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <span style="font-size: 14px; color: #666; font-style: italic;">
-                                                                                            @qaPair.Comment
-                                                                                        </span>
-                                                                                    }
-                                                                                </div>
-                                                                            }
+                                                                            
 
                                                                         </li>
                                                                     }
