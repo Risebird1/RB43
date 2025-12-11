@@ -20,6 +20,7 @@
                         s += '<option value="' + result[i].value + '">' + result[i].description + '</option>';
                     }
                     $("#drpClienthruser").html(s);
+                    $("#drpClienthruser").val($("#hiddemailid").val());
                 }
             });
         }
