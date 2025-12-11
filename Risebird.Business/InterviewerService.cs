@@ -376,7 +376,7 @@ namespace Risebird.Business
                 ProfileModel.IsEdit = true;
                 if (!string.IsNullOrEmpty(ProfileModel.AssessmentGroupId))
                 {
-                    ProfileModel.AssessmentGroupArray = ProfileModel.AssessmentGroupId.Split(',');
+                    ProfileModel.AssessmentGroupArray = ProfileModel.AssessmentGroupId.Split(',')?.Distinct().ToArray();
                     ProfileModel.AssessmentGroupArrayOld = ProfileModel.AssessmentGroupArray;
                 }
                 return ProfileModel;
