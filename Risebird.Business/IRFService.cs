@@ -4776,5 +4776,17 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public async Task<IEnumerable<Users>> GetClientUsersByIRFandAdmin(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetClientUsersByIRFandAdmin(irfId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
