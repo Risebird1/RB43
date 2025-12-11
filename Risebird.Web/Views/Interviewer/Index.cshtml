@@ -513,14 +513,15 @@
 
 
                                                         <td><b>@item.NickName</b></td>
-                                                        @if (item.AvailableDetails != "0")
+                                                        @* @if (item.AvailableDetails != "0")
                                                         {
                                                             <td>Available</td>
                                                         }
                                                         else
                                                         {
                                                             <td>Not Available</td>
-                                                        }
+                                                        } *@
+                                                        <td>@item.AvailabilityStatusValue</td>
                                                         @if (item.IsActive)
                                                         {
                                                             <td>Active</td>
