@@ -1,0 +1,194 @@
+@{
+    ViewData["Title"] = "Wallet Details";
+    ViewBag.PageHeader = "Wallet Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title-space" style="color:#fff; margin:0;">
+                        <i class="fa fa-wallet"></i> Wallet Details
+                    </h4>
+                </div>
+                <div class="pull-right">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg razorpay_con">
+                    <input type="hidden" value="@ViewBag.BillingType" id="txtBillingType" />
+                    <input type="hidden" value="@ViewBag.ClientId" id="txtClientId" />
+                    <input type="hidden" value="@ViewBag.BillingOwnerId" id="txtBillingOwnerId" />
+                    
+                    <!-- Balance Display -->
+                    <div class="row" style="padding: 20px; background: #f5f5f5; margin: 15px; border-radius: 5px;">
+                        <div class="col-md-6">
+                            <h4 style="margin: 0; color: #333;">Current Balance</h4>
+                            <h2 style="margin: 10px 0 0 0; color: #4CAF50; font-weight: bold;" id="currentBalance">
+                                @(ViewBag.CurrentBalance != null ? ViewBag.CurrentBalance.ToString("N0") : "0")
+                            </h2>
+                        </div>
+                        <div class="col-md-6 text-right" style="padding-top: 20px;">
+                            <span style="color: #666; font-size: 14px;">
+                                Billing Type: 
+                                <strong>@(ViewBag.BillingType == 1 ? "Billing Owner" : "Client")</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="mdc-card-wrapper__text-section razorpay_btn">
+                        <div style="padding:0px">
+                            <button class="form-control" id="btnall" onclick="FetchTransaction('All')">
+                                <i class="fa fa-money-bill"></i> All Transactions
+                            </button>
+                        </div>
+                        <div style="padding:0px">
+                            <button class="form-control" id="btncredit" onclick="FetchTransaction('CREDIT')">
+                                <i class="fas fa-credit-card"></i> CREDIT
+                            </button>
+                        </div>
+                        <div style="padding:0px">
+                            <button class="form-control" id="btndebit" onclick="FetchTransaction('DEBIT')">
+                                <i class="fa fa-credit-card"></i> DEBIT
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Details -->
+                    <div id="divtransaction" class="razorpay_details" style="padding: 20px;">
+                        <div class="text-center" style="padding: 40px;">
+                            <i class="fa fa-spinner fa-spin fa-3x" style="color: #b4cee8;"></i>
+                            <p style="margin-top: 15px; color: #666;">Loading transactions...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        FetchTransaction('All');
+    });
+
+    function FetchTransaction(action) {
+        // Update button states
+        if (action == "All") {
+            $("#btnall").addClass("active-razorbtn");
+            $("#btncredit").removeClass("active-razorbtn");
+            $("#btndebit").removeClass("active-razorbtn");
+        } else if (action == "DEBIT") {
+            $("#btnall").removeClass("active-razorbtn");
+            $("#btncredit").removeClass("active-razorbtn");
+            $("#btndebit").addClass("active-razorbtn");
+        }
+        else if (action == "CREDIT") {
+            $("#btnall").removeClass("active-razorbtn");
+            $("#btncredit").addClass("active-razorbtn");
+            $("#btndebit").removeClass("active-razorbtn");
+        }
+
+        // Show loading
+        $("#divtransaction").html('<div class="text-center" style="padding: 40px;"><i class="fa fa-spinner fa-spin fa-3x" style="color: #b4cee8;"></i><p style="margin-top: 15px; color: #666;">Loading transactions...</p></div>');
+
+        $.ajax({
+            type: "POST",
+            url: "/Wallet/GetWalletDetails",
+            data: {
+                billingType: $("#txtBillingType").val(),
+                clientId: $("#txtClientId").val() || null,
+                billingOwnerId: $("#txtBillingOwnerId").val() || null,
+                action: action
+            },
+            success: function (response) {
+                $("#divtransaction").html(data);
+            },
+            error: function (xhr, status, error) {
+                $("#divtransaction").html('<div class="alert alert-danger" style="margin: 20px;">An error occurred while loading transactions. Please try again.</div>');
+                console.error("Error:", error);
+            }
+        });
+    }
+</script>
+
+<style>
+    .active-razorbtn {
+        background-color: #4CAF50 !important;
+        color: white !important;
+    }
+
+    .razorpay_btn {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin: 15px;
+    }
+
+    .razorpay_btn button {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .razorpay_btn button:hover {
+        background-color: #f0f0f0;
+        border-color: #4CAF50;
+    }
+
+    .razorpay_details {
+        min-height: 200px;
+    }
+
+    .table th {
+        background-color: #f8f9fa !important;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .badge-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: #333;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+

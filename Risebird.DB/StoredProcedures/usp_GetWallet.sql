@@ -1,0 +1,60 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetWallet'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetWallet
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE usp_GetWallet        
+@BillingType int,      
+@ClientId int = NULL,      
+@BillingOwnerId int = NULL,
+@Action varchar(20) = NULL -- 'CREDIT', 'DEBIT', or NULL for all
+AS        
+BEGIN        
+	SELECT 
+		w.id,
+		w.BillingType,
+		w.ClientId,
+		w.BillingOwnerId,
+		w.CreatedBy,
+		w.Credit,
+		w.Debit,
+		w.CreatedOn,
+		w.Comment,
+		w.Balance,
+		w.InterviewId,
+		w.IRFId,
+		w.TransactionType,
+		c.Name as ClientName,
+		ul.EmailId as BillingOwnerEmail,
+		ul.FirstName + ' ' + ul.LastName as BillingOwnerName,
+		im.candidateEmail as InterviewCandidateEmail,
+		im.interviewDate as InterviewDate,
+		irf.IRFId as IRFName,
+		irf.JDTiltle as JobTitle,
+		irf.JDTitleTwo as JobTitleTwo,
+		CASE 
+			WHEN ul_candidate.LastName IS NULL THEN ul_candidate.FirstName
+			ELSE RTRIM(LTRIM(ul_candidate.FirstName)) + ' ' + RTRIM(LTRIM(ul_candidate.LastName))
+		END as CandidateName
+	FROM Wallet w
+	LEFT JOIN Client c ON c.id = w.ClientId
+	LEFT JOIN UserList ul ON ul.id = w.BillingOwnerId
+	LEFT JOIN InterviewMeetings im ON im.id = w.InterviewId
+	LEFT JOIN IRF irf ON irf.id = w.IRFId
+	LEFT JOIN UserList ul_candidate ON ul_candidate.EmailId = im.candidateEmail
+	WHERE w.BillingType = @BillingType
+		AND (@ClientId IS NULL OR w.ClientId = @ClientId)
+		AND (@BillingOwnerId IS NULL OR w.BillingOwnerId = @BillingOwnerId)
+		AND (@Action IS NULL 
+			OR (@Action = 'CREDIT' AND w.Credit > 0)
+			OR (@Action = 'DEBIT' AND w.Debit > 0))
+	ORDER BY w.CreatedOn DESC
+END 
+GO
+
