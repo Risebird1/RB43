@@ -8,6 +8,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -103,7 +104,7 @@ namespace Risebird.Web.Controllers
         /// <param name="clientId">Client ID (optional)</param>
         /// <param name="billingOwnerId">Billing Owner ID (optional)</param>
         /// <param name="action">Filter: 'CREDIT', 'DEBIT', or null for all</param>
-        /// <returns>Wallet transaction list</returns>
+        /// <returns>Wallet transaction list as partial view</returns>
         [HttpPost]
         public async Task<IActionResult> GetWalletDetails(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null)
         {
@@ -117,7 +118,7 @@ namespace Risebird.Web.Controllers
                     // Validate billing type
                     if (billingType != 1 && billingType != 3)
                     {
-                        return Json(new { success = false, message = "Invalid billing type. Use 1 for Billing Owner or 3 for Client." });
+                        return PartialView("GetWalletDetails", new List<WalletVM>());
                     }
 
                     // If user is Client, get their ClientId
@@ -148,22 +149,22 @@ namespace Risebird.Web.Controllers
                                 item.CreatedOnstring = _local.ToShortDateString();
                             }
                         }
-                        return Json(new { success = true, data = model });
+                        return PartialView("GetWalletDetails", model);
                     }
                     else
                     {
-                        return Json(new { success = false, message = "Failed to fetch wallet details." });
+                        return PartialView("GetWalletDetails", new List<WalletVM>());
                     }
                 }
                 catch (Exception ex)
                 {
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    return Json(new { success = false, message = "An error occurred while fetching wallet details." });
+                    return PartialView("GetWalletDetails", new List<WalletVM>());
                 }
             }
             else
             {
-                return Json(new { success = false, message = "SignOut" });
+                return PartialView("GetWalletDetails", new List<WalletVM>());
             }
         }
 

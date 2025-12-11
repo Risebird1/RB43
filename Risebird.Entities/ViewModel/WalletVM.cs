@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public string JobTitle { get; set; }
         public string JobTitleTwo { get; set; }
         public string CandidateName { get; set; }
+        public int? MeetingStatus { get; set; }
     }
 }
 

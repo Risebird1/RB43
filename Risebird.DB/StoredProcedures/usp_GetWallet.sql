@@ -33,7 +33,7 @@ BEGIN
 		c.Name as ClientName,
 		ul.EmailId as BillingOwnerEmail,
 		ul.FirstName + ' ' + ul.LastName as BillingOwnerName,
-		im.candidateEmail as InterviewCandidateEmail,
+		im.candidateEmail as CandidateEmail,
 		im.interviewDate as InterviewDate,
 		irf.IRFId as IRFName,
 		irf.JDTiltle as JobTitle,
@@ -41,13 +41,15 @@ BEGIN
 		CASE 
 			WHEN ul_candidate.LastName IS NULL THEN ul_candidate.FirstName
 			ELSE RTRIM(LTRIM(ul_candidate.FirstName)) + ' ' + RTRIM(LTRIM(ul_candidate.LastName))
-		END as CandidateName
+		END as CandidateName,
+		ic.MeetingStatus as MeetingStatus
 	FROM Wallet w
 	LEFT JOIN Client c ON c.id = w.ClientId
 	LEFT JOIN UserList ul ON ul.id = w.BillingOwnerId
 	LEFT JOIN InterviewMeetings im ON im.id = w.InterviewId
 	LEFT JOIN IRF irf ON irf.id = w.IRFId
 	LEFT JOIN UserList ul_candidate ON ul_candidate.EmailId = im.candidateEmail
+	LEFT JOIN InterviewComments ic ON ic.InterviewId = w.InterviewId
 	WHERE w.BillingType = @BillingType
 		AND (@ClientId IS NULL OR w.ClientId = @ClientId)
 		AND (@BillingOwnerId IS NULL OR w.BillingOwnerId = @BillingOwnerId)
