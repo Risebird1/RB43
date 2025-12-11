@@ -655,7 +655,10 @@ namespace Risebird.Web.Controllers
                             if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList, out uniqueid))
                             {
                                 TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
+                                //TempData["Message"] = "Interviewer has been updated Successfully!";
                                 return RedirectToAction("Index");
+                                //ViewBag.Message = "Interviewer has been updated Successfully!";
+                                //return View(interviewerProfile);
                             }
                             else
                             {
