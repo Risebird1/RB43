@@ -4737,6 +4737,11 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 if (model != null && Request.Form.Files.Count() > 0)
                 {
+                    var clienthrcontact = model.ClientHREmailId;
+                    if (string.IsNullOrWhiteSpace(model.ClientHREmailId))
+                    {
+                        clienthrcontact = emailId;
+                    }
                     // model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
                     // model.IRFName = Request.Form["IRFName"].ToString();
                     var addedByUserId = _irfService.GetUserId(emailId);
@@ -4766,7 +4771,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                         sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = emailId });
+                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = clienthrcontact });
                                     }
                                 }
                                 else
@@ -5364,40 +5369,40 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-        public async Task<IActionResult> CandidateResumeUpdate(int id, string resumeLink = null)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
+        //public async Task<IActionResult> CandidateResumeUpdate(int id, string resumeLink = null)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
 
-                    if (!string.IsNullOrEmpty(resumeLink) && id != 0)
-                    {
-                        //call method to redact resume and save the redacted resume
-                        var redactedResumeLink = await RedactResume(resumeLink, id);
-                        if (!string.IsNullOrEmpty(redactedResumeLink))
-                        {
-                            return Json(redactedResumeLink);
-                        }
-                        else
-                        {
-                            return Json("failed");
-                        }
-                    }
-                    else
-                        return Json(null);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+        //            if (!string.IsNullOrEmpty(resumeLink) && id != 0)
+        //            {
+        //                //call method to redact resume and save the redacted resume
+        //                var redactedResumeLink = await RedactResume(resumeLink, id);
+        //                if (!string.IsNullOrEmpty(redactedResumeLink))
+        //                {
+        //                    return Json(redactedResumeLink);
+        //                }
+        //                else
+        //                {
+        //                    return Json("failed");
+        //                }
+        //            }
+        //            else
+        //                return Json(null);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
 
         private async Task<string> RedactResume(string resumeLink, int id)
         {
@@ -7439,7 +7444,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "QualityController" || profileName == "Interviewer")
                     {
-                        
+
 
                         var summary = await _candidateService.CandidateResumeSummary(candidateId);
                         //ViewBag.InterviewerEmail = aiEvaluation.EmailId;
@@ -7450,7 +7455,7 @@ namespace Risebird.Web.Controllers
 
                         if (summary != null)
                         {
-                            
+
                             return View("_CandidateResumeSummaryBodyPartial", summary);
 
                         }
@@ -7479,5 +7484,16 @@ namespace Risebird.Web.Controllers
                 return View("PreOnboardingAIVerdictDetails", new RunResult());
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> GetClientUsersByIRFandAdmin(int irfid)
+        {
+            var _list = await _irfService.GetClientUsersByIRFandAdmin(irfid);
+            return Json(_list.Select(x => new
+            {
+                Value = x.EmailId,
+                Description = x.EmailId
+            }).ToList());
+        }
+
     }
 }

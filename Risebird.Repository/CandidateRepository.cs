@@ -1472,7 +1472,31 @@ namespace Risebird.Repository
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@candidateMasterId", candidateMasterId);
                     parameters.Add("@screeningResponseJson", screeningResponseJson);
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveCandidateOpenAIScreeningResults", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveCandidateOpenAIScreeningResults", parameters, commandTimeout: 600,  //usp_SaveCandidateOpenAIScreeningResults
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@candidateMasterId", candidateMasterId);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    parameters.Add("@verdict", verdict);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveCandidateResumeAIScreeningResultsV2", parameters, commandTimeout: 600,  
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -2018,6 +2042,27 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<Candidate> GetDetailsForCandidateResumeScreeningByAI(int irfId, int candidateId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@CandidateId", candidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetDetailsForCandidateResumeScreeningByAI", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

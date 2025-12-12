@@ -247,5 +247,6 @@ namespace Risebird.Entities.ViewModel
         public string AIVerdict { get; set; }
         public int AIScreeningScore { get; set; }
         public bool IsDeleted { get; set; }
+        public string AvailabilityStatusValue { get; set; }
     }
 }

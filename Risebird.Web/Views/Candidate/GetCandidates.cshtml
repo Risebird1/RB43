@@ -47,7 +47,7 @@
     <style>
 
         .sidebar-mini .main-panel {
-            width: calc(100% - 0px);
+        width: calc(100% - 0px);
         }
 
     </style>
@@ -241,6 +241,7 @@
                                                                 <th>Current Interview Status</th>
 
                                                             }
+                                                            <th>AI Verdict(Resume Screening)</th>
                                                             @*<th>Communications</th>*@
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
@@ -275,6 +276,7 @@
                                                                 <th>Current Interview Status</th>
 
                                                             }
+                                                            <th>AI Verdict(Resume Screening)</th>
                                                             @* <th>Communications</th>*@
 
 
@@ -686,6 +688,15 @@
 
                                                             </td>*@
 
+                                                                @if (!string.IsNullOrEmpty(item.AIResumeScreeningVerdict))
+                                                                {
+                                                                    <td>@item.AIResumeScreeningVerdict</td>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
 
                                                                 <td style="width:20%" class="text-left">
 
@@ -785,15 +796,26 @@
                                                                 </span>
                                                                 </button> *@
 
-                                                                        <div style="float:left;">
+                                                                        @* <div style="float:left;">
                                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenCandidate", "AIScreener" , new { jdTitle = item.JDTiltle, emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, irfName = item.IRFName})">
+                                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;left:-2px;   margin: 0px 0px 0px 3px;">
+                                                                                    <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" fill="#fff" width="12" height="12" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 9px;position: relative;left: -6px;color:#fff; top: 2px;"></i></span>
+                                                                                </span>
+                                                                            </a>
+                                                                        </div> *@
+                                                                        
+                                                                    }
+                                                                    @if((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.profile != null && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")))
+                                                                    {
+                                                                        string accessType = ViewBag.AccessType ?? "";
+                                                                        <div style="float:left;">
+                                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenCandidateV2", "AIScreener" , new { emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, accessType = accessType})">
                                                                                 <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;left:-2px;   margin: 0px 0px 0px 3px;">
                                                                                     <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" fill="#fff" width="12" height="12" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 9px;position: relative;left: -6px;color:#fff; top: 2px;"></i></span>
                                                                                 </span>
                                                                             </a>
                                                                         </div>
                                                                     }
-
                                                                     @if (ViewBag.AccessType != "Public")
                                                                     {
 

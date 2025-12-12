@@ -141,6 +141,7 @@ namespace Risebird.Entities.Data
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
         public int Score { get; set; }
+        public int CandidateId { get; set; }
 
     }
 }

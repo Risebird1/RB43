@@ -2293,17 +2293,17 @@
         var index = num[0];//id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
 
-        var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
-        var skillName = '';
-        if (questionSkillMappingArray != null) {
-            var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
-
-            function checkQuestion(question) {
-                return question.comment == val;
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetQuestionSkillById",
+            //data: { 'techSkillCommentId': val, 'irfId' : '@Model.IRFId' },
+            data: { 'questionText': val , 'irfId' : '@Model.IRFId' },
+            success: function (data) {
+                debugger
+                $("#" + skillElementid).val(data);
             }
-            skillName = questionSkillMappingArray[questionIndex].skillName;
-            $("#" + skillElementid).val(skillName);
-        }
+        });
+
     }
     function QuestionChangedTwo(id, val) {
         var num = id.match(/(\d+)/);
@@ -2311,17 +2311,15 @@
         var index = num[0];//id.charAt(20);
         var skillElementid = 'QuestionsTwoCollection_' + index + '__SkillName';
 
-        var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
-        var skillName = '';
-        if (questionSkillMappingArray != null) {
-            var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
-
-            function checkQuestion(question) {
-                return question.comment == val;
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetQuestionSkillById",
+            //data: { 'techSkillCommentId': val, 'irfId' : '@Model.IRFId' },
+            data: { 'questionText': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
             }
-            skillName = questionSkillMappingArray[questionIndex].skillName;
-            $("#" + skillElementid).val(skillName);
-        }
+        });
     }
 
 
