@@ -1,6 +1,8 @@
-﻿using Risebird.Entities.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -10,6 +12,8 @@ namespace Risebird.Entities.ViewModel
         public string CampaignName { get; set; }
         public int AssessmentGroupId { get; set; }
         public string AssessmentGroupName { get; set; }
+
+        //[ModelBinder(BinderType = typeof(MyBinder))]
         public IList<AssignmentVM> AssessmentGroups { get; set; } // the property name AssignmentVM is a clerical error; it should be AssessmentGroupVM
         public IList<IRFVm> SkillChannels { get; set; }
         public string CurrentForm { get; set; }
