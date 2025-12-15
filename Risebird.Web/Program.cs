@@ -90,6 +90,12 @@ builder.Services.AddHsts(options =>
     options.MaxAge = TimeSpan.FromSeconds(31536000);
 });
 
+builder.Services.AddControllers(options =>
+{
+    options.MaxModelBindingCollectionSize = 5000;
+});
+
+
 
 builder.Services.AddSingleton<HttpClientHelper>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
