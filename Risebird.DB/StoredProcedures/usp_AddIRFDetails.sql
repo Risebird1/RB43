@@ -67,6 +67,9 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsAIInterview bit,
 @AIInterviewType int,
 @MeetingPlatform varchar(25),
+@OpenAIAssistantId varchar(200) = null,
+@showChatBox bit = 0,
+@generateTranscriptSummary bit = 0,
 @idIrf int output              
               
 AS              
@@ -118,7 +121,10 @@ Begin
 	   ,[IsAIInterview]
 	   ,[AIInterviewType]
 	   ,[MeetingPlatform]
-	   ,[IsTechQC])  
+	   ,[IsTechQC]
+	   ,[OpenAIAssistantId]
+	   ,[showChatBox]
+	   ,[generateTranscriptSummary])  
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -164,7 +170,10 @@ Begin
 	   @IsAIInterview,
 	   @AIInterviewType,
 	   @MeetingPlatform,
-	   @IsTechQC)  
+	   @IsTechQC,
+	   @OpenAIAssistantId,
+	   @showChatBox,
+	   @generateTranscriptSummary)  
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        

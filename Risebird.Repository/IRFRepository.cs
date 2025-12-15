@@ -648,6 +648,8 @@ namespace Risebird.Repository
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIInterviewType"]) : 0;
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
                             _resultVM.IsTechQC = !string.IsNullOrEmpty(dt.Rows[0]["IsTechQC"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsTechQC"]) : false; ;
+                            _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
+                            _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
 
                         }
                     }
@@ -1529,6 +1531,15 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
                     cmdCreateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@OpenAIAssistantId", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@OpenAIAssistantId"].Value = irfDetails.OpenAIAssistantId ?? (object)DBNull.Value;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@showChatBox"].Value = irfDetails.showChatBox;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary;
 
                     var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
                     if (irfDetails.IsAIInterview)
@@ -2553,6 +2564,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIAssistantId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@OpenAIAssistantId"].Value = irfDetails.OpenAIAssistantId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@showChatBox"].Value = irfDetails.showChatBox;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary;
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
