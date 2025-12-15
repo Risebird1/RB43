@@ -18,5 +18,6 @@ namespace Risebird.Entities.Data
         public int ClientId { get; set; }
         public string ClientCompanyName { get; set; }
         public string InterviewMeetingPlatForm { get; set; }
+        public bool generateTranscriptSummary { get; set; }
     }
 }
