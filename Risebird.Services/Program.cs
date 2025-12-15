@@ -13,7 +13,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers(options =>
+{
+    options.MaxModelBindingCollectionSize = 5000;
+}); 
+
 builder.Services.Configure<Risebird.Entities.Data.ZohoOptions>(builder.Configuration.GetSection("Zoho"));
+
+
 
 builder.Services.AddSingleton<HttpClientHelper>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
