@@ -127,7 +127,7 @@ im.staffingAgency, ice.InterviewStatus as InterviewStatusTwo, ice.MeetingStatus 
 ice.InterviewerComment as InterviewerCommentTwo,            
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,             
 tctv.FirstScheduledOninterviewDate, tctv.completedDate, tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword               
-, 1 as isQcDone,Case When @projectid>0 then 0 else irf.IsDrive end as IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing            
+, ISNull(psd.isQcDone,0) as isQcDone,Case When @projectid>0 then 0 else irf.IsDrive end as IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId, im.RedoInterview, qcfr.QCStatus --177 for turing            
 from @TemporaryCandidateTableVariable tctv            
 join InterviewMeetings im on im.id = tctv.InterviewId            
 join IRF on IRF.IRFId=im.IRFId             
@@ -137,6 +137,7 @@ join UserList ul on ul.EmailId = im.candidateEmail
 left join UserList uli on uli.EmailId = im.interviewer            
 left join InterviewerProfile ipr on ipr.UserId = uli.id            
 left join PaymentSLADetails psd on psd.Interviewid = im.id            
+left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id            
 --where CandidateLatestStatus in ('SELECTED', 'REJECTED')            
 where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%'            
             
@@ -156,7 +157,7 @@ select IRF.id as Irfintid,im.id, im.IRFId, im.interviewDate, im.candidateEmail, 
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,            
 im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,            
 tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName,          
-tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId              
+tctv.PreReportLink, tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId, ISNull(psd.isQcDone,0) as isQcDone, im.RedoInterview, qcfr.QCStatus              
 from @TemporaryCandidateTableVariable tctv            
 join InterviewMeetings im on im.id = tctv.InterviewId            
 join IRF on IRF.IRFId=im.IRFId             
@@ -164,6 +165,8 @@ join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail            
 left join UserList uli on uli.EmailId = im.interviewer            
 left join InterviewerProfile ipr on ipr.UserId = uli.id            
+left join PaymentSLADetails psd on psd.Interviewid = im.id            
+left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id            
 where CandidateLatestStatus in ('PENDING')            
             
             
@@ -187,7 +190,7 @@ select IRF.id as Irfintid,im.id, im.IRFId, im.interviewDate, im.candidateEmail, 
 ic.InterviewStatus, im.ClientHrContact, ic.VideoLink, im.confirmationStatus--, ic.CommunicationalProficiency, ic.InterviewerComment            
 ,im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,            
 tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName, tctv.PreReportLink,           
-tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId              
+tctv.PreReportUsername, tctv.PreReportPassword, irf.ClientId, ISNull(psd.isQcDone,0) as isQcDone, im.RedoInterview, qcfr.QCStatus              
 from @TemporaryCandidateTableVariable tctv            
 join InterviewMeetings im on im.id = tctv.InterviewId            
 join IRF on IRF.IRFId=im.IRFId             
@@ -195,6 +198,8 @@ join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail            
 left join UserList uli on uli.EmailId = im.interviewer            
 left join InterviewerProfile ipr on ipr.UserId = uli.id            
+left join PaymentSLADetails psd on psd.Interviewid = im.id            
+left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id            
 where CandidateLatestStatus in ('RESCHEDULE')            
             
             
