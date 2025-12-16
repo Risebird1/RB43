@@ -1532,8 +1532,6 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
                     cmdCreateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@OpenAIAssistantId", SqlDbType.VarChar));
-                    cmdCreateIRF.Parameters["@OpenAIAssistantId"].Value = irfDetails.OpenAIAssistantId ?? (object)DBNull.Value;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@showChatBox"].Value = irfDetails.showChatBox;
