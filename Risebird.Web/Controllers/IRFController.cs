@@ -860,6 +860,14 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. JDLink not found.";
                             return RedirectToAction("Index");
                         }
+                        var isEmptyskillName = irfDetails?.SkillCollection?.Any(x => string.IsNullOrEmpty(x.SkillName));
+                        if (isEmptyskillName.HasValue && isEmptyskillName.Value == true)
+                        {
+                            //ModelState.AddModelError("", "The Skill Name column cant be empty in the Tech Rubric.");
+                            //return View("EditIRF", irfDetails);
+                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. Skill Name cannot be left empty.";
+                            return RedirectToAction("Index");
+                        }
                         if (irfDetails.JDFile != null)
                         {
                             var filename = irfDetails.JDFile.FileName.Replace(" ", "_");
