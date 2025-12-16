@@ -2105,7 +2105,13 @@ namespace Risebird.Web.Controllers
                             await SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
+                        var isEmptyskillName = model?.SkillCollection?.Any(x => string.IsNullOrEmpty(x.SkillName));
+                        if (isEmptyskillName.HasValue && isEmptyskillName.Value == true)
+                        {
+                            ModelState.AddModelError("", "The Skill Name column cant be empty in the Tech Rubric.");
+                            return View("EditIRF", model);
 
+                        }
                         if (!model.IsClone)
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
