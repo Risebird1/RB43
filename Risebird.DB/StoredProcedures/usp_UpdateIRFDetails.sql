@@ -51,6 +51,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  --@isSMEChanged bit output,  
  @IsLocked bit,  
  @IsAIInterview bit,
+ @showChatBox bit,
+ @generateTranscriptSummary bit,
  @AIInterviewType int,
  --@InterviewDuration int,  
  --@IsFixedInterviewduration bit,  
@@ -133,6 +135,8 @@ BEGIN
  ,[IsVideoRequired]=@IsVideoRequired  
  ,[TechRubricType] =@TechRubricType
  ,[IsAIInterview]=@IsAIInterview
+ ,[showChatBox]=@showChatBox
+ ,[generateTranscriptSummary]=@generateTranscriptSummary
  ,[AIInterviewType]=@AIInterviewType
  ,[OpenAIAssistantId] = @OpenAIAssistantId
  ,[IsTechQC]=@IsTechQC
