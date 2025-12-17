@@ -73,7 +73,5 @@ namespace Risebird.Entities.Data
         public string Requestor { get; set; }
         public string Heuristicsscore { get; set; }
         public bool RedoInterview { get; set; }
-        public int? QCStatus { get; set; }
-        public bool IsQCDone { get; set; }
     }
 }

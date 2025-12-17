@@ -4095,9 +4095,16 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 13].Value = "QC Pending";
                         }
-                        else if (item.QCStatus.HasValue)
+                        else if (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8)
                         {
-                            Sheet.Cells[i, 13].Value = ((QCStatus)item.QCStatus.Value).GetDescription();
+                            if (item.IsQCDone)
+                            {
+                                Sheet.Cells[i, 13].Value = "QC Passed";
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 13].Value = string.Empty;
+                            }
                         }
                         else
                         {
@@ -5919,13 +5926,20 @@ namespace Risebird.Web.Controllers
 
                         }
                         // QC status column
-                        if (!item.IsQCDone)
+                        if (item.isQcDone.HasValue && !item.isQcDone.Value)
                         {
                             Sheet.Cells[i, ++jV].Value = "QC Pending";
                         }
-                        else if (item.QCStatus.HasValue)
+                        else if (item.MeetingStatus == "4" || item.MeetingStatus == "6" || item.MeetingStatus == "7" || item.MeetingStatus == "8")
                         {
-                            Sheet.Cells[i, ++jV].Value = ((QCStatus)item.QCStatus.Value).GetDescription();
+                            if (item.isQcDone.HasValue && item.isQcDone.Value)
+                            {
+                                Sheet.Cells[i, ++jV].Value = "QC Passed";
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, ++jV].Value = string.Empty;
+                            }
                         }
                         else
                         {
