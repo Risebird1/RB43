@@ -24,7 +24,6 @@ namespace Risebird.Entities.ViewModel
         public int CurrentQuestionId { get; set; }
         public int IRFId { get; set; }
         public bool showChatBox { get; set; }
-
     }
 
     public class ChatLine
