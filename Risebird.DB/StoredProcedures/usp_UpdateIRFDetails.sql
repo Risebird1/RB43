@@ -51,6 +51,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  --@isSMEChanged bit output,  
  @IsLocked bit,  
  @IsAIInterview bit,
+ @showChatBox bit,
+ @generateTranscriptSummary bit,
  @AIInterviewType int,
  --@InterviewDuration int,  
  --@IsFixedInterviewduration bit,  
@@ -133,6 +135,8 @@ BEGIN
  ,[IsVideoRequired]=@IsVideoRequired  
  ,[TechRubricType] =@TechRubricType
  ,[IsAIInterview]=@IsAIInterview
+ ,[showChatBox]=@showChatBox
+ ,[generateTranscriptSummary]=@generateTranscriptSummary
  ,[AIInterviewType]=@AIInterviewType
  ,[OpenAIAssistantId] = @OpenAIAssistantId
  ,[IsTechQC]=@IsTechQC
@@ -186,16 +190,29 @@ BEGIN
     
  SELECT * FROM @SkillGeneralBulkData  
   
- --tech skills  
- delete from TransTechSkill where IRFId=@id  
-  
- INSERT INTO [dbo].[TransTechSkill](      
- [IRFId] ,      
- [LevelId],      
- [SkillId],      
- [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet], [SkillName])      
-      
- SELECT * FROM @TechSkillBulkData   
+ --tech skills    
+
+ --check whether a report for the skill channel has already been filled, if yes, dont allow changes to the score rubric
+
+ declare @reportExists int = 0
+
+ set @reportExists = (select top 1 tsr.id from TechSkillReport tsr 
+ join InterviewMeetings im on im.id=tsr.InterviewId
+ join IRF on irf.irfid = im.irfId
+ where irf.id = @id)
+
+ if(@reportExists is null or @reportExists = 0)
+ Begin
+  delete from TransTechSkill where IRFId=@id    
+    
+	INSERT INTO [dbo].[TransTechSkill](        
+	[IRFId] ,        
+	[LevelId],        
+	[SkillId],        
+	[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet], [SkillName])        
+        
+	SELECT * FROM @TechSkillBulkData   
+ End   
   
  --interviewers  
   
