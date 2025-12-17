@@ -274,6 +274,8 @@ namespace Risebird.Entities.ViewModel
         public bool CandidateIdverification { get; set; }
         public bool CodeSnippetRequired { get; set; }
         public bool IsAIInterview { get; set; }
+        public bool showChatBox { get; set; }
+        public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
 

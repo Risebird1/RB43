@@ -329,6 +329,23 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="mb-0">
+                                                        @Html.CheckBoxFor(model => model.showChatBox, new { @id = "showChatBox" })
+                                                        <label for="showChatBox" class="form-label">Show ChatBox</label>
+                                                    </div>
+                                                    
+                                                </div>
+
+                                                 <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="mb-0">
+                                                        @Html.CheckBoxFor(model => model.generateTranscriptSummary, new { @id = "generateTranscriptSummary" })
+                                                        <label for="generateTranscriptSummary" class="form-label">Generate TranscriptSummary</label>
+                                                    </div>
+                                                    
+                                                </div>
+
                                                 @* End: Multiple Skill sets*@
                                                 @*<div class="col-md-3 col-sm-3 pull-left">
                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
