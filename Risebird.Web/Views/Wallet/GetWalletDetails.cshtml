@@ -73,7 +73,7 @@
                             <td>
                                 @if (item.MeetingStatus > 0)
                                 {
-                                    <span class="badge badge-info meeting-status-badge">
+                                    <span class="badge badge-info meeting-status-badge" style="width:auto;height:30px;">
                                         @(((MeetingStatus)item.MeetingStatus).GetDescription())
                                     </span>
                                 }
@@ -82,7 +82,7 @@
                                     <span class="text-muted">N/A</span>
                                 }
                             </td>
-                            <td>
+                            <td style="text-align:center">
                                 @if (item.Credit > 0)
                                 {
                                     <span class="badge badge-success transaction-badge">
@@ -91,8 +91,8 @@
                                 }
                                 else if (item.Debit > 0)
                                 {
-                                    <span class="badge badge-danger transaction-badge">
-                                        <i class="fas fa-arrow-down"></i> DEBIT
+                                    <span class="badge badge-danger transaction-badge" style="width:auto;height:30px;">
+                                         DEBIT
                                     </span>
                                 }
                                 else
@@ -109,7 +109,7 @@
                                 }
                                 else if (item.Debit > 0)
                                 {
-                                    <span class="text-danger font-weight-bold">
+                                    <span class="text-danger font-weight-bold" >
                                         -@item.Debit.ToString("N0")
                                     </span>
                                 }
