@@ -67,8 +67,12 @@
                         </div>
                         <div class="balance-section">
                             <h4 style="margin: 0; color: #333; white-space: nowrap;">Current Balance:</h4>
-                            <h2 style="margin: 0; color: #4CAF50; font-weight: bold; white-space: nowrap;" id="currentBalance">
-                                @(ViewBag.CurrentBalance != null ? ViewBag.CurrentBalance.ToString("N0") : "0")
+                            @{
+                                var balance = ViewBag.CurrentBalance != null ? (decimal)ViewBag.CurrentBalance : 0;
+                                var balanceColor = balance >= 0 ? "#4CAF50" : "#e74c3c";
+                            }
+                            <h2 style="margin: 0; color: @balanceColor; font-weight: bold; white-space: nowrap;" id="currentBalance">
+                                @balance.ToString("N0")
                             </h2>
                         </div>
                     </div>
