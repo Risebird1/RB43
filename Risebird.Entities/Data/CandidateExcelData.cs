@@ -72,5 +72,6 @@ namespace Risebird.Entities.Data
         public int BillingRate { get; set; }
         public string Requestor { get; set; }
         public string Heuristicsscore { get; set; }
+        public bool RedoInterview { get; set; }
     }
 }
