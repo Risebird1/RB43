@@ -105,7 +105,7 @@ namespace Risebird.Web.Controllers
         /// <param name="billingOwnerId">Billing Owner ID (optional)</param>
         /// <param name="action">Filter: 'CREDIT', 'DEBIT', or null for all</param>
         /// <returns>Wallet transaction list as partial view</returns>
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetWalletDetails(int billingType, int? clientId = null, int? billingOwnerId = null, string actiontype = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)

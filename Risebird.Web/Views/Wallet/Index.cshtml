@@ -105,7 +105,7 @@
         $("#divtransaction").html('<div class="text-center" style="padding: 40px;"><i class="fa fa-spinner fa-spin fa-3x" style="color: #b4cee8;"></i><p style="margin-top: 15px; color: #666;">Loading transactions...</p></div>');
 
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/Wallet/GetWalletDetails",
             data: {
                 billingType: $("#txtBillingType").val(),
