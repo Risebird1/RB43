@@ -1157,6 +1157,7 @@ namespace Risebird.Repository
                                     completedDate = !string.IsNullOrEmpty(dt.Rows[i]["completedDate"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["completedDate"].ToString()) : new DateTime(),
                                     isQcDone = dt.Rows[i]["isQcDone"] != null && dt.Rows[i]["isQcDone"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["isQcDone"]) : false,
                                     IsDrive = dt.Rows[i]["IsDrive"] != null && dt.Rows[i]["IsDrive"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["IsDrive"]) : false,
+                                    RedoInterview = dt.Rows[i]["RedoInterview"] != null && dt.Rows[i]["RedoInterview"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["RedoInterview"]) : false,
 
                                     InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
                                     MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
@@ -1252,6 +1253,8 @@ namespace Risebird.Repository
                                     PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
                                     PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
                                     PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
+                                    isQcDone = dt.Rows[i]["isQcDone"] != null && dt.Rows[i]["isQcDone"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["isQcDone"]) : false,
+                                    RedoInterview = dt.Rows[i]["RedoInterview"] != null && dt.Rows[i]["RedoInterview"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["RedoInterview"]) : false,
 
                                     CandidateType = CandidateSingleSourceTruthTypes.Pending
                                 });
@@ -1346,6 +1349,8 @@ namespace Risebird.Repository
                                     PreReportLink = dt.Rows[i]["PreReportLink"] != null ? dt.Rows[i]["PreReportLink"].ToString() : null,
                                     PreReportUsername = dt.Rows[i]["PreReportUsername"] != null ? dt.Rows[i]["PreReportUsername"].ToString() : null,
                                     PreReportPassword = dt.Rows[i]["PreReportPassword"] != null ? dt.Rows[i]["PreReportPassword"].ToString() : null,
+                                    isQcDone = dt.Rows[i]["isQcDone"] != null && dt.Rows[i]["isQcDone"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["isQcDone"]) : false,
+                                    RedoInterview = dt.Rows[i]["RedoInterview"] != null && dt.Rows[i]["RedoInterview"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["RedoInterview"]) : false,
                                     CandidateType = CandidateSingleSourceTruthTypes.Reschedule
                                 });
                             }
