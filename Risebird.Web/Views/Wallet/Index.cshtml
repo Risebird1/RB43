@@ -17,12 +17,11 @@
                     </h4>
                 </div>
                 <div class="pull-right">
-                    
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -30,9 +29,11 @@
                     <input type="hidden" value="@ViewBag.BillingType" id="txtBillingType" />
                     <input type="hidden" value="@ViewBag.ClientId" id="txtClientId" />
                     <input type="hidden" value="@ViewBag.BillingOwnerId" id="txtBillingOwnerId" />
-                    
-                    <!-- Balance Display -->
+
                     <div class="row" style="padding: 20px; background: #f5f5f5; margin: 15px; border-radius: 5px;">
+                    </div>
+                    <!-- Balance Display -->
+                    @* <div class="row" style="padding: 20px; background: #f5f5f5; margin: 15px; border-radius: 5px;">
                         <div class="col-md-6">
                             <h4 style="margin: 0; color: #333;">Current Balance</h4>
                             <h2 style="margin: 10px 0 0 0; color: #4CAF50; font-weight: bold;" id="currentBalance">
@@ -45,7 +46,7 @@
                                 <strong>@(ViewBag.BillingType == 1 ? "Billing Owner" : "Client")</strong>
                             </span>
                         </div>
-                    </div>
+                    </div> *@
 
                     <!-- Filter Buttons -->
                     <div class="mdc-card-wrapper__text-section razorpay_btn">
@@ -64,8 +65,13 @@
                                 <i class="fa fa-credit-card"></i> DEBIT
                             </button>
                         </div>
+                        <div class="col-md-6">
+                            <h4 style="margin: 0; color: #333;">Current Balance</h4>
+                            <h2 style="margin: 10px 0 0 0; color: #4CAF50; font-weight: bold;" id="currentBalance">
+                                @(ViewBag.CurrentBalance != null ? ViewBag.CurrentBalance.ToString("N0") : "0")
+                            </h2>
+                        </div>
                     </div>
-
                     <!-- Transaction Details -->
                     <div id="divtransaction" class="razorpay_details" style="margin-top:0px;padding:0px 20px 20px 20px;">
                         <div class="text-center" style="padding: 40px;">
@@ -139,21 +145,21 @@
         margin: 15px;
     }
 
-    .razorpay_btn button {
-        flex: 1;
-        padding: 12px;
-        border: 2px solid #e0e0e0;
-        border-radius: 5px;
-        background: white;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-weight: 500;
-    }
+        .razorpay_btn button {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
 
-    .razorpay_btn button:hover {
-        background-color: #f0f0f0;
-        border-color: #4CAF50;
-    }
+            .razorpay_btn button:hover {
+                background-color: #f0f0f0;
+                border-color: #4CAF50;
+            }
 
     .razorpay_details {
         min-height: 200px;

@@ -104,13 +104,13 @@
                                 @if (item.Credit > 0)
                                 {
                                     <span class="text-success font-weight-bold">
-                                        +@item.Credit.ToString("N0")
+                                        @item.Credit.ToString("N0")
                                     </span>
                                 }
                                 else if (item.Debit > 0)
                                 {
                                     <span class="text-danger font-weight-bold" >
-                                        -@item.Debit.ToString("N0")
+                                        @item.Debit.ToString("N0")
                                     </span>
                                 }
                                 else

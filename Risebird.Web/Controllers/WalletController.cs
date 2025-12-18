@@ -81,6 +81,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
 
                     // Get current balance
+                    billingOwnerId = 198518;
                     var balance = await _walletService.GetWalletBalance(billingType, clientId, billingOwnerId);
                     ViewBag.CurrentBalance = balance;
                     return View();
