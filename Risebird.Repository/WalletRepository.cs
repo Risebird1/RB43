@@ -1,17 +1,14 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using static System.Data.CommandType;
+
 
 namespace Risebird.Repository
 {

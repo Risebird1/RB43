@@ -84,18 +84,18 @@
         FetchTransaction('All');
     });
 
-    function FetchTransaction(action) {
+    function FetchTransaction(actiontype) {
         // Update button states
-        if (action == "All") {
+        if (actiontype == "All") {
             $("#btnall").addClass("active-razorbtn");
             $("#btncredit").removeClass("active-razorbtn");
             $("#btndebit").removeClass("active-razorbtn");
-        } else if (action == "DEBIT") {
+        } else if (actiontype == "DEBIT") {
             $("#btnall").removeClass("active-razorbtn");
             $("#btncredit").removeClass("active-razorbtn");
             $("#btndebit").addClass("active-razorbtn");
         }
-        else if (action == "CREDIT") {
+        else if (actiontype == "CREDIT") {
             $("#btnall").removeClass("active-razorbtn");
             $("#btncredit").addClass("active-razorbtn");
             $("#btndebit").removeClass("active-razorbtn");
@@ -105,13 +105,13 @@
         $("#divtransaction").html('<div class="text-center" style="padding: 40px;"><i class="fa fa-spinner fa-spin fa-3x" style="color: #b4cee8;"></i><p style="margin-top: 15px; color: #666;">Loading transactions...</p></div>');
 
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: "/Wallet/GetWalletDetails",
             data: {
                 billingType: $("#txtBillingType").val(),
                 clientId: $("#txtClientId").val() || null,
                 billingOwnerId: $("#txtBillingOwnerId").val() || null,
-                action: action
+                actiontype: actiontype
             },
             success: function (response) {
                 $("#divtransaction").html(response);

@@ -47,20 +47,20 @@
 
                                 @if (!string.IsNullOrEmpty(item.CandidateName))
                                 {
-                                   <div> @item.CandidateName</div>
+                                    <div> @item.CandidateName</div>
                                 }
-                                 @if (!string.IsNullOrEmpty(item.CandidateEmail))
+                                @if (!string.IsNullOrEmpty(item.CandidateEmail))
                                 {
-                                   <div> <a href="mailto:@item.CandidateEmail" class="email-link">@item.CandidateEmail</a></div>
+                                    <div> <a href="mailto:@item.CandidateEmail" class="email-link">@item.CandidateEmail</a></div>
                                 }
-                               
+
                             </td>
-                            
+
                             <td>
-                                @if (item.InterviewId.HasValue && item.IRFId.HasValue)
+                                @if (item.InterviewId > 0 && item.IRFId > 0)
                                 {
-                                    <a href="@Url.Action("AddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })" 
-                                       target="_blank" 
+                                    <a href="@Url.Action("AddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })"
+                                       target="_blank"
                                        class="btn btn-sm btn-primary report-link">
                                         <i class="fa fa-file-alt"></i> View Report
                                     </a>
@@ -71,10 +71,10 @@
                                 }
                             </td>
                             <td>
-                                @if (item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0)
+                                @if (item.MeetingStatus > 0)
                                 {
                                     <span class="badge badge-info meeting-status-badge">
-                                        @(((MeetingStatus)item.MeetingStatus.Value).GetDescription())
+                                        @(((MeetingStatus)item.MeetingStatus).GetDescription())
                                     </span>
                                 }
                                 else
@@ -161,37 +161,37 @@ else
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .wallet-table thead {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
+        .wallet-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
 
-    .wallet-table thead th {
-        padding: 15px;
-        text-align: left;
-        font-weight: 600;
-        border: none;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
+            .wallet-table thead th {
+                padding: 15px;
+                text-align: left;
+                font-weight: 600;
+                border: none;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
 
-    .wallet-table tbody tr {
-        border-bottom: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-    }
+        .wallet-table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
 
-    .wallet-table tbody tr:hover {
-        background-color: #f8f9fa;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+            .wallet-table tbody tr:hover {
+                background-color: #f8f9fa;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
 
-    .wallet-table tbody td {
-        padding: 15px;
-        vertical-align: middle;
-        font-size: 14px;
-    }
+        .wallet-table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            font-size: 14px;
+        }
 
     .transaction-badge {
         padding: 6px 12px;
@@ -222,10 +222,10 @@ else
         word-break: break-word;
     }
 
-    .email-link:hover {
-        text-decoration: underline;
-        color: #0056b3;
-    }
+        .email-link:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
 
     .report-link {
         padding: 5px 12px;
@@ -235,10 +235,10 @@ else
         transition: all 0.3s;
     }
 
-    .report-link:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+        .report-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
 
     .irf-name {
         font-weight: 500;
@@ -249,19 +249,19 @@ else
         padding: 20px;
     }
 
-    @media (max-width: 768px) {
+    @@media (max-width: 768px) {
         .wallet-table {
             font-size: 12px;
         }
 
-        .wallet-table thead th,
-        .wallet-table tbody td {
-            padding: 10px 8px;
-        }
+            .wallet-table thead th,
+            .wallet-table tbody td {
+                padding: 10px 8px;
+            }
 
-        .wallet-table thead th {
-            font-size: 11px;
-        }
+            .wallet-table thead th {
+                font-size: 11px;
+            }
     }
 </style>
 
