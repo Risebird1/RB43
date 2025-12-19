@@ -41,7 +41,10 @@ BEGIN
  CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, DATEADD(minute, 330, getdate()), ModifiedBy, 'Updated'
  from InterviewComments where id = @id )
 
-
+ if(@meetingStatus!=@oldmeetingStatus)
+ begin
+ Exec usp_AddOrUpdateWalletDetails @id,'System','InterviewBilling','Dr',0
+ end
  if(@meetingStatus in (4, 6, 7, 8) and @oldmeetingStatus not in(4,6,7,8))
  Begin
 	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
