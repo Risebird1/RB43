@@ -79,7 +79,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientId = clientId;
                     ViewBag.BillingOwnerId = billingOwnerId;
                     ViewBag.ProfileName = profileName;
-
+                    ViewBag.PageStatus = "";
+                    if (!string.IsNullOrWhiteSpace(id))
+                    {
+                        ViewBag.PageStatus = "Public";
+                    }
                     // Get current balance
                     var balance = await _walletService.GetWalletBalance(billingType, clientId, billingOwnerId);
                     ViewBag.CurrentBalance = balance;
