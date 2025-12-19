@@ -18,14 +18,14 @@ AS
 BEGIN
 
  Declare @id int, @candidateEmailId varchar(200), @initialInterviewer varchar(200), @currentInterviewer varchar(200)
- Declare @OldConfirmationstatus int,@Confirmationstatus int,@irfName varchar(20)
+ Declare @OldConfirmationstatus int,@Confirmationstatus int,@irfName varchar(20),@RedoInterview bit
  Select @id = Id from inserted
 
- select @candidateEmailId = Trim(candidateEmail),@Confirmationstatus=confirmationStatus,@irfName=IRFId from InterviewMeetings where id = @id
+ select @candidateEmailId = Trim(candidateEmail),@Confirmationstatus=confirmationStatus,@irfName=IRFId,@RedoInterview=IsNull(RedoInterview,0) from InterviewMeetings where id = @id
  
  select @initialInterviewer = Trim(interviewer) from deleted
  select @currentInterviewer = Trim(interviewer) from inserted
-
+ 
  if(@initialInterviewer is not null and @initialInterviewer != @currentInterviewer)
  Begin
 
@@ -91,6 +91,9 @@ set @OldConfirmationstatus=(Select top (1) confirmationStatus From InterviewMeet
  begin
   Exec usp_AddCandidateStatusWebHookData @candidateEmailId, @irfName, 'cancelled' 
   end
-
+ if(@RedoInterview=1)
+ begin
+ Exec usp_AddOrUpdateWalletDetails @id,'System','InterviewBilling','Dr',0
+ end
 END
 GO

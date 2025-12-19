@@ -1,0 +1,267 @@
+@model List<Risebird.Entities.ViewModel.WalletVM>
+@using Risebird.Entities.Enum
+@using Risebird.CommonHelper
+
+@if (Model != null && Model.Any())
+{
+    <div class="wallet-transactions-container">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover wallet-table">
+                <thead>
+                    <tr>
+                        <th>Interview Date</th>
+                        <th>IRF Name</th>
+                        <th>Candidate Details</th>
+                        <th>Report Link</th>
+                        <th>Meeting Status</th>
+                        <th>Transaction Type</th>
+                        <th>Amount</th>
+                        <th>Created On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (item.InterviewDate.HasValue)
+                                {
+                                    @item.InterviewDate.Value.ToString("MM/dd/yyyy HH:mm")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.IRFName))
+                                {
+                                    <span class="irf-name">@item.IRFName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td>
+
+                                @if (!string.IsNullOrEmpty(item.CandidateName))
+                                {
+                                    <div> @item.CandidateName</div>
+                                }
+                                @if (!string.IsNullOrEmpty(item.CandidateEmail))
+                                {
+                                    <div> <a href="mailto:@item.CandidateEmail" class="email-link">@item.CandidateEmail</a></div>
+                                }
+
+                            </td>
+
+                            <td>
+                                @if (item.InterviewId > 0 && item.IRFId > 0)
+                                {
+                                    <a href="@Url.Action("AddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })"
+                                       target="_blank"
+                                       class="btn btn-sm btn-primary report-link">
+                                        <i class="fa fa-file-alt"></i> View Report
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.MeetingStatus > 0)
+                                {
+                                    <span class="badge badge-info meeting-status-badge" style="width:auto;height:30px;">
+                                        @(((MeetingStatus)item.MeetingStatus).GetDescription())
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Credit > 0)
+                                {
+                                    <span class="badge badge-success transaction-badge">
+                                        <i class="fas fa-arrow-up"></i> CREDIT
+                                    </span>
+                                }
+                                else if (item.Debit > 0)
+                                {
+                                    <span class="badge badge-danger transaction-badge" style="width:auto;height:30px;">
+                                         DEBIT
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-secondary">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Credit > 0)
+                                {
+                                    <span class="text-success font-weight-bold">
+                                        @item.Credit.ToString("N0")
+                                    </span>
+                                }
+                                else if (item.Debit > 0)
+                                {
+                                    <span class="text-danger font-weight-bold" >
+                                        @item.Debit.ToString("N0")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">0</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.CreatedOnstring))
+                                {
+                                    @item.CreatedOnstring
+                                }
+                                else if (item.CreatedOn.HasValue)
+                                {
+                                    @item.CreatedOn.Value.ToString("MM/dd/yyyy")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="no-transactions-message">
+        <div class="text-center" style="padding: 40px;">
+            <i class="fa fa-inbox fa-3x" style="color: #b4cee8; margin-bottom: 15px;"></i>
+            <p style="color: #666; font-size: 16px;">No transactions found.</p>
+        </div>
+    </div>
+}
+
+<style>
+    .wallet-transactions-container {
+        margin-top: 20px;
+    }
+
+    .wallet-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+        .wallet-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+            .wallet-table thead th {
+                padding: 15px;
+                text-align: left;
+                font-weight: 600;
+                border: none;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+        .wallet-table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+            .wallet-table tbody tr:hover {
+                background-color: #f8f9fa;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+        .wallet-table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+    .transaction-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .email-link {
+        color: #007bff;
+        text-decoration: none;
+        word-break: break-word;
+    }
+
+        .email-link:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+    .report-link {
+        padding: 5px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+        .report-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+    .irf-name {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .no-transactions-message {
+        padding: 20px;
+    }
+
+    @@media (max-width: 768px) {
+        .wallet-table {
+            font-size: 12px;
+        }
+
+            .wallet-table thead th,
+            .wallet-table tbody td {
+                padding: 10px 8px;
+            }
+
+            .wallet-table thead th {
+                font-size: 11px;
+            }
+    }
+</style>
+
