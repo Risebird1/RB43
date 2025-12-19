@@ -26,12 +26,12 @@ Begin
 	set @profileId = (select idProfile from UserList where id = @userId)
 	if(@profileId = 1 or @profileId = 32)
 	begin
-		select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment like @questionText
+		select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment = @questionText
 		order by id desc
 	end
 	else
 	begin 
-		select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment like @questionText and UserId = @userId
+		select top 1 SkillName from TechSkillComments where irfid = @irfId and Comment = @questionText and UserId = @userId
 		order by id desc
 	end
 
