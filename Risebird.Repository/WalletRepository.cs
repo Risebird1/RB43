@@ -4,9 +4,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -53,35 +55,15 @@ namespace Risebird.Repository
         {
             try
             {
-                string query = "";
-                if (billingType == 1) // Billing Owner
-                {
-                    query = "SELECT ISNULL(SUM(Credit) - SUM(Debit), 0) as Balance FROM Wallet WHERE BillingType = @BillingType AND BillingOwnerId = @BillingOwnerId";
-                    if (clientId.HasValue)
-                    {
-                        query += " AND ClientId = @ClientId";
-                    }
-                }
-                else if (billingType == 3) // Client
-                {
-                    query = "SELECT ISNULL(SUM(Credit) - SUM(Debit), 0) as Balance FROM Wallet WHERE BillingType = @BillingType AND ClientId = @ClientId";
-                }
-
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@BillingType", billingType);
-                if (clientId.HasValue)
-                {
-                    parameters.Add("@ClientId", clientId);
-                }
-                if (billingOwnerId.HasValue)
-                {
-                    parameters.Add("@BillingOwnerId", billingOwnerId);
-                }
-
+                parameters.Add("@ClientId", clientId);
+                parameters.Add("@BillingOwnerId", billingOwnerId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryFirstOrDefaultAsync<int>(query, parameters);
-                    return result;
+                    var results = await SqlMapper.QueryAsync<int>(con, "Usp_GetClientWalletBalance", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
