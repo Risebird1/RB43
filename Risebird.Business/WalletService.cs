@@ -36,45 +36,6 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> AddWalletCredit(int billingType, int? clientId, int? billingOwnerId, string emailid, int points, string comment, string transactionType = "Manual")
-        {
-            try
-            {
-                return await _walletRepository.AddWalletCredit(billingType, clientId, billingOwnerId, emailid, points, comment, transactionType);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed: " + ex.Message;
-            }
-        }
-
-        public async Task<string> AddWalletDebit(int billingType, int? clientId, int? billingOwnerId, string emailid, int points, string comment, int? interviewId = null, int? irfId = null, string transactionType = "Manual")
-        {
-            try
-            {
-                return await _walletRepository.AddWalletDebit(billingType, clientId, billingOwnerId, emailid, points, comment, interviewId, irfId, transactionType);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed: " + ex.Message;
-            }
-        }
-
-        public async Task<string> DebitWalletByInterview(int interviewId, int? billingType = null, string transactionType = "InterviewBilling")
-        {
-            try
-            {
-                return await _walletRepository.DebitWalletByInterview(interviewId, billingType, transactionType);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed: " + ex.Message;
-            }
-        }
-
         public async Task<int> GetWalletBalance(int billingType, int? clientId = null, int? billingOwnerId = null)
         {
             try
