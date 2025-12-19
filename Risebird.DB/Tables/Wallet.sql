@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[Wallet](
 	[BillingType] [int] NOT NULL, -- 1: Billing Owner (Client Users), 3: Client
 	[ClientId] [int] NULL,
 	[BillingOwnerId] [int] NULL, -- UserList.id for Billing Owner
-	[CreatedBy] [int] NULL,
+	[CreatedBy] [varchar](200) NULL,
 	[Credit] [int] NULL,
 	[Debit] [int] NULL,
 	[CreatedOn] [datetime] NULL,
