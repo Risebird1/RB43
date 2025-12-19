@@ -59,7 +59,7 @@
                             <td>
                                 @if (item.InterviewId > 0 && item.IRFId > 0)
                                 {
-                                    <a href="@Url.Action("AddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })"
+                                    <a href="@Url.Action("ClientReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })"
                                        target="_blank"
                                        class="btn btn-sm btn-primary report-link">
                                         <i class="fa fa-file-alt"></i> View Report

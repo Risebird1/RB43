@@ -1,9 +1,25 @@
 @{
     ViewData["Title"] = "Wallet Details";
     ViewBag.PageHeader = "Wallet Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.PageStatus == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
 }
+@if (ViewBag.PageStatus == "Public")
+{
+    <style>
 
+        .sidebar-mini .main-panel {
+            width: calc(100% - 0px);
+        }
+
+    </style>
+}
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
@@ -144,10 +160,10 @@
         max-width: 100vw;
     }
 
-    .main-panel > .ps__rail-x,
-    .ps__rail-x {
-        display: none !important;
-    }
+        .main-panel > .ps__rail-x,
+        .ps__rail-x {
+            display: none !important;
+        }
 
     .content {
         overflow-x: hidden !important;
@@ -192,7 +208,7 @@
 
     .balance-section {
         margin-left: auto;
-        margin-right:40px;
+        margin-right: 40px;
         text-align: right;
         display: flex;
         align-items: center;
@@ -205,15 +221,15 @@
             flex-wrap: wrap;
         }
 
-        .razorpay_btn > div:not(.balance-section) {
-            flex: 1 1 30%;
-        }
+            .razorpay_btn > div:not(.balance-section) {
+                flex: 1 1 30%;
+            }
 
-        .razorpay_btn button {
-            width: 100%;
-            padding: 8px;
-            font-size: 12px;
-        }
+            .razorpay_btn button {
+                width: 100%;
+                padding: 8px;
+                font-size: 12px;
+            }
 
         .balance-section {
             width: 100%;
@@ -222,13 +238,13 @@
             margin-top: 10px;
         }
 
-        .balance-section h4 {
-            font-size: 14px;
-        }
+            .balance-section h4 {
+                font-size: 14px;
+            }
 
-        .balance-section h2 {
-            font-size: 20px;
-        }
+            .balance-section h2 {
+                font-size: 20px;
+            }
     }
 
     .razorpay_details {
