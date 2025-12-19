@@ -79,7 +79,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientId = clientId;
                     ViewBag.BillingOwnerId = billingOwnerId;
                     ViewBag.ProfileName = profileName;
-
+                    ViewBag.PageStatus = "";
+                    if (!string.IsNullOrWhiteSpace(id))
+                    {
+                        ViewBag.PageStatus = "Public";
+                    }
                     // Get current balance
                     var balance = await _walletService.GetWalletBalance(billingType, clientId, billingOwnerId);
                     ViewBag.CurrentBalance = balance;
@@ -88,12 +92,26 @@ namespace Risebird.Web.Controllers
                 catch (Exception ex)
                 {
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    return RedirectToAction("Index", "Home");
+                    if (string.IsNullOrWhiteSpace(id))
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                    else
+                    {
+                        return RedirectToAction("PublicAllMeetings", "Candidate", new { id = id });
+                    }
                 }
             }
             else
             {
-                return RedirectToAction("Login", "Account");
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                else
+                {
+                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = id });
+                }
             }
         }
 
