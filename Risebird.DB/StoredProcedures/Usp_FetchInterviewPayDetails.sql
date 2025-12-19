@@ -61,7 +61,7 @@ Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100
 from InterviewPoints ip                                      
 where ip.userid=@Userid and ip.Interviewerid=0 and ip.Interviewid=0)            
 select id,InterviewId,Type,Comment,Status,(PrePoints+IsnUll(Surcharge,0)) as PrePoints,Penaltyamount,(Points+Isnull(Surcharge,0)+ISNULL(CandidateRatingAmount,0)+ISNULL(ClientRatingAmount,0)+ISNULL(QCPoints,0)+ISNULL(VideoReward,0)-ISNULL(PaymentSLA,0)) as Points,            
-Date,MeetingStatus,InterviewStatus,PreferredLocation,VideoLink,VideoDuration,Rate,CrossCheckvalue,Surcharge,CandidateRatingAmount,ClientRatingAmount,QCPoints,PaymentSLA,VideoReward,AITranscriptVerdict,AudioTranscriptFileLink,AIVerdict,IRFinid            
+Date,MeetingStatus,InterviewStatus,PreferredLocation,VideoLink,VideoDuration,Rate,CrossCheckvalue,Surcharge,CandidateRatingAmount,ClientRatingAmount,QCPoints,PaymentSLA,VideoReward,AITranscriptVerdict,AudioTranscriptFileLink,AIVerdict,IRFinid,InterviewerBillingCycle            
 From CTE            
 END   
   GO
