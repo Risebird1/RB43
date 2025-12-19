@@ -3995,10 +3995,10 @@ namespace Risebird.Web.Controllers
                 var client = await _userRepository.GetClientUserDetails(emailid);
                 var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
 
-                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:S1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 12;
+                Sheet.Cells["A1:U1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:U1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:U1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 14;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -4018,6 +4018,8 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 10].Value = "Client Hr";
                 Sheet.Cells[1, 11].Value = "Executive URL";
                 Sheet.Cells[1, 12].Value = "Interviewer Comment";
+                Sheet.Cells[1, 13].Value = "QC status";
+                Sheet.Cells[1, 14].Value = "RedoInterview";
                 //Sheet.Cells[1, 13].Value = "Video Link";
                 int i = 2;
                 if (model.Count() > 0)
@@ -4088,6 +4090,28 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 12].Value = item.InterviewerComment;
                         }
                         //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        // QC status column
+                        if (!item.IsQCDone)
+                        {
+                            Sheet.Cells[i, 13].Value = "QC Pending";
+                        }
+                        else if (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8)
+                        {
+                            if (item.IsQCDone)
+                            {
+                                Sheet.Cells[i, 13].Value = "QC Passed";
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 13].Value = string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 13].Value = string.Empty;
+                        }
+                        // RedoInterview column
+                        Sheet.Cells[i, 14].Value = item.RedoInterview ? "Yes" : "No";
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5665,6 +5689,8 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, ++j].Value = $"Interview Status ({jdtitleTwo})"; //"Interview Status (Stack 2)";//$"Interview Status {jdtitleTwo}";
                     Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
                 }
+                Sheet.Cells[1, ++j].Value = "QC status";
+                Sheet.Cells[1, ++j].Value = "RedoInterview";
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -5899,6 +5925,28 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
+                        // QC status column
+                        if (item.isQcDone.HasValue && !item.isQcDone.Value)
+                        {
+                            Sheet.Cells[i, ++jV].Value = "QC Pending";
+                        }
+                        else if (item.MeetingStatus == "4" || item.MeetingStatus == "6" || item.MeetingStatus == "7" || item.MeetingStatus == "8")
+                        {
+                            if (item.isQcDone.HasValue && item.isQcDone.Value)
+                            {
+                                Sheet.Cells[i, ++jV].Value = "QC Passed";
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, ++jV].Value = string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, ++jV].Value = string.Empty;
+                        }
+                        // RedoInterview column
+                        Sheet.Cells[i, ++jV].Value = item.RedoInterview ? "Yes" : "No";
 
                         i++;
                     }

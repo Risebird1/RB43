@@ -860,7 +860,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. JDLink not found.";
                             return RedirectToAction("Index");
                         }
-                        var isEmptyskillName = irfDetails?.SkillCollection?.Any(x => string.IsNullOrEmpty(x.SkillName));
+                        var isEmptyskillName = irfDetails?.SkillCollection?.Any(x => string.IsNullOrEmpty(x.SkillName) && x.LevelId > 0);
                         if (isEmptyskillName.HasValue && isEmptyskillName.Value == true)
                         {
                             //ModelState.AddModelError("", "The Skill Name column cant be empty in the Tech Rubric.");

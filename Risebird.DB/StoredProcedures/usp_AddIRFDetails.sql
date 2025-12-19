@@ -67,6 +67,8 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsAIInterview bit,
 @AIInterviewType int,
 @MeetingPlatform varchar(25),
+@showChatBox bit = null,  
+@generateTranscriptSummary bit = null, 
 @idIrf int output              
               
 AS              
