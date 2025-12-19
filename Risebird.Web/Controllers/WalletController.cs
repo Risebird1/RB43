@@ -88,12 +88,26 @@ namespace Risebird.Web.Controllers
                 catch (Exception ex)
                 {
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    return RedirectToAction("Index", "Home");
+                    if (string.IsNullOrWhiteSpace(id))
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                    else
+                    {
+                        return RedirectToAction("PublicAllMeetings", "Candidate", new { id = id });
+                    }
                 }
             }
             else
             {
-                return RedirectToAction("Login", "Account");
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                else
+                {
+                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = id });
+                }
             }
         }
 
