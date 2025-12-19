@@ -13,6 +13,9 @@ Create PROCEDURE [dbo].[usp_DeleteAllHistorybefore90days]
   
 AS  
 Begin  
+
+--restore questions integrity
+EXEC dbo.usp_RestoreQuestionsDiscussedTechSkillCommentsAndTransTechSkillIntegrityLessFrequently; 
   
 Delete    
 FROM ClonableSkillChannelHistory  
