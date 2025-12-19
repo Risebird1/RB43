@@ -198,7 +198,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line"/* , @readonly = "readonly"  */} })
                                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                         </div>
                                         @* <div class="form-group">
