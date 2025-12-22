@@ -6,10 +6,10 @@ CREATE TABLE [dbo].[BotInterviewQuestionVideos](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[SessionId] [varchar](50) NULL,
 	[VideoLink] [varchar](1000) NULL,
-	[question] [varchar](1000) NULL,
+	[question] [nvarchar](max) NULL,
 	[CreatedAt] [datetime] NULL,
 	[BotSynthesizedVideoLink] [varchar](2000) NULL,
-	[CandidateAnswer] [nvarchar](4000) NULL,
+	[CandidateAnswer] [nvarchar](max) NULL,
 	[BotAudioLink] [varchar](2000) NULL,
 	[DeliveryHeadQuestionId] [int] NULL,
 	[AnswerModifiedAt] [datetime] NULL,
@@ -80,6 +80,25 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE BotInterviewQuestionVideos
     Add AnswerModifiedBy varchar(100) null
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'question')
+      AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    ALTER COLUMN question NVARCHAR(max);
+END
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateAnswer')
+      AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    ALTER COLUMN CandidateAnswer NVARCHAR(max);
 END
 
 END
