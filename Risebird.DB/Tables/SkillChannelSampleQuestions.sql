@@ -5,11 +5,11 @@ CREATE TABLE [dbo].[SkillChannelSampleQuestions](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[IRFId] [int] NULL,
 	[Skill] [int] NULL,
-	[Comment] [varchar](500) NULL,
+	[Comment] [nvarchar](max) NULL,
 	[CreatedBy] [varchar](150) NULL,
-	[SkillName] [varchar](500) NULL,
+	[SkillName] [nvarchar](500) NULL,
 	[AIQuestionVideoLink] [varchar](max) NULL,
-	[ExpectedAnswer] [varchar](5000) NULL,
+	[ExpectedAnswer] [nvarchar](max) NULL,
 	[IsFlaggedForSentimentAnalysis] [bit] NULL,
  CONSTRAINT [PK_SkillChannelSampleQuestions] PRIMARY KEY CLUSTERED 
 (
@@ -58,6 +58,36 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE SkillChannelSampleQuestions
     Add IsFlaggedForSentimentAnalysis bit
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Comment')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    ALTER COLUMN Comment NVARCHAR(max)
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ExpectedAnswer')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    ALTER COLUMN ExpectedAnswer NVARCHAR(max);
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillName')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    ALTER COLUMN SkillName NVARCHAR(500);
 END
 
 End

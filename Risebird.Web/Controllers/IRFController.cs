@@ -1398,19 +1398,31 @@ namespace Risebird.Web.Controllers
                         if (ModelState.IsValid)
                         {
                             var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.SkillName, x.UserId)).Where(x => x.UserId == model.UserId);
+                            //questionsCollection = questionsCollection.Distinct();
+                            var currentUserSkills = model.SkillCollection
+                            .Where(x => x.UserId == model.UserId)
+                            .DistinctBy(x => new { x.Comment, x.SkillName, x.UserId });
 
-                            if (questionsCollection.Count() != questionsCollection.Distinct().Count())
-                            {
-                                //duplicates exist
-                                ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
-                                //var skills = await _irfService.GetTechSkills(model.IRFId);
-                                //ViewBag.Skills = new SelectList(skills, "id", "Name");
-                                var skills = await _irfService.GetIRFTechSkills(model.IRFId);
-                                ViewBag.Skills = new SelectList(skills);
-                                //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
-                                model.Profile = profileName;
-                                return View(model);
-                            }
+                            var otherUserSkills = model.SkillCollection
+                                .Where(x => x.UserId != model.UserId);
+
+                            model.SkillCollection = currentUserSkills
+                                .Concat(otherUserSkills)
+                                .ToList();
+
+
+                            //if (questionsCollection.Count() != questionsCollection.Distinct().Count())
+                            //{
+                            //    //duplicates exist
+                            //    ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
+                            //    //var skills = await _irfService.GetTechSkills(model.IRFId);
+                            //    //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            //    var skills = await _irfService.GetIRFTechSkills(model.IRFId);
+                            //    ViewBag.Skills = new SelectList(skills);
+                            //    //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                            //    model.Profile = profileName;
+                            //    return View(model);
+                            //}
                             //foreach (var skill in model.SkillCollection)
                             //{
                             //    if (!string.IsNullOrEmpty(skill.Comment))
