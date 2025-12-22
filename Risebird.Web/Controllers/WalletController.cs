@@ -1,3 +1,4 @@
+using Amazon.Runtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UglyToad.PdfPig.Actions;
 
 namespace Risebird.Web.Controllers
 {
@@ -242,10 +244,23 @@ namespace Risebird.Web.Controllers
             return PartialView();
         }
         [HttpPost]
-        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int? billingOwnerId = null)
+        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, int? billingOwnerId = null)
         {
-
-            return Json("Added Successfully");
+            var emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+            }
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, billingOwnerId);
+            if (result)
+            {
+                return Json("Added Successfully");
+            }
+            else
+            {
+                return Json("Fail to added Credit amount, Please try again.");
+            }
         }
     }
 }

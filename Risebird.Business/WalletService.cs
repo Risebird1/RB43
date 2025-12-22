@@ -48,6 +48,18 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, int? billingOwnerId = null)
+        {
+            try
+            {
+                return await _walletRepository.AddClientWalletBalance(billingType, clientId, CreditAmount, loginedUser, billingOwnerId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
