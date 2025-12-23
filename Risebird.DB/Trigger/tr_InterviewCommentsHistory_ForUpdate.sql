@@ -43,7 +43,7 @@ BEGIN
 
  if(@meetingStatus!=@oldmeetingStatus)
  begin
- Exec usp_AddOrUpdateWalletDetails @id,'System','InterviewBilling','Dr',0
+ Exec usp_AddOrUpdateWalletDetails @interviewId,'System','InterviewBilling','Dr',0
  end
  if(@meetingStatus in (4, 6, 7, 8) and @oldmeetingStatus not in(4,6,7,8))
  Begin

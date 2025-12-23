@@ -58,7 +58,13 @@ namespace Risebird.AzureTimerFunctions
                     "aditi.j@turing.com",
                     "tamara.dokic@turing.com",
                     "usama.nadeem@turing.com",
-                    "rishikesh.agrawal@turing.com"
+                    "rishikesh.agrawal@turing.com",
+                    "leonardo.rodrigues@turing.com",
+                    "suchismita.mukhopadhyay@turing.com",
+                    "divyanka.gulati@turing.com",
+                    "kasa.anuforo@turing.com",
+                    "shubhanshi.srivastava@turing.com",
+                    "harshita.chandnani@turing.com"
                 };
                 ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 ExcelPackage Ep = new ExcelPackage();
