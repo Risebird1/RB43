@@ -168,7 +168,7 @@
                                                     <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
-                                                    <span onclick="OpenAddWalletBalanceModal(@item.id, '@item.BillingType')" title="Add Wallet Balance" class="fa fa-wallet"></span>
+                                                    <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-wallet"></span>
                                                 </button>
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
@@ -289,7 +289,7 @@
 </div>
 
 
-
+@await Html.PartialAsync("~/Views/Common/_AddWalletBalance.cshtml")
 
 
 
@@ -533,50 +533,7 @@
         var url = "List";
         window.location.href = url;
     }
-    function OpenAddWalletBalanceModal(id, billingType) {
-        var model = $("#AddWalletBalanceModal");
-        if (model && model.length > 0) {
-            model.css('display', 'block');
-          
-            $("#txtCreditBalance").val('');
-            
-          
-        } else {
-            console.error("AddWalletBalanceModal not found in DOM");
-            // Retry after a short delay in case partial view is still loading
-            setTimeout(function () {
-                var modelRetry = $("#AddWalletBalanceModal");
-                if (modelRetry && modelRetry.length > 0) {
-                    modelRetry.css('display', 'block');
-                
-                    $("#txtCreditBalance").val('');
-                    
-                   
-                } else {
-                    alert("Modal not found. Please refresh the page and try again.");
-                }
-            }, 200);
-        }
-    }
-    
-
-    function CloseAddWalletBalanceModal() {
-        var model = $("#AddWalletBalanceModal");
-        if (model.length > 0) {
-            model.css('display', 'none');
-            $("#txtCreditBalance").val('');
-
-        }
-    }
-    function AddWalletBalance() {
-        var creditBalance = $("#txtCreditBalance").val();
-        if (creditBalance.trim() != "" && parseFloat(creditBalance) > 0) {
-            alert("Wallet balance functionality - Credit Balance: " + creditBalance);
-            CloseAddWalletBalanceModal();
-        } else {
-            alert("Please Enter valid value in credit balance field.");
-        }
-    }
+   
 </script>
 <script>
     function moreless(id) {
@@ -592,4 +549,4 @@
     }
 
 </script>
-@await Html.PartialAsync("~/Views/Wallet/AddWalletBalance.cshtml")
+

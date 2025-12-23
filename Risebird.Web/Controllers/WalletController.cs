@@ -230,16 +230,12 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> AddWalletBalance(int Clientid)
         {
             var clientBillingType = await _clientService.GetClientBillingType(Clientid);
-            ViewBag.BillingType = clientBillingType;
+            ViewBag.BillingType = clientBillingType;//3: BillingType :Client
             ViewBag.Clientid = Clientid;
             if (clientBillingType == 1)
             {
                 //BillingType :BilingOwner
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(Clientid), "id", "EmailId");
-            }
-            else if (clientBillingType == 3)
-            {
-                //BillingType :Client
             }
             return PartialView();
         }
@@ -255,7 +251,7 @@ namespace Risebird.Web.Controllers
             var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, billingOwnerId);
             if (result)
             {
-                return Json("Added Successfully");
+                return Json("Credit amount added Successfully");
             }
             else
             {
