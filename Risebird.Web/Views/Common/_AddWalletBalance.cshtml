@@ -1,0 +1,70 @@
+﻿<div id="AddWalletBalanceModal" class="modal modal-bg" style="display:none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <i class="fas fa-wallet publicsharing-icon" style="font-size:23px;"></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Add Wallet Balance</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="CloseAddWalletBalanceModal()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <!-- Body -->
+            <div class="modal-body" id="divAddWalletCredit">
+                <!-- Credit Balance -->
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+     function OpenAddWalletBalanceModal(id) {
+         $.ajax({
+            url: '/Wallet/AddWalletBalance',
+            data: { 'Clientid': id },
+            type: "GET",
+            success: function (data) {
+                openAddBalancepopupModal();
+                $('#divAddWalletCredit').html('');
+                $('#divAddWalletCredit').html(data);
+            }
+        });
+    }
+    function CloseAddWalletBalanceModal() {
+        var model = $("#AddWalletBalanceModal");
+        if (model.length > 0) {
+            model.css('display', 'none');
+            $("#txtCreditBalance").val('');
+        }
+    }
+    function openAddBalancepopupModal(){
+         var model = $("#AddWalletBalanceModal");
+        if (model && model.length > 0) {
+            model.css('display', 'block');
+        }
+    }
+    function AddWalletBalance() {
+        var creditBalance = $("#txtCreditBalance").val();
+        var clientid = $("#hidClientIdWallet").val();
+        var billingtype = $("#hidBillingType").val();
+        var billingOwnerId = $("#BillingOwnerUserId").val();
+        if (creditBalance.trim() != "" && parseFloat(creditBalance) > 0) {
+             $.ajax({
+                url: '/Wallet/AddWalletBalance',
+                data: { 'Clientid': clientid,'billingType':billingtype,'CreditAmount':creditBalance,'billingOwnerId':billingOwnerId },
+                type: "POST",
+                success: function (data) {
+                   alert(data);
+                   CloseAddWalletBalanceModal();
+                }
+            });
+        } else {
+            alert("Please Enter valid value in credit balance field.");
+        }
+    }
+</script>
