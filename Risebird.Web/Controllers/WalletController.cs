@@ -1,6 +1,9 @@
+using Amazon.Runtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -11,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UglyToad.PdfPig.Actions;
 
 namespace Risebird.Web.Controllers
 {
@@ -20,13 +24,15 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
+        private readonly IIRFService _irfService;
 
-        public WalletController(IWalletService walletService, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IClientService clientService)
+        public WalletController(IWalletService walletService, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService)
         {
             _walletService = walletService;
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _clientService = clientService;
+            _irfService = irfService;
         }
 
         /// <summary>
@@ -218,6 +224,38 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json(new { success = false, message = "SignOut" });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddWalletBalance(int Clientid)
+        {
+            var clientBillingType = await _clientService.GetClientBillingType(Clientid);
+            ViewBag.BillingType = clientBillingType;//3: BillingType :Client
+            ViewBag.Clientid = Clientid;
+            if (clientBillingType == 1)
+            {
+                //BillingType :BilingOwner
+                ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(Clientid), "id", "EmailId");
+            }
+            return PartialView();
+        }
+        [HttpPost]
+        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, int? billingOwnerId = null)
+        {
+            var emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+            }
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, billingOwnerId);
+            if (result)
+            {
+                return Json("Credit amount added Successfully");
+            }
+            else
+            {
+                return Json("Fail to added Credit amount, Please try again.");
             }
         }
     }

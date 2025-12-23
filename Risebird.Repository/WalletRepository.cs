@@ -72,6 +72,30 @@ namespace Risebird.Repository
             }
             return 0;
         }
+        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, int? billingOwnerId = null)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@ClientId", clientId);
+                parameters.Add("@BillingType", billingType);
+                parameters.Add("@BillingOwnerId", billingOwnerId);
+                parameters.Add("@CreatedBy", loginedUser);
+                parameters.Add("@TransactionType", "Manual");
+                parameters.Add("@Credit", CreditAmount);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<int>(con, "usp_AddCreditWalletDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 
