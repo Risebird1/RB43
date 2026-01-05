@@ -5884,6 +5884,7 @@ namespace Risebird.Repository
                                     parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                                 }
                                 parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
+                                parameters.Add("@CandidateResumeId", obj.CandidateResumeId);
                                 parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
                                 await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
@@ -5914,7 +5915,7 @@ namespace Risebird.Repository
                                     candidateStatus = resultArr[0];
                                     if (string.IsNullOrWhiteSpace(candidateStatus))
                                     {
-                                        candidateStatus = "Fail to Add Candidate at this time";
+                                        candidateStatus = "Failed to add Candidate at this time.";
                                     }
                                     dt.Rows.Add(obj.EmailId, candidateStatus, irfId, candidateId);
                                 }

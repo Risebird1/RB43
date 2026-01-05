@@ -22,7 +22,8 @@ Create PROCEDURE [dbo].usp_AddQuickCandidate
 @WhatsappNumber varchar(15),               
 @AffindaResumeIdentifier varchar(75) = null,              
 @jobId varchar(20) = null,              
-@countryCode varchar(10) = null,                
+@countryCode varchar(10) = null,  
+@CandidateResumeId int = null,
 @operationStatus varchar(200) out                     
                       
 AS                      
@@ -62,12 +63,20 @@ Begin
  End              
    Else IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))                    
    Begin                    
-    select @operationStatus='Duplicate candidate'                    
+    select @operationStatus='Duplicate candidate'    
+	if(@CandidateResumeId is not null and @CandidateResumeId > 0)
+	Begin 
+		update CandidateResume set ReasonBehindNotProcessed = @operationStatus
+	End
    End               
                      
    Else IF Exists(select 1 from UserList where EmailId=@EmailId and idProfile != @ProfileId)                    
    Begin                    
-    select @operationStatus='User exists with a different Profile'                    
+    select @operationStatus='User exists with a different Profile'  
+	if(@CandidateResumeId is not null and @CandidateResumeId > 0)
+	Begin 
+		update CandidateResume set ReasonBehindNotProcessed = @operationStatus
+	End
    End                    
                     
    Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)                      

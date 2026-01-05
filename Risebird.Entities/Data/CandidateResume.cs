@@ -18,6 +18,7 @@ namespace Risebird.Entities.Data
         public bool? IsEmailMissing { get; set; }
         public string IRFName { get; set; }
         public string ClientHREmailId { get; set; }
+        public string ReasonBehindNotProcessed { get; set; }
 
     }
 }
