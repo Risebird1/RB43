@@ -345,11 +345,12 @@ namespace Risebird.Repository
                     resumeListDt.Columns.Add("IsResumeParsed", typeof(bool));
                     resumeListDt.Columns.Add("IsResumeParsingFailed", typeof(bool));
                     resumeListDt.Columns.Add("IsEmailMissing", typeof(bool));
+                    resumeListDt.Columns.Add("ReasonBehindNotProcessed", typeof(string));
 
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed, item.IsEmailMissing);
+                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed, item.IsEmailMissing, item.ReasonBehindNotProcessed);
                     }
 
                     SqlCommand cmd = new SqlCommand("usp_CandidateResumeBulkUpdate", con);
