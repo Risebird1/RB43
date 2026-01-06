@@ -414,6 +414,9 @@ namespace Risebird.Entities.ViewModel
         public string CandidateResumeClientHREmailId { get; set; }//used in Emergency dashboards's unprocessed resumes page
         public string TranscriptSummary { get; set; }
         public bool showChatBox { get; set; }
+        public bool IsResumeParsed { get; set; }
+        public bool IsResumeParsingFailed { get; set; }
+        public string ReasonBehindNotProcessed { get; set; }
     }
 
     public class VedioComments

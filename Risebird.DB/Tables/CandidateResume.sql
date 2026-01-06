@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[CandidateResume](
 			[IsResumeParsingFailed][bit] null,
 			[IsEmailMissing][bit] null,
 			[ClientHREmailId][varchar](100) null,
+			[ReasonBehindNotProcessed][varchar](500) null,
 			CONSTRAINT [FK_CandidateResumes_IRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_CandidateResumes_AddedBy] FOREIGN KEY (AddedBy) REFERENCES UserList(id),
  CONSTRAINT [PK_CandidateResumes] PRIMARY KEY CLUSTERED 					
@@ -71,6 +72,12 @@ AND Object_ID = Object_ID(N'CandidateResume'))
 BEGIN
 	alter table CandidateResume
 	Add ClientHREmailId varchar(100) null
+END
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'ReasonBehindNotProcessed')
+AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+	alter table CandidateResume
+	Add ReasonBehindNotProcessed varchar(500) null
 END
 
 Go
