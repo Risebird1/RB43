@@ -10,28 +10,28 @@
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <div class="mobile-view">
-    <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px 0px 10px 0px;padding:0px!important">
-            <div class="card-header bg-w clearfix" style="padding:10px;">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <h4 class="card-title"> 911 Dashboard</h4>
-                </div>
-                <div class="pull-right">
-                    <div>
-                        @if (ViewBag.Actiontype != 0)
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
-                        }
-                       
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px 0px 10px 0px;padding:0px!important">
+                <div class="card-header bg-w clearfix" style="padding:10px;">
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <h4 class="card-title"> 911 Dashboard</h4>
+                    </div>
+                    <div class="pull-right">
+                        <div>
+                            @if (ViewBag.Actiontype != 0)
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-   </div>
     <div class="content  client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -57,6 +57,9 @@
                                                     <th>Client HR</th>
                                                     <th>Channel Owner</th>
                                                     <th>UnApproved Resumes</th>
+                                                    <th>IsResumeParsed</th>
+                                                    <th>IsResumeParsingFailed</th>
+                                                    <th>ReasonBehindNotProcessed</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -70,6 +73,9 @@
                                                     <th>Client HR</th>
                                                     <th>Channel Owner</th>
                                                     <th>UnApproved Resumes</th>
+                                                    <th>IsResumeParsed</th>
+                                                    <th>IsResumeParsingFailed</th>
+                                                    <th>ReasonBehindNotProcessed</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -86,6 +92,18 @@
                                                         <td>@item.CandidateResumeClientHREmailId</td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.TotalView</td>
+                                                        <td>@item.IsResumeParsed</td>
+                                                        <td>@item.IsResumeParsingFailed</td>
+                                                        @if (!string.IsNullOrEmpty(item.ReasonBehindNotProcessed))
+                                                        {
+                                                            <td>@item.ReasonBehindNotProcessed</td>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+
                                                         <td>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Resumes">
                                                                 <a style="color:white" target="_blank" href="@Url.Action("Resumes", "Candidate", new { irfId = item.irfIntId, irfName = item.IRFId,actiontype=1})" title="Resumes" class="mdc-fab__icon material-icons">

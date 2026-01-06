@@ -153,7 +153,7 @@ namespace Risebird.AzureTimerFunctions
                                         if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
                                         {
                                             //mark it as cant be processed in the database
-                                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false, ReasonBehindNotProcessed = "The extracted(parsed) email is not a valid EmailId." });
                                             continue;
                                         }
 
@@ -161,7 +161,7 @@ namespace Risebird.AzureTimerFunctions
                                     else
                                     {
                                         //mark it as cant be processed in the database
-                                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
+                                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true, ReasonBehindNotProcessed= "The email could not be extracted after parsing." });
                                         continue;
                                     }
                                     if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
@@ -182,7 +182,7 @@ namespace Risebird.AzureTimerFunctions
                                 }
                                 else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
                                 {
-                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true, ReasonBehindNotProcessed= "Parsing was tried, but failed due to some reason (third party api failed to parse it), in that case, we wont parse the resume again." });
 
                                 }
                             }
@@ -221,7 +221,7 @@ namespace Risebird.AzureTimerFunctions
                                     if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
                                     {
                                         //mark it as cant be processed in the database
-                                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false, ReasonBehindNotProcessed = "The extracted(parsed) email is not a valid EmailId." });
                                         continue;
                                     }
 
@@ -229,7 +229,7 @@ namespace Risebird.AzureTimerFunctions
                                 else
                                 {
                                     //mark it as cant be processed in the database
-                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
+                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true, ReasonBehindNotProcessed = "EmailId is missing." });
                                     continue;
                                 }
                                 if (!string.IsNullOrEmpty(candidateParsedData.phoneNumber))
@@ -249,7 +249,7 @@ namespace Risebird.AzureTimerFunctions
                             }
                             else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
                             {
-                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true, ReasonBehindNotProcessed = "Parsing was tried, but failed due to some reason (third party api failed to parse it), in that case, we wont parse the resume again." });
 
                             }
                         }
@@ -263,7 +263,7 @@ namespace Risebird.AzureTimerFunctions
                     }
                     else
                     {
-                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true, ReasonBehindNotProcessed = "Resume Link was missing at the time the parsing was attempted." });
 
                     }
 
