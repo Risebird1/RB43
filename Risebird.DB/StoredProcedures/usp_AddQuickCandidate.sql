@@ -66,7 +66,7 @@ Begin
     select @operationStatus='Duplicate candidate'    
 	if(@CandidateResumeId is not null and @CandidateResumeId > 0)
 	Begin 
-		update CandidateResume set ReasonBehindNotProcessed = @operationStatus
+		update CandidateResume set ReasonBehindNotProcessed = @operationStatus where id = @CandidateResumeId
 	End
    End               
                      
@@ -75,7 +75,7 @@ Begin
     select @operationStatus='User exists with a different Profile'  
 	if(@CandidateResumeId is not null and @CandidateResumeId > 0)
 	Begin 
-		update CandidateResume set ReasonBehindNotProcessed = @operationStatus
+		update CandidateResume set ReasonBehindNotProcessed = @operationStatus where id = @CandidateResumeId
 	End
    End                    
                     
