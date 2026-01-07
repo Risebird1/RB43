@@ -283,6 +283,8 @@ namespace Risebird.Entities.ViewModel
         public string OpenAIAssistantId { get; set; }
         [DisplayName("Tech QC Required")]
         public bool IsTechQC { get; set; }
+
+        [DisplayName("Is Curated Talent")]
         public bool IsCuratedTalent { get; set; }
         public CuratedTalentSectionsForSkillChannel CuratedTalentSections { get; set; }
 
