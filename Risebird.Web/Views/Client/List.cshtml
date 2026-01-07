@@ -105,7 +105,9 @@
                                                             </div>
                                                         }}
                                                     else
-                                                    { <div></div>}
+                                                    {
+                                                        <div></div>
+                                                    }
 
 
 
@@ -167,10 +169,12 @@
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
                                                     <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
                                                 </button>
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
-                                                    <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-wallet"></span>
-                                                </button>
-
+                                                @if (ViewBag.profile == "Admin")
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
+                                                        <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-wallet"></span>
+                                                    </button>
+                                                }
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
                                                     <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
                                                 </button>
@@ -533,7 +537,7 @@
         var url = "List";
         window.location.href = url;
     }
-   
+
 </script>
 <script>
     function moreless(id) {
