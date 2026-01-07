@@ -17,9 +17,14 @@
                             <th>Report Link</th>
                             <th>Meeting Status</th>
                         }
+                        else
+                        {
+                            <th>Transaction Date</th>
+                            <th>Transaction Id</th>
+                        }
                         <th>Transaction Type</th>
                         <th>Points</th>
-                        <th>Created On</th>
+                        <th>Wallet Entry Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,10 +93,30 @@
                                     }
                                 </td>
                             }
+                            else
+                            {
+                                <td>
+                                    @if (item.TransactionDate.HasValue)
+                                    {
+                                        @item.TransactionDate.Value.ToString("MM/dd/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.TransactionId))
+                                    {
+                                        <div> @item.TransactionId</div>
+                                    }
+                                </td>
+                            }
                             <td style="text-align:center">
                                 @if (item.Credit > 0)
                                 {
-                                    <span class="badge badge-success transaction-badge">
+                                    <span class="badge badge-success transaction-badge" style="width:auto;height:30px;">
                                         <i class="fas fa-arrow-up"></i> CREDIT
                                     </span>
                                 }
