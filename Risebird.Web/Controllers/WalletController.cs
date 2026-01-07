@@ -160,7 +160,7 @@ namespace Risebird.Web.Controllers
                             billingOwnerId = client.UserId;
                         }
                     }
-
+                    ViewBag.actiontype = actiontype;
                     var model = await _walletService.GetWallet(billingType, clientId, billingOwnerId, actiontype);
 
                     if (model != null)
