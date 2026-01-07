@@ -1539,6 +1539,31 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary;
 
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsCuratedTalent", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsCuratedTalent"].Value = irfDetails.IsCuratedTalent;
+
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@CommunicationSkills", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@CommunicationSkills"].Value = irfDetails.CuratedTalentSections?.CommunicationSkills;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@VerbalAptitude", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@VerbalAptitude"].Value = irfDetails.CuratedTalentSections?.VerbalAptitude;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@QuantitativeAptitude", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@QuantitativeAptitude"].Value = irfDetails.CuratedTalentSections?.QuantitativeAptitude;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@PsychometricTest", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@PsychometricTest"].Value = irfDetails.CuratedTalentSections?.PsychometricTest;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@DataInterpretation", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@DataInterpretation"].Value = irfDetails.CuratedTalentSections?.DataInterpretation;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@DataSufficiency", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@DataSufficiency"].Value = irfDetails.CuratedTalentSections?.DataSufficiency;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@CriticalReasoning", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@CriticalReasoning"].Value = irfDetails.CuratedTalentSections?.CriticalReasoning;
+
                     var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
                     if (irfDetails.IsAIInterview)
                     {

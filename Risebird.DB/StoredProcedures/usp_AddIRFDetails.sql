@@ -69,6 +69,16 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @MeetingPlatform varchar(25),
 @showChatBox bit = null,  
 @generateTranscriptSummary bit = null, 
+
+@IsCuratedTalent bit = null, 
+@CommunicationSkills bit = null,
+@VerbalAptitude bit = null, 
+@QuantitativeAptitude bit = null, 
+@PsychometricTest bit = null, 
+@DataInterpretation bit = null, 
+@DataSufficiency bit = null, 
+@CriticalReasoning bit = null, 
+ 
 @idIrf int output              
               
 AS              
@@ -120,7 +130,8 @@ Begin
 	   ,[IsAIInterview]
 	   ,[AIInterviewType]
 	   ,[MeetingPlatform]
-	   ,[IsTechQC])  
+	   ,[IsTechQC]
+	   ,[IsCuratedTalent])  
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -166,13 +177,42 @@ Begin
 	   @IsAIInterview,
 	   @AIInterviewType,
 	   @MeetingPlatform,
-	   @IsTechQC)  
+	   @IsTechQC,
+	   @IsCuratedTalent)  
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        
          
      select @idIrf = SCOPE_IDENTITY()    
       
+
+    if(@IsCuratedTalent = 1)
+    Begin
+	    INSERT INTO [dbo].[CuratedTalentSectionsForSkillChannel] (
+            [IRFId],
+            [CommunicationSkills],
+            [VerbalAptitude],
+            [QuantitativeAptitude],
+            [PsychometricTest],
+            [DataInterpretation],
+            [DataSufficiency],
+            [CriticalReasoning],
+            [CreatedBy],
+            [CreatedAt]
+        ) VALUES (
+            @idIrf,
+            @CommunicationSkills,
+            @VerbalAptitude,
+            @QuantitativeAptitude,
+            @PsychometricTest,
+            @DataInterpretation,
+            @DataSufficiency,
+            @CriticalReasoning,
+            @CreatedBy,
+            @CreatedOn
+        );
+    End
+
      INSERT INTO [dbo].[TransJoinability](    
      [IRFId] ,    
      [LevelId],    

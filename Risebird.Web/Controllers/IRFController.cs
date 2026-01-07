@@ -909,6 +909,12 @@ namespace Risebird.Web.Controllers
                         irfDetails.StartDate = DateTime.Now;
                         irfDetails.EndDate = DateTime.Now.AddMonths(3);
 
+
+                        //if its a skill channel for curated talent purpose, it has to be set as an aiInterview by default as the scheduling link creation depends on its value
+                        if(irfDetails.IsCuratedTalent)
+                        {
+                            irfDetails.IsAIInterview = true;
+                        }
                         //Start: Auto Generate Scheduling Link 
                         var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF", isAIInterview: irfDetails.IsAIInterview);
                         irfDetails.CalendlyLink = _schedulinglink;
@@ -2211,9 +2217,9 @@ namespace Risebird.Web.Controllers
                             model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
-                                var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(model.IRFId);
+                                //var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(model.IRFId);
 
-                                await _irfService.UpdateAffindaIndexFlag(model.IRFId, isIndexCreated);
+                                //await _irfService.UpdateAffindaIndexFlag(model.IRFId, isIndexCreated);
 
                                 TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
                                 return RedirectToAction("Index");

@@ -287,6 +287,136 @@
                                                         @Html.LabelFor(model => model.IsGeneralSkillRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
                                                 </div>
+                                                <!-- Curated Talent Checkbox and Section -->
+                                                <div class="col-md-12">
+                                                    <div class="form-group" style="margin-bottom:20px;">
+                                                        <div class="mdc-form-field">
+                                                            <div class="mdc-checkbox">
+                                                                @Html.CheckBoxFor(m => m.IsCuratedTalent, new { @class = "mdc-checkbox__native-control", @id = "IsCuratedTalent" })
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+                                                            </div>
+                                                            @Html.LabelFor(m => m.IsCuratedTalent, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; margin-left: 8px;" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12" id="curatedTalentSections" style="display:@(Model.IsCuratedTalent ? "block" : "none"); margin-bottom:20px;">
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.CommunicationSkills, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_CommunicationSkills" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_CommunicationSkills", "Communication Skills", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.VerbalAptitude, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_VerbalAptitude" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_VerbalAptitude", "Verbal Aptitude", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.QuantitativeAptitude, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_QuantitativeAptitude" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_QuantitativeAptitude", "Quantitative Aptitude", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.PsychometricTest, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_PsychometricTest" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_PsychometricTest", "Psychometric Test", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.DataInterpretation, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_DataInterpretation" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_DataInterpretation", "Data Interpretation", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.DataSufficiency, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_DataSufficiency" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_DataSufficiency", "Data Sufficiency", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedTalentSections.CriticalReasoning, new { @class = "mdc-checkbox__native-control", @id = "CuratedTalentSections_CriticalReasoning" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.Label("CuratedTalentSections_CriticalReasoning", "Critical Reasoning", new { @class = "control-label", @style = "font-size: 13px; margin-left: 8px;" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-2">Job Details</h3>
@@ -1399,7 +1529,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
+<script>
+    // ...existing scripts...
 
+    // Show/hide curated talent section based on checkbox
+    $(document).ready(function () {
+        $('#IsCuratedTalent').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('#curatedTalentSections').show();
+            } else {
+                $('#curatedTalentSections').hide();
+                // Optionally uncheck all sub-checkboxes when hiding
+                $('#curatedTalentSections input[type="checkbox"]').prop('checked', false);
+            }
+        });
+    });
+</script>
 <script>
     var isRubricGenerated = false;
     function GenerateTechRubricUsingOpenAI(customizedPrompt = null){
