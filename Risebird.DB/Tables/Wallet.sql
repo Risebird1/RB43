@@ -15,6 +15,10 @@ CREATE TABLE [dbo].[Wallet](
 	[InterviewId] [int] NULL, -- Reference to InterviewMeetings.id
 	[IRFId] [int] NULL, -- Reference to IRF.id
 	[TransactionType] [varchar](50) NULL, -- 'Manual', 'InterviewPoints', 'InterviewBilling'
+	[TransactionDate] [datetime] NULL,
+	[TransactionId] [varchar](30) NULL,
+	[TransactionRefNumber] [varchar](200) NULL,
+	[InvoicePDF] [varchar](500) NULL,
  CONSTRAINT [PK_Wallet] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
