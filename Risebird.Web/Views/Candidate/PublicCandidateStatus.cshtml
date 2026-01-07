@@ -66,333 +66,333 @@
 </script>
 <style>
     .star-rating {
-        border: solid 1px white;
-        display: flex;
-        direction: rtl;
-        font-size: 2.0em;
-        justify-content: space-around;
-        padding: 0 .2em;
-        text-align: center;
-        width: 100%;
-        margin-bottom: 10px;
-        background-color: lightgray;
+    border: solid 1px white;
+    display: flex;
+    direction: rtl;
+    font-size: 2.0em;
+    justify-content: space-around;
+    padding: 0 .2em;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: lightgray;
     }
 
-        .star-rating input {
-            display: none;
-        }
+    .star-rating input {
+    display: none;
+    }
 
-        .star-rating label {
-            /*color: #ccc;*/
-            color: #e4e4e4;
-            cursor: pointer;
-        }
+    .star-rating label {
+    /*color: #ccc;*/
+    color: #e4e4e4;
+    cursor: pointer;
+    }
 
-        .star-rating :checked ~ label {
-            color: #f90;
-        }
+    .star-rating :checked ~ label {
+    color: #f90;
+    }
 
-        .star-rating label:hover,
-        .star-rating label:hover ~ label {
-            color: #fc0;
-        }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+    color: #fc0;
+    }
 
     .card-title-space {
-        margin: 20px 0px;
-        float: right
+    margin: 20px 0px;
+    float: right
     }
 
     .mb10 {
-        margin-bottom: 10px
+    margin-bottom: 10px
     }
 
     .topheader-header [data-tooltip]:before {
-        background: #92938b !important;
-        color: #fff !important;
-        box-shadow: none;
-        top: 42px;
-        width: 455px;
-        height: 27px;
-        clear: both;
-        text-transform: initial;
-        position: absolute;
-        z-index: 100;
-        border: none !important;
-        font-size: 11px;
-        left: -225px;
+    background: #92938b !important;
+    color: #fff !important;
+    box-shadow: none;
+    top: 42px;
+    width: 455px;
+    height: 27px;
+    clear: both;
+    text-transform: initial;
+    position: absolute;
+    z-index: 100;
+    border: none !important;
+    font-size: 11px;
+    left: -225px;
     }
 
 
     .topheader-header [data-tooltip]:after {
-        border-top: 8px solid #92938b !important;
-        border-right: 7px solid transparent !important;
-        border-left: 7px solid transparent !important;
-        top: 35px;
-        transform: rotate(180deg);
+    border-top: 8px solid #92938b !important;
+    border-right: 7px solid transparent !important;
+    border-left: 7px solid transparent !important;
+    top: 35px;
+    transform: rotate(180deg);
     }
 
     #dropbtnStats {
-        background: transparent;
-        color: white;
-        font-size: 16px;
-        border: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    border: none;
     }
 
     #dropdownStats {
-        position: relative;
-        display: inline-block;
+    position: relative;
+    display: inline-block;
     }
 
     #dropdown-contentStats {
-        display: none;
-        position: absolute;
-        background-color: #f1f1f1;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        left: 10%;
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    left: 10%;
     }
 
-        #dropdown-contentStats a:hover {
-            background: #eaeaf1 !important;
-        }
+    #dropdown-contentStats a:hover {
+    background: #eaeaf1 !important;
+    }
 
-        #dropdown-contentStats:before {
-            content: "";
-            display: block;
-            width: 0;
-            height: 0;
-            border-right: 15px solid transparent;
-            border-bottom: 15px solid transparent;
-            border-left: 15px solid #dad3d338;
-            position: absolute;
-            top: -3px;
-            right: 100px;
-            transform: rotate(45deg);
-        }
+    #dropdown-contentStats:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid #dad3d338;
+    position: absolute;
+    top: -3px;
+    right: 100px;
+    transform: rotate(45deg);
+    }
 
-        #dropdown-contentStats a {
-            color: black !important;
-            padding: 0px 10px;
-            text-decoration: none;
-            display: block;
-            border-bottom: 1px dotted #ccc;
-        }
+    #dropdown-contentStats a {
+    color: black !important;
+    padding: 0px 10px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px dotted #ccc;
+    }
 
     .dropdown-contentStats a:hover {
-        background-color: #ddd;
+    background-color: #ddd;
     }
 
 </style>
 
 <style>
     .hopscotch-arrow.down {
-        transform: rotate( 1deg );
-        top: 7.9rem;
-        right: -.3rem;
+    transform: rotate( 1deg );
+    top: 7.9rem;
+    right: -.3rem;
     }
 
     .sidebar-mini .sidebar:hover {
-        width: 80px !important;
+    width: 80px !important;
     }
 
     /*.mob_h {
-                display: none !important
-                }*/
+    display: none !important
+    }*/
     .modal-backdrop {
-        visibility: hidden !important;
+    visibility: hidden !important;
     }
 
     .modal.in {
-        background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.5);
     }
 
     .navbar {
-        position: fixed;
+    position: fixed;
     }
 </style>
 
 <style>
     ul.tabs {
-        margin: 0;
-        padding: 0;
-        float: left;
-        list-style: none;
-        height: 32px;
-        border-bottom: 1px solid #333;
-        width: 100%;
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    height: 32px;
+    border-bottom: 1px solid #333;
+    width: 100%;
     }
 
-        ul.tabs li {
-            float: left;
-            margin: 0;
-            cursor: pointer;
-            padding: 0px 21px;
-            height: 31px;
-            line-height: 31px;
-            border-top: 1px solid #333;
-            border-left: 1px solid #333;
-            border-bottom: 0px solid #333;
-            background-color: #fff;
-            color: #666;
-            overflow: hidden;
-            position: relative;
-        }
+    ul.tabs li {
+    float: left;
+    margin: 0;
+    cursor: pointer;
+    padding: 0px 21px;
+    height: 31px;
+    line-height: 31px;
+    border-top: 1px solid #333;
+    border-left: 1px solid #333;
+    border-bottom: 0px solid #333;
+    background-color: #fff;
+    color: #666;
+    overflow: hidden;
+    position: relative;
+    }
 
     .tab_last {
-        border-right: 1px solid #333;
+    border-right: 1px solid #333;
     }
 
     ul.tabs li:hover {
-        background-color: #ccc;
-        color: #fff;
+    background-color: #ccc;
+    color: #fff;
     }
 
     ul.tabs li.active {
-        background-color: #57aef4;
-        color: #fff;
-        border-bottom: 1px solid #57aef4;
-        display: block;
+    background-color: #57aef4;
+    color: #fff;
+    border-bottom: 1px solid #57aef4;
+    display: block;
     }
 
     .tab_container {
-        border: 1px solid #333;
-        border-top: none;
-        clear: both;
-        float: left;
-        width: 100%;
-        background: #fff;
-        overflow: auto;
+    border: 1px solid #333;
+    border-top: none;
+    clear: both;
+    float: left;
+    width: 100%;
+    background: #fff;
+    overflow: auto;
     }
 
     .tab_content {
-        padding: 10px 15px;
-        display: none;
+    padding: 10px 15px;
+    display: none;
     }
 
     .tab_drawer_heading {
-        display: none;
+    display: none;
     }
 
     @@media screen and (max-width:1024px) {
-        ul.tabs {
-            margin: 60px 0px 0px 0px;
-        }
+    ul.tabs {
+    margin: 60px 0px 0px 0px;
+    }
 
-        .tabs-wrapper {
-            padding: 0px;
-        }
+    .tabs-wrapper {
+    padding: 0px;
+    }
 
-        .topheader-link-wrap {
-            padding: 10px;
-        }
+    .topheader-link-wrap {
+    padding: 10px;
+    }
 
-        .topheader-header .desktop-view {
-            clear: both;
-            position: relative;
-            top: -4px;
-            left: -64px;
-        }
+    .topheader-header .desktop-view {
+    clear: both;
+    position: relative;
+    top: -4px;
+    left: -64px;
+    }
     }
 
     @@media screen and (max-width: 768px) {
 
-        .tabs-wrapper {
-            width: 95%;
-            padding: 0px;
-        }
+    .tabs-wrapper {
+    width: 95%;
+    padding: 0px;
+    }
 
-        .topheader-link-wrap {
-            padding: 0px 7px;
-        }
+    .topheader-link-wrap {
+    padding: 0px 7px;
+    }
 
-        .topheader-header .desktop-view {
-            clear: both;
-            position: relative;
-            top: 47px;
-            left: -150px;
-        }
+    .topheader-header .desktop-view {
+    clear: both;
+    position: relative;
+    top: 47px;
+    left: -150px;
+    }
     }
 
     @@media screen and (max-width: 767px) {
-        .tabs {
-            display: none;
-        }
+    .tabs {
+    display: none;
+    }
 
-        .tabs-wrapper {
-            width: 100%;
-            margin-top: 50px;
-        }
+    .tabs-wrapper {
+    width: 100%;
+    margin-top: 50px;
+    }
 
-        .tab_drawer_heading {
-            background-color: #d3d2d2;
-            color: #fff;
-            border-top: 0px;
-            margin: 5px 0;
-            padding: 5px 20px;
-            display: block;
-            cursor: pointer;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+    .tab_drawer_heading {
+    background-color: #d3d2d2;
+    color: #fff;
+    border-top: 0px;
+    margin: 5px 0;
+    padding: 5px 20px;
+    display: block;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    }
 
-        .d_active {
-            background-color: #666;
-            color: #fff;
-        }
+    .d_active {
+    background-color: #666;
+    color: #fff;
+    }
 
-        .tab_content {
-            padding: 0px;
-        }
+    .tab_content {
+    padding: 0px;
+    }
 
-        .tab_container .nopad {
-            padding: 0px !important;
-        }
+    .tab_container .nopad {
+    padding: 0px !important;
+    }
 
-        .tab_container {
-            border: 0px !important;
-            padding: 10px;
-        }
+    .tab_container {
+    border: 0px !important;
+    padding: 10px;
+    }
 
-        .content.client .client-tab #candidateTable_filter {
-            position: absolute;
-            right: 20px;
-            top: -17px;
-            margin: 10px 0px 10px -11px;
-        }
+    .content.client .client-tab #candidateTable_filter {
+    position: absolute;
+    right: 20px;
+    top: -17px;
+    margin: 10px 0px 10px -11px;
+    }
 
-        .client-tab table.dataTable {
-            margin-top: 30px !important;
-        }
+    .client-tab table.dataTable {
+    margin-top: 30px !important;
+    }
 
-        .topheader-header .mobile-view {
-            clear: both;
-            position: relative;
-            top: -45px;
-            left: 130px;
-        }
+    .topheader-header .mobile-view {
+    clear: both;
+    position: relative;
+    top: -45px;
+    left: 130px;
+    }
     }
 
     @@media screen and (max-width: 480px) {
-        .topheader-header .mobile-view {
-            clear: both;
-            position: relative;
-            top: -40px;
-            left: 120px;
-        }
+    .topheader-header .mobile-view {
+    clear: both;
+    position: relative;
+    top: -40px;
+    left: 120px;
+    }
     }
 
     @@media screen and (max-width: 360px) {
-        .topheader-header .mobile-view {
-            clear: both;
-            position: relative;
-            top: -45px;
-            left: 225px;
-        }
+    .topheader-header .mobile-view {
+    clear: both;
+    position: relative;
+    top: -45px;
+    left: 225px;
+    }
     }
 
 </style>
@@ -425,7 +425,7 @@
                             <div class="topheader-link-wrap">
                                 @if (ViewBag.ClientRole == "Reviewer")
                                 {
-                                    <a target="_blank" href="@Url.Action("TotalInterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })" style="margin:5px 8px 5px 3px;text-decoration:none">
+                                    <a target="_blank" href="@Url.Action("TotalInterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })" style="margin:5px 0px 5px 3px;text-decoration:none">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
@@ -483,7 +483,7 @@
                                 </button> *@
                                 @if (ViewBag.ClientRole != "Reviewer")
                                 {
-                                    <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" style="margin:5px 8px 5px 3px;text-decoration:none">
+                                    <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id })" style="margin:5px 0px 5px 3px;text-decoration:none">
                                         <button type="button" data-toggle="tooltip" data-placement="top">
                                             <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
@@ -492,7 +492,7 @@
                                         </button>
                                     </a>
 
-                                    <button id="dropbtnStats" style="margin-right:8px;position:relative;">
+                                    <button id="dropbtnStats" style="margin-right:2px;position:relative;">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff;font-size: 11px;"></i></span>
                                         <font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-left: 5px;color:#817c7c;font-weight: 700;"> Stats</font>
                                     </button>
@@ -555,13 +555,13 @@
                                 <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
                                 </button>*@
                                     }
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 0px 5px 3px;">
                                         <span class="topheader-link"><i class="fa fa-user-times" style="color:#fff;font-size:11px;"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Probable NoShow
                                         </div>
                                     </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openDroppedAndBounced()" style="cursor:pointer;left:160px;margin:5px 0px 5px 3px;">
                                         <span class="topheader-link">
                                             <img src="~/Newassets/img/bounce-email.png" style="left: -1px;position: relative;width: 19px;" />
                                         </span>
@@ -569,7 +569,7 @@
                                             Bounced/Dropped Mails
                                         </div>
                                     </button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="NotProcessedResumeByClient('@ViewBag.emailid','@ViewBag.id')" style="cursor:pointer;left:160px;margin:5px 0px 5px 3px;">
                                         <span class="topheader-link"><img src="~/Newassets/img/not-processed-resume.png" style="width:15px;" /></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Not Processed Resume
@@ -577,14 +577,14 @@
                                     </button>
                                     @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
                                     {
-                                        <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement()" style="cursor:pointer;left:160px;margin:5px 8px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement()" style="cursor:pointer;left:160px;margin:5px 0px 5px 3px;">
                                             <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                             <div class="d-lg-inline-flex pad3">
                                                 Live Co-ordination
                                             </div>
                                         </button>
                                     }
-                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 8px 5px 3px;">
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 0px 5px 3px;">
                                         <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Manage Interviews
@@ -592,6 +592,16 @@
                                     </button>
                                 }
 
+                                @if (ViewBag.ClientId == 177)
+                                {
+                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="Wallet('@ViewBag.emailid')" style="left:160px;margin:5px 5px 5px 5px;">
+                                        <svg fill="#57aef4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 16px;color: #57aef4;"> <path d="M461.2 128H80c-8.84 0-16-7.16-16-16s7.16-16 16-16h384c8.84 0 16-7.16 16-16 0-26.51-21.49-48-48-48H64C28.65 32 0 60.65 0 96v320c0 35.35 28.65 64 64 64h397.2c28.02 0 50.8-21.53 50.8-48V176c0-26.47-22.78-48-50.8-48zM416 336c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path>
+                                        </svg>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Wallet
+                                        </div>
+                                    </button>
+                                }
                             </div>
 
 
@@ -607,10 +617,10 @@
                                 </span>
 
                             </div>
-                            <div class="desktop-view pull-left">
+                            <div class="desktop-view pull-left" style="position:relative;left:5px;">
                                 <span class="filter">
 
-                                    <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
+                                    <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top;padding:0px!important;" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
                                         <span class="fa fa-filter"></span> Filter
                                     </span>
                                 </span>
@@ -2189,6 +2199,10 @@
     function FetchInterviewerCommunicator(emailid) {
         //window.location.href = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
         var url = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
+        window.open(url, '_blank');
+    }
+    function Wallet(emailid) {
+        var url = "/Wallet/Index?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
         window.open(url, '_blank');
     }
     function bindschedulingdata(data) {
