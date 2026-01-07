@@ -72,7 +72,7 @@ namespace Risebird.Repository
             }
             return 0;
         }
-        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, int? billingOwnerId = null)
+        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null)
         {
             try
             {
@@ -83,6 +83,9 @@ namespace Risebird.Repository
                 parameters.Add("@CreatedBy", loginedUser);
                 parameters.Add("@TransactionType", "Manual");
                 parameters.Add("@Credit", CreditAmount);
+                parameters.Add("@CreatedOn", CreatedOn);
+                parameters.Add("@TransactionRefNumber", transactionRefNumber);
+                parameters.Add("@InvoicePDF", invoicePDF);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync<int>(con, "usp_AddCreditWalletDetails", parameters,

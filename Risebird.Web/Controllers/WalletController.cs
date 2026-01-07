@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.VisualBasic;
 using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -25,14 +26,18 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
         private readonly IIRFService _irfService;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public WalletController(IWalletService walletService, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService)
+        public WalletController(IWalletService walletService, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _walletService = walletService;
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _clientService = clientService;
             _irfService = irfService;
+            _azureStorageHelper = azureStorageHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         /// <summary>
@@ -240,7 +245,7 @@ namespace Risebird.Web.Controllers
             return PartialView();
         }
         [HttpPost]
-        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, int? billingOwnerId = null)
+        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null)
         {
             var emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)
@@ -248,7 +253,39 @@ namespace Risebird.Web.Controllers
                 emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
             }
-            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, billingOwnerId);
+
+            string invoicePDF = null;
+            // Handle PDF file upload
+            IFormFile file = null;
+            if (Request.Form.Files["file"] != null)
+            {
+                file = Request.Form.Files["file"];
+            }
+            else if (Request.Form.Files.Count > 0)
+            {
+                file = Request.Form.Files[0];
+            }
+
+            if (file != null && file.Length > 0)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                if (fileMimeType == "application/pdf")
+                {
+                    var fileName = file.FileName.Replace(" ", "_");
+                    // Generate unique filename with timestamp
+                    var uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{fileName}";
+                    await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                    var blob = containerRef.GetBlockBlobReference(uniqueFileName);
+                    invoicePDF = blob.Uri.ToString();
+                }
+                else
+                {
+                    return Json("Invalid file type. Only PDF files are allowed.");
+                }
+            }
+
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF);
             if (result)
             {
                 return Json("Credit amount added Successfully");

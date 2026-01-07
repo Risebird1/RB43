@@ -1,10 +1,33 @@
 ﻿<div class="row">
+        <div class="col-md-12">
+        <div class="form-group">
+            <label>Transaction Date</label>
+            <input type="datetime-local" id="txtCreatedOn" class="form-control" value="@ViewBag.CreatedOn"/>
+          
+            
+        </div>
+    </div>
     <div class="col-md-12">
         <div class="form-group">
             <label>Credit Balance</label>
             <input type="number" id="txtCreditBalance" class="form-control" />
             <input type="hidden" id="hidClientIdWallet" value="@ViewBag.Clientid" />
             <input type="hidden" id="hidBillingType" value="@ViewBag.BillingType" />
+        </div>
+    </div>
+    <!-- Transaction Reference Number -->
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Transaction Ref No</label>
+            <input type="text" id="txtTransactionRefNumber" class="form-control" placeholder="Enter transaction reference number" />
+        </div>
+    </div>
+    <!-- Transaction Invoice PDF -->
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Transaction Invoice PDF</label>
+            <input type="file" id="txtInvoicePDF" class="form-control" accept=".pdf" />
+            <small class="form-text text-muted">Only PDF files are allowed</small>
         </div>
     </div>
     <!-- Billing Type -->
@@ -36,3 +59,18 @@
         </div>
     </div>
 </div>
+<style>
+    .modal .form-control[type="datetime-local"] {
+        background-position: 98% 50% !important;
+        background-size: 3% !important;
+    }
+    
+    /* Add margin-bottom after each input field container */
+    .row > .col-md-12 {
+        margin-bottom: 5px !important;
+    }
+    
+    .form-group {
+        margin-bottom: 5px !important;
+    }
+</style>
