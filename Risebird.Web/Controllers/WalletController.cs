@@ -254,9 +254,6 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
             }
 
-            // Note: CreatedOn parameter is kept for backward compatibility but is ignored
-            // CreatedOn is automatically set to current timestamp in the stored procedure
-            // TransactionDate is independent and comes from the Transaction Date form field
 
             string invoicePDF = null;
             // Handle PDF file upload
