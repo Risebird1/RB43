@@ -245,7 +245,7 @@ namespace Risebird.Web.Controllers
             return PartialView();
         }
         [HttpPost]
-        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null)
+        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, DateTime? CreatedOn, int? billingOwnerId = null, string transactionId = null)
         {
             var emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)
@@ -285,7 +285,7 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF);
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionId, invoicePDF);
             if (result)
             {
                 return Json("Credit amount added Successfully");

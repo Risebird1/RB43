@@ -16,7 +16,7 @@ CREATE Procedure usp_AddCreditWalletDetails
 @TransactionType varchar(50), --InterviewBilling,Manual      
 @Credit int =null,
 @CreatedOn datetime = null,
-@TransactionRefNumber varchar(200) = null,
+@TransactionId varchar(30) = null,
 @InvoicePDF varchar(500) = null
 AS      
 BEGIN      
@@ -26,8 +26,8 @@ If @CreatedOn IS NULL
 Else
     Set @CreatedOnValue = @CreatedOn
 
-Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType,TransactionRefNumber,InvoicePDF)    
-values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,@Credit,0,@CreatedOnValue,'Credit',0,0,0,@TransactionType,@TransactionRefNumber,@InvoicePDF)    
+Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType,TransactionId,InvoicePDF)    
+values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,@Credit,0,@CreatedOnValue,'Credit',0,0,0,@TransactionType,@TransactionId,@InvoicePDF)    
 
 END
 GO

@@ -48,11 +48,11 @@ namespace Risebird.Business
                 return 0;
             }
         }
-        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null)
+        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionId = null, string invoicePDF = null)
         {
             try
             {
-                return await _walletRepository.AddClientWalletBalance(billingType, clientId, CreditAmount, loginedUser, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF);
+                return await _walletRepository.AddClientWalletBalance(billingType, clientId, CreditAmount, loginedUser, CreatedOn, billingOwnerId, transactionId, invoicePDF);
             }
             catch (Exception ex)
             {
