@@ -1454,7 +1454,7 @@ namespace Risebird.Web.Controllers
                         var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
 
                         //now call the synthesia api to generate the video
-                        var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, "your_template_id_here");
+                        var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, SynthesiaAIAvatarTemplates.Reema);
 
                         // Wait/poll until video is ready (Synthesia usually takes 30–60s)
                         string videoUrl;
@@ -1465,7 +1465,7 @@ namespace Risebird.Web.Controllers
                         } while (string.IsNullOrWhiteSpace(videoUrl));
 
 
-                        //save the video in our blob
+                        //save the video in our blob/
                         string uploadedVideoUrl = string.Empty;
 
                         if (videoUrl != null)
