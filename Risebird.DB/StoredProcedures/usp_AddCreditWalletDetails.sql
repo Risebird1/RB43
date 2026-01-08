@@ -16,18 +16,20 @@ CREATE Procedure usp_AddCreditWalletDetails
 @TransactionType varchar(50), --InterviewBilling,Manual      
 @Credit int =null,
 @CreatedOn datetime = null,
+@TransactionDate datetime = null,
 @TransactionRefNumber varchar(200) = null,
 @InvoicePDF varchar(500) = null
 AS      
 BEGIN      
-Declare @CreatedOnValue Datetime
-If @CreatedOn IS NULL
-    Set @CreatedOnValue = DateAdd(Minute,330,Getdate())    
-Else
-    Set @CreatedOnValue = @CreatedOn
+-- CreatedOn is always set to current timestamp (when record is created)
+Declare @CreatedOnValue Datetime = DateAdd(Minute,330,Getdate())
 
-Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType,TransactionRefNumber,InvoicePDF)    
-values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,@Credit,0,@CreatedOnValue,'Credit',0,0,0,@TransactionType,@TransactionRefNumber,@InvoicePDF)    
+-- TransactionDate is separate and can be different from CreatedOn
+-- It can be null if not provided by the user
+Declare @TransactionDateValue Datetime = @TransactionDate
+
+Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType,TransactionDate,TransactionRefNumber,InvoicePDF)    
+values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,@Credit,0,@CreatedOnValue,'Credit',0,0,0,@TransactionType,@TransactionDateValue,@TransactionRefNumber,@InvoicePDF)    
 
 END
 GO

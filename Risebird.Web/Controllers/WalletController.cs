@@ -245,7 +245,7 @@ namespace Risebird.Web.Controllers
             return PartialView();
         }
         [HttpPost]
-        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null)
+        public async Task<JsonResult> AddWalletBalance(int Clientid, int billingType, int CreditAmount, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, DateTime? transactionDate = null)
         {
             var emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)
@@ -253,6 +253,10 @@ namespace Risebird.Web.Controllers
                 emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
             }
+
+            // Note: CreatedOn parameter is kept for backward compatibility but is ignored
+            // CreatedOn is automatically set to current timestamp in the stored procedure
+            // TransactionDate is independent and comes from the Transaction Date form field
 
             string invoicePDF = null;
             // Handle PDF file upload
@@ -285,7 +289,7 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF);
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF, transactionDate);
             if (result)
             {
                 return Json("Credit amount added Successfully");

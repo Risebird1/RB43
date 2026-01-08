@@ -14,6 +14,13 @@
                 <span onclick="CloseAddWalletBalanceModal()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
+                <!-- Transaction Date -->
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Transaction Date</label>
+                        <input type="datetime-local" id="txtTransactionDate" class="form-control" />
+                    </div>
+                </div>
                 <div class="col-md-12">
                     <div class="video-url">
                         <label>Credit Balance</label>
@@ -30,7 +37,7 @@
                 <div class="col-md-12">
                     <div class="video-url">
                         <label>Transaction Invoice PDF</label>
-                        <input type="file" id="txtInvoicePDF" class="form-control" accept=".pdf" / style="padding-top:10px;padding-left:15px;">
+                        <input type="file" id="txtInvoicePDF" class="form-control" accept=".pdf" style="padding-top:10px;padding-left:15px;" />
                         <small class="form-text text-muted" style="color: #6c757d; font-size: 12px;">Only PDF files are allowed</small>
                     </div>
                 </div>
@@ -77,6 +84,12 @@
                 var billingType = $(data).find('#hidBillingType').val();
                 $("#txtBillingType").val(billingType);
                 
+                // Get and set Transaction Date from loaded form
+                var transactionDate = $(data).find('#txtTransactionDate').val();
+                if (transactionDate) {
+                    $("#txtTransactionDate").val(transactionDate);
+                }
+                
                 // Display billing type text
                 var billingTypeText = billingType == 1 ? "Billing Owner" : "Client";
                 $("#txtBillingTypeDisplay").val(billingTypeText);
@@ -104,6 +117,7 @@
         var model = $("#AddWalletBalanceModal");
         model.css("display", "none");
         // Reset form
+        $("#txtTransactionDate").val("");
         $("#txtCreditBalance").val("");
         $("#txtTransactionRefNumber").val("");
         $("#txtInvoicePDF").val("");
@@ -116,7 +130,8 @@
         var creditAmount = $("#txtCreditBalance").val();
         var transactionRefNumber = $("#txtTransactionRefNumber").val();
         var billingOwnerId = $("#ddlClientHRUser").val() || null;
-        var createdOn = $("#txtCreatedOn").val() || null;
+        // Transaction Date is what the user enters - separate from CreatedOn
+        var transactionDate = $("#txtTransactionDate").val() || null;
         var invoicePDFFile = $("#txtInvoicePDF")[0].files[0];
 
         if (!creditAmount || parseInt(creditAmount) <= 0) {
@@ -133,8 +148,10 @@
         if (billingOwnerId) {
             formData.append("billingOwnerId", billingOwnerId);
         }
-        if (createdOn) {
-            formData.append("CreatedOn", createdOn);
+        // CreatedOn is set automatically to current timestamp in stored procedure
+        // TransactionDate is the date entered by the user
+        if (transactionDate) {
+            formData.append("transactionDate", transactionDate);
         }
         if (invoicePDFFile) {
             formData.append("file", invoicePDFFile);
@@ -170,6 +187,12 @@
     
     #AddWalletBalanceModal .video-url {
         margin-bottom: 10px !important;
+    }
+    
+    /* Style for datetime-local input */
+    #AddWalletBalanceModal .form-control[type="datetime-local"] {
+        background-position: 98% 50% !important;
+        background-size: 3% !important;
     }
 </style>
 
