@@ -289,7 +289,7 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF, transactionDate);
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionRefNumber, invoicePDF);
             if (result)
             {
                 return Json("Credit amount added Successfully");

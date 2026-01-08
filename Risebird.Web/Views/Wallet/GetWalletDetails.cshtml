@@ -21,8 +21,6 @@
                         {
                             <th>Transaction Date</th>
                             <th>Transaction Id</th>
-                            <th>Transaction Ref No</th>
-                            <th>Invoice PDF</th>
                         }
                         <th>Transaction Type</th>
                         <th>Points</th>
@@ -112,28 +110,6 @@
                                     @if (!string.IsNullOrEmpty(item.TransactionId))
                                     {
                                         <div> @item.TransactionId</div>
-                                    }
-                                </td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(item.TransactionRefNumber))
-                                    {
-                                        <div> @item.TransactionRefNumber</div>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">N/A</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(item.InvoicePDF))
-                                    {
-                                        <a href="@item.InvoicePDF" target="_blank" class="btn btn-sm btn-primary report-link">
-                                            <i class="fa fa-file-pdf"></i> View Invoice
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">N/A</span>
                                     }
                                 </td>
                             }

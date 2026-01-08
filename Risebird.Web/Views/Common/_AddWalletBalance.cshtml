@@ -30,8 +30,8 @@
                 </div>
                 <div class="col-md-12">
                     <div class="video-url">
-                        <label>Transaction Ref No</label>
-                        <input type="text" id="txtTransactionRefNumber" class="form-control" placeholder="Enter transaction reference number" />
+                        <label>Transaction Id</label>
+                        <input type="text" id="txtTransactionId" class="form-control" placeholder="Enter transaction reference number" />
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -119,7 +119,7 @@
         // Reset form
         $("#txtTransactionDate").val("");
         $("#txtCreditBalance").val("");
-        $("#txtTransactionRefNumber").val("");
+        $("#txtTransactionId").val("");
         $("#txtInvoicePDF").val("");
         $("#ddlClientHRUser").val("");
     }
@@ -128,7 +128,7 @@
         var clientId = $("#txtClientIdWallet").val();
         var billingType = $("#txtBillingType").val();
         var creditAmount = $("#txtCreditBalance").val();
-        var transactionRefNumber = $("#txtTransactionRefNumber").val();
+        var transactionId = $("#txtTransactionId").val();
         var billingOwnerId = $("#ddlClientHRUser").val() || null;
         // Transaction Date is what the user enters - separate from CreatedOn
         var transactionDate = $("#txtTransactionDate").val() || null;
@@ -144,7 +144,7 @@
         formData.append("Clientid", clientId);
         formData.append("billingType", billingType);
         formData.append("CreditAmount", creditAmount);
-        formData.append("transactionRefNumber", transactionRefNumber || "");
+        formData.append("transactionId", transactionId || "");
         if (billingOwnerId) {
             formData.append("billingOwnerId", billingOwnerId);
         }
