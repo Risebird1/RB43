@@ -33,6 +33,7 @@ Select @ClientRoleId=RoleId From ClientUser where UserId=@BillingOwnerId
   w.TransactionType,
   w.TransactionDate,
   w.TransactionId,
+  w.TransactionRefNumber,
   w.InvoicePDF,
   c.Name as ClientName,    
   ul.EmailId as BillingOwnerEmail,    
