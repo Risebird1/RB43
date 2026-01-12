@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO  
 Create PROCEDURE [dbo].[usp_AddIRFSampleQuestions]    
 (    
-   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV3] READONLY,  --AddIRFSampleQuestions_TableType, AddIRFSampleQuestions_TableTypeV2
+   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV4] READONLY,  --AddIRFSampleQuestions_TableTypeV3,  AddIRFSampleQuestions_TableType, AddIRFSampleQuestions_TableTypeV2
    @IRFId int
 )    
 AS    
