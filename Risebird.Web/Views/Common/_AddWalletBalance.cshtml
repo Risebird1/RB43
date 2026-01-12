@@ -1,70 +1,197 @@
-﻿<div id="AddWalletBalanceModal" class="modal modal-bg" style="display:none;">
+<div id="AddWalletBalanceModal" class="modal modal-bg" style="display: none;">
+    <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <!-- Header -->
             <div class="filheader">
                 <div class="filavatar">
                     <span>
-                        <i class="fas fa-wallet publicsharing-icon" style="font-size:23px;"></i>
+                        <i style=" font-size: 23px;" class="fas fa-wallet publicsharing-icon"></i>
                     </span>
                 </div>
                 <h5 class="modal-title pull-left">Add Wallet Balance</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="CloseAddWalletBalanceModal()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+                <span onclick="CloseAddWalletBalanceModal()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
-            <!-- Body -->
-            <div class="modal-body" id="divAddWalletCredit">
-                <!-- Credit Balance -->
-
-
+            <div class="modal-body">
+                <!-- Transaction Date -->
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Transaction Date</label>
+                        <input type="datetime-local" id="txtTransactionDate" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Credit Balance</label>
+                        <input type="number" id="txtCreditBalance" class="form-control" />
+                        <input type="hidden" id="txtClientIdWallet" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Transaction Id</label>
+                        <input type="text" id="txtTransactionId" class="form-control" placeholder="Enter transaction reference number" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Transaction Invoice PDF</label>
+                        <input type="file" id="txtInvoicePDF" class="form-control" accept=".pdf" style="padding-top:10px;padding-left:15px;" />
+                        <small class="form-text text-muted" style="color: #6c757d; font-size: 12px;">Only PDF files are allowed</small>
+                    </div>
+                </div>
+                <!-- Billing Type -->
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Billing Type</label>
+                        <input type="text" id="txtBillingTypeDisplay" class="form-control" style="background:#fff;" readonly />
+                        <input type="hidden" id="txtBillingType" />
+                    </div>
+                </div>
+                <div class="col-md-12" id="divClientHRUser" style="display: none;">
+                    <div class="video-url">
+                        <label>Client HR User</label>
+                        <select id="ddlClientHRUser" class="form-control">
+                            <option value="">-- Select Client HR User --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right mt-10">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="AddWalletBalance()" class="mdc-button mdc-button--raised mdc-ripple-upgraded  card-title-space" value="Add Balance">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="CloseAddWalletBalanceModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Close">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-     function OpenAddWalletBalanceModal(id) {
-         $.ajax({
+    function OpenAddWalletBalanceModal(id) {
+        var model = $("#AddWalletBalanceModal");
+        model.css("display", "block");
+        $("#txtClientIdWallet").val(id);
+        
+        // Load client details and billing type
+        $.ajax({
             url: '/Wallet/AddWalletBalance',
-            data: { 'Clientid': id },
-            type: "GET",
+            data: { Clientid: id },
+            type: 'GET',
             success: function (data) {
-                openAddBalancepopupModal();
-                $('#divAddWalletCredit').html('');
                 $('#divAddWalletCredit').html(data);
+                var billingType = $(data).find('#hidBillingType').val();
+                $("#txtBillingType").val(billingType);
+                
+                // Get and set Transaction Date from loaded form
+                var transactionDate = $(data).find('#txtTransactionDate').val();
+                if (transactionDate) {
+                    $("#txtTransactionDate").val(transactionDate);
+                }
+                
+                // Display billing type text
+                var billingTypeText = billingType == 1 ? "Billing Owner" : "Client";
+                $("#txtBillingTypeDisplay").val(billingTypeText);
+                
+                // If billing type is 1 (Billing Owner), load client users
+                if (billingType == 1) {
+                    $("#divClientHRUser").show();
+                    // Load client users dropdown
+                    var options = $(data).find('#BillingOwnerUserId option');
+                    $("#ddlClientHRUser").empty();
+                    options.each(function() {
+                        $("#ddlClientHRUser").append($(this).clone());
+                    });
+                } else {
+                    $("#divClientHRUser").hide();
+                }
+            },
+            error: function () {
+                alert("Error loading wallet balance form.");
             }
         });
     }
+
     function CloseAddWalletBalanceModal() {
         var model = $("#AddWalletBalanceModal");
-        if (model.length > 0) {
-            model.css('display', 'none');
-            $("#txtCreditBalance").val('');
-        }
+        model.css("display", "none");
+        // Reset form
+        $("#txtTransactionDate").val("");
+        $("#txtCreditBalance").val("");
+        $("#txtTransactionId").val("");
+        $("#txtInvoicePDF").val("");
+        $("#ddlClientHRUser").val("");
     }
-    function openAddBalancepopupModal(){
-         var model = $("#AddWalletBalanceModal");
-        if (model && model.length > 0) {
-            model.css('display', 'block');
-        }
-    }
+
     function AddWalletBalance() {
-        var creditBalance = $("#txtCreditBalance").val();
-        var clientid = $("#hidClientIdWallet").val();
-        var billingtype = $("#hidBillingType").val();
-        var billingOwnerId = $("#BillingOwnerUserId").val();
-        if (creditBalance.trim() != "" && parseFloat(creditBalance) > 0) {
-             $.ajax({
-                url: '/Wallet/AddWalletBalance',
-                data: { 'Clientid': clientid,'billingType':billingtype,'CreditAmount':creditBalance,'billingOwnerId':billingOwnerId },
-                type: "POST",
-                success: function (data) {
-                   alert(data);
-                   CloseAddWalletBalanceModal();
-                }
-            });
-        } else {
-            alert("Please Enter valid value in credit balance field.");
+        var clientId = $("#txtClientIdWallet").val();
+        var billingType = $("#txtBillingType").val();
+        var creditAmount = $("#txtCreditBalance").val();
+        var transactionId = $("#txtTransactionId").val();
+        var billingOwnerId = $("#ddlClientHRUser").val() || null;
+        // Transaction Date is what the user enters - separate from CreatedOn
+        var transactionDate = $("#txtTransactionDate").val() || null;
+        var invoicePDFFile = $("#txtInvoicePDF")[0].files[0];
+
+        if (!creditAmount || parseInt(creditAmount) <= 0) {
+            alert("Please enter a valid credit amount.");
+            return;
         }
+        // Create FormData for file upload
+        var formData = new FormData();
+        formData.append("Clientid", clientId);
+        formData.append("billingType", billingType);
+        formData.append("CreditAmount", creditAmount);
+        formData.append("transactionId", transactionId || "");
+        if (billingOwnerId) {
+            formData.append("billingOwnerId", billingOwnerId);
+        }
+        // CreatedOn is set automatically to current timestamp in stored procedure
+        // TransactionDate is the date entered by the user
+        if (transactionDate) {
+            formData.append("transactionDate", transactionDate);
+        }
+        if (invoicePDFFile) {
+            formData.append("file", invoicePDFFile);
+        }
+
+        $.ajax({
+            url: '/Wallet/AddWalletBalance',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.includes("Successfully")) {
+                    alert(data);
+                    CloseAddWalletBalanceModal();
+                    location.reload();
+                } else {
+                    alert(data);
+                }
+            },
+            error: function () {
+                alert("Error adding wallet balance. Please try again.");
+            }
+        });
     }
 </script>
+
+<style>
+    /* Add margin-bottom after each input field container */
+    #AddWalletBalanceModal .modal-body .col-md-12 {
+        margin-bottom: 5px !important;
+    }
+    
+    #AddWalletBalanceModal .video-url {
+        margin-bottom: 10px !important;
+    }
+    
+    /* Style for datetime-local input */
+    #AddWalletBalanceModal .form-control[type="datetime-local"] {
+        background-position: 98% 50% !important;
+        background-size: 3% !important;
+    }
+</style>
+
