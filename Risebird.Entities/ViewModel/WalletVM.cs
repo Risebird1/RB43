@@ -30,6 +30,7 @@ namespace Risebird.Entities.ViewModel
         public int MeetingStatus { get; set; }
         public DateTime? TransactionDate { get; set; }
         public string TransactionId { get; set; }
+        public string TransactionRefNumber { get; set; }
         public string InvoicePDF { get; set; }
     }
 }
