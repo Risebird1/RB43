@@ -417,6 +417,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsResumeParsed { get; set; }
         public bool IsResumeParsingFailed { get; set; }
         public string ReasonBehindNotProcessed { get; set; }
+        public bool isMultiLingual { get; set; }
+
     }
 
     public class VedioComments
