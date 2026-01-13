@@ -283,6 +283,7 @@ namespace Risebird.Entities.ViewModel
         public string OpenAIAssistantId { get; set; }
         [DisplayName("Tech QC Required")]
         public bool IsTechQC { get; set; }
+        public bool isMultiLingual { get; set; }
 
     }
     public class InterviewerIds
@@ -422,6 +423,7 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public string OpenAIAssistantId { get; set; }
         public int InterviewerBillingCycle { get; set; }
+        public bool isMultiLingual { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

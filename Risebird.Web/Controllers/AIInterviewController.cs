@@ -120,6 +120,7 @@ namespace Risebird.Web.Controllers
                                 model.AssistantId = meetingDetails.AssistantId;
                                 model.AIInterviewType = meetingDetails.AIInterviewType;
                                 model.showChatBox = meetingDetails.showChatBox;
+                                model.isMultiLingual = meetingDetails.isMultiLingual;
                                 return View(model);
                             }
                             else
@@ -308,6 +309,7 @@ namespace Risebird.Web.Controllers
                             model.AssistantId = meetingDetails.AssistantId;
                             model.AIInterviewType = meetingDetails.AIInterviewType;
                             model.showChatBox = meetingDetails.showChatBox;
+                            model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
 
                         }
@@ -383,6 +385,7 @@ namespace Risebird.Web.Controllers
                             model.AssistantId = meetingDetails.AssistantId;
                             model.AIInterviewType = meetingDetails.AIInterviewType;
                             model.showChatBox = meetingDetails.showChatBox;
+                            model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
                         }
                         else
@@ -616,6 +619,7 @@ namespace Risebird.Web.Controllers
                             model.IsAdaptive = meetingDetails.IsAdaptive;
                             model.AssistantId = meetingDetails.AssistantId;
                             model.showChatBox = meetingDetails.showChatBox;
+                            model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
 
                         }
@@ -672,9 +676,9 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
                             using var stream = model.AudioFile.OpenReadStream();
-                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
 
-                            if (!IsTranscriptionValid(userMessage))
+                            if (!model.isMultiLingual && !IsTranscriptionValid(userMessage))
                             {
                                 // Rewind the stream to re-run transcription
                                 var exitModel = new AIInterviewExitModalViewModel
@@ -699,7 +703,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
                             using var stream = model.AudioFile.OpenReadStream();
-                            tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                            tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
 
                             //if (!IsTranscriptionValid(tranScribedResponse))
                             //{
@@ -727,7 +731,7 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 userMessage = tranScribedResponse;
-                                if (!IsTranscriptionValid(userMessage))
+                                if (!model.isMultiLingual && !IsTranscriptionValid(userMessage))
                                 {
                                     // Rewind the stream to re-run transcription
                                     var exitModel = new AIInterviewExitModalViewModel
@@ -903,7 +907,7 @@ namespace Risebird.Web.Controllers
                     if (model.AudioFile != null && model.AudioFile.Length > 0)
                     {
                         using var stream = model.AudioFile.OpenReadStream();
-                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
                     }
 
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
