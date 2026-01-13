@@ -29,7 +29,7 @@ namespace Risebird.CommonHelper
             //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
         }
 
-        public async Task<string> CreateVideoAsync(string scriptText, string templateId)
+        public async Task<string> CreateVideoAsync(string scriptText, string templateIdParam)
         {
             
             var options = new RestClientOptions("https://api.synthesia.io/v2/videos/fromTemplate");
@@ -43,7 +43,7 @@ namespace Risebird.CommonHelper
             {
                 test = false,
                 visibility = "private",
-                templateId = _templateId,//"8fd3aaab-d7db-46e3-bf43-9969eb4a8e25",
+                templateId = templateIdParam, //_templateId,//"8fd3aaab-d7db-46e3-bf43-9969eb4a8e25",
                 templateData = new
                 {
                     scriptDynamic = CleanMessage(scriptText)

@@ -72,7 +72,7 @@ namespace Risebird.Repository
             }
             return 0;
         }
-        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionId = null, string invoicePDF = null)
+        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null, DateTime? transactionDate = null)
         {
             try
             {
@@ -84,7 +84,8 @@ namespace Risebird.Repository
                 parameters.Add("@TransactionType", "Manual");
                 parameters.Add("@Credit", CreditAmount);
                 parameters.Add("@CreatedOn", CreatedOn);
-                parameters.Add("@TransactionId", transactionId);
+                parameters.Add("@TransactionDate", transactionDate);
+                parameters.Add("@TransactionRefNumber", transactionRefNumber);
                 parameters.Add("@InvoicePDF", invoicePDF);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

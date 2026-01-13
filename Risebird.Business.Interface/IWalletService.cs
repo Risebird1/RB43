@@ -9,7 +9,7 @@ namespace Risebird.Business.Interface
     {
         Task<List<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null);
         Task<int> GetWalletBalance(int billingType, int? clientId = null, int? billingOwnerId = null);
-        Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionId = null, string invoicePDF = null);
+        Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null, DateTime? transactionDate = null);
     }
 }
 

@@ -10,13 +10,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_SaveBotInterviewQuestionVideos
 @VideoLink varchar(1000),
-@question varchar(1000),
+@question nvarchar(max),
 @SessionId varchar(50),
 @CreatedAt datetime,
 @secondsLeft int,
 @interviewId int,
 @BotSynthesizedVideoLink varchar(2000) = null,
-@CandidateResponse nvarchar(4000),
+@CandidateResponse nvarchar(max),
 @BotAudioLink varchar(2000) = null,
 @DeliveryHeadQuestionId int = null
 AS
