@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_SaveReportOfAIInterviewByAssistant
 @SessionId varchar(200),
-@SerializedReportOfAIInterviewByAssistant varchar(max) = null,
+@SerializedReportOfAIInterviewByAssistant nvarchar(max) = null,
 @isExit bit = null,
 @interviewStatus int = null,
 @interviewerComment varchar(1000) = null,
