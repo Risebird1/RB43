@@ -8010,6 +8010,24 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Renders the V4 client report UI while reusing the existing ClientReportV3 logic.
+        /// This keeps behavior (security/share handling, redirects, etc.) identical, but swaps the view to ClientReportV4.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ClientReportV4(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
+        {
+            var result = await ClientReportV3(interviewId, irfId, isClient, isClientSelected, isQC, actiontype, uniqueid, publicEmailId);
+
+            if (result is ViewResult viewResult)
+            {
+                viewResult.ViewName = "ClientReportV4";
+            }
+
+            return result;
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
