@@ -81,9 +81,24 @@ namespace Risebird.Repository
 
         public async Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null)
         {
+            if (sessionId == Guid.Empty) return;
+
+            var cleanedRole = NormalizeForDb(role);
+            if (cleanedRole is null) return;
+
+            var cleanedMessage = NormalizeForDb(CleanMessage(message));
+            if (cleanedMessage is null) return;
+
             var sql = "INSERT INTO TransCriptsConv (SessionId, Role, Message, Timestamp, DeliveryHeadQuestionId) VALUES (@SessionId, @Role, @Message, @Timestamp, @DeliveryHeadQuestionId)";
             using var conn = new SqlConnection(connectionString);
-            await conn.ExecuteAsync(sql, new { SessionId = sessionId, Role = role, Message = CleanMessage(message), Timestamp = DateTime.UtcNow, DeliveryHeadQuestionId = deliveryHeadQuestionId });
+            await conn.ExecuteAsync(sql, new
+            {
+                SessionId = sessionId,
+                Role = cleanedRole,
+                Message = cleanedMessage,
+                Timestamp = DateTime.UtcNow,
+                DeliveryHeadQuestionId = deliveryHeadQuestionId
+            });
         }
         public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null)
         {
@@ -91,16 +106,35 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    // Normalize all strings before sending to the stored proc.
+                    // This avoids inserting whitespace-only values ("   ") which are not caught by SQL checks like != ''.
+                    var normalizedSessionId = NormalizeForDb(SessionId);
+                    var normalizedVideoLink = NormalizeForDb(VideoLink);
+                    var normalizedCandidateResponse = NormalizeForDb(CleanMessage(candidateResponse));
+                    var normalizedQuestion = NormalizeForDb(CleanMessage(question));
+                    var normalizedBotSynthVideoLink = NormalizeForDb(botSynthesizedVideoLink);
+                    var normalizedBotAudioLink = NormalizeForDb(BotAudioLink);
+
+                    // Required fields for a meaningful row in BotInterviewQuestionVideos.
+                    if (normalizedSessionId is null ||
+                        normalizedVideoLink is null ||
+                        normalizedCandidateResponse is null ||
+                        normalizedQuestion is null ||
+                        interviewId <= 0)
+                    {
+                        return false;
+                    }
+
                     var parameters = new DynamicParameters();
-                    parameters.Add("@VideoLink", VideoLink);
-                    parameters.Add("@question", CleanMessage(question));
-                    parameters.Add("@SessionId", SessionId);
-                    parameters.Add("@BotSynthesizedVideoLink", botSynthesizedVideoLink);
-                    parameters.Add("@CandidateResponse", candidateResponse);
+                    parameters.Add("@VideoLink", normalizedVideoLink);
+                    parameters.Add("@question", normalizedQuestion);
+                    parameters.Add("@SessionId", normalizedSessionId);
+                    parameters.Add("@BotSynthesizedVideoLink", normalizedBotSynthVideoLink);
+                    parameters.Add("@CandidateResponse", normalizedCandidateResponse);
                     parameters.Add("@secondsLeft", secondsLeft);
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
-                    parameters.Add("@BotAudioLink", BotAudioLink);
+                    parameters.Add("@BotAudioLink", normalizedBotAudioLink);
                     parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -437,6 +471,17 @@ namespace Risebird.Repository
                 .Replace("#", "")        // Remove Markdown headers
                 .Replace("**", "")       // Remove bold formatting if present
                 .Trim();                 // Trim whitespace
+        }
+
+        /// <summary>
+        /// Standard DB normalization for optional text fields:
+        /// trims whitespace and converts empty strings to null.
+        /// </summary>
+        private static string NormalizeForDb(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return null;
+            var trimmed = input.Trim();
+            return trimmed.Length == 0 ? null : trimmed;
         }
 
         public async Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId)
