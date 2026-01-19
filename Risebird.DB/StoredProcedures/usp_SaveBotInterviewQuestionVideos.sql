@@ -22,10 +22,14 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 AS
 BEGIN
 
+if(@VideoLink is not null and @VideoLink != '' and @CandidateResponse is not null and @CandidateResponse != '')
+Begin
 Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId) 
 values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId)
 
 update InterviewMeetings set TimeLeftInSeconds = @secondsLeft where id = @interviewId
+End
+
 
 END
 GO
