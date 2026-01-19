@@ -1114,7 +1114,11 @@
 
                                                                                             else
                                                                                             {
-                                                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                                                @if (!string.IsNullOrEmpty(item.SessionId))
+                                                                                                {
+                                                                                                    <span style="color:red">https://portal.risebird.io/AIInterview/Index?sid=@item.SessionId</span>
+                                                                                                }
+                                                                                                else if (item.zoomLink != null && item.zoomLink != "")
                                                                                                 {
 
                                                                                                     <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a>
