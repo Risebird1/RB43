@@ -69,6 +69,10 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.Type = type;
                     var model = await _meetingService.RBDetails(emailid);
+                    if (model == null)
+                    {
+                        model = new List<RBInterviewDetails>();
+                    }
                     if (type == "Paid")
                     {
                         model = model.Where(x => x.Status == "Paid").ToList();
