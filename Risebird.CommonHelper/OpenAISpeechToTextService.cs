@@ -39,7 +39,7 @@ namespace Risebird.CommonHelper
             //_http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
         }
 
-        public async Task<string> TranscribeAsync(Stream audioStream, string fileName)
+        public async Task<string> TranscribeAsync(Stream audioStream, string fileName, bool isHindi = false)
         {
             using var form = new MultipartFormDataContent();
             using var audioContent = new StreamContent(audioStream);
@@ -47,6 +47,10 @@ namespace Risebird.CommonHelper
 
             form.Add(audioContent, "file", fileName);
             form.Add(new StringContent("whisper-1"), "model");
+            if(isHindi)
+            {
+                form.Add(new StringContent("hi"), "language");
+            }
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/audio/transcriptions")
             {

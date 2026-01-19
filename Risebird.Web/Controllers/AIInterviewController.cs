@@ -120,6 +120,7 @@ namespace Risebird.Web.Controllers
                                 model.AssistantId = meetingDetails.AssistantId;
                                 model.AIInterviewType = meetingDetails.AIInterviewType;
                                 model.showChatBox = meetingDetails.showChatBox;
+                                model.isMultiLingual = meetingDetails.isMultiLingual;
                                 return View(model);
                             }
                             else
@@ -308,6 +309,7 @@ namespace Risebird.Web.Controllers
                             model.AssistantId = meetingDetails.AssistantId;
                             model.AIInterviewType = meetingDetails.AIInterviewType;
                             model.showChatBox = meetingDetails.showChatBox;
+                            model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
 
                         }
@@ -383,6 +385,7 @@ namespace Risebird.Web.Controllers
                             model.AssistantId = meetingDetails.AssistantId;
                             model.AIInterviewType = meetingDetails.AIInterviewType;
                             model.showChatBox = meetingDetails.showChatBox;
+                            model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
                         }
                         else
@@ -616,6 +619,7 @@ namespace Risebird.Web.Controllers
                             model.IsAdaptive = meetingDetails.IsAdaptive;
                             model.AssistantId = meetingDetails.AssistantId;
                             model.showChatBox = meetingDetails.showChatBox;
+                            model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
 
                         }
@@ -672,9 +676,9 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
                             using var stream = model.AudioFile.OpenReadStream();
-                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
 
-                            if (!IsTranscriptionValid(userMessage))
+                            if (!IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual && 
                             {
                                 // Rewind the stream to re-run transcription
                                 var exitModel = new AIInterviewExitModalViewModel
@@ -699,7 +703,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
                             using var stream = model.AudioFile.OpenReadStream();
-                            tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                            tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
 
                             //if (!IsTranscriptionValid(tranScribedResponse))
                             //{
@@ -727,7 +731,7 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 userMessage = tranScribedResponse;
-                                if (!IsTranscriptionValid(userMessage))
+                                if (!IsTranscriptionValid(userMessage, model.isMultiLingual)) //
                                 {
                                     // Rewind the stream to re-run transcription
                                     var exitModel = new AIInterviewExitModalViewModel
@@ -903,7 +907,26 @@ namespace Risebird.Web.Controllers
                     if (model.AudioFile != null && model.AudioFile.Length > 0)
                     {
                         using var stream = model.AudioFile.OpenReadStream();
-                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName);
+                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                    }
+
+                    if (!IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual && 
+                    {
+                        // Rewind the stream to re-run transcription
+                        var exitModel = new AIInterviewExitModalViewModel
+                        {
+                            Title = "Error with audio!",
+                            Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
+                            IconClass = "fa-exclamation-triangle",
+                            IconColor = "#dc3545",
+                            ButtonText = "Close",
+                            ButtonClass = "btn-danger",
+                            CandidateName = model.candidateName ?? "Candidate",
+                            InterviewDate = DateTime.Now,
+                            SessionId = model.SessionId.ToString(),
+                            IsFromIndex = true
+                        };
+                        return View("ExitModalPartial", exitModel);
                     }
 
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
@@ -1036,26 +1059,29 @@ namespace Risebird.Web.Controllers
 
         }
 
-        private bool IsTranscriptionValid(string text)
+        private bool IsTranscriptionValid(string text, bool isMultilingual)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return false;
+            if(!isMultilingual)
+            {
+                // Remove common punctuation and whitespace for validation
+                var cleaned = new string(text
+                    .Where(c => char.IsLetter(c) || char.IsDigit(c))
+                    .ToArray());
 
-            // Remove common punctuation and whitespace for validation
-            var cleaned = new string(text
-                .Where(c => char.IsLetter(c) || char.IsDigit(c))
-                .ToArray());
+                // Check if output contains too many unknown characters (�)
+                if (text.Count(c => c == '�') > 3)
+                    return false;
 
-            // Check if output contains too many unknown characters (�)
-            if (text.Count(c => c == '�') > 3)
-                return false;
+                // Check ratio of valid characters to overall text
+                double validRatio = (double)cleaned.Length / text.Length;
+                if (validRatio < 0.5) // Less than 50% recognizable text → bad transcription
+                    return false;
 
-            // Check ratio of valid characters to overall text
-            double validRatio = (double)cleaned.Length / text.Length;
-            if (validRatio < 0.5) // Less than 50% recognizable text → bad transcription
-                return false;
-
+            }
             return true;
+
         }
 
         private async Task<bool> UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
