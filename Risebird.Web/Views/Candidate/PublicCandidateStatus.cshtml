@@ -1116,7 +1116,9 @@
                                                                                             {
                                                                                                 @if (!string.IsNullOrEmpty(item.SessionId))
                                                                                                 {
-                                                                                                    <span style="color:red">https://portal.risebird.io/AIInterview/Index?sid=@item.SessionId</span>
+                                                                                                    <span style="color:red"><a style="background: #6490d1;color: #fff; padding: 3px 5px;border-radius: 5px; text-decoration: none;font-size: 13px;" target="_blank" href="https://portal.risebird.io/AIInterview/Index?sid=@item.SessionId">Click here</a></span>
+
+                                                                                                    
                                                                                                 }
                                                                                                 else if (item.zoomLink != null && item.zoomLink != "")
                                                                                                 {
