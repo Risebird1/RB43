@@ -410,6 +410,7 @@ namespace Risebird.Entities.ViewModel
         public int CandidateAnswerVideoIdAI { get; set; }
         public string OpenAIAssistantId { get; set; }//assistant Id on skill channel global level
         public int AICandidateResponseVideoCount { get; set; }
+        public int AITotalQuestionsCount { get; set; }
         public DateTime SkillChannelCreatedOn { get; set; }
         public string CandidateResumeClientHREmailId { get; set; }//used in Emergency dashboards's unprocessed resumes page
         public string TranscriptSummary { get; set; }
