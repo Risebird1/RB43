@@ -41,13 +41,11 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where tcul.EmailId=@Emailid and ca.ProfileSource=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId
 From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
 where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct  
-outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = CTE.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions        
+        
 end          
   else if(@clientRole = 1)              
 begin 
@@ -67,12 +65,9 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where tcul.EmailId=@Emailid and ca.ClientHRAttemptContact=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
 where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct
-outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = CTE.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions 
 end       
   else if(@clientRole = 9)              
 begin     
@@ -90,12 +85,9 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.IsAIInterview, cte.SessionId From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
-where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct   
-outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = CTE.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions 
+where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct    
         
 end       
 else          
@@ -116,12 +108,9 @@ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and c
 where tcul.EmailId=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,
-CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.SessionId, cte.IsAIInterview,
-Videos.TotalVideos, Questions.TotalQuestions From CTE 
+CTE.ProfileSource,CTE.SchedulerUniqueid,CTE.EndDate,ct.StatusValue,ct.Date,CTE.CandidateAging, cte.SessionId, cte.IsAIInterview From CTE 
 outer Apply(Select top 1 cs.Date,csm.StatusValue From  CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status
-where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct   
-outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = CTE.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions 
+where CTE.IRFId=cs.IRFId and CTE.CandidateMasterId=cs.CandidateId order by cs.Date desc) ct     
 end          
 End                        
 Else                        
@@ -165,17 +154,13 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
-DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
  left join PaymentSLADetails psd on psd.Interviewid=im.id
- outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = im.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions 
  outer apply(select top 1 cs.Date From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
- 
  order by im.interviewDate desc
   End                              
  End                                  
@@ -207,15 +192,12 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
-DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
  left join PaymentSLADetails psd on psd.Interviewid=im.id
- outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = im.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
         
@@ -247,15 +229,12 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
-DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
  left join PaymentSLADetails psd on psd.Interviewid=im.id
- outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = im.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions
  outer apply(select top 1 cs.Date From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
                       
@@ -285,15 +264,12 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
-DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
  left join PaymentSLADetails psd on psd.Interviewid=im.id
- outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = im.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
                            
@@ -325,15 +301,12 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
-DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id
  left join PaymentSLADetails psd on psd.Interviewid=im.id
- outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = im.SessionId) Videos
-outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
    End                                  
@@ -363,15 +336,12 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,tqr.IsReportBlocked,im.RedoInterview,ISNull(psd.isQcDone,0) as IsQCDone,
 ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
 SUBSTRING(CTE.CalendlyLink , LEN(CTE.CalendlyLink) -  CHARINDEX('=',REVERSE(CTE.CalendlyLink)) + 2  , LEN(CTE.CalendlyLink)) as SchedulerUniqueid,
-DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId,
-Videos.TotalVideos, Questions.TotalQuestions
+DATEDIFF(Day,CandidateAddStatus.Date,Getdate()) as CandidateAging, im.SessionId
 From CTE 
  join InterviewMeetings im on im.interviewDate=CTE.interviewDate and im.candidateEmail=CTE.CandidateEmailId and im.IRFId=CTE.IRFname
  join InterviewComments ic on ic.Interviewid=im.id  
  left join Trans_QCFormReport tqr on tqr.interviewid=im.id 
  left join PaymentSLADetails psd on psd.Interviewid=im.id
- outer apply ( select count(id) as TotalVideos from  BotInterviewQuestionVideos where SessionId = im.SessionId) Videos
- outer apply ( select count(id) as TotalQuestions from  SkillChannelSampleQuestions where irfId = CTE.IRFId) Questions
  outer apply(select top 1 cs.Date  From CandidateStatus cs where cs.IRFId=CTE.IRFId and CandidateId = CTE.CandidateMasterId and cs.Status=12 order by cs.Date desc) as CandidateAddStatus    
  order by im.interviewDate desc
  
