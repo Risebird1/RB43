@@ -51,6 +51,7 @@ CREATE TABLE [dbo].[Candidate](
     [OpenAIScreeningResponseJson] [varchar](max) NULL,
     [ResumeSummary] [varchar](max) NULL,
     [AIResumeScreeningVerdict] [varchar](30) NULL,
+    [AIResumeScreeningScore] [int] NULL,
     [AIScreeningResultJsonV2] [varchar](max) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
@@ -496,6 +497,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add AIScreeningResultJsonV2 VARCHAR(max) 
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIResumeScreeningScore')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add AIResumeScreeningScore int
 END
 
 End

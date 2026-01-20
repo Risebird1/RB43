@@ -251,7 +251,7 @@ namespace Risebird.Web.Controllers
                                 bool saveOperationResult = true;
                                 if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                                 {
-                                    saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, responseInJson, candidateResumeScreeningData.Verdict);
+                                    saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, responseInJson, candidateResumeScreeningData.Verdict, candidateResumeScreeningData.TotalScore);
                                 }
 
                                 if (saveOperationResult)
