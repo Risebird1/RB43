@@ -1307,6 +1307,8 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewId = meetingDetails.InterviewId;
                 reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
                 reportModel.resumeLink = meetingDetails.resumeLink;
+                reportModel.AIResumeScreeningVerdict = meetingDetails.AIResumeScreeningVerdict;
+                reportModel.AIResumeScreeningScore = meetingDetails.AIResumeScreeningScore;
                 if(reportModel.AIInterviewEvaluation!= null)
                 {
                     reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
