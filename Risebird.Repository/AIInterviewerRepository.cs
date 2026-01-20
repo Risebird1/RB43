@@ -275,6 +275,8 @@ namespace Risebird.Repository
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.isMultiLingual = !string.IsNullOrEmpty(dt.Rows[0]["isMultiLingual"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["isMultiLingual"]) : false;
+                            _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;
+                            _resultVM.AIResumeScreeningScore = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIResumeScreeningScore"]) : 0;
 
                             try
                             {

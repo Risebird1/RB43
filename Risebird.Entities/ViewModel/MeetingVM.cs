@@ -419,6 +419,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsResumeParsingFailed { get; set; }
         public string ReasonBehindNotProcessed { get; set; }
         public bool isMultiLingual { get; set; }
+        public string AIResumeScreeningVerdict { get; set; }
+        public int AIResumeScreeningScore { get; set; }
 
     }
 

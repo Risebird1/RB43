@@ -12,13 +12,16 @@ Create PROCEDURE [dbo].[usp_SaveCandidateResumeAIScreeningResultsV2]     -- V1 :
 @irfId int,
 @candidateMasterId int,
 @verdict varchar(30),
+@resumeScreeningScore int,
 @screeningResponseJson varchar(max)
 As
 Begin
 
 if(@screeningResponseJson is not null and @screeningResponseJson != 'null')
 Begin
-	 update Candidate set AIScreeningResultJsonV2 = @screeningResponseJson, AIResumeScreeningVerdict = @verdict where irfid = @irfId and CandidateMasterId = @candidateMasterId
+	 update Candidate set AIScreeningResultJsonV2 = @screeningResponseJson, AIResumeScreeningVerdict = @verdict,
+	 AIResumeScreeningScore = @resumeScreeningScore
+	 where irfid = @irfId and CandidateMasterId = @candidateMasterId
 End
 
 End

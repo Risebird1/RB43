@@ -1491,7 +1491,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict)
+        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict, int resumeScreeningScore)
         {
             try
             {
@@ -1502,6 +1502,7 @@ namespace Risebird.Repository
                     parameters.Add("@candidateMasterId", candidateMasterId);
                     parameters.Add("@screeningResponseJson", screeningResponseJson);
                     parameters.Add("@verdict", verdict);
+                    parameters.Add("@resumeScreeningScore", resumeScreeningScore);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveCandidateResumeAIScreeningResultsV2", parameters, commandTimeout: 600,  
                         commandType: CommandType.StoredProcedure);
                     return true;

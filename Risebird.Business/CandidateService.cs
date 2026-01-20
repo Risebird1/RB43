@@ -613,11 +613,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict)
+        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict, int resumeScreeningScore)
         {
             try
             {
-                return await _candidateRepository.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, screeningResponseJson, verdict);
+                return await _candidateRepository.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, screeningResponseJson, verdict, resumeScreeningScore);
             }
             catch (Exception ex)
             {
