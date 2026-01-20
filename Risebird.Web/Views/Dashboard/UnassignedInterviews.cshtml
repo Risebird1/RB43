@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 
 @using Risebird.Entities
 @using Newtonsoft.Json;
@@ -381,6 +381,11 @@
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
+                                                    @if (ViewBag.actionstatus == "AIMeetingStatus")
+                                                    {
+                                                        <th>Question Count</th>
+                                                        <th>Video Count</th>
+                                                    }
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Interviewer</th>
@@ -635,6 +640,11 @@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
                                                         <th>Candidate Email</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "AIMeetingStatus")
+                                                    {
+                                                        <th>Question Count</th>
+                                                        <th>Video Count</th>
                                                     }
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                     {
@@ -1675,6 +1685,11 @@
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+                                                        }
+                                                        @if (ViewBag.actionstatus == "AIMeetingStatus")
+                                                        {
+                                                            <td class="text-center">@item.AITotalQuestionsCount</td>
+                                                            <td class="text-center">@item.AICandidateResponseVideoCount</td>
                                                         }
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn" && ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCAIInterview" && ViewBag.actionstatus != "PropableRedo" && ViewBag.actionstatus != "QCUnderReview")
                                                         {

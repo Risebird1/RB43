@@ -268,13 +268,15 @@ namespace Risebird.Repository
                             _resultVM.IsAdaptive = !string.IsNullOrEmpty(dt.Rows[0]["IsAdaptive"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAdaptive"]) : true;
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt16(dt.Rows[0]["AIInterviewType"]) : 0;
                             _resultVM.irfIntId = !string.IsNullOrEmpty(dt.Rows[0]["irfIntId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["irfIntId"]) : 0;
-                            
+
                             _resultVM.MeetingStatus = !string.IsNullOrEmpty(dt.Rows[0]["MeetingStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["MeetingStatus"]) : 0;
                             _resultVM.InterviewStatus = !string.IsNullOrEmpty(dt.Rows[0]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["InterviewStatus"]) : 0;
                             _resultVM.CandidateAnswerVideoIdAI = !string.IsNullOrEmpty(dt.Rows[0]["CandidateAnswerVideoIdAI"].ToString()) ? Convert.ToInt32(dt.Rows[0]["CandidateAnswerVideoIdAI"]) : 0;
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.isMultiLingual = !string.IsNullOrEmpty(dt.Rows[0]["isMultiLingual"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["isMultiLingual"]) : false;
+                            _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;
+                            _resultVM.AIResumeScreeningScore = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIResumeScreeningScore"]) : 0;
 
                             try
                             {
@@ -298,7 +300,7 @@ namespace Risebird.Repository
                             catch (Exception ex)
                             {
                                 _resultVM.MatchScorePercentage = 0;
-                              
+
                             }
                             _resultVM.AadharVerificationId = !string.IsNullOrEmpty(dt.Rows[0]["AadharVerificationId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AadharVerificationId"]) : 0;
                         }
@@ -356,7 +358,7 @@ namespace Risebird.Repository
                         dt = dataset.Tables[2];
                         if (dt.Rows != null && dt.Rows.Count > 0)
                         {
-                            
+
                             var qaSet = new List<ExpandoObject>();
 
                             for (int i = 0; i < dt.Rows.Count; i++)
@@ -425,7 +427,7 @@ namespace Risebird.Repository
                     parameters.Add("@meetingStatus", meetingStatus);
                     parameters.Add("@timeNow", (isExit.HasValue && isExit.Value == true) ? DateTime.Now : null);
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveReportOfAIInterviewByAssistant", parameters,
-                         commandType: CommandType.StoredProcedure, commandTimeout:150);
+                         commandType: CommandType.StoredProcedure, commandTimeout: 150);
                     return true;
                 }
             }
@@ -519,7 +521,7 @@ namespace Risebird.Repository
                     parameters.Add("@irfId", irfId);
                     var result = await SqlMapper.QueryAsync<TechSkillComments>(con, "usp_GetRandomQuestionForSession", parameters,
                          commandType: CommandType.StoredProcedure);
-                    if(result != null)
+                    if (result != null)
                     {
                         return result?.FirstOrDefault();
 
