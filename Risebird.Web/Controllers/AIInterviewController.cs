@@ -198,6 +198,52 @@ namespace Risebird.Web.Controllers
                                         //}
                                         //var latestReply = CleanMessage(replies.FirstOrDefault());
 
+                                        // Guard: only move to the next question if the candidate video for the previously asked
+                                        // assistant question was successfully saved. This prevents transcript-only advancement on refresh.
+                                        var lastAssistantQuestion = transcript
+                                            .FirstOrDefault(x => x.Role != null && x.Role.ToLower() == "assistant");
+                                        var lastAssistantQuestionId = lastAssistantQuestion?.DeliveryHeadQuestionId;
+
+                                        if (lastAssistantQuestionId.HasValue)
+                                        {
+                                            var savedVideos = await _aiinterviewerService.GetBotInterviewVideoDetails(sid);
+                                            var hasCandidateVideoForLastQuestion = savedVideos != null &&
+                                                savedVideos.Any(v =>
+                                                    v.DeliveryHeadQuestionId == lastAssistantQuestionId.Value &&
+                                                    !string.IsNullOrWhiteSpace(v.VideoLink));
+
+                                            if (!hasCandidateVideoForLastQuestion)
+                                            {
+                                                // Do NOT log a new assistant message or fetch a new question.
+                                                // Keep the candidate on the last asked question until the video is saved.
+                                                model.ChatLog.Add(new ChatLine
+                                                {
+                                                    Role = "Bot",
+                                                    Message = CleanMessage(lastAssistantQuestion?.Message),
+                                                    sampleQuestionId = lastAssistantQuestionId.Value
+                                                });
+
+                                                model.SynthesizedVideoUrl = lastAssistantQuestion?.AIQuestionVideoLink;
+                                                model.CurrentQuestion = CleanMessage(lastAssistantQuestion?.Message);
+                                                model.CurrentQuestionId = lastAssistantQuestionId.Value;
+
+                                                // Optional flag for the view to show a warning if desired.
+                                                ViewData["VideoUploadError"] = true;
+
+                                                model.IsAdaptive = meetingDetails.IsAdaptive;
+                                                model.InterviewId = meetingDetails.InterviewId;
+                                                model.IRFId = meetingDetails.irfIntId;
+                                                model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                                                model.candidateName = meetingDetails.candidateName;
+                                                model.AssistantId = meetingDetails.AssistantId;
+                                                model.AIInterviewType = meetingDetails.AIInterviewType;
+                                                model.showChatBox = meetingDetails.showChatBox;
+                                                model.isMultiLingual = meetingDetails.isMultiLingual;
+
+                                                return View(model);
+                                            }
+                                        }
+
                                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
 
                                         if(sampleQuestion != null)
