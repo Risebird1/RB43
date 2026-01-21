@@ -1104,17 +1104,24 @@ namespace Risebird.Web.Controllers
                         await _azureStorageHelper.InsertImageBlob(filename, "botinterviewvideo", file, fileMimeType);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
                         var blob = containerRef.GetBlockBlobReference(filename);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
+
+                        // Guard: if the upload didn't result in a usable candidate video link,
+                        // do NOT proceed to next question and do NOT write transcripts.
+                        // This prevents "phantom" answers when blob upload/URL generation fails intermittently.
+                        var uploadedvideoFileURL = blob?.Uri?.ToString();
                         var sas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
-                        if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        var blobExists = blob != null && await blob.ExistsAsync();
+                        if (!blobExists || string.IsNullOrWhiteSpace(uploadedvideoFileURL) || string.IsNullOrWhiteSpace(sas))
                         {
-                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                            return false;
                         }
+
+                        VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     else
                     {
-                        // Invalid video file type - still save the text response
-                        VideoLink = string.Empty;
+                        // Invalid video type: treat as a failure for the video-response workflow.
+                        return false;
                     }
                 }
                 // If no video file but there's a text/code response, save it with empty VideoLink
