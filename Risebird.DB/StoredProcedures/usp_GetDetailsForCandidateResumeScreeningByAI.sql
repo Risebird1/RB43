@@ -16,10 +16,12 @@ Create PROCEDURE [dbo].[usp_GetDetailsForCandidateResumeScreeningByAI]
 @CandidateId int
 AS  
 Begin
-	select distinct irf.IRFId as IRFName, irf.JDTiltle, irf.JobLevel, irf.CompanyType, ca.ResumeLink, ca.AIResumeScreeningVerdict, ca.AIScreeningResultJsonV2
+	select distinct irf.IRFId as IRFName, irf.JDTiltle, irf.JobLevel, irf.CompanyType, ca.ResumeLink,
+	ca.AIResumeScreeningVerdict, ca.AIScreeningResultJsonV2, ag.AssessmentGroup
 	from Candidate ca join CandidatesMaster cm on ca.CandidateMasterId = cm.id
 	join UserList ul on ul.id = cm.UserId
 	join IRF on irf.id = ca.IRFId
+	join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
 	where ca.IRFId = @IRFId and ca.CandidateMasterId = @CandidateId
 
 
