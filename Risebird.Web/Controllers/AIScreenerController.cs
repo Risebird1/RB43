@@ -221,7 +221,8 @@ namespace Risebird.Web.Controllers
                             {
                                 var threadId = await _ai.CreateThreadAsync();
 
-                                var queryContent = $"Generate an output as per the instructions fed to the assistant. The job level is {jobLevel}, company type is {companyType} and the resume string is {resumeStringContent}";
+                                //var queryContent = $"Generate an output as per the instructions fed to the assistant. The job level is {jobLevel}, company type is {companyType} and the resume string is {resumeStringContent}";
+                                var queryContent = $"Generate an output as per the instructions fed to the assistant. The job title is {details.AssessmentGroup} and the resume string is {resumeStringContent}";
 
 
                                 await _ai.AddMessageAsync(threadId, "user", queryContent);
