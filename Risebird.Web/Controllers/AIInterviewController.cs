@@ -48,13 +48,16 @@ namespace Risebird.Web.Controllers
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IIRFService _iRFService;
         private readonly IAWSRekognitionService _aWSRekognitionService;
+        private readonly ICandidateService _candidateService;
+        private readonly IIRFRepository _irfRepository;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
-            IIRFService iRFService, IAWSRekognitionService aWSRekognitionService)
+            IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
+            IIRFRepository irfRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -68,6 +71,8 @@ namespace Risebird.Web.Controllers
             _pdfReaderHelper = pdfReaderHelper;
             _iRFService = iRFService;
             _aWSRekognitionService = aWSRekognitionService;
+            _candidateService = candidateService;
+            _irfRepository = irfRepository;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -1372,6 +1377,20 @@ namespace Risebird.Web.Controllers
                     reportModel.sentimentViewModel = await _aiinterviewerService.GetSentimentAnalysisById(meetingDetails.CandidateAnswerVideoIdAI);
 
                 }
+                
+                // Get candidate details for resume screening link using InterviewId
+                var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId);
+                ViewBag.IRFId = meetingDetails.irfIntId;
+                ViewBag.CandidateMasterId = candidate?.CandidateMasterId ?? 0;
+                // Determine accessType based on profile - if Client and public access, set to "Public", otherwise empty
+                string accessType = string.Empty;
+                if (profileName == ProfileNames.Client)
+                {
+                    // Check if this is a public access scenario - you may need to adjust this logic based on your requirements
+                    accessType = "Public";
+                }
+                ViewBag.AccessType = accessType;
+                
                 return View(reportModel);
             }
             else
@@ -1475,6 +1494,20 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewDate = meetingDetails.interviewDate;
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;
+                
+                // Get candidate details for resume screening link using InterviewId
+                var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId);
+                ViewBag.IRFId = meetingDetails.irfIntId;
+                ViewBag.CandidateMasterId = candidate?.CandidateMasterId ?? 0;
+                // Determine accessType based on profile - if Client and public access, set to "Public", otherwise empty
+                string accessType = string.Empty;
+                if (profileName == ProfileNames.Client)
+                {
+                    // Check if this is a public access scenario - you may need to adjust this logic based on your requirements
+                    accessType = "Public";
+                }
+                ViewBag.AccessType = accessType;
+                
                 return View(reportModel);
             }
         }

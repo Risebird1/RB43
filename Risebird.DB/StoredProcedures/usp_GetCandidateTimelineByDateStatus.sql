@@ -22,7 +22,11 @@ declare @clientRole int
 if(@datatype=1)                        
 Begin                        
 set @Clientid= (Select cu.ClientId from UserList ul join ClientUser cu on cu.UserId=ul.id where ul.EmailId=@Emailid)          
-set @clientRole =(select top 1 cu.RoleId from UserList ul join ClientUser cu on cu.UserId = ul.id where ul.EmailId =@Emailid)                  
+set @clientRole =(select top 1 cu.RoleId from UserList ul join ClientUser cu on cu.UserId = ul.id where ul.EmailId =@Emailid)  
+if(@Clientid = 172)--aurionpro
+Begin
+set @startDate = (select DATEADD(month, -6, @startDate))
+end
   if(@clientRole = 4) -- staffing agency                  
 begin   
 ;with CTE as (Select ca.id as CandidateId,IRF.id as imid,IRF.id as IRFId,ul.Emailid,IRF.IRFId as IRFname,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as Name,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ul.MobileNumber,ca.resumeLink,
@@ -121,7 +125,10 @@ if @EmailId is not null
   set @profileId = (select id from [Profile] where [Name]='Client')                                  
   set @userId  = (select id from UserList where EmailId=@EmailId and idProfile=@profileId)                                  
   set @roleId  = (select RoleId from ClientUser where UserId=@userId)                                  
-                                
+  if(@Clientid = 172)--aurionpro
+  Begin
+	set @startDate = (select DATEADD(month, -6, @startDate))
+  end
   if(Isnull(@userId,0)=0)                              
   Begin                              
   set @profileId = (select id from [Profile] where [Name]='SeniorHR')                                 
