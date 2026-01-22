@@ -1,9 +1,12 @@
 using Amazon.Runtime;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
+using OfficeOpenXml;
 using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -28,8 +31,9 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _irfService;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IWebHostEnvironment _env;
 
-        public WalletController(IWalletService walletService, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
+        public WalletController(IWalletService walletService, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IWebHostEnvironment env)
         {
             _walletService = walletService;
             _userRepository = userRepository;
@@ -38,6 +42,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _azureStorageHelper = azureStorageHelper;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _env = env;
         }
 
         /// <summary>
@@ -241,6 +246,134 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, message = "SignOut" });
             }
         }
+
+        /// <summary>
+        /// Export wallet transaction data (same as index page) to Excel, with or without filters.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ExportWalletDetails(int billingType, int? clientId = null, int? billingOwnerId = null, string actiontype = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
+            var ep = new ExcelPackage();
+            var sheet = ep.Workbook.Worksheets.Add("Wallet Details");
+            var fileName = $"Risebird_Wallet_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+            if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+            {
+                sheet.Cells[1, 1].Value = "Data export failed. Please sign in.";
+                return File(ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+            try
+            {
+                if (startDate.HasValue && endDate.HasValue && startDate.Value.Date > endDate.Value.Date)
+                {
+                    sheet.Cells[1, 1].Value = "Start date must be less than or equal to end date.";
+                    return File(ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+                if (billingType != 1 && billingType != 3)
+                {
+                    sheet.Cells[1, 1].Value = "Invalid billing type.";
+                    return File(ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    if (client != null && billingType == 3)
+                        clientId = client.ClientId;
+                    else if (client != null && billingType == 1)
+                        billingOwnerId = client.UserId;
+                }
+
+                var model = await _walletService.GetWallet(billingType, clientId, billingOwnerId, actiontype, startDate, endDate);
+                var list = model?.ToList() ?? new List<WalletVM>();
+
+                foreach (var item in list)
+                {
+                    if (item.CreatedOn.HasValue)
+                        item.CreatedOnstring = item.CreatedOn.Value.ToShortDateString();
+                }
+
+                var isCreditOnly = string.Equals(actiontype, "CREDIT", StringComparison.OrdinalIgnoreCase);
+                int col = 1, row = 1;
+
+                if (isCreditOnly)
+                {
+                    sheet.Cells[row, col++].Value = "Transaction Date";
+                    sheet.Cells[row, col++].Value = "Transaction Id";
+                    sheet.Cells[row, col++].Value = "Transaction Type";
+                    sheet.Cells[row, col++].Value = "Points";
+                    sheet.Cells[row, col].Value = "Wallet Entry Date";
+                    row = 2;
+                    foreach (var item in list)
+                    {
+                        col = 1;
+                        sheet.Cells[row, col++].Value = item.TransactionDate.HasValue ? item.TransactionDate.Value.ToString("MM/dd/yyyy HH:mm") : "N/A";
+                        sheet.Cells[row, col++].Value = item.TransactionId ?? "N/A";
+                        sheet.Cells[row, col++].Value = item.Credit > 0 ? "CREDIT" : (item.Debit > 0 ? "DEBIT" : "-");
+                        sheet.Cells[row, col++].Value = item.Credit > 0 ? item.Credit : (item.Debit > 0 ? item.Debit : 0);
+                        sheet.Cells[row, col].Value = !string.IsNullOrEmpty(item.CreatedOnstring) ? item.CreatedOnstring : (item.CreatedOn.HasValue ? item.CreatedOn.Value.ToString("MM/dd/yyyy") : "N/A");
+                        row++;
+                    }
+                }
+                else
+                {
+                    sheet.Cells[row, col++].Value = "Interview Date";
+                    sheet.Cells[row, col++].Value = "IRF Name";
+                    sheet.Cells[row, col++].Value = "Candidate Name";
+                    sheet.Cells[row, col++].Value = "Candidate Email";
+                    sheet.Cells[row, col++].Value = "Report URL";
+                    sheet.Cells[row, col++].Value = "Meeting Status";
+                    sheet.Cells[row, col++].Value = "Transaction Type";
+                    sheet.Cells[row, col++].Value = "Points";
+                    sheet.Cells[row, col].Value = "Wallet Entry Date";
+                    row = 2;
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                    foreach (var item in list)
+                    {
+                        col = 1;
+                        sheet.Cells[row, col++].Value = item.InterviewDate.HasValue ? item.InterviewDate.Value.ToString("MM/dd/yyyy HH:mm") : "N/A";
+                        sheet.Cells[row, col++].Value = item.IRFName ?? "N/A";
+                        sheet.Cells[row, col++].Value = item.CandidateName ?? "N/A";
+                        sheet.Cells[row, col++].Value = item.CandidateEmail ?? "N/A";
+                        var reportUrl = (item.InterviewId > 0 && item.IRFId > 0)
+                            ? $"{baseUrl}{Url.Action("ClientReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })}"
+                            : "N/A";
+                        sheet.Cells[row, col++].Value = reportUrl;
+                        var meetingStatusStr = "N/A";
+                        if (item.MeetingStatus > 0 && Enum.IsDefined(typeof(MeetingStatus), item.MeetingStatus))
+                            meetingStatusStr = ((MeetingStatus)item.MeetingStatus).GetDescription();
+                        sheet.Cells[row, col++].Value = meetingStatusStr;
+                        sheet.Cells[row, col++].Value = item.Credit > 0 ? "CREDIT" : (item.Debit > 0 ? "DEBIT" : "-");
+                        sheet.Cells[row, col++].Value = item.Credit > 0 ? item.Credit : (item.Debit > 0 ? item.Debit : 0);
+                        sheet.Cells[row, col].Value = !string.IsNullOrEmpty(item.CreatedOnstring) ? item.CreatedOnstring : (item.CreatedOn.HasValue ? item.CreatedOn.Value.ToString("MM/dd/yyyy") : "N/A");
+                        row++;
+                    }
+                }
+
+                if (list.Count == 0)
+                    sheet.Cells[2, 1].Value = "No transactions found.";
+
+                var maxCol = isCreditOnly ? 5 : 9;
+                for (var c = 1; c <= maxCol; c++)
+                    sheet.Column(c).Width = 18;
+
+                return File(ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                sheet.Cells[1, 1].Value = "Data export failed.";
+                return File(ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> AddWalletBalance(int Clientid)
         {
