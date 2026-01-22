@@ -46,7 +46,30 @@
                     <input type="hidden" value="@ViewBag.ClientId" id="txtClientId" />
                     <input type="hidden" value="@ViewBag.BillingOwnerId" id="txtBillingOwnerId" />
 
-                    <div class="row" style="padding: 20px; background: #f5f5f5; margin: 15px; border-radius: 5px;">
+                    <div class="row date-filter-row" style="padding: 20px; background: #f5f5f5; margin: 15px; border-radius: 5px;">
+                        <div class="col-md-12">
+                            <label class="date-filter-label">Date filter</label>
+                            <div class="date-filter-controls">
+                                <div class="form-group">
+                                    <label for="txtStartDate">Start Date</label>
+                                    <input type="date" id="txtStartDate" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="txtEndDate">End Date</label>
+                                    <input type="date" id="txtEndDate" class="form-control" />
+                                </div>
+                                <div class="form-group date-filter-actions">
+                                    <label>&nbsp;</label>
+                                    <button type="button" class="btn btn-primary" id="btnApplyDateFilter" onclick="ApplyDateFilterAndFetch()">
+                                        <i class="fa fa-filter"></i> Apply Filter
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="btnClearDateFilter" onclick="ClearDateFilterAndFetch()">
+                                        <i class="fa fa-times"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="dateFilterValidationMsg" class="text-danger small mt-2" style="display: none;"></div>
+                        </div>
                     </div>
                     <!-- Balance Display -->
                     @* <div class="row" style="padding: 20px; background: #f5f5f5; margin: 15px; border-radius: 5px;">
@@ -106,11 +129,46 @@
 </div>
 
 <script>
+    var _currentActionType = 'All';
+
     jQuery(document).ready(function ($) {
         FetchTransaction('All');
     });
 
+    function validateDateFilter() {
+        var startVal = $("#txtStartDate").val();
+        var endVal = $("#txtEndDate").val();
+        var $msg = $("#dateFilterValidationMsg");
+        $msg.hide().text('');
+        if (!startVal || !endVal) return true;
+        var start = new Date(startVal);
+        var end = new Date(endVal);
+        if (start > end) {
+            $msg.text('Start date must be less than or equal to end date.').show();
+            return false;
+        }
+        return true;
+    }
+
+    function ApplyDateFilterAndFetch() {
+        if (!validateDateFilter()) return;
+        FetchTransaction(_currentActionType);
+    }
+
+    function ClearDateFilterAndFetch() {
+        $("#txtStartDate").val('');
+        $("#txtEndDate").val('');
+        $("#dateFilterValidationMsg").hide().text('');
+        FetchTransaction(_currentActionType);
+    }
+
     function FetchTransaction(actiontype) {
+        _currentActionType = actiontype;
+
+        var startVal = $("#txtStartDate").val();
+        var endVal = $("#txtEndDate").val();
+        if (startVal && endVal && !validateDateFilter()) return;
+
         // Update button states
         if (actiontype == "All") {
             $("#btnall").addClass("active-razorbtn");
@@ -130,15 +188,19 @@
         // Show loading
         $("#divtransaction").html('<div class="text-center" style="padding: 40px;"><i class="fa fa-spinner fa-spin fa-3x" style="color: #b4cee8;"></i><p style="margin-top: 15px; color: #666;">Loading transactions...</p></div>');
 
+        var payload = {
+            billingType: $("#txtBillingType").val(),
+            clientId: $("#txtClientId").val() || null,
+            billingOwnerId: $("#txtBillingOwnerId").val() || null,
+            actiontype: actiontype
+        };
+        if (startVal) payload.startDate = startVal;
+        if (endVal) payload.endDate = endVal;
+
         $.ajax({
             type: "POST",
             url: "/Wallet/GetWalletDetails",
-            data: {
-                billingType: $("#txtBillingType").val(),
-                clientId: $("#txtClientId").val() || null,
-                billingOwnerId: $("#txtBillingOwnerId").val() || null,
-                actiontype: actiontype
-            },
+            data: payload,
             success: function (response) {
                 $("#divtransaction").html(response);
             },
@@ -281,6 +343,54 @@
     .badge-secondary {
         background-color: #6c757d;
         color: white;
+    }
+
+    .date-filter-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .date-filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 15px;
+    }
+
+    .date-filter-controls .form-group {
+        margin-bottom: 0;
+    }
+
+    .date-filter-controls .form-group label {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .date-filter-controls .form-control {
+        min-width: 160px;
+    }
+
+    .date-filter-actions .btn {
+        margin-right: 8px;
+    }
+
+    .date-filter-actions .btn:last-child {
+        margin-right: 0;
+    }
+
+    @@media (max-width: 768px) {
+        .date-filter-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .date-filter-controls .form-control {
+            min-width: 100%;
+        }
     }
 </style>
 

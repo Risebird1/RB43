@@ -133,14 +133,24 @@ namespace Risebird.Web.Controllers
         /// <param name="clientId">Client ID (optional)</param>
         /// <param name="billingOwnerId">Billing Owner ID (optional)</param>
         /// <param name="action">Filter: 'CREDIT', 'DEBIT', or null for all</param>
+        /// <param name="startDate">Optional filter: transactions from this date (inclusive)</param>
+        /// <param name="endDate">Optional filter: transactions up to this date (inclusive). Must be &gt;= startDate when both provided.</param>
         /// <returns>Wallet transaction list as partial view</returns>
         [HttpPost]
-        public async Task<IActionResult> GetWalletDetails(int billingType, int? clientId = null, int? billingOwnerId = null, string actiontype = null)
+        public async Task<IActionResult> GetWalletDetails(int billingType, int? clientId = null, int? billingOwnerId = null, string actiontype = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 try
                 {
+                    // Validate start date < end date when both provided
+                    if (startDate.HasValue && endDate.HasValue && startDate.Value.Date > endDate.Value.Date)
+                    {
+                        ViewBag.DateFilterError = "Start date must be less than or equal to end date.";
+                        ViewBag.actiontype = actiontype;
+                        return PartialView("GetWalletDetails", new List<WalletVM>());
+                    }
+
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
@@ -166,7 +176,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     ViewBag.actiontype = actiontype;
-                    var model = await _walletService.GetWallet(billingType, clientId, billingOwnerId, actiontype);
+                    var model = await _walletService.GetWallet(billingType, clientId, billingOwnerId, actiontype, startDate, endDate);
 
                     if (model != null)
                     {

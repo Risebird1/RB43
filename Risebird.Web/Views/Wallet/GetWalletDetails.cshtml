@@ -2,6 +2,13 @@
 @using Risebird.Entities.Enum
 @using Risebird.CommonHelper
 
+@if (ViewBag.DateFilterError != null)
+{
+    <div class="alert alert-danger" role="alert" style="margin: 20px;">
+        <i class="fa fa-exclamation-triangle"></i> @ViewBag.DateFilterError
+    </div>
+}
+
 @if (Model != null && Model.Any())
 {
     <div class="wallet-transactions-container">
@@ -170,7 +177,7 @@
         </div>
     </div>
 }
-else
+else if (ViewBag.DateFilterError == null)
 {
     <div class="no-transactions-message">
         <div class="text-center" style="padding: 40px;">

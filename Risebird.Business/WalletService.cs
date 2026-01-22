@@ -22,11 +22,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public async Task<List<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null)
+        public async Task<List<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                var resultdata = await _walletRepository.GetWallet(billingType, clientId, billingOwnerId, action);
+                var resultdata = await _walletRepository.GetWallet(billingType, clientId, billingOwnerId, action, startDate, endDate);
                 return resultdata?.ToList();
             }
             catch (Exception ex)
