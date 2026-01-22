@@ -83,6 +83,9 @@
                                     <button type="button" class="btn btn-secondary btn-sm" id="btnClearDateFilter" onclick="ClearDateFilterAndFetch()">
                                         <i class="fa fa-times"></i> Clear
                                     </button>
+                                    <button type="button" class="btn btn-success btn-sm" id="btnExportWallet" onclick="ExportWallet()" title="Export to Excel (respects current filters)">
+                                        <i class="far fa-file-excel"></i> Export
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -145,6 +148,26 @@
         $("#txtEndDate").val('');
         $("#dateFilterValidationMsg").hide().text('');
         FetchTransaction(_currentActionType);
+    }
+
+    function ExportWallet() {
+        var startVal = $("#txtStartDate").val();
+        var endVal = $("#txtEndDate").val();
+        if (startVal && endVal && !validateDateFilter()) return;
+
+        var params = {
+            billingType: $("#txtBillingType").val(),
+            clientId: $("#txtClientId").val() || null,
+            billingOwnerId: $("#txtBillingOwnerId").val() || null,
+            actiontype: _currentActionType
+        };
+        if (startVal) params.startDate = startVal;
+        if (endVal) params.endDate = endVal;
+
+        var qs = Object.keys(params).filter(function (k) { return params[k] != null && params[k] !== ''; })
+            .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); }).join('&');
+        var url = '/Wallet/ExportWalletDetails?' + qs;
+        window.location.href = url;
     }
 
     function FetchTransaction(actiontype) {
