@@ -117,14 +117,15 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 	else If(@actionstatus ='AIMeetingStatus')
 	begin
 		select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,
-		im.id as imid, a.VideoCount as AICandidateResponseVideoCount 
+		im.id as imid, a.VideoCount as AICandidateResponseVideoCount, q.AITotalQuestionsCount 
 		from InterviewMeetings im 
 		join IRF on im.IRFId=irf.IRFId 
 		join Client cl on irf.ClientId=cl.id 
 		left join InterviewComments ic on ic.InterviewId= im.id 
 		left join UserList uli on uli.EmailId=im.interviewer
 		left join UserList ulc on ulc.id=IRF.RisebirdHr
-		cross apply (select count(id) as VideoCount from BotInterviewQuestionVideos where SessionId = im.SessionId) a
+		outer apply (select count(id) as VideoCount from BotInterviewQuestionVideos where SessionId = im.SessionId) a
+		outer apply (select count(id) as AITotalQuestionsCount from SkillChannelSampleQuestions where irfid = irf.id) q
 		where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and interviewdate<@currentdate and ISNULL(IRF.IsAIInterview,0)=1
 	end
 	else If(@actionstatus ='UnAssignedCoordianter')
@@ -725,4 +726,4 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 		end
 	end
 END
-GO
+GO 

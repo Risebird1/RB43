@@ -221,7 +221,8 @@ namespace Risebird.Web.Controllers
                             {
                                 var threadId = await _ai.CreateThreadAsync();
 
-                                var queryContent = $"Generate an output as per the instructions fed to the assistant. The job level is {jobLevel}, company type is {companyType} and the resume string is {resumeStringContent}";
+                                //var queryContent = $"Generate an output as per the instructions fed to the assistant. The job level is {jobLevel}, company type is {companyType} and the resume string is {resumeStringContent}";
+                                var queryContent = $"Generate an output as per the instructions fed to the assistant. The job title is {details.AssessmentGroup} and the resume string is {resumeStringContent}";
 
 
                                 await _ai.AddMessageAsync(threadId, "user", queryContent);
@@ -251,7 +252,7 @@ namespace Risebird.Web.Controllers
                                 bool saveOperationResult = true;
                                 if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                                 {
-                                    saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, responseInJson, candidateResumeScreeningData.Verdict);
+                                    saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResultsV2(irfId, candidateMasterId, responseInJson, candidateResumeScreeningData.Verdict, candidateResumeScreeningData.TotalScore);
                                 }
 
                                 if (saveOperationResult)

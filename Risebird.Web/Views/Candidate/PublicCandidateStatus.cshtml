@@ -1114,10 +1114,29 @@
 
                                                                                             else
                                                                                             {
-                                                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                                                @if (!string.IsNullOrEmpty(item.SessionId))
+                                                                                                {
+                                                                                                    var aiUrl = "https://portal.risebird.io/AIInterview/Index?sid=" + item.SessionId;
+
+                                                                                                    <div style="display:flex; align-items:center; gap:10px;">
+                                                                                                        <span title="@aiUrl"
+                                                                                                              style="color:red;width:240px; overflow:hidden; white-space:nowrap;text-overflow:ellipsis;">
+                                                                                                            @aiUrl
+                                                                                                        </span>
+
+                                                                                                        <button type="button"
+                                                                                                                onclick="openAILinkPopup('@item.SessionId')"
+                                                                                                                style="border:1px solid #ccc; padding:2px 8px;border-radius:4px; cursor:pointer;background:#f8f8f8;">
+                                                                                                            Copy
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                }
+                                                                                                else if (item.zoomLink != null && item.zoomLink != "")
                                                                                                 {
 
-                                                                                                    <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a>
+                                                                                                   <a class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a> 
+                      
+
                                                                                                 }
                                                                                                 else
                                                                                                 {
@@ -1625,7 +1644,56 @@
         </div>
     </div>
 </div>
+<div id="AILinkPopup"
+     style="display:none;
+            position:fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.4);
+            z-index:9999;">
 
+    <div style="background:#fff;
+                width:420px;
+                padding:20px;
+                border-radius:8px;
+                margin:15% auto;
+                box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+
+        <h4 style="margin-bottom:12px;">AI Interview URL</h4>
+
+        <input type="text"
+               id="AILinkInput"
+               readonly
+               style="width:100%;
+                      padding:8px;
+                      border:1px solid #ccc;
+                      border-radius:4px;
+                      margin-bottom:12px;" />
+
+        <div style="text-align:right;">
+            <button onclick="copyAILink()"
+                    style="margin-right:8px;
+                           padding:6px 12px;
+                           background:#007bff;
+                           color:#fff;
+                           border:none;
+                           border-radius:4px;
+                           cursor:pointer;">
+                Copy
+            </button>
+
+            <button onclick="closeAILinkPopup()"
+                    style="padding:6px 12px;
+                           background:#6c757d;
+                           color:#fff;
+                           border:none;
+                           border-radius:4px;
+                           cursor:pointer;">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 @await Html.PartialAsync("~/Views/Interview/WhatsAppPopup.cshtml")
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 <script src="~/js/WhatsAppPopup.js"></script>
@@ -2437,6 +2505,36 @@
         modal.style.display = "none";
     }
 </script>
+<script>
+    function openAILinkPopup(sessionId) {
+        const url = "https://portal.risebird.io/AIInterview/Index?sid=" + sessionId;
+        const input = document.getElementById("AILinkInput");
+        input.value = url;
+        document.getElementById("AILinkPopup").style.display = "block";
+        input.focus();
+        input.select();
+    }
+
+    function closeAILinkPopup() {
+        document.getElementById("AILinkPopup").style.display = "none";
+    }
+
+    function copyAILink() {
+        const input = document.getElementById("AILinkInput");
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(input.value).then(() => {
+                alert("AI link copied successfully!");
+            });
+        } else {
+            input.select();
+            document.execCommand("copy");
+            alert("AI link copied successfully!");
+        }
+    }
+</script>
+
+
 @*<script>
 
     function closeClientwhatsappModel() {

@@ -48,13 +48,16 @@ namespace Risebird.Web.Controllers
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IIRFService _iRFService;
         private readonly IAWSRekognitionService _aWSRekognitionService;
+        private readonly ICandidateService _candidateService;
+        private readonly IIRFRepository _irfRepository;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
-            IIRFService iRFService, IAWSRekognitionService aWSRekognitionService)
+            IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
+            IIRFRepository irfRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -68,6 +71,8 @@ namespace Risebird.Web.Controllers
             _pdfReaderHelper = pdfReaderHelper;
             _iRFService = iRFService;
             _aWSRekognitionService = aWSRekognitionService;
+            _candidateService = candidateService;
+            _irfRepository = irfRepository;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -197,6 +202,52 @@ namespace Risebird.Web.Controllers
                                         //    model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
                                         //}
                                         //var latestReply = CleanMessage(replies.FirstOrDefault());
+
+                                        // Guard: only move to the next question if the candidate video for the previously asked
+                                        // assistant question was successfully saved. This prevents transcript-only advancement on refresh.
+                                        var lastAssistantQuestion = transcript
+                                            .FirstOrDefault(x => x.Role != null && x.Role.ToLower() == "assistant");
+                                        var lastAssistantQuestionId = lastAssistantQuestion?.DeliveryHeadQuestionId;
+
+                                        if (lastAssistantQuestionId.HasValue)
+                                        {
+                                            var savedVideos = await _aiinterviewerService.GetBotInterviewVideoDetails(sid);
+                                            var hasCandidateVideoForLastQuestion = savedVideos != null &&
+                                                savedVideos.Any(v =>
+                                                    v.DeliveryHeadQuestionId == lastAssistantQuestionId.Value &&
+                                                    !string.IsNullOrWhiteSpace(v.VideoLink));
+
+                                            if (!hasCandidateVideoForLastQuestion)
+                                            {
+                                                // Do NOT log a new assistant message or fetch a new question.
+                                                // Keep the candidate on the last asked question until the video is saved.
+                                                model.ChatLog.Add(new ChatLine
+                                                {
+                                                    Role = "Bot",
+                                                    Message = CleanMessage(lastAssistantQuestion?.Message),
+                                                    sampleQuestionId = lastAssistantQuestionId.Value
+                                                });
+
+                                                model.SynthesizedVideoUrl = lastAssistantQuestion?.AIQuestionVideoLink;
+                                                model.CurrentQuestion = CleanMessage(lastAssistantQuestion?.Message);
+                                                model.CurrentQuestionId = lastAssistantQuestionId.Value;
+
+                                                // Optional flag for the view to show a warning if desired.
+                                                ViewData["VideoUploadError"] = true;
+
+                                                model.IsAdaptive = meetingDetails.IsAdaptive;
+                                                model.InterviewId = meetingDetails.InterviewId;
+                                                model.IRFId = meetingDetails.irfIntId;
+                                                model.TimeLeftInSeconds = meetingDetails.TimeLeftInSeconds;
+                                                model.candidateName = meetingDetails.candidateName;
+                                                model.AssistantId = meetingDetails.AssistantId;
+                                                model.AIInterviewType = meetingDetails.AIInterviewType;
+                                                model.showChatBox = meetingDetails.showChatBox;
+                                                model.isMultiLingual = meetingDetails.isMultiLingual;
+
+                                                return View(model);
+                                            }
+                                        }
 
                                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
 
@@ -1104,17 +1155,24 @@ namespace Risebird.Web.Controllers
                         await _azureStorageHelper.InsertImageBlob(filename, "botinterviewvideo", file, fileMimeType);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
                         var blob = containerRef.GetBlockBlobReference(filename);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
+
+                        // Guard: if the upload didn't result in a usable candidate video link,
+                        // do NOT proceed to next question and do NOT write transcripts.
+                        // This prevents "phantom" answers when blob upload/URL generation fails intermittently.
+                        var uploadedvideoFileURL = blob?.Uri?.ToString();
                         var sas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
-                        if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        var blobExists = blob != null && await blob.ExistsAsync();
+                        if (!blobExists || string.IsNullOrWhiteSpace(uploadedvideoFileURL) || string.IsNullOrWhiteSpace(sas))
                         {
-                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                            return false;
                         }
+
+                        VideoLink = uploadedvideoFileURL + "?" + sas;
                     }
                     else
                     {
-                        // Invalid video file type - still save the text response
-                        VideoLink = string.Empty;
+                        // Invalid video type: treat as a failure for the video-response workflow.
+                        return false;
                     }
                 }
                 // If no video file but there's a text/code response, save it with empty VideoLink
@@ -1307,6 +1365,8 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewId = meetingDetails.InterviewId;
                 reportModel.MatchScorePercentage = meetingDetails.MatchScorePercentage;
                 reportModel.resumeLink = meetingDetails.resumeLink;
+                reportModel.AIResumeScreeningVerdict = meetingDetails.AIResumeScreeningVerdict;
+                reportModel.AIResumeScreeningScore = meetingDetails.AIResumeScreeningScore;
                 if(reportModel.AIInterviewEvaluation!= null)
                 {
                     reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
@@ -1317,6 +1377,20 @@ namespace Risebird.Web.Controllers
                     reportModel.sentimentViewModel = await _aiinterviewerService.GetSentimentAnalysisById(meetingDetails.CandidateAnswerVideoIdAI);
 
                 }
+                
+                // Get candidate details for resume screening link using InterviewId
+                var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId);
+                ViewBag.IRFId = meetingDetails.irfIntId;
+                ViewBag.CandidateMasterId = candidate?.CandidateMasterId ?? 0;
+                // Determine accessType based on profile - if Client and public access, set to "Public", otherwise empty
+                string accessType = string.Empty;
+                if (profileName == ProfileNames.Client)
+                {
+                    // Check if this is a public access scenario - you may need to adjust this logic based on your requirements
+                    accessType = "Public";
+                }
+                ViewBag.AccessType = accessType;
+                
                 return View(reportModel);
             }
             else
@@ -1420,6 +1494,20 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewDate = meetingDetails.interviewDate;
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;
+                
+                // Get candidate details for resume screening link using InterviewId
+                var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId);
+                ViewBag.IRFId = meetingDetails.irfIntId;
+                ViewBag.CandidateMasterId = candidate?.CandidateMasterId ?? 0;
+                // Determine accessType based on profile - if Client and public access, set to "Public", otherwise empty
+                string accessType = string.Empty;
+                if (profileName == ProfileNames.Client)
+                {
+                    // Check if this is a public access scenario - you may need to adjust this logic based on your requirements
+                    accessType = "Public";
+                }
+                ViewBag.AccessType = accessType;
+                
                 return View(reportModel);
             }
         }
