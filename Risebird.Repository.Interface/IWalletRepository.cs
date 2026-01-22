@@ -13,3 +13,4 @@ namespace Risebird.Repository.Interface
     }
 }
 
+
