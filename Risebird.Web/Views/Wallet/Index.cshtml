@@ -22,7 +22,11 @@
 }
 <style>
     .razorpay_details {
-        width: calc(100% - 0px);
+        width: calc(100% - 0px)!important;
+    }
+
+    .date-filter-buttons button.btn:focus, .date-filter-buttons button.btn:active:focus, .date-filter-buttons button.btn.active:focus {
+
     }
 </style>
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
@@ -89,17 +93,17 @@
                                 <label for="txtEndDate">End Date</label>
                                 <input type="date" id="txtEndDate" class="form-control date-input" />
                             </div>
-                        </div>
-                        <div class="date-filter-buttons">
-                            <button type="button" class="btn btn-primary btn-sm" id="btnApplyDateFilter" onclick="ApplyDateFilterAndFetch()">
-                                <i class="fa fa-filter"></i> Apply
-                            </button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btnClearDateFilter" onclick="ClearDateFilterAndFetch()">
-                                <i class="fa fa-times"></i> Clear
-                            </button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btnClearDateFilter" onclick="ExportWallet()">
-                                <i class="fa fa-times"></i> Export
-                            </button>
+                            <div class="date-filter-buttons">
+                                <button type="button" class="btn btn-primary btn-sm" id="btnApplyDateFilter" onclick="ApplyDateFilterAndFetch()" style="height:37px;position:relative;top:9px;">
+                                    <i class="fa fa-filter"></i> Apply
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btnClearDateFilter" onclick="ClearDateFilterAndFetch()" style="height:37px;position:relative;top:9px;background:#acb0b4">
+                                    <i class="fa fa-times"></i> Clear
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btnExportWallet" onclick="ExportWallet()" style="height:37px;position:relative;top:9px;background:#4caf50">
+                                    <i class="fa fa-download"></i> Export
+                                </button>
+                            </div>
                         </div>
                         <!-- Balance Section -->
 
@@ -107,7 +111,7 @@
                     <!-- Validation Message -->
                     <div id="dateFilterValidationMsg" class="text-danger small" style="display: none; margin: 0 15px 10px 15px;"></div>
                     <!-- Transaction Details -->
-                    <div id="divtransaction" class="razorpay_details" style="margin-top:0px;padding:0px 20px 20px 20px;">
+                    <div id="divtransaction" class="razorpay_details" style="margin-top:0px;padding:0px 0px 20px 20px;">
                         <div class="text-center" style="padding: 40px;">
                             <i class="fa fa-spinner fa-spin fa-3x" style="color: #b4cee8;"></i>
                             <p style="margin-top: 15px; color: #666;">Loading transactions...</p>
@@ -257,7 +261,7 @@
         flex-wrap: nowrap;
         align-items: flex-end;
         gap: 5px;
-        padding: 15px;
+        padding:0px 15px 15px 15px;
         background: #f8f9fa;
         border-radius: 5px;
         margin: 15px;
@@ -308,6 +312,21 @@
         font-size: 13px;
     }
 
+    .date-filter-buttons {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        margin-bottom: 0;
+    }
+
+        .date-filter-buttons .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            white-space: nowrap;
+            height: 32px;
+            border-radius: 4px;
+        }
+
 
     .balance-section {
         margin-left: auto;
@@ -342,6 +361,12 @@
             min-width: 120px;
         }
 
+        .date-filter-buttons {
+            width: 100%;
+            justify-content: flex-start;
+            margin-top: 5px;
+        }
+
         .razorpay_btn > div:not(.balance-section):not(.date-filter-group) {
             flex: 1 1 auto;
             min-width: 100px;
@@ -374,6 +399,17 @@
         .date-input {
             min-width: 100%;
         }
+
+        .date-filter-buttons {
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+            .date-filter-buttons .btn {
+                flex: 1;
+                min-width: 80px;
+            }
 
         .razorpay_btn > div:not(.balance-section):not(.date-filter-group) {
             width: 100%;
