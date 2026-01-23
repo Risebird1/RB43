@@ -17,14 +17,7 @@
         <div class="wallet-filter-totals">
             <span class="wallet-total-item"><strong>Total Credit:</strong> <span class="text-success font-weight-bold" style="font-size:23px;">@totalCredit.ToString("N0")</span></span>
             <span class="wallet-total-item"><strong>Total Debit:</strong> <span class="text-danger font-weight-bold" style="font-size:23px;">@totalDebit.ToString("N0")</span></span>
-            <div class="date-filter-buttons">
-                <button type="button" class="btn btn-primary btn-sm" id="btnApplyDateFilter" onclick="ApplyDateFilterAndFetch()">
-                    <i class="fa fa-filter"></i> Apply
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" id="btnClearDateFilter" onclick="ClearDateFilterAndFetch()">
-                    <i class="fa fa-times"></i> Clear
-                </button>
-            </div>
+         
         </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover wallet-table">
