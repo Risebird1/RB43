@@ -426,7 +426,7 @@ a.rb-link:hover {
 
                                                                 @if(Model.CandidateDetails.IsAIInterview)
                                                                 {
-                                                                    <button id="btn_ai_Interview" type="button"
+                                                                    <button id="btn_ai_Interview" type="button" style="width:auto;margin:15px 10px;"
                                                                     class="btn btn-primary click_herebtn"
                                                                     onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
                                                                     @(item.AadharVerificationId >
@@ -2006,11 +2006,26 @@ a.rb-link:hover {
         console.log("BindData called with:", data);
         if(data!=null)
         {
-            aadhaarname=data.name;
-            aadhaaraddress=data.address;
-            aadhaargender=data.gender;
-            aadhaardob=data.dob;
-            aadhaarPhotoData=data.doc_face;
+            aadhaarname=data.name || "";
+            aadhaaraddress=data.address || "";
+            aadhaargender=data.gender || "";
+            aadhaardob=data.dob || "";
+            aadhaarPhotoData=data.doc_face || "";
+            // If candidate verified data is blank, show skip button
+            if (!data.name || !data.doc_face) {
+                if (typeof showSkipButton === 'function') {
+                    showSkipButton("Candidate verification data is blank or incomplete. You can skip and proceed.");
+                } else {
+                    document.getElementById("skipVerificationBtn").style.display = "inline-block";
+                }
+            }
+        } else {
+            // Data is null - show skip button
+            if (typeof showSkipButton === 'function') {
+                showSkipButton("Candidate verification data could not be retrieved. You can skip and proceed.");
+            } else {
+                document.getElementById("skipVerificationBtn").style.display = "inline-block";
+            }
         }
         console.log("BindData completed successfully");
     }
@@ -2034,6 +2049,7 @@ a.rb-link:hover {
             setTimeout(function() {
                 resetBiometricModal();
                 updateVerificationStatus();
+                // Do NOT show skip button here - only show after verification has been attempted and failed
             }, 100);
         } else {
             console.error("BiometricVerificationModal not found!");
@@ -2357,6 +2373,11 @@ a.rb-link:hover {
             confirmButtonColor: "#ffc107"
         }).then(function(result) {
             if (result.value) {
+                // Hide loader when skipping (no API call, so no loader needed)
+                if (typeof hideloader === 'function') { hideloader(); }
+                swal.close();
+                $(".loader").hide();
+
                 // Enable the meeting link button directly
                 var aiInterviewButton = document.getElementById('btn_ai_Interview');
                 if(aiInterviewButton != null) {
@@ -2393,6 +2414,21 @@ a.rb-link:hover {
                 const originalSuccess = options.success;
                 options.success = function(dataKYC) {
                     console.log("Intercepted Aadhaar verification response:", dataKYC);
+
+                    // If candidate verified data is blank, show skip button and do not set as verified
+                    var isBlank = !dataKYC || !dataKYC.name || !dataKYC.doc_face;
+                    if (isBlank) {
+                        if (typeof hideloader === 'function') { hideloader(); }
+                        document.getElementById("skipVerificationBtn").style.display = "inline-block";
+                        if (typeof showSkipButton === 'function') {
+                            showSkipButton("Candidate verification data is blank or could not be retrieved. You can skip and proceed.");
+                        }
+                        // Do not set isAadhaarVerified or call originalSuccess (would break BindKYCData)
+                        if (typeof closeAadhaarpopup === 'function') {
+                            closeAadhaarpopup();
+                        }
+                        return;
+                    }
 
                     // Set our verification variables for biometric modal
                     isAadhaarVerified = true;
@@ -2435,11 +2471,30 @@ a.rb-link:hover {
                 options.success = function(dataKYC) {
                     console.log("Intercepted Aadhaar verification response:", dataKYC);
 
+                    // If candidate verified data is blank, show skip button and do not set as verified
+                    var isBlank = !dataKYC || !dataKYC.name || !dataKYC.doc_face;
+                    if (isBlank) {
+                        if (typeof hideloader === 'function') { hideloader(); }
+                        document.getElementById("skipVerificationBtn").style.display = "inline-block";
+                        if (typeof showSkipButton === 'function') {
+                            showSkipButton("Candidate verification data is blank or could not be retrieved. You can skip and proceed.");
+                        }
+                        if (typeof closeAadhaarpopup === 'function') {
+                            closeAadhaarpopup();
+                        }
+                        return;
+                    }
+
                     // Set our verification variables for biometric modal
                     isAadhaarVerified = true;
 
                     // Update verification status for biometric modal
                     updateVerificationStatus();
+
+                    // Update meeting link styling if photo is also captured
+                    if (capturedPhotoData) {
+                        updateMeetingLinkStyling();
+                    }
 
                     // IMPORTANT: Call the original success callback to preserve all Aadhaar.js functionality
                     if (originalSuccess) {
