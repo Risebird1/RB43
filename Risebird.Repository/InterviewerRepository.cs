@@ -3447,9 +3447,9 @@ namespace Risebird.Repository
                     parameters.Add("@PrimarySpecialization", PrimarySpecialization);
                     parameters.Add("@PerformedBy", loggedInUser);
                     parameters.Add("@timeNow", DateTime.Now);
-                    parameters.Add("@completeFitmentAnalysis", model.completeFitmentAnalysis);
-                    parameters.Add("@fitmentScore", model.fitmentScore);
-                    parameters.Add("@verdict", model.verdict);
+                    parameters.Add("@completeFitmentAnalysis", model != null ? model.completeFitmentAnalysis : null);
+                    parameters.Add("@fitmentScore", model != null ? model.fitmentScore : null);
+                    parameters.Add("@verdict", model != null ? model.verdict : null);
                     parameters.Add("@result", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 5215585);
 
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerPreOnboardingVerdictV2", parameters, commandTimeout: 600,

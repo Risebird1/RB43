@@ -631,14 +631,30 @@ namespace Risebird.Web.Controllers
                             string aiResponseUrl = string.Empty;
                             if (response != null )
                             {
-                                aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
+                                try
+                                {
+                                    aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
 
-                                //saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
-                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, aiAnalysisModel, loggedInUser);
-                                //aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
-                                
+                                    //saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
+                                    saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, aiAnalysisModel, loggedInUser);
+                                    //aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                                    aiAnalysisModel = null;
+                                    saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, null, loggedInUser);
+
+                                }
                             }
-                            if (saveOperationResult)
+                            else
+                            {
+                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, null, loggedInUser);
+
+                            }
+                            if (saveOperationResult && response != null && aiAnalysisModel != null)
                             {
                                 aiResponseUrl = Url.Action("PreOnboardingAIVerdictDetails", "AIScreener",
                                 new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
