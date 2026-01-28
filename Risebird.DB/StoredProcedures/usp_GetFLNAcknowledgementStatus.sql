@@ -17,7 +17,7 @@ AS
 BEGIN         
     
 
-select distinct poi.EmailId, poi.PrimarySpecialization, poi.AIVerdict, poi.CreatedBy as FLN, poi.CreatedAt as AddedOn,
+select distinct top 1000 poi.EmailId, poi.PrimarySpecialization, poi.AIVerdict, poi.CreatedBy as FLN, poi.CreatedAt as AddedOn,-- just remove top 1000 if you want all the data
 ipr.CompanyName, ipr.ResumeLink, ul.MobileNumber, ul.FirstName + ' ' + ul.LastName as [Name], irf.IRFId as TargetSkillChannel, 
 ag.AssessmentGroup,
 CASE 

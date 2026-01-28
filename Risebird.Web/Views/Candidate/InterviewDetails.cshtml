@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.CandidateIRFDetailsVM
+@model Risebird.Entities.ViewModel.CandidateIRFDetailsVM
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Http;
 @using Risebird.Entities.Enum
@@ -1984,6 +1984,9 @@ a.rb-link:hover {
                         <button type="button" class="btn btn-secondary" onclick="closeBiometricVerificationModal()" style="margin-right: 10px;">
                             <i class="fa fa-times" style="margin-right: 5px;"></i>Cancel
                         </button>
+                        <button type="button" class="btn btn-warning" onclick="skipVerification()" id="skipVerificationBtn" style="display: none; margin-right: 10px;">
+                            <i class="fa fa-forward" style="margin-right: 5px;"></i>Skip Verification
+                        </button>
                         <button type="button" class="btn btn-success" onclick="completeVerification()" id="completeVerificationBtn" disabled>
                             <i class="fa fa-check" style="margin-right: 5px;"></i>Verify your details
                         </button>
@@ -2073,6 +2076,9 @@ a.rb-link:hover {
 
         // Reset verification button
         document.getElementById("completeVerificationBtn").disabled = true;
+
+        // Hide skip button on reset
+        document.getElementById("skipVerificationBtn").style.display = "none";
 
         // Update status
         updateVerificationStatus();
@@ -2194,6 +2200,9 @@ a.rb-link:hover {
         if(aiInterviewButton != null)
         {
             aiInterviewButton.disabled = false;  // enable it
+            aiInterviewButton.removeAttribute("disabled"); // Remove disabled attribute
+            aiInterviewButton.style.opacity = "1";
+            aiInterviewButton.style.cursor = "pointer";
             //aiInterviewButton.classList.remove("disabled-link"); // optional: remove custom disabled styling
         }
     @* const meetingLinks = document.querySelectorAll('.meeting-link');
@@ -2242,35 +2251,65 @@ a.rb-link:hover {
             // Update meeting link styling to blue
             updateMeetingLinkStyling();
 
+            // Hide skip button if verification is successful
+            document.getElementById("skipVerificationBtn").style.display = "none";
+
             //closeBiometricVerificationModal();
 
-            // Test if SweetAlert works
+            // Show loading message and save verification data
             try {
+                // Show loading indicator
                 swal.fire({
-                    title: "Verification Complete!",
-                    text: "Candidate verification has been completed successfully.",
-                    type: "success",
-                    confirmButtonText: "OK",
+                    title: "Saving Verification...",
+                    text: "Please wait while we save your verification details.",
+                    type: "info",
                     allowOutsideClick: false,
-                    allowEscapeKey: false
-                }).then(function(result) {
-                     $.ajax({
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        swal.showLoading();
+                    }
+                });
+
+                // Make AJAX call to save verification data
+                $.ajax({
                     type: "POST",
                     url: "/Aadhaar/SaveVerificationData",
                     data: { interviewId: aadhaarinterviewid, capturedPhotoData: capturedPhotoData ,aadhaarPhotoData:aadhaarPhotoData,Name:aadhaarname,Address:aadhaaraddress,gender:aadhaargender,dob:aadhaardob,email:$("#txtcandidateEmailid").val()},
                     success: function (data) {
-                            closeBiometricVerificationModal();
+                        if (data.success) {
+                            // Close SweetAlert and show success message briefly
+                            swal.fire({
+                                title: "Verification Complete!",
+                                text: "Candidate verification has been completed successfully.",
+                                type: "success",
+                                confirmButtonText: "OK",
+                                timer: 2000,
+                                timerProgressBar: true
+                            }).then(function(result) {
+                                // Close the biometric verification modal
+                                closeBiometricVerificationModal();
+                            });
+                        } else {
+                            // Close loading alert first
+                            swal.close();
+                            // Verification failed - show skip button
+                            showSkipButton(data.message || "Verification failed. You can skip and proceed.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX error:", error);
+                        // Close loading alert
+                        swal.close();
+                        // Show skip button on AJAX error
+                        showSkipButton("Network error occurred. You can skip verification and proceed.");
                     }
-                    });
-                }).catch(function(error) {
-                    console.error("SweetAlert error:", error);
-                    console.log("Fallback: calling closeBiometricVerificationModal directly...");
-                    closeBiometricVerificationModal();
                 });
             } catch (error) {
-                console.error("Error showing SweetAlert:", error);
-                console.log("Fallback: calling closeBiometricVerificationModal directly...");
-                closeBiometricVerificationModal();
+                console.error("Error in verification process:", error);
+                swal.close();
+                // Show skip button on error
+                showSkipButton("An error occurred during verification. You can skip and proceed.");
             }
         } else {
             console.log("Conditions NOT met:");
@@ -2284,6 +2323,66 @@ a.rb-link:hover {
                 confirmButtonText: "OK"
             });
         }
+    }
+
+    // Function to show skip button when verification fails
+    function showSkipButton(errorMessage) {
+        document.getElementById("skipVerificationBtn").style.display = "inline-block";
+        
+        // Show error message with option to skip
+        swal.fire({
+            title: "Verification Failed",
+            text: errorMessage + " Would you like to skip verification and proceed?",
+            type: "error",
+            showCancelButton: true,
+            confirmButtonText: "Skip & Proceed",
+            cancelButtonText: "Try Again",
+            confirmButtonColor: "#ffc107"
+        }).then(function(result) {
+            if (result.value) {
+                skipVerification();
+            }
+        });
+    }
+
+    // Function to skip verification and proceed
+    function skipVerification() {
+        swal.fire({
+            title: "Skip Verification?",
+            text: "Are you sure you want to skip verification? You will be able to proceed to the interview without verification.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Skip",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#ffc107"
+        }).then(function(result) {
+            if (result.value) {
+                // Enable the meeting link button directly
+                var aiInterviewButton = document.getElementById('btn_ai_Interview');
+                if(aiInterviewButton != null) {
+                    aiInterviewButton.disabled = false;
+                    aiInterviewButton.removeAttribute("disabled");
+                    aiInterviewButton.style.opacity = "1";
+                    aiInterviewButton.style.cursor = "pointer";
+                    aiInterviewButton.style.backgroundColor = "#007bff";
+                    aiInterviewButton.style.color = "#fff";
+                }
+                
+                // Also call the update function for consistency
+                updateMeetingLinkStyling();
+                
+                // Close the modal
+                closeBiometricVerificationModal();
+                
+                // Show success message
+                swal.fire({
+                    title: "Verification Skipped",
+                    text: "You can now proceed to join the interview.",
+                    type: "info",
+                    confirmButtonText: "OK"
+                });
+            }
+        });
     }
 
     // Also update the AJAX interceptor to call updateMeetingLinkStyling when Aadhaar verification completes

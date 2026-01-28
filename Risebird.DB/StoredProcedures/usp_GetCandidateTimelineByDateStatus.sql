@@ -23,7 +23,7 @@ if(@datatype=1)
 Begin                        
 set @Clientid= (Select cu.ClientId from UserList ul join ClientUser cu on cu.UserId=ul.id where ul.EmailId=@Emailid)          
 set @clientRole =(select top 1 cu.RoleId from UserList ul join ClientUser cu on cu.UserId = ul.id where ul.EmailId =@Emailid)  
-if(@Clientid = 172)--aurionpro
+if exists(select id from irf where clientId = @Clientid  and IsAIInterview = 1 and AIInterviewType = 2)--aurionpro
 Begin
 set @startDate = (select DATEADD(month, -6, @startDate))
 end
@@ -125,7 +125,7 @@ if @EmailId is not null
   set @profileId = (select id from [Profile] where [Name]='Client')                                  
   set @userId  = (select id from UserList where EmailId=@EmailId and idProfile=@profileId)                                  
   set @roleId  = (select RoleId from ClientUser where UserId=@userId)                                  
-  if(@Clientid = 172)--aurionpro
+  if exists(select id from irf where clientId = @Clientid  and IsAIInterview = 1 and AIInterviewType = 2)--aurionpro
   Begin
 	set @startDate = (select DATEADD(month, -6, @startDate))
   end
