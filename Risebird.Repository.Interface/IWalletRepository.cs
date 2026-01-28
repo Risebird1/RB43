@@ -7,9 +7,10 @@ namespace Risebird.Repository.Interface
 {
     public interface IWalletRepository
     {
-        Task<IEnumerable<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null);
+        Task<IEnumerable<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null, DateTime? startDate = null, DateTime? endDate = null);
         Task<int> GetWalletBalance(int billingType, int? clientId = null, int? billingOwnerId = null);
         Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null, DateTime? transactionDate = null);
     }
 }
+
 

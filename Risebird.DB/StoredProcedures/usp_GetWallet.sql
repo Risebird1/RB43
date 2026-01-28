@@ -12,7 +12,9 @@ Create PROCEDURE usp_GetWallet
 @BillingType int,          
 @ClientId int = NULL,          
 @BillingOwnerId int = NULL,    
-@Action varchar(20) = NULL -- 'CREDIT', 'DEBIT', 'all'   
+@Action varchar(20) = NULL, -- 'CREDIT', 'DEBIT', 'all'
+@StartDate datetime = NULL,
+@EndDate datetime = NULL
 AS            
 BEGIN            
 Declare @ClientRoleId int  
@@ -60,7 +62,14 @@ Select @ClientRoleId=RoleId From ClientUser where UserId=@BillingOwnerId
   AND (@BillingOwnerId IS NULL OR @ClientRoleId=9 OR w.BillingOwnerId = @BillingOwnerId)    
   AND (@Action = 'All'    
    OR (@Action = 'CREDIT' AND w.Credit > 0)    
-   OR (@Action = 'DEBIT' AND w.Debit > 0))    
+   OR (@Action = 'DEBIT' AND w.Debit > 0))
+  AND (
+    (@StartDate IS NULL AND @EndDate IS NULL)
+    OR (
+      (@StartDate IS NULL OR (w.Credit > 0 AND w.CreatedOn >= CAST(@StartDate AS date)) OR (w.Debit > 0 AND im.interviewDate >= CAST(@StartDate AS date)))
+      AND (@EndDate IS NULL OR (w.Credit > 0 AND w.CreatedOn < DATEADD(day, 1, CAST(@EndDate AS date))) OR (w.Debit > 0 AND im.interviewDate < DATEADD(day, 1, CAST(@EndDate AS date))))
+    )
+  )
  ORDER BY w.CreatedOn DESC    
 END     
 GO
