@@ -12,9 +12,9 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerPreOnboardingVerdictV2]
 @EmailId [varchar](50),
 @PrimarySpecialization [varchar](250),
 --@screeningResponseJson varchar(max),
-@completeFitmentAnalysis varchar(max),
-@fitmentScore int,
-@verdict varchar(25),
+@completeFitmentAnalysis varchar(max) = null,
+@fitmentScore int = null,
+@verdict varchar(25) = null,
 @PerformedBy varchar(200),
 @timeNow datetime,
 @result bit out
