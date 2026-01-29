@@ -46,7 +46,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("ResumeParserJob")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * *
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer) // Every 10 minutes (was: 5 min - reduced OpenAI costs)
         {
             try
             {

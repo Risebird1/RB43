@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -111,13 +111,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
@@ -169,13 +175,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
@@ -594,67 +606,59 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<bool> DeleteFiles()
+        public async Task<bool> DeleteFiles(int maxIterations = 10)
         {
             try
             {
-                var filesList = await ListFiles();
-                if (filesList != null && filesList.data != null && filesList.data.Count() > 0)
+                int iteration = 0;
+                int totalDeleted = 0;
+
+                // Loop with circuit breaker to prevent infinite recursion
+                while (iteration < maxIterations)
                 {
+                    var filesList = await ListFiles();
+                    
+                    // No more files to delete
+                    if (filesList == null || filesList.data == null || filesList.data.Count() == 0)
+                    {
+                        return true;
+                    }
 
-                    //Parallel.ForEach(filesList?.data, item =>
-                    //{
-                    //    HttpClient client = new HttpClient();
-
-                    //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
-                    //    {
-                    //        Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
-                    //    };
-
-                    //    var response = client.SendAsync(request).Result;
-
-                    //    response.EnsureSuccessStatusCode();
-                    //    var responseContent = response.Content.ReadAsStringAsync().Result;
-
-                    //    //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                    //    //return files;
-                    //}
-                    //);
-                    foreach (var item in filesList?.data)
+                    // Delete all files in current batch
+                    foreach (var item in filesList.data)
                     {
                         try
                         {
                             HttpClient client = new HttpClient();
 
-                            //var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
-                            //{
-                            //    Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
-                            //};
-
                             var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
                             {
-                                Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                                Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
                             };
 
                             var response = await client.SendAsync(request);
-
                             response.EnsureSuccessStatusCode();
                             var responseContent = await response.Content.ReadAsStringAsync();
-
-                            //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                            //return files;
+                            
+                            totalDeleted++;
                         }
                         catch (Exception ex)
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
-
                     }
-                    await DeleteFiles();
+
+                    iteration++;
+                }
+
+                // Log if we hit the max iterations (potential issue)
+                if (iteration >= maxIterations)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                        new Exception($"DeleteFiles: Hit max iterations ({maxIterations}). Deleted {totalDeleted} files. More files may still exist."));
                 }
 
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -775,13 +779,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 4s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(4000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
                     //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
@@ -834,13 +844,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
                     
@@ -882,13 +898,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
 
@@ -928,13 +950,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
 
@@ -975,13 +1003,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
                     var messages = await ListRunMessages(threadId);
 
