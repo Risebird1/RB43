@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -39,7 +39,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("CheckInterviewerSkillChannelSuitabilityOpenAI")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * * , ILogger log
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer) // Every 10 minutes (was: 5 min - reduced OpenAI costs)
         {
             log.LogInformation($"CheckInterviewerSkillChannelSuitabilityOpenAI : C# Timer trigger function started executing  at: {DateTime.Now}");
 

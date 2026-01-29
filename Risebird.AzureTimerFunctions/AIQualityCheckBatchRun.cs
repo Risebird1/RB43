@@ -22,7 +22,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("AIQualityCheckBatchRun")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer) // Every 10 minutes (was: 5 min - reduced OpenAI costs)
         {
             log.LogInformation($"AIQualityCheckBatchRun : C# Timer trigger function started executing  at: {DateTime.Now}");
 
