@@ -1,4 +1,4 @@
-﻿@using Risebird.Entities.ViewModel
+@using Risebird.Entities.ViewModel
 @using System.Text.Json
 @model ChatMessageViewModel
 @{
@@ -3331,4 +3331,266 @@
             }
         };
     });
+
+    // ===============================================
+    // TYPING SPEED ASSESSMENT FUNCTIONALITY
+    // ===============================================
+    (function() {
+        const isTypingSpeedQuestion = @Json.Serialize(Model.IsTypingSpeedQuestion);
+        
+        if (!isTypingSpeedQuestion) {
+            return; // Not a typing speed question, skip this functionality
+        }
+
+        // Sample texts for typing assessment (randomly selected)
+        const sampleTexts = [
+            "The quick brown fox jumps over the lazy dog. Programming requires attention to detail and careful consideration of logic. Software development is both an art and a science that requires constant learning and adaptation.",
+            "In the world of technology, innovation drives progress forward. Developers must balance creativity with practicality while building solutions that meet user needs. Effective communication and teamwork are essential skills in modern software development.",
+            "Artificial intelligence and machine learning are transforming industries across the globe. These technologies enable computers to learn from data and make intelligent decisions. The future of computing lies in creating systems that can think and adapt like humans.",
+            "Web development encompasses a wide range of technologies and frameworks. From frontend design to backend architecture, developers must master multiple disciplines. Building responsive and accessible applications requires dedication and continuous improvement.",
+            "Data structures and algorithms form the foundation of computer science. Understanding how to efficiently store and manipulate data is crucial for building scalable systems. Problem-solving skills are developed through practice and perseverance."
+        ];
+
+        // Select a random sample text
+        const sampleText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+        
+        // Store typing assessment data
+        let typingStartTime = null;
+        let typingEndTime = null;
+        let typingInProgress = false;
+
+        // Function to calculate accuracy
+        function calculateAccuracy(originalText, typedText) {
+            let correctChars = 0;
+            const minLength = Math.min(originalText.length, typedText.length);
+            
+            for (let i = 0; i < minLength; i++) {
+                if (originalText[i] === typedText[i]) {
+                    correctChars++;
+                }
+            }
+            
+            return {
+                correctChars: correctChars,
+                totalChars: originalText.length,
+                accuracy: (correctChars / originalText.length) * 100
+            };
+        }
+
+        // Function to calculate WPM
+        function calculateWPM(text, timeInSeconds) {
+            const words = text.trim().split(/\s+/).length;
+            const minutes = timeInSeconds / 60;
+            return words / minutes;
+        }
+
+        // Show typing test modal when page loads
+        function showTypingTestModal() {
+            let timerInterval = null;
+            let startTime = null;
+            
+            Swal.fire({
+                title: 'Typing Speed Assessment',
+                html: `
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px; font-size: 14px; color: #666;">
+                            This question will assess your typing speed. Please read the text below and click "Start" when ready.
+                        </p>
+                        <div id="typingInstructions" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #4eda92;">
+                            <strong>Instructions:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 13px; color: #555;">
+                                <li>Click "Start" to begin the typing test</li>
+                                <li>Type the text exactly as shown</li>
+                                <li>Video recording will start automatically when you begin typing</li>
+                                <li>Click "Submit" when finished</li>
+                            </ul>
+                        </div>
+                        <div id="typingSampleTextContainer" style="display: none; background: #e8f2ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">
+                            ${sampleText}
+                        </div>
+                        <div id="typingTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
+                            Time: <span id="typingTimerValue">0:00</span>
+                        </div>
+                        <textarea id="typingInputArea" 
+                                  placeholder="Start typing here after clicking 'Start'..." 
+                                  style="width: 100%; height: 150px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 14px; resize: vertical; display: none;"
+                                  disabled></textarea>
+                    </div>
+                `,
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '<i class="fa fa-play"></i> Start',
+                confirmButtonColor: '#4eda92',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                width: '700px',
+                preConfirm: () => {
+                    const inputArea = document.getElementById('typingInputArea');
+                    const sampleTextContainer = document.getElementById('typingSampleTextContainer');
+                    const timerDisplay = document.getElementById('typingTimerDisplay');
+                    const instructions = document.getElementById('typingInstructions');
+                    const confirmBtn = Swal.getConfirmButton();
+
+                    if (!typingInProgress) {
+                        // Start the typing test
+                        typingInProgress = true;
+                        typingStartTime = new Date();
+                        startTime = Date.now();
+                        
+                        // Update UI
+                        instructions.style.display = 'none';
+                        sampleTextContainer.style.display = 'block';
+                        timerDisplay.style.display = 'block';
+                        inputArea.style.display = 'block';
+                        inputArea.disabled = false;
+                        inputArea.focus();
+                        
+                        // Change button to Submit
+                        confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
+                        confirmBtn.style.backgroundColor = '#28a745';
+                        
+                        // Start timer
+                        timerInterval = setInterval(() => {
+                            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                            const minutes = Math.floor(elapsed / 60);
+                            const seconds = elapsed % 60;
+                            const timerValueElement = document.getElementById('typingTimerValue');
+                            if (timerValueElement) {
+                                timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            }
+                        }, 1000);
+
+                        // Start video recording automatically
+                        if (typeof startRecording === 'function') {
+                            startRecording();
+                        }
+                        
+                        // Return false to prevent modal from closing
+                        return false;
+                    } else {
+                        // Submit the typing test
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                        }
+                        
+                        // Stop video recording when typing test is submitted
+                        if (typeof stopRecording === 'function') {
+                            stopRecording();
+                        }
+                        
+                        typingEndTime = new Date();
+                        const typedText = inputArea.value;
+                        
+                        // Calculate metrics
+                        const timeTaken = (typingEndTime - typingStartTime) / 1000; // in seconds
+                        const accuracyData = calculateAccuracy(sampleText, typedText);
+                        const wpm = calculateWPM(typedText, timeTaken);
+                        
+                        // Store data in hidden form fields
+                        document.getElementById('TypingSampleText').value = sampleText;
+                        document.getElementById('TypedText').value = typedText;
+                        document.getElementById('TypingStartTime').value = typingStartTime.toISOString();
+                        document.getElementById('TypingEndTime').value = typingEndTime.toISOString();
+                        document.getElementById('TypingTimeTaken').value = timeTaken.toFixed(2);
+                        document.getElementById('TypingTotalChars').value = accuracyData.totalChars;
+                        document.getElementById('TypingCorrectChars').value = accuracyData.correctChars;
+                        document.getElementById('TypingAccuracy').value = accuracyData.accuracy.toFixed(2);
+                        document.getElementById('TypingWPM').value = wpm.toFixed(2);
+                        
+                        // Show results first, then trigger form submission
+                        Swal.fire({
+                            title: 'Typing Test Complete!',
+                            html: `
+                                <div style="text-align: left;">
+                                    <h4 style="color: #4eda92; margin-bottom: 15px;">Your Results:</h4>
+                                    <ul style="list-style: none; padding: 0;">
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Time Taken:</strong> ${timeTaken.toFixed(2)} seconds
+                                        </li>
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Accuracy:</strong> ${accuracyData.accuracy.toFixed(2)}%
+                                        </li>
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Words Per Minute:</strong> ${wpm.toFixed(2)} WPM
+                                        </li>
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Correct Characters:</strong> ${accuracyData.correctChars} / ${accuracyData.totalChars}
+                                        </li>
+                                    </ul>
+                                </div>
+                            `,
+                            icon: 'success',
+                            confirmButtonText: 'Continue',
+                            confirmButtonColor: '#4eda92',
+                            allowOutsideClick: false
+                        }).then(() => {
+                            // After showing results, trigger the existing form submission flow
+                            // This will show the "Are you sure you want to submit?" confirmation
+                            const form = document.getElementById('chatForm');
+                            if (form) {
+                                Swal.fire({
+                                    title: 'Submit Answer?',
+                                    text: 'Are you sure you want to submit your typing assessment?',
+                                    icon: 'question',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#4eda92',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'Submit Answer',
+                                    cancelButtonText: 'Cancel',
+                                    reverseButtons: false,
+                                    focusConfirm: true
+                                }).then((result) => {
+                                    if (result.isConfirmed || result.value === true) {
+                                        // User confirmed - submit the form
+                                        form.submit();
+                                    } else {
+                                        // User cancelled
+                                        console.log("Typing assessment submission cancelled");
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Return true to allow the modal to close
+                        return true;
+                    }
+                }
+            });
+        }
+
+        // Add hidden form fields to store typing data
+        function addHiddenFormFields() {
+            const form = document.getElementById('chatForm');
+            if (!form) return;
+
+            const hiddenFields = [
+                { name: 'IsTypingSpeedQuestion', value: 'true' },
+                { name: 'TypingSampleText', value: '' },
+                { name: 'TypedText', value: '' },
+                { name: 'TypingStartTime', value: '' },
+                { name: 'TypingEndTime', value: '' },
+                { name: 'TypingTimeTaken', value: '' },
+                { name: 'TypingTotalChars', value: '' },
+                { name: 'TypingCorrectChars', value: '' },
+                { name: 'TypingAccuracy', value: '' },
+                { name: 'TypingWPM', value: '' }
+            ];
+
+            hiddenFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.id = field.name;
+                input.value = field.value;
+                form.appendChild(input);
+            });
+        }
+
+        // Initialize typing speed assessment
+        setTimeout(() => {
+            addHiddenFormFields();
+            showTypingTestModal();
+        }, 1000); // Show modal 1 second after page load
+
+    })();
 </script>
