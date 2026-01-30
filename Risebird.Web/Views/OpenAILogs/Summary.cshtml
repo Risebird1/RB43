@@ -1,0 +1,211 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "OpenAI Cost Summary";
+    ViewBag.PageHeader = "OpenAI Cost Summary";
+    var dailySummary = ViewBag.DailySummary as List<Risebird.Entities.Data.OpenAIApiLogSummary>;
+    var operationTypeSummary = ViewBag.OperationTypeSummary as List<Risebird.Entities.Data.OpenAIApiLogSummary>;
+    var modelSummary = ViewBag.ModelSummary as List<Risebird.Entities.Data.OpenAIApiLogSummary>;
+}
+
+<div class="main-panel" id="main-panel">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>OpenAI API Cost Summary</h2>
+            <hr />
+        </div>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" class="form-inline">
+                <div class="form-group mr-3">
+                    <label for="startDate" class="mr-2">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control" value="@ViewBag.StartDate" />
+                </div>
+                <div class="form-group mr-3">
+                    <label for="endDate" class="mr-2">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control" value="@ViewBag.EndDate" />
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Total Cost Overview -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Cost</h5>
+                    <h2 class="card-text">$@ViewBag.TotalCost.ToString("N2")</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Total API Calls</h5>
+                    <h2 class="card-text">@ViewBag.TotalCalls</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary by Operation Type -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Cost by Operation Type</h4>
+                </div>
+                <div class="card-body">
+                    @if (operationTypeSummary != null && operationTypeSummary.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Operation Type</th>
+                                    <th>Total Calls</th>
+                                    <th>Successful</th>
+                                    <th>Failed</th>
+                                    <th>Total Tokens</th>
+                                    <th>Total Cost</th>
+                                    <th>Avg Response Time (ms)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in operationTypeSummary)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-action="ByOperationType" asp-route-operationType="@item.OperationType" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate">
+                                                @item.OperationType
+                                            </a>
+                                        </td>
+                                        <td>@item.TotalCalls</td>
+                                        <td class="text-success">@item.SuccessfulCalls</td>
+                                        <td class="text-danger">@item.FailedCalls</td>
+                                        <td>@item.TotalTokens.ToString("N0")</td>
+                                        <td>$@item.TotalCostUSD.ToString("N2")</td>
+                                        <td>@item.AvgResponseTimeMs</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No data available for the selected date range.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary by Model -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Cost by Model</h4>
+                </div>
+                <div class="card-body">
+                    @if (modelSummary != null && modelSummary.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Total Calls</th>
+                                    <th>Successful</th>
+                                    <th>Failed</th>
+                                    <th>Total Tokens</th>
+                                    <th>Total Cost</th>
+                                    <th>Avg Response Time (ms)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in modelSummary)
+                                {
+                                    <tr>
+                                        <td>@(string.IsNullOrEmpty(item.Model) ? "N/A" : item.Model)</td>
+                                        <td>@item.TotalCalls</td>
+                                        <td class="text-success">@item.SuccessfulCalls</td>
+                                        <td class="text-danger">@item.FailedCalls</td>
+                                        <td>@item.TotalTokens.ToString("N0")</td>
+                                        <td>$@item.TotalCostUSD.ToString("N2")</td>
+                                        <td>@item.AvgResponseTimeMs</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No data available for the selected date range.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Summary -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Daily Cost Breakdown</h4>
+                </div>
+                <div class="card-body">
+                    @if (dailySummary != null && dailySummary.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Total Calls</th>
+                                    <th>Successful</th>
+                                    <th>Failed</th>
+                                    <th>Total Tokens</th>
+                                    <th>Total Cost</th>
+                                    <th>Avg Response Time (ms)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in dailySummary)
+                                {
+                                    <tr>
+                                        <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                                        <td>@item.TotalCalls</td>
+                                        <td class="text-success">@item.SuccessfulCalls</td>
+                                        <td class="text-danger">@item.FailedCalls</td>
+                                        <td>@item.TotalTokens.ToString("N0")</td>
+                                        <td>$@item.TotalCostUSD.ToString("N2")</td>
+                                        <td>@item.AvgResponseTimeMs</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No data available for the selected date range.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <a asp-action="Index" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-secondary">View All Logs</a>
+            <a asp-action="Failed" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-danger">View Failed Calls</a>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>

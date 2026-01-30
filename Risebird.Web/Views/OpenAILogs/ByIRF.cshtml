@@ -1,0 +1,147 @@
+@model List<Risebird.Entities.Data.OpenAIApiLog>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Logs - IRF {ViewBag.IRFId}";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>OpenAI API Logs for IRF</h2>
+            <p class="text-muted">IRF ID: <strong>@ViewBag.IRFId</strong></p>
+            <hr />
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a asp-action="Index" class="btn btn-secondary">Back to All Logs</a>
+            <a asp-action="Summary" class="btn btn-info">View Summary</a>
+        </div>
+    </div>
+
+    <!-- IRF Summary -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total API Calls</h6>
+                    <h3 class="card-text">@Model.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Cost</h6>
+                    <h3 class="card-text text-success">$@Model.Sum(x => x.EstimatedCostUSD ?? 0).ToString("N4")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Tokens</h6>
+                    <h3 class="card-text">@Model.Sum(x => x.TotalTokens ?? 0).ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operation Type Breakdown -->
+    @if (Model.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Cost by Operation Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Operation Type</th>
+                                    <th>Calls</th>
+                                    <th>Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var group in Model.GroupBy(x => x.OperationType).OrderByDescending(g => g.Sum(x => x.EstimatedCostUSD ?? 0)))
+                                {
+                                    <tr>
+                                        <td><span class="badge badge-info">@group.Key</span></td>
+                                        <td>@group.Count()</td>
+                                        <td>$@group.Sum(x => x.EstimatedCostUSD ?? 0).ToString("N4")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Logs Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>All API Calls</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>Operation Type</th>
+                                        <th>Model</th>
+                                        <th>Status</th>
+                                        <th>Tokens</th>
+                                        <th>Cost</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var log in Model.OrderByDescending(x => x.LogDate))
+                                    {
+                                        <tr class="@(log.IsSuccess ? "" : "table-danger")">
+                                            <td>@log.LogDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            <td><span class="badge badge-info">@log.OperationType</span></td>
+                                            <td>@(string.IsNullOrEmpty(log.Model) ? "N/A" : log.Model)</td>
+                                            <td>
+                                                @if (log.IsSuccess)
+                                                {
+                                                    <span class="badge badge-success">Success</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Failed</span>
+                                                }
+                                            </td>
+                                            <td>@(log.TotalTokens.HasValue && log.TotalTokens.Value > 0 ? log.TotalTokens.Value.ToString("N0") : "-")</td>
+                                            <td>@(log.EstimatedCostUSD.HasValue && log.EstimatedCostUSD.Value > 0 ? "$" + log.EstimatedCostUSD.Value.ToString("N6") : "-")</td>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@log.Id" class="btn btn-sm btn-primary">Details</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">No logs found for this IRF.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
