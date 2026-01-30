@@ -20,6 +20,7 @@ namespace Risebird.CommonHelper
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IOpenAIApiLogger _openAIApiLogger;
         private readonly string apiKey;
         private readonly string baseUrl;
         private readonly string candidateScreenerAssistantId;
@@ -37,11 +38,12 @@ namespace Risebird.CommonHelper
         private readonly string stringResumeAnalysisAssistantIdV2;
 
         //private readonly List<string> candidateResumesVectorStoreId;
-        public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
         {
             _httpClient = new HttpClient();
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
+            _openAIApiLogger = openAIApiLogger;
             apiKey = _configuration["OpenAI:ApiKey"];
             baseUrl = _configuration["OpenAI:BaseUrl"];
             candidateScreenerAssistantId = _configuration["OpenAI:CandidateScreenerAssistantId"];
@@ -214,42 +216,52 @@ namespace Risebird.CommonHelper
             {
                 HttpClient client = new HttpClient();
                 string assistantId = string.Empty;
+                string operationType = "Unknown";
+                
                 if(!string.IsNullOrEmpty(profileType))
                 {
                     if (profileType == ProfileNames.Candidate)
                     {
                         assistantId = candidateScreenerAssistantId;
+                        operationType = "CandidateScreening";
                     }
                     else if (profileType == ProfileNames.Interviewer)
                     {
                         assistantId = interviewerScreenerAssistantId;
+                        operationType = "InterviewerScreening";
                     }
                     else if (profileType == ProfileNames.ResumeParserAIAssistant)
                     {
                         assistantId = resumeParserAssistantId;
+                        operationType = "ResumeParsing";
                     }
                     else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
                     {
                         assistantId = aiTranscriptAnalysisAssistantId;
+                        operationType = "TranscriptAnalysis";
                     }
                     else if (profileType == ProfileNames.StringResumeAnalysisAIAssistant)
                     {
                         //assistantId = stringResumeAnalysisAssistantId;
                         assistantId = stringResumeAnalysisAssistantIdV2;
+                        operationType = "ResumeAnalysis";
                     }
                     else if (profileType == ProfileNames.StringReportQCAIAssistant)
                     {
                         assistantId = stringReportQCAssistantIdStructuredOutput;//stringReportQCAssistantId;
+                        operationType = "ReportQC";
                     }
                     else
                     {
                         assistantId = reportQCAssistantId;
+                        operationType = "QualityCheck";
                     }
 
                 }
                 else
                 {
                     assistantId = rubricGeneratorAssistantId;
+                    operationType = "RubricGeneration";
                 }
                 
 
@@ -270,10 +282,33 @@ namespace Risebird.CommonHelper
 
                 request.Content = content;
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs",
+                    apiMethod: "POST",
+                    requestPayload: jsonContent,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null, // Assistants API doesn't expose model in request
+                    assistantId: assistantId,
+                    threadId: threadId,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = operationType
+                    });
 
                 response.EnsureSuccessStatusCode();
-                var responseContent = await response.Content.ReadAsStringAsync();
                 var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
                 return runResponse["id"].ToString();
             }
@@ -296,14 +331,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
-                //HttpClient client = new HttpClient();
-                //client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-                //client.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
-                //var response = await client.PostAsync($"{baseUrl}/threads/{threadId}/runs", content);
-                response.EnsureSuccessStatusCode();
+                sw.Stop();
+                
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: threadId,
+                    runId: runId,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "RunRetrieval"
+                    });
+                
+                response.EnsureSuccessStatusCode();
                 var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
                 var failedAt = runResponse["failed_at"];
                 if (failedAt != null)
@@ -330,10 +384,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/messages",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: threadId,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "MessageRetrieval"
+                    });
 
                 response.EnsureSuccessStatusCode();
-                var responseContent = await response.Content.ReadAsStringAsync();
 
                 RunResult runResultMessages = JsonConvert.DeserializeObject<RunResult>(responseContent);
                 return runResultMessages;
@@ -373,10 +450,34 @@ namespace Risebird.CommonHelper
 
                         HttpClient client = new HttpClient();
                         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                        
+                        var sw = System.Diagnostics.Stopwatch.StartNew();
                         var response = await client.PostAsync($"{baseUrl}/files", content);
-                        response.EnsureSuccessStatusCode();
+                        sw.Stop();
 
                         var responseContent = await response.Content.ReadAsStringAsync();
+                        
+                        // Log the API call
+                        await _openAIApiLogger.LogApiCallAsync(
+                            apiEndpoint: $"{baseUrl}/files",
+                            apiMethod: "POST",
+                            requestPayload: $"{{\"purpose\":\"assistants\",\"file\":\"{fcName}\"}}",
+                            responsePayload: responseContent,
+                            responseTimeMs: (int)sw.ElapsedMilliseconds,
+                            statusCode: (int)response.StatusCode,
+                            isSuccess: response.IsSuccessStatusCode,
+                            errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                            model: null,
+                            assistantId: null,
+                            threadId: null,
+                            runId: null,
+                            fileId: null,
+                            context: new OpenAIApiLogContext
+                            {
+                                OperationType = "FileUpload"
+                            });
+                        
+                        response.EnsureSuccessStatusCode();
 
                         var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
                         return fileResponse["id"].ToString();
@@ -563,10 +664,34 @@ namespace Risebird.CommonHelper
 
                 request.Content = content;
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await _httpClient.SendAsync(request);
+                sw.Stop();
+                
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads",
+                    apiMethod: "POST",
+                    requestPayload: jsonContent,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: null,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "ThreadCreation"
+                    });
+                
                 response.EnsureSuccessStatusCode();
 
-                var responseContent = await response.Content.ReadAsStringAsync();
                 dynamic thread = JsonConvert.DeserializeObject(responseContent);
 
                 //return JsonConvert.DeserializeObject<CandidateScreeningResponse>(responseContent);
@@ -591,10 +716,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
 
-                response.EnsureSuccessStatusCode();
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/files",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: null,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "FileList"
+                    });
+                
+                response.EnsureSuccessStatusCode();
 
                 FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
                 return files;
@@ -636,9 +784,33 @@ namespace Risebird.CommonHelper
                                 Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
                             };
 
+                            var sw = System.Diagnostics.Stopwatch.StartNew();
                             var response = await client.SendAsync(request);
-                            response.EnsureSuccessStatusCode();
+                            sw.Stop();
+                            
                             var responseContent = await response.Content.ReadAsStringAsync();
+                            
+                            // Log the API call
+                            await _openAIApiLogger.LogApiCallAsync(
+                                apiEndpoint: $"{baseUrl}/files/{item.id}",
+                                apiMethod: "DELETE",
+                                requestPayload: null,
+                                responsePayload: responseContent,
+                                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                                statusCode: (int)response.StatusCode,
+                                isSuccess: response.IsSuccessStatusCode,
+                                errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                                model: null,
+                                assistantId: null,
+                                threadId: null,
+                                runId: null,
+                                fileId: item.id,
+                                context: new OpenAIApiLogContext
+                                {
+                                    OperationType = "FileDelete"
+                                });
+                            
+                            response.EnsureSuccessStatusCode();
                             
                             totalDeleted++;
                         }
@@ -678,10 +850,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
 
-                response.EnsureSuccessStatusCode();
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/vector_stores",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: null,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "VectorStoreList"
+                    });
+                
+                response.EnsureSuccessStatusCode();
 
                 FilesList vectors = JsonConvert.DeserializeObject<FilesList>(responseContent);//FilesList: used the same type for vector list
                 return vectors;
@@ -702,6 +897,7 @@ namespace Risebird.CommonHelper
                 {
                     Parallel.ForEach(vectorsList?.data, item =>
                     {
+                        var sw = System.Diagnostics.Stopwatch.StartNew();
                         HttpClient client = new HttpClient();
 
                         var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
@@ -710,9 +906,31 @@ namespace Risebird.CommonHelper
                         };
 
                         var response = client.SendAsync(request).Result;
+                        sw.Stop();
 
-                        response.EnsureSuccessStatusCode();
                         var responseContent = response.Content.ReadAsStringAsync().Result;
+                        
+                        // Log the API call (using GetAwaiter().GetResult() for sync context)
+                        _openAIApiLogger.LogApiCallAsync(
+                            apiEndpoint: $"{baseUrl}/vector_stores/{item.id}",
+                            apiMethod: "DELETE",
+                            requestPayload: null,
+                            responsePayload: responseContent,
+                            responseTimeMs: (int)sw.ElapsedMilliseconds,
+                            statusCode: (int)response.StatusCode,
+                            isSuccess: response.IsSuccessStatusCode,
+                            errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                            model: null,
+                            assistantId: null,
+                            threadId: null,
+                            runId: null,
+                            fileId: null,
+                            context: new OpenAIApiLogContext
+                            {
+                                OperationType = "VectorStoreDelete"
+                            }).GetAwaiter().GetResult();
+                        
+                        response.EnsureSuccessStatusCode();
 
                         //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
                         //return files;
