@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +25,16 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public bool showChatBox { get; set; }
         public bool isMultiLingual { get; set; }
+        public bool IsTypingSpeedQuestion { get; set; }
+        public string TypingSampleText { get; set; }
+        public string TypedText { get; set; }
+        public string TypingStartTime { get; set; }
+        public string TypingEndTime { get; set; }
+        public decimal TypingTimeTaken { get; set; }
+        public int TypingTotalChars { get; set; }
+        public int TypingCorrectChars { get; set; }
+        public decimal TypingAccuracy { get; set; }
+        public decimal TypingWPM { get; set; }
     }
 
     public class ChatLine

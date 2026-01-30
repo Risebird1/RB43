@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
@@ -100,7 +100,7 @@ namespace Risebird.Repository
                 DeliveryHeadQuestionId = deliveryHeadQuestionId
             });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false)
         {
             try
             {
@@ -116,16 +116,31 @@ namespace Risebird.Repository
                     var normalizedBotAudioLink = NormalizeForDb(BotAudioLink);
 
                     // Required fields for a meaningful row in BotInterviewQuestionVideos.
-                    if (normalizedSessionId is null ||
+                    if(isTypingSpeedQuestion)
+                    {
+                        if (normalizedSessionId is null ||
+                        normalizedVideoLink is null ||
+                        //normalizedCandidateResponse is null ||
+                        normalizedQuestion is null ||
+                        interviewId <= 0)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (normalizedSessionId is null ||
                         normalizedVideoLink is null ||
                         normalizedCandidateResponse is null ||
                         normalizedQuestion is null ||
                         interviewId <= 0)
-                    {
-                        return false;
+                        {
+                            return false;
+                        }
                     }
 
-                    var parameters = new DynamicParameters();
+
+                        var parameters = new DynamicParameters();
                     parameters.Add("@VideoLink", normalizedVideoLink);
                     parameters.Add("@question", normalizedQuestion);
                     parameters.Add("@SessionId", normalizedSessionId);
@@ -675,6 +690,42 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", obj.SessionId);
+                    parameters.Add("@QuestionId", obj.QuestionId);
+                    parameters.Add("@SampleText", obj.SampleText);
+                    parameters.Add("@TypedText", obj.TypedText);
+                    parameters.Add("@TimeStarted", obj.TimeStarted);
+                    parameters.Add("@TimeCompleted", obj.TimeCompleted);
+                    parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
+                    parameters.Add("@TotalCharacters", obj.TotalCharacters);
+                    parameters.Add("@CorrectCharacters", obj.CorrectCharacters);
+                    parameters.Add("@AccuracyPercentage", obj.AccuracyPercentage);
+                    parameters.Add("@WordsPerMinute", obj.WordsPerMinute);
+                    parameters.Add("@CreatedBy", obj.CreatedBy);
+                    
+                    await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
 
     }

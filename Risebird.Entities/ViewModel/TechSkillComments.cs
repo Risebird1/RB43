@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
@@ -24,5 +24,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
         public string AIQuestionVideoLink { get; set; }
+        public bool IsTypingSpeedAssessment { get; set; }
     }
 }
