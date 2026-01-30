@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Risebird.Repository.Interface
         Task CreateSession(InterviewSession session);
         Task<string> GetThreadId(Guid sessionId);
         Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null);
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
         Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId);
@@ -27,5 +27,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveSentimentAnalysis(VideoSentimentAnalysis obj);
         Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);
         Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
+        Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj);
     }
 }
