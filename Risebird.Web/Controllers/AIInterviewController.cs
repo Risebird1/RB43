@@ -112,6 +112,7 @@ namespace Risebird.Web.Controllers
                                     model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
                                     model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                     model.CurrentQuestionId = sampleQuestion.id;
+                                    model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
                                     await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                 }
@@ -262,6 +263,7 @@ namespace Risebird.Web.Controllers
                                                 model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;//latestEntry.AIQuestionVideoLink;
                                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                                 model.CurrentQuestionId = sampleQuestion.id;//latestEntry.DeliveryHeadQuestionId;
+                                                model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                             }
@@ -893,6 +895,36 @@ namespace Risebird.Web.Controllers
                             };
                             return View("ExitModalPartial", exitModel);
                         }
+
+                        // Save typing speed assessment if this was a typing speed question
+                        if (model.IsTypingSpeedQuestion && !string.IsNullOrEmpty(model.TypedText))
+                        {
+                            try
+                            {
+                                var typingAssessment = new TypingSpeedAssessment
+                                {
+                                    SessionId = model.SessionId.ToString(),
+                                    QuestionId = model.CurrentQuestionId,
+                                    SampleText = model.TypingSampleText,
+                                    TypedText = model.TypedText,
+                                    TimeStarted = DateTime.Parse(model.TypingStartTime),
+                                    TimeCompleted = DateTime.Parse(model.TypingEndTime),
+                                    TimeTakenInSeconds = model.TypingTimeTaken,
+                                    TotalCharacters = model.TypingTotalChars,
+                                    CorrectCharacters = model.TypingCorrectChars,
+                                    AccuracyPercentage = model.TypingAccuracy,
+                                    WordsPerMinute = model.TypingWPM,
+                                    CreatedBy = model.candidateName
+                                };
+                                await _aiinterviewerService.SaveTypingSpeedAssessment(typingAssessment);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                // Continue even if typing speed save fails - don't block the interview
+                            }
+                        }
+
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
@@ -909,12 +941,14 @@ namespace Risebird.Web.Controllers
                             //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
                             model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                             model.CurrentQuestionId = sampleQuestion.id;
+                            model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
 
                             if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
                             {
                                 model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                 model.CurrentQuestionId = sampleQuestion.id;
+                                model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
                                 await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                             }
@@ -1179,7 +1213,7 @@ namespace Risebird.Web.Controllers
                 // This allows text/code submissions to be saved successfully
                 
                 // Save in db with question.sessionid,videoLink,Datetime (VideoLink can be empty for text responses)
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId, model.IsTypingSpeedQuestion);
                 return result;
             }
             catch (Exception ex)
