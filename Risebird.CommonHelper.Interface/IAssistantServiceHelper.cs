@@ -9,7 +9,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<CandidateScreeningResponse> ScreenCandidateAsync(ScreeningRequest request);
         Task<RunResult> ScreenAsync(ScreeningRequest request);
         Task<bool> DeleteVectors();
-        Task<bool> DeleteFiles();
+        Task<bool> DeleteFiles(int maxIterations = 10);
         Task<RunResult> GenerateTechRubric(string jobTitle);
         Task<RunResult> GenerateTranscriptAnalysis(string transcriptData);
         Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle);
