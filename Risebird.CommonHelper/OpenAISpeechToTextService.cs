@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
@@ -25,14 +25,16 @@ namespace Risebird.CommonHelper
     {
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
+        private readonly IOpenAIApiLogger _openAIApiLogger;
 
         private readonly string _openAiKey;
 
-        public OpenAISpeechToTextService(IConfiguration config)//HttpClient http, 
+        public OpenAISpeechToTextService(IConfiguration config, IOpenAIApiLogger openAIApiLogger)//HttpClient http, 
         {
             //_http = http;
             _http = new HttpClient();
             _config = config;
+            _openAIApiLogger = openAIApiLogger;
             _openAiKey = _config["OpenAI:ApiKey"];
 
             //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _openAiKey);
@@ -59,8 +61,33 @@ namespace Risebird.CommonHelper
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _openAiKey);
 
+            var requestPayload = $"{{\"model\":\"whisper-1\",\"file\":\"{fileName}\",\"language\":\"{(isHindi ? "hi" : "en")}\"}}";
+            
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var response = await _http.SendAsync(request);
+            sw.Stop();
+            
             var content = await response.Content.ReadAsStringAsync();
+
+            // Log the API call
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: "https://api.openai.com/v1/audio/transcriptions",
+                apiMethod: "POST",
+                requestPayload: requestPayload,
+                responsePayload: content,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : content,
+                model: "whisper-1",
+                assistantId: null,
+                threadId: null,
+                runId: null,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = "SpeechToText"
+                });
 
             if (!response.IsSuccessStatusCode)
             {
@@ -88,11 +115,37 @@ namespace Risebird.CommonHelper
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _openAiKey);
 
+            var requestPayload = System.Text.Json.JsonSerializer.Serialize(payload);
+            
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var response = await _http.SendAsync(request);
+            sw.Stop();
+
+            var content = response.IsSuccessStatusCode ? "[Binary Audio Data]" : await response.Content.ReadAsStringAsync();
+            
+            // Log the API call
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: "https://api.openai.com/v1/audio/speech",
+                apiMethod: "POST",
+                requestPayload: requestPayload,
+                responsePayload: content,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : content,
+                model: "tts-1",
+                assistantId: null,
+                threadId: null,
+                runId: null,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = "TextToSpeech"
+                });
 
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
+                var error = content;
                 throw new Exception($"TTS failed: {error}");
             }
 

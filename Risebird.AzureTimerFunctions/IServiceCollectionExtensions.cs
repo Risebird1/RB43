@@ -1,4 +1,4 @@
-﻿using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -154,8 +154,11 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
             services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
             services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
-            services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
+            services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
+            services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
             services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
+            services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
+            services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
             
             return services;
         }
