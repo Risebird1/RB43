@@ -27,7 +27,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("RenewTemplateTechRubricsJob")]
-        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer)//0 */5 * * * *
+        public async Task Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer) // Every 6 hours (was: every minute - causing excessive OpenAI costs)
         {
             log.LogInformation($"RenewTemplateTechRubricsJob : C# Timer trigger function started executing  at: {DateTime.Now}");
 
