@@ -1,4 +1,4 @@
-﻿using DinkToPdf;
+using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
@@ -170,6 +170,8 @@ namespace Risebird.MicroService
                     services.AddScoped<IAIInterviewerService, AIInterviewerService>();
                     services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
                     services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
+                    services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
+                    services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
                 }).Build();
             host.Run();
         }
