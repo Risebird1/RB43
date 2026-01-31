@@ -361,6 +361,7 @@ namespace Risebird.CommonHelper
                 var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
                 var failedAt = runResponse["failed_at"];
                 if (failedAt != null)
+                    var json = JObject.Parse(responseContent);
                 {
                     return "failed";
                 }
