@@ -18,13 +18,28 @@ namespace Risebird.CommonHelper
         private readonly IOpenAIApiLogRepository _logRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        // OpenAI Pricing (as of 2024 - update as needed)
+        // OpenAI Pricing (as of January 2026)
+        // GPT-4o models (most common)
+        private readonly decimal GPT4O_INPUT_COST_PER_1K = 0.0025m;      // $2.50 per 1M tokens
+        private readonly decimal GPT4O_OUTPUT_COST_PER_1K = 0.0100m;     // $10.00 per 1M tokens
+        private readonly decimal GPT4O_CACHED_COST_PER_1K = 0.00125m;    // $1.25 per 1M tokens
+        
+        // GPT-4o-mini models
+        private readonly decimal GPT4O_MINI_INPUT_COST_PER_1K = 0.00015m;   // $0.15 per 1M tokens
+        private readonly decimal GPT4O_MINI_OUTPUT_COST_PER_1K = 0.00060m;  // $0.60 per 1M tokens
+        private readonly decimal GPT4O_MINI_CACHED_COST_PER_1K = 0.000075m; // $0.075 per 1M tokens
+        
+        // Legacy GPT-4 models
         private readonly decimal GPT4_INPUT_COST_PER_1K = 0.03m;
         private readonly decimal GPT4_OUTPUT_COST_PER_1K = 0.06m;
         private readonly decimal GPT4_TURBO_INPUT_COST_PER_1K = 0.01m;
         private readonly decimal GPT4_TURBO_OUTPUT_COST_PER_1K = 0.03m;
+        
+        // GPT-3.5 models
         private readonly decimal GPT35_TURBO_INPUT_COST_PER_1K = 0.0015m;
         private readonly decimal GPT35_TURBO_OUTPUT_COST_PER_1K = 0.002m;
+        
+        // Audio models
         private readonly decimal WHISPER_COST_PER_MINUTE = 0.006m;
         private readonly decimal TTS_COST_PER_1K_CHARS = 0.015m;
         private readonly decimal TTS_HD_COST_PER_1K_CHARS = 0.030m;
@@ -120,15 +135,27 @@ namespace Risebird.CommonHelper
 
             model = model.ToLower();
 
-            if (model.Contains("gpt-4") && !model.Contains("turbo"))
+            // Check for gpt-4o models first (most common)
+            if (model.Contains("gpt-4o-mini"))
             {
-                inputCost = GPT4_INPUT_COST_PER_1K;
-                outputCost = GPT4_OUTPUT_COST_PER_1K;
+                inputCost = GPT4O_MINI_INPUT_COST_PER_1K;
+                outputCost = GPT4O_MINI_OUTPUT_COST_PER_1K;
             }
-            else if (model.Contains("gpt-4") && model.Contains("turbo"))
+            else if (model.Contains("gpt-4o"))
+            {
+                inputCost = GPT4O_INPUT_COST_PER_1K;
+                outputCost = GPT4O_OUTPUT_COST_PER_1K;
+            }
+            // Legacy GPT-4 models
+            else if (model.Contains("gpt-4-turbo") || model.Contains("gpt-4-1106") || model.Contains("gpt-4-0125"))
             {
                 inputCost = GPT4_TURBO_INPUT_COST_PER_1K;
                 outputCost = GPT4_TURBO_OUTPUT_COST_PER_1K;
+            }
+            else if (model.Contains("gpt-4"))
+            {
+                inputCost = GPT4_INPUT_COST_PER_1K;
+                outputCost = GPT4_OUTPUT_COST_PER_1K;
             }
             else if (model.Contains("gpt-3.5-turbo"))
             {
@@ -137,9 +164,9 @@ namespace Risebird.CommonHelper
             }
             else
             {
-                // Default to GPT-3.5 pricing for unknown models
-                inputCost = GPT35_TURBO_INPUT_COST_PER_1K;
-                outputCost = GPT35_TURBO_OUTPUT_COST_PER_1K;
+                // Default to gpt-4o pricing for unknown models (most likely case)
+                inputCost = GPT4O_INPUT_COST_PER_1K;
+                outputCost = GPT4O_OUTPUT_COST_PER_1K;
             }
 
             var totalCost = (promptTokens / 1000m * inputCost) + (completionTokens / 1000m * outputCost);
@@ -162,7 +189,21 @@ namespace Risebird.CommonHelper
                     var promptTokens = usage["prompt_tokens"]?.Value<int>() ?? 0;
                     var completionTokens = usage["completion_tokens"]?.Value<int>() ?? 0;
                     var totalTokens = usage["total_tokens"]?.Value<int>() ?? (promptTokens + completionTokens);
-                    return (promptTokens, completionTokens, totalTokens);
+                    
+                    if (promptTokens > 0 || completionTokens > 0)
+                        return (promptTokens, completionTokens, totalTokens);
+                }
+
+                // Check for camelCase version (some APIs return this)
+                var usageCamel = json["Usage"];
+                if (usageCamel != null)
+                {
+                    var promptTokens = usageCamel["promptTokens"]?.Value<int>() ?? usageCamel["PromptTokens"]?.Value<int>() ?? 0;
+                    var completionTokens = usageCamel["completionTokens"]?.Value<int>() ?? usageCamel["CompletionTokens"]?.Value<int>() ?? 0;
+                    var totalTokens = usageCamel["totalTokens"]?.Value<int>() ?? usageCamel["TotalTokens"]?.Value<int>() ?? (promptTokens + completionTokens);
+                    
+                    if (promptTokens > 0 || completionTokens > 0)
+                        return (promptTokens, completionTokens, totalTokens);
                 }
 
                 // For assistant runs, check for different structure
@@ -173,6 +214,59 @@ namespace Risebird.CommonHelper
                     var promptTokens = promptTokensField?.Value<int>() ?? 0;
                     var completionTokens = completionTokensField?.Value<int>() ?? 0;
                     return (promptTokens, completionTokens, promptTokens + completionTokens);
+                }
+                
+                // Check if response has "object": "thread.run" with status "completed"
+                // In Assistants API v2, usage might be at different levels
+                var objectType = json["object"]?.Value<string>();
+                var status = json["status"]?.Value<string>();
+                
+                if (objectType == "thread.run" && status == "completed")
+                {
+                    // Try to find usage anywhere in the response
+                    var allTokens = json.SelectTokens("$..usage").FirstOrDefault();
+                    if (allTokens != null && allTokens is JObject usageObj)
+                    {
+                        var promptTokens = usageObj["prompt_tokens"]?.Value<int>() ?? 0;
+                        var completionTokens = usageObj["completion_tokens"]?.Value<int>() ?? 0;
+                        var totalTokens = usageObj["total_tokens"]?.Value<int>() ?? (promptTokens + completionTokens);
+                        
+                        if (promptTokens > 0 || completionTokens > 0)
+                            return (promptTokens, completionTokens, totalTokens);
+                    }
+                }
+                
+                // Check for run steps format (list.thread.run.step)
+                if (objectType == "list" && json["data"] != null)
+                {
+                    var dataArray = json["data"] as JArray;
+                    if (dataArray != null && dataArray.Count > 0)
+                    {
+                        int totalPromptTokens = 0;
+                        int totalCompletionTokens = 0;
+                        int totalAllTokens = 0;
+                        
+                        // Sum up usage from all steps
+                        foreach (var step in dataArray)
+                        {
+                            var stepUsage = step["usage"];
+                            if (stepUsage != null)
+                            {
+                                totalPromptTokens += stepUsage["prompt_tokens"]?.Value<int>() ?? 0;
+                                totalCompletionTokens += stepUsage["completion_tokens"]?.Value<int>() ?? 0;
+                                totalAllTokens += stepUsage["total_tokens"]?.Value<int>() ?? 0;
+                            }
+                        }
+                        
+                        if (totalPromptTokens > 0 || totalCompletionTokens > 0)
+                        {
+                            // If total_tokens wasn't provided, calculate it
+                            if (totalAllTokens == 0)
+                                totalAllTokens = totalPromptTokens + totalCompletionTokens;
+                                
+                            return (totalPromptTokens, totalCompletionTokens, totalAllTokens);
+                        }
+                    }
                 }
             }
             catch
